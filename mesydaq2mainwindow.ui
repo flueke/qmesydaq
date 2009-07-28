@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Mesydaq2MainWindow</class>
+ <widget class="QMainWindow" name="Mesydaq2MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Files">
+    <property name="title">
+     <string>&amp;Files</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action_Save_Config_File"/>
+    <addaction name="action_Load_Config_File"/>
+    <addaction name="separator"/>
+    <addaction name="action_Replay_List_File"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_Histogram_File"/>
+    <addaction name="actionLoad_H_istogram_File"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <addaction name="menu_Files"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_Save_Config_File">
+   <property name="text">
+    <string>&amp;Save Config File ...</string>
+   </property>
+  </action>
+  <action name="action_Load_Config_File">
+   <property name="text">
+    <string>&amp;Load Config File ...</string>
+   </property>
+  </action>
+  <action name="action_Replay_List_File">
+   <property name="text">
+    <string>&amp;Replay List File ...</string>
+   </property>
+  </action>
+  <action name="actionSave_Histogram_File">
+   <property name="text">
+    <string>Save &amp;Histogram File ...</string>
+   </property>
+  </action>
+  <action name="actionLoad_H_istogram_File">
+   <property name="text">
+    <string>Load H&amp;istogram File ...</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>action_Quit</sender>
+   <signal>activated()</signal>
+   <receiver>Mesydaq2MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
