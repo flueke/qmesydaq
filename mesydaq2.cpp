@@ -36,8 +36,6 @@
 #include "histogram.h"
 #include "mcpd8.h"
 #include "measurement.h"
-#include "corbathread.h"
-#include "controlinterface.h"
 
 Mesydaq2::Mesydaq2(QObject *parent)
 	: QObject(parent) 
@@ -62,32 +60,16 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, initialize(false)
 {
 #warning m_hist is not initialized
-	meas = new Measurement(this);
-	ct = new CorbaThread();
-	cInt = new ControlInterface(this);
-	
-	connect(meas, SIGNAL(protocol(QString, quint8)), this, SLOT(protocol(QString, quint8)));
-	connect(meas, SIGNAL(stop()), this, SLOT(stop()));
-	connect(meas, SIGNAL(setCountlimit(quint8, ulong)), this, SLOT(setCountlimit(quint8, ulong)));
-	connect(meas, SIGNAL(acqListfile(bool)), this, SLOT(acqListfile(bool)));
 	
 	initValues();
 	initDevices();
 	initTimers();
 	initHardware();
 	protocol(tr("running on Qt %1").arg(qVersion()));
-#warning TODO	mainWin->displayMcpdSlot();
-	dispMpsd();
-#warning TODO	mainWin->dispFiledata();
-#warning TODO	ct->initializeCorba(this, cInt);
 }
 
 Mesydaq2::~Mesydaq2()
 {
-	dispTimer->stop();
-	if (dispTimer)
-		delete dispTimer;
-	dispTimer = NULL;
 	for(quint8 i = 0; i < MCPDS; i++)
 	{
 		if (m_mcpd[i])
@@ -183,6 +165,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
 					data = (pd.data[counter + 2] & 0x00FF) * 0x10000 + (pd.data[counter + 1] & 0xFFF8) / 8;
 					time = (quint16) tim;
 					// dispatch events:
+#warning TODO
+#if 0
 					switch(dataId)
 					{
 						case MON1ID:
@@ -196,6 +180,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
 						default:
 							break;
 					}
+#endif
 				}
 // neutron event:
 				else
@@ -206,16 +191,16 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
 					chan = 8 * 2 * mod + slot;
 					data1 = (pd.data[counter+2] & 0x007F) * 8 + (pd.data[counter+1] & 0xE000) / 8192;
 					data0 = (pd.data[counter+1] & 0x1FF8) / 8;
-					if((m_countLimit[EVID] == 0) || (meas->events() < m_countLimit[EVID]))
+#warning TODO 				if((m_countLimit[EVID] == 0) || (meas->events() < m_countLimit[EVID]))
 					{
 //						hist.incVal(chan, data0, data1, tim);
-						meas->incEvents();
+#warning TODO					meas->incEvents();
 					}
 				}
 			}
 		}
 // now copy auxiliary counter values into operational counters
-		meas->copyCounters();
+#warning TODO	meas->copyCounters();
 	}
 }
 
@@ -228,64 +213,26 @@ void Mesydaq2::acqListfile(bool yesno)
     	protocol(tr("Listfile recording %1").arg((yesno ? "on" : "off")), 1);
 }
 
-/*!
-    \fn Mesydaq2::startedDaq(void)
- */
-void Mesydaq2::startedDaq(void)
-{
-	meas->start(m_timeMsecs);
-// maybe some remote control is interested?
-   	cInt->completeCar();
-	m_daq = RUNNING;
-#warning TODO
-//	mainWin->update();
-//	mainWin->daqStatusLine->setText("RUNNING");
-	protocol("daq started", 1);
-}
-
-
-/*!
-    \fn Mesydaq2::stoppedDaq(void)
- */
-void Mesydaq2::stoppedDaq(void)
-{
-	meas->stop(m_timeMsecs);
-// maybe some remote control is interested?
-   	cInt->completeCar();
-	
-	if(m_acquireListfile)
-	{
-		writeClosingSignature();
-		datfile.close();
-	}
-	m_daq = IDLE;
-#warning TODO
-//	mainWin->update();
-//	mainWin->daqStatusLine->setText("IDLE");
-	protocol("daq stopped", 1);
-}
 
 /*!
     \fn Mesydaq2::startDaq(void)
  */
 bool Mesydaq2::startDaq(void)
 {
+#warning TODO
+#if 0
 	// check for listfile
 	if(m_acquireListfile)
 	{
 		if(meas->remoteStart())
 		{
-#warning TODO
-//			listfilename = mainWin->listfilepath->text();
+//			m_listfilename = mainWin->listfilepath->text();
 			m_listfilename.append("run%d.mdat");
 			ovwList = true;
-#warning TODO 
 //			mainWin->listFilename->setText(listfilename);
 		}
 		else
 		{
-#warning TODO
-#if 0
 			if(mainWin->listFilename->text().isEmpty())
 			{
 				if(listfilename.isEmpty())
@@ -303,7 +250,6 @@ bool Mesydaq2::startDaq(void)
 			}
 			else
 				listfilename = mainWin->listFilename->text();
-#endif
 		}			
 		// o.k. - now try to use it:
 		datfile.setFileName(m_listfilename);
@@ -315,8 +261,6 @@ bool Mesydaq2::startDaq(void)
    			if(!ovwList)
 			{
    				qDebug("no overwrite");
-#warning TODO
-#if 0
 				int answer = QMessageBox::warning(
 						this, "Listfile Exists -- Overwrite File",
 						QString("Overwrite existing listfile?"),
@@ -327,7 +271,6 @@ bool Mesydaq2::startDaq(void)
 					ovwList = false;
 					return false;
 				}
-#endif
    			}
    		}
 		// reset overwrite o.k. flag
@@ -339,11 +282,23 @@ bool Mesydaq2::startDaq(void)
 		writeListfileHeader();
 		writeHeaderSeparator();
   	}
+#endif
+	emit statusChanged("STARTED");
   	m_daq = STARTED;
-#warning TODO 
-//	mainWin->daqStatusLine->setText("STARTED");
 	protocol("daq start",1);
 	return true;
+}
+
+/*!
+    \fn Mesydaq2::startedDaq(void)
+ */
+void Mesydaq2::startedDaq(void)
+{
+// maybe some remote control is interested?
+#warning TODO   cInt->completeCar();
+	m_daq = RUNNING;
+	emit statusChanged("RUNNING");
+	protocol("daq started", 1);
 }
 
 
@@ -353,9 +308,27 @@ bool Mesydaq2::startDaq(void)
 void Mesydaq2::stopDaq(void)
 {
 	m_daq = STOPPED;
-#warning TODO
-//	mainWin->daqStatusLine->setText("STOPPED");
+	emit statusChanged("STOPPED");
 	protocol("daq stop", 1);
+}
+
+/*!
+    \fn Mesydaq2::stoppedDaq(void)
+ */
+void Mesydaq2::stoppedDaq(void)
+{
+// maybe some remote control is interested?
+#warning TODO   cInt->completeCar();
+	
+	if(m_acquireListfile)
+	{
+		writeClosingSignature();
+		datfile.close();
+	}
+	m_daq = IDLE;
+#warning TODO
+	emit statusChanged("IDLE");
+	protocol("daq stopped", 1);
 }
 
 
@@ -390,11 +363,6 @@ void Mesydaq2::initDevices(void)
  */
 void Mesydaq2::initTimers(void)
 {
-// display refresh timer
-	dispTimer = new QTimer(this);
-	connect(dispTimer, SIGNAL(timeout()), this, SLOT(dispTime()));
-	dispTimer->start(1000);
-	
 // central dispatch timer
 	theTimer = new QTimer(this);
 	connect(theTimer, SIGNAL(timeout()), this, SLOT(centralDispatch()));
@@ -409,18 +377,6 @@ void Mesydaq2::initTimers(void)
 	commTimer->setSingleShot(true);
 	commId = 99;
 }
-
-
-/*!
-    \fn Mesydaq2::dispTime()
- */
-void Mesydaq2::dispTime()
-{
-	protocol("disp time reached", 3);
-	draw();
-#warning TODO	mainWin->update();
-}
-
 
 /*!
     \fn Mesydaq2::clearAllHist(void)
@@ -556,55 +512,14 @@ void Mesydaq2::readListfile(QString readfilename)
 		if(bcount == 1000)
 		{
 			bcount = 0;
-			draw();
+#warning TODO		draw();
 //			kapp->processEvents();
 		}  
 	}	
 	datfile.close();
-	draw();
+#warning TODO draw();
 }
 
-
-/*!
-    \fn Mesydaq2::draw(void)
- */
-void Mesydaq2::draw(void)
-{
-//	quint8 id = mainWin->getDispId();
-#warning TODO
-#if 0
-	if(mainWin->dispAll->isChecked())
-	{
-		if(mainWin->dispAllPos->isChecked())
-		{
-//			hist[id]->copyLine(CHANNELS-2, dispBuf);
-//			mainWin->setData(dispBuf, 960, hist[id]->max(CHANNELS-2));
-		}
-		else
-		{
-//			hist[id]->copyLine(CHANNELS-1, dispBuf);
-//			mainWin->setData(dispBuf, 960, hist[id]->max(CHANNELS-1));
-		}
-	}
-	else
-	{
-		if(mainWin->specialBox->isChecked())
-		{
-//			hist[id]->copyLine(CHANNELS, dispBuf);
-//			mainWin->setData(dispBuf, 960, hist[id]->max(CHANNELS));
-		}
-		else
-		{
-			quint32 chan = mainWin->dispMcpd->value() * 128;
-			chan += mainWin->dispMpsd->value() * 16;
-			chan += mainWin->dispChan->value();
-//			hist[id]->copyLine(chan, dispBuf);
-//			mainWin->setData(dispBuf, 960, hist[id]->max(chan));
-		}
-	}
-	mainWin->draw();
-#endif
-}
 
 bool Mesydaq2::isPulserOn()
 {
@@ -631,16 +546,6 @@ void Mesydaq2::scanPeriph(quint16 id)
 {
 	m_mcpd[id]->readId();
 }
-
-
-/*!
-    \fn Mesydaq2::dispMpsd(void)
- */
-void Mesydaq2::dispMpsd(void)
-{
-#warning TODO	mainWin->displayMpsdSlot();
-}
-
 
 /*!
     \fn Mesydaq2::initHardware(void)
@@ -952,14 +857,14 @@ void Mesydaq2::commTimeout()
  */
 void Mesydaq2::centralDispatch()
 {
-	if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
-    		cInt->caressTask();
+#warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
+#warning TODO cInt->caressTask();
     	
 	dispatch[0]++;
 	if(dispatch[0] == 8)
 	{
 		dispatch[0] = 0;
-		meas->calcRates();
+#warning TODO	meas->calcRates();
 	}
 	
 	dispatch[1]++;
@@ -974,7 +879,7 @@ void Mesydaq2::centralDispatch()
 		dispatch[1] = 0;
 	}
 	
-	dispatchLevel ++;
+	dispatchLevel++;
 	if(dispatchLevel == 100)
 	{
     		dispatchLevel = 0;
@@ -1117,7 +1022,7 @@ void Mesydaq2::start(void)
    	protocol("remote start", 1);
 #warning TODO
 	m_mcpd[0]->start();
-//	mainWin->updateCaress();
+	emit statusChanged("STARTED");
 }
 
 /*!
@@ -1127,7 +1032,7 @@ void Mesydaq2::stop(void)
 {
 #warning TODO
 	m_mcpd[0]->stop();
-//	mainWin->updateCaress();
+	emit statusChanged("STOPPED");
    	protocol("remote stop", 1);
 }
 

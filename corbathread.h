@@ -33,7 +33,7 @@ const char FS_X = 1;
 const char FS_Y = 2;
 const char FS_XY = 3;
 
-class Mesydaq2;
+class MainWidget;
 class CORBADevice_i;
 class ControlInterface;
 
@@ -50,14 +50,14 @@ public:
   /** No descriptions */
 	virtual void run();
   /** No descriptions */
-	bool initializeCorba(Mesydaq2* App, ControlInterface* pcInt);
+	bool initializeCorba(MainWidget* App, ControlInterface* pcInt);
   /** stops and closes thread */
 	void bye();
   /** No descriptions */
 	bool asyncCmd(void);
 
 protected:
-	Mesydaq2 		*m_pApp;
+	MainWidget 		*m_pApp;
 
 	ControlInterface 	*m_pInt;
 

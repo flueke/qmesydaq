@@ -37,18 +37,15 @@
 #include "structures.h"
 
 /**
- * @short Application Main Object
+ * @short Mesydaq DAQ object (without any graphical frontend
  * @author Gregor Montermann <g.montermann@mesytec.com>
- * @version 0.8
+ * @author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ * @version 0.9
  */
 
-
-class MainWidget;
 class Histogram;
 class MCPD8;
 class MPSD8;
-class Measurement;
-class CorbaThread;
 class ControlInterface;
 
 class Mesydaq2 : public QObject // MainWindow, public Ui_Mesydaq2MainWindow
@@ -71,12 +68,9 @@ public:
 	void stoppedDaq(void);
 	void clearChanHist(ulong chan);
 	void clearAllHist(void);
-	void draw(void);
 	void scanPeriph(quint16 id);
-	void dispMpsd(void);
 	void initMpsd(quint8 id);
 	void initMcpd(quint8 id);
-	void allPulserOff();
 	void setTimingwidth(quint8 width);
 	void writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val);
 	quint16 readPeriReg(quint16 id, quint16 mod, quint16 reg);
@@ -124,6 +118,8 @@ public:
 
 	quint8 getThreshold(quint16 mod, quint16 addr);
 
+	quint64 getMTime(void) {return m_timeMsecs;}
+
 public slots:
 	void writeRegister(quint16 id, quint16 addr, quint16 reg, quint16 val);
 
@@ -151,7 +147,6 @@ public slots:
 
 	void setThreshold(quint16 mod, quint16 addr, quint8 thresh);
 
-	void dispTime();
 	void centralDispatch();
 	void commTimeout();
 	void protocol(QString str, quint8 level = 1);
@@ -163,7 +158,12 @@ public slots:
 	void reset(void);
 	void cont(void);
 
+	void allPulserOff();
+
 	void analyzeBuffer(DATA_PACKET &pd);
+
+signals:
+	void statusChanged(const QString &);
 
 private:
 	void initNetwork(void);
@@ -186,8 +186,6 @@ public:
 
 #warning TODO
 	MCPD8 		*m_mcpd[8];
-	Measurement 	*meas;
-	ControlInterface *cInt;
 
 private:
 	Histogram 	*m_hist;
@@ -223,13 +221,12 @@ private:
 	quint8  	initcpd;
 	quint8  	initpsd;
 	bool 		initialize;
-	CorbaThread	*ct;
+//	CorbaThread	*ct;
 	quint8  	dispatch[10];
 
 	ulong 		m_countLimit[9];
 
 	QString 	pstring;
-	QTimer 		*dispTimer;
 	QTimer 		*commTimer;
 	QTimer 		*theTimer;
 };

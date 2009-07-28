@@ -22,9 +22,13 @@
 
 #include "ui_mesydaq2mainwidget.h"
 
-class Mesydaq2;
 class QwtPlotCurve;
+class QTimer;
 class MesydaqData;
+class Mesydaq2;
+class Measurement;
+class CorbaThread;
+class ControlInterface;
 
 /**
 	@author Gregor Montermann <g.montermann@mesytec.com>
@@ -40,7 +44,6 @@ public:
 	void 	update(void);
 	QString buildTimestring(ulong timeval, bool nano);
 	void 	setData(ulong * data, quint32 len, ulong max);
-	void 	draw(void);
 	void 	processDispData();
 	void 	drawOpData();
 	void 	dispFiledata(void);
@@ -49,61 +52,60 @@ public:
 	void 	updateCaress(void);
 
 public slots:
-	virtual void sendAuxSlot();
-	virtual void sendParamSlot();
-	virtual void sendCellSlot();
-	virtual void startStopSlot();
-	virtual void setTimingSlot();
-	virtual void resetTimerSlot();
-	virtual void clearChanSlot();
-	virtual void clearMpsdSlot();
-	virtual void clearMcpdSlot();
-	virtual void clearAllSlot();
-	virtual void setStreamSlot();
-	virtual void replayListfileSlot();
-	virtual void setRunIdSlot();
-	virtual void displayMpsdSlot(int = -1);
-	virtual void displayMcpdSlot(int = -1);
+	void sendAuxSlot();
+	void sendParamSlot();
+	void sendCellSlot();
+	void startStopSlot();
+	void setTimingSlot();
+	void resetTimerSlot();
+	void clearChanSlot();
+	void clearMpsdSlot();
+	void clearMcpdSlot();
+	void clearAllSlot();
+	void setStreamSlot();
+	void replayListfileSlot();
+	void setRunIdSlot();
+	void displayMpsdSlot(int = -1);
+	void displayMcpdSlot(int = -1);
 
 	void mpsdCheck(int);
 
-	virtual void setModeSlot(int);
-	virtual void scanPeriSlot();
-	virtual void restoreSetupSlot();
-	virtual void linlogSlot();
-	virtual void applyThreshSlot();
-	virtual void saveSetupSlot();
-	virtual void redrawSlot();
-	virtual void readRegisterSlot();
-	virtual void writeRegisterSlot();
-	virtual void selectConfigpathSlot();
-	virtual void selectHistpathSlot();
-	virtual void selectListpathSlot();
-	virtual void writeHistSlot();
-	virtual void m2PresetSlot(bool pr);
-	virtual void m1PresetSlot(bool pr);
-	virtual void tPresetSlot(bool pr);
-	virtual void ePresetSlot(bool pr);
-	virtual void m2ResetSlot();
-	virtual void m1ResetSlot();
-	virtual void eResetSlot();
-	virtual void tResetSlot();
+	void setModeSlot(int);
+	void scanPeriSlot();
+	void restoreSetupSlot();
+	void linlogSlot();
+	void applyThreshSlot();
+	void saveSetupSlot();
+	void redrawSlot();
+	void readRegisterSlot();
+	void writeRegisterSlot();
+	void selectConfigpathSlot();
+	void selectHistpathSlot();
+	void selectListpathSlot();
+	void writeHistSlot();
+	void m2PresetSlot(bool pr);
+	void m1PresetSlot(bool pr);
+	void tPresetSlot(bool pr);
+	void ePresetSlot(bool pr);
+	void m2ResetSlot();
+	void m1ResetSlot();
+	void eResetSlot();
+	void tResetSlot();
 
-	virtual void	saveConfigSlot();
+	void saveConfigSlot();
+
+	void draw(void);
 
 protected slots:
-	virtual void	selectListfileSlot();
-	virtual void	setThresholdSlot();
-	virtual void	setGainSlot();
-	virtual void	setPulserSlot();
-	virtual void	setIpUdpSlot();
-	virtual void	setMcpdIdSlot();
+	void selectListfileSlot();
+	void setThresholdSlot();
+	void setGainSlot();
+	void setPulserSlot();
+	void setIpUdpSlot();
+	void setMcpdIdSlot();
 
 private:
-	quint16 	m_cmdBuffer[20];
-	quint16 	*m_pBuffer;
 	Mesydaq2	*m_theApp;
-	QString		m_pstring;
 	
 	ulong 		*m_pDispBuffer;
 	ulong 		m_dispMax;
@@ -111,7 +113,7 @@ private:
 	ulong 		m_dispLen;
 
 	quint16 	m_height;
-	quint16 	width;
+	quint16 	m_width;
 	quint16 	xstep;
 	float		ystep;
 	ulong 		dispLoThresh;
@@ -124,6 +126,14 @@ private:
 	QwtPlotCurve	*m_curve;
 
 	MesydaqData	*m_data;
+
+	Measurement 	*m_meas;
+
+	CorbaThread	*m_ct;
+
+	ControlInterface *m_cInt;
+
+	QTimer 		*m_dispTimer;
 };	
 
 #endif

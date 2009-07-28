@@ -28,6 +28,7 @@
 #include <QPen>
 #include <QRadioButton>
 #include <QHostAddress>
+#include <QTimer>
 
 #include <qwt_plot_curve.h>
 
@@ -42,6 +43,9 @@
 #include "histogram.h"
 #include "mesydaqdata.h"
 
+#include "corbathread.h"
+#include "controlinterface.h"
+
 MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	: QWidget(parent)
 	, Ui_Mesydaq2MainWidget()
@@ -51,17 +55,28 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_dispLen(0)
 	, m_height(480)
 {
+	m_meas = new Measurement(this);
+	m_ct = new CorbaThread();
 	setupUi(this);
 	
-        QObject::connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
-        QObject::connect(allPulsersoffButton, SIGNAL(clicked()), m_theApp, SLOT(allPulserOff()));
+        connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
+        connect(allPulsersoffButton, SIGNAL(clicked()), m_theApp, SLOT(allPulserOff()));
+        connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
 
+	connect(m_meas, SIGNAL(protocol(QString, quint8)), m_theApp, SLOT(protocol(QString, quint8)));
+	connect(m_meas, SIGNAL(stop()), m_theApp, SLOT(stop()));
+	connect(m_meas, SIGNAL(setCountlimit(quint8, ulong)), m_theApp, SLOT(setCountlimit(quint8, ulong)));
+	connect(m_meas, SIGNAL(acqListfile(bool)), m_theApp, SLOT(acqListfile(bool)));
+
+// display refresh timer
+	m_dispTimer = new QTimer(this);
+	connect(m_dispTimer, SIGNAL(timeout()), this, SLOT(draw()));
+	
 	qDebug("comgain->isChecked() %d", comgain->isChecked());
 	channelLabel->setHidden(true /* comgain->isChecked() */);
 	channelLabel->setHidden(true /* comgain->isChecked() */);
 	scanPeriSlot();
-	m_pBuffer = (quint16 *) &m_cmdBuffer;
-	width = 960;
+	m_width = 960;
 	xstep = 1;
 	ystep = 1;
 	scale = 1;
@@ -88,11 +103,26 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_curve->attach(dataFrame);
 	m_data = new MesydaqData();
 	m_curve->setData(*m_data);
+
+	displayMcpdSlot();
+	dispFiledata();
+
+	m_dispTimer->start(1000);
+	m_cInt = new ControlInterface(this);
+	m_ct->initializeCorba(this, m_cInt);
 }
 
 
 MainWidget::~MainWidget()
 {
+	m_dispTimer->stop();
+	if (m_dispTimer)
+		delete m_dispTimer;
+	m_dispTimer = NULL;
+
+	if (m_meas)
+		delete m_meas;
+	m_meas = NULL;
 }
 
 void MainWidget::startStopSlot()
@@ -103,24 +133,26 @@ void MainWidget::startStopSlot()
 		m_theApp->setTimingwidth(timingBox->value());
 		
 		// get latest preset entry
-		if(m_theApp->meas->isMaster(TCT))
-			m_theApp->meas->setPreset(TCT, tPreset->value(), true);
-		if(m_theApp->meas->isMaster(EVCT))
-			m_theApp->meas->setPreset(EVCT, evPreset->value(), true);
-		if(m_theApp->meas->isMaster(M1CT))
-			m_theApp->meas->setPreset(M1CT, m1Preset->value(), true);
-		if(m_theApp->meas->isMaster(M2CT))
-			m_theApp->meas->setPreset(M2CT, m2Preset->value(), true);
+		if(m_meas->isMaster(TCT))
+			m_meas->setPreset(TCT, tPreset->value(), true);
+		if(m_meas->isMaster(EVCT))
+			m_meas->setPreset(EVCT, evPreset->value(), true);
+		if(m_meas->isMaster(M1CT))
+			m_meas->setPreset(M1CT, m1Preset->value(), true);
+		if(m_meas->isMaster(M2CT))
+			m_meas->setPreset(M2CT, m2Preset->value(), true);
 		
 		startStopButton->setText("Stop");
 		// set device id to 0 -> will be filled by mesydaq for master
 		m_theApp->start(); 
+		m_meas->start(m_theApp->getMTime());
 	}
 	else
 	{
 		startStopButton->setText("Start");
 		// set device idto 0 -> will be filled by mesydaq for master
 		m_theApp->stop(); 
+		m_meas->stop(m_theApp->getMTime());
 	}
 }
 
@@ -272,43 +304,27 @@ void MainWidget::selectListfileSlot()
 void MainWidget::update(void)
 {
    	quint16 id = (quint16) paramId->value();	
-	m_pstring.sprintf("%ld", m_theApp->m_dataRxd);
-	dataRx->setText(m_pstring);
-	m_pstring.sprintf("%ld", m_theApp->m_cmdTxd);
-	cmdTx->setText(m_pstring);
-	m_pstring.sprintf("%ld", m_theApp->m_cmdRxd);;
-	cmdRx->setText(m_pstring);
-	m_pstring = buildTimestring(m_theApp->m_headertime, true);
-	hTimeText->setText(m_pstring);
-	m_pstring = buildTimestring(m_theApp->meas->getMeastime(), false);
-	mTimeText->setText(m_pstring);   
+	dataRx->setText(tr("%1").arg(m_theApp->m_dataRxd));
+	cmdTx->setText(tr("%1").arg( m_theApp->m_cmdTxd));
+	cmdRx->setText(tr("%1").arg(m_theApp->m_cmdRxd));
+	hTimeText->setText(buildTimestring(m_theApp->m_headertime, true));
+	mTimeText->setText(buildTimestring(m_meas->getMeastime(), false));   
     
 // parameter values for selected ID
-	m_pstring.sprintf("%llu", m_theApp->m_mcpd[id]->getParameter(0));
-	param0->setText(m_pstring);
-	m_pstring.sprintf("%llu", m_theApp->m_mcpd[id]->getParameter(1));
-	param1->setText(m_pstring);
-	m_pstring.sprintf("%llu", m_theApp->m_mcpd[id]->getParameter(2));
-	param2->setText(m_pstring);
-	m_pstring.sprintf("%llu", m_theApp->m_mcpd[id]->getParameter(3));
-	param3->setText(m_pstring);
-	m_theApp->meas->calcMeanRates();
+	param0->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(0)));
+	param1->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(1)));
+	param2->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(2)));
+	param3->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(3)));
+	m_meas->calcMeanRates();
     
 // measurement values counters and rates
-	m_pstring.sprintf("%llu", m_theApp->meas->getCounter(EVCT));
-	totalCounts->setText(m_pstring);
-	m_pstring.sprintf("%llu", m_theApp->meas->getCounter(TCT));
-	tSecsText->setText(m_pstring);
-	m_pstring.sprintf("%lu", m_theApp->meas->getRate(EVCT));
-	eventRate->setText(m_pstring);
-	m_pstring.sprintf("%llu", m_theApp->meas->getCounter(M1CT));
-	monitor1->setText(m_pstring);
-	m_pstring.sprintf("%llu", m_theApp->meas->getCounter(M2CT));
-	monitor2->setText(m_pstring);
-	m_pstring.sprintf("%lu", m_theApp->meas->getRate(M1CT));
-	monRate1->setText(m_pstring);
-	m_pstring.sprintf("%lu", m_theApp->meas->getRate(M2CT));
-	monRate2->setText(m_pstring);
+	totalCounts->setText(tr("%1").arg(m_meas->getCounter(EVCT)));
+	tSecsText->setText(tr("%1").arg(m_meas->getCounter(TCT)));
+	eventRate->setText(tr("%1").arg(m_meas->getRate(EVCT)));
+	monitor1->setText(tr("%1").arg(m_meas->getCounter(M1CT)));
+	monitor2->setText(tr("%1").arg(m_meas->getCounter(M2CT)));
+	monRate1->setText(tr("%1").arg(m_meas->getRate(M1CT)));
+	monRate2->setText(tr("%1").arg(m_meas->getRate(M2CT)));
 }
 
 /*!
@@ -407,21 +423,10 @@ void MainWidget::setData(ulong *data, quint32 len, ulong max)
 	}
 }
 
-/*!
-    \fn MainWidget::draw(void)
- */
-void MainWidget::draw(void)
-{
-//	qDebug("draw()");
-	dispId = dispMcpd->value();
-	dataFrame->replot();
-	drawOpData();
-//	displayMpsdSlot();
-}
-
 void MainWidget::clearAllSlot()
 {
 	m_theApp->clearAllHist();
+	draw();
 }
 
 void MainWidget::clearMcpdSlot()
@@ -429,7 +434,7 @@ void MainWidget::clearMcpdSlot()
 	quint32 start = dispMcpd->value() * 64;
 	for(quint32 i = start; i < start + 64; i++)
 		m_theApp->clearChanHist(i);
-	m_theApp->draw();
+	draw();
 }
 
 void MainWidget::clearMpsdSlot()
@@ -438,15 +443,14 @@ void MainWidget::clearMpsdSlot()
 //	qDebug("clearMpsd: %d", start);
 	for(quint32 i = start; i < start + 8; i++)
 		m_theApp->clearChanHist(i);
-	m_theApp->draw();
+	draw();
 }
 
 void MainWidget::clearChanSlot()
 {
 	ulong chan = dispChan->value() + dispMpsd->value() * 8 + dispMcpd->value() * 64;
-//	qDebug("clearChan: %d",chan);
 	m_theApp->clearChanHist(chan);
-	m_theApp->draw();
+	draw();
 }
 
 
@@ -460,10 +464,8 @@ void MainWidget::replayListfileSlot()
 void MainWidget::setRunIdSlot()
 {
 	quint16 runid = (quint16) devid->value();	
-
 	m_theApp->m_mcpd[0]->setRunId(runid); 
-	m_pstring.sprintf("Set run ID to %d", runid);	
-	m_theApp->protocol(m_pstring, 2);
+	m_theApp->protocol(tr("Set run ID to %1").arg(runid), 2);
 }
 
 /*!
@@ -471,7 +473,6 @@ void MainWidget::setRunIdSlot()
  */
 void MainWidget::displayMcpdSlot(int)
 {
-	QString str;
 	quint16 values[4];
 // retrieve displayed ID
 	quint8 id = mcpdId->value();
@@ -487,8 +488,7 @@ void MainWidget::displayMcpdSlot(int)
 	paramSource->setCurrentIndex(m_theApp->m_mcpd[id]->getParamSource(param->value()));
 
 // get timer settings
-	str.sprintf("%x", m_theApp->m_mcpd[id]->getAuxTimer(timer->value()));
-	compareAux->setText(str); 
+	compareAux->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getAuxTimer(timer->value()), 0, 16)); 
 	
 // get stream setting
 //	statusStream->setChecked(m_theApp->myMcpd[id]->getStream());	
@@ -777,7 +777,7 @@ void MainWidget::ePresetSlot(bool pr)
 		tPreset->setEnabled(false);
 	}
 	evPreset->setEnabled(pr);
-	m_theApp->meas->setPreset(EVCT, evPreset->value(), pr);
+	m_meas->setPreset(EVCT, evPreset->value(), pr);
 }
 
 
@@ -793,7 +793,7 @@ void MainWidget::tPresetSlot(bool pr)
 		evPreset->setEnabled(false);
 	}
 	tPreset->setEnabled(pr);
-	m_theApp->meas->setPreset(TCT, tPreset->value(), pr);
+	m_meas->setPreset(TCT, tPreset->value(), pr);
 }
 
 
@@ -809,7 +809,7 @@ void MainWidget::m1PresetSlot(bool pr)
 		tPreset->setEnabled(false);
 	}
 	m1Preset->setEnabled(pr);
-	m_theApp->meas->setPreset(M1CT, m1Preset->value(), pr);
+	m_meas->setPreset(M1CT, m1Preset->value(), pr);
 }
 
 
@@ -825,7 +825,7 @@ void MainWidget::m2PresetSlot(bool pr)
 		tPreset->setEnabled(false);
 	}
 	m2Preset->setEnabled(pr);
-	m_theApp->meas->setPreset(M2CT, m2Preset->value(), pr);
+	m_meas->setPreset(M2CT, m2Preset->value(), pr);
 }
 
 
@@ -835,47 +835,44 @@ void MainWidget::m2PresetSlot(bool pr)
 void MainWidget::updatePresets(void)
 {
 // presets
-	evPreset->setValue(m_theApp->meas->getPreset(EVCT));
-	tPreset->setValue(m_theApp->meas->getPreset(TCT));
-	m1Preset->setValue(m_theApp->meas->getPreset(M1CT));
-	m2Preset->setValue(m_theApp->meas->getPreset(M2CT));
+	evPreset->setValue(m_meas->getPreset(EVCT));
+	tPreset->setValue(m_meas->getPreset(TCT));
+	m1Preset->setValue(m_meas->getPreset(M1CT));
+	m2Preset->setValue(m_meas->getPreset(M2CT));
     
 // check for master preset counter
-	ePresetButton->setChecked(m_theApp->meas->isMaster(EVCT));
-    	m1PresetButton->setChecked(m_theApp->meas->isMaster(M1CT));
-    	m2PresetButton->setChecked(m_theApp->meas->isMaster(M2CT));
-    	tPresetButton->setChecked(m_theApp->meas->isMaster(TCT));
+	ePresetButton->setChecked(m_meas->isMaster(EVCT));
+    	m1PresetButton->setChecked(m_meas->isMaster(M1CT));
+    	m2PresetButton->setChecked(m_meas->isMaster(M2CT));
+    	tPresetButton->setChecked(m_meas->isMaster(TCT));
    
 // Caress values
-	m_pstring.sprintf("%d", m_theApp->meas->getCarHeight());
-	caressHeight->setText(m_pstring);
-	m_pstring.sprintf("%d", m_theApp->meas->getCarWidth());
-	caressWidth->setText(m_pstring);
-	m_pstring.sprintf("%d", m_theApp->meas->getRun());
-	caressRun->setText(m_pstring);
+	caressHeight->setText(tr("%1").arg(m_meas->getCarHeight()));
+	caressWidth->setText(tr("%1").arg(m_meas->getCarWidth()));
+	caressRun->setText(tr("%1").arg(m_meas->getRun()));
 }
 
 void MainWidget::tResetSlot()
 {
-	m_theApp->meas->clearCounter(TCT);
+	m_meas->clearCounter(TCT);
 	update();
 }
 
 void MainWidget::eResetSlot()
 {
-	m_theApp->meas->clearCounter(EVCT);
+	m_meas->clearCounter(EVCT);
 	update();
 }
 
 void MainWidget::m1ResetSlot()
 {
-	m_theApp->meas->clearCounter(M1CT);
+	m_meas->clearCounter(M1CT);
 	update();
 }
 
 void MainWidget::m2ResetSlot()
 {
-	m_theApp->meas->clearCounter(M2CT);
+	m_meas->clearCounter(M2CT);
 	update();
 }
 
@@ -886,13 +883,9 @@ void MainWidget::m2ResetSlot()
  */
 void MainWidget::updateCaress(void)
 {
-	QString str;
-	str.sprintf("%d", m_theApp->meas->getCarWidth());
-	caressWidth->setText(str);
-	str.sprintf("%d", m_theApp->meas->getCarHeight());
-	caressHeight->setText(str);
-	str.sprintf("%d", m_theApp->meas->getRun());
-	caressRun->setText(str);
+	caressWidth->setText(tr("%1").arg(m_meas->getCarWidth()));
+	caressHeight->setText(tr("%1").arg(m_meas->getCarHeight()));
+	caressRun->setText(tr("%1").arg(m_meas->getRun()));
 }
 
 /*!
@@ -912,4 +905,46 @@ void MainWidget::mpsdCheck(int mod)
 		module->stepUp();
 	else
 		module->stepBy(-7);
+}
+
+/*!
+    \fn MainWidget::draw(void)
+ */
+void MainWidget::draw(void)
+{
+	qDebug("MainWidget::draw()");
+	quint8 id = getDispId();
+
+	if(dispAll->isChecked())
+	{
+		if(dispAllPos->isChecked())
+		{
+//			hist[id]->copyLine(CHANNELS-2, dispBuf);
+//			setData(dispBuf, 960, hist[id]->max(CHANNELS-2));
+		}
+		else
+		{
+//			hist[id]->copyLine(CHANNELS-1, dispBuf);
+//			setData(dispBuf, 960, hist[id]->max(CHANNELS-1));
+		}
+	}
+	else
+	{
+		if (specialBox->isChecked())
+		{
+//			hist[id]->copyLine(CHANNELS, dispBuf);
+//			setData(dispBuf, 960, hist[id]->max(CHANNELS));
+		}
+		else
+		{
+			quint32 chan = dispMcpd->value() * 128;
+			chan += dispMpsd->value() * 16;
+			chan += dispChan->value();
+//			hist[id]->copyLine(chan, dispBuf);
+//			setData(dispBuf, 960, hist[id]->max(chan));
+		}
+	}
+	dispId = dispMcpd->value();
+	dataFrame->replot();
+	drawOpData();
 }

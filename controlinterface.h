@@ -44,7 +44,6 @@ public:
 	bool caressTaskPending(void) {return m_caressTaskPending;}
 	bool asyncTaskPending(void) {return m_asyncTaskPending;}
 
-
 protected:
 	bool 		m_asyncTaskPending;
 	bool 		m_caressTaskPending;

@@ -160,7 +160,7 @@ void CorbaThread::run()
 }
 
 /** No descriptions */
-bool CorbaThread::initializeCorba(Mesydaq2* App, ControlInterface* pcInt)
+bool CorbaThread::initializeCorba(MainWidget* App, ControlInterface* pcInt)
 {
 	qDebug("initialize corba");
 	m_pApp = App;
@@ -224,11 +224,11 @@ bool CorbaThread::asyncCmd(void)
   	
 // return false if already a cmd is pending
 	
-	m_pApp->cInt->setCaressTaskPending(true);
+	m_pInt->setCaressTaskPending(true);
 
 // wait max. 100 ms. for completion
 	quint8 waitCount(100);
-  	for( ; m_pApp->cInt->isActive() && waitCount; --waitCount)
+  	for( ; m_pInt->isActive() && waitCount; --waitCount)
     		usleep(1000);
 
   	if(waitCount)

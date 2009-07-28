@@ -64,13 +64,12 @@ void ControlInterface::caressTask()
     			pstring.append("init.");
 			if(m_caressDevice == HISTO)
 			{
-				m_theApp->meas->setCarHistSize(m_caressHeight, m_caressWidth);
+#warning TODO 			m_theApp->meas->setCarHistSize(m_caressHeight, m_caressWidth);
 				m_caressHistoSize = m_caressHeight * m_caressWidth;
 			}
 			else
-				m_theApp->meas->clearCounter(devMap[m_caressDevice]);
-#warning TODO
-//			m_theApp->mainWin->update();
+#warning TODO			m_theApp->meas->clearCounter(devMap[m_caressDevice]);
+#warning TODO 		m_theApp->mainWin->update();
 			break;
     	
 		case CAR_RELEASE:
@@ -127,20 +126,18 @@ void ControlInterface::caressTask()
 				}
 				if(m_caressSubTaskNum == CAR_MASTER)
 				{
-					m_theApp->meas->setPreset(devMap[m_caressDevice], m_caressPreset, true); 
+#warning TODO				m_theApp->meas->setPreset(devMap[m_caressDevice], m_caressPreset, true); 
 					pstring.append("load master preset: ");
 					str.sprintf("%ld", m_caressPreset);
 					pstring.append(str);
-#warning TODO
-//					m_theApp->mainWin->updatePresets();
+#warning TODO 				m_theApp->mainWin->updatePresets();
 					m_caressMaster = m_caressDevice; 
 				}
 				if(m_caressSubTaskNum == CAR_RESET)
 				{
-					m_theApp->meas->clearCounter(devMap[m_caressDevice]); 
+#warning TODO				m_theApp->meas->clearCounter(devMap[m_caressDevice]); 
 					pstring.append("(reset / load)");
-#warning TODO
-//					m_theApp->mainWin->updatePresets();
+#warning TODO 				m_theApp->mainWin->updatePresets();
 				}
 			}
 			break;
