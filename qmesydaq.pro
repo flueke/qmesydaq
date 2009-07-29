@@ -34,7 +34,8 @@ HEADERS 	+= mesydaqobject.h \
 		mpsd8.h \
 		networkdevice.h \
 		structures.h \
-		mesydaqdata.h
+		mesydaqdata.h \
+		counter.h
 
 FORMS 		+= mesydaq2mainwidget.ui \
 		mesydaq2mainwindow.ui
