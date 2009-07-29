@@ -48,6 +48,25 @@ typedef struct _DATA_PACKET
 	quint16 data[750];
 } DATA_PACKET, *PDATA_PACKET;
 
+typedef struct TriggerEvent
+{
+	quint8	id 		: 1;
+	quint8	trigId 		: 3;
+	quint8	dataId 		: 4;
+	quint32 data 		: 21;
+	quint32 timestamp 	: 19;
+} TRIGGER;
+
+typedef struct NeutronEvent
+{
+	quint8 	id		: 1;
+	quint8	modId		: 3;
+	quint8	slotId		: 5;
+	quint16	amp		: 10;
+	quint16 pos		: 10;
+	quint32	timestamp	: 19;
+} NEUTRON;
+
 #define BUFTYPE		0x8000
 #define CMDBUFLEN	1
 #define CMDHEADLEN	10
