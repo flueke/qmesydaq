@@ -38,29 +38,21 @@
 #include "measurement.h"
 
 Mesydaq2::Mesydaq2(QObject *parent)
-	: QObject(parent) 
+	: MesydaqObject(parent) 
 	, m_dataRxd(0)
 	, m_cmdRxd(0)
 	, m_cmdTxd(0)
 	, m_hist(NULL)
 	, m_daq(IDLE)
-	, sep0(0x0000)
-	, sep5(0x5555)
-	, sepA(0xAAAA)
-	, sepF(0xFFFF)
 	, m_acquireListfile(false)
 	, m_listfilename("")
 	, m_histfilename("")
-	, listPath("/home")
-	, histPath("/home")
-	, configPath("/home")
-	, ovwList(false)
-	, timingwidth(1)
-	, initstep(0)
-	, initialize(false)
+	, m_listPath("/home")
+	, m_histPath("/home")
+	, m_configPath("/home")
+	, m_timingwidth(1)
 {
 #warning m_hist is not initialized
-	
 	initValues();
 	initDevices();
 	initTimers();
@@ -87,7 +79,7 @@ Mesydaq2::~Mesydaq2()
 void Mesydaq2::initValues()
 {
 	for (quint8 c = 0; c < 8; ++c)
-		m_countLimit[c] = 0;
+		m_counter[c].setLimit(0);
 	statuscounter[0] = 0;
 	statuscounter[1] = 0;
 }
@@ -126,7 +118,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
 			unsigned int i;
 			for(i = 0; i < pd.bufferLength; i++)
 			{
-				datStream << pD[i];
+				m_datStream << pD[i];
 //				qDebug("%x", pD[i]);
 			}
 			writeBlockSeparator();
@@ -146,13 +138,12 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
 					var *= 0x10000ULL;
 					var += pd.param[i][2-j];
 				}
-				m_mcpd[id]->setParameter((unsigned char)i, var);
-//				meas->setCounter(i, var);
+				m_mcpd[id]->setParameter(quint8(i), var);
+				emit setCounter(i, var);
 			}		
 // 			data length = (buffer length - header length) / (3 words per event) - 4 parameters.
  			quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 			for(i = 0; i < datalen; ++i, counter += 3)
-			
 			{
 				tim = 0x10000 * (pd.data[counter + 1] & 0x0007) + pd.data[counter];
 				tim += htim;
@@ -163,19 +154,17 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
 					trigId = (pd.data[counter + 2] & 0x7000) / 0x1000;
 					dataId = (pd.data[counter + 2] & 0x0F00) / 0x100;
 					data = (pd.data[counter + 2] & 0x00FF) * 0x10000 + (pd.data[counter + 1] & 0xFFF8) / 8;
-					time = (quint16) tim;
+					emit incCounter(trigId, dataId, data, tim);
 					// dispatch events:
 #warning TODO
 #if 0
 					switch(dataId)
 					{
 						case MON1ID:
-							if((m_countLimit[MON1ID] == 0) || (meas->mon1() < m_countLimit[MON1ID]))
-								meas->incMon1();
+							m_counter[MON1ID].inc();
 							break;
 						case MON2ID:
-							if((m_countLimit[MON2ID] == 0) || (meas->mon2() < m_countLimit[MON2ID]))
-								meas->incMon2();
+							m_counter[MON2ID].inc()
 							break;
 						default:
 							break;
@@ -191,16 +180,17 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
 					chan = 8 * 2 * mod + slot;
 					data1 = (pd.data[counter+2] & 0x007F) * 8 + (pd.data[counter+1] & 0xE000) / 8192;
 					data0 = (pd.data[counter+1] & 0x1FF8) / 8;
-#warning TODO 				if((m_countLimit[EVID] == 0) || (meas->events() < m_countLimit[EVID]))
+					if (!m_counter[EVID].isStopped())
 					{
-//						hist.incVal(chan, data0, data1, tim);
-#warning TODO					meas->incEvents();
+						m_counter[EVID].inc();
+#warning TODO					hist.incVal(chan, data0, data1, tim);
+						emit incEvents(chan, data0, data1, tim);
 					}
 				}
 			}
 		}
 // now copy auxiliary counter values into operational counters
-#warning TODO	meas->copyCounters();
+		emit updateCounters();
 	}
 }
 
@@ -323,7 +313,7 @@ void Mesydaq2::stoppedDaq(void)
 	if(m_acquireListfile)
 	{
 		writeClosingSignature();
-		datfile.close();
+		m_datfile.close();
 	}
 	m_daq = IDLE;
 #warning TODO
@@ -366,16 +356,9 @@ void Mesydaq2::initTimers(void)
 // central dispatch timer
 	theTimer = new QTimer(this);
 	connect(theTimer, SIGNAL(timeout()), this, SLOT(centralDispatch()));
-	theTimer->start(1);
-	dispatchLevel = 0;
 	for(quint8 c = 0; c < 10; c++)
-		dispatch[c] = 0;
-
-// communication timeout timer
-	commTimer = new QTimer(this);
-	connect(commTimer, SIGNAL(timeout()), this, SLOT(commTimeout()));
-	commTimer->setSingleShot(true);
-	commId = 99;
+		m_dispatch[c] = 0;
+	theTimer->start(1);
 }
 
 /*!
@@ -403,11 +386,9 @@ void Mesydaq2::clearChanHist(unsigned long chan)
  */
 void Mesydaq2::writeListfileHeader(void)
 {
-	QString str;
-	str. sprintf("mesytec psd listmode data\n");
-	textStream << str;
-	str. sprintf("header length: %d lines \n", 2);
-	textStream << str;		
+	m_textStream << "mesytec psd listmode data\n";
+	m_textStream << QString("header length: %1 lines \n").arg(2);
+	m_datStream << m_textStream.string();
 }
 
 
@@ -416,7 +397,7 @@ void Mesydaq2::writeListfileHeader(void)
  */
 void Mesydaq2::writeHeaderSeparator(void)
 {
-	datStream << sep0 << sep5 << sepA << sepF;
+	m_datStream << sep0 << sep5 << sepA << sepF;
 }
 
 
@@ -425,7 +406,7 @@ void Mesydaq2::writeHeaderSeparator(void)
  */
 void Mesydaq2::writeBlockSeparator(void)
 {
-	datStream << sep0 << sepF << sep5 << sepA;
+	m_datStream << sep0 << sepF << sep5 << sepA;
 }
 
 
@@ -434,7 +415,7 @@ void Mesydaq2::writeBlockSeparator(void)
  */
 void Mesydaq2::writeClosingSignature(void)
 {
-	datStream << sepF << sepA << sep5 << sep0;
+	m_datStream << sepF << sepA << sep5 << sep0;
 }
 
 
@@ -559,8 +540,7 @@ void Mesydaq2::initHardware(void)
 // setup MPSDs
 	
 // set init values:
-	pstring.sprintf("initializing hardware");
-	protocol(pstring, 1);
+	protocol(tr("initializing hardware"), 1);
 	 
 // scan connected MCPDs
 	quint8 p = 0;
@@ -572,13 +552,12 @@ void Mesydaq2::initHardware(void)
 				p++;
 	}
 	
-	pstring.sprintf("%d mpsd-8 found", p);
-	protocol(pstring, 1);
+	protocol(tr("%1 mpsd-8 found").arg(p), 1);
 	
 // initialize all connected hardware modules
 // try to read standard config file
-	protocol("load setup ?");
-	if(!loadSetup(false))
+	protocol(tr("load setup ?"));
+	if(!loadSetup("mesycfg.mcfg"))
 	{
 		// initialize MPSD-8 by default values.
 		for(quint8 c = 0; c < MCPDS; c++)
@@ -593,29 +572,21 @@ void Mesydaq2::initHardware(void)
 /*!
     \fn Mesydaq2::saveSetup(void)
  */
-bool Mesydaq2::saveSetup(void)
+bool Mesydaq2::saveSetup(const QString &name)
 {
-	QString name;
-#warning TODO
-#if 0
-	name = QFileDialog::getSaveFileName(this, "Save Config File...", configPath, "mesydaq config files (*.mcfg);;all files (*.*)"); 
-#endif
-	if(name.isEmpty())
-		return false;
-  
 	m_configfilename = name;
+	if(m_configfilename.isEmpty())
+		m_configfilename = "mesycfg.mcfg";
+  
 	int i = m_configfilename.indexOf(".mcfg");
 	if(i == -1)
 		m_configfilename.append(".mcfg");
 
-	QDateTime dateTime;
-	dateTime=QDateTime::currentDateTime();
-
 	QSettings settings(m_configfilename, QSettings::IniFormat);
-	settings.setValue("general/date", dateTime);
-	settings.setValue("general/Config Path", configPath);
-	settings.setValue("general/Histogram Path", histPath);
-	settings.setValue("general/Listfile Path", listPath);
+	settings.setValue("general/date", QDateTime::currentDateTime());
+	settings.setValue("general/Config Path", m_configPath);
+	settings.setValue("general/Histogram Path", m_histPath);
+	settings.setValue("general/Listfile Path", m_listPath);
 	for (int i = 0; i < MCPDS; ++i)
 	{
 		for (int j = 0; j < 8; ++j)
@@ -692,40 +663,22 @@ bool Mesydaq2::saveSetup(void)
 	return true;
 }
 
-
-
 /*!
     \fn Mesydaq2::loadSetup(void)
  */
-bool Mesydaq2::loadSetup(bool ask)
+bool Mesydaq2::loadSetup(const QString &name)
 {
-	QString name;
-
-#warning TODO
-#if 0
-	if(ask)
-		name = QFileDialog::getOpenFileName(this, "Load Config File...", configPath, "mesydaq config files (*.mcfg);;all files (*.*)");
-	else
-		name.sprintf("mesycfg.mcfg");
-#endif
-  
-	if(name.isEmpty())
-		return false;
-  
 	m_configfilename = name;
+	if(name.isEmpty())
+		m_configfilename = "mesycfg.mcfg";
   
-	if(!ask)
-		pstring = "Reading standard configfile ";
-	else
-		pstring = "Reading configfile ";
-	pstring += m_configfilename;
-	protocol(pstring, 1);
+	protocol(tr("Reading configfile %1").arg(m_configfilename), 1);
 
 	QSettings settings(m_configfilename, QSettings::IniFormat);
 
-	configPath = settings.value("general/Config Path", "/home").toString();
-	histPath = settings.value("general/Histogram Path", "/home").toString();
-	listPath = settings.value("general/Listfile Path", "/home").toString();
+	m_configPath = settings.value("general/Config Path", "/home").toString();
+	m_histPath = settings.value("general/Histogram Path", "/home").toString();
+	m_listPath = settings.value("general/Listfile Path", "/home").toString();
 	for (int i = 0; i < MCPDS; ++i)
 	{
 		protocol(tr("mcpd #%1").arg(i));
@@ -841,49 +794,33 @@ bool Mesydaq2::loadSetup(bool ask)
 	return true;
 }
 
-
-/*!
-    \fn Mesydaq2::commTimeout()
- */
-void Mesydaq2::commTimeout()
-{
-	m_mcpd[commId]->communicate(false);
-	qDebug("timeout while waiting for cmd answer from ID: %d", commId);
-}
-
-
 /*!
     \fn Mesydaq2::centralDispatch()
  */
 void Mesydaq2::centralDispatch()
 {
 #warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
-#warning TODO cInt->caressTask();
+#warning TODO 		cInt->caressTask();
     	
-	dispatch[0]++;
-	if(dispatch[0] == 8)
+#warning TODO
+#if 0
+	if(++m_dispatch[0] == 8)		// every 8 ms calculate the rates
 	{
-		dispatch[0] = 0;
-#warning TODO	meas->calcRates();
+		m_dispatch[0] = 0;
+		meas->calcRates();
 	}
+#endif
 	
-	dispatch[1]++;
-	if(dispatch[1] == 50)
+	if(++m_dispatch[1] == 50)		// every 50 ms check the MCPD
 	{
 //		checkMcpd(0);
 	}
-	if(dispatch[1] == 60)
+	else if(m_dispatch[1] == 60)		// every 60 ms check measurement
 	{
 		//if(meas->isOk() == 0)
 			//meas->setOnline(false);
-		dispatch[1] = 0;
+		m_dispatch[1] = 0;
 	}
-	
-	dispatchLevel++;
-	if(dispatchLevel == 100)
-	{
-    		dispatchLevel = 0;
-    	}
 }
 
 
@@ -952,12 +889,11 @@ void Mesydaq2::allPulserOff()
  */
 void Mesydaq2::setTimingwidth(quint8 width)
 {
-	if(width < 48)
-		timingwidth = width;
-	else
-    		timingwidth = 48;
+	m_timingwidth = width;
+	if(width > 48)
+    		m_timingwidth = 48;
 	if (m_hist)
-   		m_hist->setWidth(timingwidth); 
+   		m_hist->setWidth(m_timingwidth); 
 }
 
 
@@ -987,7 +923,7 @@ bool Mesydaq2::checkListfilename(void)
 // name already defined?
 // no - try ot get one...
 #warning TODO
-	datfile.setFileName(m_listfilename);
+	m_datfile.setFileName(m_listfilename);
 	return m_listfilename.isEmpty();
 }
 
@@ -1069,7 +1005,7 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
  */
 void Mesydaq2::setLimit(quint8 cNum, ulong lim)
 {
-	m_countLimit[cNum] = lim;
+	m_counter[cNum].setLimit(lim);
 }
 
 /*!
@@ -1190,6 +1126,7 @@ void Mesydaq2::setHistfilename(QString name)
  */
 void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
+	m_dispatch[1] = 0;
 	if(m_daq == RUNNING)
 	{
 		quint16 time, counter = 0;
@@ -1206,17 +1143,15 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		m_lastBufnum = pd.bufferNumber;
 		if(m_acquireListfile)
 		{
-#if 0
 			quint16 *pD = (quint16 *) &pd.bufferLength;
 			unsigned int i;
 			for(i = 0; i < pd.bufferLength; i++)
 			{
-				datStream << pD[i];
+				m_datStream << pD[i];
 //				qDebug("%x", pD[i]);
 			}
 			writeBlockSeparator();
 //			qDebug("------------------");
-#endif
 		}
 		protocol(tr("dataRxd : %1").arg(++m_dataRxd));
 		protocol(tr("buffer : length : %1").arg(pd.bufferLength));

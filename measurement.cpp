@@ -40,7 +40,6 @@ Measurement::Measurement(QObject *parent)
 	, m_carHistWidth(128)
 	, m_carStep(0)
 {
-		
 	for(quint8 c = 0; c < 8; c++)
 	{
     		m_rate[10][c] = 0;
@@ -121,8 +120,6 @@ void Measurement::stop(ulong /*time */)
  */
 void Measurement::setCounter(quint32 cNum, quint64 val)
 {
-	QString str;
-    
 // set counter
 	if(cNum < 8)
    		m_counter[1][cNum] = m_counterOffset[cNum] + val - m_counterStart[cNum];
@@ -141,8 +138,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 	{
 		if(m_counter[1][cNum] >= m_preset[cNum] && !m_stopping)
 		{
-			str.sprintf("stop on counter %d, value: %lld, preset: %lld", cNum, m_counter[1][cNum], m_preset[cNum]);
-			emit protocol(str);
+			emit protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[1][cNum]).arg(m_preset[cNum]));
 			m_stopped[cNum] = true;
 			m_stopping = true;
 			emit stop();

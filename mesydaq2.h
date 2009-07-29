@@ -31,10 +31,10 @@
 #include <QTextStream>
 #include <QString>
 #include <QTimer>
-#include <QLabel>
-#include <QApplication>
 
+#include "mesydaqobject.h"
 #include "structures.h"
+#include "counter.h"
 
 /**
  * @short Mesydaq DAQ object (without any graphical frontend
@@ -46,9 +46,8 @@
 class Histogram;
 class MCPD8;
 class MPSD8;
-class ControlInterface;
 
-class Mesydaq2 : public QObject // MainWindow, public Ui_Mesydaq2MainWindow
+class Mesydaq2 : public MesydaqObject 
 {
     Q_OBJECT
 public:
@@ -79,8 +78,8 @@ public:
 	void setListfilename(QString name) {m_listfilename = name;}
 	QString getListfilename() {return m_listfilename;}
 	bool checkListfilename(void);
-	void setListfilepath(QString path) {listPath = path;}
-	QString getListfilepath() {return listPath;}
+	void setListfilepath(QString path) {m_listPath = path;}
+	QString getListfilepath() {return m_listPath;}
 	void readListfile(QString readfilename);
 	void writeListfileHeader(void);
 	void writeClosingSignature(void);
@@ -90,17 +89,17 @@ public:
 // histogram file oriented methods
 	void setHistfilename(QString name);
 	QString getHistfilename(void) {return m_histfilename;}
-	void setHistfilepath(QString path) {histPath = path;}
-	QString getHistfilepath(void) {return histPath;}
+	void setHistfilepath(QString path) {m_histPath = path;}
+	QString getHistfilepath(void) {return m_histPath;}
 	void writeHistograms();
 
 // configuration file oriented methods
 	void setConfigfilename(QString name) {m_configfilename = name;}
 	QString getConfigfilename(void) {return m_configfilename;}
-	void setConfigfilepath(QString path) {configPath = path;}
-	QString getConfigfilepath(void) {return configPath;}
-	bool loadSetup(bool ask);
-	bool saveSetup(void);
+	void setConfigfilepath(QString path) {m_configPath = path;}
+	QString getConfigfilepath(void) {return m_configPath;}
+	bool loadSetup(const QString &name);
+	bool saveSetup(const QString &name);
 
 	bool checkMcpd(quint8 device);
 	void copyData(quint32 line, ulong *data);
@@ -119,6 +118,14 @@ public:
 	quint8 getThreshold(quint16 mod, quint16 addr);
 
 	quint64 getMTime(void) {return m_timeMsecs;}
+
+	quint64 getHeadertime(void) {return m_headertime;}
+
+	quint64 receivedData() {return m_dataRxd;}
+
+	quint64 receivedCmds() {return m_cmdRxd;}
+
+	quint64 sentCmds() {return m_cmdTxd;}
 
 public slots:
 	void writeRegister(quint16 id, quint16 addr, quint16 reg, quint16 val);
@@ -148,7 +155,6 @@ public slots:
 	void setThreshold(quint16 mod, quint16 addr, quint8 thresh);
 
 	void centralDispatch();
-	void commTimeout();
 	void protocol(QString str, quint8 level = 1);
     	void acqListfile(bool yesno);
     	void setCountlimit(quint8 cNum, ulong lim);
@@ -165,6 +171,16 @@ public slots:
 signals:
 	void statusChanged(const QString &);
 
+	void setCounter(quint32 cNum, quint64 val);
+
+	void incEvents();
+
+	void incEvents(quint16 chan, quint16 data0, quint16 data1, quint64 tim);
+
+	void updateCounters();
+
+	void incCounter(quint8 trigId, quint8 dataId, quint32 data, quint64 tim);
+
 private:
 	void initNetwork(void);
 	void initValues(void);
@@ -173,62 +189,54 @@ private:
 	void initTimers(void);
 
 	void analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist);
+
 	void setLimit(quint8 cNum, ulong lim);
 
 public:
-// not really used in Mesydaq2 
-	ulong 		m_dataRxd;
-	ulong 		m_cmdRxd;
-	ulong 		m_cmdTxd;
-	ulong 		m_headertime;
-
-	ulong 		m_timeMsecs;
-
 #warning TODO
 	MCPD8 		*m_mcpd[8];
 
 private:
+	static const quint16  	sep0 = 0x0000;
+	static const quint16  	sep5 = 0x5555;    
+	static const quint16  	sepA = 0xAAAA;
+	static const quint16  	sepF = 0xFFFF;
+
+private:
+// not really used in Mesydaq2 
+	ulong 		m_dataRxd;
+	ulong 		m_cmdRxd;
+	ulong 		m_cmdTxd;
+
 	Histogram 	*m_hist;
 
 	quint8  	m_daq;
 	ulong 		statuscounter[0];
-	quint16  	sep0;
-	quint16  	sep5;    
-	quint16  	sepA;
-	quint16  	sepF;
-	quint8  	cmdLen[50];
-	QString 	setupfile;
-	quint32 	dispatchLevel;
-	quint8  	commId;
-//	quint16  	commandBuffer[20];
     
 	bool 		m_acquireListfile;
 	QString 	m_listfilename;
 	QString 	m_histfilename;
 	QString 	m_configfilename;
 
-	QFile 		datfile;
-	QDataStream 	datStream;
-	QTextStream 	textStream;
-	QString 	listPath;
-	QString 	histPath;
-	QString 	configPath;
-	bool 		ovwList;
-	quint8  	timingwidth;
+	QFile 		m_datfile;
+	QDataStream 	m_datStream;
+	QTextStream 	m_textStream;
+
+	QString 	m_listPath;
+	QString 	m_histPath;
+	QString 	m_configPath;
+
+	quint8  	m_timingwidth;
 	quint32 	m_lastBufnum;
-	quint16  	initstep;
-	quint16  	initcmd;
-	quint8  	initcpd;
-	quint8  	initpsd;
-	bool 		initialize;
-//	CorbaThread	*ct;
-	quint8  	dispatch[10];
+	quint8  	m_dispatch[10];
 
-	ulong 		m_countLimit[9];
+	MesydaqCounter 	m_counter[9];
 
-	QString 	pstring;
-	QTimer 		*commTimer;
 	QTimer 		*theTimer;
+
+	quint64		m_headertime;
+
+	quint64 	m_timeMsecs;
 };
 
 

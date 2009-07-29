@@ -62,11 +62,15 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), m_theApp, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
+	connect(m_theApp, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
+	connect(m_theApp, SIGNAL(incEvents()), m_meas, SLOT(incEvents()));
 
 	connect(m_meas, SIGNAL(protocol(QString, quint8)), m_theApp, SLOT(protocol(QString, quint8)));
 	connect(m_meas, SIGNAL(stop()), m_theApp, SLOT(stop()));
 	connect(m_meas, SIGNAL(setCountlimit(quint8, ulong)), m_theApp, SLOT(setCountlimit(quint8, ulong)));
 	connect(m_meas, SIGNAL(acqListfile(bool)), m_theApp, SLOT(acqListfile(bool)));
+
+	
 
 // display refresh timer
 	m_dispTimer = new QTimer(this);
@@ -304,10 +308,10 @@ void MainWidget::selectListfileSlot()
 void MainWidget::update(void)
 {
    	quint16 id = (quint16) paramId->value();	
-	dataRx->setText(tr("%1").arg(m_theApp->m_dataRxd));
-	cmdTx->setText(tr("%1").arg( m_theApp->m_cmdTxd));
-	cmdRx->setText(tr("%1").arg(m_theApp->m_cmdRxd));
-	hTimeText->setText(buildTimestring(m_theApp->m_headertime, true));
+	dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
+	cmdTx->setText(tr("%1").arg( m_theApp->sentCmds()));
+	cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
+	hTimeText->setText(buildTimestring(m_theApp->getHeadertime(), true));
 	mTimeText->setText(buildTimestring(m_meas->getMeastime(), false));   
     
 // parameter values for selected ID
@@ -598,12 +602,16 @@ void MainWidget::setModeSlot(qint32 mode)
 
 void MainWidget::saveSetupSlot()
 {
-	m_theApp->saveSetup();
+	QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
+	if (!name.isEmpty())
+		m_theApp->saveSetup(name);
 }
 
 void MainWidget::restoreSetupSlot()
 {
-	m_theApp->loadSetup(true);
+	QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
+	if (!name.isEmpty())
+		m_theApp->loadSetup(name);
 }
 
 
