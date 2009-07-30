@@ -17,65 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef COUNTER_H
-#define COUNTER_H
+#include "counter.h"
 
-#include "mesydaqobject.h"
-
-#include "mdefines.h"
-
-class MesydaqCounter : public MesydaqObject
+MesydaqCounter :: MesydaqCounter() 
+	: MesydaqObject()
+	, m_value(0)
+	, m_limit(0)
 {
-Q_OBJECT
+}
 
-public:
-	//! constructor
-	MesydaqCounter(); 
+void MesydaqCounter::inc(void)
+{
+	if (!m_limit || m_value < m_limit)
+		++m_value;
+	if (isStopped())
+		emit stop();
+}
 
-	/** 
-	 * increments the counter if not limit reached and emits the signal
-	 * stop() if the limit is reached
-	 */
-	void inc(void);
+bool MesydaqCounter::isStopped(void) 
+{
+	if (!m_limit)
+		return false;
+	return (m_value >= m_limit);
+}
 
-	//! checks whether the the limit is reached or not
-	bool isStopped(void);
-
-	/**
-	 * sets the counter value
-	 * 
-	 * \param val new counter value
-	 */
-	void set(quint64 val) {m_value = val;}
-	
-	//! sets the counter value to zero
-	void reset(void) {set(0);}
-
-	/**
-	 * Sets the counter limit. If this limit will be reached the signal
-	 * stop() will be emitted. 
-	 *
-	 * \param val counter limit, if the value is zero no limit will be set
-	 */
-	void setLimit(quint64 val) {m_limit = val;}
-
-	//! \return the current counter limit if limit is 0 no limit is set
-	quint64 limit(void) {return m_limit;}
-
-	//! \return current counter value
-	quint64 value(void) {return m_value;}
-
-signals:
-	//! the counter has to be stopped
-	void stop();
-
-private:
-	//! current counter value
-	quint64 m_value;
-
-	//! current counter limit
-	quint64 m_limit;
-};
-
-
-#endif // COUNTER_H
