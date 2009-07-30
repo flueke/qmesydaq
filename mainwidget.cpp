@@ -55,7 +55,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_dispLen(0)
 	, m_height(480)
 {
-	m_meas = new Measurement(this);
+	m_meas = new Measurement(mesy, this);
 	m_ct = new CorbaThread();
 	setupUi(this);
 	
@@ -429,7 +429,7 @@ void MainWidget::setData(ulong *data, quint32 len, ulong max)
 
 void MainWidget::clearAllSlot()
 {
-	m_theApp->clearAllHist();
+	m_meas->clearAllHist();
 	draw();
 }
 
@@ -437,7 +437,7 @@ void MainWidget::clearMcpdSlot()
 {
 	quint32 start = dispMcpd->value() * 64;
 	for(quint32 i = start; i < start + 64; i++)
-		m_theApp->clearChanHist(i);
+		m_meas->clearChanHist(i);
 	draw();
 }
 
@@ -446,14 +446,14 @@ void MainWidget::clearMpsdSlot()
 	quint32 start = dispMpsd->value() * 8 + dispMcpd->value() * 64;
 //	qDebug("clearMpsd: %d", start);
 	for(quint32 i = start; i < start + 8; i++)
-		m_theApp->clearChanHist(i);
+		m_meas->clearChanHist(i);
 	draw();
 }
 
 void MainWidget::clearChanSlot()
 {
 	ulong chan = dispChan->value() + dispMpsd->value() * 8 + dispMcpd->value() * 64;
-	m_theApp->clearChanHist(chan);
+	m_meas->clearChanHist(chan);
 	draw();
 }
 
@@ -462,7 +462,7 @@ void MainWidget::replayListfileSlot()
 {
 	QString name = QFileDialog::getOpenFileName(this, "Load...", m_theApp->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
 	if(!name.isEmpty())
-		m_theApp->readListfile(name);
+		m_meas->readListfile(name);
 }
 
 void MainWidget::setRunIdSlot()
@@ -767,8 +767,7 @@ void MainWidget::writeHistSlot()
     		int i = name.indexOf(".mtxt");
 		if(i == -1)
 			name.append(".mtxt");
- 		m_theApp->setHistfilename(name);
-		m_theApp->writeHistograms();
+		m_meas->writeHistograms(name);
   	}
 }
 

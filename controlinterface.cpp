@@ -116,7 +116,7 @@ void ControlInterface::caressTask()
 			if(m_caressDevice == HISTO)
 			{
 				pstring.append("load.");
-				m_theApp->clearAllHist();
+#warning TODO			m_theApp->clearAllHist();
 			}
 			else
 			{
@@ -173,7 +173,9 @@ void ControlInterface::caressTask()
 			}
 			// now copy requested amount of data into transfer buffer
 			for(quint8 c = 0; c < rows; c++)
-				m_theApp->copyData(c+start, &m_transferBuffer[c*960]);
+			{		
+#warning TODO			m_theApp->copyData(c+start, &m_transferBuffer[c*960]);
+			}
 			pstring.append("readblock module start: ");
 			str.sprintf("%ld",m_caressStartChannel);
 			pstring.append(str);

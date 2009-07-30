@@ -31,10 +31,10 @@
 #include <QTextStream>
 #include <QString>
 #include <QTimer>
+#include <QMap>
 
 #include "mesydaqobject.h"
 #include "structures.h"
-#include "counter.h"
 
 /**
  * @short Mesydaq DAQ object (without any graphical frontend
@@ -43,7 +43,7 @@
  * @version 0.9
  */
 
-class Histogram;
+// class Histogram;
 class MCPD8;
 class MPSD8;
 
@@ -65,8 +65,6 @@ public:
 	void stopDaq(void);
 	void startedDaq(void);
 	void stoppedDaq(void);
-	void clearChanHist(ulong chan);
-	void clearAllHist(void);
 	void scanPeriph(quint16 id);
 	void initMpsd(quint8 id);
 	void initMcpd(quint8 id);
@@ -80,7 +78,6 @@ public:
 	bool checkListfilename(void);
 	void setListfilepath(QString path) {m_listPath = path;}
 	QString getListfilepath() {return m_listPath;}
-	void readListfile(QString readfilename);
 	void writeListfileHeader(void);
 	void writeClosingSignature(void);
 	void writeBlockSeparator(void);
@@ -91,7 +88,6 @@ public:
 	QString getHistfilename(void) {return m_histfilename;}
 	void setHistfilepath(QString path) {m_histPath = path;}
 	QString getHistfilepath(void) {return m_histPath;}
-	void writeHistograms();
 
 // configuration file oriented methods
 	void setConfigfilename(QString name) {m_configfilename = name;}
@@ -102,7 +98,6 @@ public:
 	bool saveSetup(const QString &name);
 
 	bool checkMcpd(quint8 device);
-	void copyData(quint32 line, ulong *data);
 	quint8 isDaq(void) {return m_daq;}
 
 	bool isPulserOn();
@@ -110,6 +105,8 @@ public:
 	bool isPulserOn(quint16 mod);
 
 	bool isPulserOn(quint16 mod, quint8 addr);
+
+	bool getMode(const quint16 id, quint16 addr);
 
 	quint8 getMpsdId(quint16 mod, quint8 addr);
 
@@ -155,13 +152,15 @@ public slots:
 	void setThreshold(quint16 mod, quint16 addr, quint8 thresh);
 
 	void centralDispatch();
-	void protocol(QString str, quint8 level = 1);
+
     	void acqListfile(bool yesno);
-    	void setCountlimit(quint8 cNum, ulong lim);
 
 	void start(void);
+
 	void stop(void);
+
 	void reset(void);
+
 	void cont(void);
 
 	void allPulserOff();
@@ -171,30 +170,20 @@ public slots:
 signals:
 	void statusChanged(const QString &);
 
-	void setCounter(quint32 cNum, quint64 val);
-
-	void incEvents();
-
-	void incEvents(quint16 chan, quint16 data0, quint16 data1, quint64 tim);
-
-	void updateCounters();
-
-	void incCounter(quint8 trigId, quint8 dataId, quint32 data, quint64 tim);
+	void analyzeDataBuffer(DATA_PACKET &pd);
 
 private:
-	void initNetwork(void);
-	void initValues(void);
 	void initHardware(void);
-	void initDevices(void);
-	void initTimers(void);
 
-	void analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist);
+	void initDevices(void);
+
+	void initTimers(void);
 
 	void setLimit(quint8 cNum, ulong lim);
 
 public:
 #warning TODO
-	MCPD8 		*m_mcpd[8];
+	QMap<int, MCPD8	*>	m_mcpd;
 
 private:
 	static const quint16  	sep0 = 0x0000;
@@ -208,10 +197,9 @@ private:
 	ulong 		m_cmdRxd;
 	ulong 		m_cmdTxd;
 
-	Histogram 	*m_hist;
+//	Histogram 	*m_hist;
 
 	quint8  	m_daq;
-	ulong 		statuscounter[0];
     
 	bool 		m_acquireListfile;
 	QString 	m_listfilename;
@@ -229,8 +217,6 @@ private:
 	quint8  	m_timingwidth;
 	quint32 	m_lastBufnum;
 	quint8  	m_dispatch[10];
-
-	MesydaqCounter 	m_counter[9];
 
 	QTimer 		*theTimer;
 

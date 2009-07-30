@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Gregor Montermann   *
- *   g.montermann@mesytec.com   *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,26 +20,32 @@
 #ifndef MEASUREMENT_H
 #define MEASUREMENT_H
 
-#include <QObject>
+#include "mesydaqobject.h"
+#include "counter.h"
+#include "structures.h"
+#include "mdefines.h"
 
-class mesydaq2;
+class Histogram;
+class Mesydaq2;
 
 /**
 	@author Gregor Montermann <g.montermann@mesytec.com>
 */
-class Measurement : public QObject
+class Measurement : public MesydaqObject
 {
 Q_OBJECT
 public:
-	Measurement(QObject *parent = 0);
+	Measurement(Mesydaq2 *mesy, QObject *parent = 0);
 
 	~Measurement();
 
 	ulong	getMeastime(void);
 
-	void	setCurrentTime(ulong msecs);
-	void	stop(ulong time);
-	void	start(ulong time);
+	void	setCurrentTime(quint64 msecs);
+	void	stop(quint64 time);
+	void	start(quint64 time);
+	void	cont();
+
 	void	calcRates();
 	void	setCounter(quint32 cNum, quint64 val);
 	ulong	getRate(quint8 cNum);
@@ -48,66 +54,87 @@ public:
 	quint8	isOk(void);
 	void	setOnline(bool truth);
 	ulong	getPreset(quint8 cNum);
-	void	setPreset(quint8 cNum, ulong prval, bool mast);
+	void	setPreset(quint8 cNum, quint64 prval, bool mast);
 	void	setRunnumber(quint32 number);
 	void	setListmode(bool truth);
 	void	setCarHistSize(quint32 h, quint32 w);
 	void	setRemote(bool truth);
 	bool	remoteStart(void);
 	void	setStep(quint32 step);
+
 	quint32	getCarHeight();
 	quint32	getCarWidth();
 	quint32	getRun();
+	
 	bool	isMaster(quint8 cNum);
 	void	clearCounter(quint8 cNum);
 	bool	hasStopped(quint8 cNum);
 	void	copyCounters(void);
 	bool	limitReached(quint8 cNum);
 
-	void	incMon1() {++m_mon1;}
-	void	incMon2() {++m_mon2;}
-	void	incEvents() {++m_events;}
+	void 	readListfile(QString readfilename);
 
-	ulong	mon1() {return m_mon1;}
-	ulong	mon2() {return m_mon2;}
-	ulong	events() {return m_events;}
+//	void	incMon1() {++m_counter[M1CT];}
+//	void	incMon2() {++m_counter[M2CT];}
+//	void	incEvents() {++m_counter[EVCT];}
+
+	quint64	mon1() {return m_counter[M1CT].value();}
+	quint64	mon2() {return m_counter[M2CT].value();}
+	quint64	events() {return m_counter[EVCT].value();}
+
+	void writeHistograms(const QString &name);
+
+	void clearAllHist(void);
+
+	void clearChanHist(quint16 chan);
+
+	void copyData(quint32 line, ulong *data);
+
+public slots:
+	void analyzeBuffer(DATA_PACKET &pd);
 
 signals:
-	void protocol(QString, quint8 = 1);
 	void stop();
+
 	void acqListfile(bool);
+
 	void setCountlimit(quint8, ulong);
+
+	void draw();
 	
 private:
-	ulong 	m_events;
-	ulong 	m_mon1;    
-	ulong 	m_mon2;
+	static const quint16  	sep0 = 0x0000;
+	static const quint16  	sep5 = 0x5555;    
+	static const quint16  	sepA = 0xAAAA;
+	static const quint16  	sepF = 0xFFFF;
 
-	ulong 	m_starttime_msec;
-	ulong 	m_meastime_msec;
-	ulong 	m_ratetime_msec;
-	bool 	m_running;
-	bool 	m_stopping;
-	bool 	m_rateflag;
-	bool 	m_online;
-	bool 	m_working; // it's set to true and nothing else ????
-	bool 	m_listmode;
-	bool 	m_remote;
+	//! Access to hardware
+	Mesydaq2	*m_mesydaq;
 
-	quint64 m_counter[2][8];
-	quint64 m_counterStart[8];
-	quint64 m_counterOffset[8];
-	quint64 m_preset[8];
-	bool 	m_master[8];
-	bool 	m_stopped[8];
-	ulong 	m_rate[11][8];
-	quint8 	m_ratecount[8];
-	quint8 	m_ratepointer[8];
 
-	quint32 m_runNumber;
-	quint32 m_carHistHeight;
-	quint32 m_carHistWidth;
-	quint32 m_carStep;
+	//! Histogram buffer
+	Histogram	*m_hist;
+
+	quint64 	m_starttime_msec;
+	quint64 	m_meastime_msec;
+	quint64 	m_ratetime_msec;
+
+	bool 		m_running;
+	bool 		m_stopping;
+	bool 		m_rateflag;
+	bool 		m_online;
+	bool 		m_working; 		// it's set to true and nothing else ????
+	bool 		m_listmode;
+	bool 		m_remote;
+
+	//! definitions of the counters
+	MesydaqCounter	m_counter[8];
+
+	//! CARESS 
+	quint32 	m_runNumber;
+	quint32 	m_carHistHeight;
+	quint32 	m_carHistWidth;
+	quint32 	m_carStep;
 };
 
 #endif

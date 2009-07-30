@@ -33,7 +33,7 @@
 #include "mesydaq2.h"
 #include "mainwidget.h"
 #include "mdefines.h"
-#include "histogram.h"
+// #include "histogram.h"
 #include "mcpd8.h"
 #include "measurement.h"
 
@@ -42,7 +42,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_dataRxd(0)
 	, m_cmdRxd(0)
 	, m_cmdTxd(0)
-	, m_hist(NULL)
+//	, m_hist(NULL)
 	, m_daq(IDLE)
 	, m_acquireListfile(false)
 	, m_listfilename("")
@@ -53,7 +53,6 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_timingwidth(1)
 {
 #warning m_hist is not initialized
-	initValues();
 	initDevices();
 	initTimers();
 	initHardware();
@@ -68,20 +67,6 @@ Mesydaq2::~Mesydaq2()
 			delete m_mcpd[i];
 		m_mcpd[i] = NULL;
 	}
-	if (m_hist)
-		delete m_hist;
-	m_hist = NULL;
-}
-
-/*!
-    \fn Mesydaq2::initValues()
- */
-void Mesydaq2::initValues()
-{
-	for (quint8 c = 0; c < 8; ++c)
-		m_counter[c].setLimit(0);
-	statuscounter[0] = 0;
-	statuscounter[1] = 0;
 }
 
 /*!
@@ -92,108 +77,6 @@ void Mesydaq2::writeRegister(quint16 id, quint16 addr, quint16 reg, quint16 val)
 	m_mcpd[id]->writeRegister(addr, reg, val);
 }
 
-void Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq, Histogram &hist)
-{
-	if(daq == RUNNING)
-	{
-		quint8 	chan, mod, slot, trigId, dataId;
-		quint8 	data0, data1, time, counter = 0;
-		ulong 	data;
-		quint32 i, j;
-		quint64 var = 0;
-		quint16 neutrons = 0;
-		quint16 triggers = 0;
-		quint64 htim = pd.time[0] + 0x10000ULL * pd.time[1] + 0x100000000ULL * pd.time[2],
-			tim;
-	
-//		quint16 diff = pd.bufferNumber - m_lastBufnum;
-//		if(diff > 1)
-//			qDebug("Lost %d Buffers: current: %d, last: %d", diff, recBuf->bufferNumber, lastBufnum);
-
-		quint16	id = pd.deviceId;
-		m_lastBufnum = pd.bufferNumber;
-		if(m_acquireListfile)
-		{
-			quint16 *pD = (quint16 *) &pd.bufferLength;
-			unsigned int i;
-			for(i = 0; i < pd.bufferLength; i++)
-			{
-				m_datStream << pD[i];
-//				qDebug("%x", pD[i]);
-			}
-			writeBlockSeparator();
-//			qDebug("------------------");
-		}
-		m_dataRxd++;
-		qDebug("dataRxd : %ld", m_dataRxd);
-		if(pd.bufferType == 0x0000 || pd.bufferType == 0x0001)
-		{
-			quint8 id = pd.deviceId;
-// extract parameter values:
-			for(i = 0; i < 4; i++)
-			{
-				var = 0;
-				for(j = 0; j < 3; j++)
-				{
-					var *= 0x10000ULL;
-					var += pd.param[i][2-j];
-				}
-				m_mcpd[id]->setParameter(quint8(i), var);
-				emit setCounter(i, var);
-			}		
-// 			data length = (buffer length - header length) / (3 words per event) - 4 parameters.
- 			quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
-			for(i = 0; i < datalen; ++i, counter += 3)
-			{
-				tim = 0x10000 * (pd.data[counter + 1] & 0x0007) + pd.data[counter];
-				tim += htim;
-// not neutron event (counter, chopper, ...)
-				if((pd.data[counter + 2] & 0x8000) == 0x8000)
-				{
-					triggers++;
-					trigId = (pd.data[counter + 2] & 0x7000) / 0x1000;
-					dataId = (pd.data[counter + 2] & 0x0F00) / 0x100;
-					data = (pd.data[counter + 2] & 0x00FF) * 0x10000 + (pd.data[counter + 1] & 0xFFF8) / 8;
-					emit incCounter(trigId, dataId, data, tim);
-					// dispatch events:
-#warning TODO
-#if 0
-					switch(dataId)
-					{
-						case MON1ID:
-							m_counter[MON1ID].inc();
-							break;
-						case MON2ID:
-							m_counter[MON2ID].inc()
-							break;
-						default:
-							break;
-					}
-#endif
-				}
-// neutron event:
-				else
-				{
-					neutrons++;
-					mod = (pd.data[counter+2] & 0x7000) / 0x1000;
-					slot = (pd.data[counter+2] & 0x0780) / 0x80;
-					chan = 8 * 2 * mod + slot;
-					data1 = (pd.data[counter+2] & 0x007F) * 8 + (pd.data[counter+1] & 0xE000) / 8192;
-					data0 = (pd.data[counter+1] & 0x1FF8) / 8;
-					if (!m_counter[EVID].isStopped())
-					{
-						m_counter[EVID].inc();
-#warning TODO					hist.incVal(chan, data0, data1, tim);
-						emit incEvents(chan, data0, data1, tim);
-					}
-				}
-			}
-		}
-// now copy auxiliary counter values into operational counters
-		emit updateCounters();
-	}
-}
-
 /*!
     \fn Mesydaq2::acqListfile(bool yesno)
  */
@@ -202,7 +85,6 @@ void Mesydaq2::acqListfile(bool yesno)
 	m_acquireListfile = yesno;
     	protocol(tr("Listfile recording %1").arg((yesno ? "on" : "off")), 1);
 }
-
 
 /*!
     \fn Mesydaq2::startDaq(void)
@@ -321,23 +203,6 @@ void Mesydaq2::stoppedDaq(void)
 	protocol("daq stopped", 1);
 }
 
-
-/*!
-    \fn Mesydaq2::protocol(QString str, unsigned char level)
- */
-void Mesydaq2::protocol(QString str, quint8 level)
-{
-	if(level <= DEBUGLEVEL)
-	{
-		QDateTime datetime;
-		QString datestring = datetime.currentDateTime().toString("hh:mm:ss.zzz");
-		str.prepend(" - ");
-		str.prepend(datestring);
-		qDebug("[%d] %s", level, str.toStdString().c_str());
-	}
-}
-
-
 /*!
     \fn Mesydaq2::initDevices(void)
  */
@@ -360,26 +225,6 @@ void Mesydaq2::initTimers(void)
 		m_dispatch[c] = 0;
 	theTimer->start(1);
 }
-
-/*!
-    \fn Mesydaq2::clearAllHist(void)
- */
-void Mesydaq2::clearAllHist(void)
-{
-	if (m_hist)
-		m_hist->clear();
-}
-
-
-/*!
-    \fn Mesydaq2::clearChanHist(unsigned long chan)
- */
-void Mesydaq2::clearChanHist(unsigned long chan)
-{
-	if (m_hist)
-		m_hist->clear(chan);
-}
-
 
 /*!
     \fn Mesydaq2::writeListfileHeader(void)
@@ -422,85 +267,6 @@ void Mesydaq2::writeClosingSignature(void)
 /*!
     \fn Mesydaq2::readListfile(QString readfilename)
  */
-void Mesydaq2::readListfile(QString readfilename)
-{
-	QDataStream datStream;
-	QTextStream textStream;
-	QFile datfile;
-	QString str;
-	bool ok = false;
-	unsigned short sep1, sep2, sep3, sep4;
-    
-	datfile.setFileName(readfilename);
-	datfile.open(QIODevice::ReadOnly);
-	datStream.setDevice(&datfile);
-	textStream.setDevice(&datfile);
-
-	unsigned int blocks = 0;
-	unsigned int bcount = 0;
-
-	qDebug("readListfile");
-	str = textStream.readLine();
-	qDebug(str.toStdString().c_str());
-	str = textStream.readLine();
-	qDebug(str.toStdString().c_str());
-	datStream >> sep1 >> sep2 >> sep3 >> sep4;
-	if((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF))
-	{
-		ok = true;
-	}
-	while(ok)
-	{
-		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-// check for closing signature:
-		if((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0))
-		{
-			qDebug("EOF reached after %d buffers", blocks);
-			break;
-		}
-		DATA_PACKET 	dataBuf;
-		dataBuf.bufferLength = sep1;
-		dataBuf.bufferType = sep2;
-		dataBuf.headerLength = sep3;
-		dataBuf.bufferNumber = sep4;
-		if(dataBuf.bufferLength > 729)
-		{
-			qDebug("erroneous length: %d - aborting", dataBuf.bufferLength);
-			datStream >> sep1 >> sep2 >> sep3 >> sep4;
-			qDebug("Separator: %x %x %x %x", sep1, sep2, sep3, sep4);
-			break;
-		}
-		quint16 *pD = (quint16 *)&dataBuf.bufferLength;
-		for(int i = 4; i < dataBuf.bufferLength; i++)
-			datStream >> pD[i];
-// hand over data buffer for processing
-		analyzeBuffer(dataBuf, m_daq, *m_hist);
-// increment local counters
-		blocks++;
-		bcount++;
-// check for next separator:
-		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-//		qDebug("Separator: %x %x %x %x", sep1, sep2, sep3, sep4);
-		if((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA))
-		{
-			ok = true;
-		}
-		else
-		{
-			qDebug("File structure error - read aborted after %d buffers", blocks);
-			ok = false;
-		}
-		if(bcount == 1000)
-		{
-			bcount = 0;
-#warning TODO		draw();
-//			kapp->processEvents();
-		}  
-	}	
-	datfile.close();
-#warning TODO draw();
-}
-
 
 bool Mesydaq2::isPulserOn()
 {
@@ -892,8 +658,11 @@ void Mesydaq2::setTimingwidth(quint8 width)
 	m_timingwidth = width;
 	if(width > 48)
     		m_timingwidth = 48;
+#warning TODO
+#if 0
 	if (m_hist)
    		m_hist->setWidth(m_timingwidth); 
+#endif
 }
 
 
@@ -927,28 +696,6 @@ bool Mesydaq2::checkListfilename(void)
 	return m_listfilename.isEmpty();
 }
 
-/*!
-    \fn Mesydaq2::writeHistograms()
- */
-void Mesydaq2::writeHistograms()
-{
-	if(m_histfilename.isEmpty())
-		return;
-
-	QFile f;
-	f.setFileName(m_histfilename);
-	if (f.open(QIODevice::WriteOnly)) 
-	{    // file opened successfully
-		QTextStream t( &f );        // use a text stream
-		// Title
-		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
-		t.flush();
-		if (m_hist)
-    			m_hist->writeHistogram(&f);
-		f.close();
-	}
-}
-
 // command shortcuts for simple operations:
 /*!
     \fn Mesydaq2::start(void)
@@ -956,7 +703,6 @@ void Mesydaq2::writeHistograms()
 void Mesydaq2::start(void)
 {
    	protocol("remote start", 1);
-#warning TODO
 	m_mcpd[0]->start();
 	emit statusChanged("STARTED");
 }
@@ -966,7 +712,6 @@ void Mesydaq2::start(void)
  */
 void Mesydaq2::stop(void)
 {
-#warning TODO
 	m_mcpd[0]->stop();
 	emit statusChanged("STOPPED");
    	protocol("remote stop", 1);
@@ -977,9 +722,10 @@ void Mesydaq2::stop(void)
  */
 void Mesydaq2::cont(void)
 {
-    /// @todo implement me
+	protocol("remote cont", 1);
+	m_mcpd[0]->cont();
+	emit statusChanged("STARTED");
 }
-
 
 /*!
     \fn Mesydaq2::reset(void)
@@ -1000,49 +746,15 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
 	return true;
 }
 
-/*!
-    \fn dataCruncher::setLimit(unsigned long lim)
- */
-void Mesydaq2::setLimit(quint8 cNum, ulong lim)
-{
-	m_counter[cNum].setLimit(lim);
-}
-
-/*!
-    \fn Mesydaq2::setCountlimit(unsigned char cNum, unsigned long lim)
- */
-void Mesydaq2::setCountlimit(quint8 cNum, ulong lim)
-{
-	switch(cNum)
-	{
-		case M1CT:
-    			setLimit(MON1ID, lim);
-    			break;
-		case M2CT:
-    			setLimit(MON2ID, lim);
-    			break;    	
-		case EVCT:
-    			setLimit(EVID, lim);
-    			break;
-    		default:
-    		break;
-	}
-}
-
-
-/*!
-    \fn Mesydaq2::copyData(unsigned int line, unsigned long * data)
- */
-void Mesydaq2::copyData(quint32 line, ulong *data)
-{
-	if (m_hist)
-		m_hist->copyLine(line, data);
-}
-
 void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString dataIP, const qint16 dataPort, const QString cmdIP, const qint16 cmdPort)
 {
 	m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }	
+
+bool Mesydaq2::getMode(const quint16 id, quint16 addr)
+{
+	return m_mcpd[id]->getMode(addr);
+}
 
 void Mesydaq2::setMode(const quint16 id, quint16 addr, bool mode)
 {
@@ -1129,13 +841,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 	m_dispatch[1] = 0;
 	if(m_daq == RUNNING)
 	{
-		quint16 time, counter = 0;
-		ulong 	data;
 		quint32 i, j;
-		quint16 neutrons = 0;
-		quint16 triggers = 0;
-		quint64 htim = pd.time[0] + quint64(pd.time[1]) << 16 + quint64(pd.time[2]) << 32,
-			tim;
 		quint16 mod = pd.deviceId;	
 		quint16 diff = pd.bufferNumber - m_lastBufnum;
 		if(diff > 1)
@@ -1144,12 +850,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		if(m_acquireListfile)
 		{
 			quint16 *pD = (quint16 *) &pd.bufferLength;
-			unsigned int i;
-			for(i = 0; i < pd.bufferLength; i++)
-			{
+			for(quint16 i = 0; i < pd.bufferLength; i++)
 				m_datStream << pD[i];
-//				qDebug("%x", pD[i]);
-			}
 			writeBlockSeparator();
 //			qDebug("------------------");
 		}
@@ -1157,7 +859,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		protocol(tr("buffer : length : %1").arg(pd.bufferLength));
 		if(pd.bufferType < 0x0002) 
 		{
-			quint8 id = pd.deviceId;
 // extract parameter values:
 			for(i = 0; i < 4; i++)
 			{
@@ -1169,63 +870,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 				}
 				m_mcpd[mod]->setParameter((unsigned char)i, var);
 			}		
-// 			data length = (buffer length - header length) / (3 words per event) - 4 parameters.
- 			quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
-			protocol(tr("%1 data").arg(datalen));
-			quint8 status = pd.deviceStatus;
-			protocol(tr("running %1").arg(status & 1)); 
-			QChar c('0');
-			for(i = 0; i < datalen; ++i, counter += 3)
-			{
-				tim = pd.data[counter + 1] & 0x7;
-				tim <<= 16;
-				tim += pd.data[counter];
-//				protocol(tr("time : %1 (%2 %3)").arg(tim).arg(pd.data[counter + 1] & 0x7).arg(pd.data[counter])); //, 8, 16, c));
-				tim += htim;
-// id stands for the trigId and modId depending on the package type
-				quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
-//				ulong delta = tim - m_lastTime;
-//				m_lastTime = tim;
-// not neutron event (counter, chopper, ...)
-//				protocol(tr("%1 %2 %3").arg(pd.data[counter + 2],4,16,c).arg(pd.data[counter + 1],4,16,c).arg(pd.data[counter], 4, 16,c));
-				if((pd.data[counter + 2] & 0x8000))
-				{
-					triggers++;
-					quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
-					data = (pd.data[counter + 2] & 0xFF) << 13 + (pd.data[counter + 1] >> 3) & 0x7FFF;
-					time = (quint16)tim;
-#warning TODO 				emit incEvents(tim, id, dataId, data);
-//					protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId));
-				}
-// neutron event:
-				else
-				{
-					neutrons++;
-					quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
-					quint8 chan = (id << 3) + slotId;
-					quint16 amp(0), 
-						pos(0);
-					if (m_mcpd[mod]->getMpsdId(id) == 103)
-					{
-						if (m_mcpd[mod]->getMode(id))
-							amp = (pd.data[counter+1] >> 3) & 0x3FF;
-						else
-							pos = (pd.data[counter+1] >> 3) & 0x3FF;
-					}
-					else
-					{
-						amp = (pd.data[counter+2] & 0x7F) << 3 + (pd.data[counter+1] >> 13) & 0x7;
-						pos = (pd.data[counter+1] >> 3) & 0x3FF;
-					}
-					if (m_hist)
-					{
-						m_hist->incVal(chan, pos, tim);
-#warning TODO 					m_hist->incVal(chan, pos, tim);
-					}
-//					protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c));
-				}
-			}
+			emit analyzeDataBuffer(pd);
 		}
 	}
 }
-

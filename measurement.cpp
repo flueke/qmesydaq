@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Gregor Montermann   *
- *   g.montermann@mesytec.com   *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,15 +17,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <QString>
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
+
 #include "measurement.h"
 #include "mdefines.h"
 #include "histogram.h"
+#include "mesydaq2.h"
 
-Measurement::Measurement(QObject *parent)
-	: QObject(parent)
-	, m_events(0)
-	, m_mon1(0)
-	, m_mon2(0)
+Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
+	: MesydaqObject(parent)
+	, m_mesydaq(mesy)
+	, m_hist(NULL)
 	, m_starttime_msec(0)
 	, m_meastime_msec(0)
 	, m_ratetime_msec(0)
@@ -40,19 +45,6 @@ Measurement::Measurement(QObject *parent)
 	, m_carHistWidth(128)
 	, m_carStep(0)
 {
-	for(quint8 c = 0; c < 8; c++)
-	{
-    		m_rate[10][c] = 0;
-    		m_counter[0][c] = 0;
-    		m_counter[1][c] = 0;
-    		m_preset[c] = 0;
-    		m_counterStart[c] = 0;
-    		m_counterOffset[c] = 0;
-    		m_master[c] = false;
-    		m_stopped[c] = false;
-		m_ratecount[c] = 0;
-		m_ratepointer[c] = 0;
-	}
 }
 
 Measurement::~Measurement()
@@ -62,12 +54,13 @@ Measurement::~Measurement()
 /*!
     \fn Measurement::setCurrentTime(unsigend long msecs)
  */
-void Measurement::setCurrentTime(ulong msecs)
+void Measurement::setCurrentTime(quint64 msecs)
 {
 	if(m_running)
 	{
     		m_meastime_msec = msecs - m_starttime_msec;
-		setCounter(TCT, msecs/1000);
+		for (quint8 i = 0; i < 8; ++i)
+			m_counter[i].setTime(m_meastime_msec);
 	}
 }
 
@@ -82,67 +75,48 @@ ulong Measurement::getMeastime(void)
 /*!
     \fn Measurement::start(unsigned long time)
  */
-void Measurement::start(ulong time)
+void Measurement::start(quint64 time)
 {
 	m_running = true;
 	m_stopping = false;
-	m_starttime_msec = time;
-	m_rateflag = false;
 	for(quint8 c = 0; c < 8; c++)
-	{
-		m_stopped[c] = false;
-    		m_rate[10][c] = 0;
-		m_ratecount[c] = 0;
-		m_ratepointer [c] = 0;
-		if(c == TCT)
-		{
-			m_counter[1][c] = m_counterOffset[c];
-			m_counterStart[TCT] = time / 1000;
-		}
-	}
-	// remember current value for timer counter
+		m_counter[c].start(time);
 }
 
 
 /*!
     \fn Measurement::stop(unsigned long time)
  */
-void Measurement::stop(ulong /*time */)
+void Measurement::stop(quint64 /*time */)
 {
 	m_running = false;
 	m_stopping = false;
+#if 0
  	m_counterOffset[TCT] = m_counter[1][TCT];
+#endif
 } 
 
 
 /*!
-    \fn Measurement::setCounter(unsigned int cNum, unsigned long long val)
+    \fn Measurement::setCounter(unsigned int cNum, quint64 val)
  */
 void Measurement::setCounter(quint32 cNum, quint64 val)
 {
 // set counter
 	if(cNum < 8)
-   		m_counter[1][cNum] = m_counterOffset[cNum] + val - m_counterStart[cNum];
-    	
-// if counter is reset: clear rate buffers
-	if(val == 0)
 	{
-		for(quint8 c = 0; c < 11; c++)
-			m_rate[c][cNum] = 0;
-		m_counterOffset[cNum] = 0;
-		m_counterStart[cNum] = 0;
+		if(val == 0)
+			m_counter[cNum].reset();
+		else
+   			m_counter[cNum].set(val);
 	}
-	
+    	
 // is counter master and is limit reached?
-	if(m_master[cNum] && (m_preset[cNum] > 0))
+	if(m_counter[cNum].isStopped() && !m_stopping)
 	{
-		if(m_counter[1][cNum] >= m_preset[cNum] && !m_stopping)
-		{
-			emit protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[1][cNum]).arg(m_preset[cNum]));
-			m_stopped[cNum] = true;
-			m_stopping = true;
-			emit stop();
-		}
+		protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[cNum].value()).arg(m_counter[cNum].limit()));
+		m_stopping = true;
+		emit stop();
 	}
 }
 
@@ -152,33 +126,8 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
  */
 void Measurement::calcRates()
 {
-	if(m_meastime_msec == 0)
-		return;
-	if(m_ratetime_msec >= m_meastime_msec)
-	{
-		m_ratetime_msec = m_meastime_msec;
-		return;
-	}
-	if (m_rateflag = true)
-	{
-		ulong tval = (m_meastime_msec - m_ratetime_msec);
-		
-		for(quint8 c = 0; c < 8; c++)
-		{
-			if(m_ratecount[c] < 10)
-				m_ratecount[c]++;
-			if(m_ratecount[c] > 1)
-				m_rate[m_ratepointer[c]][c] = (m_counter[1][c] - m_counter[0][c]) * 1000 / tval;
-			else
-				m_rate[m_ratepointer[c]][c] = 0;
-			m_counter[0][c] = m_counter[1][c];
-			m_ratepointer[c]++;
-			if(m_ratepointer[c] == 10)
-				m_ratepointer[c] = 0;
-		}
-	}
-	m_ratetime_msec = m_meastime_msec;
-	m_rateflag = true;
+	for(quint8 c = 0; c < 8; c++)
+		m_counter[c].calcRate();
 }
 
 /*!
@@ -188,6 +137,7 @@ void Measurement::calcMeanRates()
 {
 	for(quint8 c = 0; c < 8; c++)
 	{
+#if 0
 		ulong val2 = 0;
 		for(quint8 d = 1; d < m_ratecount[c]; d++)
 			val2 += m_rate[d][c];
@@ -195,6 +145,7 @@ void Measurement::calcMeanRates()
 			m_rate[10][c] = val2 / (m_ratecount[c] - 1);
 		else
 			m_rate[10][c] = 0;			
+#endif
 	}
 }
 
@@ -204,7 +155,7 @@ void Measurement::calcMeanRates()
 quint64 Measurement::getCounter(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_counter[1][cNum];
+		return m_counter[cNum].value();
 	else
 		return 0;
 }
@@ -216,7 +167,7 @@ quint64 Measurement::getCounter(quint8 cNum)
 ulong Measurement::getRate(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_rate[10][cNum];
+		return m_counter[cNum].rate();
 	else
 		return 0;
 }
@@ -229,9 +180,9 @@ ulong Measurement::getRate(quint8 cNum)
  */
 quint8 Measurement::isOk(void)
 {
-	if(m_online)
+	if (m_online)
 	{
-		if(m_working)
+		if (m_working)
 		{
 //    			qDebug("online&working");
     			return 0;
@@ -252,21 +203,15 @@ quint8 Measurement::isOk(void)
  */
 void Measurement::setOnline(bool truth)
 {
-	QString str;
-	
 	m_online = truth;
-	if (m_online)
-		str.sprintf("MCPD online");
-	else
-		str.sprintf("MCPD offline");
-	emit protocol(str, 1);	
+	protocol(tr("MCPD %1").arg(m_online ? tr("online") : tr("offline")), 1);	
 }
 
 
 /*!
     \fn Measurement::setPreset(unsigned char cNum, unsigned long prval, bool mast)
  */
-void Measurement::setPreset(quint8 cNum, ulong prval, bool mast)
+void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 {
 	if(cNum < 8)
 	{
@@ -274,20 +219,26 @@ void Measurement::setPreset(quint8 cNum, ulong prval, bool mast)
 		{
     			// clear all other master flags
     			for(quint8 c = 0; c < 8;c++)
-    				m_master[cNum] = false;
+    				m_counter[cNum].setMaster(false);
     			// set new master
-    			m_master[cNum] = true;
+    			m_counter[cNum].setMaster(true);
     		}
     		else
     		// just clear master
-    			m_master[cNum] = false;
-    		
-    		m_preset[cNum] = prval;
-    		if(cNum == EVCT || cNum == M1CT || cNum == M2CT)
-    			if(m_master[cNum])
-    				emit setCountlimit(cNum, prval);
-			else	
-    				emit setCountlimit(cNum, 0);
+    			m_counter[cNum].setMaster(false);
+    		m_counter[cNum].setLimit(prval);
+		
+		switch(cNum)
+		{
+			case M1CT:
+			case M2CT:
+			case EVCT:
+				m_counter[cNum].setMaster(mast);
+    				m_counter[cNum].setLimit(prval);
+    				break;
+			default:
+				break;
+		}
 	}
 }
 
@@ -298,7 +249,7 @@ void Measurement::setPreset(quint8 cNum, ulong prval, bool mast)
 ulong Measurement::getPreset(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_preset[cNum];
+		return m_counter[cNum].limit();
 	else
 		return 0;
 }
@@ -390,7 +341,7 @@ quint32 Measurement::getRun()
  */
 bool Measurement::isMaster(quint8 cNum)
 {
-	return(m_master[cNum]);
+	return m_counter[cNum].isMaster();
 }
 
 
@@ -405,29 +356,18 @@ void Measurement::clearCounter(quint8 cNum)
 		
 	if(cNum == TCT)
 	{
+#if 0
 		if(m_running)
 		{
 			m_counterStart[cNum] += m_counter[1][cNum];
 			m_counterStart[cNum] -= m_counterOffset[cNum];
 			m_counterOffset[cNum] = 0;
 		}
+#endif
 	}
 
-	if(cNum == EVCT)
-    		m_events = 0;
-	if(cNum == M1CT)
-    		m_mon1 = 0;
-	if(cNum == M2CT)
-		m_mon2 = 0;
+	m_counter[cNum].reset();
 
-	m_counter[1][cNum] = 0;
-	
-	for(quint8 c = 0; c < 11; c++)
-		m_rate[c][cNum] = 0;
-	m_counterOffset[cNum] = 0;
-
-	m_ratecount[cNum] = 0;
-	m_ratepointer[cNum] = 0;
 }
 
 /*!
@@ -436,9 +376,8 @@ void Measurement::clearCounter(quint8 cNum)
 bool Measurement::hasStopped(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_stopped[cNum];
-	else
-    		return false;
+		return m_counter[cNum].isStopped();
+    	return false;
 }
 
 /*!
@@ -446,9 +385,11 @@ bool Measurement::hasStopped(quint8 cNum)
  */
 void Measurement::copyCounters(void)
 {
+#if 0
 	setCounter(EVCT, m_events);
 	setCounter(M1CT, m_mon1);
 	setCounter(M2CT, m_mon2);
+#endif
 }
 
 
@@ -459,10 +400,221 @@ bool Measurement::limitReached(quint8 cNum)
 {
 	if(cNum >= 8)
 		return false;
-    
+	return m_counter[cNum].isStopped();
+#if 0   
 	if(m_master[cNum] && (m_counter[1][cNum] >= m_preset[cNum]))
 		return true;
 	else 
 		return false;
+#endif
+}
+
+/*!
+    \fn Measurement::clearAllHist(void)
+ */
+void Measurement::clearAllHist(void)
+{
+	if (m_hist)
+		m_hist->clear();
+}
+
+
+/*!
+    \fn Measurement::clearChanHist(unsigned long chan)
+ */
+void Measurement::clearChanHist(quint16 chan)
+{
+	if (m_hist)
+		m_hist->clear(chan);
+}
+
+/*!
+    \fn Measurement::copyData(unsigned int line, unsigned long * data)
+ */
+void Measurement::copyData(quint32 line, ulong *data)
+{
+	if (m_hist)
+		m_hist->copyLine(line, data);
+}
+
+/*!
+    \fn Measurement::writeHistograms()
+ */
+void Measurement::writeHistograms(const QString &name)
+{
+	if(name.isEmpty())
+		return;
+
+	QFile f;
+	f.setFileName(name);
+	if (f.open(QIODevice::WriteOnly)) 
+	{    // file opened successfully
+		QTextStream t( &f );        // use a text stream
+		// Title
+		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
+		t.flush();
+		if (m_hist)
+    			m_hist->writeHistogram(&f);
+		f.close();
+	}
+}
+
+/*!
+    \fn Measurement::analyzeBuffer(DATA_PACKET &pd, quint8 daq)
+ */
+void Measurement::analyzeBuffer(DATA_PACKET &pd)
+{
+	quint16 time, counter = 0;
+	ulong 	data;
+	quint32 i, j;
+	quint16 neutrons = 0;
+	quint16 triggers = 0;
+	quint64 htim = pd.time[0] + quint64(pd.time[1]) << 16 + quint64(pd.time[2]) << 32,
+		tim;
+	quint16 mod = pd.deviceId;	
+	if(pd.bufferType < 0x0002) 
+	{
+// extract parameter values:
+		QChar c('0');
+		for(i = 0; i < 4; i++)
+		{
+			quint64 var = 0;
+			for(j = 0; j < 3; j++)
+			{
+				var *= 0x10000ULL;
+				var += pd.param[i][2-j];
+			}
+			setCounter(i, var);
+		}		
+// 		data length = (buffer length - header length) / (3 words per event) - 4 parameters.
+ 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		for(i = 0; i < datalen; ++i, counter += 3)
+		{
+			tim = pd.data[counter + 1] & 0x7;
+			tim <<= 16;
+			tim += pd.data[counter];
+//			protocol(tr("time : %1 (%2 %3)").arg(tim).arg(pd.data[counter + 1] & 0x7).arg(pd.data[counter])); //, 8, 16, c));
+			tim += htim;
+// id stands for the trigId and modId depending on the package type
+			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
+//			ulong delta = tim - m_lastTime;
+//			m_lastTime = tim;
+// not neutron event (counter, chopper, ...)
+//			protocol(tr("%1 %2 %3").arg(pd.data[counter + 2],4,16,c).arg(pd.data[counter + 1],4,16,c).arg(pd.data[counter], 4, 16,c));
+			if((pd.data[counter + 2] & 0x8000))
+			{
+				triggers++;
+				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
+				data = (pd.data[counter + 2] & 0xFF) << 13 + (pd.data[counter + 1] >> 3) & 0x7FFF;
+				time = (quint16)tim;
+				switch(dataId)
+				{
+					case MON1ID:
+						++m_counter[M1CT];
+						break;
+					case MON2ID:
+						++m_counter[M2CT];
+						break;
+					default:
+						break;
+				}
+//				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId));
+			}
+// neutron event:
+			else
+			{
+				neutrons++;
+				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
+				quint8 chan = (id << 3) + slotId;
+				quint16 amp(0), 
+					pos(0);
+				if (m_mesydaq->getMpsdId(mod, slotId) == 103)
+				{
+					if (m_mesydaq->getMode(mod, id))
+						amp = (pd.data[counter+1] >> 3) & 0x3FF;
+					else
+						pos = (pd.data[counter+1] >> 3) & 0x3FF;
+				}
+				else
+				{
+					amp = (pd.data[counter+2] & 0x7F) << 3 + (pd.data[counter+1] >> 13) & 0x7;
+					pos = (pd.data[counter+1] >> 3) & 0x3FF;
+				}
+				++m_counter[EVCT];
+				if (m_hist)
+					m_hist->incVal(chan, pos, tim);
+//				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c));
+			}
+		}
+	}
+	copyCounters();
+}
+
+void Measurement::readListfile(QString readfilename)
+{
+	QDataStream datStream;
+	QTextStream textStream;
+	QFile datfile;
+	QString str;
+	quint16 sep1, sep2, sep3, sep4;
+    
+	datfile.setFileName(readfilename);
+	datfile.open(QIODevice::ReadOnly);
+	datStream.setDevice(&datfile);
+	textStream.setDevice(&datfile);
+
+	quint32 blocks(0),
+		bcount(0);
+
+	qDebug("readListfile");
+	str = textStream.readLine();
+	qDebug(str.toStdString().c_str());
+	str = textStream.readLine();
+	qDebug(str.toStdString().c_str());
+	datStream >> sep1 >> sep2 >> sep3 >> sep4;
+	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
+	while(ok)
+	{
+		datStream >> sep1 >> sep2 >> sep3 >> sep4;
+// check for closing signature:
+		if((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0))
+		{
+			qDebug("EOF reached after %d buffers", blocks);
+			break;
+		}
+		DATA_PACKET 	dataBuf;
+		dataBuf.bufferLength = sep1;
+		dataBuf.bufferType = sep2;
+		dataBuf.headerLength = sep3;
+		dataBuf.bufferNumber = sep4;
+		if(dataBuf.bufferLength > 729)
+		{
+			qDebug("erroneous length: %d - aborting", dataBuf.bufferLength);
+			datStream >> sep1 >> sep2 >> sep3 >> sep4;
+			qDebug("Separator: %x %x %x %x", sep1, sep2, sep3, sep4);
+			break;
+		}
+		quint16 *pD = (quint16 *)&dataBuf.bufferLength;
+		for(int i = 4; i < dataBuf.bufferLength; i++)
+			datStream >> pD[i];
+// hand over data buffer for processing
+		analyzeBuffer(dataBuf);
+// increment local counters
+		blocks++;
+		bcount++;
+// check for next separator:
+		datStream >> sep1 >> sep2 >> sep3 >> sep4;
+//		qDebug("Separator: %x %x %x %x", sep1, sep2, sep3, sep4);
+		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
+		if (!ok)
+			qDebug("File structure error - read aborted after %d buffers", blocks);
+		if(bcount == 1000)
+		{
+			bcount = 0;
+			emit draw();
+		}  
+	}	
+	datfile.close();
+	emit draw();
 }
 
