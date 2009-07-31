@@ -120,7 +120,7 @@ void NetworkDevice::readSocketData(void)
 		if (len != -1)
 		{
 			protocol(tr("read datagram : %1 from %2 bytes").arg(len).arg(maxsize), 3);
-			protocol(tr("read nr : %1 cmd : %2 status %3").arg(m_recBuf.bufferNumber).arg(m_recBuf.cmd).arg(m_recBuf.deviceStatus), 1);
+			protocol(tr("read nr : %1 cmd : %2 status %3").arg(m_recBuf.bufferNumber).arg(m_recBuf.cmd).arg(m_recBuf.deviceStatus), 3);
 			quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
 			protocol(tr("read time : %1").arg(tim), 3);
 			emit bufferReceived(m_recBuf);
