@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Gregor Montermann   *
- *   g.montermann@mesytec.com   *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -59,9 +59,9 @@ typedef struct TriggerEvent
 
 typedef struct NeutronEvent
 {
-	quint8 	id		: 1;
-	quint8	modId		: 3;
-	quint8	slotId		: 5;
+	quint16 id		: 1;
+	quint16	modId		: 3;
+	quint16	slotId		: 5;
 	quint16	amp		: 10;
 	quint16 pos		: 10;
 	quint32	timestamp	: 19;
