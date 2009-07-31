@@ -25,7 +25,8 @@
 #include <cmath>
 
 Spectrum::Spectrum(quint16 bins)
-	: m_bins(bins)
+	: m_data(NULL)
+	, m_bins(bins)
 	, m_maximumPos(0)
 	, m_meanCount(0)
 	, m_meanPos(0)
@@ -89,7 +90,10 @@ Histogram::Histogram(quint16 channels, quint16 bins, QObject *parent)
 	, m_lastTime(0)
 	, m_totalCounts(0)
 	, m_twidth(1)
+	, m_data(NULL)
 	, m_channels(channels)
+	, m_sumSpectrum(NULL)
+	, m_timeSpectrum(NULL)
 	, m_maximumPos(0)
 {
 	m_data = new Spectrum*[channels];
@@ -125,7 +129,7 @@ bool Histogram::incVal(quint16 chan, quint16 bin, quint64 time)
 #warning TODO 960 ??????
 		if(deltat > 959)		
 			deltat = 959; 
-		m_timeSpectrum->incVal((quint16)deltat);
+#warning TODO	m_timeSpectrum->incVal((quint16)deltat);
 	}
 	m_lastTime = time;
 		
