@@ -47,19 +47,23 @@ public:
 	void	cont();
 
 	void	calcRates();
-	void	setCounter(quint32 cNum, quint64 val);
-	ulong	getRate(quint8 cNum);
-	quint64	getCounter(quint8 cNum);
 	void	calcMeanRates();
+	ulong	getRate(quint8 cNum);
+
+	void	setCounter(quint32 cNum, quint64 val);
+	quint64	getCounter(quint8 cNum);
+
 	quint8	isOk(void);
 	void	setOnline(bool truth);
+
 	ulong	getPreset(quint8 cNum);
 	void	setPreset(quint8 cNum, quint64 prval, bool mast);
-	void	setRunnumber(quint32 number);
+
 	void	setListmode(bool truth);
 	void	setRemote(bool truth);
 	bool	remoteStart(void);
 
+	void	setRunnumber(quint32 number);
 	void	setCarStep(quint32 step) {m_carStep = step;}
 	void	setCarHistSize(quint32 h, quint32 w)
 	{
