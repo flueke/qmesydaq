@@ -79,11 +79,11 @@ public:
 
 	void clear(quint16 channel);
 
-	ulong getTotalCounts(void);
+	quint64 getTotalCounts(void);
 
 	void copyLine(quint16 channel, ulong *pLineBuffer);
 
-	ulong max(quint16 channel);
+	quint64 max(quint16 channel);
 
 	quint16 maxpos(quint16 channel);
 
@@ -96,9 +96,9 @@ public:
 	bool writeHistogram(QFile* f);
 
 protected:
-	ulong 		m_lastTime;
+	quint64 	m_lastTime;
 
-	ulong 		m_totalCounts;
+	quint64 	m_totalCounts;
 
 	quint8 		m_twidth;
 

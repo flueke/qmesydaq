@@ -167,7 +167,7 @@ void Histogram::clear(void)
 /*!
     \fn Histogram::getTotalCounts(void)
  */
-ulong Histogram::getTotalCounts(void)
+quint64 Histogram::getTotalCounts(void)
 {
 	return m_totalCounts;
 }
@@ -191,7 +191,7 @@ void Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
 /*!
     \fn Histogram::max(unsigned int channel)
  */
-ulong Histogram::max(quint16 channel)
+quint64 Histogram::max(quint16 channel)
 {
 	if(channel <= m_channels)
 		return m_data[channel]->max();
