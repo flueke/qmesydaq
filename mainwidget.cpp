@@ -915,38 +915,32 @@ void MainWidget::mpsdCheck(int mod)
 void MainWidget::draw(void)
 {
 	qDebug("MainWidget::draw()");
+#if 0
 	quint8 id = getDispId();
+	static ulong	dispBuf[960];
 
 	if(dispAll->isChecked())
 	{
 		if(dispAllPos->isChecked())
-		{
-//			hist[id]->copyLine(CHANNELS-2, dispBuf);
-//			setData(dispBuf, 960, hist[id]->max(CHANNELS-2));
-		}
+			m_meas->copyData(CHANNELS-2, dispBuf);
 		else
-		{
-//			hist[id]->copyLine(CHANNELS-1, dispBuf);
-//			setData(dispBuf, 960, hist[id]->max(CHANNELS-1));
-		}
+			m_meas->copyData(CHANNELS-1, dispBuf);
 	}
 	else
 	{
 		if (specialBox->isChecked())
-		{
-//			hist[id]->copyLine(CHANNELS, dispBuf);
-//			setData(dispBuf, 960, hist[id]->max(CHANNELS));
-		}
+			m_meas->copyData(CHANNELS, dispBuf);
 		else
 		{
 			quint32 chan = dispMcpd->value() * 128;
 			chan += dispMpsd->value() * 16;
 			chan += dispChan->value();
-//			hist[id]->copyLine(chan, dispBuf);
-//			setData(dispBuf, 960, hist[id]->max(chan));
+			m_meas->copyData(chan, dispBuf);
 		}
 	}
+	setData(dispBuf, 960, 0/*hist[id]->max(chan)*/);
 	dispId = dispMcpd->value();
 	dataFrame->replot();
 	drawOpData();
+#endif
 }
