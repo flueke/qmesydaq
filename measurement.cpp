@@ -99,6 +99,7 @@ void Measurement::requestStop()
 {
 	m_stopping = true;
 	emit stop();
+	protocol(tr("Max %1 was at pos %2").arg(m_hist->max(0)).arg(m_hist->maxpos(0)));
 }
 
 /*!
