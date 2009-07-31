@@ -415,7 +415,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 	quint16 mod = pd.deviceId;	
 	if(pd.bufferType < 0x0002) 
 	{
-		protocol(tr("Measurement::analyzeBuffer()"), 1);
+		protocol(tr("Measurement::analyzeBuffer()"), 3);
 // extract parameter values:
 		QChar c('0');
 		for(i = 0; i < 4; i++)
@@ -426,7 +426,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				var *= 0x10000ULL;
 				var += pd.param[i][2-j];
 			}
-			protocol(tr("set counter %1 to %2").arg(i).arg(var));
+			protocol(tr("set counter %1 to %2").arg(i).arg(var), 3);
 			setCounter(i, var);
 		}		
 // 		data length = (buffer length - header length) / (3 words per event) - 4 parameters.
