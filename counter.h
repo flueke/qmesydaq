@@ -93,6 +93,8 @@ public:
 
 	void calcRate(void);
 
+	void calcMeanRate(void);
+
 signals:
 	//! the counter has to be stopped
 	void stop();

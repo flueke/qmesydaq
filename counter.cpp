@@ -77,7 +77,7 @@ void MesydaqCounter::setTime(quint64 val)
 	m_meastime_msec = val;
 }
 
-void MesydaqCounter::calcRate()
+void MesydaqCounter::calcRate(void)
 {
 	if(m_meastime_msec == 0)
 		return;
@@ -99,6 +99,17 @@ void MesydaqCounter::calcRate()
 	}
 	m_ratetime_msec = m_meastime_msec;
 	m_rateflag = true;
+}
+
+void MesydaqCounter::calcMeanRate(void)
+{
+	quint64 val2(0);
+	for(quint8 c = 1; c < m_rate.size(); ++c)
+		val2 += m_rate[c];
+	if(m_rate.size() > 2)
+		m_rate.enqueue(val2 / (m_rate.size() - 1));
+	else
+		m_rate.enqueue(0);			
 }
 
 quint64 MesydaqCounter::rate()
