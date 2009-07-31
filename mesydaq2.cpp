@@ -730,7 +730,7 @@ void Mesydaq2::setHistfilename(QString name)
 void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
 	m_dispatch[1] = 0;
-	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq));
+	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), 3);
 	if(m_daq == RUNNING)
 	{
 		quint32 i, j;
@@ -747,8 +747,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			writeBlockSeparator();
 //			qDebug("------------------");
 		}
-		protocol(tr("dataRxd : %1").arg(++m_dataRxd));
-		protocol(tr("buffer : length : %1").arg(pd.bufferLength));
+		protocol(tr("dataRxd : %1").arg(++m_dataRxd), 3);
+		protocol(tr("buffer : length : %1").arg(pd.bufferLength), 3);
 		if(pd.bufferType < 0x0002) 
 		{
 // extract parameter values:
@@ -762,7 +762,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 				}
 				m_mcpd[mod]->setParameter((unsigned char)i, var);
 			}
-			protocol(tr("found data"));
 			emit analyzeDataBuffer(pd);
 		}
 	}
