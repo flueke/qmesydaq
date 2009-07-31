@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Gregor Montermann   *
- *   g.montermann@mesytec.com   *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -125,9 +125,9 @@
 #define MCPDS 			1
 
 // CARESS counter mapping
-#define EVCT			4
 #define M1CT			0
 #define M2CT			1
+#define EVCT			4
 #define TCT			5
 #define HISTO			99
 
