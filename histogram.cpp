@@ -177,14 +177,12 @@ quint64 Histogram::getTotalCounts(void)
  */
 void Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
 {
-#warning TODO
-#if 0
-   	if(channel <= CHANNELS)
-	{
-		for(quint32 i = 0; i < 960; i++)
-    			pLineBuffer[i] = m_data[channel][i];
-	}
-#endif
+   	if(channel <= m_channels)
+		for(quint16 i = 0; i < 960; i++)
+    			pLineBuffer[i] = m_data[channel]->val(i);
+	else
+		for(quint16 i = 0; i < 960; i++)
+                        pLineBuffer[i] = 0;
 }
 
 
