@@ -45,6 +45,10 @@ public:
 
 	float mean(float &s);
 
+//	quint64 operator[](quint16 index) {return m_data[index];}
+	
+	quint64 val(quint16 index) {return m_data[index];}
+
 private:
 	quint64		*m_data;
 
