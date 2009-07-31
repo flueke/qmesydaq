@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Gregor Montermann   *
- *   g.montermann@mesytec.com   *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -62,15 +62,10 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), m_theApp, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
-	connect(m_theApp, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
-	connect(m_theApp, SIGNAL(incEvents()), m_meas, SLOT(incEvents()));
+//	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 
-	connect(m_meas, SIGNAL(protocol(QString, quint8)), m_theApp, SLOT(protocol(QString, quint8)));
 	connect(m_meas, SIGNAL(stop()), m_theApp, SLOT(stop()));
-	connect(m_meas, SIGNAL(setCountlimit(quint8, ulong)), m_theApp, SLOT(setCountlimit(quint8, ulong)));
 	connect(m_meas, SIGNAL(acqListfile(bool)), m_theApp, SLOT(acqListfile(bool)));
-
-	
 
 // display refresh timer
 	m_dispTimer = new QTimer(this);
@@ -88,7 +83,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	dispThresh = false;
 	dispLoThresh = 0;
 
-	versionLabel->setText("QMesyDAQ " VERSION __DATE__);
+	versionLabel->setText("QMesyDAQ " VERSION " " __DATE__);
 
 	QRegExp ex("(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.){3}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"); 
 	mcpdIPAddress->setValidator(new QRegExpValidator(ex, mcpdIPAddress));
