@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Gregor Montermann   *
- *   g.montermann@mesytec.com   *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,7 +23,7 @@
 
 #include "mainwindow.h"
 
-static const char version[] = "0.8";
+static const char version[] = VERSION;
 
 int main(int argc, char **argv)
 {
@@ -33,6 +33,7 @@ int main(int argc, char **argv)
 //    about.addAuthor( "Gregor Montermann", 0, "g.montermann@mesytec.com" );
 
 	QApplication app(argc, argv);
+
 	QPixmap pixmap(":/mesytec.jpg");
 
 	QSplashScreen splash(pixmap);
@@ -48,7 +49,6 @@ int main(int argc, char **argv)
 	mainWin->show();
 	splash.finish(mainWin);
 
-//	mainWin->draw();
 	return app.exec();
 }
 
