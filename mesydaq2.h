@@ -28,7 +28,6 @@
 
 #include <QFile>
 #include <QDataStream>
-#include <QTextStream>
 #include <QString>
 #include <QTimer>
 #include <QMap>
@@ -61,10 +60,6 @@ public:
      */
 	virtual ~Mesydaq2();
 
-	bool startDaq(void);
-	void stopDaq(void);
-	void startedDaq(void);
-	void stoppedDaq(void);
 	void scanPeriph(quint16 id);
 	void initMpsd(quint8 id);
 	void initMcpd(quint8 id);
@@ -75,7 +70,6 @@ public:
 // list mode oriented methods
 	void setListfilename(QString name) {m_listfilename = name;}
 	QString getListfilename() {return m_listfilename;}
-	bool checkListfilename(void);
 	void setListfilepath(QString path) {m_listPath = path;}
 	QString getListfilepath() {return m_listPath;}
 	void writeListfileHeader(void);
@@ -156,8 +150,10 @@ public slots:
     	void acqListfile(bool yesno);
 
 	void start(void);
+	void startedDaq(void);
 
 	void stop(void);
+	void stoppedDaq(void);
 
 	void reset(void);
 
@@ -179,8 +175,6 @@ private:
 
 	void initTimers(void);
 
-	void setLimit(quint8 cNum, ulong lim);
-
 public:
 #warning TODO
 	QMap<int, MCPD8	*>	m_mcpd;
@@ -197,8 +191,6 @@ private:
 	ulong 		m_cmdRxd;
 	ulong 		m_cmdTxd;
 
-//	Histogram 	*m_hist;
-
 	quint8  	m_daq;
     
 	bool 		m_acquireListfile;
@@ -208,7 +200,6 @@ private:
 
 	QFile 		m_datfile;
 	QDataStream 	m_datStream;
-	QTextStream 	m_textStream;
 
 	QString 	m_listPath;
 	QString 	m_histPath;

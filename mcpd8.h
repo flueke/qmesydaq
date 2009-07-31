@@ -153,7 +153,7 @@ signals:
 
 	void stoppedDaq(void);
 
-	void analyzeBuffer(quint16 mod, DATA_PACKET &pd);
+	void analyzeDataBuffer(DATA_PACKET &pd);
 
 private:
 	void initCmdBuffer(quint16);
@@ -220,8 +220,15 @@ private:
 
 	//! counter for the received data packets
 	quint32		m_dataRxd;
-// TODO
+
+	//! counter for the sent cmd packets
+	quint32		m_cmdTxd;
+
+	//! counter for the receivcd cmd packets
+	quint32		m_cmdRxd;
+
 public:
+#warning TODO remove the public access of m_mpsd
 	//! the accessed MPSD8 ????
 	QMap<int, MPSD8 *> m_mpsd;
 };

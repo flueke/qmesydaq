@@ -18,31 +18,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-// #include <QMainWindow>
-#include <QMessageBox>
-#include <QLineEdit>
-#include <QSpinBox>
-#include <QCheckBox>
-#include <QFileDialog>
 #include <QDateTime>
-#include <QRadioButton>
-#include <QDateTime>
-#include <QPushButton>
 #include <QSettings>
+#include <QTextStream>
 
-#include "mesydaq2.h"
-#include "mainwidget.h"
 #include "mdefines.h"
-// #include "histogram.h"
+#include "mesydaq2.h"
 #include "mcpd8.h"
-#include "measurement.h"
 
 Mesydaq2::Mesydaq2(QObject *parent)
 	: MesydaqObject(parent) 
 	, m_dataRxd(0)
 	, m_cmdRxd(0)
 	, m_cmdTxd(0)
-//	, m_hist(NULL)
 	, m_daq(IDLE)
 	, m_acquireListfile(false)
 	, m_listfilename("")
@@ -52,7 +40,6 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_configPath("/home")
 	, m_timingwidth(1)
 {
-#warning m_hist is not initialized
 	initDevices();
 	initTimers();
 	initHardware();
@@ -61,12 +48,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 
 Mesydaq2::~Mesydaq2()
 {
-	for(quint8 i = 0; i < MCPDS; i++)
-	{
-		if (m_mcpd[i])
-			delete m_mcpd[i];
-		m_mcpd[i] = NULL;
-	}
+	m_mcpd.clear();
 }
 
 /*!
@@ -87,101 +69,21 @@ void Mesydaq2::acqListfile(bool yesno)
 }
 
 /*!
-    \fn Mesydaq2::startDaq(void)
- */
-bool Mesydaq2::startDaq(void)
-{
-#warning TODO
-#if 0
-	// check for listfile
-	if(m_acquireListfile)
-	{
-		if(meas->remoteStart())
-		{
-//			m_listfilename = mainWin->listfilepath->text();
-			m_listfilename.append("run%d.mdat");
-			ovwList = true;
-//			mainWin->listFilename->setText(listfilename);
-		}
-		else
-		{
-			if(mainWin->listFilename->text().isEmpty())
-			{
-				if(listfilename.isEmpty())
-				{
-					if(!getListfilename())
-					{
-						ovwList = false;
-						return false;
-					}
-				}
-				else
-				{
-					listfilename = mainWin->listFilename->text();
-				}
-			}
-			else
-				listfilename = mainWin->listFilename->text();
-		}			
-		// o.k. - now try to use it:
-		datfile.setFileName(m_listfilename);
-		// now check if existing:
-		// listfile already existing? Warning!
-   		if(QFile::exists(datfile.fileName()))
-		{
-   			qDebug("datfile exists");
-   			if(!ovwList)
-			{
-   				qDebug("no overwrite");
-				int answer = QMessageBox::warning(
-						this, "Listfile Exists -- Overwrite File",
-						QString("Overwrite existing listfile?"),
-						"&Yes", "&No", QString::null, 1, 1 );
-				qDebug("answer: %d", answer);
-				if(answer == 1)
-				{
-					ovwList = false;
-					return false;
-				}
-   			}
-   		}
-		// reset overwrite o.k. flag
-		ovwList = false;
-    	// o.k. - successfully retrieved a listfile
-		datfile.open(QIODevice::WriteOnly);
-		textStream.setDevice(&datfile);
-  		datStream.setDevice(&datfile);
-		writeListfileHeader();
-		writeHeaderSeparator();
-  	}
-#endif
-	emit statusChanged("STARTED");
-  	m_daq = STARTED;
-	protocol("daq start",1);
-	return true;
-}
-
-/*!
     \fn Mesydaq2::startedDaq(void)
  */
 void Mesydaq2::startedDaq(void)
 {
-// maybe some remote control is interested?
-#warning TODO   cInt->completeCar();
+	if(m_acquireListfile)
+	{
+		m_datfile.setName(m_listfilename);
+		m_datfile.open(IO_WriteOnly);
+//		m_textStream.setDevice(&m_datfile);
+		m_datStream.setDevice(&m_datfile);
+		writeListfileHeader();
+	}
 	m_daq = RUNNING;
 	emit statusChanged("RUNNING");
 	protocol("daq started", 1);
-}
-
-
-/*!
-    \fn Mesydaq2::stopDaq(void)
- */
-void Mesydaq2::stopDaq(void)
-{
-	m_daq = STOPPED;
-	emit statusChanged("STOPPED");
-	protocol("daq stop", 1);
 }
 
 /*!
@@ -189,16 +91,12 @@ void Mesydaq2::stopDaq(void)
  */
 void Mesydaq2::stoppedDaq(void)
 {
-// maybe some remote control is interested?
-#warning TODO   cInt->completeCar();
-	
 	if(m_acquireListfile)
 	{
 		writeClosingSignature();
 		m_datfile.close();
 	}
 	m_daq = IDLE;
-#warning TODO
 	emit statusChanged("IDLE");
 	protocol("daq stopped", 1);
 }
@@ -209,7 +107,12 @@ void Mesydaq2::stoppedDaq(void)
 void Mesydaq2::initDevices(void)
 {
 	for(quint8 i = 0; i < MCPDS; i++)
+	{
 		m_mcpd[i] = new MCPD8(i, this);
+		connect(m_mcpd[i], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
+		connect(m_mcpd[i], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
+		connect(m_mcpd[i], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
+	}
 }
 
 
@@ -231,9 +134,10 @@ void Mesydaq2::initTimers(void)
  */
 void Mesydaq2::writeListfileHeader(void)
 {
-	m_textStream << "mesytec psd listmode data\n";
-	m_textStream << QString("header length: %1 lines \n").arg(2);
-	m_datStream << m_textStream.string();
+	QTextStream txtStr; 
+	txtStr << "mesytec psd listmode data\n";
+	txtStr << QString("header length: %1 lines \n").arg(2);
+	m_datStream << txtStr.string();
 }
 
 
@@ -683,19 +587,6 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 	m_mcpd[id]->writePeriReg(mod, reg, val);
 }
 
-
-/*!
-    \fn Mesydaq2::checkListfilename(void)
- */
-bool Mesydaq2::checkListfilename(void)
-{
-// name already defined?
-// no - try ot get one...
-#warning TODO
-	m_datfile.setFileName(m_listfilename);
-	return m_listfilename.isEmpty();
-}
-
 // command shortcuts for simple operations:
 /*!
     \fn Mesydaq2::start(void)
@@ -834,11 +725,12 @@ void Mesydaq2::setHistfilename(QString name)
 }
      
 /*!
-    \fn Mesydaq2::analyzeBuffer(DATA_PACKET &pd, quint8 daq)
+    \fn Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
  */
 void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
 	m_dispatch[1] = 0;
+	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq));
 	if(m_daq == RUNNING)
 	{
 		quint32 i, j;
@@ -869,7 +761,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 					var |= pd.param[i][2-j];
 				}
 				m_mcpd[mod]->setParameter((unsigned char)i, var);
-			}		
+			}
+			protocol(tr("found data"));
 			emit analyzeDataBuffer(pd);
 		}
 	}

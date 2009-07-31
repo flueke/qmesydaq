@@ -57,13 +57,18 @@ public:
 	void	setPreset(quint8 cNum, quint64 prval, bool mast);
 	void	setRunnumber(quint32 number);
 	void	setListmode(bool truth);
-	void	setCarHistSize(quint32 h, quint32 w);
 	void	setRemote(bool truth);
 	bool	remoteStart(void);
-	void	setStep(quint32 step);
 
-	quint32	getCarHeight();
-	quint32	getCarWidth();
+	void	setCarStep(quint32 step) {m_carStep = step;}
+	void	setCarHistSize(quint32 h, quint32 w)
+	{
+		m_carHistWidth = w;
+		m_carHistHeight = h;
+	}
+	quint32	getCarHeight() {return m_carHistHeight;}
+	quint32	getCarWidth() {return m_carHistWidth;}
+
 	quint32	getRun();
 	
 	bool	isMaster(quint8 cNum);
@@ -73,10 +78,6 @@ public:
 	bool	limitReached(quint8 cNum);
 
 	void 	readListfile(QString readfilename);
-
-//	void	incMon1() {++m_counter[M1CT];}
-//	void	incMon2() {++m_counter[M2CT];}
-//	void	incEvents() {++m_counter[EVCT];}
 
 	quint64	mon1() {return m_counter[M1CT].value();}
 	quint64	mon2() {return m_counter[M2CT].value();}
@@ -92,6 +93,9 @@ public:
 
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
+
+private slots:
+	void requestStop(void);
 
 signals:
 	void stop();
@@ -117,7 +121,6 @@ private:
 
 	quint64 	m_starttime_msec;
 	quint64 	m_meastime_msec;
-	quint64 	m_ratetime_msec;
 
 	bool 		m_running;
 	bool 		m_stopping;

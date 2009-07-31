@@ -40,12 +40,15 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 	, m_lastBufnum(0)
 	, m_commTimer(NULL)
 	, m_daq(false)
+	, m_dataRxd(0)
+	, m_cmdTxd(0)
+	, m_cmdRxd(0)
 {
 // TODO
 //	setId(id);
 	m_id = id;
 	stdInit();
-#warning TODO
+#warning TODO only import the found MPSD''s into the list
 	for(int i = 0; i < 8; i++)
 	{
 		m_mpsd[i] = NULL;
@@ -619,16 +622,12 @@ int MCPD8::sendCommand(void)
 		pstring.sprintf("%d. sent cmd: %d to id: %d", m_txCmdBufNum, m_cmdBuf.cmd, m_cmdBuf.deviceId);
 		protocol(pstring, 2 /*3 */);
 		communicate(true);
-#if 0
-		m_txCmdBufNum++;
-		commId = buffer[1];
-#endif
 		m_commTimer->start(500);
 // wait for answer
 		while(isBusy())
 			qApp->processEvents();
+		m_cmdTxd++;
 	}
-//	cmdTxd++;
 	return 1;
 }
 
@@ -652,20 +651,17 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 	m_commTimer->stop();
 	quint8 id = recBuf.deviceId;
 	
-	protocol(tr("id %1").arg(id), 1);
+	protocol(tr("id %1").arg(id), 3);
 	communicate(false);
-#if 0
-	cmdRxd++;
-#endif
-//	dispCmdBuf();
 	MPSD8	*ptrMPSD;
 
-	protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), 1);
+	protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), 3);
 		
 	if(recBuf.bufferType & 0x8000)
 	{
+		++m_cmdRxd;
 		quint16 chksum = recBuf.headerChksum;
-		// recBuf.headerChksum = 0;
+		recBuf.headerChksum = 0;
 		if (chksum != calcChksum(recBuf))
 			protocol(tr("packet (%3) is not valid (CHKSUM error) %1 != %2").arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength));
 		switch(recBuf.cmd)
@@ -682,7 +678,6 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				// extract ip and eth addresses in case of "this pc"
 				break;
 			case READID: // extract the retrieved MPSD-8 IDs:
-#warning TODO
 				for(quint8 c = 0; c < 8; c++)
 					m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
 				break;
@@ -759,7 +754,11 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 		}
 	}
 	else
-		emit analyzeBuffer(m_id, (DATA_PACKET &)recBuf); 
+	{
+		++m_dataRxd;
+		protocol(tr("ID %1 : emit analyzeBuffer(recBuf)").arg(m_id), 3);
+		emit analyzeDataBuffer((DATA_PACKET &)recBuf); 
+	}
 }
 
 /*!
