@@ -942,8 +942,8 @@ void MainWidget::draw(void)
 		}
 	}
 	setData(dispBuf, 960, 0/*hist[id]->max(chan)*/);
+#endif
 	dispId = dispMcpd->value();
 	dataFrame->replot();
 	drawOpData();
-#endif
 }
