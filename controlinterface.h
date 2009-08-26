@@ -20,7 +20,7 @@
 #ifndef CONTROLINTERFACE_H
 #define CONTROLINTERFACE_H
 
-#include <QObject>
+#include "mesydaqobject.h"
 
 class Mesydaq2;
 
@@ -29,9 +29,10 @@ Interface class for external control (caress, ...)
 
 	@author Gregor Montermann <g.montermann@mesytec.com>
 */
-class ControlInterface : public QObject
+
+class ControlInterface : public MesydaqObject
 {
-Q_OBJECT
+	Q_OBJECT
 public:
 	ControlInterface(QObject *parent = 0);
 

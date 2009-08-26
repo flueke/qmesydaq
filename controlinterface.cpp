@@ -24,7 +24,7 @@
 #include "measurement.h"
 
 ControlInterface::ControlInterface(QObject *parent)
-	: QObject(parent)
+	: MesydaqObject(parent)
 	, m_asyncTaskPending(false)
 	, m_caressTaskPending(false)
 	, m_caressTaskNum(0)
