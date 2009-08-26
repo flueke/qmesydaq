@@ -29,6 +29,10 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 	setupUi(this);
 	m_main = new MainWidget(new Mesydaq2(this), this);
 	setCentralWidget(m_main);
+	connect(action_Load_Config_File, SIGNAL(activated()), m_main, SLOT(restoreSetupSlot()));
+	connect(action_Save_Config_File, SIGNAL(activated()), m_main, SLOT(saveSetupSlot()));
+	connect(action_Replay_List_File, SIGNAL(activated()), m_main, SLOT(replayListfileSlot()));
+	connect(actionSave_Histogram_File, SIGNAL(activated()), m_main, SLOT(writeHistSlot()));
 	m_main->resize(1280, 980);
 }
 
