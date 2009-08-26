@@ -46,8 +46,11 @@ bool Spectrum::incVal(quint16 bin)
 	if (m_data[bin] > m_data[m_maximumPos])
 		m_maximumPos = bin;
 
+#warning TODO mean value determination
+#if 0
 	m_floatingMean[m_meanPos] = bin;
 	m_meanPos++;
+#endif
 	if(m_meanCount < 255)
 		m_meanCount++;
 	return true;
@@ -86,7 +89,7 @@ float Spectrum::mean(float &s)
 }
 
 Histogram::Histogram(quint16 channels, quint16 bins, QObject *parent)
-	: QObject(parent)
+	: MesydaqObject(parent)
 	, m_lastTime(0)
 	, m_totalCounts(0)
 	, m_twidth(1)
@@ -96,7 +99,7 @@ Histogram::Histogram(quint16 channels, quint16 bins, QObject *parent)
 	, m_timeSpectrum(NULL)
 	, m_maximumPos(0)
 {
-	m_data = new Spectrum*[channels];
+	m_data = new Spectrum*[m_channels];
 	for (quint16 i = 0; i < m_channels; ++i)
 		m_data[i] = new Spectrum(bins);
 	
@@ -118,7 +121,10 @@ bool Histogram::incVal(quint16 chan, quint16 bin, quint64 time)
 {
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
-	m_data[chan]->incVal(bin);
+	if (chan < m_channels)
+		m_data[chan]->incVal(bin);
+	else
+		qDebug("ERROR !!!!! chan = %d", chan); 
 // sum spectrum of all channels
 	m_sumSpectrum->incVal(bin);
 
@@ -265,10 +271,7 @@ bool Histogram::writeHistogram(QFile* f)
 			for(j = 0; j < 8 ; j++)
 			{
 #warning TODO
-#if 0
-				t << m_data[16*k+j][i];
-				t << '\t';
-#endif
+				t << m_data[k]->val(i) << '\t';
 			}
 		}
 		t << '\r' << '\n';
@@ -291,10 +294,7 @@ bool Histogram::writeHistogram(QFile* f)
 			for(j = 0; j < 8 ; j++)
 			{
 #warning TODO
-#if 0
-				t << m_data[16*k+j+8][i];
-				t << '\t';
-#endif
+				t << m_data[k]->val(i) << '\t';
 			}
 		}
 		t << '\r' << '\n';
