@@ -20,7 +20,7 @@
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
 
-#include <QObject>
+#include "mesydaqobject.h"
 
 #include "mdefines.h"
 
@@ -69,7 +69,7 @@ private:
 /**
 	@author Gregor Montermann <g.montermann@mesytec.com>
 */
-class Histogram : public QObject
+class Histogram : public MesydaqObject
 {
 Q_OBJECT
 public:
