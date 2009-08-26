@@ -431,8 +431,10 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 		}		
 // 		data length = (buffer length - header length) / (3 words per event) - 4 parameters.
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		protocol(tr("datalen = %1, m_stopping = %2").arg(datalen).arg(m_stopping), 3);
 		for(i = 0; i < datalen && !m_stopping; ++i, counter += 3)
 		{
+			protocol(tr("i = %1").arg(i), 3);
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
 			tim += pd.data[counter];
@@ -486,8 +488,10 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				++m_counter[EVCT];
 				protocol(tr("events %1 %2").arg(quint64(m_counter[EVCT])).arg(m_counter[EVCT].limit()), 3);
 				if (m_hist)
+				{
 					m_hist->incVal(chan, pos, tim);
-//				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c));
+				}
+				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), 3);
 			}
 		}
 	}
@@ -509,20 +513,21 @@ void Measurement::readListfile(QString readfilename)
 	quint32 blocks(0),
 		bcount(0);
 
-	qDebug("readListfile");
 	str = textStream.readLine();
-	qDebug(str.toStdString().c_str());
+//	qDebug(str.toStdString().c_str());
 	str = textStream.readLine();
-	qDebug(str.toStdString().c_str());
+//	qDebug(str.toStdString().c_str());
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
 	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
+	protocol(tr("readListfile : %1").arg(ok));
+	QChar c('0');
 	while(ok)
 	{
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
 // check for closing signature:
 		if((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0))
 		{
-			qDebug("EOF reached after %d buffers", blocks);
+			protocol(tr("EOF reached after %1 buffers").arg(blocks));
 			break;
 		}
 		DATA_PACKET 	dataBuf;
@@ -532,9 +537,9 @@ void Measurement::readListfile(QString readfilename)
 		dataBuf.bufferNumber = sep4;
 		if(dataBuf.bufferLength > 729)
 		{
-			qDebug("erroneous length: %d - aborting", dataBuf.bufferLength);
+			protocol(tr("erroneous length: %1 - aborting").arg(dataBuf.bufferLength));
 			datStream >> sep1 >> sep2 >> sep3 >> sep4;
-			qDebug("Separator: %x %x %x %x", sep1, sep2, sep3, sep4);
+			protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c));
 			break;
 		}
 		quint16 *pD = (quint16 *)&dataBuf.bufferLength;
@@ -547,10 +552,10 @@ void Measurement::readListfile(QString readfilename)
 		bcount++;
 // check for next separator:
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-//		qDebug("Separator: %x %x %x %x", sep1, sep2, sep3, sep4);
+		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c));
 		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
 		if (!ok)
-			qDebug("File structure error - read aborted after %d buffers", blocks);
+			protocol(tr("File structure error - read aborted after %1 buffers").arg(blocks));
 		if(bcount == 1000)
 		{
 			bcount = 0;
