@@ -34,7 +34,6 @@
  * @version 0.1
  */
 
-
 class MesydaqObject : public QObject
 {
     Q_OBJECT
