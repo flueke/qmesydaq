@@ -63,7 +63,6 @@ public slots:
 	void clearMcpdSlot();
 	void clearAllSlot();
 	void setStreamSlot();
-	void replayListfileSlot();
 	void setRunIdSlot();
 	void displayMpsdSlot(int = -1);
 	void displayMcpdSlot(int = -1);
@@ -72,10 +71,17 @@ public slots:
 
 	void setModeSlot(int);
 	void scanPeriSlot();
+
+// setup related methods
 	void restoreSetupSlot();
+	void saveSetupSlot();
+	void saveConfigSlot();
+
+// list mode files related methods
+	void replayListfileSlot();
+
 	void linlogSlot();
 	void applyThreshSlot();
-	void saveSetupSlot();
 	void redrawSlot();
 	void readRegisterSlot();
 	void writeRegisterSlot();
@@ -91,8 +97,6 @@ public slots:
 	void m1ResetSlot();
 	void eResetSlot();
 	void tResetSlot();
-
-	void saveConfigSlot();
 
 	void draw(void);
 
