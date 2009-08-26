@@ -77,7 +77,6 @@ void Mesydaq2::startedDaq(void)
 	{
 		m_datfile.setName(m_listfilename);
 		m_datfile.open(IO_WriteOnly);
-//		m_textStream.setDevice(&m_datfile);
 		m_datStream.setDevice(&m_datfile);
 		writeListfileHeader();
 	}
@@ -279,7 +278,8 @@ bool Mesydaq2::saveSetup(const QString &name)
 
 #if 0
 	QFile f(configfilename);
-	if ( f.open(QIODevice::WriteOnly) ) {    // file opened successfully
+	if ( f.open(QIODevice::WriteOnly) ) 
+	{    // file opened successfully
 		QTextStream t( &f );        // use a text stream
 		QString s;
 		// Title
@@ -302,39 +302,42 @@ bool Mesydaq2::saveSetup(const QString &name)
 		t << '\r' << '\n';
 		t << "Setup:";
 		t << '\r' << '\n';
-/*	    t << "MCPD-8 settings";
-    	t << '\r' << '\n';
-	    t << '\r' << '\n';
+/*		t << "MCPD-8 settings";
+		t << '\r' << '\n';
+		t << '\r' << '\n';
 		t << "MCPD-8 #" << 0 << ":";
 		t << '\r' << '\n';
 */    	
-    	t << "MPSD-8 settings";
-	    t << '\r' << '\n';
-    	t << '\r' << '\n';
-		for(int i=0; i<8*MCPDS; i++){
-		if(myMpsd[i]->getMpsdId()){
-			t << "MPSD-8 #" << i << ":";
-			t << '\r' << '\n';
-			t << "gains:";
-			t << '\r' << '\n';
-			for(int j=0; j<8; j++){
-			t << myMpsd[i]->getGainpoti(j,0);
-			t << '\r' << '\n';
+		t << "MPSD-8 settings";
+		t << '\r' << '\n';
+		t << '\r' << '\n';
+		for(int i=0; i<8*MCPDS; i++)
+		{
+			if(myMpsd[i]->getMpsdId())
+			{
+				t << "MPSD-8 #" << i << ":";
+				t << '\r' << '\n';
+				t << "gains:";
+				t << '\r' << '\n';
+				for(int j=0; j<8; j++)
+				{
+					t << myMpsd[i]->getGainpoti(j,0);
+					t << '\r' << '\n';
+				}
+				t << "threshold:";
+				t << '\r' << '\n';
+				t << myMpsd[i]->getThreshpoti(0);
+				t << '\r' << '\n';
 			}
-			t << "threshold:";
-			t << '\r' << '\n';
-			t << myMpsd[i]->getThreshpoti(0);
-			t << '\r' << '\n';
 		}
-    }
-  }
-  f.close();
+	}
+	f.close();
 #endif
 	return true;
 }
 
 /*!
-    \fn Mesydaq2::loadSetup(void)
+    \fn Mesydaq2::loadSetup(const QString &name)
  */
 bool Mesydaq2::loadSetup(const QString &name)
 {
@@ -351,17 +354,17 @@ bool Mesydaq2::loadSetup(const QString &name)
 	m_listPath = settings.value("general/Listfile Path", "/home").toString();
 	for (int i = 0; i < MCPDS; ++i)
 	{
-		protocol(tr("mcpd #%1").arg(i));
+		protocol(tr("mcpd #%1 : number of groups %2").arg(i).arg(settings.childGroups().size()));
 		for (int j = 0; j < 8; ++j)
 		{
 			QString str;
 			str.sprintf("MPSD-8 #%d", j);
-			qDebug("number of groups %d", settings.childGroups().size());
 			if (settings.childGroups().contains(str))
 			{
 				settings.beginGroup(str);
 				protocol("init " + str);
-				int size = settings.beginReadArray(str + "gains");
+				int size = settings.beginReadArray("gains");
+				protocol(tr("init size = %1").arg(size));
 				for (int l = 0; l < size; ++l)
 				{
 					settings.setArrayIndex(l);
