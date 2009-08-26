@@ -72,8 +72,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(m_dispTimer, SIGNAL(timeout()), this, SLOT(draw()));
 	
 	qDebug("comgain->isChecked() %d", comgain->isChecked());
-	channelLabel->setHidden(true /* comgain->isChecked() */);
-	channelLabel->setHidden(true /* comgain->isChecked() */);
+	channelLabel->setHidden(comgain->isChecked());
+	channel->setHidden(comgain->isChecked());
 	scanPeriSlot();
 	m_width = 960;
 	xstep = 1;
@@ -606,7 +606,10 @@ void MainWidget::restoreSetupSlot()
 {
 	QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
 	if (!name.isEmpty())
+	{
 		m_theApp->loadSetup(name);
+		configfilename->setText(m_theApp->getConfigfilename());
+	}
 }
 
 
