@@ -26,6 +26,9 @@
 
 class QFile;
 
+/**
+	@author Jens Krüger <jens.krueger@frm2.tum.de>
+*/
 class Spectrum 
 {
 public:

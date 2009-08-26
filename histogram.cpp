@@ -40,6 +40,10 @@ Spectrum::~Spectrum()
 	delete m_data;
 }
 
+/**
+ \param bin number of the bin in the spectrum
+ \return true or false if successful or not
+ */
 bool Spectrum::incVal(quint16 bin)
 {
 	m_data[bin]++;
@@ -63,7 +67,7 @@ void Spectrum::clear(void)
 	m_maximumPos = m_meanCount = m_meanPos = 0;
 }
 
-/*
+/**
  \param s sigma of the floating mean value
  \return floating mean value
  */
