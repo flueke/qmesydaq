@@ -39,6 +39,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_histPath("/home")
 	, m_configPath("/home")
 	, m_timingwidth(1)
+	, theTimer(NULL)
 {
 	initDevices();
 	initTimers();
@@ -49,6 +50,9 @@ Mesydaq2::Mesydaq2(QObject *parent)
 Mesydaq2::~Mesydaq2()
 {
 	m_mcpd.clear();
+	if (theTimer)
+		delete theTimer;
+	theTimer = NULL;
 }
 
 /*!
