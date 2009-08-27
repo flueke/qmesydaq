@@ -43,6 +43,8 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 	, m_dataRxd(0)
 	, m_cmdTxd(0)
 	, m_cmdRxd(0)
+	, m_headertime(0)
+	, m_timemsec(0)
 {
 // TODO
 //	setId(id);
@@ -657,6 +659,9 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 	protocol(tr("id %1").arg(id), 3);
 	communicate(false);
 	MPSD8	*ptrMPSD;
+
+	m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
+	m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
 
 	protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), 3);
 		

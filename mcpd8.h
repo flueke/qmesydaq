@@ -75,6 +75,11 @@ public:
 
 	quint16 getRunId(void) {return m_runId;}
 
+	quint64 receivedData() {return m_dataRxd;} 
+
+	quint64 receivedCmds() {return m_cmdRxd;} 
+
+	quint64 sentCmds() {return m_cmdTxd;} 
 
 // commands: General MCPD-8 settings
 	bool setCounterCell(quint16 source, quint16 trigger, quint16 compare);
@@ -142,6 +147,8 @@ public:
 	bool isPulserOn();
 
 	bool isPulserOn(quint8 addr);
+
+	quint64 time(void) {return m_timemsec;}
 
 public slots:
 	void analyzeBuffer(MDP_PACKET &pd);
@@ -231,6 +238,13 @@ public:
 #warning TODO remove the public access of m_mpsd
 	//! the accessed MPSD8 ????
 	QMap<int, MPSD8 *> m_mpsd;
+private:
+	
+	//! the header time stamp
+	quint64		m_headertime;
+
+	//! the header time in ms
+	quint64		m_timemsec;
 };
 
 #endif
