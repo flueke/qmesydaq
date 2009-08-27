@@ -108,15 +108,13 @@ public:
 
 	quint8 getThreshold(quint16 mod, quint16 addr);
 
-	quint64 getMTime(void) {return m_timeMsecs;}
+	quint64 receivedData(); 
 
-	quint64 getHeadertime(void) {return m_headertime;}
+	quint64 receivedCmds(); 
 
-	quint64 receivedData() {return m_dataRxd;}
+	quint64 sentCmds(); 
 
-	quint64 receivedCmds() {return m_cmdRxd;}
-
-	quint64 sentCmds() {return m_cmdTxd;}
+	quint64 time();
 
 public slots:
 	void writeRegister(quint16 id, quint16 addr, quint16 reg, quint16 val);
@@ -186,11 +184,6 @@ private:
 	static const quint16  	sepF = 0xFFFF;
 
 private:
-// not really used in Mesydaq2 
-	ulong 		m_dataRxd;
-	ulong 		m_cmdRxd;
-	ulong 		m_cmdTxd;
-
 	quint8  	m_daq;
     
 	bool 		m_acquireListfile;
@@ -209,11 +202,7 @@ private:
 	quint32 	m_lastBufnum;
 	quint8  	m_dispatch[10];
 
-	QTimer 		*theTimer;
-
-	quint64		m_headertime;
-
-	quint64 	m_timeMsecs;
+	QTimer 		*m_theTimer;
 };
 
 

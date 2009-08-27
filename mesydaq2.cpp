@@ -28,9 +28,6 @@
 
 Mesydaq2::Mesydaq2(QObject *parent)
 	: MesydaqObject(parent) 
-	, m_dataRxd(0)
-	, m_cmdRxd(0)
-	, m_cmdTxd(0)
 	, m_daq(IDLE)
 	, m_acquireListfile(false)
 	, m_listfilename("")
@@ -39,7 +36,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_histPath("/home")
 	, m_configPath("/home")
 	, m_timingwidth(1)
-	, theTimer(NULL)
+	, m_theTimer(NULL)
 {
 	initDevices();
 	initTimers();
@@ -50,9 +47,39 @@ Mesydaq2::Mesydaq2(QObject *parent)
 Mesydaq2::~Mesydaq2()
 {
 	m_mcpd.clear();
-	if (theTimer)
-		delete theTimer;
-	theTimer = NULL;
+	if (m_theTimer)
+		delete m_theTimer;
+	m_theTimer = NULL;
+}
+
+quint64 Mesydaq2::receivedData(void) 
+{
+	quint64 dataRxd = 0;
+	for (QMap<int, MCPD8	*>::const_iterator it = m_mcpd.constBegin(); it != m_mcpd.constEnd(); ++it)
+		dataRxd += it.value()->receivedData();	
+	return dataRxd;
+}
+
+quint64 Mesydaq2::receivedCmds(void)
+{
+	quint64 cmdRxd = 0;
+	for (QMap<int, MCPD8	*>::const_iterator it = m_mcpd.constBegin(); it != m_mcpd.constEnd(); ++it)
+		cmdRxd += it.value()->receivedCmds();	
+	return cmdRxd;
+}
+
+quint64 Mesydaq2::sentCmds(void) 
+{
+	quint64 cmdTxd = 0;
+	for (QMap<int, MCPD8	*>::const_iterator it = m_mcpd.constBegin(); it != m_mcpd.constEnd(); ++it)
+		cmdTxd += it.value()->sentCmds();	
+	return cmdTxd;
+}
+
+quint64 Mesydaq2::time(void)
+{
+#warning TODO what if the number of MCPD is > 1
+	return m_mcpd[0]->time();
 }
 
 /*!
@@ -125,11 +152,11 @@ void Mesydaq2::initDevices(void)
 void Mesydaq2::initTimers(void)
 {
 // central dispatch timer
-	theTimer = new QTimer(this);
-	connect(theTimer, SIGNAL(timeout()), this, SLOT(centralDispatch()));
+	m_theTimer = new QTimer(this);
+	connect(m_theTimer, SIGNAL(timeout()), this, SLOT(centralDispatch()));
 	for(quint8 c = 0; c < 10; c++)
 		m_dispatch[c] = 0;
-	theTimer->start(1);
+	m_theTimer->start(1);
 }
 
 /*!
@@ -754,7 +781,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			writeBlockSeparator();
 //			qDebug("------------------");
 		}
-		protocol(tr("dataRxd : %1").arg(++m_dataRxd), 3);
 		protocol(tr("buffer : length : %1").arg(pd.bufferLength), 3);
 		if(pd.bufferType < 0x0002) 
 		{
