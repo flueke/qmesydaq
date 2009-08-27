@@ -78,6 +78,9 @@ MCPD8::~MCPD8()
 	if (m_network)
 		delete m_network;
 	m_network = NULL;
+	if (m_commTimer)
+		delete m_commTimer;
+	m_commTimer = NULL;
 }
 
 /*!
