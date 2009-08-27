@@ -31,7 +31,10 @@ MesydaqData::MesydaqData()
 
 QwtData *MesydaqData::copy() const
 {
-	return new MesydaqData();
+	MesydaqData *tmp = new MesydaqData();
+	ulong *t = (ulong *)m_data.data();
+	tmp->setData(t, d_size);
+	return tmp;
 }
 
 double MesydaqData::x(size_t i) const
