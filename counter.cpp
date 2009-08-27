@@ -104,7 +104,7 @@ void MesydaqCounter::calcRate(void)
 void MesydaqCounter::calcMeanRate(void)
 {
 	quint64 val2(0);
-	for(quint8 c = 1; c < m_rate.size(); ++c)
+	for(quint16 c = 1; c < m_rate.size(); ++c)
 		val2 += m_rate[c];
 	if(m_rate.size() > 2)
 		m_rate.enqueue(val2 / (m_rate.size() - 1));
