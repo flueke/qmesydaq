@@ -37,10 +37,11 @@ Spectrum::Spectrum(quint16 bins)
 
 Spectrum::~Spectrum()
 {
-	delete m_data;
+	delete [] m_data;
 }
 
 /**
+ \fn Spectrum::incVal(quint16 bin)
  \param bin number of the bin in the spectrum
  \return true or false if successful or not
  */
@@ -60,6 +61,9 @@ bool Spectrum::incVal(quint16 bin)
 	return true;
 }
 
+/**
+ \fn Spectrum::clear(void)
+ */
 void Spectrum::clear(void)
 {
 	for (quint16 i = 0; i < m_bins; ++i)
@@ -68,6 +72,7 @@ void Spectrum::clear(void)
 }
 
 /**
+ \fn Spectrum::mean(float &s)
  \param s sigma of the floating mean value
  \return floating mean value
  */
@@ -94,13 +99,11 @@ float Spectrum::mean(float &s)
 
 Histogram::Histogram(quint16 channels, quint16 bins, QObject *parent)
 	: MesydaqObject(parent)
-	, m_lastTime(0)
 	, m_totalCounts(0)
 	, m_twidth(1)
 	, m_data(NULL)
 	, m_channels(channels)
 	, m_sumSpectrum(NULL)
-	, m_timeSpectrum(NULL)
 	, m_maximumPos(0)
 {
 	m_data = new Spectrum*[m_channels];
@@ -108,7 +111,6 @@ Histogram::Histogram(quint16 channels, quint16 bins, QObject *parent)
 		m_data[i] = new Spectrum(bins);
 	
 	m_sumSpectrum = new Spectrum(bins);
-	m_timeSpectrum = new Spectrum(bins);
 	clear();
 }
 
@@ -118,10 +120,9 @@ Histogram::~Histogram()
 		delete m_data[i];
 	delete m_data;
 	delete m_sumSpectrum;
-	delete m_timeSpectrum;
 }
 
-bool Histogram::incVal(quint16 chan, quint16 bin, quint64 time)
+bool Histogram::incVal(quint16 chan, quint16 bin)
 {
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
@@ -132,17 +133,6 @@ bool Histogram::incVal(quint16 chan, quint16 bin, quint64 time)
 // sum spectrum of all channels
 	m_sumSpectrum->incVal(bin);
 
-// already a value?
-	if(m_lastTime)
-	{
-		quint64 deltat = time - m_lastTime;
-#warning TODO 960 ??????
-		if(deltat > 959)		
-			deltat = 959; 
-#warning TODO	m_timeSpectrum->incVal((quint16)deltat);
-	}
-	m_lastTime = time;
-		
 	return true;
 }
 
@@ -168,8 +158,7 @@ void Histogram::clear(void)
  	for(quint16 i = 0;i < m_channels; i++)
 		m_data[i]->clear();
 	m_sumSpectrum->clear();
-	m_timeSpectrum->clear();
-	m_lastTime = 0;
+//	m_timeSpectrum->clear();
 	m_totalCounts = 0;
 	m_twidth = 1;
 }
@@ -183,21 +172,36 @@ quint64 Histogram::getTotalCounts(void)
 }
 
 /*!
-    \fn Histogram::copyLine(channel)
+    \fn Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
  */
 void Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
 {
+	quint16 bins;
    	if(channel <= m_channels)
-		for(quint16 i = 0; i < 960; i++)
+	{
+		bins = m_data[channel]->width();
+		for(quint16 i = 0; i < bins; i++)
     			pLineBuffer[i] = m_data[channel]->val(i);
+	}
 	else
-		for(quint16 i = 0; i < 960; i++)
+	{
+		bins = m_data[0]->width();
+		for(quint16 i = 0; i < bins; i++)
                         pLineBuffer[i] = 0;
+	}
 }
 
+/*!
+    \fn Histogram::copyLine(ulong *pLineBuffer)
+ */
+void Histogram::copyLine(ulong *pLineBuffer)
+{
+	for(quint16 i = 0; i < m_sumSpectrum->width(); i++)
+    		pLineBuffer[i] = m_sumSpectrum->val(i);
+}
 
 /*!
-    \fn Histogram::max(unsigned int channel)
+    \fn Histogram::max(quint16 channel)
  */
 quint64 Histogram::max(quint16 channel)
 {
@@ -209,7 +213,7 @@ quint64 Histogram::max(quint16 channel)
 
 
 /*!
-    \fn Histogram::maxpos(unsigned char channel)
+    \fn Histogram::maxpos(quint16 channel)
  */
 quint16 Histogram::maxpos(quint16 channel)
 {
@@ -218,6 +222,7 @@ quint16 Histogram::maxpos(quint16 channel)
 }
 
 /*!
+    \fn Histogram::getMean(quint16 chan, float &m, float &s)
  */
 void Histogram::getMean(quint16 chan, float &m, float &s)
 {
@@ -225,7 +230,7 @@ void Histogram::getMean(quint16 chan, float &m, float &s)
 }
 
 /*!
-    \fn Histogram::getMean(float* vals)
+    \fn Histogram::getMean(quint16 chan, float* vals)
  */
 void Histogram::getMean(quint16 chan, float* vals)
 {
@@ -241,69 +246,42 @@ void Histogram::getMean(quint16 chan, float* vals)
 
 
 /*!
-    \fn Histogram::setWidth(unsigned char width)
+    \fn Histogram::setWidth(quint8 width)
  */
 void Histogram::setWidth(quint8 width)
 {
 	m_twidth = width; 
 }
 
-
 /*!
     \fn Histogram::writeHistogram(QFile f)
  */
-bool Histogram::writeHistogram(QFile* f)
+bool Histogram::writeHistogram(QFile* f, const QString title)
 {
 	quint32 i, j, k;
   
 	QTextStream t( f );        // use a text stream
 	QString s;
 	// Title
-	t << "position data: 1 row title (8 x 8 detectors), position data in columns";
-	t << '\r' << '\n';
-	t << '\t';
+	t << title << '\r' << '\n'; 
 	for(i = 0; i < 64; i++)		// why 64 ??? 
-	{
-		t << i << '\t';
-	}
+		t << '\t' << i; 
 	t << '\r' << '\n';
-	for(i = 0; i < 960; i++)	// ???? why 960
+	for(i = 0; i < m_data[k]->width(); i++)	// ???? why 960
 	{
-		t << i << '\t';
 		for(k = 0; k < 8 ; k++)
 		{
 			for(j = 0; j < 8 ; j++)
 			{
-#warning TODO
-				t << m_data[k]->val(i) << '\t';
+				t << '\t' << m_data[k]->val(i);
 			}
 		}
 		t << '\r' << '\n';
 	}
 	t << '\r' << '\n';
 
-	t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns";
-	t << '\r' << '\n';
-	t << '\t';
-	for(i = 0; i < 64; i++)
-	{
-		t << i << '\t';
-	}
-	t << '\r' << '\n';
-	for(i = 0; i < 960; i++)
-	{
-		t << i << '\t';
-		for(k = 0; k < 8 ; k++)
-		{
-			for(j = 0; j < 8 ; j++)
-			{
-#warning TODO
-				t << m_data[k]->val(i) << '\t';
-			}
-		}
-		t << '\r' << '\n';
-	}
-	t << '\r' << '\n';
+// "position data: 1 row title (8 x 8 detectors), position data in columns";
+// 	t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns";
 	return true;
 }
 

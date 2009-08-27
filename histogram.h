@@ -52,6 +52,8 @@ public:
 	
 	quint64 val(quint16 index) {return m_data[index];}
 
+	quint16		width() {return m_bins;}
+
 private:
 	quint64		*m_data;
 
@@ -80,7 +82,7 @@ public:
 
 	~Histogram();
     
-	bool incVal(quint16 chan, quint16 bin, quint64 time);
+	bool incVal(quint16 chan, quint16 bin);
 
 	void clear(void);
 
@@ -89,6 +91,8 @@ public:
 	quint64 getTotalCounts(void);
 
 	void copyLine(quint16 channel, ulong *pLineBuffer);
+
+	void copyLine(ulong *pLineBuffer);
 
 	quint64 max(quint16 channel);
 
@@ -100,11 +104,9 @@ public:
 
 	void setWidth(quint8 width);
 
-	bool writeHistogram(QFile* f);
+	bool writeHistogram(QFile* f, const QString = "");
 
 protected:
-	quint64 	m_lastTime;
-
 	quint64 	m_totalCounts;
 
 	quint8 		m_twidth;
@@ -115,17 +117,8 @@ protected:
 
 	Spectrum	*m_sumSpectrum;
 
-	Spectrum	*m_timeSpectrum;
-
 	quint16		m_maximumPos;
 
-//	quint64 	m_chanCounts[CHANNELS+1];
-
-//	quint32 	m_floatingMean[CHANNELS+3][255];
-
-//	quint8 		m_meanCount[CHANNELS+3];
-
-//	quint8 		m_meanPos[CHANNELS+3];
 };
 
 #endif
