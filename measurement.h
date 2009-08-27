@@ -26,6 +26,7 @@
 #include "mdefines.h"
 
 class Histogram;
+class Spectrum;
 class Mesydaq2;
 
 /**
@@ -39,11 +40,11 @@ public:
 
 	~Measurement();
 
-	ulong	getMeastime(void);
+	quint64	getMeastime(void);
 
 	void	setCurrentTime(quint64 msecs);
-	void	stop(quint64 time);
-	void	start(quint64 time);
+	void	stop();
+	void	start();
 	void	cont();
 
 	void	calcRates();
@@ -87,13 +88,19 @@ public:
 	quint64	mon2() {return m_counter[M2CT].value();}
 	quint64	events() {return m_counter[EVCT].value();}
 
+	quint64 getHeadertime(void) {return m_headertime;}
+
 	void writeHistograms(const QString &name);
 
 	void clearAllHist(void);
 
 	void clearChanHist(quint16 chan);
 
-	void copyData(quint32 line, ulong *data);
+	void copyPosData(quint32 line, ulong *data);
+	void copyAmpData(quint32 line, ulong *data);
+	void copyTimeData(ulong *data);
+	void copyPosData(ulong *data);
+	void copyAmpData(ulong *data);
 
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
@@ -102,7 +109,7 @@ private slots:
 	void requestStop(void);
 
 signals:
-	void stop();
+	void stopSignal();
 
 	void acqListfile(bool);
 
@@ -119,9 +126,12 @@ private:
 	//! Access to hardware
 	Mesydaq2	*m_mesydaq;
 
-
 	//! Histogram buffer
-	Histogram	*m_hist;
+	Histogram	*m_posHist;
+	Histogram	*m_ampHist;
+	Spectrum	*m_timeSpectrum;
+
+	quint64 	m_lastTime;
 
 	quint64 	m_starttime_msec;
 	quint64 	m_meastime_msec;
@@ -133,6 +143,8 @@ private:
 	bool 		m_working; 		// it's set to true and nothing else ????
 	bool 		m_listmode;
 	bool 		m_remote;
+
+	quint64		m_headertime;
 
 	//! definitions of the counters
 	MesydaqCounter	m_counter[8];
