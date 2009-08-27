@@ -64,8 +64,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 
-	connect(m_meas, SIGNAL(stop()), m_theApp, SLOT(stop()));
-	connect(m_meas, SIGNAL(acqListfile(bool)), m_theApp, SLOT(acqListfile(bool)));
 
 // display refresh timer
 	m_dispTimer = new QTimer(this);
@@ -143,15 +141,13 @@ void MainWidget::startStopSlot()
 		
 		startStopButton->setText("Stop");
 		// set device id to 0 -> will be filled by mesydaq for master
-		m_theApp->start(); 
-		m_meas->start(m_theApp->getMTime());
+		m_meas->start(); 
 	}
 	else
 	{
 		startStopButton->setText("Start");
 		// set device idto 0 -> will be filled by mesydaq for master
-		m_theApp->stop(); 
-		m_meas->stop(m_theApp->getMTime());
+		m_meas->stop();
 	}
 }
 
@@ -304,9 +300,9 @@ void MainWidget::update(void)
 {
    	quint16 id = (quint16) paramId->value();	
 	dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
-	cmdTx->setText(tr("%1").arg( m_theApp->sentCmds()));
+	cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
 	cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
-	hTimeText->setText(buildTimestring(m_theApp->getHeadertime(), true));
+	hTimeText->setText(buildTimestring(m_meas->getHeadertime(), true));
 	mTimeText->setText(buildTimestring(m_meas->getMeastime(), false));   
     
 // parameter values for selected ID
@@ -356,9 +352,8 @@ QString MainWidget::buildTimestring(ulong timeval, bool nano)
 	min = val / 60;
 // remaining seconds:
 	sec = val - (min * 60);
-//	qDebug("%x - %x - %x", m_theApp->ht[2], m_theApp->ht[1], m_theApp->ht[0]);
 //	qDebug("%lu %lu %lu %lu %lu", nsecs, hr, min, sec, nsec);
-	str.sprintf("%2lu:%2lu:%2lu", hr, min, sec);
+	str.sprintf("%02lu:%02lu:%02lu", hr, min, sec);
 	return str;
 }
 
@@ -368,7 +363,7 @@ QString MainWidget::buildTimestring(ulong timeval, bool nano)
  */
 void MainWidget::setData(ulong *data, quint32 len, ulong max)
 {
-	qDebug("setData, len : %d, max: %ld", len, max);
+	qDebug(tr("setData, len : %1, max: %2").arg(len).arg(max));
 	ulong m = max * 1.1;
 	m_pDispBuffer = data;
 	m_dispLen = len;
@@ -377,8 +372,9 @@ void MainWidget::setData(ulong *data, quint32 len, ulong max)
 	scale = 1;
 
 	m_data->setData(data, len);
-	qDebug("setData max : %u", m_data->max());
+	qDebug(tr("setData max : %1").arg(m_data->max()));
 	m_curve->setData(*m_data);
+	
     
 // reduce data in case of threshold settings:
 	if(dispThresh)
@@ -918,32 +914,37 @@ void MainWidget::mpsdCheck(int mod)
 void MainWidget::draw(void)
 {
 	qDebug("MainWidget::draw()");
-#if 0
 	quint8 id = getDispId();
 	static ulong	dispBuf[960];
 
 	if(dispAll->isChecked())
 	{
 		if(dispAllPos->isChecked())
-			m_meas->copyData(CHANNELS-2, dispBuf);
+			m_meas->copyPosData(dispBuf);
 		else
-			m_meas->copyData(CHANNELS-1, dispBuf);
+			m_meas->copyAmpData(dispBuf);
 	}
 	else
 	{
 		if (specialBox->isChecked())
-			m_meas->copyData(CHANNELS, dispBuf);
+		{
+			m_meas->copyTimeData(dispBuf);
+		}
 		else
 		{
-			quint32 chan = dispMcpd->value() * 128;
-			chan += dispMpsd->value() * 16;
+			quint32 chan = dispMcpd->value() * 64;
+			chan += dispMpsd->value() * 8;
 			chan += dispChan->value();
-			m_meas->copyData(chan, dispBuf);
+			qDebug(tr("channel = %1").arg(chan));
+			if(dispAllPos->isChecked())
+				m_meas->copyPosData(chan, dispBuf);
+			else
+				m_meas->copyAmpData(chan, dispBuf);
 		}
 	}
-	setData(dispBuf, 960, 0/*hist[id]->max(chan)*/);
-#endif
-	dispId = dispMcpd->value();
+	setData(dispBuf, 960, 0);
 	dataFrame->replot();
+	dispId = dispMcpd->value();
 	drawOpData();
+	update();
 }
