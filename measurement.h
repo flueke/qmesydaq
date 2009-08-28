@@ -72,9 +72,9 @@ public:
 
 	void 	readListfile(QString readfilename);
 
-	quint64	mon1() {return m_counter[M1CT].value();}
-	quint64	mon2() {return m_counter[M2CT].value();}
-	quint64	events() {return m_counter[EVCT].value();}
+	quint64	mon1() {return m_counter[M1CT]->value();}
+	quint64	mon2() {return m_counter[M2CT]->value();}
+	quint64	events() {return m_counter[EVCT]->value();}
 
 	quint64 getHeadertime(void) {return m_headertime;}
 
@@ -97,7 +97,7 @@ private slots:
 	void requestStop(void);
 
 signals:
-	void stopSignal();
+	void stopSignal(bool = false);
 
 	void acqListfile(bool);
 
@@ -135,7 +135,7 @@ private:
 	quint64		m_headertime;
 
 	//! definitions of the counters
-	MesydaqCounter	m_counter[8];
+	MesydaqCounter	*m_counter[8];
 };
 
 class CARESSMeasurement : public Measurement

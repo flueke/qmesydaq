@@ -547,7 +547,7 @@ Listfile</string>
              <string>activate preset for timer</string>
             </property>
             <property name="text">
-             <string>P</string>
+             <string>Preset</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -560,7 +560,7 @@ Listfile</string>
              <string>activate preset for event counter</string>
             </property>
             <property name="text">
-             <string>P</string>
+             <string>Preset</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -573,7 +573,7 @@ Listfile</string>
              <string>activate preset for monitor 2</string>
             </property>
             <property name="text">
-             <string>P</string>
+             <string>Preset</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -681,7 +681,7 @@ Listfile</string>
              <string>activate preset for monitor 1</string>
             </property>
             <property name="text">
-             <string>P</string>
+             <string>Preset</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -717,7 +717,7 @@ Listfile</string>
              <string>reset timer</string>
             </property>
             <property name="text">
-             <string>&amp;R</string>
+             <string>&amp;Reset</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -730,7 +730,7 @@ Listfile</string>
              <string>reset event counter</string>
             </property>
             <property name="text">
-             <string>R</string>
+             <string>Reset</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -743,7 +743,7 @@ Listfile</string>
              <string>reset monitor 1</string>
             </property>
             <property name="text">
-             <string>R</string>
+             <string>Reset</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -756,7 +756,7 @@ Listfile</string>
              <string>reset monitor 2</string>
             </property>
             <property name="text">
-             <string>R</string>
+             <string>Reset</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -3129,7 +3129,7 @@ parameters</string>
    <sender>logGroup</sender>
    <signal>toggled(bool)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>redrawSlot()</slot>
+   <slot>draw()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>124</x>
@@ -3721,7 +3721,7 @@ parameters</string>
    <sender>specialBox</sender>
    <signal>clicked()</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>redrawSlot()</slot>
+   <slot>draw()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>22</x>
@@ -3735,9 +3735,9 @@ parameters</string>
   </connection>
   <connection>
    <sender>startStopButton</sender>
-   <signal>clicked()</signal>
+   <signal>clicked(bool)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>startStopSlot()</slot>
+   <slot>startStopSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1079</x>

@@ -73,6 +73,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
+        connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 
 // display refresh timer
@@ -167,9 +168,9 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         }
 }
 
-void MainWidget::startStopSlot()
+void MainWidget::startStopSlot(bool checked)
 {
-	if(startStopButton->isChecked())
+	if(checked)
 	{
 		// get timing binwidth
 		m_theApp->setTimingwidth(timingBox->value());
@@ -195,6 +196,7 @@ void MainWidget::startStopSlot()
 		m_meas->stop();
 	}
 }
+
 
 void MainWidget::sendCellSlot()
 {
@@ -358,12 +360,12 @@ void MainWidget::update(void)
 	m_meas->calcMeanRates();
     
 // measurement values counters and rates
-	totalCounts->setText(tr("%1").arg(m_meas->getCounter(EVCT)));
 	tSecsText->setText(tr("%1").arg(m_meas->getCounter(TCT)));
+	totalCounts->setText(tr("%1").arg(m_meas->getCounter(EVCT)));
 	eventRate->setText(tr("%1").arg(m_meas->getRate(EVCT)));
 	monitor1->setText(tr("%1").arg(m_meas->getCounter(M1CT)));
-	monitor2->setText(tr("%1").arg(m_meas->getCounter(M2CT)));
 	monRate1->setText(tr("%1").arg(m_meas->getRate(M1CT)));
+	monitor2->setText(tr("%1").arg(m_meas->getCounter(M2CT)));
 	monRate2->setText(tr("%1").arg(m_meas->getRate(M2CT)));
 }
 

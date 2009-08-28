@@ -114,7 +114,7 @@ void MesydaqCounter::calcMeanRate(void)
 
 quint64 MesydaqCounter::rate()
 {
-	m_rate.last();
+	return m_rate.last();
 }
 
 MesydaqTimer::MesydaqTimer()
@@ -124,11 +124,16 @@ MesydaqTimer::MesydaqTimer()
 
 void MesydaqTimer::start(quint64 time)
 {
+	protocol(tr("MesydaqTimer::start(%1)").arg(time));
 	m_start = time / 1000;
 	set(m_offset);
 }
 
 void MesydaqTimer::setTime(quint64 time)
 {
-	set(time / 1000);
+	protocol(tr("MesydaqTimer::setTime(%1)").arg(time));
+	m_value = time / 1000;
+//	set(time / 1000);
+	if (isStopped())
+		emit stop();
 }

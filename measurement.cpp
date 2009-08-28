@@ -45,9 +45,15 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_headertime(0)
 {
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
-	connect(this, SIGNAL(stop()), m_mesydaq, SLOT(stop()));
+	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	for (quint8 i = 0; i < 8; ++i)
-		connect(&m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
+	{
+		if (i != TCT)
+			m_counter[i] = new MesydaqCounter();
+		else
+			m_counter[i] = new MesydaqTimer();
+		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
+	}
 	m_ampHist = new Histogram(64, 960);
 	m_posHist = new Histogram(64, 960);
 	m_timeSpectrum = new Spectrum(960);
@@ -78,7 +84,7 @@ void Measurement::setCurrentTime(quint64 msecs)
 	{
     		m_meastime_msec = msecs - m_starttime_msec;
 		for (quint8 i = 0; i < 8; ++i)
-			m_counter[i].setTime(m_meastime_msec);
+			m_counter[i]->setTime(m_meastime_msec);
 	}
 }
 
@@ -100,11 +106,11 @@ void Measurement::start()
 	m_starttime_msec = m_mesydaq->time();
 	m_running = true;
 	m_stopping = false;
-	protocol(tr("event counter limit : %1").arg(m_counter[EVCT].limit()));
+	protocol(tr("event counter limit : %1").arg(m_counter[EVCT]->limit()));
 	for (quint8 c = 0; c < 8; ++c)
 	{
-		m_counter[c].start(m_starttime_msec);
-		protocol(tr("counter %1 limit : %2").arg(c).arg(m_counter[c].limit()));
+		m_counter[c]->start(m_starttime_msec);
+		protocol(tr("counter %1 limit : %2").arg(c).arg(m_counter[c]->limit()));
 	}
 }
 
@@ -114,7 +120,7 @@ void Measurement::start()
 void Measurement::requestStop()
 {
 	m_stopping = true;
-	emit stopSignal();
+	emit stopSignal(false);
 	protocol(tr("Max %1 was at pos %2").arg(m_posHist->max(0)).arg(m_posHist->maxpos(0)));
 }
 
@@ -128,7 +134,7 @@ void Measurement::stop()
 	m_running = false;
 	m_stopping = false;
 	for (quint8 c = 0; c < 8; ++c)
-		m_counter[c].stop(time);
+		m_counter[c]->stop(time);
 #if 0
  	m_counterOffset[TCT] = m_counter[1][TCT];
 #endif
@@ -144,13 +150,13 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 	if(cNum < 8)
 	{
 		if (val == 0)
-			m_counter[cNum].reset();
+			m_counter[cNum]->reset();
 		else
-   			m_counter[cNum].set(val);
+   			m_counter[cNum]->set(val);
 // is counter master and is limit reached?
-		if(m_counter[cNum].isStopped() && !m_stopping)
+		if(m_counter[cNum]->isStopped() && !m_stopping)
 		{
-			protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[cNum].value()).arg(m_counter[cNum].limit()));
+			protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[cNum]->value()).arg(m_counter[cNum]->limit()));
 			m_stopping = true;
 			emit stopSignal();
 		}
@@ -163,7 +169,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 void Measurement::calcRates()
 {
 	for(quint8 c = 0; c < 8; c++)
-		m_counter[c].calcRate();
+		m_counter[c]->calcRate();
 }
 
 /*!
@@ -172,7 +178,7 @@ void Measurement::calcRates()
 void Measurement::calcMeanRates()
 {
 	for(quint8 c = 0; c < 8; c++)
-		m_counter[c].calcMeanRate();
+		m_counter[c]->calcMeanRate();
 }
 
 /*!
@@ -181,7 +187,7 @@ void Measurement::calcMeanRates()
 quint64 Measurement::getCounter(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_counter[cNum].value();
+		return m_counter[cNum]->value();
 	else
 		return 0;
 }
@@ -192,7 +198,7 @@ quint64 Measurement::getCounter(quint8 cNum)
 ulong Measurement::getRate(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_counter[cNum].rate();
+		return m_counter[cNum]->rate();
 	else
 		return 0;
 }
@@ -242,14 +248,14 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 		{
     			// clear all other master flags
     			for (quint8 c = 0; c < 8;c++)
-    				m_counter[cNum].setMaster(false);
+    				m_counter[cNum]->setMaster(false);
     			// set new master
-    			m_counter[cNum].setMaster(true);
+    			m_counter[cNum]->setMaster(true);
     		}
     		else
     		// just clear master
-    			m_counter[cNum].setMaster(false);
-    		m_counter[cNum].setLimit(prval);
+    			m_counter[cNum]->setMaster(false);
+    		m_counter[cNum]->setLimit(prval);
 	}
 }
 
@@ -260,7 +266,7 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 ulong Measurement::getPreset(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_counter[cNum].limit();
+		return m_counter[cNum]->limit();
 	else
 		return 0;
 }
@@ -297,7 +303,7 @@ bool Measurement::remoteStart(void)
  */
 bool Measurement::isMaster(quint8 cNum)
 {
-	return m_counter[cNum].isMaster();
+	return m_counter[cNum]->isMaster();
 }
 
 
@@ -321,7 +327,7 @@ void Measurement::clearCounter(quint8 cNum)
 		}
 #endif
 	}
-	m_counter[cNum].reset();
+	m_counter[cNum]->reset();
 }
 
 /*!
@@ -330,7 +336,7 @@ void Measurement::clearCounter(quint8 cNum)
 bool Measurement::hasStopped(quint8 cNum)
 {
 	if(cNum < 8)
-		return m_counter[cNum].isStopped();
+		return m_counter[cNum]->isStopped();
     	return false;
 }
 
@@ -341,7 +347,7 @@ bool Measurement::limitReached(quint8 cNum)
 {
 	if(cNum >= 8)
 		return false;
-	return m_counter[cNum].isStopped();
+	return m_counter[cNum]->isStopped();
 #if 0   
 	if(m_master[cNum] && (m_counter[1][cNum] >= m_preset[cNum]))
 		return true;
@@ -507,10 +513,10 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				switch(dataId)
 				{
 					case MON1ID:
-						++m_counter[M1CT];
+						++(*m_counter[M1CT]);
 						break;
 					case MON2ID:
-						++m_counter[M2CT];
+						++(*m_counter[M2CT]);
 						break;
 					default:
 						break;
@@ -541,8 +547,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					amp = (pd.data[counter+2] & 0x7F) << 3 + (pd.data[counter+1] >> 13) & 0x7;
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
 				}
-				++m_counter[EVCT];
-				protocol(tr("events %1 %2").arg(quint64(m_counter[EVCT])).arg(m_counter[EVCT].limit()), 3);
+				++(*m_counter[EVCT]);
+				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), 3);
 				if (m_posHist)
 				{
 					m_posHist->incVal(chan, pos);

@@ -55,7 +55,7 @@ public slots:
 	void sendAuxSlot();
 	void sendParamSlot();
 	void sendCellSlot();
-	void startStopSlot();
+	void startStopSlot(bool = false);
 	void setTimingSlot();
 	void resetTimerSlot();
 	void clearChanSlot();
