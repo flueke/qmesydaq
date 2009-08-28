@@ -43,10 +43,6 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_working(true)
 	, m_remote(false)
 	, m_headertime(0)
-	, m_runNumber(0)
-	, m_carHistHeight(128)
-	, m_carHistWidth(128)
-	, m_carStep(0)
 {
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(this, SIGNAL(stop()), m_mesydaq, SLOT(stop()));
@@ -269,16 +265,6 @@ ulong Measurement::getPreset(quint8 cNum)
 		return 0;
 }
 
-
-/*!
-    \fn Measurement::setRunnumber(unsigned int number)
- */
-void Measurement::setRunnumber(quint32 number)
-{
-	m_runNumber = number;
-}
-
-
 /*!
     \fn Measurement::setListmode(bool truth)
  */
@@ -304,14 +290,6 @@ void Measurement::setRemote(bool truth)
 bool Measurement::remoteStart(void)
 {
 	return m_remote;
-}
-
-/*!
-    \fn Measurement::getRun()
- */
-quint32 Measurement::getRun()
-{
-	return m_runNumber;
 }
 
 /*!
@@ -550,7 +528,11 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				if (m_mesydaq->getMpsdId(mod, slotId) == 103)
 				{
 					if (m_mesydaq->getMode(mod, id))
+					{
 						amp = (pd.data[counter+1] >> 3) & 0x3FF;
+						if (amp != 0)
+							protocol(tr("amp = %1").arg(amp));
+					}
 					else
 						pos = (pd.data[counter+1] >> 3) & 0x3FF;
 				}
