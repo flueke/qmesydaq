@@ -66,6 +66,7 @@ public slots:
 	void setRunIdSlot();
 	void displayMpsdSlot(int = -1);
 	void displayMcpdSlot(int = -1);
+	void allPulserOff();
 
 	void mpsdCheck(int);
 

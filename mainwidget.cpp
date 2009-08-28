@@ -71,7 +71,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	setupUi(this);
 	
         connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
-        connect(allPulsersoffButton, SIGNAL(clicked()), m_theApp, SLOT(allPulserOff()));
+        connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 
@@ -139,6 +139,12 @@ MainWidget::~MainWidget()
 
 	delete m_meas;
 	m_meas = NULL;
+}
+
+void MainWidget::allPulserOff(void)
+{
+	m_theApp->allPulserOff();
+	pulserButton->setChecked(false);
 }
 
 void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
