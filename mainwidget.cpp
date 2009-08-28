@@ -31,6 +31,8 @@
 #include <QTimer>
 
 #include <qwt_plot_curve.h>
+#include <qwt_plot_zoomer.h>
+#include <qwt_plot_layout.h>
 
 #include <cmath>
 
@@ -50,10 +52,19 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	: QWidget(parent)
 	, Ui_Mesydaq2MainWidget()
 	, m_theApp(mesy)
-	, m_dispMax(10)
-	, m_dispRange(m_dispMax)
-	, m_dispLen(0)
-	, m_height(480)
+	, m_width(960)
+	, m_dispThresh(false)
+	, m_dispLoThresh(0)
+	, m_dispHiThresh(0)
+	, m_dispLog(false)
+	, m_curve(NULL)
+	, m_data(NULL)
+	, m_meas(NULL)
+	, m_dispTimer(NULL)
+	, m_zoomer(NULL)
+	, m_zoomEnabled(false)
+	, m_ct(NULL)
+	, m_cInt(NULL)
 {
 	m_meas = new Measurement(mesy, this);
 	m_ct = new CorbaThread();
@@ -64,22 +75,13 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 
-
 // display refresh timer
 	m_dispTimer = new QTimer(this);
 	connect(m_dispTimer, SIGNAL(timeout()), this, SLOT(draw()));
 	
-	qDebug("comgain->isChecked() %d", comgain->isChecked());
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
 	scanPeriSlot();
-	m_width = 960;
-	xstep = 1;
-	ystep = 1;
-	scale = 1;
-	dispLog = false;
-	dispThresh = false;
-	dispLoThresh = 0;
 
 	versionLabel->setText("QMesyDAQ " VERSION " " __DATE__);
 
@@ -90,6 +92,23 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	dataFrame->setAxisTitle(QwtPlot::xBottom, "channels");
 	dataFrame->setAxisTitle(QwtPlot::yLeft, "counts");
+//	dataFrame->plotLayout()->setAlignCanvasToScales(true);
+	dataFrame->replot();
+
+	m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, dataFrame->canvas());
+
+	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+        connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+
+#if QT_VERSION < 0x040000
+	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlButton);
+#else
+	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier);
+#endif
+	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect3, Qt::RightButton);
+	m_zoomer->setRubberBandPen(QColor(Qt::black));
+	m_zoomer->setTrackerPen(QColor(Qt::black));
+	m_zoomer->setEnabled(true);
 
 	m_curve = new QwtPlotCurve("");
 	m_curve->setStyle(QwtPlotCurve::Steps);
@@ -112,14 +131,34 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 MainWidget::~MainWidget()
 {
-	m_dispTimer->stop();
 	if (m_dispTimer)
-		delete m_dispTimer;
+		m_dispTimer->stop();
+
+	delete m_dispTimer;
 	m_dispTimer = NULL;
 
-	if (m_meas)
-		delete m_meas;
+	delete m_meas;
 	m_meas = NULL;
+}
+
+void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
+{
+        if(!m_zoomEnabled)
+        {
+                m_zoomer->setZoomBase();
+                m_zoomEnabled = true;
+        }
+}
+
+void MainWidget::zoomed(const QwtDoubleRect &rect)
+{
+        if(rect == m_zoomer->zoomBase())
+        {
+                dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+                dataFrame->setAxisAutoScale(QwtPlot::xBottom);
+                dataFrame->replot();
+                m_zoomEnabled = false;
+        }
 }
 
 void MainWidget::startStopSlot()
@@ -261,7 +300,7 @@ void MainWidget::setGainSlot()
 	if(gainval > 1.88)
 		gainval = 1.88;
 #endif		
-#warning TODO
+#warning TODO m_theApp->m_mcpd
 	MPSD8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
 	m_theApp->setGain(id, addr, chan, ptrMPSD->calcGainpoti(gainval)); 
 }
@@ -273,7 +312,7 @@ void MainWidget::setThresholdSlot()
 	quint16 addr = module->value();
 	quint16 thresh = threshold->text().toUInt(&ok, 0);
 
-#warning TODO
+#warning TODO m_theApp->m_mcpd
 	MPSD8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
 	m_theApp->setThreshold(id, addr, ptrMPSD->calcThreshpoti(thresh)); 
 }
@@ -323,15 +362,16 @@ void MainWidget::update(void)
 }
 
 /*!
-    \fn MainWidget::buildTimestring(unsigned long nsec)
+    \fn MainWidget::buildTimestring(ulong timeval, bool nano)
  */
-QString MainWidget::buildTimestring(ulong timeval, bool nano)
+QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 {
 // nsec = time in 100 nsecs
 //-> usec = 
 //->
 	QString str;
-	ulong nsec, val, sec, min, hr;
+	quint64 val;
+	ulong nsec, sec, min, hr;
 // calculate raw seconds
 	if(nano)
 	{
@@ -342,8 +382,8 @@ QString MainWidget::buildTimestring(ulong timeval, bool nano)
 	{
 		val = timeval / 1000;
 		nsec = timeval - (1000 * val);
-//		qDebug("%d %d %d", timeval, val, nsec);
 	}
+//	qDebug("%d %d %d", timeval, val, nsec);
 // hours = val / 3600 (s/h)
 	hr = val / 3600;
 // remaining seconds:
@@ -355,67 +395,6 @@ QString MainWidget::buildTimestring(ulong timeval, bool nano)
 //	qDebug("%lu %lu %lu %lu %lu", nsecs, hr, min, sec, nsec);
 	str.sprintf("%02lu:%02lu:%02lu", hr, min, sec);
 	return str;
-}
-
-
-/*!
-    \fn MainWidget::setData(unsigned long * data, unsigned int len)
- */
-void MainWidget::setData(ulong *data, quint32 len, ulong max)
-{
-	qDebug(tr("setData, len : %1, max: %2").arg(len).arg(max));
-	ulong m = max * 1.1;
-	m_pDispBuffer = data;
-	m_dispLen = len;
-	m_dispMax = 10;
-	m_dispRange = m_dispMax;
-	scale = 1;
-
-	m_data->setData(data, len);
-	qDebug(tr("setData max : %1").arg(m_data->max()));
-	m_curve->setData(*m_data);
-	
-    
-// reduce data in case of threshold settings:
-	if(dispThresh)
-	{
-		for(quint32 i = 0; i < len; i++)
-		{
-//    			if(m_pDispBuffer[i] > dispLoThresh && m_pDispBuffer[i] < dispHiThresh)
-//    				m_pDispBuffer[i] -= dispLoThresh;
-//    			else
-//			{ 
-				if(m_pDispBuffer[i] < dispLoThresh)
-					m_pDispBuffer[i] = 0;
-				if(m_pDispBuffer[i] > dispHiThresh)
-					m_pDispBuffer[i] = dispHiThresh;
-//	    		}
-    		}
-    	}
-// check for upper threshold
-	if(dispThresh)
-	{
-		if(dispHiThresh < max)
-		{
-			m_dispMax = dispHiThresh;
-//	    		m_dispRange = m_dispMax - dispLoThresh;
-	    		m_dispRange = m_dispMax;
-	    	}
-	    	else
-		{
-		    // calculate maximum
-			while(m > m_dispMax)
-				m_dispMax *= 1.3;    	
-			m_dispRange = m_dispMax;
-		}
-   	}
-	else
-	{
-	    // calculate maximum
-		while(m > m_dispMax)
-			m_dispMax *= 1.3;    	
-		m_dispRange = m_dispMax;
-	}
 }
 
 void MainWidget::clearAllSlot()
@@ -608,13 +587,6 @@ void MainWidget::restoreSetupSlot()
 	}
 }
 
-
-void MainWidget::redrawSlot()
-{
-	draw();
-}
-
-
 /*!
     \fn MainWidget::processDispData()
  */
@@ -623,31 +595,31 @@ void MainWidget::processDispData()
     /// @todo implement me
 }
 
+/*!
+    \fn MainWidget::applyThreshSlot()
+ */
 void MainWidget::applyThreshSlot()
 {
 	bool ok;
-	if(useThresh->isChecked()){
-		dispThresh = true;
-		dispHiThresh = hiLim->text().toUInt(&ok, 0);
-		dispLoThresh = loLim->text().toUInt(&ok, 0);
-		qDebug("lo: %ld, hi: %ld", dispLoThresh, dispHiThresh);
+	m_dispThresh = useThresh->isChecked();
+	if(m_dispThresh)
+	{
+		m_dispHiThresh = hiLim->text().toUInt(&ok, 0);
+		m_dispLoThresh = loLim->text().toUInt(&ok, 0);
 	}
-	else
-		dispThresh = false;		
 }
 
+/*!
+    \fn MainWidget::linlogSlot()
+ */
 void MainWidget::linlogSlot()
 {
-	if(log->isChecked()){
-		dispLog = true;
+	m_dispLog = log->isChecked();
+	if (m_dispLog)
 		qDebug("log");
-	}
-	else{
-		dispLog = false;
+	else
 		qDebug("lin");
-	}
 }
-
 
 /*!
     \fn MainWidget::drawOpData()
@@ -848,9 +820,7 @@ void MainWidget::updatePresets(void)
     	tPresetButton->setChecked(m_meas->isMaster(TCT));
    
 // Caress values
-	caressHeight->setText(tr("%1").arg(m_meas->getCarHeight()));
-	caressWidth->setText(tr("%1").arg(m_meas->getCarWidth()));
-	caressRun->setText(tr("%1").arg(m_meas->getRun()));
+	updateCaress();
 }
 
 void MainWidget::tResetSlot()
@@ -884,9 +854,12 @@ void MainWidget::m2ResetSlot()
  */
 void MainWidget::updateCaress(void)
 {
+#warning TODO remove the CARESS specific part
+#if 0
 	caressWidth->setText(tr("%1").arg(m_meas->getCarWidth()));
 	caressHeight->setText(tr("%1").arg(m_meas->getCarHeight()));
 	caressRun->setText(tr("%1").arg(m_meas->getRun()));
+#endif
 }
 
 /*!
@@ -913,9 +886,7 @@ void MainWidget::mpsdCheck(int mod)
  */
 void MainWidget::draw(void)
 {
-	qDebug("MainWidget::draw()");
-	quint8 id = getDispId();
-	static ulong	dispBuf[960];
+	ulong	dispBuf[m_width];
 
 	if(dispAll->isChecked())
 	{
@@ -935,16 +906,21 @@ void MainWidget::draw(void)
 			quint32 chan = dispMcpd->value() * 64;
 			chan += dispMpsd->value() * 8;
 			chan += dispChan->value();
-			qDebug(tr("channel = %1").arg(chan));
 			if(dispAllPos->isChecked())
 				m_meas->copyPosData(chan, dispBuf);
 			else
 				m_meas->copyAmpData(chan, dispBuf);
 		}
 	}
-	setData(dispBuf, 960, 0);
+	
+	m_data->setData(dispBuf, m_width);
+	m_curve->setData(*m_data);
+// reduce data in case of threshold settings:
+	if(m_dispThresh)
+		dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
+	else
+                dataFrame->setAxisAutoScale(QwtPlot::yLeft);
 	dataFrame->replot();
-	dispId = dispMcpd->value();
 	drawOpData();
 	update();
 }

@@ -53,6 +53,7 @@ SOURCES 	+= mesydaqobject.cpp \
 		mpsd8.cpp \
 		networkdevice.cpp \
 		mesydaqdata.cpp \
-		counter.cpp
+		counter.cpp \
+		caressmeasurement.cpp
 
 RESOURCES 	+= images.qrc

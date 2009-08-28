@@ -23,6 +23,7 @@
 #include "ui_mesydaq2mainwidget.h"
 
 class QwtPlotCurve;
+class QwtPlotZoomer;
 class QTimer;
 class MesydaqData;
 class Mesydaq2;
@@ -42,8 +43,7 @@ public:
 	~MainWidget();
 
 	void 	update(void);
-	QString buildTimestring(ulong timeval, bool nano);
-	void 	setData(ulong * data, quint32 len, ulong max);
+	QString buildTimestring(quint64 timeval, bool nano);
 	void 	processDispData();
 	void 	drawOpData();
 	void 	dispFiledata(void);
@@ -82,7 +82,6 @@ public slots:
 
 	void linlogSlot();
 	void applyThreshSlot();
-	void redrawSlot();
 	void readRegisterSlot();
 	void writeRegisterSlot();
 	void selectConfigpathSlot();
@@ -108,24 +107,23 @@ protected slots:
 	void setIpUdpSlot();
 	void setMcpdIdSlot();
 
+	void zoomAreaSelected(const QwtDoubleRect&);
+	void zoomed(const QwtDoubleRect&);
+
 private:
 	Mesydaq2	*m_theApp;
 	
 	ulong 		*m_pDispBuffer;
-	ulong 		m_dispMax;
-	float		m_dispRange;
-	ulong 		m_dispLen;
 
-	quint16 	m_height;
 	quint16 	m_width;
-	quint16 	xstep;
-	float		ystep;
-	ulong 		dispLoThresh;
-	ulong 		dispHiThresh;
-	quint8 		scale;
-	bool		dispLog;
-	bool		dispThresh;
-	quint8 		dispId;
+
+// using thresholds for display
+	bool		m_dispThresh;
+	ulong 		m_dispLoThresh;
+	ulong 		m_dispHiThresh;
+
+	bool		m_dispLog;
+//	quint8 		m_dispId;
 
 	QwtPlotCurve	*m_curve;
 
@@ -133,11 +131,15 @@ private:
 
 	Measurement 	*m_meas;
 
+	QTimer 		*m_dispTimer;
+
+	QwtPlotZoomer	*m_zoomer;
+
+	bool		m_zoomEnabled;
+
 	CorbaThread	*m_ct;
 
 	ControlInterface *m_cInt;
-
-	QTimer 		*m_dispTimer;
 };	
 
 #endif

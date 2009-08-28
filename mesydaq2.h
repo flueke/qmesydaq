@@ -174,7 +174,7 @@ private:
 	void initTimers(void);
 
 public:
-#warning TODO
+#warning TODO remove the public attribute
 	QMap<int, MCPD8	*>	m_mcpd;
 
 private:
