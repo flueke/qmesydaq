@@ -34,11 +34,11 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 	, m_cmdPort(port)	// original 7000
 	, m_dataPort(7000)
 	, m_master(true)
-	, m_runId(0)
 	, m_stream(false)
 	, m_commActive(false)
 	, m_lastBufnum(0)
 	, m_commTimer(NULL)
+	, m_runId(0)
 	, m_daq(false)
 	, m_dataRxd(0)
 	, m_cmdTxd(0)
@@ -465,7 +465,6 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 		m_cmdIpAddress = cmdsink;
 		protocol(tr("mcpd #%1: cmd ip address set to %2").arg(m_id).arg(m_cmdIpAddress), 1);
 	}
-
 	finishCmdBuffer(14);
 	return sendCommand();
 }
@@ -517,11 +516,14 @@ bool MCPD8::setRunId(quint16 runid)
 	if(m_master)
 	{
     		m_runId = runid;
+		initCmdBuffer(SETRUNID);
+		m_cmdBuf.data[0] = m_runId;
+		finishCmdBuffer(1);
     		protocol(tr("mcpd %1: set run ID to %2").arg(m_id).arg(m_runId), 1);
+		return sendCommand();
   	}
-	else
-		protocol(tr("Error: trying to set run ID on mcpd %1 - not master!").arg(m_id), 1);
-	return m_master;
+	protocol(tr("Error: trying to set run ID on mcpd %1 - not master!").arg(m_id), 1);
+	return false;
 }
 
 
@@ -674,6 +676,9 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 			protocol(tr("packet (%3) is not valid (CHKSUM error) %1 != %2").arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength));
 		switch(recBuf.cmd)
 		{
+			case RESET:
+				protocol(tr("not handled command : RESET"));
+				break;
 			case START:
 				m_daq = true;
 				emit startedDaq();
@@ -682,12 +687,24 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				m_daq = false;
 				emit stoppedDaq();
 				break;
+			case CONTINUE:
+				m_daq = true;
+				emit continuedDaq();
+				break;
+			case SETID:
+				protocol(tr("not handled command : SETID"));
+				break;
 			case SETPROTOCOL:
 				// extract ip and eth addresses in case of "this pc"
 				break;
-			case READID: // extract the retrieved MPSD-8 IDs:
-				for(quint8 c = 0; c < 8; c++)
-					m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
+			case SETTIMING:
+				protocol(tr("not handled command : SETTIMING"));
+				break;
+			case SETCLOCK:
+				protocol(tr("not handled command : SETCLOCK"));
+				break;
+			case SETCELL:
+				protocol(tr("not handled command : SETCELL"));
 				break;
 			case SETAUXTIMER:
 				ptrMPSD = m_mpsd[recBuf.data[0]];
@@ -697,35 +714,11 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 						arg(recBuf.data[1]).arg(recBuf.data[2]).arg(m_auxTimer[recBuf.data[1]]), 1);
 				}
 				break;
-			case SETMODE: // extract the set mode:
-				m_mpsd[recBuf.data[0]]->setMode(recBuf.data[1] == 1, 0);
+			case SETPARAM:
+				protocol(tr("not handled command : SETPARAM"));
 				break;
-			case SETPULSER:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
-				if(recBuf.data[3] != ptrMPSD->getPulsPoti(1))
-				{
-					protocol(tr("Error setting pulspoti, mod %1, is: %2, should be: %3").
-						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[3]).arg(ptrMPSD->getPulsPoti(1)), 1);
-				}
-				ptrMPSD->setPulserPoti(recBuf.data[1], recBuf.data[2], recBuf.data[3], recBuf.data[4], 0);
-				break;
-			case SETTHRESH: // extract the set thresh value:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
-				if (recBuf.data[1] != ptrMPSD->getThreshpoti(1))
-				{
-					protocol(tr("Error setting threshold, mod %1, is: %2, should be: %3").
-						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[1]).arg(ptrMPSD->getThreshpoti(1)), 1);
-				}
-				ptrMPSD->setThreshpoti(recBuf.data[1], 0);
-				break;
-			case WRITEPERIREG:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
-				if(recBuf.data[2] != ptrMPSD->getInternalreg(recBuf.data[1], 1))
-				{
-					protocol(tr("Error setting internal mpsd-register, mod %1, is: %2, should be: %3").
-						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[3]).arg(ptrMPSD->getPulsPoti(1)), 1);
-				}
-				ptrMPSD->setInternalreg(recBuf.data[1], recBuf.data[2], 0);			
+			case GETPARAM:
+				protocol(tr("not handled command : GETPARAM"));
 				break;
 			case SETGAIN: // extract the set gain values: 
 				if(recBuf.bufferLength == 21) // set common gain
@@ -754,7 +747,81 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 					ptrMPSD->setGain(recBuf.data[1], (quint8)recBuf.data[2], 0);
 				}
 				break;
-			case WRITEREGISTER :
+			case SETTHRESH: // extract the set thresh value:
+				ptrMPSD = m_mpsd[recBuf.data[0]];
+				if (recBuf.data[1] != ptrMPSD->getThreshpoti(1))
+				{
+					protocol(tr("Error setting threshold, mod %1, is: %2, should be: %3").
+						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[1]).arg(ptrMPSD->getThreshpoti(1)), 1);
+				}
+				ptrMPSD->setThreshpoti(recBuf.data[1], 0);
+				break;
+			case SETPULSER:
+				ptrMPSD = m_mpsd[recBuf.data[0]];
+				if(recBuf.data[3] != ptrMPSD->getPulsPoti(1))
+				{
+					protocol(tr("Error setting pulspoti, mod %1, is: %2, should be: %3").
+						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[3]).arg(ptrMPSD->getPulsPoti(1)), 1);
+				}
+				ptrMPSD->setPulserPoti(recBuf.data[1], recBuf.data[2], recBuf.data[3], recBuf.data[4], 0);
+				break;
+			case SETMODE: // extract the set mode:
+				m_mpsd[recBuf.data[0]]->setMode(recBuf.data[1] == 1, 0);
+				break;
+			case SETDAC:
+				protocol(tr("not handled command : SETDAC"));
+				break;
+			case SENDSERIAL:
+				protocol(tr("not handled command : SENDSERIAL"));
+				break;
+			case READSERIAL:
+				protocol(tr("not handled command : READSERIAL"));
+				break;
+			case SCANPERI:
+				protocol(tr("not handled command : SCANPERI"));
+				break;
+			case WRITEFPGA:
+				protocol(tr("not handled command : SCANPERI"));
+				break;
+			case WRITEREGISTER:
+				protocol(tr("not handled command : WRITEREGISTER"));
+				break;
+			case READREGISTER:
+				protocol(tr("not handled command : READREGISTER"));
+				break;
+			case READFPGA:
+				protocol(tr("not handled command : READFPGA"));
+				break;
+			case SETPOTI:
+				protocol(tr("not handled command : SETPOTI"));
+				break;
+			case GETPOTI:
+				protocol(tr("not handled command : GETPOTI"));
+				break;
+			case READID: // extract the retrieved MPSD-8 IDs:
+				for(quint8 c = 0; c < 8; c++)
+					m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
+				break;
+			case DATAREQUEST:
+				protocol(tr("not handled command : DATAREQUEST"));
+				break;
+			case QUIET:
+				protocol(tr("not handled command : QUIET"));
+				break;
+			case GETVER:
+				protocol(tr("not handled command : GETVER"));
+				break;
+			case READPERIREG:
+				protocol(tr("not handled command : READPERIREG"));
+				break;
+			case WRITEPERIREG:
+				ptrMPSD = m_mpsd[recBuf.data[0]];
+				if(recBuf.data[2] != ptrMPSD->getInternalreg(recBuf.data[1], 1))
+				{
+					protocol(tr("Error setting internal mpsd-register, mod %1, is: %2, should be: %3").
+						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[3]).arg(ptrMPSD->getPulsPoti(1)), 1);
+				}
+				ptrMPSD->setInternalreg(recBuf.data[1], recBuf.data[2], 0);			
 				break;
 			default:
 				protocol(tr("not handled command : %1").arg(recBuf.cmd));

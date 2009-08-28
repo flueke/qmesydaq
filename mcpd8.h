@@ -71,10 +71,6 @@ public:
 
 	bool setMasterClock(quint64);
 
-	bool setRunId(quint16 runid);
-
-	quint16 getRunId(void) {return m_runId;}
-
 	quint64 receivedData() {return m_dataRxd;} 
 
 	quint64 receivedCmds() {return m_cmdRxd;} 
@@ -150,6 +146,10 @@ public:
 
 	quint64 time(void) {return m_timemsec;}
 
+	bool setRunId(quint16 runid);
+
+	quint16 getRunId(void) {return m_runId;}
+
 public slots:
 	void analyzeBuffer(MDP_PACKET &pd);
 
@@ -159,6 +159,8 @@ signals:
 	void startedDaq(void);
 
 	void stoppedDaq(void);
+
+	void continuedDaq(void);
 
 	void analyzeDataBuffer(DATA_PACKET &pd);
 
@@ -211,7 +213,6 @@ private:
 	//! four parameters (transmitted in buffer header), 9 possible sources
 	quint8 		m_paramSource[4];
 	
-	quint16 	m_runId;
 	bool 		m_stream;
 	quint64 	m_parameter[4];
 	bool 		m_commActive;
@@ -221,6 +222,9 @@ private:
 	quint32 	m_lastBufnum;
 
 	QTimer 		*m_commTimer;
+
+	//! current run ID
+	quint16 	m_runId;
 
 	//! DAQ started?
 	bool		m_daq;
@@ -238,8 +242,8 @@ public:
 #warning TODO remove the public access of m_mpsd
 	//! the accessed MPSD8 ????
 	QMap<int, MPSD8 *> m_mpsd;
-private:
 	
+private:
 	//! the header time stamp
 	quint64		m_headertime;
 
