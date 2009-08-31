@@ -129,8 +129,11 @@ void MesydaqTimer::start(quint64)
 	m_value = 0;
 	if (m_timer.isActive())
 		m_timer.stop();
-	m_timer.start(m_limit);
-	protocol(tr("timer start"));
+	if (m_limit)
+	{
+		m_timer.start(m_limit);
+		protocol(tr("timer start"));
+	}
 	m_time.start();
 }
 
