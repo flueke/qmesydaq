@@ -142,3 +142,5 @@
 #define ADC2ID			7
 #define EVID			8
 
+#define	MPSD8			103
+#define MPSD8P			105
