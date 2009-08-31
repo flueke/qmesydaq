@@ -21,6 +21,8 @@
 #define COUNTER_H
 
 #include <QQueue>
+#include <QTime>
+#include <QTimer>
 
 #include "mesydaqobject.h"
 
@@ -68,13 +70,13 @@ public:
 	 *
 	 * \param val counter limit, if the value is zero no limit will be set
 	 */
-	void setLimit(quint64 val) {m_limit = m_master ? val : 0;}
+	virtual void setLimit(quint64 val) {m_limit = m_master ? val : 0;}
 
 	//! \return the current counter limit if limit is 0 no limit is set
 	quint64 limit(void) {return m_limit;}
 
 	//! \return current counter value
-	quint64 value(void) {return m_value;}
+	virtual quint64 value(void) {return m_value;}
 
 	//! \return whether this counter is master or not
 	bool isMaster(void) {return m_master;}
@@ -135,7 +137,16 @@ public:
 
 	virtual void start(quint64 val);
 
-	virtual void setTime(quint64 val);
+	//! \return current timer value
+	virtual quint64 value(void); 
+
+private slots:
+	void timerStop(void);
+
+private:
+	QTime	m_time;
+
+	QTimer	m_timer;
 };
 
 #endif // COUNTER_H

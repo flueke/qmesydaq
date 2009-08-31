@@ -120,20 +120,30 @@ quint64 MesydaqCounter::rate()
 MesydaqTimer::MesydaqTimer()
 	: MesydaqCounter()
 {
+	m_timer.setSingleShot(true);
+	connect(&m_timer, SIGNAL(timeout()), this, SLOT(timerStop()));
 }
 
-void MesydaqTimer::start(quint64 time)
+void MesydaqTimer::start(quint64)
 {
-	protocol(tr("MesydaqTimer::start(%1)").arg(time));
-	m_start = time / 1000;
-	set(m_offset);
+	m_value = 0;
+	if (m_timer.isActive())
+		m_timer.stop();
+	m_timer.start(m_limit);
+	protocol(tr("timer start"));
+	m_time.start();
 }
 
-void MesydaqTimer::setTime(quint64 time)
+void MesydaqTimer::timerStop()
 {
-	protocol(tr("MesydaqTimer::setTime(%1)").arg(time));
-	m_value = time / 1000;
-//	set(time / 1000);
-	if (isStopped())
-		emit stop();
+	protocol(tr("timer stop"));
+	emit stop();
+	m_value = m_time.elapsed();
+}
+
+quint64 MesydaqTimer::value(void) 
+{
+	if (m_timer.isActive())
+		return m_time.elapsed();
+	return m_value;
 }
