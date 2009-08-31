@@ -750,12 +750,16 @@ void MainWidget::ePresetSlot(bool pr)
 {
 	if(pr)
 	{
-		m1PresetButton->setChecked(false);
-		m2PresetButton->setChecked(false);
 		tPresetButton->setChecked(false);
-		m1Preset->setEnabled(false);
-		m2Preset->setEnabled(false);
 		tPreset->setEnabled(false);
+		m1PresetButton->setChecked(false);
+		m1Preset->setEnabled(false);
+		m2PresetButton->setChecked(false);
+		m2Preset->setEnabled(false);
+		m3PresetButton->setChecked(false);
+		m3Preset->setEnabled(false);
+		m4PresetButton->setChecked(false);
+		m4Preset->setEnabled(false);
 	}
 	evPreset->setEnabled(pr);
 	m_meas->setPreset(EVCT, evPreset->value(), pr);
@@ -766,12 +770,16 @@ void MainWidget::tPresetSlot(bool pr)
 {
 	if(pr)
 	{
+		ePresetButton->setChecked(false);
+		evPreset->setEnabled(false);
 		m1PresetButton->setChecked(false);
 		m2PresetButton->setChecked(false);
-		ePresetButton->setChecked(false);
 		m1Preset->setEnabled(false);
 		m2Preset->setEnabled(false);
-		evPreset->setEnabled(false);
+		m3PresetButton->setChecked(false);
+		m3Preset->setEnabled(false);
+		m4PresetButton->setChecked(false);
+		m4Preset->setEnabled(false);
 	}
 	tPreset->setEnabled(pr);
 	m_meas->setPreset(TCT, tPreset->value() * 1000, pr);
@@ -782,12 +790,16 @@ void MainWidget::m1PresetSlot(bool pr)
 {
 	if(pr)
 	{
-		ePresetButton->setChecked(false);
-		m2PresetButton->setChecked(false);
 		tPresetButton->setChecked(false);
-		m2Preset->setEnabled(false);
-		evPreset->setEnabled(false);
 		tPreset->setEnabled(false);
+		ePresetButton->setChecked(false);
+		evPreset->setEnabled(false);
+		m2Preset->setEnabled(false);
+		m2PresetButton->setChecked(false);
+		m3Preset->setEnabled(false);
+		m3PresetButton->setChecked(false);
+		m4Preset->setEnabled(false);
+		m4PresetButton->setChecked(false);
 	}
 	m1Preset->setEnabled(pr);
 	m_meas->setPreset(M1CT, m1Preset->value(), pr);
@@ -798,17 +810,59 @@ void MainWidget::m2PresetSlot(bool pr)
 {
 	if(pr)
 	{
-		m1PresetButton->setChecked(false);
-		ePresetButton->setChecked(false);
 		tPresetButton->setChecked(false);
-		m1Preset->setEnabled(false);
-		evPreset->setEnabled(false);
 		tPreset->setEnabled(false);
+		ePresetButton->setChecked(false);
+		evPreset->setEnabled(false);
+		m1PresetButton->setChecked(false);
+		m1Preset->setEnabled(false);
+		m3Preset->setEnabled(false);
+		m3PresetButton->setChecked(false);
+		m4Preset->setEnabled(false);
+		m4PresetButton->setChecked(false);
 	}
 	m2Preset->setEnabled(pr);
 	m_meas->setPreset(M2CT, m2Preset->value(), pr);
 }
 
+void MainWidget::m3PresetSlot(bool pr)
+{
+	if(pr)
+	{
+		tPresetButton->setChecked(false);
+		tPreset->setEnabled(false);
+		ePresetButton->setChecked(false);
+		evPreset->setEnabled(false);
+		m1Preset->setEnabled(false);
+		m1PresetButton->setChecked(false);
+		m2Preset->setEnabled(false);
+		m2PresetButton->setChecked(false);
+		m4Preset->setEnabled(false);
+		m4PresetButton->setChecked(false);
+	}
+	m3Preset->setEnabled(pr);
+	m_meas->setPreset(M3CT, m1Preset->value(), pr);
+}
+
+
+void MainWidget::m4PresetSlot(bool pr)
+{
+	if(pr)
+	{
+		tPresetButton->setChecked(false);
+		tPreset->setEnabled(false);
+		ePresetButton->setChecked(false);
+		evPreset->setEnabled(false);
+		m1Preset->setEnabled(false);
+		m1PresetButton->setChecked(false);
+		m2Preset->setEnabled(false);
+		m2PresetButton->setChecked(false);
+		m3Preset->setEnabled(false);
+		m3PresetButton->setChecked(false);
+	}
+	m3Preset->setEnabled(pr);
+	m_meas->setPreset(M4CT, m1Preset->value(), pr);
+}
 
 /*!
     \fn MainWidget::updatePresets(void)
@@ -816,16 +870,20 @@ void MainWidget::m2PresetSlot(bool pr)
 void MainWidget::updatePresets(void)
 {
 // presets
-	evPreset->setValue(m_meas->getPreset(EVCT));
 	tPreset->setValue(m_meas->getPreset(TCT));
+	evPreset->setValue(m_meas->getPreset(EVCT));
 	m1Preset->setValue(m_meas->getPreset(M1CT));
 	m2Preset->setValue(m_meas->getPreset(M2CT));
+	m3Preset->setValue(m_meas->getPreset(M3CT));
+	m4Preset->setValue(m_meas->getPreset(M4CT));
     
 // check for master preset counter
+    	tPresetButton->setChecked(m_meas->isMaster(TCT));
 	ePresetButton->setChecked(m_meas->isMaster(EVCT));
     	m1PresetButton->setChecked(m_meas->isMaster(M1CT));
     	m2PresetButton->setChecked(m_meas->isMaster(M2CT));
-    	tPresetButton->setChecked(m_meas->isMaster(TCT));
+    	m1PresetButton->setChecked(m_meas->isMaster(M3CT));
+    	m2PresetButton->setChecked(m_meas->isMaster(M4CT));
    
 // Caress values
 	updateCaress();
@@ -855,7 +913,17 @@ void MainWidget::m2ResetSlot()
 	update();
 }
 
+void MainWidget::m3ResetSlot()
+{
+	m_meas->clearCounter(M3CT);
+	update();
+}
 
+void MainWidget::m4ResetSlot()
+{
+	m_meas->clearCounter(M4CT);
+	update();
+}
 
 /*!
     \fn MainWidget::updateCaress(void)

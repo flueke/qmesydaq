@@ -315,45 +315,7 @@ void Measurement::clearCounter(quint8 cNum)
 {
 	if(cNum > 7)
 		return;
-		
-	if(cNum == TCT)
-	{
-#if 0
-		if(m_running)
-		{
-			m_counterStart[cNum] += m_counter[1][cNum];
-			m_counterStart[cNum] -= m_counterOffset[cNum];
-			m_counterOffset[cNum] = 0;
-		}
-#endif
-	}
 	m_counter[cNum]->reset();
-}
-
-/*!
-    \fn Measurement::hasStopped(unsigned char cNum)
- */
-bool Measurement::hasStopped(quint8 cNum)
-{
-	if(cNum < 8)
-		return m_counter[cNum]->isStopped();
-    	return false;
-}
-
-/*!
-    \fn Measurement::limitReached(unsigned char cNum)
- */
-bool Measurement::limitReached(quint8 cNum)
-{
-	if(cNum >= 8)
-		return false;
-	return m_counter[cNum]->isStopped();
-#if 0   
-	if(m_master[cNum] && (m_counter[1][cNum] >= m_preset[cNum]))
-		return true;
-	else 
-		return false;
-#endif
 }
 
 /*!
@@ -369,7 +331,6 @@ void Measurement::clearAllHist(void)
 		m_timeSpectrum->clear();
 	m_lastTime = 0;
 }
-
 
 /*!
     \fn Measurement::clearChanHist(unsigned long chan)

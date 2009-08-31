@@ -89,14 +89,24 @@ public slots:
 	void selectHistpathSlot();
 	void selectListpathSlot();
 	void writeHistSlot();
-	void m2PresetSlot(bool pr);
-	void m1PresetSlot(bool pr);
+
 	void tPresetSlot(bool pr);
-	void ePresetSlot(bool pr);
-	void m2ResetSlot();
-	void m1ResetSlot();
-	void eResetSlot();
 	void tResetSlot();
+
+	void ePresetSlot(bool pr);
+	void eResetSlot();
+
+	void m1PresetSlot(bool pr);
+	void m1ResetSlot();
+
+	void m2PresetSlot(bool pr);
+	void m2ResetSlot();
+
+	void m3PresetSlot(bool pr);
+	void m3ResetSlot();
+
+	void m4PresetSlot(bool pr);
+	void m4ResetSlot();
 
 	void draw(void);
 

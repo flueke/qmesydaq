@@ -127,6 +127,8 @@
 // CARESS counter mapping
 #define M1CT			0
 #define M2CT			1
+#define M3CT			2
+#define M4CT			3
 #define EVCT			4
 #define TCT			5
 #define HISTO			99

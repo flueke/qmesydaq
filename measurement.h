@@ -66,9 +66,7 @@ public:
 
 	bool	isMaster(quint8 cNum);
 	void	clearCounter(quint8 cNum);
-	bool	hasStopped(quint8 cNum);
 	void	copyCounters(void);
-	bool	limitReached(quint8 cNum);
 
 	void 	readListfile(QString readfilename);
 
