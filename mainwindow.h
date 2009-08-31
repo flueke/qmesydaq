@@ -48,7 +48,7 @@
 class MainWidget;
 class Histogram;
 class MCPD8;
-class MPSD8;
+class MPSD_8;
 class Measurement;
 class CorbaThread;
 class ControlInterface;

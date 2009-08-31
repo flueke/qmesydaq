@@ -28,13 +28,13 @@
  *
  * @author Gregor Montermann <g.montermann@mesytec.com>
 */
-class MPSD8 : public MesydaqObject
+class MPSD_8 : public MesydaqObject
 {
 Q_OBJECT
 public:
-	MPSD8(quint8, QObject * = 0);
+	MPSD_8(quint8, QObject * = 0);
 
-	~MPSD8();
+	~MPSD_8();
 
 	void	setMpsdId(quint8, quint8, bool = true);
 	quint8 	getMpsdId(void) {return m_mpsdId;}
@@ -128,6 +128,19 @@ private:
 	float 		m_p2;
 	quint8		m_busNum;
 	quint16 	m_internalReg[3][2];
+};
+
+class MPSD_8p : public MPSD_8
+{
+Q_OBJECT
+public:
+	MPSD_8p(quint8 id, QObject *parent = 0)
+		: MPSD_8(id, parent)
+	{
+	}
+
+	~MPSD_8p() {}
+
 };
 
 #endif

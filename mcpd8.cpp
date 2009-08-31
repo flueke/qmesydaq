@@ -50,13 +50,6 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 //	setId(id);
 	m_id = id;
 	stdInit();
-#warning TODO only import the found MPSD''s into the list
-	for(int i = 0; i < 8; i++)
-	{
-		m_mpsd[i] = NULL;
-		m_mpsd[i] = new MPSD8(0, this);
-	}
-
 	m_network = new NetworkDevice(this, ip, port);
 	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET &)), this, SLOT(analyzeBuffer(MDP_PACKET &)));
 
@@ -65,23 +58,17 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 	m_commTimer->setSingleShot(true);
 
 	memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
+
+	m_mpsd.clear();
 }
 
 
 MCPD8::~MCPD8()
 {
-#warning TODO
-	for (int i = 0; i < 8; ++i)
-	{
-		if (m_mpsd[i])
-			delete m_mpsd[i];
-		m_mpsd[i] = NULL;
-	}
-	if (m_network)
-		delete m_network;
+	m_mpsd.clear();
+	delete m_network;
 	m_network = NULL;
-	if (m_commTimer)
-		delete m_commTimer;
+	delete m_commTimer;
 	m_commTimer = NULL;
 }
 
@@ -189,7 +176,7 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
 	if (chan > 8)
 		chan = 8;
-#warning TODO
+#warning TODO common gain handling
 	if (chan == 8)
 	{
 		for (int i = 0; i < 8; ++i)
@@ -255,7 +242,7 @@ bool MCPD8::setMode(quint16 addr, bool mode)
 {
 	if (addr > 8)
 		addr = 8;
-#warning TODO
+#warning TODO common mode handling
 	if (addr == 8)
 	{
 		for (int i = 0; i < 8; ++i)
@@ -288,7 +275,7 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 		pos = 2;
 	if (chan == 8)
 	{
-#warning TODO
+#warning TODO common puler handling
 		for (int i = 0; i < 8; ++i)
 			m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
 	}
@@ -660,7 +647,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 	
 	protocol(tr("id %1").arg(id), 3);
 	communicate(false);
-	MPSD8	*ptrMPSD;
+	MPSD_8	*ptrMPSD;
 
 	m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
 	m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
@@ -799,8 +786,19 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				protocol(tr("not handled command : GETPOTI"));
 				break;
 			case READID: // extract the retrieved MPSD-8 IDs:
+#warning TODO if the configuration has changed
 				for(quint8 c = 0; c < 8; c++)
-					m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
+					if (recBuf.data[c])
+					{
+						if (m_mpsd.find(c) == m_mpsd.end())
+						{
+							if (recBuf.data[c] == MPSD8)
+								m_mpsd[c] = new MPSD_8(c, this);
+							else
+								m_mpsd[c] = new MPSD_8p(c, this);
+						}
+						m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
+					}
 				break;
 			case DATAREQUEST:
 				protocol(tr("not handled command : DATAREQUEST"));
@@ -905,7 +903,7 @@ bool MCPD8::setTimingSetup(bool master, bool sync)
 
 bool MCPD8::isPulserOn(quint8 addr)
 {
-	if (m_mpsd[addr]->getMpsdId() && m_mpsd[addr]->isPulserOn())
+	if (getMpsdId(addr) && m_mpsd[addr]->isPulserOn())
 		return true;
 	return false;
 }
@@ -913,7 +911,7 @@ bool MCPD8::isPulserOn(quint8 addr)
 bool MCPD8::isPulserOn()
 {
 	for (quint8 i = 0; i < 8; ++i)
-		if (m_mpsd[i]->getMpsdId() && m_mpsd[i]->isPulserOn())
+		if (getMpsdId(i) && m_mpsd[i]->isPulserOn())
 			return true;
 	return false;
 }

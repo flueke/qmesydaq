@@ -28,7 +28,7 @@
 #include "mesydaqobject.h"
 
 class NetworkDevice;
-class MPSD8;
+class MPSD_8;
 class QTimer;
 
 /**
@@ -241,7 +241,7 @@ private:
 public:
 #warning TODO remove the public access of m_mpsd
 	//! the accessed MPSD8 ????
-	QMap<int, MPSD8 *> m_mpsd;
+	QMap<int, MPSD_8 *> m_mpsd;
 	
 private:
 	//! the header time stamp
