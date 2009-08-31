@@ -177,7 +177,7 @@ void MainWidget::startStopSlot(bool checked)
 		
 		// get latest preset entry
 		if(m_meas->isMaster(TCT))
-			m_meas->setPreset(TCT, tPreset->value(), true);
+			m_meas->setPreset(TCT, tPreset->value() * 1000, true);
 		if(m_meas->isMaster(EVCT))
 			m_meas->setPreset(EVCT, evPreset->value(), true);
 		if(m_meas->isMaster(M1CT))
@@ -309,7 +309,7 @@ void MainWidget::setGainSlot()
 		gainval = 1.88;
 #endif		
 #warning TODO m_theApp->m_mcpd
-	MPSD8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
+	MPSD_8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
 	m_theApp->setGain(id, addr, chan, ptrMPSD->calcGainpoti(gainval)); 
 }
 
@@ -321,7 +321,7 @@ void MainWidget::setThresholdSlot()
 	quint16 thresh = threshold->text().toUInt(&ok, 0);
 
 #warning TODO m_theApp->m_mcpd
-	MPSD8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
+	MPSD_8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
 	m_theApp->setThreshold(id, addr, ptrMPSD->calcThreshpoti(thresh)); 
 }
 
@@ -360,7 +360,7 @@ void MainWidget::update(void)
 	m_meas->calcMeanRates();
     
 // measurement values counters and rates
-	tSecsText->setText(tr("%1").arg(m_meas->getCounter(TCT)));
+	tSecsText->setText(tr("%1").arg(m_meas->getCounter(TCT) / 1000.));
 	totalCounts->setText(tr("%1").arg(m_meas->getCounter(EVCT)));
 	eventRate->setText(tr("%1").arg(m_meas->getRate(EVCT)));
 	monitor1->setText(tr("%1").arg(m_meas->getCounter(M1CT)));
@@ -774,7 +774,7 @@ void MainWidget::tPresetSlot(bool pr)
 		evPreset->setEnabled(false);
 	}
 	tPreset->setEnabled(pr);
-	m_meas->setPreset(TCT, tPreset->value(), pr);
+	m_meas->setPreset(TCT, tPreset->value() * 1000, pr);
 }
 
 
