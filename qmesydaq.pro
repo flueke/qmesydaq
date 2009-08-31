@@ -57,3 +57,5 @@ SOURCES 	+= mesydaqobject.cpp \
 		caressmeasurement.cpp
 
 RESOURCES 	+= images.qrc
+
+DISTFILES	+= qmesydaq.desktop

@@ -1,0 +1,26 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=qmesydaq
+Exec=qmesydaq
+Icon=qmesydaq
+Type=Application
+Comment=QMesyDAQ application
+Comment[ca]=QMesyDAQ aplicació 
+Comment[da]=QMesyDAQ program
+Comment[de]=QMesyDAQ Program
+Comment[es]=QMesyDAQ aplicación
+Comment[eu]=QMesyDAQ aplikazio 
+Comment[fr]=QMesyDAQ application
+Comment[ga]=QMesyDAQ Feidhmchlár
+Comment[gl]=QMesyDAQ aplicación
+Comment[is]=QMesyDAQ forrit
+Comment[it]=QMesyDAQ applicazione
+Comment[nds]=Dat QMesyDAQ Programm
+Comment[nl]=QMesyDAQ toepassing
+Comment[pl]=QMesyDAQ program
+Comment[pt]=QMesyDAQ aplicação
+Comment[pt_BR]=QMesyDAQ Aplicativo
+Comment[sk]=QMesyDAQ aplikácia
+Comment[sl]=QMesyDAQ program
+Comment[sr@Latn]=QMesyDAQ program
+Comment[sv]=QMesyDAQ program
