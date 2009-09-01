@@ -471,18 +471,19 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
 				data = (pd.data[counter + 2] & 0xFF) << 13 + (pd.data[counter + 1] >> 3) & 0x7FFF;
 				time = (quint16)tim;
+#warning TODO remove misterous mapping
 				switch(dataId)
 				{
-					case MON1ID:
-						++(*m_counter[M1CT]);
-						break;
-					case MON2ID:
-						++(*m_counter[M2CT]);
+					case MON1ID :
+					case MON2ID :
+					case MON3ID :
+					case MON4ID :
+						++(*m_counter[dataId]);
 						break;
 					default:
 						break;
 				}
-				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId));
+				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId), 3);
 			}
 // neutron event:
 			else
@@ -518,18 +519,6 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				{
 					m_ampHist->incVal(chan, amp);
 				}
-#if 0
-// already a value?
-				if(m_lastTime)
-				{
-					quint64 deltat = time - m_lastTime;
-#warning TODO 960 ??????
-					if(deltat > 959)		
-						deltat = 959; 
-#warning TODO				m_timeSpectrum->incVal((quint16)deltat);
-				}
-				m_lastTime = time;
-#endif
 				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), 3);
 			}
 		}
