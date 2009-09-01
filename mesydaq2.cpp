@@ -767,7 +767,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), 3);
 	if(m_daq == RUNNING)
 	{
-		quint32 i, j;
 		quint16 mod = pd.deviceId;	
 		quint16 diff = pd.bufferNumber - m_lastBufnum;
 		if(diff > 1)
@@ -785,15 +784,16 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		if(pd.bufferType < 0x0002) 
 		{
 // extract parameter values:
-			for(i = 0; i < 4; i++)
+			for(quint8 i = 0; i < 4; i++)
 			{
 				quint64 var = 0;
-				for(j = 0; j < 3; j++)
+				for(quint8 j = 0; j < 3; j++)
 				{
 					var <<= 16;
-					var |= pd.param[i][2-j];
+					var |= pd.param[i][2 - j];
 				}
-				m_mcpd[mod]->setParameter((unsigned char)i, var);
+				protocol(tr("setParameter(%1, %2)").arg(i).arg(var));
+				m_mcpd[mod]->setParameter(i, var);
 			}
 			emit analyzeDataBuffer(pd);
 		}
