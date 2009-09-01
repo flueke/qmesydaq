@@ -367,6 +367,10 @@ void MainWidget::update(void)
 	monRate1->setText(tr("%1").arg(m_meas->getRate(M1CT)));
 	monitor2->setText(tr("%1").arg(m_meas->getCounter(M2CT)));
 	monRate2->setText(tr("%1").arg(m_meas->getRate(M2CT)));
+	monitor3->setText(tr("%1").arg(m_meas->getCounter(M3CT)));
+	monRate3->setText(tr("%1").arg(m_meas->getRate(M3CT)));
+	monitor4->setText(tr("%1").arg(m_meas->getCounter(M4CT)));
+	monRate4->setText(tr("%1").arg(m_meas->getRate(M4CT)));
 }
 
 /*!
