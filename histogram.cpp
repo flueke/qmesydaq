@@ -52,10 +52,8 @@ bool Spectrum::incVal(quint16 bin)
 		m_maximumPos = bin;
 
 #warning TODO mean value determination
-#if 0
 	m_floatingMean[m_meanPos] = bin;
 	m_meanPos++;
-#endif
 	if(m_meanCount < 255)
 		m_meanCount++;
 	return true;
@@ -144,9 +142,8 @@ void Histogram::clear(quint16 channel)
 	m_totalCounts -= m_data[channel]->getTotalCounts();
 	m_data[channel]->clear();
 
-#warning TODO
-// remove the counts from the sum spectrum and total counts
-// adjust the new maximum
+#warning TODO remove the counts from the sum spectrum and total counts and adjust the new maximum
+// remove the counts from the sum spectrum and total counts and adjust the new maximum
 }
 
 
@@ -158,7 +155,6 @@ void Histogram::clear(void)
  	for(quint16 i = 0;i < m_channels; i++)
 		m_data[i]->clear();
 	m_sumSpectrum->clear();
-//	m_timeSpectrum->clear();
 	m_totalCounts = 0;
 	m_twidth = 1;
 }
@@ -226,22 +222,16 @@ quint16 Histogram::maxpos(quint16 channel)
  */
 void Histogram::getMean(quint16 chan, float &m, float &s)
 {
+// calculate mean for given channel:
 	m = m_data[chan]->mean(s);
 }
 
 /*!
     \fn Histogram::getMean(quint16 chan, float* vals)
  */
-void Histogram::getMean(quint16 chan, float* vals)
+void Histogram::getMean(float &m, float &s)
 {
-	float s = 0;
-	
-// calculate mean for given channel:
-	float m = m_data[chan]->mean(s);
-	vals[0] = m;
-	vals[1] = s;
-//	qDebug("chan: %d, mean: %f +/- %f", chan, m, s);	
-	return;
+	m = m_sumSpectrum->mean(s);
 }
 
 

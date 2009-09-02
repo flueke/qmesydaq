@@ -63,7 +63,8 @@ private:
 
 	quint64		m_meanCount;
 
-	quint64		m_meanPos;
+#warning TODO why only 8 bits ?
+	quint8 /*64*/	m_meanPos;
 
 	quint64		m_totalCounts;
 
@@ -98,7 +99,7 @@ public:
 
 	quint16 maxpos(quint16 channel);
 
-	void getMean(quint16 chan, float* vals);
+	void getMean(float &mean, float &sigma);
 
 	void getMean(quint16 chan, float &mean, float &sigma);
 
