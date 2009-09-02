@@ -275,7 +275,7 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 		pos = 2;
 	if (chan == 8)
 	{
-#warning TODO common puler handling
+#warning TODO common pulser handling
 		for (int i = 0; i < 8; ++i)
 			m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
 	}
