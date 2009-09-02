@@ -143,8 +143,6 @@ public slots:
 
 	void setThreshold(quint16 mod, quint16 addr, quint8 thresh);
 
-	void centralDispatch();
-
     	void acqListfile(bool yesno);
 
 	void start(void);
@@ -165,6 +163,9 @@ signals:
 	void statusChanged(const QString &);
 
 	void analyzeDataBuffer(DATA_PACKET &pd);
+
+protected:
+	void timerEvent(QTimerEvent *event);
 
 private:
 	void initHardware(void);
@@ -200,9 +201,8 @@ private:
 
 	quint8  	m_timingwidth;
 	quint32 	m_lastBufnum;
-	quint8  	m_dispatch[10];
 
-	QTimer 		*m_theTimer;
+	int 		m_checkTimer;
 };
 
 

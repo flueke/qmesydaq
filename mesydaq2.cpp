@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QSettings>
 #include <QTextStream>
+#include <QTimerEvent>
 
 #include "mdefines.h"
 #include "mesydaq2.h"
@@ -36,7 +37,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_histPath("/home")
 	, m_configPath("/home")
 	, m_timingwidth(1)
-	, m_theTimer(NULL)
+	, m_checkTimer(0)
 {
 	initDevices();
 	initTimers();
@@ -47,9 +48,9 @@ Mesydaq2::Mesydaq2(QObject *parent)
 Mesydaq2::~Mesydaq2()
 {
 	m_mcpd.clear();
-	if (m_theTimer)
-		delete m_theTimer;
-	m_theTimer = NULL;
+	if (m_checkTimer)
+		killTimer(m_checkTimer);
+	m_checkTimer = 0;
 }
 
 quint64 Mesydaq2::receivedData(void) 
@@ -151,12 +152,7 @@ void Mesydaq2::initDevices(void)
  */
 void Mesydaq2::initTimers(void)
 {
-// central dispatch timer
-	m_theTimer = new QTimer(this);
-	connect(m_theTimer, SIGNAL(timeout()), this, SLOT(centralDispatch()));
-	for(quint8 c = 0; c < 10; c++)
-		m_dispatch[c] = 0;
-	m_theTimer->start(1);
+	m_checkTimer = startTimer(50);	// every 50 ms check the MCPD
 }
 
 /*!
@@ -501,30 +497,16 @@ bool Mesydaq2::loadSetup(const QString &name)
 /*!
     \fn Mesydaq2::centralDispatch()
  */
-void Mesydaq2::centralDispatch()
+void Mesydaq2::timerEvent(QTimerEvent *event)
 {
 #warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
 #warning TODO 		cInt->caressTask();
     	
 #warning TODO
 #if 0
-	if(++m_dispatch[0] == 8)		// every 8 ms calculate the rates
-	{
-		m_dispatch[0] = 0;
-		meas->calcRates();
-	}
+	if (event->timerId() == m_checkTimer)	
+		checkMcpd(0);
 #endif
-	
-	if(++m_dispatch[1] == 50)		// every 50 ms check the MCPD
-	{
-//		checkMcpd(0);
-	}
-	else if(m_dispatch[1] == 60)		// every 60 ms check measurement
-	{
-		//if(meas->isOk() == 0)
-			//meas->setOnline(false);
-		m_dispatch[1] = 0;
-	}
 }
 
 
@@ -763,7 +745,6 @@ void Mesydaq2::setHistfilename(QString name)
  */
 void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
-	m_dispatch[1] = 0;
 	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), 3);
 	if(m_daq == RUNNING)
 	{
@@ -792,7 +773,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 					var <<= 16;
 					var |= pd.param[i][2 - j];
 				}
-				protocol(tr("setParameter(%1, %2)").arg(i).arg(var));
 				m_mcpd[mod]->setParameter(i, var);
 			}
 			emit analyzeDataBuffer(pd);
