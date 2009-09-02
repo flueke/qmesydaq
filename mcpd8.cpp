@@ -521,7 +521,6 @@ bool MCPD8::setParameter(quint16 param, quint64 val)
 {
 	if(param > 3)
 		return false;
-	protocol(tr("parameter[%1] = %2").arg(param).arg(val));
 	m_parameter[param] = val;
 	return true;
 }
