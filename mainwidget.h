@@ -129,17 +129,25 @@ private:
 	quint16 	m_width;
 
 // using thresholds for display
+	//! using thresholds ?
 	bool		m_dispThresh;
+
+	//! lower limit of the threshold
 	ulong 		m_dispLoThresh;
+
+	//! upper limit of the threshold
 	ulong 		m_dispHiThresh;
 
+	//! scale the Y axis logarithmic
 	bool		m_dispLog;
-//	quint8 		m_dispId;
 
+	//! plot curve
 	QwtPlotCurve	*m_curve;
 
+	//! data to be plotted
 	MesydaqData	*m_data;
 
+	//! measurement objct
 	Measurement 	*m_meas;
 
 	QTimer 		*m_dispTimer;

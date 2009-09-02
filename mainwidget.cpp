@@ -101,12 +101,14 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
         connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
 
+#if 0
 #if QT_VERSION < 0x040000
 	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlButton);
 #else
 	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier);
 #endif
 	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect3, Qt::RightButton);
+#endif
 	m_zoomer->setRubberBandPen(QColor(Qt::black));
 	m_zoomer->setTrackerPen(QColor(Qt::black));
 	m_zoomer->setEnabled(true);
@@ -998,7 +1000,7 @@ void MainWidget::draw(void)
 // reduce data in case of threshold settings:
 	if(m_dispThresh)
 		dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
-	else
+	else if (!m_zoomEnabled)
                 dataFrame->setAxisAutoScale(QwtPlot::yLeft);
 	dataFrame->replot();
 	drawOpData();
