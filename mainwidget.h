@@ -121,6 +121,9 @@ protected slots:
 	void zoomAreaSelected(const QwtDoubleRect&);
 	void zoomed(const QwtDoubleRect&);
 
+protected:
+	void timerEvent(QTimerEvent *event);
+
 private:
 	Mesydaq2	*m_theApp;
 	
@@ -150,7 +153,7 @@ private:
 	//! measurement objct
 	Measurement 	*m_meas;
 
-	QTimer 		*m_dispTimer;
+	int 		m_dispTimer;
 
 	QwtPlotZoomer	*m_zoomer;
 

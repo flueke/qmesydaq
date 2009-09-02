@@ -60,7 +60,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_curve(NULL)
 	, m_data(NULL)
 	, m_meas(NULL)
-	, m_dispTimer(NULL)
+	, m_dispTimer(0)
 	, m_zoomer(NULL)
 	, m_zoomEnabled(false)
 	, m_ct(NULL)
@@ -76,9 +76,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 
-// display refresh timer
-	m_dispTimer = new QTimer(this);
-	connect(m_dispTimer, SIGNAL(timeout()), this, SLOT(draw()));
 	
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
@@ -126,22 +123,26 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	displayMcpdSlot();
 	dispFiledata();
 
-	m_dispTimer->start(1000);
 	m_cInt = new ControlInterface(this);
 	m_ct->initializeCorba(this, m_cInt);
+// display refresh timer
+	m_dispTimer = startTimer(1000);
 }
 
 
 MainWidget::~MainWidget()
 {
 	if (m_dispTimer)
-		m_dispTimer->stop();
-
-	delete m_dispTimer;
-	m_dispTimer = NULL;
+		killTimer(m_dispTimer);
+	m_dispTimer = 0;
 
 	delete m_meas;
 	m_meas = NULL;
+}
+
+void MainWidget::timerEvent(QTimerEvent *event)
+{
+	draw();
 }
 
 void MainWidget::allPulserOff(void)
@@ -640,26 +641,28 @@ void MainWidget::linlogSlot()
  */
 void MainWidget::drawOpData()
 {
-	float meansigma[2] = {0.0, 0.0};
+	float	mean,
+		sigma;
 	
 // display mean and sigma:
-#if 0
 	if(dispAll->isChecked())
 	{
 		if(dispAllPos->isChecked())
-			m_theApp->hist[dispId]->getMean(CHANNELS+1, meansigma);
+			m_meas->getPosMean(mean, sigma);
 		else
-			m_theApp->hist[dispId]->getMean(CHANNELS+2, meansigma);
+			m_meas->getAmpMean(mean, sigma);
 	}
 	else{
 		if(specialBox->isChecked())
-			m_theApp->hist[dispId]->getMean(CHANNELS, meansigma);
+			m_meas->getTimeMean(mean, sigma);
+		else if(dispAllPos->isChecked())
+			m_meas->getPosMean(dispMpsd->value()*8 + dispChan->value(), mean, sigma);
 		else
-			m_theApp->hist[dispId]->getMean(dispMpsd->value()*8*2 + dispChan->value(), meansigma);
+			m_meas->getAmpMean(dispMpsd->value()*8 + dispChan->value(), mean, sigma);
 	}
-#endif	
-	meanText->setText(tr("%1").arg(meansigma[0], 3, 'f', 1));
-	sigmaText->setText(tr("%1").arg(meansigma[1], 3, 'f', 1));
+	meanText->setText(tr("%1").arg(mean, 3, 'f', 1));
+	sigmaText->setText(tr("%1").arg(sigma, 3, 'f', 1));
+
 // pulser warning
 	if(m_theApp->isPulserOn())
 		pulserWarning->setText("<p align=\"center\">PULSER ON!</p>");
