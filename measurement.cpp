@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDateTime>
+#include <QTimerEvent>
 
 #include "measurement.h"
 #include "mdefines.h"
@@ -43,6 +44,8 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_working(true)
 	, m_remote(false)
 	, m_headertime(0)
+	, m_rateTimer(0)
+	, m_onlineTimer(0)
 {
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
@@ -60,10 +63,19 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
+
+	m_rateTimer = startTimer(8);	// every 8 ms calculate the rates
+	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
 }
 
 Measurement::~Measurement()
 {
+	if (m_rateTimer)
+		killTimer(m_rateTimer);
+	m_rateTimer = 0;
+	if (m_onlineTimer)
+		killTimer(m_onlineTimer);
+	m_onlineTimer = 0;
 	if (m_ampHist)
 		delete m_ampHist;
 	m_ampHist = NULL;
@@ -75,6 +87,17 @@ Measurement::~Measurement()
 	m_timeSpectrum = NULL;
 }
 
+void Measurement::timerEvent(QTimerEvent *event)
+{
+	int id = event->timerId(); 
+	if (id == m_rateTimer)
+		calcRates();
+	else if (id == m_onlineTimer)
+	{
+		if(!isOk())
+			setOnline(false);
+	}
+}
 /*!
     \fn Measurement::setCurrentTime(unsigend long msecs)
  */
@@ -471,7 +494,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
 				data = (pd.data[counter + 2] & 0xFF) << 13 + (pd.data[counter + 1] >> 3) & 0x7FFF;
 				time = (quint16)tim;
-#warning TODO remove misterous mapping
+#warning TODO remove mysterious mapping
 				switch(dataId)
 				{
 					case MON1ID :
@@ -592,5 +615,30 @@ void Measurement::readListfile(QString readfilename)
 	}	
 	datfile.close();
 	emit draw();
+}
+
+void Measurement::getPosMean(float &mean, float &sigma)
+{
+	m_posHist->getMean(mean, sigma);
+}
+
+void Measurement::getPosMean(quint16 chan, float &mean, float &sigma)
+{
+	m_posHist->getMean(chan, mean, sigma);
+}
+
+void Measurement::getAmpMean(float &mean, float &sigma)
+{
+	m_ampHist->getMean(mean, sigma);
+}
+
+void Measurement::getAmpMean(quint16 chan, float &mean, float &sigma)
+{
+	m_ampHist->getMean(chan, mean, sigma);
+}
+
+void Measurement::getTimeMean(float &mean, float &sigma)
+{
+	mean = m_timeSpectrum->mean(sigma);
 }
 

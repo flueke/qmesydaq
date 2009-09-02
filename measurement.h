@@ -47,7 +47,6 @@ public:
 	void	start();
 	void	cont();
 
-	void	calcRates();
 	void	calcMeanRates();
 	ulong	getRate(quint8 cNum);
 
@@ -88,8 +87,16 @@ public:
 	void copyPosData(ulong *data);
 	void copyAmpData(ulong *data);
 
+	void getPosMean(float &, float &);
+	void getPosMean(quint16, float &, float &);
+	void getAmpMean(float &, float &);
+	void getAmpMean(quint16, float &, float &);
+	void getTimeMean(float &, float &);
+
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
+
+	void	calcRates();
 
 private slots:
 	void requestStop(void);
@@ -103,6 +110,9 @@ signals:
 
 	void draw();
 	
+protected:
+	void timerEvent(QTimerEvent *event);
+
 private:
 	static const quint16  	sep0 = 0x0000;
 	static const quint16  	sep5 = 0x5555;    
@@ -112,9 +122,13 @@ private:
 	//! Access to hardware
 	Mesydaq2	*m_mesydaq;
 
-	//! Histogram buffer
+	//! position histogram buffer
 	Histogram	*m_posHist;
+
+	//! amplitude histogram buffer
 	Histogram	*m_ampHist;
+
+	//! time spectrum
 	Spectrum	*m_timeSpectrum;
 
 	quint64 	m_lastTime;
@@ -134,6 +148,11 @@ private:
 
 	//! definitions of the counters
 	MesydaqCounter	*m_counter[8];
+
+	int		m_rateTimer;
+
+	int 		m_onlineTimer;
+
 };
 
 class CARESSMeasurement : public Measurement
