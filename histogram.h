@@ -50,7 +50,7 @@ public:
 
 //	quint64 operator[](quint16 index) {return m_data[index];}
 	
-	quint64 val(quint16 index) {return m_data[index];}
+	quint64 value(quint16 index) {return m_data[index];}
 
 	quint16		width() {return m_bins;}
 
@@ -97,6 +97,10 @@ public:
 
 	quint64 max(quint16 channel);
 
+	quint64 max() {return m_data[m_maximumPos]->max();}
+	
+	quint16 maxpos() {return m_maximumPos;}
+
 	quint16 maxpos(quint16 channel);
 
 	void getMean(float &mean, float &sigma);
@@ -106,6 +110,8 @@ public:
 	void setWidth(quint8 width);
 
 	bool writeHistogram(QFile* f, const QString = "");
+
+	quint64 value(quint16 x, quint16 y);
 
 protected:
 	quint64 	m_totalCounts;
@@ -119,7 +125,6 @@ protected:
 	Spectrum	*m_sumSpectrum;
 
 	quint16		m_maximumPos;
-
 };
 
 #endif

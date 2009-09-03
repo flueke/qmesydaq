@@ -120,12 +120,21 @@ Histogram::~Histogram()
 	delete m_sumSpectrum;
 }
 
+quint64 Histogram::value(quint16 chan, quint16 bin)
+{
+	return m_data[chan]->value(bin);
+}
+
 bool Histogram::incVal(quint16 chan, quint16 bin)
 {
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
 	if (chan < m_channels)
+	{
 		m_data[chan]->incVal(bin);
+		if (m_data[chan]->max() > m_data[m_maximumPos]->max())
+			m_maximumPos = chan;
+	}
 	else
 		qDebug("ERROR !!!!! chan = %d", chan); 
 // sum spectrum of all channels
@@ -177,7 +186,7 @@ void Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
 	{
 		bins = m_data[channel]->width();
 		for(quint16 i = 0; i < bins; i++)
-    			pLineBuffer[i] = m_data[channel]->val(i);
+    			pLineBuffer[i] = m_data[channel]->value(i);
 	}
 	else
 	{
@@ -193,7 +202,7 @@ void Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
 void Histogram::copyLine(ulong *pLineBuffer)
 {
 	for(quint16 i = 0; i < m_sumSpectrum->width(); i++)
-    		pLineBuffer[i] = m_sumSpectrum->val(i);
+    		pLineBuffer[i] = m_sumSpectrum->value(i);
 }
 
 /*!
@@ -263,7 +272,7 @@ bool Histogram::writeHistogram(QFile* f, const QString title)
 		{
 			for(j = 0; j < 8 ; j++)
 			{
-				t << '\t' << m_data[k]->val(i);
+				t << '\t' << m_data[k]->value(i);
 			}
 		}
 		t << '\r' << '\n';
