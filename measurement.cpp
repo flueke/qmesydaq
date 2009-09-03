@@ -413,7 +413,7 @@ void Measurement::copyTimeData(ulong *data)
 	if (m_timeSpectrum)
 	{
 		for(quint16 i = 0; i < m_timeSpectrum->width(); i++)
-    			data[i] = m_timeSpectrum->val(i);
+    			data[i] = m_timeSpectrum->value(i);
 	}
 }
 

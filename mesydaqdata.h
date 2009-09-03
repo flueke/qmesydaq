@@ -24,6 +24,7 @@
 #include <QVector>
 
 #include <qwt_data.h>
+#include <qwt_raster_data.h>
 
 class MesydaqData : public QwtData
 {
@@ -46,6 +47,21 @@ private:
 	size_t 		d_size;
 	QVector<ulong>	m_data;
 	
+};
+
+class MesydaqDiffractogram : public QwtRasterData
+{
+public:
+	MesydaqDiffractogram();
+
+	QwtRasterData *copy() const;
+
+	QwtDoubleInterval range() const;
+
+	double value(double x, double y) const;
+	
+private:
+
 };
 
 #endif
