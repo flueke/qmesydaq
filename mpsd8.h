@@ -56,13 +56,11 @@ public:
 	quint8	getThreshpoti(bool preset = false) {return m_threshPoti[preset];}
 
 // Gain related methods
-	void	setGain(quint8 channel, float gainv, bool preset = 0);
-	void	setGain(quint8 channel, quint8 gain, bool preset = 0);
-	quint8	getGainpoti(quint8 chan, bool preset = 0) {return m_gainPoti[chan][preset];}
-	quint8	calcGainpoti(float fval);
-	float	calcGainval(quint8 ga);
-	float	getGainval(quint8 chan, bool preset = 0) {return m_gainVal[chan][preset];}
-	bool	comGain() {return m_comgain;}
+	virtual void	setGain(quint8 channel, float gainv, bool preset = 0);
+	virtual void	setGain(quint8 channel, quint8 gain, bool preset = 0);
+	quint8		getGainpoti(quint8 chan, bool preset = 0) {return m_gainPoti[chan][preset];}
+	float		getGainval(quint8 chan, bool preset = 0) {return m_gainVal[chan][preset];}
+	bool		comGain() {return m_comgain;}
 
 // Mode related methods
 	void	setMode(bool amplitude, bool preset = 0) {m_ampMode[preset] = amplitude;}
@@ -72,21 +70,23 @@ public:
 	void	setInternalreg(quint8 reg, quint16 val, bool preset = 0);
 	quint16	getInternalreg(quint8 reg, bool preset = 0) {return m_internalReg[reg][preset];}
 	
-private:
-	quint8	calcPulsPoti(quint8 val, float gv);
-	quint8	calcPulsAmp(quint8 val, float gv);
+	virtual quint8	calcGainpoti(float fval);
+protected:
+	virtual float	calcGainval(quint8 ga);
+	virtual quint8	calcPulsPoti(quint8 val, float gv);
+	virtual quint8	calcPulsAmp(quint8 val, float gv);
+	virtual quint8	calcThreshval(quint8 thr);
 public:
-	quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
-private:
-	quint8	calcThreshval(quint8 thr);
+	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
-private:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
 	
+private:
 	//! MPSD-8 id
 	quint8 		m_mpsdId;
-	
+
+protected:
 	//! Gain poti values 
 	quint8 		m_gainPoti[9][2];
 	
@@ -96,6 +96,7 @@ private:
 	//! Common gain
 	bool 		m_comgain;
 
+private:
 	//! Threshold poti values
 	quint8 		m_threshPoti[2];
 
@@ -119,14 +120,10 @@ private:
 
 	//! amplitude mode
 	bool		m_ampMode[2]; 
-
-	float 		m_g1;
-	float 		m_g2;
-	float 		m_t1;
-	float 		m_t2;
-	float 		m_p1;
-	float 		m_p2;
+protected:
 	quint8		m_busNum;
+
+private:
 	quint16 	m_internalReg[3][2];
 };
 
@@ -134,13 +131,28 @@ class MPSD_8p : public MPSD_8
 {
 Q_OBJECT
 public:
-	MPSD_8p(quint8 id, QObject *parent = 0)
-		: MPSD_8(id, parent)
-	{
-	}
+	MPSD_8p(quint8 id, QObject *parent = 0);
 
 	~MPSD_8p() {}
 
+	virtual void 	setGain(quint8 channel, float gainv, quint8 preset);
+	virtual void	setThreshold(quint8 threshold, bool preset);
+
+	virtual quint8	calcGainpoti(float fval);
+	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
+protected:
+	virtual float	calcGainval(quint8 ga);
+	virtual quint8	calcPulsPoti(quint8 val, float gv);
+	virtual quint8	calcPulsAmp(quint8 val, float gv);
+	virtual quint8	calcThreshval(quint8 thr);
+
+private:
+	float 		m_g1;
+	float 		m_g2;
+	float 		m_t1;
+	float 		m_t2;
+	float 		m_p1;
+	float 		m_p2;
 };
 
 #endif

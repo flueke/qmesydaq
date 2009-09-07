@@ -24,17 +24,21 @@ MPSD_8::MPSD_8(quint8 id, QObject *parent)
 	: MesydaqObject(parent)
 	, m_mpsdId(id)
 	, m_comgain(true)
+#if 0
 	, m_g1(0.0)
 	, m_g2(1.0)
 	, m_t1(5.1)
 	, m_t2(5.0)
 	, m_p1(0.0)
 	, m_p2(1.0)
+#endif
 	, m_busNum(0)
 {
 	m_mcpdId = reinterpret_cast<MCPD8 *>(parent)->getId();
 	for(quint8 c = 0; c < 9; c++)
 	{
+		m_gainPoti[c][0] = 128;
+		m_gainVal[c][0] = 128;
 		m_gainPoti[c][1] = 128;
 		m_gainVal[c][1] = 128;
 	}
@@ -50,15 +54,6 @@ MPSD_8::MPSD_8(quint8 id, QObject *parent)
 		m_ampMode[c] = false;
 	}
 	
-// set calibration factors for gain, threshold and pulser calculation
-/*	
-	, m_g1(0.5)
-	, m_g2(184.783)
-	, m_t1(0)
-	, m_t2(0.4583)
-	, m_p1(4.167)
-	, m_p2(1.2083)
-*/
 }
 
 MPSD_8::~MPSD_8()
@@ -75,11 +70,7 @@ void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
    	m_busNum = bus;
    	
    	if(listIds)
-   	{
-   		QString str;
-		str.sprintf("identified MPSD id on MCPD %d, bus %d: %d", m_mcpdId, bus, id);
-   		protocol(str, 1);
-	}
+   		protocol(tr("identified MPSD id on MCPD %1, bus %2: %3").arg(m_mcpdId).arg(bus).arg(id), 1);
 }
 
 /*!
@@ -87,13 +78,6 @@ void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
  */
 void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 {
-#if 0   
-// boundary check
-	if(gainv > 1.88)
-		gainv = 1.88;
-	if(gainv < 0.5)
-		gainv = 0.5;
-#endif    
 	quint8 val = calcGainpoti(gainv);
     
 	m_comgain = (channel == 8);
@@ -141,11 +125,6 @@ void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
  */
 void MPSD_8::setThreshold(quint8 threshold, bool preset)
 {
-#if 0    
-// boundary check
-	if(threshold > 100)
-    		threshold = 100;
-#endif   
 	m_threshPoti[preset] = calcThreshpoti(threshold);
 	m_threshVal[preset] = threshold;
     
@@ -220,15 +199,7 @@ void MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool pres
 quint8 MPSD_8::calcGainpoti(float fval)
 {
 	quint8 ug = (quint8) fval;
-#if 0	
-	float fg;
-	
-	fg = (fval-m_g1)*m_g2;
-	ug = (unsigned char) fg;
-	if((fg - ug) > 0.5)
-		ug++;
-//	qDebug("m_gainVal: %1.2f, m_gainPoti: %d", fval, ug);		
-#endif
+//	protocol(tr("m_gainVal: %1, m_gainPoti: %2").arg(fval).arg(ug));		
 	return ug;
 }
 
@@ -239,16 +210,7 @@ quint8 MPSD_8::calcGainpoti(float fval)
 quint8 MPSD_8::calcThreshpoti(quint8 tval)
 {
 	quint8 ut = tval;
-#if 0
-	float ft;
-	
-	ft = (tval-m_t1)/m_t2;
-	ut = (unsigned char) ft;
-	if((ft - ut) > 0.5)
-		ut++;
-		
-//	qDebug("threshold: %d, threshpoti: %d", tval, ut);	
-#endif
+//	protocol(tr("threshold: %1, threshpoti: %2").arg(tval).arg(ut));	
 	return ut;
 }
 
@@ -258,19 +220,8 @@ quint8 MPSD_8::calcThreshpoti(quint8 tval)
  */
 float MPSD_8::calcGainval(quint8 ga)
 {
-	float fgain = (float) ga;
-#if 0	
-	float fgain = m_g1 + (float)ga/m_g2;
-	// round to two decimals:
-	float fg = 100.0 * fgain;
-	unsigned short g = (unsigned short) fg;
-	float test = fg -g;
-	if(test >= 0.5)
-		g++;
-	 
-	fgain = (float)g /100.0; 
-//	qDebug("m_gainPoti: %d, m_gainVal: %1.2f", ga, fgain);	
-#endif
+	float fgain = float(ga);
+//	protocol(tr("m_gainPoti: %1, m_gainVal: %2").arg(ga).arg(fgain));	
 	return fgain;
 }
 
@@ -281,14 +232,7 @@ float MPSD_8::calcGainval(quint8 ga)
 quint8 MPSD_8::calcThreshval(quint8 thr)
 {
 	quint8 t = thr;
-#if 0
-	float ft = m_t1+(float)thr*m_t2;
-	unsigned char t = (unsigned char) ft;
-	float diff = ft - t;
-	if(diff > 0.5)
-		t++;
-//	qDebug("threshpoti: %d, threshval: %d", t, thr);	
-#endif
+//	protocol(tr("threshpoti: %1, threshval: %2").arg(t).arg(thr));	
 	return t;
 }
 
@@ -298,15 +242,7 @@ quint8 MPSD_8::calcThreshval(quint8 thr)
 quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
 {
 	quint8 pa = val;
-#if 0    
-	float pamp = (val / gv - m_p1) / m_p2;
-	unsigned char pa = (unsigned char) pamp;
-     
-	if(pamp - pa > 0.5)
-		pa++;
-     
-//	qDebug("pulsval: %d, pulspoti: %d", val, pa);
-#endif
+//	protocol(tr("pulsval: %1, pulspoti: %2").arg(val).arg(pa));
 	return pa;
 }
 
@@ -316,15 +252,6 @@ quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
 quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
 {
 	protocol(tr("MPSD_8::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv));
-	protocol(tr("m_p1: %1, m_p2: %2").arg(m_p1).arg(m_p2));
-#if 0
-	float pa = (m_p1 + (val * m_p2)) * gv;
-	quint8 pamp = (quint8) pa;
-	if(pa - pamp > 0.5)
-		pamp++;
-	protocol(tr("pulspoti: %1, pulsamp: %2").arg(val).arg(pamp));
-	return pamp;
-#endif
 	return val;
 }
 

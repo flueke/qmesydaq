@@ -78,12 +78,14 @@ MCPD8::~MCPD8()
 bool MCPD8::init(void)
 {
 // set tx capability to P
-	initCmdBuffer(WRITEREGISTER);
-	m_cmdBuf.data[0] = 1;
-	m_cmdBuf.data[1] = 103;
-	m_cmdBuf.data[2] = 1;
-	finishCmdBuffer(3);
-	return sendCommand();
+	writeRegister(1, 103, 1);
+	for(quint8 c = 0; c < 8; c++)
+		if (m_mpsd.find(c) != m_mpsd.end())
+		{
+			if (m_mpsd[c]->getMpsdId() == MPSD8P)
+				writePeriReg(c, 1, 4);
+		}
+	return true;
 }
 
 /*!
@@ -795,7 +797,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 							if (recBuf.data[c] == MPSD8)
 								m_mpsd[c] = new MPSD_8(c, this);
 							else
+							{
 								m_mpsd[c] = new MPSD_8p(c, this);
+//								writePeriReg(c, 1, 4);
+							}
 						}
 						m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
 					}

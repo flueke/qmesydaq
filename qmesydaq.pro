@@ -51,6 +51,7 @@ SOURCES 	+= mesydaqobject.cpp \
 		measurement.cpp \
 		mesydaq2.cpp \
 		mpsd8.cpp \
+		mpsd8p.cpp \
 		networkdevice.cpp \
 		mesydaqdata.cpp \
 		counter.cpp \
