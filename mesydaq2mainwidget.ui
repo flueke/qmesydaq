@@ -247,7 +247,7 @@ Listfile</string>
      <x>240</x>
      <y>540</y>
      <width>737</width>
-     <height>309</height>
+     <height>311</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -2645,7 +2645,7 @@ parameters</string>
     <rect>
      <x>10</x>
      <y>540</y>
-     <width>227</width>
+     <width>221</width>
      <height>311</height>
     </rect>
    </property>
@@ -2656,19 +2656,73 @@ parameters</string>
     <attribute name="title">
      <string>Display</string>
     </attribute>
-    <layout class="QGridLayout" name="gridLayout_22">
-     <item row="1" column="2">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+    <layout class="QGridLayout" name="gridLayout_25">
+     <item row="0" column="0" colspan="4">
+      <widget class="Q3ButtonGroup" name="buttonGroup10_2">
+       <property name="title">
+        <string/>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>30</height>
-        </size>
+       <layout class="QGridLayout" name="gridLayout_22">
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="dispSpectra">
+          <property name="text">
+           <string>Spectra</string>
+          </property>
+          <property name="shortcut">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="dispHistogram">
+          <property name="text">
+           <string>Histogram</string>
+          </property>
+          <property name="shortcut">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="1" column="2" colspan="2">
+      <widget class="Q3ButtonGroup" name="buttonGroup10">
+       <property name="title">
+        <string/>
        </property>
-      </spacer>
+       <layout class="QGridLayout" name="gridLayout_21">
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="dispAllAmpl">
+          <property name="text">
+           <string>Ampl</string>
+          </property>
+          <property name="shortcut">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="dispAllPos">
+          <property name="text">
+           <string>Pos</string>
+          </property>
+          <property name="shortcut">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item row="2" column="0" colspan="3">
       <widget class="QCheckBox" name="dispAll">
@@ -2703,7 +2757,7 @@ parameters</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="2">
+     <item row="3" column="1">
       <widget class="QSpinBox" name="dispMcpd">
        <property name="enabled">
         <bool>false</bool>
@@ -2726,7 +2780,7 @@ parameters</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="3">
+     <item row="4" column="0" colspan="2">
       <layout class="QHBoxLayout">
        <item>
         <widget class="QLabel" name="textLabel1_4_2_3_4_2_2">
@@ -2833,38 +2887,6 @@ parameters</string>
          <widget class="QRadioButton" name="log">
           <property name="text">
            <string>log</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="0" column="1" colspan="3">
-      <widget class="Q3ButtonGroup" name="buttonGroup10">
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_21">
-        <item row="0" column="1">
-         <widget class="QRadioButton" name="dispAllAmpl">
-          <property name="text">
-           <string>Ampl</string>
-          </property>
-          <property name="shortcut">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="dispAllPos">
-          <property name="text">
-           <string>Pos</string>
-          </property>
-          <property name="shortcut">
-           <string/>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
           </property>
          </widget>
         </item>

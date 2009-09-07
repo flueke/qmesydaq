@@ -26,41 +26,45 @@
 #include <qwt_data.h>
 #include <qwt_raster_data.h>
 
-class MesydaqData : public QwtData
+class Spectrum;
+class Histogram;
+
+class MesydaqSpectrumData : public QwtData
 {
 public:
-	MesydaqData();
+	MesydaqSpectrumData();
 
 	virtual QwtData *copy() const;
 
-	virtual size_t size() const {return d_size;}
+	virtual size_t size() const; 
 
 	virtual double x(size_t i) const;
 
 	virtual double y(size_t i) const;
 
-	void setData(ulong *, quint32);
+	void setData(Spectrum *data);
 
 	quint32 max(void);
 
 private:
-	size_t 		d_size;
-	QVector<ulong>	m_data;
-	
+	Spectrum	*m_spectrum;
 };
 
-class MesydaqDiffractogram : public QwtRasterData
+class MesydaqHistogramData : public QwtRasterData
 {
 public:
-	MesydaqDiffractogram();
+	MesydaqHistogramData();
 
 	QwtRasterData *copy() const;
 
 	QwtDoubleInterval range() const;
 
 	double value(double x, double y) const;
+
+	void setData(Histogram *data);
 	
 private:
+	Histogram	*m_histogram;
 
 };
 

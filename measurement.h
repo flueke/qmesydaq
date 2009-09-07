@@ -81,11 +81,17 @@ public:
 
 	void clearChanHist(quint16 chan);
 
-	void copyPosData(quint32 line, ulong *data);
-	void copyAmpData(quint32 line, ulong *data);
-	void copyTimeData(ulong *data);
-	void copyPosData(ulong *data);
-	void copyAmpData(ulong *data);
+	Spectrum *posData(quint16 line);
+	Spectrum *posData();
+
+	Histogram *posHist() {return m_posHist;}
+
+	Spectrum *ampData(quint16 line);	
+	Spectrum *ampData();	
+
+	Histogram *ampHist() {return m_ampHist;}	
+
+	Spectrum *timeData();
 
 	void getPosMean(float &, float &);
 	void getPosMean(quint16, float &, float &);

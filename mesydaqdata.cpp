@@ -19,48 +19,88 @@
  ***************************************************************************/
 
 #include "mesydaqdata.h"
+#include "histogram.h"
 
-MesydaqData::MesydaqData()
+MesydaqSpectrumData::MesydaqSpectrumData()
 	: QwtData()
-	, d_size(1)
+	, m_spectrum(NULL)
 {
-	m_data.clear();
-	for (quint32 i = 0; i <= d_size; ++i)
-		m_data.append(i * i);
 }
 
-
-QwtData *MesydaqData::copy() const
+QwtData *MesydaqSpectrumData::copy() const
 {
-	MesydaqData *tmp = new MesydaqData();
-	ulong *t = (ulong *)m_data.data();
-	tmp->setData(t, d_size);
+	MesydaqSpectrumData *tmp = new MesydaqSpectrumData();
+	tmp->setData(m_spectrum);
 	return tmp;
 }
 
-double MesydaqData::x(size_t i) const
+size_t MesydaqSpectrumData::size() const
+{
+	if (m_spectrum) 
+		return m_spectrum->width();
+	else
+		return 0;
+}
+
+double MesydaqSpectrumData::x(size_t i) const
 {
 	return i;
 }
 
-double MesydaqData::y(size_t i) const
+double MesydaqSpectrumData::y(size_t i) const
 {
-	return m_data[i];
+	if (m_spectrum)
+		return m_spectrum->value(i);
+	else
+		return 0.0;
 }
 
-void MesydaqData::setData(ulong *data, quint32 len)
+void MesydaqSpectrumData::setData(Spectrum *data)
 {
-	m_data.clear();
-	for (quint32 i = 0; i < len; ++i)
-		m_data.append(data[i]);
-	d_size = len;
+	m_spectrum = data;
 }
 
-quint32 MesydaqData::max(void)
+quint32 MesydaqSpectrumData::max(void)
 {
-	quint32 m = 0;
-	for(int i = 0; i < m_data.size(); ++i)
-		if (m_data.value(i, 0) > m)
-			m = m_data.value(i, 0);
-	return m;
+	if (m_spectrum)
+		return m_spectrum->max();
+	else
+		return 0;
+}
+
+MesydaqHistogramData::MesydaqHistogramData() 
+	: QwtRasterData()
+	, m_histogram(NULL)
+{
+}
+
+QwtRasterData *MesydaqHistogramData::copy() const
+{
+	MesydaqHistogramData *tmp = new MesydaqHistogramData();
+	tmp->setData(m_histogram);
+	return tmp;
+}
+
+QwtDoubleInterval MesydaqHistogramData::range() const
+{
+	if (m_histogram)
+	{
+		double m = double(m_histogram->max());
+		return QwtDoubleInterval(0.0, m);
+	}
+	else
+		return QwtDoubleInterval(0.0, 1.0);
+}
+
+double MesydaqHistogramData::value(double x, double y) const
+{
+	if (m_histogram)
+		return m_histogram->value(quint16(y), quint16(x));
+	else
+		return 0.0;
+}
+
+void MesydaqHistogramData::setData(Histogram *data)
+{
+	m_histogram = data;
 }

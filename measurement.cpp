@@ -364,57 +364,58 @@ void Measurement::clearChanHist(quint16 chan)
 		m_posHist->clear(chan);
 	if (m_ampHist)
 		m_ampHist->clear(chan);
-//	if (m_timeSpectrum)
-//		m_timeSpectrum->clear(chan);
-//	m_lastTime = 0;
 }
 
 /*!
-    \fn Measurement::copyPosData(quint32 line, ulong *data)
- */
-void Measurement::copyPosData(quint32 line, ulong *data)
+    \fn Spectrum *Measurement::posData(quint16 line)
+*/
+Spectrum *Measurement::posData(quint16 line)
 {
 	if (m_posHist)
-		m_posHist->copyLine(line, data);
+		return m_posHist->spectrum(line);
+	else
+		return NULL;
 }
 
 /*!
-    \fn Measurement::copyAmpData(quint32 line, ulong *data)
- */
-void Measurement::copyAmpData(quint32 line, ulong *data)
-{
-	if (m_ampHist)
-		m_ampHist->copyLine(line, data);
-}
-
-/*!
-    \fn Measurement::copyPosData(ulong *data)
- */
-void Measurement::copyPosData(ulong *data)
+    \fn Spectrum *Measurement::posData()
+*/
+Spectrum *Measurement::posData()
 {
 	if (m_posHist)
-		m_posHist->copyLine(data);
+		return m_posHist->spectrum();
+	else
+		return NULL;
 }
 
 /*!
-    \fn Measurement::copyAmpData(ulong *data)
- */
-void Measurement::copyAmpData(ulong *data)
+    \fn Spectrum *Measurement::ampData()
+*/
+Spectrum *Measurement::ampData()
 {
 	if (m_ampHist)
-		m_ampHist->copyLine(data);
+		return m_ampHist->spectrum();
+	else
+		return NULL;
 }
 
 /*!
-    \fn Measurement::copyTimeData(ulong *data)
- */
-void Measurement::copyTimeData(ulong *data)
+    \fn Spectrum *Measurement::ampData(quint16 line)
+*/
+Spectrum *Measurement::ampData(quint16 line)
 {
-	if (m_timeSpectrum)
-	{
-		for(quint16 i = 0; i < m_timeSpectrum->width(); i++)
-    			data[i] = m_timeSpectrum->value(i);
-	}
+	if (m_ampHist)
+		return m_ampHist->spectrum(line);
+	else
+		return NULL;
+}
+
+/*!
+    \fn Spectrum *Measurement::timeData(quint16 line)
+*/
+Spectrum *Measurement::timeData()
+{
+	return m_timeSpectrum;
 }
 
 /*!

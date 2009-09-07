@@ -91,9 +91,9 @@ public:
 
 	quint64 getTotalCounts(void);
 
-	void copyLine(quint16 channel, ulong *pLineBuffer);
+	Spectrum *spectrum(quint16 channel);
 
-	void copyLine(ulong *pLineBuffer);
+	Spectrum *spectrum() {return m_sumSpectrum;}
 
 	quint64 max(quint16 channel);
 
@@ -112,6 +112,8 @@ public:
 	bool writeHistogram(QFile* f, const QString = "");
 
 	quint64 value(quint16 x, quint16 y);
+
+	quint16	height() {return m_channels;}
 
 protected:
 	quint64 	m_totalCounts;

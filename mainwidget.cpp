@@ -33,6 +33,9 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_zoomer.h>
 #include <qwt_plot_layout.h>
+#include <qwt_plot_spectrogram.h>
+#include <qwt_color_map.h>
+#include <qwt_scale_widget.h>
 
 #include <cmath>
 
@@ -58,7 +61,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_dispHiThresh(0)
 	, m_dispLog(false)
 	, m_curve(NULL)
+	, m_histogram(NULL)
 	, m_data(NULL)
+	, m_histData(NULL)
 	, m_meas(NULL)
 	, m_dispTimer(0)
 	, m_zoomer(NULL)
@@ -90,7 +95,10 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	dataFrame->setAxisTitle(QwtPlot::xBottom, "channels");
 	dataFrame->setAxisTitle(QwtPlot::yLeft, "counts");
+	dataFrame->setAxisTitle(QwtPlot::yRight, "intensity");
+	dataFrame->enableAxis(QwtPlot::yRight, false);
 //	dataFrame->plotLayout()->setAlignCanvasToScales(true);
+	dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
 	dataFrame->replot();
 
 	m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, dataFrame->canvas());
@@ -117,8 +125,21 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #endif
 	m_curve->setPen(QPen(Qt::black));
 	m_curve->attach(dataFrame);
-	m_data = new MesydaqData();
+
+	m_data = new MesydaqSpectrumData();
 	m_curve->setData(*m_data);
+
+	m_histogram = new QwtPlotSpectrogram();
+	QwtLinearColorMap colorMap(Qt::darkBlue, Qt::darkRed);
+	colorMap.addColorStop(0.2, Qt::blue);
+	colorMap.addColorStop(0.4, Qt::green);
+	colorMap.addColorStop(0.6, Qt::yellow);
+	colorMap.addColorStop(0.8, Qt::red);
+	m_histogram->setColorMap(colorMap);
+
+	dataFrame->axisWidget(QwtPlot::yRight)->setColorBarEnabled(true);
+	m_histData = new MesydaqHistogramData();
+	m_histogram->setData(*m_histData);
 
 	displayMcpdSlot();
 	dispFiledata();
@@ -165,7 +186,8 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         if(rect == m_zoomer->zoomBase())
         {
                 dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-                dataFrame->setAxisAutoScale(QwtPlot::xBottom);
+//		dataFrame->setAxisAutoScale(QwtPlot::xBottom);
+		dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
                 dataFrame->replot();
                 m_zoomEnabled = false;
         }
@@ -971,40 +993,61 @@ void MainWidget::mpsdCheck(int mod)
  */
 void MainWidget::draw(void)
 {
-	ulong	dispBuf[m_width];
+	bool on = dispHistogram->isChecked();
 
-	if(dispAll->isChecked())
+	m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, on);
+	m_histogram->setDefaultContourPen(on ? QPen() : QPen(Qt::NoPen));
+	dataFrame->enableAxis(QwtPlot::yRight, on);
+
+	if (on)
 	{
-		if(dispAllPos->isChecked())
-			m_meas->copyPosData(dispBuf);
-		else
-			m_meas->copyAmpData(dispBuf);
+		m_curve->detach();
+		m_histogram->attach(dataFrame);
+		m_histData->setData(m_meas->posHist());
+		
+		QwtDoubleInterval interval = m_histogram->data().range();
+
+		dataFrame->setAxisScale(QwtPlot::yRight,  interval.minValue(), interval.maxValue());
+		dataFrame->axisWidget(QwtPlot::yRight)->setColorMap(interval, m_histogram->colorMap());
+		m_histogram->setData(*m_histData);
+		if (!m_zoomEnabled)
+			dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->posHist()->height());
+		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
 	}
 	else
 	{
-		if (specialBox->isChecked())
+		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
+		if(dispAll->isChecked())
 		{
-			m_meas->copyTimeData(dispBuf);
+			if(dispAllPos->isChecked())
+				m_data->setData(m_meas->posData());
+			else
+				m_data->setData(m_meas->ampData());
 		}
 		else
 		{
-			quint32 chan = dispMcpd->value() * 64;
-			chan += dispMpsd->value() * 8;
-			chan += dispChan->value();
-			if(dispAllPos->isChecked())
-				m_meas->copyPosData(chan, dispBuf);
+			if (specialBox->isChecked())
+				m_data->setData(m_meas->timeData());
 			else
-				m_meas->copyAmpData(chan, dispBuf);
+			{
+				quint32 chan = dispMcpd->value() * 64;
+				chan += dispMpsd->value() * 8;
+				chan += dispChan->value();
+				if(dispAllPos->isChecked())
+					m_data->setData(m_meas->posData(chan));
+				else
+					m_data->setData(m_meas->ampData(chan));
+			}
 		}
-	}
-	
-	m_data->setData(dispBuf, m_width);
-	m_curve->setData(*m_data);
+		m_histogram->detach();
+		m_curve->attach(dataFrame);	
+		m_curve->setData(*m_data);
 // reduce data in case of threshold settings:
-	if(m_dispThresh)
-		dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
-	else if (!m_zoomEnabled)
-                dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+		if (m_dispThresh)
+			dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
+		else if (!m_zoomEnabled)
+        	        dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+	}
 	dataFrame->replot();
 	drawOpData();
 	update();

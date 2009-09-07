@@ -122,7 +122,10 @@ Histogram::~Histogram()
 
 quint64 Histogram::value(quint16 chan, quint16 bin)
 {
-	return m_data[chan]->value(bin);
+	if (chan < m_channels)
+		return m_data[chan]->value(bin);
+	else
+		return 0;
 }
 
 bool Histogram::incVal(quint16 chan, quint16 bin)
@@ -176,33 +179,13 @@ quint64 Histogram::getTotalCounts(void)
 	return m_totalCounts;
 }
 
-/*!
-    \fn Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
- */
-void Histogram::copyLine(quint16 channel, ulong *pLineBuffer)
-{
-	quint16 bins;
-   	if(channel <= m_channels)
-	{
-		bins = m_data[channel]->width();
-		for(quint16 i = 0; i < bins; i++)
-    			pLineBuffer[i] = m_data[channel]->value(i);
-	}
-	else
-	{
-		bins = m_data[0]->width();
-		for(quint16 i = 0; i < bins; i++)
-                        pLineBuffer[i] = 0;
-	}
-}
 
-/*!
-    \fn Histogram::copyLine(ulong *pLineBuffer)
- */
-void Histogram::copyLine(ulong *pLineBuffer)
+Spectrum *Histogram::spectrum(quint16 channel)
 {
-	for(quint16 i = 0; i < m_sumSpectrum->width(); i++)
-    		pLineBuffer[i] = m_sumSpectrum->value(i);
+   	if(channel <= m_channels)
+		return m_data[channel];
+	else
+		return NULL;
 }
 
 /*!
@@ -216,14 +199,12 @@ quint64 Histogram::max(quint16 channel)
 		return 0;
 }
 
-
 /*!
     \fn Histogram::maxpos(quint16 channel)
  */
 quint16 Histogram::maxpos(quint16 channel)
 {
 	return m_data[channel]->maxpos();
-//	return m_maximumPos;
 }
 
 /*!

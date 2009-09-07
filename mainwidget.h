@@ -23,9 +23,11 @@
 #include "ui_mesydaq2mainwidget.h"
 
 class QwtPlotCurve;
+class QwtPlotSpectrogram;
 class QwtPlotZoomer;
 class QTimer;
-class MesydaqData;
+class MesydaqSpectrumData;
+class MesydaqHistogramData;
 class Mesydaq2;
 class Measurement;
 class CorbaThread;
@@ -147,8 +149,14 @@ private:
 	//! plot curve
 	QwtPlotCurve	*m_curve;
 
-	//! data to be plotted
-	MesydaqData	*m_data;
+	//! plot diffractogram
+	QwtPlotSpectrogram	*m_histogram;
+
+	//! spectrum to be plotted
+	MesydaqSpectrumData	*m_data;
+
+	//! histogram to be plotted
+	MesydaqHistogramData	*m_histData;	
 
 	//! measurement objct
 	Measurement 	*m_meas;
