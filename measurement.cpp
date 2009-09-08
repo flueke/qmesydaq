@@ -493,7 +493,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			{
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
-				data = (pd.data[counter + 2] & 0xFF) << 13 + (pd.data[counter + 1] >> 3) & 0x7FFF;
+				data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
 				time = (quint16)tim;
 #warning TODO remove mysterious mapping
 				switch(dataId)
@@ -530,7 +530,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				}
 				else
 				{
-					amp = (pd.data[counter+2] & 0x7F) << 3 + (pd.data[counter+1] >> 13) & 0x7;
+					amp = ((pd.data[counter+2] & 0x7F) << 3) + ((pd.data[counter+1] >> 13) & 0x7);
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
 				}
 				++(*m_counter[EVCT]);
