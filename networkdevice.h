@@ -43,6 +43,10 @@ public:
 
 	int sendBuffer(MDP_PACKET &);
 
+	QString ip() {return m_ipAddress;}
+
+	quint16 port() {return m_port;}
+
 public slots:
 	void readSocketData();
 

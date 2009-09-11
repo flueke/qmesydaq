@@ -110,10 +110,9 @@ int NetworkDevice::sendBuffer(MDP_PACKET &buf)
 void NetworkDevice::readSocketData(void)
 {
 // read socket data into receive buffer and notify
-// notify
 	if (m_sock->hasPendingDatagrams())
 	{
-		protocol("NetworkDevice::readSocketData()", 3);
+		protocol(tr("NetworkDevice::readSocketData() : %1").arg(ip()), 3);
 		qint64 maxsize = m_sock->pendingDatagramSize();
 		memset(&m_recBuf, 0, sizeof(m_recBuf));
 		qint64 len = m_sock->readDatagram((char *)&m_recBuf, maxsize);
