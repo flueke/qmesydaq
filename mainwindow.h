@@ -18,13 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #ifndef _MAINWINDOW_H_
 #define _MAINWINDOW_H_
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #include <QMainWindow>
 #include <QFile>
