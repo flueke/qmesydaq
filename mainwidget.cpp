@@ -48,11 +48,10 @@
 #include "histogram.h"
 #include "mesydaqdata.h"
 
-#if 0
-
-#include "caresscontrol.h"
-#include "tacocontrol.h"
-
+#if TACO
+#	include "tacocontrol.h"
+#elif CARESS
+#	include "caresscontrol.h"
 #endif
 
 MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
@@ -152,9 +151,11 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	displayMcpdSlot();
 	dispFiledata();
-
-//	m_cInt = new CARESSControl(this);
-//	m_cInt = new TACOControl(this);
+#if TACO
+	m_cInt = new TACOControl(this);
+#elif CARESS
+	m_cInt = new CARESSControl(this);
+#endif
 // display refresh timer
 	m_dispTimer = startTimer(1000);
 }
@@ -170,7 +171,7 @@ MainWidget::~MainWidget()
 	m_meas = NULL;
 }
 
-void MainWidget::timerEvent(QTimerEvent *event)
+void MainWidget::timerEvent(QTimerEvent * /* event */)
 {
 	draw();
 }
