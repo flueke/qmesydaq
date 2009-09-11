@@ -22,10 +22,6 @@
 #ifndef _MESYDAQ_OBJECT_H_
 #define _MESYDAQ_OBJECT_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <QObject>
 
 /**
