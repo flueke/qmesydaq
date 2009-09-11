@@ -25,42 +25,30 @@
 class Mesydaq2;
 
 /**
-Interface class for external control (caress, ...)
-
-	@author Gregor Montermann <g.montermann@mesytec.com>
+ * Interface class for external control (CARESS, TACO, ...)
+ *
+ * \author Gregor Montermann <g.montermann@mesytec.com>
 */
 
 class ControlInterface : public MesydaqObject
 {
 	Q_OBJECT
 public:
-	ControlInterface(QObject *parent = 0);
+	ControlInterface(QObject *parent = NULL);
 
 	~ControlInterface();
-	void caressTask();
-	bool isActive(void);
-	void completeCar();
 
-	void setCaressTaskPending(bool val) {m_caressTaskPending = val;}
-	bool caressTaskPending(void) {return m_caressTaskPending;}
-	bool asyncTaskPending(void) {return m_asyncTaskPending;}
+	void start();
+
+	void stop();
+
+	void cont();
+
+signals:
 
 protected:
-	bool 		m_asyncTaskPending;
-	bool 		m_caressTaskPending;
-	quint32 	m_caressTaskNum;
-	quint32 	m_caressSubTaskNum;
-	quint8  	m_caressMaster;
-	quint8  	m_caressDevice;
-	ulong		*m_transferBuffer;
-	ulong		m_caressStartChannel;
-	ulong		m_caressEndChannel;
-	ulong		m_caressHistoSize;
-	quint32 	m_caressHeight;
-	quint32 	m_caressWidth;
-	ulong		m_caressPreset;
-
 	Mesydaq2	*m_theApp;
 };
 
 #endif
+
