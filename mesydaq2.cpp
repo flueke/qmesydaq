@@ -137,7 +137,7 @@ void Mesydaq2::stoppedDaq(void)
  */
 void Mesydaq2::initDevices(void)
 {
-	QString ip[MCPDS] = {"192.168.168.121", "192.168.169.121", };	
+	QString ip[MCPDS] = {"192.168.168.121", /* "192.168.169.121", */};	
 	for(quint8 i = 0; i < MCPDS; i++)
 	{
 		m_mcpd[i] = new MCPD8(i, this, ip[i]);
