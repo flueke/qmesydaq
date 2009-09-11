@@ -22,10 +22,6 @@
 #ifndef _MESYDAQ2_H_
 #define _MESYDAQ2_H_
 
-#ifdef HAVE_CONFIG_H
-#	include <config.h>
-#endif
-
 #include <QFile>
 #include <QDataStream>
 #include <QString>
