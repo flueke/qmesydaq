@@ -63,11 +63,12 @@ private:
 
 	quint64		m_meanCount;
 
-#warning TODO why only 8 bits ?
-	quint8 /*64*/	m_meanPos;
-
 	quint64		m_totalCounts;
 
+	//! implicit ring buffer due to the change of 256 -> 0
+	quint8 		m_meanPos;
+
+	//! last events
 	quint16		m_floatingMean[255];
 };
 
