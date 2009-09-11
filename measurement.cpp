@@ -57,8 +57,8 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 			m_counter[i] = new MesydaqTimer();
 		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
 	}
-	m_ampHist = new Histogram(64, 960);
-	m_posHist = new Histogram(64, 960);
+	m_ampHist = new Histogram(MCPDS * 64, 960);
+	m_posHist = new Histogram(MCPDS * 64, 960);
 	m_timeSpectrum = new Spectrum(960);
 
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
