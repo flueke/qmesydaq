@@ -113,6 +113,8 @@ public:
 
 	quint8 getMpsdId(quint8 addr);
 
+	void initMpsd(quint8 id);
+
 // commands: MCPD-8 ports
 	bool setDac(quint16 dac, quint16 val);
 
@@ -126,6 +128,9 @@ public:
 	bool writePeriReg(quint16 mod, quint16 reg, quint16 val);
 
 	bool writeRegister(quint16 addr, quint16 reg, quint16 val);
+
+	bool getVersion(void);
+	float version(void);
 
 public:
 	void communicate(bool yesno) {m_commActive = yesno;}
@@ -143,6 +148,12 @@ public:
 	bool isPulserOn();
 
 	bool isPulserOn(quint8 addr);
+
+	quint8	getPulsPos(quint8 addr, bool preset = false);
+
+	quint8	getPulsAmp(quint8 addr, bool preset = false); 
+
+	quint8	getPulsChan(quint8 addr, bool preset = false); 
 
 	quint64 time(void) {return m_timemsec;}
 

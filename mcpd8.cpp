@@ -30,6 +30,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 	: MesydaqObject(parent)
 	, m_network(NULL)
 	, m_txCmdBufNum(0)
+	, m_id(id)
 	, m_ownIpAddress(ip)
 	, m_cmdPort(port)	// original 7000
 	, m_dataPort(7000)
@@ -46,9 +47,6 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 	, m_headertime(0)
 	, m_timemsec(0)
 {
-// TODO
-//	setId(id);
-	m_id = id;
 	stdInit();
 	m_network = new NetworkDevice(this, ip, port);
 	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET &)), this, SLOT(analyzeBuffer(MDP_PACKET &)));
@@ -60,6 +58,9 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port)
 	memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
 
 	m_mpsd.clear();
+
+#warning TODO	setId(m_id);
+	getVersion();
 }
 
 
@@ -161,13 +162,23 @@ bool MCPD8::setId(quint8 mcpdid)
 }
 
 /*!
+ * \fn MCPD8::getVersion(void)
+ */
+bool MCPD8::getVersion(void)
+{
+	initCmdBuffer(GETVER);
+	finishCmdBuffer(0);
+	return sendCommand();
+}
+
+/*!
     \fn MCPD8::readId(void)
  */
 bool MCPD8::readId(void)
 {
 	initCmdBuffer(READID);
 	m_cmdBuf.data[0] = 2;
-	finishCmdBuffer(3);
+	finishCmdBuffer(1); /* was 3 ? */
 	return sendCommand();
 }
 
@@ -176,6 +187,8 @@ bool MCPD8::readId(void)
  */
 bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
+	if (m_mpsd.find(addr) == m_mpsd.end())
+		return false;
 	if (chan > 8)
 		chan = 8;
 #warning TODO common gain handling
@@ -242,6 +255,8 @@ quint8 MCPD8::getThreshold(quint16 addr)
 
 bool MCPD8::setMode(quint16 addr, bool mode)
 {
+	if (m_mpsd.find(addr) == m_mpsd.end())
+		return false;
 	if (addr > 8)
 		addr = 8;
 #warning TODO common mode handling
@@ -269,6 +284,8 @@ bool MCPD8::getMode(quint16 addr)
 bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool onoff)
 {
 	protocol(tr("MCPD8::setPulser(addr = %1, chan = %2, pos = %3, amp = %4, onoff = %5)").arg(addr).arg(chan).arg(pos).arg(amp).arg(onoff));
+	if (m_mpsd.find(addr) == m_mpsd.end())
+		return false;
 	if (addr > 7)
 		addr = 7;
 	if (chan > 8)
@@ -614,9 +631,8 @@ int MCPD8::sendCommand(void)
 {
 	if(m_network->sendBuffer(m_cmdBuf))
 	{
-		QString pstring;
-		pstring.sprintf("%d. sent cmd: %d to id: %d", m_txCmdBufNum, m_cmdBuf.cmd, m_cmdBuf.deviceId);
-		protocol(pstring, 2 /*3 */);
+		QString pstring = tr("%1. sent cmd: %2 to id: %3 (%4(%5))").arg(m_txCmdBufNum).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId).arg(m_network->ip()).arg(m_network->port());
+		protocol(pstring, 2);
 		communicate(true);
 		m_commTimer->start(500);
 // wait for answer
@@ -812,6 +828,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				protocol(tr("not handled command : QUIET"));
 				break;
 			case GETVER:
+				protocol(tr("Modul (ID  %1): Version number : %2.%3").arg(m_id).arg(recBuf.data[0]).arg(recBuf.data[1]));
 				protocol(tr("not handled command : GETVER"));
 				break;
 			case READPERIREG:
@@ -908,6 +925,8 @@ bool MCPD8::setTimingSetup(bool master, bool sync)
 
 bool MCPD8::isPulserOn(quint8 addr)
 {
+	if (m_mpsd.find(addr) == m_mpsd.end())
+		return false;
 	if (getMpsdId(addr) && m_mpsd[addr]->isPulserOn())
 		return true;
 	return false;
@@ -916,7 +935,67 @@ bool MCPD8::isPulserOn(quint8 addr)
 bool MCPD8::isPulserOn()
 {
 	for (quint8 i = 0; i < 8; ++i)
-		if (getMpsdId(i) && m_mpsd[i]->isPulserOn())
+		if (isPulserOn(i))
 			return true;
 	return false;
 }
+
+quint8	MCPD8::getPulsPos(quint8 addr, bool preset)
+{
+	if (m_mpsd.find(addr) == m_mpsd.end())
+		return -1;
+	return m_mpsd[addr]->getPulsPos(preset);
+}
+
+quint8	MCPD8::getPulsAmp(quint8 addr, bool preset)
+{
+	if (m_mpsd.find(addr) == m_mpsd.end())
+		return -1;
+	return m_mpsd[addr]->getPulsAmp(preset);
+} 
+
+quint8	MCPD8::getPulsChan(quint8 addr, bool preset)
+{
+	if (m_mpsd.find(addr) == m_mpsd.end())
+		return -1;
+	return m_mpsd[addr]->getPulsChan(preset);
+} 
+
+/*!
+    \fn MCPD8::initMpsd(quint8 id)
+ */
+void MCPD8::initMpsd(quint8 id)
+{
+#warning TODO
+#if 0
+	quint8 	start = 8,
+		stop = 9;
+	
+	// gains:
+	if(!myMpsd[id]->comGain())
+	{
+		// iterate through all channels
+		start = 0;
+		stop = 8;
+	}
+	for (quint8 c = start; c < stop; ++c)
+		m_mcpd[id]->setGain(c, myMpsd[id]->getGainpoti(c, 1));
+#endif
+	
+// threshold:
+	setThreshold(id, getThreshold(id));
+
+// pulser
+	setPulser(id, 0, 2, 50, false);
+
+// mode
+	setMode(id, false);
+	
+// now set tx capabilities, if id == 105
+	if(getMpsdId(id) == 105)
+	{
+		// write register 1
+		writePeriReg(id, 1, 4);
+	}
+}
+
