@@ -1,0 +1,7 @@
+#define HAVE_RPC_RPC_H 1
+#define HAVE_RPC_PMAP_CLNT_H 1
+
+#define SIZEOF_UNSIGNED_LONG 4
+#define SIZEOF_LONG 4
+
+#define HAVE_DECL_GETHOSTNAME 1
