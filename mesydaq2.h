@@ -61,7 +61,6 @@ public:
 	virtual ~Mesydaq2();
 
 	void scanPeriph(quint16 id);
-	void initMpsd(quint8 id);
 	void initMcpd(quint8 id);
 	void setTimingwidth(quint8 width);
 	void writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val);
@@ -142,6 +141,8 @@ public slots:
 	void setGain(quint16 mod, quint16 addr, quint8 channel, float gain);
 
 	void setThreshold(quint16 mod, quint16 addr, quint8 thresh);
+
+	void setThreshold(quint16 mod, quint16 addr, quint16 thresh);
 
     	void acqListfile(bool yesno);
 

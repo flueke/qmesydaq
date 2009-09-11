@@ -80,7 +80,7 @@ quint64 Mesydaq2::sentCmds(void)
 quint64 Mesydaq2::time(void)
 {
 #warning TODO what if the number of MCPD is > 1
-	return m_mcpd[0]->time();
+	return (*m_mcpd.begin())->time();
 }
 
 /*!
@@ -137,9 +137,10 @@ void Mesydaq2::stoppedDaq(void)
  */
 void Mesydaq2::initDevices(void)
 {
+	QString ip[MCPDS] = {"192.168.168.121", "192.168.169.121", };	
 	for(quint8 i = 0; i < MCPDS; i++)
 	{
-		m_mcpd[i] = new MCPD8(i, this);
+		m_mcpd[i] = new MCPD8(i, this, ip[i]);
 		connect(m_mcpd[i], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 		connect(m_mcpd[i], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 		connect(m_mcpd[i], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
@@ -259,7 +260,7 @@ void Mesydaq2::initHardware(void)
 		for(quint8 c = 0; c < MCPDS; c++)
 			for (int i = 0; i < 8; ++i)
 				if(m_mcpd[c]->getMpsdId(i))
-					initMpsd(c * 8 + i);
+					m_mcpd[c]->initMpsd(i);
 	}
 	initMcpd(0);
 }
@@ -510,44 +511,6 @@ void Mesydaq2::timerEvent(QTimerEvent *event)
 }
 
 
-/*!
-    \fn Mesydaq2::initMpsd(unsigned char id)
- */
-void Mesydaq2::initMpsd(unsigned char id)
-{
-	quint8 	start = 8,
-		stop = 9;
-	
-#warning TODO
-#if 0
-	// gains:
-	if(!myMpsd[id]->comGain())
-	{
-		// iterate through all channels
-		start = 0;
-		stop = 8;
-	}
-	for (quint8 c = start; c < stop; ++c)
-		m_mcpd[id]->setGain(c, myMpsd[id]->getGainpoti(c, 1));
-#endif
-	
-// threshold:
-	m_mcpd[0]->setThreshold(id, m_mcpd[0]->getThreshold(id));
-
-// pulser
-	m_mcpd[0]->setPulser(id, 0, 2, 50, false);
-
-// mode
-	m_mcpd[0]->setMode(id, false);
-	
-// now set tx capabilities, if id == 105
-	if(m_mcpd[0]->getMpsdId(id) == 105)
-	{
-		// write register 1
-		m_mcpd[0]->writePeriReg(id, 1, 4);
-	}
-}
-
 
 /*!
     \fn Mesydaq2::initMcpd(unsigned char id)
@@ -714,6 +677,11 @@ void Mesydaq2::setGain(quint16 id, quint16 addr, quint8 channel, float gain)
 }
 
 void Mesydaq2::setThreshold(quint16 id, quint16 addr, quint8 thresh)
+{
+	m_mcpd[id]->setThreshold(addr, thresh);
+}
+
+void Mesydaq2::setThreshold(quint16 id, quint16 addr, quint16 thresh)
 {
 	m_mcpd[id]->setThreshold(addr, thresh);
 }
