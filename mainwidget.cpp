@@ -48,8 +48,12 @@
 #include "histogram.h"
 #include "mesydaqdata.h"
 
-#include "corbathread.h"
-#include "controlinterface.h"
+#if 0
+
+#include "caresscontrol.h"
+#include "tacocontrol.h"
+
+#endif
 
 MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	: QWidget(parent)
@@ -68,12 +72,17 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_dispTimer(0)
 	, m_zoomer(NULL)
 	, m_zoomEnabled(false)
-	, m_ct(NULL)
 	, m_cInt(NULL)
 {
 	m_meas = new Measurement(mesy, this);
-	m_ct = new CorbaThread();
 	setupUi(this);
+
+//	deviceId->setMaximum(MCPDS - 1);
+	dispMcpd->setMaximum(MCPDS - 1);
+	devid->setMaximum(MCPDS - 1);
+	devid_2->setMaximum(MCPDS - 1);
+	paramId->setMaximum(MCPDS - 1);
+	mcpdId->setMaximum(MCPDS - 1);
 	
         connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
@@ -144,8 +153,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	displayMcpdSlot();
 	dispFiledata();
 
-	m_cInt = new ControlInterface(this);
-	m_ct->initializeCorba(this, m_cInt);
+//	m_cInt = new CARESSControl(this);
+//	m_cInt = new TACOControl(this);
 // display refresh timer
 	m_dispTimer = startTimer(1000);
 }
@@ -327,15 +336,7 @@ void MainWidget::setGainSlot()
 		id = (quint16) devid->value(),
 		addr = module->value();
 	float 	gainval = gain->text().toFloat(&ok);
-#if 0	
-	if(gainval < 0.5)
-		gainval = 0.5;
-	if(gainval > 1.88)
-		gainval = 1.88;
-#endif		
-#warning TODO m_theApp->m_mcpd
-	MPSD_8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
-	m_theApp->setGain(id, addr, chan, ptrMPSD->calcGainpoti(gainval)); 
+	m_theApp->setGain(id, addr, chan, gainval); 
 }
 
 void MainWidget::setThresholdSlot()
@@ -344,10 +345,7 @@ void MainWidget::setThresholdSlot()
 	quint16 id = (quint16) devid->value();	
 	quint16 addr = module->value();
 	quint16 thresh = threshold->text().toUInt(&ok, 0);
-
-#warning TODO m_theApp->m_mcpd
-	MPSD_8	*ptrMPSD = m_theApp->m_mcpd[id]->m_mpsd[addr];
-	m_theApp->setThreshold(id, addr, ptrMPSD->calcThreshpoti(thresh)); 
+	m_theApp->setThreshold(id, addr, thresh); 
 }
 
 void MainWidget::selectListfileSlot()
@@ -559,7 +557,7 @@ void MainWidget::displayMpsdSlot(int)
 	threshold->setText(tr("%1").arg(m_theApp->getThreshold(id, mod)));
 		
 // pulser:  on/off
-	if(m_theApp->m_mcpd[id]->m_mpsd[mod]->isPulserOn())
+	if(m_theApp->m_mcpd[id]->isPulserOn(mod))
 	{
 		pulserButton->setChecked(true);
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
@@ -570,12 +568,12 @@ void MainWidget::displayMpsdSlot(int)
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
 	}
 // channel
-	pulsChan->setValue((int)m_theApp->m_mcpd[id]->m_mpsd[mod]->getPulsChan());
+	pulsChan->setValue((int)m_theApp->m_mcpd[id]->getPulsChan(mod));
 // amplitude
-	dstr.sprintf("%3d", m_theApp->m_mcpd[id]->m_mpsd[mod]->getPulsAmp(0));
+	dstr.sprintf("%3d", m_theApp->m_mcpd[id]->getPulsAmp(mod, 0));
 //	pulsAmp->setValue((int)m_theApp->m_mpsd[8*id+mod]->getPulsAmp());
 // position
-	switch(m_theApp->m_mcpd[id]->m_mpsd[mod]->getPulsPos())
+	switch(m_theApp->m_mcpd[id]->getPulsPos(mod))
 	{
 		case 0:
 			pulsLeft->setChecked(true);
@@ -598,7 +596,7 @@ void MainWidget::displayMpsdSlot(int)
 
 void MainWidget::scanPeriSlot()
 {
-	m_theApp->scanPeriph((quint16)devid->value());
+	m_theApp->scanPeriph((quint16)devid_2->value());
 	displayMpsdSlot();
 }
 
