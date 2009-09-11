@@ -44,8 +44,8 @@ public:
 	void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 	quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
 	quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
-	quint8	getPulsPoti(bool preset = false) {return m_pulsPoti[preset];}
 	quint8	getPulsChan(bool preset = false) {return m_pulsChan[preset];}
+	quint8	getPulsPoti(bool preset = false) {return m_pulsPoti[preset];}
 	bool	isPulserOn() {return m_pulser[0];}
 
 // Threshold related methods
