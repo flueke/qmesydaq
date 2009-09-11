@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2008 by Lutz Rossa <rossa@hmi.de>                       *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,65 +17,52 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CORBATHREAD_H
-#define CORBATHREAD_H
+#ifndef CARESSCONTROL_H
+#define CARESSCONTROL_H
 
-#include <QThread>
+#include "controlinterface.h"
 
-#define OK 0
+class CorbaThread;
 
-const char FS_NONE = 0;
-const char FS_X = 1;
-const char FS_Y = 2;
-const char FS_XY = 3;
+/**
+ * Interface class for external control for CARESS
+ *
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+*/
 
-class CORBADevice_i;
-class CARESSControl;
-
-/** implementation of corba server threads
-  * \author Gregor Montermann
-  * CORBA / CARESS modules by Lutz Rossa, Helmholtz Zentrum Berlin
-  */
-
-class CorbaThread : public QThread  
+class CARESSControl : public ControlInterface
 {
-public: 
-	//! Constructor
-	CorbaThread(CARESSControl *pcInt);
-	
-	//! Destructor
-	~CorbaThread();
+	Q_OBJECT
+public:
+	CARESSControl(QObject *parent = NULL);
 
-	//! No descriptions
-	virtual void run();
+	~CARESSControl();
 
-private:
-	//! No descriptions
-	bool initialize(CARESSControl *pcInt);
+	void caressTask();
+	bool isActive(void);
+	void completeCar();
 
-	//! No descriptions 
-	bool asyncCmd(void);
+	void setCaressTaskPending(bool val) {m_caressTaskPending = val;}
+	bool caressTaskPending(void) {return m_caressTaskPending;}
+	bool asyncTaskPending(void) {return m_asyncTaskPending;}
 
 protected:
-	CARESSControl 	*m_pInt;
+	bool 		m_asyncTaskPending;
+	bool 		m_caressTaskPending;
+	quint32 	m_caressTaskNum;
+	quint32 	m_caressSubTaskNum;
+	quint8  	m_caressMaster;
+	quint8  	m_caressDevice;
+	ulong		*m_transferBuffer;
+	ulong		m_caressStartChannel;
+	ulong		m_caressEndChannel;
+	ulong		m_caressHistoSize;
+	quint32 	m_caressHeight;
+	quint32 	m_caressWidth;
+	ulong		m_caressPreset;
 
-	//! implementation of generic CORBA device for CARESS 
-	CORBADevice_i 	*m_pCORBADevice;
-
-	//! size of desired histogram: 0=64*64, 1 = 128*128 
-//	quint8 		m_fullsize;
-
-	//! 
-	quint8 		m_xsize;
-
-	//!
-	quint8 		m_ysize;
-
-	//!
-	qint32 		m_retval;
-
-	//!
-	bool 		m_terminate;
+private:
+	CorbaThread	*m_ct;
 };
 
 #endif

@@ -34,7 +34,7 @@
 // application specific includes
 #include "corbathread.h"
 #include "mesydaq2.h"
-#include "controlinterface.h"
+#include "caresscontrol.h"
 #include "mdefines.h"
 #include "measurement.h"
 #include "mainwidget.h"
@@ -102,7 +102,6 @@ public:
   CORBA::Boolean needs_reference_module(CORBA::Long id);
 
 protected:
-  mesydaq2* m_pApp;
 //  MesydaqDoc* m_pDoc;
 //  Histogram*  m_pHistogram;
   CorbaThread* m_pThread;
@@ -125,24 +124,27 @@ protected:
 
 static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr objref, const char* szName);
 */
-CorbaThread::CorbaThread()
-	: m_pApp(NULL)
+CorbaThread::CorbaThread(CARESSControl *pcInt)
+	: m_pInt(NULL)
 	, m_pCORBADevice(NULL)
-	, terminate(false)
+	, m_terminate(false)
 {
+	initialize(pcInt);
 }
 
 CorbaThread::~CorbaThread()
 {
+	qDebug(tr("CorbaThread::~CorbaThread()"));
 }
 
 /** No descriptions */
 void CorbaThread::run()
 {
+	qDebug(tr("CorbaThread::run()"));
 #if 0  
-	while (m_pCORBADevicei != NULL)
+	while (m_pCORBADevice != NULL)
 	{ /* if OK then wait for ever */
-		if (terminate == true)
+		if (m_terminate == true)
 		{
 			qDebug("terminating");
 			break;    
@@ -158,13 +160,13 @@ void CorbaThread::run()
   /* otherwise program terminates */
 //	qDebug("CORBA not running");
 #endif
+	exec();
 }
 
 /** No descriptions */
-bool CorbaThread::initializeCorba(MainWidget* App, ControlInterface* pcInt)
+bool CorbaThread::initialize(CARESSControl *pcInt)
 {
-	qDebug("initialize corba");
-	m_pApp = App;
+	qDebug("initialize CARESS");
 	m_pInt = pcInt;
 #if 0  
 	if (m_pCORBADevice!=NULL)
@@ -212,14 +214,6 @@ bool CorbaThread::initializeCorba(MainWidget* App, ControlInterface* pcInt)
 	return true;
 }
 
-/** stops and closes thread */
-void CorbaThread::bye()
-{
-	qDebug("cthread: exit");
-	terminate = true;
-	qDebug("cthread: finished");
-}
-
 bool CorbaThread::asyncCmd(void)
 {
   	
@@ -229,7 +223,7 @@ bool CorbaThread::asyncCmd(void)
 
 // wait max. 100 ms. for completion
 	quint8 waitCount(100);
-  	for( ; m_pInt->isActive() && waitCount; --waitCount)
+	for( ; m_pInt->isActive() && waitCount; --waitCount)
     		usleep(1000);
 
   	if(waitCount)
