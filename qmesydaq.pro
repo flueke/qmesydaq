@@ -33,8 +33,8 @@ QWTLIB 		= qwt
 
 INTERFACES	= 
 
-INCLUDEPATH 	+= $${QWT_ROOT}/include $${TACO_ROOT}/include
-DEPENDPATH  	+= $${QWT_ROOT}/include $${TACO_ROOT}/include
+INCLUDEPATH 	+= $${QWT_ROOT}/include 
+DEPENDPATH  	+= $${QWT_ROOT}/include 
 LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} 
 
 # Input
