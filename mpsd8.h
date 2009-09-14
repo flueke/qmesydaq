@@ -79,10 +79,10 @@ protected:
 public:
 	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
+private:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
 	
-private:
 	//! MPSD-8 id
 	quint8 		m_mpsdId;
 
