@@ -498,7 +498,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 /*!
     \fn Mesydaq2::centralDispatch()
  */
-void Mesydaq2::timerEvent(QTimerEvent *event)
+void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 {
 #warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
 #warning TODO 		cInt->caressTask();
