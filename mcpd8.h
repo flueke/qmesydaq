@@ -130,6 +130,7 @@ public:
 	bool writeRegister(quint16 addr, quint16 reg, quint16 val);
 
 	bool getVersion(void);
+
 	float version(void);
 
 public:
