@@ -40,7 +40,7 @@ class MCPD8 : public MesydaqObject
 {
 Q_OBJECT
 public:
-	MCPD8(quint8, QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321);
+	MCPD8(quint8, QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
 
 	~MCPD8();
 
@@ -123,15 +123,15 @@ public:
 	QString readSerialString(void);
 
 // commands:
-	bool readPeriReg(quint16 mod, quint16 reg);
+	quint16 readPeriReg(quint16 mod, quint16 reg);
 
 	bool writePeriReg(quint16 mod, quint16 reg, quint16 val);
 
-	bool writeRegister(quint16 addr, quint16 reg, quint16 val);
+	bool writeRegister(quint16 reg, quint16 val);
 
-	bool getVersion(void);
+	quint16 readRegister(quint16 reg);
 
-	float version(void);
+	float version(void); 
 
 public:
 	void communicate(bool yesno) {m_commActive = yesno;}
@@ -261,6 +261,15 @@ private:
 
 	//! the header time in ms
 	quint64		m_timemsec;
+
+	//! the firmware version 
+	float		m_version;
+
+	//! last register read value
+	quint16		m_reg;
+
+	//! last peripheral register value
+	quint16		m_periReg;
 };
 
 #endif

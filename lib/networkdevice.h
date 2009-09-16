@@ -37,13 +37,13 @@ class NetworkDevice : public MesydaqObject
 {
 Q_OBJECT
 public:
-	NetworkDevice(QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321);
+	NetworkDevice(QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
 
 	~NetworkDevice();
 
 	int sendBuffer(MDP_PACKET &);
 
-	QString ip() {return m_ipAddress;}
+	QString ip() {return m_target;}
 
 	quint16 port() {return m_port;}
 
@@ -59,9 +59,11 @@ private:
 	void destroySocket(void);
 
 private:
-	QString 	m_ipAddress;
+	QString 	m_target;
 
 	quint16		m_port;
+
+	QString		m_source;
 
 	QHostAddress	m_cpuAddress;
 

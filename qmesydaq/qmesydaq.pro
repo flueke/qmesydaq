@@ -18,13 +18,72 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-TEMPLATE 	= 	subdirs
+TEMPLATE 	= app
+TARGET 		= qmesydaq
+DEPENDPATH 	+= . ../lib
+INCLUDEPATH 	+= . ../lib
+VERSION 	= 0.0.0
+DEFINES		+= VERSION=\\\"$${VERSION}\\\" HAVE_CONFIG_H
 
-SUBDIRS		+= lib qmesydaq test
+QT 		+= qt3support network
 
-TARGET = 	
-DEPENDPATH 	+= . lib qmesydaq
-INCLUDEPATH 	+= . qmesydaq lib
+QWT_ROOT 	= /usr/local/qwt5
 
-DISTFILES	+= AUTHOR COPYING qmesydaq.desktop
+QWTLIB 		= qwt
+
+INTERFACES	= 
+
+INCLUDEPATH 	+= $${QWT_ROOT}/include 
+DEPENDPATH  	+= $${QWT_ROOT}/include 
+LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
+
+# Input
+HEADERS 	+= mainwidget.h \
+		mainwindow.h \
+		mesydaqdata.h \
+		controlinterface.h 
+
+FORMS 		+= mesydaq2mainwidget.ui \
+		mesydaq2mainwindow.ui
+
+SOURCES 	+= main.cpp \
+		mainwidget.cpp \
+		mainwindow.cpp \
+		mesydaqdata.cpp \
+		controlinterface.cpp 
+
+RESOURCES 	+= images.qrc
+
+DISTFILES	+= 
+
+contains(INTERFACES, TACO) {
+DEFINES		+= TACO=1
+TACO_ROOT	= /opt/taco
+
+INCLUDEPATH 	+= $${TACO_ROOT}/include
+DEPENDPATH  	+= $${TACO_ROOT}/include
+LIBS		+= -L$${TACO_ROOT}/lib -ltaco++ -llog4taco -llog4cpp -lTACOExtensions
+
+TACO_ROOT	= /opt/taco
+
+HEADERS		+= tacocontrol.h \
+		tacothread.h
+
+SOURCES		+= tacocontrol.cpp \
+		tacothread.cpp \
+		startup.cpp \
+		MesyDAQDetectorDetector.cpp \
+		MesyDAQDetectorDetectorImpl.cpp 
+}
+
+contains(INTERFACES, CARESS) {
+DEFINES		+= CARESS=1
+
+HEADERS		+= corbathread.h \
+		caresscontrol.h 
+
+SOURCES		+= corbathread.cpp \
+		caresscontrol.cpp \
+		caressmeasurement.cpp 
+}
 

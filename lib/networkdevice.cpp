@@ -21,11 +21,13 @@
 #include <QUdpSocket>
 
 #include "networkdevice.h"
+#include "mdefines.h"
 
-NetworkDevice::NetworkDevice(QObject *parent, QString ip, quint16 port)
+NetworkDevice::NetworkDevice(QObject *parent, QString target, quint16 port, QString source)
 	: MesydaqObject(parent)
-	, m_ipAddress(ip)
+	, m_target(target)
 	, m_port(port)
+	, m_source(source)
 	, m_sock(NULL)
 	, m_notifyNet(NULL)
 {
@@ -44,13 +46,14 @@ NetworkDevice::~NetworkDevice()
  */
 void NetworkDevice::destroySocket()
 {
-	m_notifyNet->setEnabled(false);
-	disconnect (m_notifyNet, SIGNAL (activated(int)), this, SLOT (readSocketData()));
 	if (m_notifyNet)
-		delete m_notifyNet;
+	{
+		m_notifyNet->setEnabled(false);
+		disconnect (m_notifyNet, SIGNAL (activated(int)), this, SLOT (readSocketData()));
+	}
+	delete m_notifyNet;
 	m_notifyNet = NULL;
-	if (m_sock)
-		delete m_sock;
+	delete m_sock;
 	m_sock = NULL;
 }
 
@@ -63,17 +66,17 @@ void NetworkDevice::destroySocket()
  */
 int NetworkDevice::createSocket(void)
 {
-	protocol("init socket: address " + m_ipAddress, 1);
-	m_cpuAddress.setAddress(m_ipAddress);
+	protocol(tr("%1(%2) : init socket: address").arg(m_target).arg(m_port), NOTICE);
+	m_cpuAddress.setAddress(m_target);
 	
 // create server address
-	QHostAddress servaddr(QHostAddress::Any);
+	QHostAddress servaddr(m_source); // QHostAddress::Any);
 	if (m_sock)
 		delete m_sock;
 	m_sock = new QUdpSocket(this);
 
 // bind address
-	if (m_sock && m_sock->bind(servaddr, m_port))
+	if (m_sock && m_sock->bind(servaddr, m_port, QUdpSocket::DontShareAddress))
 	{
 		if (m_notifyNet)
 		{
@@ -98,7 +101,7 @@ int NetworkDevice::createSocket(void)
  */
 int NetworkDevice::sendBuffer(MDP_PACKET &buf)
 {
-	protocol("send buffer", 3);
+	protocol(tr("%1(%2) : send buffer").arg(ip()).arg(port()), DEBUG);
 	if (m_sock->writeDatagram((const char *)&buf, 200, m_cpuAddress, m_port) != -1)
 		return 1;
 	return 0;
@@ -112,16 +115,16 @@ void NetworkDevice::readSocketData(void)
 // read socket data into receive buffer and notify
 	if (m_sock->hasPendingDatagrams())
 	{
-		protocol(tr("NetworkDevice::readSocketData() : %1").arg(ip()), 3);
+		protocol(tr("%1(%2) : NetworkDevice::readSocketData()").arg(ip()).arg(port()), DEBUG);
 		qint64 maxsize = m_sock->pendingDatagramSize();
 		memset(&m_recBuf, 0, sizeof(m_recBuf));
 		qint64 len = m_sock->readDatagram((char *)&m_recBuf, maxsize);
 		if (len != -1)
 		{
-			protocol(tr("read datagram : %1 from %2 bytes").arg(len).arg(maxsize), 3);
-			protocol(tr("read nr : %1 cmd : %2 status %3").arg(m_recBuf.bufferNumber).arg(m_recBuf.cmd).arg(m_recBuf.deviceStatus), 3);
+			protocol(tr("%1(%2) : read datagram : %3 from %4 bytes").arg(ip()).arg(port()).arg(len).arg(maxsize), DEBUG);
+			protocol(tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(m_recBuf.bufferNumber).arg(m_recBuf.cmd).arg(m_recBuf.deviceStatus), DEBUG);
 			quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
-			protocol(tr("read time : %1").arg(tim), 3);
+			protocol(tr("%1(%2) : read time : %3").arg(ip()).arg(port()).arg(tim), DEBUG);
 			emit bufferReceived(m_recBuf);
 		}
 	}

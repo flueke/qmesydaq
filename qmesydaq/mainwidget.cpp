@@ -313,13 +313,13 @@ void MainWidget::setPulserSlot()
 	else
 		ampl = (quint8) pulsAmp2->text().toInt(&ok);
 	
-	quint16 pos;
+	quint16 pos = MIDDLE;
 	if(pulsLeft->isChecked())
-		pos = 0;
-	if(pulsRight->isChecked())
-		pos = 1;
-	if(pulsMid->isChecked())
-		pos = 2;
+		pos = LEFT;
+	else if(pulsRight->isChecked())
+		pos = RIGHT;
+	else if(pulsMid->isChecked())
+		pos = MIDDLE;
 	
 	bool pulse = pulserButton->isChecked();
 	if (pulse)
@@ -513,8 +513,7 @@ void MainWidget::displayMpsdSlot(int)
 	QString dstr;
     
 // retrieve displayed ID
-	quint8 id = mcpdId->value();
-	quint8 mod = module->value();
+	quint8 id = devid_2->value();
     
 // Status display:
 	if(m_theApp->getMpsdId(id, 0))
@@ -550,15 +549,17 @@ void MainWidget::displayMpsdSlot(int)
 	else
 		status7->setText("-");		
 		
-// gain:
+	id = mcpdId->value();
+	quint8 mod = module->value();
 	quint8 chan = channel->value();
+// gain:
 	gain->setText(tr("%1").arg(double(m_theApp->getGain(id, mod, chan)), 4, 'f', 2));	
 	
 // threshold:
 	threshold->setText(tr("%1").arg(m_theApp->getThreshold(id, mod)));
 		
 // pulser:  on/off
-	if(m_theApp->m_mcpd[id]->isPulserOn(mod))
+	if(m_theApp->isPulserOn(id, mod))
 	{
 		pulserButton->setChecked(true);
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
@@ -569,25 +570,25 @@ void MainWidget::displayMpsdSlot(int)
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
 	}
 // channel
-	pulsChan->setValue((int)m_theApp->m_mcpd[id]->getPulsChan(mod));
+	pulsChan->setValue((int)m_theApp->getPulsChan(id, mod));
 // amplitude
-	dstr.sprintf("%3d", m_theApp->m_mcpd[id]->getPulsAmp(mod, 0));
-//	pulsAmp->setValue((int)m_theApp->m_mpsd[8*id+mod]->getPulsAmp());
+	dstr.sprintf("%3d", m_theApp->getPulsAmp(id, mod));
+//	pulsAmp->setValue((int)m_theApp->getPulsAmp(id, mod));
 // position
-	switch(m_theApp->m_mcpd[id]->getPulsPos(mod))
+	switch(m_theApp->getPulsPos(id, mod))
 	{
-		case 0:
+		case LEFT:
 			pulsLeft->setChecked(true);
 			break;
-		case 1:
+		case RIGHT:
 			pulsRight->setChecked(true);
 			break;
-		case 2:
+		case MIDDLE:
 			pulsMid->setChecked(true);
 			break;
 	}
 // mode
-	if(m_theApp->m_mcpd[id]->getMode(mod))
+	if(m_theApp->getMode(id, mod))
 		amp->setChecked(true);
 	else
 		Ui_Mesydaq2MainWidget::pos->setChecked(true);
@@ -699,11 +700,12 @@ void MainWidget::writeRegisterSlot()
 	quint16 addr = module->value();
 	quint16 reg = registerSelect->value();
 	quint16 val = registerValue->text().toUInt(&ok, 0);
-	m_theApp->writeRegister(id, addr, reg, val);
+	m_theApp->writePeriReg(id, addr, reg, val);
 }
 
 void MainWidget::readRegisterSlot()
 {
+#warning TODO
 	quint16 id = (quint16) devid->value();	
 	quint16 addr = module->value();
 	quint16 reg = registerSelect->value();

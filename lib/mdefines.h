@@ -18,6 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef MDEFINES_H
+#define MDEFINES_H
+
 // general definitions for mesydaq
 /*
 // 
@@ -118,11 +121,8 @@
 #define STARTED 		2
 #define STOPPED 		3
 
-// debug level
-#define DEBUGLEVEL 		2
-
 // number of MCPDs
-#define MCPDS 			1
+#define MCPDS 			2
 
 // CARESS counter mapping
 #define M1CT			0
@@ -144,5 +144,29 @@
 #define ADC2ID			7
 #define EVID			8
 
+// pulser positions
+#define LEFT			0
+#define RIGHT			1
+#define MIDDLE			2
+
+// logging levels
+#define FATAL			0
+#define ERROR			1
+#define WARNING			2
+#define NOTICE			3
+#define INFO			4
+#define DEBUG			5
+
+// Module ID's
 #define	MPSD8			103
+#define MSTD16			104
 #define MPSD8P			105
+
+// TX modes
+#define	P			1
+#define TP			2
+#define TPA			4
+
+extern int DEBUGLEVEL;
+
+#endif

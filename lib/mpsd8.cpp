@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "mcpd8.h"
 #include "mpsd8.h"
+#include "mdefines.h"
 
 MPSD_8::MPSD_8(quint8 id, QObject *parent)
 	: MesydaqObject(parent)
@@ -70,7 +71,7 @@ void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
    	m_busNum = bus;
    	
    	if(listIds)
-   		protocol(tr("identified MPSD id on MCPD %1, bus %2: %3").arg(m_mcpdId).arg(bus).arg(id), 1);
+   		protocol(tr("identified MPSD id on MCPD %1, bus %2: %3").arg(m_mcpdId).arg(bus).arg(id), NOTICE);
 }
 
 /*!
@@ -94,7 +95,7 @@ void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 		m_gainPoti[channel][preset] = val;
 		m_gainVal[channel][preset] = gainv;
 	}
-   	protocol(tr("m_gainVal %1%2, %3,  %4 to %5 (%6)").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gainv,6, 'f', 2).arg(val), 1);
+   	protocol(tr("m_gainVal %1%2, %3,  %4 to %5 (%6)").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gainv,6, 'f', 2).arg(val), NOTICE);
 }
 
 /*!
@@ -117,7 +118,7 @@ void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
 		m_gainPoti[channel][preset] = gain;
 		m_gainVal[channel][preset] = gv;
 	}
-   	protocol(tr("gain %1%2,  %3, %4 to %5 (%6)").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gain).arg(gv, 6, 'f', 2), 1);
+   	protocol(tr("gain %1%2,  %3, %4 to %5 (%6)").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gain).arg(gv, 6, 'f', 2), NOTICE);
 }
 
 /*!
@@ -130,7 +131,7 @@ void MPSD_8::setThreshold(quint8 threshold, bool preset)
     
 	QString str;
    	str.sprintf("threshold %s%d, %d to %d (%d)", (preset ? "preset " : ""), m_mcpdId, m_busNum, threshold, m_threshPoti[preset]);
-   	protocol(str, 1);
+   	protocol(str, NOTICE);
 }
 
 /*!
@@ -143,7 +144,7 @@ void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
    	
 	QString str; 
    	str.sprintf("threshpoti %s%d, %d to %d (%d)", (preset ? "preset " : ""), m_mcpdId, m_busNum, thresh, m_threshVal[preset]);
-   	protocol(str, 1);
+   	protocol(str, NOTICE);
 }
 
 /*!
@@ -151,7 +152,7 @@ void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
  */
 void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 {
-	protocol(tr("MPSD_8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5)").arg(chan).arg(pos).arg(poti).arg(on).arg(preset));
+	protocol(tr("MPSD_8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5)").arg(chan).arg(pos).arg(poti).arg(on).arg(preset), NOTICE);
 	if(pos > 2)
 		m_pulsPos[preset] = 2;
 	else
@@ -167,7 +168,7 @@ void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool
 	m_pulser[preset] = on;
    	
    	protocol(tr("pulser %1%2, bus %3 to pos %4, poti %5 - ampl %6")
-			.arg(preset ? "preset ": "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(poti).arg(m_pulsAmp[preset], 6, 'f', 2), 1);
+			.arg(preset ? "preset ": "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(poti).arg(m_pulsAmp[preset], 6, 'f', 2), NOTICE);
 }
 
 /*!
@@ -190,7 +191,7 @@ void MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool pres
 	m_pulser[preset] = on;
    	
    	protocol(tr("pulser %1%2, bus %3 to pos %4, ampl %5 - poti %6")
-			.arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(amp).arg(m_pulsPoti[preset]), 1);
+			.arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(amp).arg(m_pulsPoti[preset]), NOTICE);
 }
 
 /*!
@@ -251,7 +252,7 @@ quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
  */
 quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
 {
-	protocol(tr("MPSD_8::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv));
+	protocol(tr("MPSD_8::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv), NOTICE);
 	return val;
 }
 
@@ -262,6 +263,6 @@ void MPSD_8::setInternalreg(quint8 reg, quint16 val, bool preset)
 {
 	m_internalReg[reg][preset] = val;
    	
-   	protocol(tr("register %1%2, %3, %4, to %5").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(reg).arg(m_internalReg[reg][preset]), 1);
+   	protocol(tr("register %1%2, %3, %4, to %5").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(reg).arg(m_internalReg[reg][preset]), NOTICE);
 }
 

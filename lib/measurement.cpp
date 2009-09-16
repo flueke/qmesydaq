@@ -129,11 +129,11 @@ void Measurement::start()
 	m_starttime_msec = m_mesydaq->time();
 	m_running = true;
 	m_stopping = false;
-	protocol(tr("event counter limit : %1").arg(m_counter[EVCT]->limit()));
+	protocol(tr("event counter limit : %1").arg(m_counter[EVCT]->limit()), NOTICE);
 	for (quint8 c = 0; c < 8; ++c)
 	{
 		m_counter[c]->start(m_starttime_msec);
-		protocol(tr("counter %1 limit : %2").arg(c).arg(m_counter[c]->limit()));
+		protocol(tr("counter %1 limit : %2").arg(c).arg(m_counter[c]->limit()), NOTICE);
 	}
 }
 
@@ -144,7 +144,7 @@ void Measurement::requestStop()
 {
 	m_stopping = true;
 	emit stopSignal(false);
-	protocol(tr("Max %1 was at pos %2").arg(m_posHist->max(0)).arg(m_posHist->maxpos(0)));
+	protocol(tr("Max %1 was at pos %2").arg(m_posHist->max(0)).arg(m_posHist->maxpos(0)), NOTICE);
 }
 
 /*!
@@ -179,7 +179,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 // is counter master and is limit reached?
 		if(m_counter[cNum]->isStopped() && !m_stopping)
 		{
-			protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[cNum]->value()).arg(m_counter[cNum]->limit()));
+			protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[cNum]->value()).arg(m_counter[cNum]->limit()), NOTICE);
 			m_stopping = true;
 			emit stopSignal();
 		}
@@ -255,7 +255,7 @@ quint8 Measurement::isOk(void)
 void Measurement::setOnline(bool truth)
 {
 	m_online = truth;
-	protocol(tr("MCPD %1").arg(m_online ? tr("online") : tr("offline")), 1);	
+	protocol(tr("MCPD %1").arg(m_online ? tr("online") : tr("offline")), NOTICE);	
 }
 
 
@@ -266,7 +266,7 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 {
 	if(cNum < 8)
 	{
-		protocol(tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? tr("master") : tr("slave")), 1);	
+		protocol(tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? tr("master") : tr("slave")), NOTICE);	
 		if (mast)
 		{
     			// clear all other master flags
@@ -458,7 +458,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 	if(pd.bufferType < 0x0002) 
 	{
-		protocol(tr("Measurement::analyzeBuffer()"), 3);
+		protocol(tr("Measurement::analyzeBuffer()"), DEBUG);
 // extract parameter values:
 		QChar c('0');
 		for(i = 0; i < 4; i++)
@@ -469,15 +469,15 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				var *= 0x10000ULL;
 				var += pd.param[i][2-j];
 			}
-			protocol(tr("set counter %1 to %2").arg(i).arg(var), 3);
+			protocol(tr("set counter %1 to %2").arg(i).arg(var), DEBUG);
 			setCounter(i, var);
 		}		
 // 		data length = (buffer length - header length) / (3 words per event) - 4 parameters.
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
-		protocol(tr("datalen = %1, m_stopping = %2").arg(datalen).arg(m_stopping), 3);
+		protocol(tr("datalen = %1, m_stopping = %2").arg(datalen).arg(m_stopping), DEBUG);
 		for(i = 0; i < datalen && !m_stopping; ++i, counter += 3)
 		{
-			protocol(tr("i = %1").arg(i), 3);
+			protocol(tr("i = %1").arg(i), DEBUG);
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
 			tim += pd.data[counter];
@@ -507,7 +507,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					default:
 						break;
 				}
-				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId), 3);
+				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId), DEBUG);
 			}
 // neutron event:
 			else
@@ -517,13 +517,13 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				quint8 chan = (id << 3) + slotId;
 				quint16 amp(0), 
 					pos(0);
-				if (m_mesydaq->getMpsdId(mod, slotId) == 103)
+				if (m_mesydaq->getMpsdId(mod, slotId) == MPSD8)
 				{
 					if (m_mesydaq->getMode(mod, id))
 					{
 						amp = (pd.data[counter+1] >> 3) & 0x3FF;
 						if (amp != 0)
-							protocol(tr("amp = %1").arg(amp));
+							protocol(tr("amp = %1").arg(amp), NOTICE);
 					}
 					else
 						pos = (pd.data[counter+1] >> 3) & 0x3FF;
@@ -534,7 +534,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
 				}
 				++(*m_counter[EVCT]);
-				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), 3);
+				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), DEBUG);
 				if (m_posHist)
 				{
 					m_posHist->incVal(chan, pos);
@@ -543,7 +543,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				{
 					m_ampHist->incVal(chan, amp);
 				}
-				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), 3);
+				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), DEBUG);
 			}
 		}
 	}
@@ -571,7 +571,7 @@ void Measurement::readListfile(QString readfilename)
 //	qDebug(str.toStdString().c_str());
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
 	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
-	protocol(tr("readListfile : %1").arg(ok));
+	protocol(tr("readListfile : %1").arg(ok), NOTICE);
 	QChar c('0');
 	while(ok)
 	{
@@ -579,7 +579,7 @@ void Measurement::readListfile(QString readfilename)
 // check for closing signature:
 		if((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0))
 		{
-			protocol(tr("EOF reached after %1 buffers").arg(blocks));
+			protocol(tr("EOF reached after %1 buffers").arg(blocks), NOTICE);
 			break;
 		}
 		DATA_PACKET 	dataBuf;
@@ -589,9 +589,9 @@ void Measurement::readListfile(QString readfilename)
 		dataBuf.bufferNumber = sep4;
 		if(dataBuf.bufferLength > 729)
 		{
-			protocol(tr("erroneous length: %1 - aborting").arg(dataBuf.bufferLength));
+			protocol(tr("erroneous length: %1 - aborting").arg(dataBuf.bufferLength), ERROR);
 			datStream >> sep1 >> sep2 >> sep3 >> sep4;
-			protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c));
+			protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), ERROR);
 			break;
 		}
 		quint16 *pD = (quint16 *)&dataBuf.bufferLength;
@@ -604,10 +604,10 @@ void Measurement::readListfile(QString readfilename)
 		bcount++;
 // check for next separator:
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c));
+		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), DEBUG);
 		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
 		if (!ok)
-			protocol(tr("File structure error - read aborted after %1 buffers").arg(blocks));
+			protocol(tr("File structure error - read aborted after %1 buffers").arg(blocks), ERROR);
 		if(bcount == 1000)
 		{
 			bcount = 0;

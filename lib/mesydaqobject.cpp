@@ -23,6 +23,8 @@
 
 #include <QDateTime>
 
+int DEBUGLEVEL = NOTICE;
+
 MesydaqObject::MesydaqObject(QObject *parent)
 	: QObject(parent)
 {

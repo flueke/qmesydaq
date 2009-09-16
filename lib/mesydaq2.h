@@ -95,13 +95,19 @@ public:
 
 	bool isPulserOn(quint16 mod, quint8 addr);
 
-	bool getMode(const quint16 id, quint16 addr);
+	bool getMode(const quint16 mod, quint8 addr);
 
 	quint8 getMpsdId(quint16 mod, quint8 addr);
 
-	quint8 getGain(quint16 mod, quint16 addr, quint8 chan);
+	quint8 getGain(quint16 mod, quint8 addr, quint8 chan);
 
-	quint8 getThreshold(quint16 mod, quint16 addr);
+	quint8 getThreshold(quint16 mod, quint8 addr);
+
+	quint8 getPulsChan(quint16 mod, quint8 addr);
+
+	quint8 getPulsAmp(quint16 mod, quint8 addr);
+
+	quint8 getPulsPos(quint16 mod, quint8 addr);
 
 	quint64 receivedData(); 
 
@@ -112,7 +118,7 @@ public:
 	quint64 time();
 
 public slots:
-	void writeRegister(quint16 id, quint16 addr, quint16 reg, quint16 val);
+	void writeRegister(quint16 id, quint16 reg, quint16 val);
 
 	void setProtocol(const quint16 id, const QString &mcpdIP, const QString dataIP = "0.0.0.0", const qint16 dataPort = 0, const QString cmdIP = "0.0.0.0", const qint16 cmdPort = 0);
 	
@@ -132,13 +138,13 @@ public slots:
 
 	void setId(quint16 mod, quint8 mcpdid);
 
-	void setGain(quint16 mod, quint16 addr, quint8 channel, quint8 gain);
+	void setGain(quint16 mod, quint8 addr, quint8 channel, quint8 gain);
 
-	void setGain(quint16 mod, quint16 addr, quint8 channel, float gain);
+	void setGain(quint16 mod, quint8 addr, quint8 channel, float gain);
 
-	void setThreshold(quint16 mod, quint16 addr, quint8 thresh);
+	void setThreshold(quint16 mod, quint8 addr, quint8 thresh);
 
-	void setThreshold(quint16 mod, quint16 addr, quint16 thresh);
+	void setThreshold(quint16 mod, quint8 addr, quint16 thresh);
 
     	void acqListfile(bool yesno);
 

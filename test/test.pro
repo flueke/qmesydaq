@@ -18,13 +18,15 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-TEMPLATE 	= 	subdirs
 
-SUBDIRS		+= lib qmesydaq test
+TEMPLATE 	= app
+TARGET 		= test1 
+DEPENDPATH 	+= . ../lib
+INCLUDEPATH 	+= . ../lib
 
-TARGET = 	
-DEPENDPATH 	+= . lib qmesydaq
-INCLUDEPATH 	+= . qmesydaq lib
+QT		+= core network
+QT		-= gui
 
-DISTFILES	+= AUTHOR COPYING qmesydaq.desktop
+SOURCES 	+= main.cpp
 
+LIBS        	+= -L../lib -lmesydaq

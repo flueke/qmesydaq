@@ -22,6 +22,7 @@
 #include <QSettings>
 #include <QTextStream>
 #include <QTimerEvent>
+#include <QStringList>
 
 #include "mdefines.h"
 #include "mesydaq2.h"
@@ -42,7 +43,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	initDevices();
 	initTimers();
 	initHardware();
-	protocol(tr("running on Qt %1").arg(qVersion()));
+	protocol(tr("running on Qt %1").arg(qVersion()), NOTICE);
 }
 
 Mesydaq2::~Mesydaq2()
@@ -86,9 +87,9 @@ quint64 Mesydaq2::time(void)
 /*!
     \fn Mesydaq2::writeRegister(unsigned int id, unsigned int addr, unsigned int val)
  */
-void Mesydaq2::writeRegister(quint16 id, quint16 addr, quint16 reg, quint16 val)
+void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 {
-	m_mcpd[id]->writeRegister(addr, reg, val);
+	m_mcpd[id]->writeRegister(reg, val);
 }
 
 /*!
@@ -97,7 +98,7 @@ void Mesydaq2::writeRegister(quint16 id, quint16 addr, quint16 reg, quint16 val)
 void Mesydaq2::acqListfile(bool yesno)
 {
 	m_acquireListfile = yesno;
-    	protocol(tr("Listfile recording %1").arg((yesno ? "on" : "off")), 1);
+    	protocol(tr("Listfile recording %1").arg((yesno ? "on" : "off")), NOTICE);
 }
 
 /*!
@@ -107,14 +108,14 @@ void Mesydaq2::startedDaq(void)
 {
 	if(m_acquireListfile)
 	{
-		m_datfile.setName(m_listfilename);
-		m_datfile.open(IO_WriteOnly);
+		m_datfile.setFileName(m_listfilename);
+		m_datfile.open(QIODevice::WriteOnly);
 		m_datStream.setDevice(&m_datfile);
 		writeListfileHeader();
 	}
 	m_daq = RUNNING;
 	emit statusChanged("RUNNING");
-	protocol("daq started", 1);
+	protocol("daq started", DEBUG);
 }
 
 /*!
@@ -129,7 +130,7 @@ void Mesydaq2::stoppedDaq(void)
 	}
 	m_daq = IDLE;
 	emit statusChanged("IDLE");
-	protocol("daq stopped", 1);
+	protocol("daq stopped", DEBUG);
 }
 
 /*!
@@ -137,7 +138,7 @@ void Mesydaq2::stoppedDaq(void)
  */
 void Mesydaq2::initDevices(void)
 {
-	QString ip[MCPDS] = {"192.168.168.121", /* "192.168.169.121", */};	
+	QString ip[MCPDS] = {"192.168.168.121", "192.168.169.121", };	
 	for(quint8 i = 0; i < MCPDS; i++)
 	{
 		m_mcpd[i] = new MCPD8(i, this, ip[i]);
@@ -237,7 +238,7 @@ void Mesydaq2::initHardware(void)
 // setup MPSDs
 	
 // set init values:
-	protocol(tr("initializing hardware"), 1);
+	protocol(tr("initializing hardware"), NOTICE);
 	 
 // scan connected MCPDs
 	quint8 p = 0;
@@ -249,11 +250,11 @@ void Mesydaq2::initHardware(void)
 				p++;
 	}
 	
-	protocol(tr("%1 mpsd-8 found").arg(p), 1);
+	protocol(tr("%1 mpsd-8 found").arg(p), NOTICE);
 	
 // initialize all connected hardware modules
 // try to read standard config file
-	protocol(tr("load setup ?"));
+	protocol(tr("load setup ?"), DEBUG);
 	if(!loadSetup("mesycfg.mcfg"))
 	{
 		// initialize MPSD-8 by default values.
@@ -262,7 +263,7 @@ void Mesydaq2::initHardware(void)
 				if(m_mcpd[c]->getMpsdId(i))
 					m_mcpd[c]->initMpsd(i);
 	}
-	initMcpd(0);
+//	initMcpd(0);
 }
 
 
@@ -373,7 +374,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 	if(name.isEmpty())
 		m_configfilename = "mesycfg.mcfg";
   
-	protocol(tr("Reading configfile %1").arg(m_configfilename), 1);
+	protocol(tr("Reading configfile %1").arg(m_configfilename), DEBUG);
 
 	QSettings settings(m_configfilename, QSettings::IniFormat);
 
@@ -382,7 +383,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 	m_listPath = settings.value("general/Listfile Path", "/home").toString();
 	for (int i = 0; i < MCPDS; ++i)
 	{
-		protocol(tr("mcpd #%1 : number of groups %2").arg(i).arg(settings.childGroups().size()));
+		protocol(tr("mcpd #%1 : number of groups %2").arg(i).arg(settings.childGroups().size()), NOTICE);
 		for (int j = 0; j < 8; ++j)
 		{
 			QString str;
@@ -390,9 +391,9 @@ bool Mesydaq2::loadSetup(const QString &name)
 			if (settings.childGroups().contains(str))
 			{
 				settings.beginGroup(str);
-				protocol("init " + str);
+				protocol("init " + str, NOTICE);
 				int size = settings.beginReadArray("gains");
-				protocol(tr("init size = %1").arg(size));
+				protocol(tr("init size = %1").arg(size), DEBUG);
 				for (int l = 0; l < size; ++l)
 				{
 					settings.setArrayIndex(l);
@@ -488,7 +489,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 		pstring.sprintf("ERROR: opening configfile '");
 		pstring.append(name);
 		pstring.append("' failed");
-		protocol(pstring, 1);
+		protocol(pstring, ERROR);
 		return false;
 	}
 #endif
@@ -572,7 +573,7 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
  */
 void Mesydaq2::start(void)
 {
-   	protocol("remote start", 1);
+   	protocol("remote start", NOTICE);
 	m_mcpd[0]->start();
 	emit statusChanged("STARTED");
 }
@@ -584,7 +585,7 @@ void Mesydaq2::stop(void)
 {
 	m_mcpd[0]->stop();
 	emit statusChanged("STOPPED");
-   	protocol("remote stop", 1);
+   	protocol("remote stop", NOTICE);
 }
 
 /*!
@@ -592,7 +593,7 @@ void Mesydaq2::stop(void)
  */
 void Mesydaq2::cont(void)
 {
-	protocol("remote cont", 1);
+	protocol("remote cont", NOTICE);
 	m_mcpd[0]->cont();
 	emit statusChanged("STARTED");
 }
@@ -621,7 +622,7 @@ void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QStrin
 	m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }	
 
-bool Mesydaq2::getMode(const quint16 id, quint16 addr)
+bool Mesydaq2::getMode(const quint16 id, quint8 addr)
 {
 	return m_mcpd[id]->getMode(addr);
 }
@@ -666,22 +667,22 @@ void Mesydaq2::setId(quint16 id, quint8 mcpdid)
 	m_mcpd[id]->setId(mcpdid);
 }
 
-void Mesydaq2::setGain(quint16 id, quint16 addr, quint8 channel, quint8 gain)
+void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 channel, quint8 gain)
 {
 	m_mcpd[id]->setGain(addr, channel, gain);
 }
 
-void Mesydaq2::setGain(quint16 id, quint16 addr, quint8 channel, float gain)
+void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 channel, float gain)
 {
 	m_mcpd[id]->setGain(addr, channel, gain);
 }
 
-void Mesydaq2::setThreshold(quint16 id, quint16 addr, quint8 thresh)
+void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint8 thresh)
 {
 	m_mcpd[id]->setThreshold(addr, thresh);
 }
 
-void Mesydaq2::setThreshold(quint16 id, quint16 addr, quint16 thresh)
+void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 {
 	m_mcpd[id]->setThreshold(addr, thresh);
 }
@@ -691,12 +692,27 @@ quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 	return m_mcpd[id]->getMpsdId(addr);
 }
 
-quint8 Mesydaq2::getGain(quint16 id, quint16 addr, quint8 chan)
+quint8 Mesydaq2::getPulsChan(quint16 id, quint8 addr)
+{
+	return m_mcpd[id]->getPulsChan(addr);
+}
+
+quint8 Mesydaq2::getPulsAmp(quint16 id, quint8 addr)
+{
+	return m_mcpd[id]->getPulsAmp(addr);
+}
+
+quint8 Mesydaq2::getPulsPos(quint16 id, quint8 addr)
+{
+	return m_mcpd[id]->getPulsPos(addr);
+}
+
+quint8 Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 {
 	return m_mcpd[id]->getGain(addr, chan);
 }
 
-quint8 Mesydaq2::getThreshold(quint16 id, quint16 addr)
+quint8 Mesydaq2::getThreshold(quint16 id, quint8 addr)
 {
 	return m_mcpd[id]->getThreshold(addr);
 }
@@ -713,13 +729,13 @@ void Mesydaq2::setHistfilename(QString name)
  */
 void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
-	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), 3);
+	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), DEBUG);
 	if(m_daq == RUNNING)
 	{
 		quint16 mod = pd.deviceId;	
 		quint16 diff = pd.bufferNumber - m_lastBufnum;
 		if(diff > 1)
-			protocol(tr("Lost %1 Buffers: current: %2, last: %3").arg(diff).arg(pd.bufferNumber).arg(m_lastBufnum));
+			protocol(tr("Lost %1 Buffers: current: %2, last: %3").arg(diff).arg(pd.bufferNumber).arg(m_lastBufnum), ERROR);
 		m_lastBufnum = pd.bufferNumber;
 		if(m_acquireListfile)
 		{
@@ -729,7 +745,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			writeBlockSeparator();
 //			qDebug("------------------");
 		}
-		protocol(tr("buffer : length : %1").arg(pd.bufferLength), 3);
+		protocol(tr("buffer : length : %1").arg(pd.bufferLength), DEBUG);
 		if(pd.bufferType < 0x0002) 
 		{
 // extract parameter values:

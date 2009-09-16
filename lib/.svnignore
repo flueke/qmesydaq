@@ -8,4 +8,4 @@ qrc_images.cpp
 qmesydaq
 Makefile
 *.patch
-*.orig
+libmesydaq.so*
