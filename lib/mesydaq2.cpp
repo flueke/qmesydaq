@@ -93,6 +93,14 @@ void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 }
 
 /*!
+    \fn float Mesydaq2::getFirmware(quint16 id)
+*/
+float Mesydaq2::getFirmware(quint16 id)
+{
+	return m_mcpd[id]->version();
+}
+
+/*!
     \fn Mesydaq2::acqListfile(bool yesno)
  */
 void Mesydaq2::acqListfile(bool yesno)
@@ -139,9 +147,12 @@ void Mesydaq2::stoppedDaq(void)
 void Mesydaq2::initDevices(void)
 {
 	QString ip[MCPDS] = {"192.168.168.121", "192.168.169.121", };	
+	quint16 port[MCPDS] = {54321, 54321, };
+	QString sourceIP[MCPDS] = {"192.168.168.1", "192.168.169.1", };
+
 	for(quint8 i = 0; i < MCPDS; i++)
 	{
-		m_mcpd[i] = new MCPD8(i, this, ip[i]);
+		m_mcpd[i] = new MCPD8(i, this, ip[i], port[i], sourceIP[i]);
 		connect(m_mcpd[i], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 		connect(m_mcpd[i], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 		connect(m_mcpd[i], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));

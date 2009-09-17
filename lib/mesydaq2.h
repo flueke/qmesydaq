@@ -117,6 +117,8 @@ public:
 
 	quint64 time();
 
+	float getFirmware(quint16 mod);
+
 public slots:
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
 
