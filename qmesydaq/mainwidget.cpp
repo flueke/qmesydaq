@@ -592,6 +592,9 @@ void MainWidget::displayMpsdSlot(int)
 		amp->setChecked(true);
 	else
 		Ui_Mesydaq2MainWidget::pos->setChecked(true);
+
+// firmware version
+	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
 }
 
 
