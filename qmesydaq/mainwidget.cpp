@@ -514,6 +514,9 @@ void MainWidget::displayMpsdSlot(int)
     
 // retrieve displayed ID
 	quint8 id = devid_2->value();
+
+// firmware version
+	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
     
 // Status display:
 	if(m_theApp->getMpsdId(id, 0))
@@ -592,9 +595,6 @@ void MainWidget::displayMpsdSlot(int)
 		amp->setChecked(true);
 	else
 		Ui_Mesydaq2MainWidget::pos->setChecked(true);
-
-// firmware version
-	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
 }
 
 
