@@ -26,18 +26,17 @@
 
 Spectrum::Spectrum(quint16 bins)
 	: m_data(NULL)
-	, m_bins(bins)
 	, m_maximumPos(0)
 	, m_meanCount(0)
 	, m_meanPos(0)
 {
-	m_data = new quint64[bins];
+	m_data.resize(bins);
+	m_floatingMean.resize(255);
 	clear();
 }
 
 Spectrum::~Spectrum()
 {
-	delete [] m_data;
 }
 
 /**
@@ -64,8 +63,8 @@ bool Spectrum::incVal(quint16 bin)
  */
 void Spectrum::clear(void)
 {
-	for (quint16 i = 0; i < m_bins; ++i)
-		m_data[i] = 0;
+	m_data.fill(0);
+	m_floatingMean.fill(0);
 	m_maximumPos = m_meanCount = m_meanPos = 0;
 }
 

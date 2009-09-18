@@ -24,6 +24,8 @@
 
 #include "mdefines.h"
 
+#include <QVector>
+
 class QFile;
 
 /**
@@ -52,24 +54,22 @@ public:
 	
 	quint64 value(quint16 index) {return m_data[index];}
 
-	quint16		width() {return m_bins;}
+	quint16	width() {return m_data.size();}
 
 private:
-	quint64		*m_data;
+	QVector<quint64>	m_data;
 
-	quint16		m_bins;
+	quint64			m_maximumPos;
 
-	quint64		m_maximumPos;
+	quint64			m_meanCount;
 
-	quint64		m_meanCount;
-
-	quint64		m_totalCounts;
+	quint64			m_totalCounts;
 
 	//! implicit ring buffer due to the change of 256 -> 0
-	quint8 		m_meanPos;
+	quint8 			m_meanPos;
 
 	//! last events
-	quint16		m_floatingMean[255];
+	QVector<quint16>	m_floatingMean; 
 };
 
 
