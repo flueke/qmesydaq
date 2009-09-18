@@ -99,6 +99,8 @@ public:
 
 	quint8 getMpsdId(quint16 mod, quint8 addr);
 
+	QString getMpsdType(quint16 mod, quint8 addr);
+
 	quint8 getGain(quint16 mod, quint8 addr, quint8 chan);
 
 	quint8 getThreshold(quint16 mod, quint8 addr);

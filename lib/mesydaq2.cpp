@@ -703,6 +703,19 @@ quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 	return m_mcpd[id]->getMpsdId(addr);
 }
 
+QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
+{
+	switch(m_mcpd[id]->getMpsdId(addr))
+	{
+		case MPSD8 :
+			return "MPSD-8";
+		case MPSD8P:
+			return "MPSD-8+";
+		default:
+			return "MPSD-8??";
+	}
+}
+
 quint8 Mesydaq2::getPulsChan(quint16 id, quint8 addr)
 {
 	return m_mcpd[id]->getPulsChan(addr);
