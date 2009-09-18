@@ -133,6 +133,8 @@ public:
 
 	float version(void); 
 
+	quint8 numModules(void) {return m_mpsd.size();}
+
 public:
 	void communicate(bool yesno) {m_commActive = yesno;}
 
@@ -250,8 +252,6 @@ private:
 	//! counter for the receivcd cmd packets
 	quint32		m_cmdRxd;
 
-public:
-#warning TODO remove the public access of m_mpsd
 	//! the accessed MPSD8 ????
 	QMap<int, MPSD_8 *> m_mpsd;
 	

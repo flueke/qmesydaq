@@ -207,7 +207,7 @@ bool MCPD8::readId(void)
  */
 bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
-	if (m_mpsd.find(addr) == m_mpsd.end())
+	if (!m_mpsd.size() || m_mpsd.find(addr) == m_mpsd.end())
 		return false;
 	if (chan > 8)
 		chan = 8;
@@ -837,10 +837,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 							if (recBuf.data[c] == MPSD8)
 								m_mpsd[c] = new MPSD_8(c, this);
 							else
-							{
 								m_mpsd[c] = new MPSD_8p(c, this);
-//								writePeriReg(c, 1, 4);
-							}
 						}
 						m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
 					}
