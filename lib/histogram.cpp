@@ -46,16 +46,21 @@ Spectrum::~Spectrum()
  */
 bool Spectrum::incVal(quint16 bin)
 {
-	m_data[bin]++;
-	if (m_data[bin] > m_data[m_maximumPos])
-		m_maximumPos = bin;
+	if (bin < m_data.size())
+	{
+		m_data[bin]++;
+		if (m_data[bin] > m_data[m_maximumPos])
+			m_maximumPos = bin;
 
 #warning TODO mean value determination
-	m_floatingMean[m_meanPos] = bin;
-	m_meanPos++;
-	if(m_meanCount < 255)
-		m_meanCount++;
-	return true;
+		m_floatingMean[m_meanPos] = bin;
+		m_meanPos++;
+		if(m_meanCount < 255)
+			m_meanCount++;
+		return true;
+	}
+	qDebug("bin(%d) > size(%d)", bin, m_data.size());
+	return false;
 }
 
 /**
@@ -100,14 +105,13 @@ Histogram::Histogram(quint16 channels, quint16 bins, QObject *parent)
 	, m_twidth(1)
 	, m_data(NULL)
 	, m_channels(channels)
-	, m_sumSpectrum(NULL)
 	, m_maximumPos(0)
 {
 	m_data = new Spectrum*[m_channels];
 	for (quint16 i = 0; i < m_channels; ++i)
 		m_data[i] = new Spectrum(bins);
 	
-	m_sumSpectrum = new Spectrum(bins);
+	m_sumSpectrum.resize(bins);
 	clear();
 }
 
@@ -116,7 +120,6 @@ Histogram::~Histogram()
 	for (quint16 i = 0; i < m_channels; ++i)
 		delete m_data[i];
 	delete m_data;
-	delete m_sumSpectrum;
 }
 
 quint64 Histogram::value(quint16 chan, quint16 bin)
@@ -140,7 +143,7 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
 	else
 		qDebug("ERROR !!!!! chan = %d", chan); 
 // sum spectrum of all channels
-	m_sumSpectrum->incVal(bin);
+	m_sumSpectrum.incVal(bin);
 
 	return true;
 }
@@ -165,7 +168,7 @@ void Histogram::clear(void)
 {
  	for(quint16 i = 0;i < m_channels; i++)
 		m_data[i]->clear();
-	m_sumSpectrum->clear();
+	m_sumSpectrum.clear();
 	m_totalCounts = 0;
 	m_twidth = 1;
 }
@@ -220,7 +223,7 @@ void Histogram::getMean(quint16 chan, float &m, float &s)
  */
 void Histogram::getMean(float &m, float &s)
 {
-	m = m_sumSpectrum->mean(s);
+	m = m_sumSpectrum.mean(s);
 }
 
 

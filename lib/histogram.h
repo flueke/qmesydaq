@@ -56,6 +56,8 @@ public:
 
 	quint16	width() {return m_data.size();}
 
+	void resize(quint16 bins) {m_data.resize(bins);}
+
 private:
 	QVector<quint64>	m_data;
 
@@ -94,7 +96,7 @@ public:
 
 	Spectrum *spectrum(quint16 channel);
 
-	Spectrum *spectrum() {return m_sumSpectrum;}
+	Spectrum *spectrum() {return &m_sumSpectrum;}
 
 	quint64 max(quint16 channel);
 
@@ -125,7 +127,7 @@ protected:
 
 	quint16		m_channels;
 
-	Spectrum	*m_sumSpectrum;
+	Spectrum	m_sumSpectrum;
 
 	quint16		m_maximumPos;
 };
