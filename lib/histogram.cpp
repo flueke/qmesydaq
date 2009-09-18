@@ -226,6 +226,10 @@ void Histogram::getMean(float &m, float &s)
 	m = m_sumSpectrum.mean(s);
 }
 
+quint16	Histogram::height() 
+{
+	return m_channels;
+}
 
 /*!
     \fn Histogram::setWidth(quint8 width)

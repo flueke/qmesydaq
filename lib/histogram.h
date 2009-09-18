@@ -116,7 +116,7 @@ public:
 
 	quint64 value(quint16 x, quint16 y);
 
-	quint16	height() {return m_channels;}
+	quint16	height(); 
 
 protected:
 	quint64 	m_totalCounts;
