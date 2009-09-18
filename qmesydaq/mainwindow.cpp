@@ -27,7 +27,17 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 	, Ui_Mesydaq2MainWindow()
 {
 	setupUi(this);
-	m_main = new MainWidget(new Mesydaq2(this), this);
+
+	QString ip[] = {"192.168.168.121", "192.168.169.121", };	
+	quint16 port[] = {54321, 54321, };
+	QString sourceIP[] = {"192.168.168.1", "192.168.169.1", };
+
+	Mesydaq2 *mesy = new Mesydaq2(this);
+
+	for (int i = 0; i < 2; i++)
+		mesy->addMCPD(i, ip[i], port[i], sourceIP[i]);
+
+	m_main = new MainWidget(mesy, this);
 	setCentralWidget(m_main);
 	connect(action_Load_Config_File, SIGNAL(activated()), m_main, SLOT(restoreSetupSlot()));
 	connect(action_Save_Config_File, SIGNAL(activated()), m_main, SLOT(saveSetupSlot()));

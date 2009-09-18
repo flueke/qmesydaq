@@ -76,18 +76,20 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_meas = new Measurement(mesy, this);
 	setupUi(this);
 
-//	deviceId->setMaximum(MCPDS - 1);
-	dispMcpd->setMaximum(MCPDS - 1);
-	devid->setMaximum(MCPDS - 1);
-	devid_2->setMaximum(MCPDS - 1);
-	paramId->setMaximum(MCPDS - 1);
-	mcpdId->setMaximum(MCPDS - 1);
+//	deviceId->setMaximum(mesy->numMCPD() - 1);
+	dispMcpd->setMaximum(mesy->numMCPD() - 1);
+	devid->setMaximum(mesy->numMCPD() - 1);
+	devid_2->setMaximum(mesy->numMCPD() - 1);
+	paramId->setMaximum(mesy->numMCPD() - 1);
+	mcpdId->setMaximum(mesy->numMCPD() - 1);
 	
         connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
         connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
+	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
+	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(displayMpsdSlot(int)));
 
 	
 	channelLabel->setHidden(comgain->isChecked());
@@ -377,10 +379,10 @@ void MainWidget::update(void)
 	mTimeText->setText(buildTimestring(m_meas->getMeastime(), false));   
     
 // parameter values for selected ID
-	param0->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(0)));
-	param1->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(1)));
-	param2->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(2)));
-	param3->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getParameter(3)));
+	param0->setText(tr("%1").arg(m_theApp->getParameter(id, 0)));
+	param1->setText(tr("%1").arg(m_theApp->getParameter(id, 1)));
+	param2->setText(tr("%1").arg(m_theApp->getParameter(id, 2)));
+	param3->setText(tr("%1").arg(m_theApp->getParameter(id, 3)));
 	m_meas->calcMeanRates();
     
 // measurement values counters and rates
@@ -473,8 +475,9 @@ void MainWidget::replayListfileSlot()
 
 void MainWidget::setRunIdSlot()
 {
-	quint16 runid = (quint16) devid->value();	
-	m_theApp->m_mcpd[0]->setRunId(runid); 
+	quint16 runid = (quint16) devid->value();
+#warning TODO 0 !!!!
+	m_theApp->setRunId(0, runid); 
 	m_theApp->protocol(tr("Set run ID to %1").arg(runid), 2);
 }
 
@@ -486,19 +489,21 @@ void MainWidget::displayMcpdSlot(int)
 	quint16 values[4];
 // retrieve displayed ID
 	quint8 id = mcpdId->value();
+	if (!m_theApp->numMCPD())
+		return;
      
 // now get and display parameters:
     
 // get cell parameters
-	m_theApp->m_mcpd[id]->getCounterCell(cellSource->currentIndex(), values);
+	m_theApp->getCounterCell(id, cellSource->currentIndex(), values);
 	cellTrigger->setCurrentIndex(values[0]);
 	cellCompare->setValue(values[1]);
     
 // get parameter settings
-	paramSource->setCurrentIndex(m_theApp->m_mcpd[id]->getParamSource(param->value()));
+	paramSource->setCurrentIndex(m_theApp->getParamSource(id, param->value()));
 
 // get timer settings
-	compareAux->setText(tr("%1").arg(m_theApp->m_mcpd[id]->getAuxTimer(timer->value()), 0, 16)); 
+	compareAux->setText(tr("%1").arg(m_theApp->getAuxTimer(id, timer->value()), 0, 16)); 
 	
 // get stream setting
 //	statusStream->setChecked(m_theApp->myMcpd[id]->getStream());	
@@ -552,7 +557,7 @@ void MainWidget::displayMpsdSlot(int)
 	else
 		status7->setText("-");		
 		
-	id = mcpdId->value();
+	id = /*mcpdId */devid->value();
 	quint8 mod = module->value();
 	quint8 chan = channel->value();
 // gain:
@@ -982,14 +987,23 @@ void MainWidget::saveConfigSlot(void)
 
 void MainWidget::mpsdCheck(int mod)
 {
-	m_theApp->protocol(tr("MainWidget::mpsdCheck() : module %1").arg(mod), 1);
+	m_theApp->protocol(tr("MainWidget::mpsdCheck() : module %1").arg(mod), DEBUG);
 	quint8 id = mcpdId->value();
-	if (m_theApp->m_mcpd[id]->getMpsdId(mod))
+	if (m_theApp->getMpsdId(id, mod))
 		displayMpsdSlot(mod);
-	else if (mod < 7)
-		module->stepUp();
 	else
-		module->stepBy(-7);
+	{ 
+		for (int i = 0; i < 8; ++i) 
+		{
+			int nextmod = (mod + i + 1) % 8;
+			if (m_theApp->getMpsdId(id, nextmod))
+			{
+				module->setValue(nextmod);	
+				return;
+			}
+		}
+		module->setValue(0);	
+	}
 }
 
 /*!
