@@ -30,6 +30,7 @@ NetworkDevice::NetworkDevice(QObject *parent, QString target, quint16 port, QStr
 	, m_source(source)
 	, m_sock(NULL)
 	, m_notifyNet(NULL)
+	, m_lastBufnum(0)
 {
 	createSocket();
 }
@@ -125,6 +126,10 @@ void NetworkDevice::readSocketData(void)
 			protocol(tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(m_recBuf.bufferNumber).arg(m_recBuf.cmd).arg(m_recBuf.deviceStatus), DEBUG);
 			quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
 			protocol(tr("%1(%2) : read time : %3").arg(ip()).arg(port()).arg(tim), DEBUG);
+			quint16 diff = m_recBuf.bufferNumber - m_lastBufnum;
+			if(diff > 1)
+				protocol(tr("%1(%2) : Lost %3 Buffers: current: %4, last: %5").arg(ip()).arg(port()).arg(diff).arg(m_recBuf.bufferNumber).arg(m_lastBufnum), ERROR);
+			m_lastBufnum = m_recBuf.bufferNumber;
 			emit bufferReceived(m_recBuf);
 		}
 	}
