@@ -40,8 +40,8 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_timingwidth(1)
 	, m_checkTimer(0)
 {
-	initDevices();
 	initTimers();
+	initDevices();
 	initHardware();
 	protocol(tr("running on Qt %1").arg(qVersion()), NOTICE);
 }
@@ -57,29 +57,31 @@ Mesydaq2::~Mesydaq2()
 quint64 Mesydaq2::receivedData(void) 
 {
 	quint64 dataRxd = 0;
-	for (QMap<int, MCPD8	*>::const_iterator it = m_mcpd.constBegin(); it != m_mcpd.constEnd(); ++it)
-		dataRxd += it.value()->receivedData();	
+	foreach (MCPD8	*value, m_mcpd)
+		dataRxd += value->receivedData();	
 	return dataRxd;
 }
 
 quint64 Mesydaq2::receivedCmds(void)
 {
 	quint64 cmdRxd = 0;
-	for (QMap<int, MCPD8	*>::const_iterator it = m_mcpd.constBegin(); it != m_mcpd.constEnd(); ++it)
-		cmdRxd += it.value()->receivedCmds();	
+	foreach (MCPD8	*value, m_mcpd)
+		cmdRxd += value->receivedCmds();	
 	return cmdRxd;
 }
 
 quint64 Mesydaq2::sentCmds(void) 
 {
 	quint64 cmdTxd = 0;
-	for (QMap<int, MCPD8	*>::const_iterator it = m_mcpd.constBegin(); it != m_mcpd.constEnd(); ++it)
-		cmdTxd += it.value()->sentCmds();	
+	foreach (MCPD8	*value, m_mcpd)
+		cmdTxd += value->sentCmds();	
 	return cmdTxd;
 }
 
 quint64 Mesydaq2::time(void)
 {
+	if (m_mcpd.empty())
+		return 0;
 #warning TODO what if the number of MCPD is > 1
 	return (*m_mcpd.begin())->time();
 }
@@ -89,7 +91,8 @@ quint64 Mesydaq2::time(void)
  */
 void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 {
-	m_mcpd[id]->writeRegister(reg, val);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->writeRegister(reg, val);
 }
 
 /*!
@@ -97,6 +100,8 @@ void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 */
 float Mesydaq2::getFirmware(quint16 id)
 {
+	if (m_mcpd.empty())
+		return 0;
 	return m_mcpd[id]->version();
 }
 
@@ -146,17 +151,17 @@ void Mesydaq2::stoppedDaq(void)
  */
 void Mesydaq2::initDevices(void)
 {
-	QString ip[MCPDS] = {"192.168.168.121", "192.168.169.121", };	
-	quint16 port[MCPDS] = {54321, 54321, };
-	QString sourceIP[MCPDS] = {"192.168.168.1", "192.168.169.1", };
+	QString ip[] = {"192.168.168.121", "192.168.169.121", };	
+	quint16 port[] = {54321, 54321, };
+	QString sourceIP[] = {"192.168.168.1", "192.168.169.1", };
+}
 
-	for(quint8 i = 0; i < MCPDS; i++)
-	{
-		m_mcpd[i] = new MCPD8(i, this, ip[i], port[i], sourceIP[i]);
-		connect(m_mcpd[i], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
-		connect(m_mcpd[i], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
-		connect(m_mcpd[i], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
-	}
+void Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
+{
+	m_mcpd[id] = new MCPD8(id, this, ip, port, sourceIP);
+	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
+	connect(m_mcpd[id], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
+	connect(m_mcpd[id], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 }
 
 
@@ -213,19 +218,23 @@ void Mesydaq2::writeClosingSignature(void)
 
 bool Mesydaq2::isPulserOn()
 {
-	for (quint8 i = 0; i < MCPDS; ++i)
-		if (m_mcpd[i]->isPulserOn())
+	foreach(MCPD8 *value, m_mcpd) 
+		if (value->isPulserOn())
 			return true;
 	return false;
 }
 
 bool Mesydaq2::isPulserOn(quint16 id)
 {
+	if (m_mcpd.empty())
+		return false;
 	return m_mcpd[id]->isPulserOn();
 }
 
 bool Mesydaq2::isPulserOn(quint16 id, quint8 addr)
 {
+	if (m_mcpd.empty())
+		return false;
 	return m_mcpd[id]->isPulserOn(addr);
 }
 
@@ -234,7 +243,8 @@ bool Mesydaq2::isPulserOn(quint16 id, quint8 addr)
  */
 void Mesydaq2::scanPeriph(quint16 id)
 {
-	m_mcpd[id]->readId();
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->readId();
 }
 
 /*!
@@ -252,14 +262,9 @@ void Mesydaq2::initHardware(void)
 	protocol(tr("initializing hardware"), NOTICE);
 	 
 // scan connected MCPDs
-	quint8 p = 0;
-	for(quint8 c = 0; c < MCPDS; c++)
-	{
-		m_mcpd[c]->readId();
-		for(quint8 i = 0; i < 8; ++i)
-			if(m_mcpd[c]->getMpsdId(i))
-				p++;
-	}
+	quint16 p = 0;
+	foreach(MCPD8 *value, m_mcpd)
+		p += value->numModules();
 	
 	protocol(tr("%1 mpsd-8 found").arg(p), NOTICE);
 	
@@ -269,12 +274,13 @@ void Mesydaq2::initHardware(void)
 	if(!loadSetup("mesycfg.mcfg"))
 	{
 		// initialize MPSD-8 by default values.
-		for(quint8 c = 0; c < MCPDS; c++)
+		foreach(MCPD8 *value, m_mcpd)
+		{
 			for (int i = 0; i < 8; ++i)
-				if(m_mcpd[c]->getMpsdId(i))
-					m_mcpd[c]->initMpsd(i);
+				if(value->getMpsdId(i))
+					value->initMpsd(i);
+		}
 	}
-//	initMcpd(0);
 }
 
 
@@ -296,11 +302,12 @@ bool Mesydaq2::saveSetup(const QString &name)
 	settings.setValue("general/Config Path", m_configPath);
 	settings.setValue("general/Histogram Path", m_histPath);
 	settings.setValue("general/Listfile Path", m_listPath);
-	for (int i = 0; i < MCPDS; ++i)
+	i = 0;
+	foreach(MCPD8 *value, m_mcpd) 
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			if (m_mcpd[i]->getMpsdId(j))
+			if (value->getMpsdId(j))
 			{
 				QString str;
 				str.sprintf("MPSD-8 #%d/", i);
@@ -308,12 +315,13 @@ bool Mesydaq2::saveSetup(const QString &name)
 				for(int k = 0; k < 8; k++)
 				{
 					settings.setArrayIndex(k);
-					settings.setValue("gain", m_mcpd[i]->getGain(j, k));
+					settings.setValue("gain", value->getGain(j, k));
 				}
 				settings.endArray();
-				settings.setValue(str + "threshold", m_mcpd[i]->getThreshold(j));
+				settings.setValue(str + "threshold", value->getThreshold(j));
 			}
 		}
+		++i;
 	}
 
 #if 0
@@ -392,7 +400,8 @@ bool Mesydaq2::loadSetup(const QString &name)
 	m_configPath = settings.value("general/Config Path", "/home").toString();
 	m_histPath = settings.value("general/Histogram Path", "/home").toString();
 	m_listPath = settings.value("general/Listfile Path", "/home").toString();
-	for (int i = 0; i < MCPDS; ++i)
+	int i(0);
+	foreach(MCPD8 *value, m_mcpd)
 	{
 		protocol(tr("mcpd #%1 : number of groups %2").arg(i).arg(settings.childGroups().size()), NOTICE);
 		for (int j = 0; j < 8; ++j)
@@ -409,14 +418,15 @@ bool Mesydaq2::loadSetup(const QString &name)
 				{
 					settings.setArrayIndex(l);
 					quint8 gain = settings.value("gain", 128).toUInt() & 0xff;
-					m_mcpd[i]->setGain(j, l, gain);
+					value->setGain(j, l, gain);
 				}
 				settings.endArray();
 				quint8 thresh = settings.value(str + "threshold", 10).toUInt() & 0xff;
-				m_mcpd[i]->setThreshold(j, thresh);
+				value->setThreshold(j, thresh);
 				settings.endGroup();
 			}
 		}
+		++i;
 	}
 #if 0
 	QFile f(configfilename);
@@ -529,7 +539,8 @@ void Mesydaq2::timerEvent(QTimerEvent * /* event */)
  */
 void Mesydaq2::initMcpd(quint8 id)
 {
-	m_mcpd[id]->init();
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->init();
 }
 
 
@@ -539,10 +550,10 @@ void Mesydaq2::initMcpd(quint8 id)
 void Mesydaq2::allPulserOff()
 {
 // send pulser off to all connected MPSD
-	for(quint32 i = 0; i < MCPDS; i++)
-		for(quint32 j = 0; j < 8; j++)
-			if(m_mcpd[i]->getMpsdId(j))
-				m_mcpd[i]->setPulser(j, 0, 2, 40, 0);
+	foreach(MCPD8 *value, m_mcpd)
+		for(quint8 j = 0; j < 8; j++)
+			if(value->getMpsdId(j))
+				value->setPulser(j, 0, 2, 40, 0);
 }
 
 /*!
@@ -566,6 +577,8 @@ void Mesydaq2::setTimingwidth(quint8 width)
  */
 quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 {
+	if (m_mcpd.empty())
+		return 0;
 	return m_mcpd[id]->readPeriReg(mod, reg);
 }
 
@@ -575,7 +588,8 @@ quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
  */
 void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 {
-	m_mcpd[id]->writePeriReg(mod, reg, val);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->writePeriReg(mod, reg, val);
 }
 
 // command shortcuts for simple operations:
@@ -585,7 +599,8 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 void Mesydaq2::start(void)
 {
    	protocol("remote start", NOTICE);
-	m_mcpd[0]->start();
+	foreach(MCPD8 *it, m_mcpd)
+		it->start();
 	emit statusChanged("STARTED");
 }
 
@@ -594,7 +609,8 @@ void Mesydaq2::start(void)
  */
 void Mesydaq2::stop(void)
 {
-	m_mcpd[0]->stop();
+	foreach(MCPD8 *it, m_mcpd)
+		it->stop();
 	emit statusChanged("STOPPED");
    	protocol("remote stop", NOTICE);
 }
@@ -605,7 +621,8 @@ void Mesydaq2::stop(void)
 void Mesydaq2::cont(void)
 {
 	protocol("remote cont", NOTICE);
-	m_mcpd[0]->cont();
+	foreach(MCPD8 *it, m_mcpd)
+		it->cont();
 	emit statusChanged("STARTED");
 }
 
@@ -623,8 +640,9 @@ void Mesydaq2::reset(void)
  */
 bool Mesydaq2::checkMcpd(quint8 /* device */)
 {
-	for(quint8 c = 0; c < MCPDS; c++)
-		scanPeriph(c);    	
+	quint8 c(0);
+	foreach(MCPD8 *value, m_mcpd)
+		scanPeriph(c++);    	
 	return true;
 }
 
@@ -635,82 +653,101 @@ void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QStrin
 
 bool Mesydaq2::getMode(const quint16 id, quint8 addr)
 {
+	if (m_mcpd.empty())
+		return false;
 	return m_mcpd[id]->getMode(addr);
 }
 
 void Mesydaq2::setMode(const quint16 id, quint16 addr, bool mode)
 {
-	m_mcpd[id]->setMode(addr, mode);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMode(addr, mode);
 }
 
 void Mesydaq2::setPulser(const quint16 id, quint16 addr, quint8 channel, quint8 position, quint8 amp, bool onoff)
 {
-	m_mcpd[id]->setPulser(addr, channel, position, amp, onoff);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setPulser(addr, channel, position, amp, onoff);
 }
 
 void Mesydaq2::setCounterCell(quint16 id, quint16 source, quint16 trigger, quint16 compare)
 {
-	m_mcpd[id]->setCounterCell(source, trigger, compare);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setCounterCell(source, trigger, compare);
 }
 
 void Mesydaq2::setParamSource(quint16 id, quint16 param, quint16 source)
 {
-	m_mcpd[id]->setParamSource(param, source);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setParamSource(param, source);
 }
 
 void Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 {
-	m_mcpd[id]->setAuxTimer(tim, val);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setAuxTimer(tim, val);
 }
 
 void Mesydaq2::setMasterClock(quint16 id, quint64 val)
 {
-	m_mcpd[id]->setMasterClock(val);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMasterClock(val);
 }
 
 void Mesydaq2::setTimingSetup(quint16 id, bool master, bool sync)
 {
-	m_mcpd[id]->setTimingSetup(master, sync);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setTimingSetup(master, sync);
 }
 
 void Mesydaq2::setId(quint16 id, quint8 mcpdid)
 {
-	m_mcpd[id]->setId(mcpdid);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setId(mcpdid);
 }
 
 void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 channel, quint8 gain)
 {
-	m_mcpd[id]->setGain(addr, channel, gain);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setGain(addr, channel, gain);
 }
 
 void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 channel, float gain)
 {
-	m_mcpd[id]->setGain(addr, channel, gain);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setGain(addr, channel, gain);
 }
 
 void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint8 thresh)
 {
-	m_mcpd[id]->setThreshold(addr, thresh);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setThreshold(addr, thresh);
 }
 
 void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 {
-	m_mcpd[id]->setThreshold(addr, thresh);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setThreshold(addr, thresh);
 }
 
 quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 {
-	return m_mcpd[id]->getMpsdId(addr);
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMpsdId(addr);
 }
 
 QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
 {
+	if (m_mcpd.empty())
+		return "-";
 	switch(m_mcpd[id]->getMpsdId(addr))
 	{
 		case MPSD8 :
 			return "MPSD-8";
 		case MPSD8P:
 			return "MPSD-8+";
+		case 0:
+			return "-";
 		default:
 			return "MPSD-8??";
 	}
@@ -718,27 +755,70 @@ QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
 
 quint8 Mesydaq2::getPulsChan(quint16 id, quint8 addr)
 {
+	if (m_mcpd.empty())
+		return 0;
 	return m_mcpd[id]->getPulsChan(addr);
 }
 
 quint8 Mesydaq2::getPulsAmp(quint16 id, quint8 addr)
 {
+	if (m_mcpd.empty())
+		return 0;
 	return m_mcpd[id]->getPulsAmp(addr);
 }
 
 quint8 Mesydaq2::getPulsPos(quint16 id, quint8 addr)
 {
+	if (m_mcpd.empty())
+		return 0;
 	return m_mcpd[id]->getPulsPos(addr);
+}
+
+void Mesydaq2::getCounterCell(quint16 id, quint8 cell, quint16 *celldata)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->getCounterCell(cell, celldata);
+}
+
+quint16 Mesydaq2::getParamSource(quint16 id, quint16 param)
+{
+	if (m_mcpd.empty())
+		return 0;
+	return m_mcpd[id]->getParamSource(param);
+}
+	
+quint16 Mesydaq2::getAuxTimer(quint16 id, quint16 timer)
+{
+	if (m_mcpd.empty())
+		return 0;
+	return m_mcpd[id]->getAuxTimer(timer);
+}
+
+quint64 Mesydaq2::getParameter(quint16 id, quint16 param)
+{
+	if (m_mcpd.empty())
+		return 0;
+	return m_mcpd[id]->getParameter(param);
 }
 
 quint8 Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 {
+	if (m_mcpd.empty())
+		return 0;
 	return m_mcpd[id]->getGain(addr, chan);
 }
 
 quint8 Mesydaq2::getThreshold(quint16 id, quint8 addr)
 {
+	if (m_mcpd.empty())
+		return 0;
 	return m_mcpd[id]->getThreshold(addr);
+}
+
+bool Mesydaq2::setRunId(quint16 id, quint16 runid)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setRunId(runid); 
 }
 
 void Mesydaq2::setHistfilename(QString name) 
@@ -757,10 +837,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 	if(m_daq == RUNNING)
 	{
 		quint16 mod = pd.deviceId;	
-		quint16 diff = pd.bufferNumber - m_lastBufnum;
-		if(diff > 1)
-			protocol(tr("Lost %1 Buffers: current: %2, last: %3").arg(diff).arg(pd.bufferNumber).arg(m_lastBufnum), ERROR);
-		m_lastBufnum = pd.bufferNumber;
 		if(m_acquireListfile)
 		{
 			quint16 *pD = (quint16 *) &pd.bufferLength;

@@ -111,6 +111,16 @@ public:
 
 	quint8 getPulsPos(quint16 mod, quint8 addr);
 
+	void getCounterCell(quint16 mod, quint8 cell, quint16 *celldata);
+
+	quint16 getParamSource(quint16 mod, quint16 param);
+	
+	quint16 getAuxTimer(quint16 mod, quint16 timer);
+
+	quint64 getParameter(quint16 mod, quint16 param);
+
+	bool setRunId(quint16 mod, quint16 runid);
+
 	quint64 receivedData(); 
 
 	quint64 receivedCmds(); 
@@ -120,6 +130,10 @@ public:
 	quint64 time();
 
 	float getFirmware(quint16 mod);
+
+	void addMCPD(quint16 id, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+
+	quint16 numMCPD(void) {return m_mcpd.size();}
 
 public slots:
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
@@ -181,8 +195,6 @@ private:
 
 	void initTimers(void);
 
-public:
-#warning TODO remove the public attribute
 	QMap<int, MCPD8	*>	m_mcpd;
 
 private:
@@ -207,8 +219,6 @@ private:
 	QString 	m_configPath;
 
 	quint8  	m_timingwidth;
-	quint32 	m_lastBufnum;
-
 	int 		m_checkTimer;
 };
 
