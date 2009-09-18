@@ -99,49 +99,46 @@ float Spectrum::mean(float &s)
 	return m;
 }
 
-Histogram::Histogram(quint16 channels, quint16 bins, QObject *parent)
+Histogram::Histogram(quint16 , quint16 bins, QObject *parent)
 	: MesydaqObject(parent)
 	, m_totalCounts(0)
 	, m_twidth(1)
-	, m_data(NULL)
-	, m_channels(channels)
 	, m_maximumPos(0)
 {
-	m_data = new Spectrum*[m_channels];
-	for (quint16 i = 0; i < m_channels; ++i)
-		m_data[i] = new Spectrum(bins);
-	
+	m_data.clear();
 	m_sumSpectrum.resize(bins);
 	clear();
 }
 
 Histogram::~Histogram()
 {
-	for (quint16 i = 0; i < m_channels; ++i)
-		delete m_data[i];
-	delete m_data;
+}
+
+quint64 Histogram::max() 
+{
+	return m_data.size() ? m_data[m_maximumPos]->max() : 0;
 }
 
 quint64 Histogram::value(quint16 chan, quint16 bin)
 {
-	if (chan < m_channels)
-		return m_data[chan]->value(bin);
-	else
-		return 0;
+	return m_data.contains(chan) ? m_data[chan]->value(bin) : 0;
 }
 
 bool Histogram::incVal(quint16 chan, quint16 bin)
 {
+	if (!m_data.contains(chan))
+	{
+		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
+			if (!m_data.contains(i))
+				m_data[i] = new Spectrum(m_sumSpectrum.width());
+	}
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
-	if (chan < m_channels)
-	{
-		m_data[chan]->incVal(bin);
-		if (m_data[chan]->max() > m_data[m_maximumPos]->max())
-			m_maximumPos = chan;
-	}
-	else
-		qDebug("ERROR !!!!! chan = %d", chan); 
+	m_data[chan]->incVal(bin);
+	if (!m_data.contains(m_maximumPos))
+		qDebug("ERROR !!!!! chan = %d", m_maximumPos); 
+	if (m_data[chan]->max() > m_data[m_maximumPos]->max())
+		m_maximumPos = chan;
 // sum spectrum of all channels
 	m_sumSpectrum.incVal(bin);
 
@@ -166,8 +163,8 @@ void Histogram::clear(quint16 channel)
  */
 void Histogram::clear(void)
 {
- 	for(quint16 i = 0;i < m_channels; i++)
-		m_data[i]->clear();
+	foreach (Spectrum *value, m_data)
+		value->clear();
 	m_sumSpectrum.clear();
 	m_totalCounts = 0;
 	m_twidth = 1;
@@ -184,10 +181,7 @@ quint64 Histogram::getTotalCounts(void)
 
 Spectrum *Histogram::spectrum(quint16 channel)
 {
-   	if(channel <= m_channels)
-		return m_data[channel];
-	else
-		return NULL;
+   	return m_data.contains(channel) ?  m_data[channel] : NULL;
 }
 
 /*!
@@ -195,10 +189,7 @@ Spectrum *Histogram::spectrum(quint16 channel)
  */
 quint64 Histogram::max(quint16 channel)
 {
-	if(channel <= m_channels)
-		return m_data[channel]->max();
-	else
-		return 0;
+   	return m_data.contains(channel) ? m_data[channel]->max() : 0;
 }
 
 /*!
@@ -206,7 +197,7 @@ quint64 Histogram::max(quint16 channel)
  */
 quint16 Histogram::maxpos(quint16 channel)
 {
-	return m_data[channel]->maxpos();
+   	return m_data.contains(channel) ? m_data[channel]->maxpos() : 0;
 }
 
 /*!
@@ -228,7 +219,7 @@ void Histogram::getMean(float &m, float &s)
 
 quint16	Histogram::height() 
 {
-	return m_channels;
+	return m_data.size();
 }
 
 /*!

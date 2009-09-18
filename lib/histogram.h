@@ -26,6 +26,8 @@
 
 #include <QVector>
 
+#include <QMap>
+
 class QFile;
 
 /**
@@ -42,7 +44,7 @@ public:
 
 	void clear();
 
-	quint64 max() {return m_data[m_maximumPos];}
+	quint64 max() {return m_data.size() ? m_data[m_maximumPos] : 0;}
 
 	quint16 maxpos() {return m_maximumPos;}
 
@@ -100,7 +102,7 @@ public:
 
 	quint64 max(quint16 channel);
 
-	quint64 max() {return m_data[m_maximumPos]->max();}
+	quint64 max(); 
 	
 	quint16 maxpos() {return m_maximumPos;}
 
@@ -119,17 +121,15 @@ public:
 	quint16	height(); 
 
 protected:
-	quint64 	m_totalCounts;
+	quint64 			m_totalCounts;
 
-	quint8 		m_twidth;
+	quint8 				m_twidth;
 
-	Spectrum  	**m_data;
+	QMap<quint16, Spectrum*>	m_data;
 
-	quint16		m_channels;
+	Spectrum			m_sumSpectrum;
 
-	Spectrum	m_sumSpectrum;
-
-	quint16		m_maximumPos;
+	quint16				m_maximumPos;
 };
 
 #endif
