@@ -121,9 +121,6 @@
 #define STARTED 		2
 #define STOPPED 		3
 
-// number of MCPDs
-#define MCPDS 			2
-
 // CARESS counter mapping
 #define M1CT			0
 #define M2CT			1
