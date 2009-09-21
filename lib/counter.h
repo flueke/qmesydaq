@@ -28,6 +28,10 @@
 
 #include "mdefines.h"
 
+/**
+ * \short Software counter
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class MesydaqCounter : public MesydaqObject
 {
 Q_OBJECT
@@ -46,6 +50,10 @@ public:
 	 */
 	void operator++(void); 
 
+	/**
+	 * this operator returns the current value of the counter
+	 * \see value
+	 */
 	operator quint64() {return value();}
 
 	//! checks whether the the limit is reached or not
@@ -89,12 +97,29 @@ public:
 	 */
 	void setMaster(const bool val = true);
 
+	/**
+	 * Sets the counter time
+	 *
+	 * \param val the time in 100ns ticks
+	 */
 	virtual void setTime(quint64 val);
 
+	//! \return the current rate of the counter
 	quint64 rate(void);
 
+	/**
+	 * calculates the rate of the counter
+	 *
+	 * \see rate
+	 */
 	void calcRate(void);
 
+	/**
+	 * calculates the mean rate of the counter
+	 *
+	 * \see rate
+	 * \see calcRate
+	 */
 	void calcMeanRate(void);
 
 signals:
@@ -103,36 +128,42 @@ signals:
 
 protected:
 	//! current counter value
-	quint64 m_value;
+	quint64 	m_value;
 
 	//! store the value during the last calculation of the rate
-	quint64 m_lastValue;
+	quint64 	m_lastValue;
 
 	//! current counter limit
-	quint64 m_limit;
+	quint64 	m_limit;
 
 	//! is this counter a master counter
-	bool	m_master;
+	bool		m_master;
 
-	quint64 m_start;
+private:
+	quint64 	m_start;
 
-	quint64 m_offset;
+	quint64 	m_offset;
 
-	quint64 m_meastime_msec;
+	quint64 	m_meastime_msec;
 	
-	quint64 m_ratetime_msec;
+	quint64 	m_ratetime_msec;
 
-	bool	m_rateflag;
+	bool		m_rateflag;
 
 	QQueue<quint64>	m_rate;
 
-	quint8	m_ratepointer;
+	quint8		m_ratepointer;
 };
 
+/**
+ * \short Software timer
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class MesydaqTimer : public MesydaqCounter
 {
 Q_OBJECT
 public:
+	//! constructor
 	MesydaqTimer();
 
 	virtual void start(quint64 val);

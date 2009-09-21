@@ -400,7 +400,7 @@ void MainWidget::update(void)
 }
 
 /*!
-    \fn MainWidget::buildTimestring(ulong timeval, bool nano)
+    \fn MainWidget::buildTimestring(quint64 timeval, bool nano)
  */
 QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 {
@@ -482,7 +482,7 @@ void MainWidget::setRunIdSlot()
 }
 
 /*!
-    \fn MainWidget::dispMcpdSlot(void)
+    \fn MainWidget::displayMcpdSlot(int)
  */
 void MainWidget::displayMcpdSlot(int)
 {
@@ -511,7 +511,7 @@ void MainWidget::displayMcpdSlot(int)
 
 
 /*!
-    \fn MainWidget::dispMpsdSlot(void)
+    \fn MainWidget::displayMpsdSlot(int)
  */
 void MainWidget::displayMpsdSlot(int)
 {

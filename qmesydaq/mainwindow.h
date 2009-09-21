@@ -34,12 +34,6 @@
 
 #include "structures.h"
 
-/**
- * @short Application Main Window
- * @author Gregor Montermann <g.montermann@mesytec.com>
- * @version 0.8
- */
-
 class MainWidget;
 class Histogram;
 class MCPD8;
@@ -48,6 +42,12 @@ class Measurement;
 class CorbaThread;
 class ControlInterface;
 
+/**
+ * \short Application Main Window
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ * \version 0.9
+ */
 class Mesydaq2MainWindow : public QMainWindow, public Ui_Mesydaq2MainWindow
 {
 	Q_OBJECT

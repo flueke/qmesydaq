@@ -21,6 +21,11 @@
 #include "mesydaq2.h"
 #include "mdefines.h"
 
+/**
+ * constructor
+ *
+ * \param parent parant object
+ */
 ControlInterface::ControlInterface(QObject *parent)
 	: MesydaqObject(parent)
 {

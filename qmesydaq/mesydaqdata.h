@@ -29,43 +29,81 @@
 class Spectrum;
 class Histogram;
 
+/**
+ * \short wrapper class to display spectrum data
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de
+ */
 class MesydaqSpectrumData : public QwtData
 {
 public:
+	//! constructor
 	MesydaqSpectrumData();
 
+	//! \return a deep copy of the spectrum data
 	virtual QwtData *copy() const;
 
+	//! \return the length of the spectrum
 	virtual size_t size() const; 
 
+	//! \return the cell number of the spectrum
 	virtual double x(size_t i) const;
 
+	//! \return the counts of the cell i in spectrum
 	virtual double y(size_t i) const;
 
+	/**
+	 * takes the data from the spectrum
+	 * the data pointed by data will not copied.
+	 *
+	 * \param data pointer to the data spectrum
+	 */
 	void setData(Spectrum *data);
 
+	//! \return the maximum value for the spectrum
 	quint32 max(void);
 
 private:
 	Spectrum	*m_spectrum;
 };
 
+/**
+ * \short wrapper class to display histogram data
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de
+ */
 class MesydaqHistogramData : public QwtRasterData
 {
 public:
+	//! constructor
 	MesydaqHistogramData();
 
+	//! \return a deep copy of the histogram data
 	QwtRasterData *copy() const;
 
+	//! \return the interval between min count and maximum count
 	QwtDoubleInterval range() const;
 
+	/**
+	 * gets the value of the cell x, y if exist, otherwise 0,
+	 * the x and y values will be treated as integer values.
+	 *
+	 * \param x bin inside a spectrum (truncated to integer)
+	 * \param y number of the tube (truncated to integer)
+	 * \return counts
+	 */
 	double value(double x, double y) const;
 
+	/**
+	 * takes the data from the histogram
+	 * the data pointed by data will not copied.
+	 *
+	 * \param data pointer to the data histogram
+	 */
 	void setData(Histogram *data);
 	
 private:
 	Histogram	*m_histogram;
-
 };
 
 #endif

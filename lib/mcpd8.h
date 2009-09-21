@@ -32,9 +32,9 @@ class MPSD_8;
 class QTimer;
 
 /**
- * representation of mcpd-8 central module
+ * \short representation of MCPD-8 central module
  *
- * @author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Gregor Montermann <g.montermann@mesytec.com>
 */
 class MCPD8 : public MesydaqObject
 {

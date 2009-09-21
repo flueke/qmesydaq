@@ -35,7 +35,7 @@ MesydaqObject::~MesydaqObject()
 }
 
 /*!
-    \fn Mesydaq2::protocol(QString str, unsigned char level)
+    \fn MesydaqObject::protocol(QString str, quint8 level)
  */
 void MesydaqObject::protocol(QString str, quint8 level)
 {

@@ -35,9 +35,9 @@ MPSD_8p::MPSD_8p(quint8 id, QObject *parent)
 }
 
 /*!
-    \fn MPSD_8p::setGain(unsigned char channel, float gain, bool preset)
+    \fn MPSD_8p::setGain(quint8 channel, float gain, bool preset)
  */
-void MPSD_8p::setGain(quint8 channel, float gainv, quint8 preset)
+void MPSD_8p::setGain(quint8 channel, float gainv, bool preset)
 {
 // boundary check
 	if(gainv > 1.88)
@@ -49,7 +49,7 @@ void MPSD_8p::setGain(quint8 channel, float gainv, quint8 preset)
 }
 
 /*!
-    \fn mpsd8::calcGainpoti(float fval)
+    \fn MPSD_8p::calcGainpoti(float fval)
  */
 quint8 MPSD_8p::calcGainpoti(float fval)
 {
@@ -116,7 +116,7 @@ quint8 MPSD_8p::calcThreshval(quint8 thr)
 }
 
 /*!
-    \fn MPSD_8::calcPulspoti(quint8 val, float)
+    \fn MPSD_8::calcPulsPoti(quint8 val, float)
  */
 quint8 MPSD_8p::calcPulsPoti(quint8 val, float gv)
 {
@@ -129,7 +129,7 @@ quint8 MPSD_8p::calcPulsPoti(quint8 val, float gv)
 }
 
 /*!
-    \fn MPSD_8::calcPulsamp(quint8 val, float gv)
+    \fn MPSD_8::calcPulsAmp(quint8 val, float gv)
  */
 quint8 MPSD_8p::calcPulsAmp(quint8 val, float gv)
 {

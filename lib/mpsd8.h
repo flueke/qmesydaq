@@ -24,10 +24,10 @@
 #include "mesydaqobject.h"
 
 /**
- * representation of mpsd-8 peripheral module 
+ * \short representation of MPSD-8 peripheral module 
  *
- * @author Gregor Montermann <g.montermann@mesytec.com>
-*/
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+ */
 class MPSD_8 : public MesydaqObject
 {
 Q_OBJECT
@@ -127,6 +127,11 @@ private:
 	quint16 	m_internalReg[3][2];
 };
 
+/**
+ * \short representation of MPSD-8+ peripheral module 
+ *
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+ */
 class MPSD_8p : public MPSD_8
 {
 Q_OBJECT
@@ -135,11 +140,12 @@ public:
 
 	~MPSD_8p() {}
 
-	virtual void 	setGain(quint8 channel, float gainv, quint8 preset);
-	virtual void	setThreshold(quint8 threshold, bool preset);
+	virtual void 	setGain(quint8 channel, float gainv, bool preset = 0);
+	virtual void	setThreshold(quint8 threshold, bool preset = 0);
 
 	virtual quint8	calcGainpoti(float fval);
 	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
+
 protected:
 	virtual float	calcGainval(quint8 ga);
 	virtual quint8	calcPulsPoti(quint8 val, float gv);

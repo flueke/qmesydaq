@@ -99,7 +99,7 @@ void Measurement::timerEvent(QTimerEvent *event)
 	}
 }
 /*!
-    \fn Measurement::setCurrentTime(unsigend long msecs)
+    \fn Measurement::setCurrentTime(quint64 msecs)
  */
 void Measurement::setCurrentTime(quint64 msecs)
 {
@@ -120,8 +120,7 @@ quint64 Measurement::getMeastime(void)
 }
 
 /*!
-    \fn Measurement::start(quint64 time)
-		m_theApp->getMTime());
+    \fn Measurement::start()
  */
 void Measurement::start()
 {
@@ -148,7 +147,7 @@ void Measurement::requestStop()
 }
 
 /*!
-    \fn Measurement::stop(unsigned long time)
+    \fn Measurement::stop()
  */
 void Measurement::stop()
 {
@@ -165,7 +164,7 @@ void Measurement::stop()
 
 
 /*!
-    \fn Measurement::setCounter(unsigned int cNum, quint64 val)
+    \fn Measurement::setCounter(quint32 cNum, quint64 val)
  */
 void Measurement::setCounter(quint32 cNum, quint64 val)
 {
@@ -205,7 +204,7 @@ void Measurement::calcMeanRates()
 }
 
 /*!
-    \fn Measurement::getCounter(unsigned char cNum)
+    \fn Measurement::getCounter(quint8 cNum)
  */
 quint64 Measurement::getCounter(quint8 cNum)
 {
@@ -216,7 +215,7 @@ quint64 Measurement::getCounter(quint8 cNum)
 }
 
 /*!
-    \fn Measurement::getRate(unsigned char cNum)
+    \fn Measurement::getRate(quint8 cNum)
  */
 ulong Measurement::getRate(quint8 cNum)
 {
@@ -260,7 +259,7 @@ void Measurement::setOnline(bool truth)
 
 
 /*!
-    \fn Measurement::setPreset(unsigned char cNum, unsigned long prval, bool mast)
+    \fn Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
  */
 void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 {
@@ -284,7 +283,7 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 
 
 /*!
-    \fn Measurement::getPreset(unsigned char cNum)
+    \fn Measurement::getPreset(quint8 cNum)
  */
 ulong Measurement::getPreset(quint8 cNum)
 {
@@ -305,7 +304,7 @@ void Measurement::setListmode(bool truth)
 
 
 /*!
-    \fn Measurement::remote(bool truth)
+    \fn Measurement::setRemote(bool truth)
  */
 void Measurement::setRemote(bool truth)
 {
@@ -322,7 +321,7 @@ bool Measurement::remoteStart(void)
 }
 
 /*!
-    \fn Measurement::isMaster(unsigned char cNum)
+    \fn Measurement::isMaster(quint8 cNum)
  */
 bool Measurement::isMaster(quint8 cNum)
 {
@@ -332,7 +331,7 @@ bool Measurement::isMaster(quint8 cNum)
 
 
 /*!
-    \fn Measurement::clearCounter(unsigned char cNum)
+    \fn Measurement::clearCounter(quint8 cNum)
  */
 void Measurement::clearCounter(quint8 cNum)
 {
@@ -356,7 +355,7 @@ void Measurement::clearAllHist(void)
 }
 
 /*!
-    \fn Measurement::clearChanHist(unsigned long chan)
+    \fn Measurement::clearChanHist(quint16 chan)
  */
 void Measurement::clearChanHist(quint16 chan)
 {
@@ -411,7 +410,7 @@ Spectrum *Measurement::ampData(quint16 line)
 }
 
 /*!
-    \fn Spectrum *Measurement::timeData(quint16 line)
+    \fn Spectrum *Measurement::timeData()
 */
 Spectrum *Measurement::timeData()
 {
@@ -419,7 +418,7 @@ Spectrum *Measurement::timeData()
 }
 
 /*!
-    \fn Measurement::writeHistograms()
+    \fn Measurement::writeHistograms(const QString &name)
  */
 void Measurement::writeHistograms(const QString &name)
 {
@@ -443,7 +442,7 @@ void Measurement::writeHistograms(const QString &name)
 }
 
 /*!
-    \fn Measurement::analyzeBuffer(DATA_PACKET &pd, quint8 daq)
+    \fn Measurement::analyzeBuffer(DATA_PACKET &pd)
  */
 void Measurement::analyzeBuffer(DATA_PACKET &pd)
 {

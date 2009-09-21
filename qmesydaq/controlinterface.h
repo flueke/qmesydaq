@@ -25,11 +25,10 @@
 class Mesydaq2;
 
 /**
- * Interface class for external control (CARESS, TACO, ...)
+ * \short Interface class for external control (CARESS, TACO, ...)
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
 */
-
 class ControlInterface : public MesydaqObject
 {
 	Q_OBJECT
@@ -38,15 +37,19 @@ public:
 
 	~ControlInterface();
 
-	void start();
+	//! starts the data aquisition
+	virtual void start();
 
-	void stop();
+	//! stops the data aquisition
+	virtual void stop();
 
-	void cont();
+	//! continues a stopped data aquisition
+	virtual void cont();
 
 signals:
 
 protected:
+	//! the object to control the measurement
 	Mesydaq2	*m_theApp;
 };
 

@@ -25,7 +25,8 @@
 #include <cmath>
 
 Spectrum::Spectrum(quint16 bins)
-	: m_data(NULL)
+	: MesydaqObject()
+	, m_data(NULL)
 	, m_maximumPos(0)
 	, m_meanCount(0)
 	, m_meanPos(0)
@@ -99,8 +100,8 @@ float Spectrum::mean(float &s)
 	return m;
 }
 
-Histogram::Histogram(quint16 , quint16 bins, QObject *parent)
-	: MesydaqObject(parent)
+Histogram::Histogram(quint16 , quint16 bins)
+	: MesydaqObject()
 	, m_totalCounts(0)
 	, m_twidth(1)
 	, m_maximumPos(0)
@@ -146,7 +147,7 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
 }
 
 /*!
-    \fn Histogram::clearHist(unsigned int channel)
+    \fn Histogram::clear(quint16 channel)
  */
 void Histogram::clear(quint16 channel)
 {
@@ -159,7 +160,7 @@ void Histogram::clear(quint16 channel)
 
 
 /*!
-    \fn Histogram::clearAllHist(void);
+    \fn Histogram::clear(void);
  */
 void Histogram::clear(void)
 {
@@ -210,7 +211,7 @@ void Histogram::getMean(quint16 chan, float &m, float &s)
 }
 
 /*!
-    \fn Histogram::getMean(quint16 chan, float* vals)
+    \fn Histogram::getMean(float &m, float &s)
  */
 void Histogram::getMean(float &m, float &s)
 {
@@ -231,9 +232,9 @@ void Histogram::setWidth(quint8 width)
 }
 
 /*!
-    \fn Histogram::writeHistogram(QFile f)
+    \fn Histogram::writeHistogram(QFile *f, const QString title)
  */
-bool Histogram::writeHistogram(QFile* f, const QString title)
+bool Histogram::writeHistogram(QFile *f, const QString title)
 {
 	quint32 i, j, k;
   

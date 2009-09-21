@@ -63,7 +63,7 @@ MPSD_8::~MPSD_8()
 
 
 /*!
-    \fn MPSD_8::setMpsdId(unsigned char id)
+    \fn MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
  */
 void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
 {
@@ -75,7 +75,7 @@ void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
 }
 
 /*!
-    \fn MPSD_8::setGain(quint8 channel, float gain, quint8 preset)
+    \fn MPSD_8::setGain(quint8 channel, float gain, bool preset)
  */
 void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 {
@@ -99,7 +99,7 @@ void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setGain(quint8 channel, quint8 gain, quint8 preset)
+    \fn MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
  */
 void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
 {
@@ -122,7 +122,7 @@ void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setThreshold(quint8 threshold, quint8 preset)
+    \fn MPSD_8::setThreshold(quint8 threshold, bool preset)
  */
 void MPSD_8::setThreshold(quint8 threshold, bool preset)
 {
@@ -135,7 +135,7 @@ void MPSD_8::setThreshold(quint8 threshold, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setThrespoti(quint8 thresh, quint8 preset)
+    \fn MPSD_8::setThreshpoti(quint8 thresh, bool preset)
  */
 void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
 {
@@ -148,7 +148,7 @@ void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setPulserpoti(quint8 thresh, quint8 chan, quint8 preset)
+    \fn MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
  */
 void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 {
@@ -172,7 +172,7 @@ void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool
 }
 
 /*!
-    \fn MPSD_8::setPulser(quint8 chan, quint8 amp = 128, quint8 pos = 2, quint8 on = true, quint8 preset = 0)
+    \fn MPSD_8::setPulser(quint8 chan, quint8 amp = 128, quint8 pos = 2, quint8 on = true, bool preset = 0)
  */
 void MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
 {
@@ -238,7 +238,7 @@ quint8 MPSD_8::calcThreshval(quint8 thr)
 }
 
 /*!
-    \fn MPSD_8::calcPulspoti(quint8 val, float)
+    \fn MPSD_8::calcPulsPoti(quint8 val, float)
  */
 quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
 {
@@ -248,7 +248,7 @@ quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
 }
 
 /*!
-    \fn MPSD_8::calcPulsamp(quint8 val, float gv)
+    \fn MPSD_8::calcPulsAmp(quint8 val, float gv)
  */
 quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
 {
@@ -257,7 +257,7 @@ quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
 }
 
 /*!
-    \fn MPSD_8::setInternalreg(quint8 reg, quint16 val, quint8 preset)
+    \fn MPSD_8::setInternalreg(quint8 reg, quint16 val, bool preset)
  */
 void MPSD_8::setInternalreg(quint8 reg, quint16 val, bool preset)
 {

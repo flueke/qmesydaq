@@ -87,7 +87,7 @@ quint64 Mesydaq2::time(void)
 }
 
 /*!
-    \fn Mesydaq2::writeRegister(unsigned int id, unsigned int addr, unsigned int val)
+    \fn Mesydaq2::writeRegister(quint16 id, quint16 addr, quint16 val)
  */
 void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 {
@@ -213,7 +213,7 @@ void Mesydaq2::writeClosingSignature(void)
 
 
 /*!
-    \fn Mesydaq2::readListfile(QString readfilename)
+    \fn Mesydaq2::isPulserOn()
  */
 
 bool Mesydaq2::isPulserOn()
@@ -239,7 +239,7 @@ bool Mesydaq2::isPulserOn(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::scanPeriph(unsigned short id)
+    \fn Mesydaq2::scanPeriph(quint16 id)
  */
 void Mesydaq2::scanPeriph(quint16 id)
 {
@@ -285,7 +285,7 @@ void Mesydaq2::initHardware(void)
 
 
 /*!
-    \fn Mesydaq2::saveSetup(void)
+    \fn Mesydaq2::saveSetup(const QString &name)
  */
 bool Mesydaq2::saveSetup(const QString &name)
 {
@@ -518,7 +518,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 }
 
 /*!
-    \fn Mesydaq2::centralDispatch()
+    \fn Mesydaq2::timerEvent(QTimerEvent *event)
  */
 void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 {
@@ -535,7 +535,7 @@ void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 
 
 /*!
-    \fn Mesydaq2::initMcpd(unsigned char id)
+    \fn Mesydaq2::initMcpd(quint8 id)
  */
 void Mesydaq2::initMcpd(quint8 id)
 {
@@ -557,7 +557,7 @@ void Mesydaq2::allPulserOff()
 }
 
 /*!
-    \fn Mesydaq2::setTimingwidth(unsigned char width)
+    \fn Mesydaq2::setTimingwidth(quint8 width)
  */
 void Mesydaq2::setTimingwidth(quint8 width)
 {
@@ -573,7 +573,7 @@ void Mesydaq2::setTimingwidth(quint8 width)
 
 
 /*!
-    \fn Mesydaq2::readPeriReg(unsigned short id, unsigned short mod, unsigned short reg)
+    \fn Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
  */
 quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 {
@@ -584,7 +584,7 @@ quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 
 
 /*!
-    \fn Mesydaq2::writePeriReg(unsigned short id, unsigned short mod, unsigned short reg, unsigned short val)
+    \fn Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
  */
 void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 {
@@ -616,7 +616,7 @@ void Mesydaq2::stop(void)
 }
 
 /*!
-    \fn Mesydaq2::continue(void)
+    \fn Mesydaq2::cont(void)
  */
 void Mesydaq2::cont(void)
 {
@@ -636,7 +636,7 @@ void Mesydaq2::reset(void)
 
 
 /*!
-    \fn Mesydaq2::checkMcpd(unsigned char device)
+    \fn Mesydaq2::checkMcpd(quint8 device)
  */
 bool Mesydaq2::checkMcpd(quint8 /* device */)
 {

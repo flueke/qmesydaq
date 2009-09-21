@@ -31,33 +31,70 @@
 class QFile;
 
 /**
-	@author Jens Krüger <jens.krueger@frm2.tum.de>
-*/
-class Spectrum 
+ * \short represents a single spectrum 
+ * \author Jens Krüger <jens.krueger@frm2.tum.de>
+ */
+class Spectrum : public MesydaqObject
 {
 public:
+	/**
+	 * constructor
+	 *
+	 * \param bins number of points in the spectrum
+	 */
 	Spectrum(quint16 bins = LINBINS);
 
+	//! destructor
 	~Spectrum();
 
+	/**
+	 * add a event add position bin
+	 *
+	 * \param bin position inside the spectrum to increment
+	 */
 	bool incVal(quint16 bin);
 
+	//! clear the spectrum
 	void clear();
 
+	//! \return the maximum value of the spectrum
 	quint64 max() {return m_data.size() ? m_data[m_maximumPos] : 0;}
 
+	//! \return the first position of the maximum value of the spectrum
 	quint16 maxpos() {return m_maximumPos;}
 
+	//! \return sum of counts in the spectrum
 	quint16 getTotalCounts() {return m_totalCounts;}
 
+	/**
+	 * calculates the mean value and standard deviation of the mean value
+	 * 
+	 * \param s standard deviation of the mean value
+	 * \return mean value
+	 */
 	float mean(float &s);
 
 //	quint64 operator[](quint16 index) {return m_data[index];}
 	
+	/**
+	 * gives the counts at the position index
+	 *
+	 * \param index position inside the spectrum for the required counts
+	 * \return the number of neutrons
+	 */
 	quint64 value(quint16 index) {return m_data[index];}
 
+	//! \return the lenght of the spectrum
 	quint16	width() {return m_data.size();}
 
+	/**
+	 * sets the size of the spectrum to the desired size, if the size
+	 * will be increased the new values will be set to zero, if the size
+	 * will be decreased the values with indices above the new size will
+	 * be discarded.
+	 *
+	 * \param  bins new size of the spectrum
+	 */
 	void resize(quint16 bins) {m_data.resize(bins);}
 
 private:
@@ -78,49 +115,112 @@ private:
 
 
 /**
-	@author Gregor Montermann <g.montermann@mesytec.com>
-*/
+ * \short represents a histogram
+ * This histogram object will automatically increase its size, if
+ * the incVal method gives values which are not exist.
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+ */
 class Histogram : public MesydaqObject
 {
 Q_OBJECT
 public:
-	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS, QObject *parent = 0);
+	/**
+	 * constructor
+	 *
+	 * \param channels number of channels (i.e. number of tubes)
+	 * \param bins number of bins (inside a tube)
+	 */
+	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS);
 
 	~Histogram();
     
+	/**
+	 * increment value by 1 in cell[chan, bin]. If the cell does
+	 * not exist it will be created.
+	 *
+	 * \param chan number of the spectrum
+	 * \param bin number of the bin in the spectrum
+	 * \return true if it was ok otherwise false
+	 */
 	bool incVal(quint16 chan, quint16 bin);
 
+	//! clears the complete histogram
 	void clear(void);
 
+	/**
+	 * clears the spectrum channel
+	 *
+	 * \param channel number of the spectrum to be cleared
+	 */
 	void clear(quint16 channel);
 
+	//! returns the sum of all counts
 	quint64 getTotalCounts(void);
 
+	//! \return the pointer to the spectrum of the tube channel
 	Spectrum *spectrum(quint16 channel);
 
+	//! \return the pointer to the sum spectrum
 	Spectrum *spectrum() {return &m_sumSpectrum;}
 
+	//! \return the maximum of the spectrum of the tube channel
 	quint64 max(quint16 channel);
 
+	//! \return the maximum of the whole histogram
 	quint64 max(); 
 	
+	//! \return the number of the first tube containing the maximum value
 	quint16 maxpos() {return m_maximumPos;}
 
+	//! \return the number of the bin in the tube channel
 	quint16 maxpos(quint16 channel);
 
+	/**
+	 * gives the mean value and the standard deviation of the last events
+	 *
+	 * \param mean mean value
+	 * \param sigma standard deviation
+	 */
 	void getMean(float &mean, float &sigma);
 
+	/**
+	 * gives the mean value and the standard deviation of the last events in the tube chan
+	 *
+	 * \param chan the number of the tube
+	 * \param mean mean value
+	 * \param sigma standard deviation
+	 */
 	void getMean(quint16 chan, float &mean, float &sigma);
 
+	/**
+	 * sets the width of each cell
+	 *
+	 * \param width 
+	 */
 	void setWidth(quint8 width);
 
-	bool writeHistogram(QFile* f, const QString = "");
+	/**
+	 * writes the histogram to the opened file with a comment.
+	 *
+	 * \param f file pointer to the opened file
+	 * \param comment comment for the histogram
+	 * \return true in case of success else false
+	 */
+	bool writeHistogram(QFile *f, const QString comment = "");
 
+	/**
+	 * gives the counts of the cell x,y. 
+	 *
+	 * \param x number of the bin
+	 * \param y number of the tube
+	 * \return 0 rief the cell does not exist, otherwise the counts
+	 */
 	quint64 value(quint16 x, quint16 y);
 
+	//! \return number of tubes
 	quint16	height(); 
 
-protected:
+private:
 	quint64 			m_totalCounts;
 
 	quint8 				m_twidth;

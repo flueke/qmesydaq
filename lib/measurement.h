@@ -30,7 +30,9 @@ class Spectrum;
 class Mesydaq2;
 
 /**
-	@author Gregor Montermann <g.montermann@mesytec.com>
+ * \short representation of a measurement
+
+   \author Gregor Montermann <g.montermann@mesytec.com>
 */
 class Measurement : public MesydaqObject
 {
@@ -161,6 +163,8 @@ private:
 
 };
 
+#if CARESS
+
 class CARESSMeasurement : public Measurement
 {
 Q_OBJECT
@@ -198,5 +202,7 @@ private:
 	quint32 	m_histWidth;
 	quint32 	m_step;
 };
+
+#endif
 
 #endif

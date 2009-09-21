@@ -29,9 +29,9 @@ class QUdpSocket;
 class QSocketNotifier;
 
 /**
- * Base class for network devices like MCPD-2, MCPD-8
+ * \short Base class for network devices like MCPD-2, MCPD-8
  *
- * @author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Gregor Montermann <g.montermann@mesytec.com>
 */
 class NetworkDevice : public MesydaqObject
 {
@@ -41,16 +41,25 @@ public:
 
 	~NetworkDevice();
 
-	int sendBuffer(MDP_PACKET &);
+	/** 
+	 * sends the command buffer to the target
+	 *
+	 * \param packet data packet to be send
+	 */
+	int sendBuffer(MDP_PACKET &packet);
 
+	//! \return IP address of the target
 	QString ip() {return m_target;}
 
+	//! \return port number of the communication target
 	quint16 port() {return m_port;}
 
 public slots:
-	void readSocketData();
+	//! handles the action if some data reach the socket for incoming data
+	void readSocketData(void);
 
 signals:
+	//! This signal is emitted if a complete data or command packet has read.
 	void bufferReceived(MDP_PACKET &);
 
 private:

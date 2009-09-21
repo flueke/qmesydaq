@@ -34,7 +34,9 @@ class CorbaThread;
 class ControlInterface;
 
 /**
-	@author Gregor Montermann <g.montermann@mesytec.com>
+ 	\short Main Widget in the application
+
+	\author Gregor Montermann <g.montermann@mesytec.com>
 */
 class MainWidget : public QWidget, public Ui_Mesydaq2MainWidget
 {
@@ -72,7 +74,7 @@ public slots:
 
 	void mpsdCheck(int);
 
-	void setModeSlot(int);
+	void setModeSlot(qint32);
 	void scanPeriSlot();
 
 // setup related methods

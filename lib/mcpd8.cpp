@@ -179,7 +179,7 @@ bool MCPD8::setId(quint8 mcpdid)
 }
 
 /*!
- * \fn MCPD8::getVersion(void)
+ * \fn MCPD8::version(void)
  */
 float MCPD8::version(void)
 {
@@ -203,7 +203,7 @@ bool MCPD8::readId(void)
 }
 
 /*!
-    \fn MCPD8::setGain(quint16 addr, quint16 chan, float gainval, quint8 preset)
+    \fn MCPD8::setGain(quint16 addr, quint8 channel, quint8 gain)
  */
 bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
@@ -240,7 +240,7 @@ quint8 MCPD8::getGain(quint16 addr,  quint8 chan)
 }
 
 /*!
-    \fn MCPD8::setGain(quint16 addr, quint16 chan, float gainval, quint8 preset)
+    \fn MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
  */
 bool MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
 {
@@ -331,7 +331,7 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 }
 
 /*!
-    \fn MCPD8::setAuxTimer(unsigned char tim, unsigned short val)
+    \fn MCPD8::setAuxTimer(quint16 tim, quint16 val)
  */
 bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 {
@@ -347,9 +347,9 @@ bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 
 
 /*!
-    \fn MCPD8::setCounterCell(unsigned char * celldata)
- */
+    \fn MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
  // celldata[0] = cell, celldata[1] = trig, celldata[2] = comp
+ */
 bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 {
 	bool errorflag = false;
@@ -386,7 +386,7 @@ bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 }
 
 /*!
-    \fn MCPD8::getCounterCell(unsigned char *)
+    \fn MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
  */
 void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
 {
@@ -396,7 +396,7 @@ void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
 
 
 /*!
-    \fn MCPD8::setParam(unsigned char param, unsigned char source)
+    \fn MCPD8::setParamSource(quint16 param, quint16 source)
  */
 bool MCPD8::setParamSource(quint16 param, quint16 source)
 {
@@ -411,7 +411,7 @@ bool MCPD8::setParamSource(quint16 param, quint16 source)
 }
 
 /*!
-    \fn MCPD8::getParamSource(unsigned short param)
+    \fn MCPD8::getParamSource(quint16 param)
  */
 quint16 MCPD8::getParamSource(quint16 param)
 {
@@ -496,7 +496,7 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 }
 
 /*!
-    \fn MCPD8::getProtocol(unsigned short addr*)
+    \fn MCPD8::getProtocol(quint16 *addr)
  */
 void MCPD8::getProtocol(quint16 * addr)
 {
@@ -517,7 +517,7 @@ void MCPD8::getProtocol(quint16 * addr)
 
 
 /*!
-    \fn MCPD8::setDac(unsigned char dac, unsigned short val)
+    \fn MCPD8::setDac(quint16 dac, quint16 val)
  */
 bool MCPD8::setDac(quint16 /* dac */, quint16 /* val */)
 {
@@ -526,7 +526,7 @@ bool MCPD8::setDac(quint16 /* dac */, quint16 /* val */)
 
 
 /*!
-    \fn MCPD8::setOutstring(QString str)
+    \fn MCPD8::sendSerialString(QString str)
  */
 bool MCPD8::sendSerialString(QString /* str*/)
 {
@@ -535,7 +535,7 @@ bool MCPD8::sendSerialString(QString /* str*/)
 
 
 /*!
-    \fn MCPD8::setRunId(unsigned short runid)
+    \fn MCPD8::setRunId(quint16 runid)
  */
 bool MCPD8::setRunId(quint16 runid)
 {
@@ -554,7 +554,7 @@ bool MCPD8::setRunId(quint16 runid)
 
 
 /*!
-    \fn MCPD8::setParameter(unsigned char param, unsigned long val)
+    \fn MCPD8::setParameter(quint16 param, quint64 val)
  */
 bool MCPD8::setParameter(quint16 param, quint64 val)
 {
@@ -566,7 +566,7 @@ bool MCPD8::setParameter(quint16 param, quint64 val)
 
 
 /*!
-    \fn MCPD8::getParameter(unsigned char param)
+    \fn MCPD8::getParameter(quint16 param)
  */
 quint64 MCPD8::getParameter(quint16 param)
 {
@@ -575,7 +575,7 @@ quint64 MCPD8::getParameter(quint16 param)
 
 
 /*!
-    \fn MCPD8::getAuxTimer(unsigned short timer)
+    \fn MCPD8::getAuxTimer(quint16 timer)
  */
 quint16 MCPD8::getAuxTimer(quint16 timer)
 {
@@ -611,7 +611,7 @@ void MCPD8::stdInit(void)
 }
 
 /*!
-    \fn MCPD8::setStream(unsigned short strm)
+    \fn MCPD8::setStream(quint16 strm)
  */
 bool MCPD8::setStream(quint16 strm)
 {
@@ -620,7 +620,7 @@ bool MCPD8::setStream(quint16 strm)
 }
 
 /*!
-    \fn MCPD8::serialize(qDatastream ds)
+    \fn MCPD8::serialize(QDataStream ds)
  */
 bool MCPD8::serialize(QDataStream /* ds */)
 {
@@ -665,7 +665,7 @@ int MCPD8::sendCommand(void)
 }
 
 /*!
-    \fn MCPD8::calcChksm(unsigned int * buffer, unsigned int len)
+    \fn MCPD8::calcChksum(MDP_PACKET &buffer)
  */
 quint16 MCPD8::calcChksum(MDP_PACKET &buffer)
 {
@@ -677,7 +677,7 @@ quint16 MCPD8::calcChksum(MDP_PACKET &buffer)
 }
 
 /*!
-    \fn MCPD8::analyzeCmd(MDP_PACKET &recBuf)
+    \fn MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
  */
 void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 {
@@ -893,7 +893,7 @@ void MCPD8::commTimeout()
 }
 
 /*!
-    \fn MCPD8::readPeriReg(unsigned short mod, unsigned short reg)
+    \fn MCPD8::readPeriReg(quint16 mod, quint16 reg)
  */
 quint16 MCPD8::readPeriReg(quint16 mod, quint16 reg)
 {
@@ -907,7 +907,7 @@ quint16 MCPD8::readPeriReg(quint16 mod, quint16 reg)
 }
 
 /*!
-    \fn MCPD8::writePeriReg(unsigned short mod, unsigned short reg, unsigned short val)
+    \fn MCPD8::writePeriReg(quint16 mod, quint16 reg, quint16 val)
  */
 bool MCPD8::writePeriReg(quint16 mod, quint16 reg, quint16 val)
 {
@@ -921,7 +921,7 @@ bool MCPD8::writePeriReg(quint16 mod, quint16 reg, quint16 val)
 }
 
 /*!
-    \fn MCPD8::writeRegister(unsigned int addr, unsigned int val)
+    \fn MCPD8::writeRegister(quint16 addr, quint16 val)
  */
 bool MCPD8::writeRegister(quint16 reg, quint16 val)
 {

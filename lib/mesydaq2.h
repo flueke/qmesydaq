@@ -31,17 +31,16 @@
 #include "mesydaqobject.h"
 #include "structures.h"
 
-/**
- * @short Mesydaq DAQ object (without any graphical frontend
- * @author Gregor Montermann <g.montermann@mesytec.com>
- * @author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
- * @version 0.9
- */
 
-// class Histogram;
 class MCPD8;
 class MPSD_8;
 
+/**
+ * \short Mesydaq DAQ object (without any graphical frontend)
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ * \version 0.9
+ */
 class Mesydaq2 : public MesydaqObject 
 {
     Q_OBJECT

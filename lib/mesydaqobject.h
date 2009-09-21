@@ -25,9 +25,9 @@
 #include <QObject>
 
 /**
- * @short Mesydaq object
- * @author Jens Krüger <jens.krueger@frm2.tum.de>
- * @version 0.1
+ * \short Mesydaq object
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ * \version 0.1
  */
 
 class MesydaqObject : public QObject

@@ -23,6 +23,14 @@
 #include "networkdevice.h"
 #include "mdefines.h"
 
+/**
+ * constructor
+ *
+ * \param parent parent object
+ * \param target IP address of the communication target
+ * \param port port number of the communication target
+ * \param source IP address of the communication source
+ */
 NetworkDevice::NetworkDevice(QObject *parent, QString target, quint16 port, QString source)
 	: MesydaqObject(parent)
 	, m_target(target)
