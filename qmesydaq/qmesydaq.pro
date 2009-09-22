@@ -35,7 +35,7 @@ INTERFACES	=
 
 INCLUDEPATH 	+= $${QWT_ROOT}/include 
 DEPENDPATH  	+= $${QWT_ROOT}/include 
-LIBS        	+= -L$${QWT_ROOT}/lib64 -l$${QWTLIB} -L../lib -lmesydaq
+LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
 
 # Input
 HEADERS 	+= mainwidget.h \
