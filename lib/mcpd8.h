@@ -62,11 +62,16 @@ public:
 	/**
 	 * sets the id of the MCPD
 	 *
-	 * \fn mcpdId the new ID of the MCPD
+	 * \param mcpdid the new ID of the MCPD
+	 * \return true if operation was succesful or not
 	 */
 	bool setId(quint8 mcpdid);
 
-	//! reads the ID's of all connected MPSD-8/8+ and MSTD-16
+	/**
+	 *  reads the ID's of all connected MPSD-8/8+ and MSTD-16
+	 *
+	 * \return true if operation was succesful or not
+	 */
 	bool readId(void);
 
 	//! \return the ID of this MCPD
@@ -97,8 +102,23 @@ public:
 
 	void getCounterCell(quint8 cell, quint16 *celldata);
 
-	bool setAuxTimer(quint16 tim, quint16 val);
+	/**
+	 * sets the auxiliary timer to a new value
+	 *
+	 * \param timer number of the timer
+	 * \param val new timer value
+	 * \return true if operation was succesful or not
+	 * \see getAuxTimer
+	 */
+	bool setAuxTimer(quint16 timer, quint16 val);
 
+	/**
+	 * get the value of auxiliary counter
+	 *
+	 * \param timer number of the timer
+	 * \return counter value
+	 * \see setAuxTimer
+	 */
 	quint16 getAuxTimer(quint16 timer);
 
 	bool setParamSource(quint16 param, quint16 source);
@@ -110,16 +130,68 @@ public:
 	quint64 getParameter(quint16 param);
 
 // commands: MPSD-8 settings
+	/**
+	 * sets the gain to a poti value
+	 * 
+	 * \param addr number of the module
+	 * \param channel channel number of the module
+	 * \param gain poti value of the gain
+	 * \return true if operation was succesful or not
+	 * \see getGain
+	 */ 
 	bool setGain(quint16 addr, quint8 channel, quint8 gain);
 
+	/**
+	 * \overload setGain(quint16 addr, quint8 channel, float gain);
+	 * 
+	 * the gain value will be set as a user value
+	 */
 	bool setGain(quint16 addr, quint8 channel, float gain);
 
+	/**
+	 * gets the currently set gain value for a special module and channel
+	 * 
+	 * if the channel number is greater 7 than all channels of the module
+	 * will be set
+	 *
+	 * \param addr number of the module
+	 * \param chan number of the channel of the module
+	 * \return poti value of the gain
+	 * \see setGain
+	 */
 	quint8	getGain(quint16 addr, quint8 chan);
 
+	/**
+	 * set the threshold value as poti value
+	 *
+	 * \param addr number of the module
+	 * \param thresh threshold value as poti value
+	 * \return true if operation was succesful or not
+	 * \see getThresh
+	 */
 	bool setThreshold(quint16 addr, quint8 thresh);
 
+	/**
+	 * get the threshold value as poti value
+	 *
+	 * \param addr module number
+	 * \return the threshold as poti value
+	 * \see setThreshold
+	 */
 	quint8 getThreshold(quint16 addr);
 
+	/**
+	 * set the pulser of the module to a position, channel, and amplitude
+	 * and switch it on or off
+	 * 
+	 * \param addr number of the module
+	 * \param channel number of the channel of the module
+	 * \param position set the position to left, middle or right of the 'tube'
+	 * \param amp the amplitude of a test pulse (event)
+	 * \param onoff true the pulser will be switch on, otherwise off
+	 * \return true if operation was succesful or not
+	 * \see isPulserOn
+	 */
 	bool setPulser(quint16 addr, quint8 channel, quint8 position, quint8 amp, bool onoff);
 
 	bool setMode(quint16 addr, bool mode);
@@ -138,12 +210,44 @@ public:
 	QString readSerialString(void);
 
 // commands:
+	/**
+	 * reads the content of a register in a module
+	 * 
+	 * \param mod number of the module
+	 * \param reg number of the register
+	 * \return content of the register
+	 * \see writePeriReg
+	 */
 	quint16 readPeriReg(quint16 mod, quint16 reg);
 
+	/**
+	 * writes a value into a module register
+	 *
+	 * \param mod number of the module
+	 * \param reg number of the register
+	 * \param val new value
+	 * \return true if operation was succesful or not
+	 * \see readPeriReg
+	 */
 	bool writePeriReg(quint16 mod, quint16 reg, quint16 val);
 
+	/**
+	 * writes a value into a register of the MCPD
+	 *
+	 * \param reg number of the register
+	 * \param val new value
+	 * \return true if operation was succesful or not
+	 * \see readRegister
+	 */
 	bool writeRegister(quint16 reg, quint16 val);
 
+	/**
+	 * reads the content of a register 
+	 * 
+	 * \param reg number of the register
+	 * \return content of the register
+	 * \see writeRegister
+	 */
 	quint16 readRegister(quint16 reg);
 
 	//! \return firmware version of the MCPD whereas the integral places represents the major number and the decimal parts the minor number
