@@ -40,8 +40,18 @@ public:
 	//! constructor
 	MesydaqCounter(); 
 
+	/**
+	 * starts the counter at time %time%
+	 *
+	 * \param time start time
+	 */
 	virtual void start(quint64 time);
 
+	/**
+	 * stops the counter at time %time%
+	 * 
+	 * \param time stop time
+	 */
 	virtual void stop(quint64 time);
 
 	/** 
