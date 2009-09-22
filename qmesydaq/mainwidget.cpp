@@ -277,6 +277,7 @@ void MainWidget::setMcpdIdSlot()
 
 void MainWidget::setStreamSlot()
 {
+#warning TODO  MainWidget::setStreamSlot()
 #if 0	
 	unsigned short id = (unsigned short) deviceId->value();	
 	m_cmdBuffer[0] = mcpdId->value();
@@ -288,6 +289,8 @@ void MainWidget::setStreamSlot()
 	m_pstring.sprintf("Set stream %d", m_cmdBuffer[2]);
 	m_theApp->protocol(m_pstring, 2);
 	m_theApp->sendCommand(m_pBuffer);
+
+	m_theApp->setStream(mcpdId->value(), statusStream->isChecked());
 #endif
 }
 

@@ -616,6 +616,15 @@ void MCPD8::stdInit(void)
 bool MCPD8::setStream(quint16 strm)
 {
 	m_stream = bool(strm);
+#warning TODO MCPD8::setStream(quint16 strm)
+#if 0
+	unsigned short id = (unsigned short) deviceId->value();	
+	initCmdBuffer(QUIET);	
+	m_cmdBuf.data[0] = strm;
+	finishCmdBuffer(1);
+	protocol(tr("Set stream %1").arg(strm), 2);
+	return sendCommand();
+#endif
 	return true;
 }
 

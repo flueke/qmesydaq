@@ -46,19 +46,30 @@ public:
 
 // commands of the MPCD-8
 // commands: DAQ commands
+	//! resets the MCPD-8
 	bool reset(void);
 
+	//! starts the data acquisition
 	bool start(void);
 
+	//! stops the data acquisition
 	bool stop(void);
 
+	//! continues the data acquisition
 	bool cont(void);
 
 // commands: communication settings
+	/**
+	 * sets the id of the MCPD
+	 *
+	 * \fn mcpdId the new ID of the MCPD
+	 */
 	bool setId(quint8 mcpdid);
 
+	//! reads the ID's of all connected MPSD-8/8+ and MSTD-16
 	bool readId(void);
 
+	//! \return the ID of this MCPD
 	quint8 getId(void) { return m_id; }
 
 	bool setProtocol(const QString addr, const QString datasink = "0.0.0.0", const quint16 dataport = 0, const QString cmdsink = "0.0.0.0", const quint16 cmdport = 0);
@@ -67,14 +78,18 @@ public:
 
 	bool setTimingSetup(bool master, bool sync);
 
+	//! \return whether this MCPD is configured as master or not
 	bool isMaster(void) {return m_master;}
 
 	bool setMasterClock(quint64);
 
+	//! returns the number of received data packages
 	quint64 receivedData() {return m_dataRxd;} 
 
+	//! returns the number of received cmd answer packages
 	quint64 receivedCmds() {return m_cmdRxd;} 
 
+	//! returns the number of sent cmd packages 
 	quint64 sentCmds() {return m_cmdTxd;} 
 
 // commands: General MCPD-8 settings
@@ -131,12 +146,11 @@ public:
 
 	quint16 readRegister(quint16 reg);
 
+	//! \return firmware version of the MCPD whereas the integral places represents the major number and the decimal parts the minor number
 	float version(void); 
 
+	//! \return number of modules found
 	quint8 numModules(void) {return m_mpsd.size();}
-
-public:
-	void communicate(bool yesno) {m_commActive = yesno;}
 
 	bool init(void);
 
@@ -148,8 +162,14 @@ public:
 
 	bool isBusy(void) {return m_commActive;}
 
+	//! \return true if one of the connected modules has a switched on pulser
 	bool isPulserOn();
 
+	/**
+	 checks if the pulser of module number addr
+	 \param addr number of the module to query
+	 \return is pulser on or not
+	 */
 	bool isPulserOn(quint8 addr);
 
 	quint8	getPulsPos(quint8 addr, bool preset = false);
@@ -165,20 +185,37 @@ public:
 	quint16 getRunId(void) {return m_runId;}
 
 public slots:
+	/**
+	 * analyze the data package coming from the MCPD-8
+	 *
+	 * \param pd data package
+	 */
 	void analyzeBuffer(MDP_PACKET &pd);
 
+private slots:
+	//! callback for the communication timer to detect a timeout
 	void commTimeout(void);
 
 signals:
+	//! this will be emitted if the MCPD-8 was started 
 	void startedDaq(void);
 
+	//! this will be emitted if the MCPD-8 was stopped 
 	void stoppedDaq(void);
 
+	//! this will be emitted if the MCPD-8 was continued 
 	void continuedDaq(void);
 
+	/**
+	 * this will be emitted if the MCPD-8 has sent a new data packet
+	 *
+	 * \param pd data packet
+	 */
 	void analyzeDataBuffer(DATA_PACKET &pd);
 
 private:
+	void communicate(bool yesno) {m_commActive = yesno;}
+
 	void initCmdBuffer(quint16);
 
 	void finishCmdBuffer(quint16 buflen);
