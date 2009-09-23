@@ -46,32 +46,17 @@ public:
 
 // commands of the MPCD-8
 // commands: DAQ commands
-	//! resets the MCPD-8
 	bool reset(void);
 
-	//! starts the data acquisition
 	bool start(void);
 
-	//! stops the data acquisition
 	bool stop(void);
 
-	//! continues the data acquisition
 	bool cont(void);
 
 // commands: communication settings
-	/**
-	 * sets the id of the MCPD
-	 *
-	 * \param mcpdid the new ID of the MCPD
-	 * \return true if operation was succesful or not
-	 */
 	bool setId(quint8 mcpdid);
 
-	/**
-	 *  reads the ID's of all connected MPSD-8/8+ and MSTD-16
-	 *
-	 * \return true if operation was succesful or not
-	 */
 	bool readId(void);
 
 	//! \return the ID of this MCPD
@@ -102,23 +87,8 @@ public:
 
 	void getCounterCell(quint8 cell, quint16 *celldata);
 
-	/**
-	 * sets the auxiliary timer to a new value
-	 *
-	 * \param timer number of the timer
-	 * \param val new timer value
-	 * \return true if operation was succesful or not
-	 * \see getAuxTimer
-	 */
 	bool setAuxTimer(quint16 timer, quint16 val);
 
-	/**
-	 * get the value of auxiliary counter
-	 *
-	 * \param timer number of the timer
-	 * \return counter value
-	 * \see setAuxTimer
-	 */
 	quint16 getAuxTimer(quint16 timer);
 
 	bool setParamSource(quint16 param, quint16 source);
@@ -130,69 +100,27 @@ public:
 	quint64 getParameter(quint16 param);
 
 // commands: MPSD-8 settings
-	/**
-	 * sets the gain to a poti value
-	 * 
-	 * \param addr number of the module
-	 * \param channel channel number of the module
-	 * \param gain poti value of the gain
-	 * \return true if operation was succesful or not
-	 * \see getGain
-	 */ 
 	bool setGain(quint16 addr, quint8 channel, quint8 gain);
 
-	/**
-	 * \overload setGain(quint16 addr, quint8 channel, float gain);
-	 * 
-	 * the gain value will be set as a user value
-	 */
 	bool setGain(quint16 addr, quint8 channel, float gain);
 
-	/**
-	 * gets the currently set gain value for a special module and channel
-	 * 
-	 * if the channel number is greater 7 than all channels of the module
-	 * will be set
-	 *
-	 * \param addr number of the module
-	 * \param chan number of the channel of the module
-	 * \return poti value of the gain
-	 * \see setGain
-	 */
 	quint8	getGain(quint16 addr, quint8 chan);
 
-	/**
-	 * set the threshold value as poti value
-	 *
-	 * \param addr number of the module
-	 * \param thresh threshold value as poti value
-	 * \return true if operation was succesful or not
-	 * \see getThresh
-	 */
 	bool setThreshold(quint16 addr, quint8 thresh);
 
-	/**
-	 * get the threshold value as poti value
-	 *
-	 * \param addr module number
-	 * \return the threshold as poti value
-	 * \see setThreshold
-	 */
 	quint8 getThreshold(quint16 addr);
 
-	/**
-	 * set the pulser of the module to a position, channel, and amplitude
-	 * and switch it on or off
-	 * 
-	 * \param addr number of the module
-	 * \param channel number of the channel of the module
-	 * \param position set the position to left, middle or right of the 'tube'
-	 * \param amp the amplitude of a test pulse (event)
-	 * \param onoff true the pulser will be switch on, otherwise off
-	 * \return true if operation was succesful or not
-	 * \see isPulserOn
-	 */
 	bool setPulser(quint16 addr, quint8 channel, quint8 position, quint8 amp, bool onoff);
+
+	bool isPulserOn();
+
+	bool isPulserOn(quint8 addr);
+
+	quint8	getPulsPos(quint8 addr, bool preset = false);
+
+	quint8	getPulsAmp(quint8 addr, bool preset = false); 
+
+	quint8	getPulsChan(quint8 addr, bool preset = false); 
 
 	bool setMode(quint16 addr, bool mode);
 
@@ -207,50 +135,18 @@ public:
 
 	bool sendSerialString(QString str);
 
+	//! \todo implement me
 	QString readSerialString(void);
 
 // commands:
-	/**
-	 * reads the content of a register in a module
-	 * 
-	 * \param mod number of the module
-	 * \param reg number of the register
-	 * \return content of the register
-	 * \see writePeriReg
-	 */
 	quint16 readPeriReg(quint16 mod, quint16 reg);
 
-	/**
-	 * writes a value into a module register
-	 *
-	 * \param mod number of the module
-	 * \param reg number of the register
-	 * \param val new value
-	 * \return true if operation was succesful or not
-	 * \see readPeriReg
-	 */
 	bool writePeriReg(quint16 mod, quint16 reg, quint16 val);
 
-	/**
-	 * writes a value into a register of the MCPD
-	 *
-	 * \param reg number of the register
-	 * \param val new value
-	 * \return true if operation was succesful or not
-	 * \see readRegister
-	 */
 	bool writeRegister(quint16 reg, quint16 val);
 
-	/**
-	 * reads the content of a register 
-	 * 
-	 * \param reg number of the register
-	 * \return content of the register
-	 * \see writeRegister
-	 */
 	quint16 readRegister(quint16 reg);
 
-	//! \return firmware version of the MCPD whereas the integral places represents the major number and the decimal parts the minor number
 	float version(void); 
 
 	//! \return number of modules found
@@ -260,40 +156,30 @@ public:
 
 	bool setStream(quint16 strm);
 
+	/**
+	 * ????
+	 *
+	 * \return ???
+	 * \see setStream
+	 */
 	bool getStream(void) {return m_stream;}
 
-	bool serialize(QDataStream ds);
+//	bool serialize(QDataStream ds);
 
-	bool isBusy(void) {return m_commActive;}
-
-	//! \return true if one of the connected modules has a switched on pulser
-	bool isPulserOn();
-
-	/**
-	 checks if the pulser of module number addr
-	 \param addr number of the module to query
-	 \return is pulser on or not
-	 */
-	bool isPulserOn(quint8 addr);
-
-	quint8	getPulsPos(quint8 addr, bool preset = false);
-
-	quint8	getPulsAmp(quint8 addr, bool preset = false); 
-
-	quint8	getPulsChan(quint8 addr, bool preset = false); 
-
+	//! \return the current time of the MCPD in msec
 	quint64 time(void) {return m_timemsec;}
 
 	bool setRunId(quint16 runid);
 
+	/**
+	 * gets the current set run ID
+	 *
+	 * \return run ID
+	 * \see setRunId
+	 */
 	quint16 getRunId(void) {return m_runId;}
 
 public slots:
-	/**
-	 * analyze the data package coming from the MCPD-8
-	 *
-	 * \param pd data package
-	 */
 	void analyzeBuffer(MDP_PACKET &pd);
 
 private slots:
@@ -331,6 +217,8 @@ private:
 	int sendCommand(quint16 *buffer);
 
 	void stdInit(void);
+
+	bool isBusy(void) {return m_commActive;}
 
 private:
 	//! communication device

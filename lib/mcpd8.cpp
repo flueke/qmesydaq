@@ -26,6 +26,15 @@
 #include "mcpd8.h"
 #include "mdefines.h"
 
+/**
+ * constructor
+ *
+ * \param id ID of the MCPD
+ * \param parent Qt parent object
+ * \param ip source IP address
+ * \param port source port
+ * \param sourceIP IP address for incoming packets
+ */
 MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourceIP)
 	: MesydaqObject(parent)
 	, m_network(NULL)
@@ -66,7 +75,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	init();
 }
 
-
+//! destructor
 MCPD8::~MCPD8()
 {
 	m_mpsd.clear();
@@ -78,6 +87,10 @@ MCPD8::~MCPD8()
 
 /*!
     \fn MCPD8::init(void)
+
+    initializes the MCPD and tries to set the right communication parameters
+
+    \return true if operation was succesful or not
  */
 bool MCPD8::init(void)
 {
@@ -108,6 +121,9 @@ bool MCPD8::init(void)
 
 /*!
     \fn MCPD8::reset(void)
+    resets the MCPD-8
+
+    \return true if operation was succesful or not
  */
 bool MCPD8::reset(void)
 {	
@@ -118,7 +134,13 @@ bool MCPD8::reset(void)
 
 /*!
     \fn MCPD8::start(void)
-	 */
+
+    starts the data acquisition
+
+    \return true if operation was succesful or not
+    \see stop
+    \see cont
+ */
 bool MCPD8::start(void)
 {	
 	initCmdBuffer(START);	
@@ -128,6 +150,12 @@ bool MCPD8::start(void)
 
 /*!
     \fn MCPD8::stop(void)
+
+    stops the data acquisition
+
+    \return true if operation was succesful or not
+    \see start
+    \see cont
  */
 bool MCPD8::stop(void)
 {	
@@ -138,6 +166,12 @@ bool MCPD8::stop(void)
 
 /*!
     \fn MCPD8::cont(void)
+
+    continues the data acquisition
+
+    \return true if operation was succesful or not
+    \see start
+    \see stop
  */
 bool MCPD8::cont(void)
 {	
@@ -148,6 +182,12 @@ bool MCPD8::cont(void)
 
 /*!
     \fn MCPD8::getMpsdId(quint8 addr)
+
+    get the detected ID of the MPSD. If MPSD not exists it will return 0.
+
+    \param addr module number
+    \return module ID (type)
+    \see readId
  */
 quint8 MCPD8::getMpsdId(quint8 addr)
 {
@@ -159,6 +199,12 @@ quint8 MCPD8::getMpsdId(quint8 addr)
 
 /*!
     \fn MCPD8::setId(quint8 mcpdid)
+
+    sets the id of the MCPD
+
+    \param mcpdid the new ID of the MCPD
+    \return true if operation was succesful or not
+    \see getId
  */
 bool MCPD8::setId(quint8 mcpdid)
 {
@@ -179,7 +225,8 @@ bool MCPD8::setId(quint8 mcpdid)
 }
 
 /*!
- * \fn MCPD8::version(void)
+   \fn MCPD8::version(void)
+   \return firmware version of the MCPD whereas the integral places represents the major number and the decimal parts the minor number
  */
 float MCPD8::version(void)
 {
@@ -192,18 +239,31 @@ float MCPD8::version(void)
 
 /*!
     \fn MCPD8::readId(void)
+
+    reads the ID's of all connected MPSD-8/8+ and MSTD-16
+
+    \return true if operation was succesful or not
+    \see getMpsdId
  */
 bool MCPD8::readId(void)
 {
 	m_mpsd.clear();
 	initCmdBuffer(READID);
 	m_cmdBuf.data[0] = 2;
-	finishCmdBuffer(1); /* was 3 ? */
+	finishCmdBuffer(1); 
 	return sendCommand();
 }
 
 /*!
-    \fn MCPD8::setGain(quint16 addr, quint8 channel, quint8 gain)
+    \fn MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
+
+    sets the gain to a poti value
+
+    \param addr number of the module
+    \param chan channel number of the module
+    \param gainval poti value of the gain
+    \return true if operation was succesful or not
+    \see getGain
  */
 bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
@@ -228,6 +288,19 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 	return sendCommand();
 }
 
+/*!
+    \fn MCPD8::getGain(quint16 addr,  quint8 chan)
+
+    gets the currently set gain value for a special module and channel
+
+    if the channel number is greater 7 than all channels of the module
+    will be set
+
+    \param addr number of the module
+    \param chan number of the channel of the module
+    \return poti value of the gain
+    \see setGain
+ */
 quint8 MCPD8::getGain(quint16 addr,  quint8 chan)
 {
 	if (m_mpsd.find(addr) != m_mpsd.end())
@@ -241,6 +314,15 @@ quint8 MCPD8::getGain(quint16 addr,  quint8 chan)
 
 /*!
     \fn MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
+	
+    \overload setGain(quint16 addr, quint8 chan, float gainval);
+
+    the gain value will be set as a user value
+    \param addr number of the module
+    \param chan channel number of the module
+    \param gainval user value of the gain
+    \return true if operation was succesful or not
+    \see getGain
  */
 bool MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
 {
@@ -250,7 +332,14 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
 }
 
 /*!
-    \fn MCPD8::setThreshold(quint16 addr, quint8 tresh)
+    \fn MCPD8::setThreshold(quint16 addr, quint8 thresh)
+
+    set the threshold value as poti value
+
+    \param addr number of the module
+    \param thresh threshold value as poti value
+    \return true if operation was succesful or not
+    \see getThresh
  */
 bool MCPD8::setThreshold(quint16 addr, quint8 thresh)
 {
@@ -266,6 +355,15 @@ bool MCPD8::setThreshold(quint16 addr, quint8 thresh)
 	return false;
 }
 
+/*!
+    \fn MCPD8::getThreshold(quint16 addr)
+
+    get the threshold value as poti value
+
+    \param addr module number
+    \return the threshold as poti value
+    \see setThreshold
+ */
 quint8 MCPD8::getThreshold(quint16 addr)
 {
 	if (m_mpsd.find(addr) != m_mpsd.end())
@@ -273,6 +371,16 @@ quint8 MCPD8::getThreshold(quint16 addr)
 	return 0;
 }
 
+/*!
+    \fn MCPD8::setMode(quint16 addr, bool mode)
+
+    set the mode to amplitude or position
+
+    \param addr number of the module
+    \param mode if true amplitude mode otherwise position mode
+    \return true if operation was succesful or not
+    \see getMode
+*/
 bool MCPD8::setMode(quint16 addr, bool mode)
 {
 	if (m_mpsd.find(addr) == m_mpsd.end())
@@ -294,13 +402,36 @@ bool MCPD8::setMode(quint16 addr, bool mode)
 	return sendCommand();
 }
 
+/*!
+    \fn MCPD8::getMode(quint16 addr)
+
+    get the mode: amplitude or position
+
+    \param addr module number
+    \return true if in amplitude mode otherwise in position mode
+    \see setMode
+ */
 bool MCPD8::getMode(quint16 addr)
 {
 	if (m_mpsd.find(addr) != m_mpsd.end())
 		return m_mpsd[addr]->getMode(0);
-	return 0;
+	return false;
 }
 
+/*!
+    \fn MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool onoff)
+
+    set the pulser of the module to a position, channel, and amplitude
+    and switch it on or off
+
+    \param addr number of the module
+    \param chan number of the channel of the module
+    \param pos set the position to left, middle or right of the 'tube'
+    \param amp the amplitude of a test pulse (event)
+    \param onoff true the pulser will be switch on, otherwise off
+    \return true if operation was succesful or not
+    \see isPulserOn
+ */
 bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool onoff)
 {
 	protocol(tr("MCPD8::setPulser(addr = %1, chan = %2, pos = %3, amp = %4, onoff = %5)").arg(addr).arg(chan).arg(pos).arg(amp).arg(onoff), INFO);
@@ -332,6 +463,13 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 
 /*!
     \fn MCPD8::setAuxTimer(quint16 tim, quint16 val)
+
+    sets the auxiliary timer to a new value
+
+    \param tim number of the timer
+    \param val new timer value
+    \return true if operation was succesful or not
+    \see getAuxTimer
  */
 bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 {
@@ -345,10 +483,15 @@ bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 	return sendCommand();
 }
 
-
 /*!
     \fn MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
- // celldata[0] = cell, celldata[1] = trig, celldata[2] = comp
+
+    map the counter cell
+
+    \param source source of the counter
+    \param trigger trigger level
+    \param compare ????
+    \see getCounterCell
  */
 bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 {
@@ -387,6 +530,12 @@ bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 
 /*!
     \fn MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
+
+    celldata[0] = trig, celldata[1] = comp
+
+    \param cell cell number
+    \param celldata return data
+    \see setCounterCell
  */
 void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
 {
@@ -397,6 +546,11 @@ void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
 
 /*!
     \fn MCPD8::setParamSource(quint16 param, quint16 source)
+
+    \param param number of the parameter
+    \param source number of source
+    \return true if operation was succesful or not
+    \see getParamSource
  */
 bool MCPD8::setParamSource(quint16 param, quint16 source)
 {
@@ -412,6 +566,12 @@ bool MCPD8::setParamSource(quint16 param, quint16 source)
 
 /*!
     \fn MCPD8::getParamSource(quint16 param)
+
+    get the source of parameter param
+
+    \param param the parameter number
+    \return source of the parameter
+    \see setParamSource
  */
 quint16 MCPD8::getParamSource(quint16 param)
 {
@@ -421,6 +581,16 @@ quint16 MCPD8::getParamSource(quint16 param)
 
 /*!
     \fn MCPD8::setProtocol(const QString addr, const QString datasink, const quint16 dataport, const QString cmdsink, const quint16 cmdport)
+
+    configures the MCPD for the communication it will set the IP address of the module, the IP address and ports of the data and command sink
+
+    \param addr new IP address of the module
+    \param datasink IP address to which data packets should be send (if 0.0.0.0 the sender will be receive them)
+    \param dataport port number for data packets (if 0 the port number won't be changed)
+    \param cmdsink IP address to which cmd answer packets should be send (if 0.0.0.0 the sender will be receive them)
+    \param cmdport port number for cmd answer packets (if 0 the port number won't be changed)
+    \return true if operation was succesful or not
+    \see getProtocol
  */
 bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint16 dataport, const QString cmdsink, const quint16 cmdport)
 {
@@ -497,6 +667,9 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 
 /*!
     \fn MCPD8::getProtocol(quint16 *addr)
+
+    \param addr ????
+    \see setProtocol
  */
 void MCPD8::getProtocol(quint16 * addr)
 {
@@ -515,27 +688,41 @@ void MCPD8::getProtocol(quint16 * addr)
 	addr[9] = m_dataPort;
 }
 
-
 /*!
     \fn MCPD8::setDac(quint16 dac, quint16 val)
+    \todo this function has to be implemented
+
+    the MCPD has a analogue output which may be set by programmer 
+
+    \param dac
+    \param val
+    \return true if operation was succesful or not
  */
 bool MCPD8::setDac(quint16 /* dac */, quint16 /* val */)
 {
 	return true;
 }
 
-
 /*!
     \fn MCPD8::sendSerialString(QString str)
+    \todo this function has to be implemented
+
+    \param str
+    \return true if operation was succesful or not
  */
 bool MCPD8::sendSerialString(QString /* str*/)
 {
 	return true;
 }
 
-
 /*!
     \fn MCPD8::setRunId(quint16 runid)
+
+    sets the run ID of the measurement
+
+    \param runid the new run ID
+    \return true if operation was succesful or not
+    \see getRunId
  */
 bool MCPD8::setRunId(quint16 runid)
 {
@@ -552,9 +739,15 @@ bool MCPD8::setRunId(quint16 runid)
 	return false;
 }
 
-
 /*!
     \fn MCPD8::setParameter(quint16 param, quint64 val)
+
+    sets a parameter param to a new value
+  
+    \param param parameter number
+    \param val new value
+    \return true if operation was succesful or not
+    \see getParameter
  */
 bool MCPD8::setParameter(quint16 param, quint64 val)
 {
@@ -564,24 +757,33 @@ bool MCPD8::setParameter(quint16 param, quint64 val)
 	return true;
 }
 
-
 /*!
     \fn MCPD8::getParameter(quint16 param)
+
+    gets the value of the parameter number param
+
+    \param param parameter number
+    \return parameter value
+    \see setParameter
  */
 quint64 MCPD8::getParameter(quint16 param)
 {
 	return param > 3 ?  0 : m_parameter[param];
 }
 
-
 /*!
     \fn MCPD8::getAuxTimer(quint16 timer)
+
+    get the value of auxiliary counter
+
+    \param timer number of the timer
+    \return counter value
+    \see setAuxTimer
  */
 quint16 MCPD8::getAuxTimer(quint16 timer)
 {
 	return timer > 3 ? 0 : m_auxTimer[timer];
 }
-
 
 /*!
     \fn MCPD8::stdInit(void)
@@ -612,6 +814,12 @@ void MCPD8::stdInit(void)
 
 /*!
     \fn MCPD8::setStream(quint16 strm)
+
+    ????
+
+    \param strm ????	
+    \return true if operation was succesful or not
+    \see getStream
  */
 bool MCPD8::setStream(quint16 strm)
 {
@@ -631,11 +839,14 @@ bool MCPD8::setStream(quint16 strm)
 /*!
     \fn MCPD8::serialize(QDataStream ds)
  */
+#if 0
 bool MCPD8::serialize(QDataStream /* ds */)
 {
     /// @todo implement me
 	return false;
 }
+
+#endif
 
 // general buffer preparations:
 void MCPD8::initCmdBuffer(quint16 cmd)
@@ -687,6 +898,10 @@ quint16 MCPD8::calcChksum(MDP_PACKET &buffer)
 
 /*!
     \fn MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
+	
+    analyze the data package coming from the MCPD-8
+
+    \param recBuf data package
  */
 void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 {
@@ -903,6 +1118,13 @@ void MCPD8::commTimeout()
 
 /*!
     \fn MCPD8::readPeriReg(quint16 mod, quint16 reg)
+
+    reads the content of a register in a module
+
+    \param mod number of the module
+    \param reg number of the register
+    \return content of the register
+    \see writePeriReg
  */
 quint16 MCPD8::readPeriReg(quint16 mod, quint16 reg)
 {
@@ -917,6 +1139,14 @@ quint16 MCPD8::readPeriReg(quint16 mod, quint16 reg)
 
 /*!
     \fn MCPD8::writePeriReg(quint16 mod, quint16 reg, quint16 val)
+
+    writes a value into a module register
+
+    \param mod number of the module
+    \param reg number of the register
+    \param val new value
+    \return true if operation was succesful or not
+    \see readPeriReg
  */
 bool MCPD8::writePeriReg(quint16 mod, quint16 reg, quint16 val)
 {
@@ -930,7 +1160,14 @@ bool MCPD8::writePeriReg(quint16 mod, quint16 reg, quint16 val)
 }
 
 /*!
-    \fn MCPD8::writeRegister(quint16 addr, quint16 val)
+    \fn MCPD8::writeRegister(quint16 reg, quint16 val)
+
+    writes a value into a register of the MCPD
+
+    \param reg number of the register
+    \param val new value
+    \return true if operation was succesful or not
+    \see readRegister
  */
 bool MCPD8::writeRegister(quint16 reg, quint16 val)
 {
@@ -942,6 +1179,14 @@ bool MCPD8::writeRegister(quint16 reg, quint16 val)
 	return sendCommand();
 }
 
+/*!
+    \fn  MCPD8::readRegister(quint16 reg)
+    reads the content of a register 
+
+    \param reg number of the register
+    \return content of the register
+    \see writeRegister
+ */
 quint16 MCPD8::readRegister(quint16 reg)
 {
 	initCmdBuffer(READREGISTER);
@@ -953,6 +1198,14 @@ quint16 MCPD8::readRegister(quint16 reg)
 	return 0xFFFF;
 }
 
+/*!
+    \fn MCPD8::setMasterClock(quint64 val)
+
+    sets the master clock to a new value
+   
+    \param val new clock value
+    \return true if operation was succesful or not
+ */
 bool MCPD8::setMasterClock(quint64 val)
 {
 	initCmdBuffer(SETCLOCK);
@@ -963,6 +1216,15 @@ bool MCPD8::setMasterClock(quint64 val)
 	return sendCommand();
 }
 
+/*!
+    \fn MCPD8::setTimingSetup(bool master, bool sync)
+
+    sets the communication parameters between the MCPD's
+
+    \param master is this MCPD master or not
+    \param sync should the MCPD synchronized with the other MCPD's
+    \return true if operation was succesful or not
+ */
 bool MCPD8::setTimingSetup(bool master, bool sync)
 {
 	initCmdBuffer(SETTIMING);
@@ -972,6 +1234,14 @@ bool MCPD8::setTimingSetup(bool master, bool sync)
 	return sendCommand();
 }
 
+/*!
+    \fn  MCPD8::isPulserOn(quint8 addr)
+
+    checks if the pulser of module number addr
+
+    \param addr number of the module to query
+    \return is pulser on or not
+ */
 bool MCPD8::isPulserOn(quint8 addr)
 {
 	if (m_mpsd.find(addr) == m_mpsd.end())
@@ -981,6 +1251,11 @@ bool MCPD8::isPulserOn(quint8 addr)
 	return false;
 }
 
+/*! 
+    \fn MCPD8::isPulserOn()
+
+    \return true if one of the connected modules has a switched on pulser
+ */
 bool MCPD8::isPulserOn()
 {
 	for (quint8 i = 0; i < 8; ++i)
@@ -989,6 +1264,17 @@ bool MCPD8::isPulserOn()
 	return false;
 }
 
+/*!
+    \fn	MCPD8::getPulsPos(quint8 addr, bool preset)
+    gets the current set pulser position of a module
+
+    \param addr module number
+    \param preset ???
+    \return the pulser position
+    \see setPulser
+    \see getPulsAmp
+    \see getPulsChan
+ */
 quint8	MCPD8::getPulsPos(quint8 addr, bool preset)
 {
 	if (m_mpsd.find(addr) == m_mpsd.end())
@@ -996,6 +1282,18 @@ quint8	MCPD8::getPulsPos(quint8 addr, bool preset)
 	return m_mpsd[addr]->getPulsPos(preset);
 }
 
+/*!
+    \fn	MCPD8::getPulsAmp(quint8 addr, bool preset)
+
+    gets the current set pulser amplitude of a module
+
+    \param addr module number
+    \param preset ???
+    \return the pulser amplitude
+    \see setPulser
+    \see getPulsPos
+    \see getPulsChan
+ */
 quint8	MCPD8::getPulsAmp(quint8 addr, bool preset)
 {
 	if (m_mpsd.find(addr) == m_mpsd.end())
@@ -1003,6 +1301,18 @@ quint8	MCPD8::getPulsAmp(quint8 addr, bool preset)
 	return m_mpsd[addr]->getPulsAmp(preset);
 } 
 
+/*!
+    \fn	MCPD8::getPulsChan(quint8 addr, bool preset)
+
+    gets the current set channel of the pulser of a module
+
+    \param addr module number
+    \param preset ???
+    \return the pulser channel
+    \see setPulser
+    \see getPulsAmp
+    \see getPulsPos
+ */
 quint8	MCPD8::getPulsChan(quint8 addr, bool preset)
 {
 	if (m_mpsd.find(addr) == m_mpsd.end())
@@ -1012,6 +1322,15 @@ quint8	MCPD8::getPulsChan(quint8 addr, bool preset)
 
 /*!
     \fn MCPD8::initMpsd(quint8 id)
+    
+    initializes a MPSD:
+	- sets threshold
+	- sets pulser
+	- sets mode
+	- writes peripheral registers
+	- ...
+    
+    \param id number of the MPSD
  */
 void MCPD8::initMpsd(quint8 id)
 {
