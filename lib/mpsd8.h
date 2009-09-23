@@ -37,37 +37,146 @@ public:
 	~MPSD_8();
 
 	void	setMpsdId(quint8, quint8, bool = true);
+
+	//! \return the ID of the MPSD
 	quint8 	getMpsdId(void) {return m_mpsdId;}
 
 // Pulser related methods
 	void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 	void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
+	
+	/**
+	 * get the pulser position
+	 *
+         * \return pulser position (left, right, middle)
+	 * \see getPulsAmp
+	 * \see getPulsChan
+	 * \see getPulsPoti
+	 * \see setPulser
+	 * \see setPulserPoti
+	 */
 	quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
+	
+	/**
+	 * get the pulser amplitude
+	 *
+         * \return pulser amplitude
+	 * \see getPulsPos
+	 * \see getPulsChan
+	 * \see getPulsPoti
+	 * \see setPulser
+	 * \see setPulserPoti
+	 */
 	quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
+	
+	/**
+	 * get the pulser channel
+	 *
+         * \return pulser channel 
+	 * \see getPulsPos
+	 * \see getPulsAmp
+	 * \see getPulsPoti
+	 * \see setPulser
+	 * \see setPulserPoti
+	 */
 	quint8	getPulsChan(bool preset = false) {return m_pulsChan[preset];}
+	
+	/**
+	 * get the pulser poti
+	 *
+         * \return pulser poti 
+	 * \see getPulsPos
+	 * \see getPulsAmp
+	 * \see getPulsChan
+	 * \see setPulser
+	 * \see setPulserPoti
+	 */
 	quint8	getPulsPoti(bool preset = false) {return m_pulsPoti[preset];}
+
+	//! \return is the pulser on
 	bool	isPulserOn() {return m_pulser[0];}
 
 // Threshold related methods
 	void	setThreshold(quint8 threshold, bool preset = false);
+
+	/**
+ 	 * gets the threshold
+	 *
+	 * \param preset ????
+	 * \return threshold value
+	 * \see setThreshold
+	 * \see setThreshpoti
+	 * \see getThreshpoti
+	 */
 	quint8	getThreshold(bool preset = false) {return m_threshVal[preset];}
 
 	void 	setThreshpoti(quint8 thresh, bool preset = false);
+	/**
+ 	 * gets the threshold poti value
+	 *
+	 * \param preset ????
+	 * \return threshold poti value
+	 * \see setThreshold
+	 * \see setThreshpoti
+	 * \see getThreshold
+	 */
 	quint8	getThreshpoti(bool preset = false) {return m_threshPoti[preset];}
 
 // Gain related methods
 	virtual void	setGain(quint8 channel, float gainv, bool preset = 0);
 	virtual void	setGain(quint8 channel, quint8 gain, bool preset = 0);
+
+	/**
+	 * get the poti value for the gain
+	 *
+	 * \return gain poti value
+	 * \see setGain
+	 * \see getGainval
+	 */
 	quint8		getGainpoti(quint8 chan, bool preset = 0) {return m_gainPoti[chan][preset];}
+
+	/**
+	 * get the user value for the gain
+	 *
+	 * \return gain user value
+	 * \see setGain
+	 * \see getGainpoti
+	 */
 	float		getGainval(quint8 chan, bool preset = 0) {return m_gainVal[chan][preset];}
+
+	//! \return use the same gain for all channels ?
 	bool		comGain() {return m_comgain;}
 
 // Mode related methods
+	/**
+	 * sets the mode amplitude/position
+	 *
+	 * \param amplitude true = amplitude, false = position
+	 * \param preset ????
+	 * \see getMode
+	 */
 	void	setMode(bool amplitude, bool preset = 0) {m_ampMode[preset] = amplitude;}
+
+	/**
+	 * gets the mode amplitude/position
+	 *
+	 * \param preset ????
+	 * \return amplitude true = amplitude, false = position
+	 * \see setMode
+	 */
 	bool	getMode(bool preset = 0) {return m_ampMode[preset];}
 
 // Internal registers related methods
 	void	setInternalreg(quint8 reg, quint16 val, bool preset = 0);
+
+	/**
+	 * get the value of the internal registers 
+	 *
+	 * \param reg register number
+	 * \param preset ????
+	 * \return value of the register
+	 * \see setInternalreg
+	 */
 	quint16	getInternalreg(quint8 reg, bool preset = 0) {return m_internalReg[reg][preset];}
 	
 	virtual quint8	calcGainpoti(float fval);
@@ -120,7 +229,9 @@ private:
 
 	//! amplitude mode
 	bool		m_ampMode[2]; 
+
 protected:
+	//! the bus number ????
 	quint8		m_busNum;
 
 private:

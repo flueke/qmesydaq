@@ -36,6 +36,19 @@ MesydaqObject::~MesydaqObject()
 
 /*!
     \fn MesydaqObject::protocol(QString str, quint8 level)
+   
+    puts out a log message if the level value is lower than the global value %DEBUGLEVEL%
+    
+    logging levels are:
+	- FATAL = 0
+        - ERROR    
+        - WARNING  
+        - NOTICE  
+        - INFO   
+        - DEBUG 
+
+    \param str message to be put out
+    \param level logging level 
  */
 void MesydaqObject::protocol(QString str, quint8 level)
 {

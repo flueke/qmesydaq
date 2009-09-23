@@ -21,6 +21,12 @@
 #include "mpsd8.h"
 #include "mdefines.h"
 
+/*!
+    constructor
+
+    \param id module number
+    \param parent Qt parent object
+ */
 MPSD_8::MPSD_8(quint8 id, QObject *parent)
 	: MesydaqObject(parent)
 	, m_mpsdId(id)
@@ -57,6 +63,7 @@ MPSD_8::MPSD_8(quint8 id, QObject *parent)
 	
 }
 
+//! desctructor
 MPSD_8::~MPSD_8()
 {
 }
@@ -64,6 +71,12 @@ MPSD_8::~MPSD_8()
 
 /*!
     \fn MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
+
+    sets the ID of the MPSD
+
+    \param bus number of the bus
+    \param id ID number
+    \param listIds log the action or not
  */
 void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
 {
@@ -75,13 +88,21 @@ void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
 }
 
 /*!
-    \fn MPSD_8::setGain(quint8 channel, float gain, bool preset)
+    \fn MPSD_8::setGain(quint8 channel, float gainv, bool preset)
+
+    sets the gain values for a single channel or all (if channel > 7)
+
+    \param channel number of the channel
+    \param gainv user value of the gain
+    \param preset ????
+    \see getGainpoti
+    \see getGainval
  */
 void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 {
 	quint8 val = calcGainpoti(gainv);
     
-	m_comgain = (channel == 8);
+	m_comgain = (channel > 7);
 	if (m_comgain)
 	{
 		for(quint8 c = 0; c < 8; c++)
@@ -99,12 +120,20 @@ void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
+    \overload MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
+
+    sets the gain values for a single channel or all (if channel > 7)
+
+    \param channel number of the channel
+    \param gain poti value of the gain
+    \param preset ????
+    \see getGainpoti
+    \see getGainval
  */
 void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
 {
 	float gv = calcGainval(gain);
-	m_comgain = (channel == 8);
+	m_comgain = (channel > 7);
 	if (m_comgain)
 	{
 		for(quint8 c = 0; c < 8; c++)
@@ -123,6 +152,14 @@ void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
 
 /*!
     \fn MPSD_8::setThreshold(quint8 threshold, bool preset)
+
+    set the threshold value for the MPSD
+
+    \param threshold threshold value 
+    \param preset ????
+    \see setThreshpoti
+    \see getThreshold
+    \see getThrespoti
  */
 void MPSD_8::setThreshold(quint8 threshold, bool preset)
 {
@@ -136,6 +173,14 @@ void MPSD_8::setThreshold(quint8 threshold, bool preset)
 
 /*!
     \fn MPSD_8::setThreshpoti(quint8 thresh, bool preset)
+
+    set the threshold poti value for the MPSD
+
+    \param thresh threshold poti value 
+    \param preset ????
+    \see setThreshold
+    \see getThreshold
+    \see getThrespoti
  */
 void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
 {
@@ -149,6 +194,15 @@ void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
 
 /*!
     \fn MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
+
+    set the pulser with poti value for amplitude
+
+    \param chan channel of the module
+    \param pos position in the channel left, right, middle
+    \param poti poti value of the amplitude of the pulser
+    \param on switch on or off
+    \param preset ????
+    \see setPulser
  */
 void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 {
@@ -172,7 +226,16 @@ void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool
 }
 
 /*!
-    \fn MPSD_8::setPulser(quint8 chan, quint8 amp = 128, quint8 pos = 2, quint8 on = true, bool preset = 0)
+    \fn MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
+
+    set the pulser with amplitude value
+
+    \param chan channel of the module
+    \param pos position in the channel left, right, middle
+    \param amp amplitude of the pulser
+    \param on switch on or off
+    \param preset ????
+    \see setPulser
  */
 void MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
 {
@@ -196,6 +259,11 @@ void MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool pres
 
 /*!
     \fn MPSD_8::calcGainpoti(float fval)
+
+    calculates the poti value of the gain for a user value
+
+    \param fval user value
+    \return poti value
  */
 quint8 MPSD_8::calcGainpoti(float fval)
 {
@@ -207,6 +275,10 @@ quint8 MPSD_8::calcGainpoti(float fval)
 
 /*!
     \fn MPSD_8::calcThreshpoti(quint8 tval)
+    calculates the poti value for the threshold for a user value
+
+    \param tval user value
+    \return poti value
  */
 quint8 MPSD_8::calcThreshpoti(quint8 tval)
 {
@@ -218,6 +290,11 @@ quint8 MPSD_8::calcThreshpoti(quint8 tval)
 
 /*!
     \fn MPSD_8::calcGainval(quint8 ga)
+
+    calculates the user value for a gain poti value
+
+    \param ga poti gain value
+    \return user gain value
  */
 float MPSD_8::calcGainval(quint8 ga)
 {
@@ -229,6 +306,11 @@ float MPSD_8::calcGainval(quint8 ga)
 
 /*!
     \fn MPSD_8::calcThreshval(quint8 thr)
+
+    calculates the user value for the threshold poti value
+
+    \param thr threshold poti value
+    \return user threshold value
  */
 quint8 MPSD_8::calcThreshval(quint8 thr)
 {
@@ -238,7 +320,13 @@ quint8 MPSD_8::calcThreshval(quint8 thr)
 }
 
 /*!
-    \fn MPSD_8::calcPulsPoti(quint8 val, float)
+    \fn MPSD_8::calcPulsPoti(quint8 val, float gv)
+
+    calculates the pulser poti value ????
+
+    \param val
+    \param gv gain value ??? 
+    \return pulser poti value
  */
 quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
 {
@@ -249,6 +337,12 @@ quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
 
 /*!
     \fn MPSD_8::calcPulsAmp(quint8 val, float gv)
+
+    calculates the amplitude value for ????
+
+    \param val value 
+    \param gv gain value ???
+    \return amplitude value
  */
 quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
 {
@@ -258,6 +352,13 @@ quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
 
 /*!
     \fn MPSD_8::setInternalreg(quint8 reg, quint16 val, bool preset)
+
+    set the value of the internal registers 
+
+    \param reg register number
+    \param val vale of the register
+    \param preset ????
+    \see getInternalreg
  */
 void MPSD_8::setInternalreg(quint8 reg, quint16 val, bool preset)
 {

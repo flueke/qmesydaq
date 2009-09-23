@@ -19,8 +19,15 @@
  ***************************************************************************/
 
 #include "mpsd8.h"
-// #include "mcpd8.h"
 
+/*!
+    \fn MPSD_8p::MPSD_8p(quint8 id, QObject *parent)
+
+    constructor
+
+    \param id ID of the module
+    \param parent Qt parent object
+*/
 MPSD_8p::MPSD_8p(quint8 id, QObject *parent)
 	: MPSD_8(id, parent)
 // set calibration factors for gain, threshold and pulser calculation
@@ -61,6 +68,9 @@ quint8 MPSD_8p::calcGainpoti(float fval)
         return ug;
 }
 
+/*!
+    \fn MPSD_8p::setThreshold(quint8 threshold, bool preset)
+*/
 void MPSD_8p::setThreshold(quint8 threshold, bool preset)
 {
 // boundary check
@@ -71,7 +81,7 @@ void MPSD_8p::setThreshold(quint8 threshold, bool preset)
 }
 
 /*!
-    \fn MPSD_8::calcThreshpoti(quint8 tval)
+    \fn MPSD_8p::calcThreshpoti(quint8 tval)
  */
 quint8 MPSD_8p::calcThreshpoti(quint8 tval)
 {
@@ -85,7 +95,7 @@ quint8 MPSD_8p::calcThreshpoti(quint8 tval)
 
 
 /*!
-    \fn MPSD_8::calcGainval(quint8 ga)
+    \fn MPSD_8p::calcGainval(quint8 ga)
  */
 float MPSD_8p::calcGainval(quint8 ga)
 {
@@ -116,7 +126,7 @@ quint8 MPSD_8p::calcThreshval(quint8 thr)
 }
 
 /*!
-    \fn MPSD_8::calcPulsPoti(quint8 val, float)
+    \fn MPSD_8p::calcPulsPoti(quint8 val, float)
  */
 quint8 MPSD_8p::calcPulsPoti(quint8 val, float gv)
 {
@@ -129,7 +139,7 @@ quint8 MPSD_8p::calcPulsPoti(quint8 val, float gv)
 }
 
 /*!
-    \fn MPSD_8::calcPulsAmp(quint8 val, float gv)
+    \fn MPSD_8p::calcPulsAmp(quint8 val, float gv)
  */
 quint8 MPSD_8p::calcPulsAmp(quint8 val, float gv)
 {

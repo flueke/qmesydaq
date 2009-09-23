@@ -41,8 +41,6 @@
 
 #include "mainwidget.h"
 #include "mdefines.h"
-#include "mcpd8.h"
-#include "mpsd8.h"
 #include "measurement.h"
 #include "mesydaq2.h"
 #include "histogram.h"

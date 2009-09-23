@@ -313,9 +313,7 @@ quint8 MCPD8::getGain(quint16 addr,  quint8 chan)
 }
 
 /*!
-    \fn MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
-	
-    \overload setGain(quint16 addr, quint8 chan, float gainval);
+    \overload MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
 
     the gain value will be set as a user value
     \param addr number of the module
@@ -836,10 +834,10 @@ bool MCPD8::setStream(quint16 strm)
 	return true;
 }
 
+#if 0
 /*!
     \fn MCPD8::serialize(QDataStream ds)
  */
-#if 0
 bool MCPD8::serialize(QDataStream /* ds */)
 {
     /// @todo implement me
