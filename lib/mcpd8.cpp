@@ -70,6 +70,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	m_mpsd.clear();
 
 #warning TODO	setId(m_id);
+//! \todo	setId(m_id);
 	version();
 	readId();
 	init();
@@ -272,6 +273,7 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 	if (chan > 8)
 		chan = 8;
 #warning TODO common gain handling
+//! \todo common gain handling
 	if (chan == 8)
 	{
 		for (int i = 0; i < 8; ++i)
@@ -386,6 +388,7 @@ bool MCPD8::setMode(quint16 addr, bool mode)
 	if (addr > 8)
 		addr = 8;
 #warning TODO common mode handling
+//! \todo common mode handling
 	if (addr == 8)
 	{
 		for (int i = 0; i < 8; ++i)
@@ -444,6 +447,7 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 	if (chan == 8)
 	{
 #warning TODO common pulser handling
+//! \todo common pulser handling
 		for (int i = 0; i < 8; ++i)
 			m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
 	}
@@ -544,6 +548,8 @@ void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
 
 /*!
     \fn MCPD8::setParamSource(quint16 param, quint16 source)
+
+    set the source of a parameter
 
     \param param number of the parameter
     \param source number of source
@@ -823,6 +829,7 @@ bool MCPD8::setStream(quint16 strm)
 {
 	m_stream = bool(strm);
 #warning TODO MCPD8::setStream(quint16 strm)
+//! \todo implement me
 #if 0
 	unsigned short id = (unsigned short) deviceId->value();	
 	initCmdBuffer(QUIET);	
@@ -1051,6 +1058,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				break;
 			case READID: // extract the retrieved MPSD-8 IDs:
 #warning TODO if the configuration has changed
+//! \todo if the configuration has changed
 				for(quint8 c = 0; c < 8; c++)
 					if (recBuf.data[c])
 					{
@@ -1333,6 +1341,7 @@ quint8	MCPD8::getPulsChan(quint8 addr, bool preset)
 void MCPD8::initMpsd(quint8 id)
 {
 #warning TODO
+//! \todo gain initialization
 #if 0
 	quint8 	start = 8,
 		stop = 9;

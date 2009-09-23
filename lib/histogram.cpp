@@ -54,6 +54,7 @@ bool Spectrum::incVal(quint16 bin)
 			m_maximumPos = bin;
 
 #warning TODO mean value determination
+//! \todo mean value determination
 		m_floatingMean[m_meanPos] = bin;
 		m_meanPos++;
 		if(m_meanCount < 255)
@@ -155,7 +156,7 @@ void Histogram::clear(quint16 channel)
 	m_data[channel]->clear();
 
 #warning TODO remove the counts from the sum spectrum and total counts and adjust the new maximum
-// remove the counts from the sum spectrum and total counts and adjust the new maximum
+//! \todo remove the counts from the sum spectrum and total counts and adjust the new maximum
 }
 
 

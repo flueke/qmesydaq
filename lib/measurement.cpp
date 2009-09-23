@@ -495,6 +495,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
 				time = (quint16)tim;
 #warning TODO remove mysterious mapping
+//! \todo remove mysterious mapping
 				switch(dataId)
 				{
 					case MON1ID :

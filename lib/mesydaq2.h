@@ -62,30 +62,82 @@ public:
 	quint16 readPeriReg(quint16 id, quint16 mod, quint16 reg);
 
 // list mode oriented methods
+	/**
+	 * sets the file name of a list mode data file
+	 *
+	 * \param name name of the next list mode data file
+	 */
 	void setListfilename(QString name) {m_listfilename = name;}
+	
+	//! \return name of the current list mode data file
 	QString getListfilename() {return m_listfilename;}
+
+	/**
+	 * sets the path for the list mode data files
+	 *
+	 * \param path to the list mode data files
+	 */
 	void setListfilepath(QString path) {m_listPath = path;}
+
+	//! \return path to store all list mode data files
 	QString getListfilepath() {return m_listPath;}
+
 	void writeListfileHeader(void);
+
 	void writeClosingSignature(void);
+
 	void writeBlockSeparator(void);
+
 	void writeHeaderSeparator(void);
 
 // histogram file oriented methods
+	/**
+	 * sets the file name of a histogram data file
+	 *
+	 * \param name name of the next histogram data file
+	 */
 	void setHistfilename(QString name);
+
+	//! \return name of the current histogram data file
 	QString getHistfilename(void) {return m_histfilename;}
+
+	/**
+	 * sets the path for the histogram data files
+	 *
+	 * \param path to the histogram data files
+	 */
 	void setHistfilepath(QString path) {m_histPath = path;}
+
+	//! \return path to store all histogram data files
 	QString getHistfilepath(void) {return m_histPath;}
 
 // configuration file oriented methods
+	/**
+	 * sets the config file name
+	 *
+	 * \param name config file name
+	 */
 	void setConfigfilename(QString name) {m_configfilename = name;}
+
+	//! \return last loaded config file name
 	QString getConfigfilename(void) {return m_configfilename;}
+
+	/**
+	 * sets the path for the config files
+	 *
+	 * \param path to the config files
+	 */
 	void setConfigfilepath(QString path) {m_configPath = path;}
+
+	//! \return path to store all config files
 	QString getConfigfilepath(void) {return m_configPath;}
+
 	bool loadSetup(const QString &name);
 	bool saveSetup(const QString &name);
 
 	bool checkMcpd(quint8 device);
+
+	//! \return if data acquisition started or not
 	quint8 isDaq(void) {return m_daq;}
 
 	bool isPulserOn();
@@ -118,7 +170,7 @@ public:
 
 	quint64 getParameter(quint16 mod, quint16 param);
 
-	bool setRunId(quint16 mod, quint16 runid);
+	void setRunId(quint16 mod, quint16 runid);
 
 	quint64 receivedData(); 
 
@@ -132,16 +184,17 @@ public:
 
 	void addMCPD(quint16 id, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
 
+	//! \return number of MCPD's
 	quint16 numMCPD(void) {return m_mcpd.size();}
 
 public slots:
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
 
-	void setProtocol(const quint16 id, const QString &mcpdIP, const QString dataIP = "0.0.0.0", const qint16 dataPort = 0, const QString cmdIP = "0.0.0.0", const qint16 cmdPort = 0);
+	void setProtocol(const quint16 id, const QString &mcpdIP, const QString dataIP = "0.0.0.0", const quint16 dataPort = 0, const QString cmdIP = "0.0.0.0", const quint16 cmdPort = 0);
 	
-	void setMode(const quint16 id, quint16 addr, bool mode);
+	void setMode(const quint16 id, quint8 addr, bool mode);
 
-	void setPulser(const quint16 id, quint16 addr, quint8 channel, quint8 position, quint8 amp, bool onoff);
+	void setPulser(const quint16 id, quint8 addr, quint8 channel, quint8 position, quint8 amp, bool onoff);
 
 	void setCounterCell(quint16 mod, quint16 source, quint16 trigger, quint16 compare);
 
@@ -166,9 +219,11 @@ public slots:
     	void acqListfile(bool yesno);
 
 	void start(void);
+
 	void startedDaq(void);
 
 	void stop(void);
+
 	void stoppedDaq(void);
 
 	void reset(void);
@@ -180,8 +235,18 @@ public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
 
 signals:
-	void statusChanged(const QString &);
+	/**
+	 * will be emitted if the status has changed
+	 *	
+	 * \param str the status as string
+	 */
+	void statusChanged(const QString &str);
 
+	/**
+	 * will be emitted if new data packet reached from one of the MCPD's 
+	 *
+	 * \param pd data packet
+	 */
 	void analyzeDataBuffer(DATA_PACKET &pd);
 
 protected:
