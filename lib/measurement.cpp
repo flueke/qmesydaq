@@ -28,6 +28,14 @@
 #include "histogram.h"
 #include "mesydaq2.h"
 
+/*!
+    \fn Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
+
+    constructor
+
+    \param mesy Mesydaq2 object to control the hardware
+    \param parent Qt parent object
+*/
 Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	: MesydaqObject(parent)
 	, m_mesydaq(mesy)
@@ -68,6 +76,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
 }
 
+//! destructor
 Measurement::~Measurement()
 {
 	if (m_rateTimer)
@@ -87,6 +96,13 @@ Measurement::~Measurement()
 	m_timeSpectrum = NULL;
 }
 
+/*!
+    \fn Measurement::timerEvent(QTimerEvent *event)
+
+    callback for the timer events
+
+    \param event event structure
+*/
 void Measurement::timerEvent(QTimerEvent *event)
 {
 	int id = event->timerId(); 
@@ -100,6 +116,10 @@ void Measurement::timerEvent(QTimerEvent *event)
 }
 /*!
     \fn Measurement::setCurrentTime(quint64 msecs)
+  
+    sets the current time for the measurement
+
+    \param msecs current time in ms
  */
 void Measurement::setCurrentTime(quint64 msecs)
 {
@@ -113,6 +133,8 @@ void Measurement::setCurrentTime(quint64 msecs)
 
 /*!
     \fn Measurement::getMeastime(void)
+
+    \return measurement time
  */
 quint64 Measurement::getMeastime(void)
 {
@@ -121,6 +143,8 @@ quint64 Measurement::getMeastime(void)
 
 /*!
     \fn Measurement::start()
+
+    starts the measurement and initialize all counters and timers
  */
 void Measurement::start()
 {
@@ -138,6 +162,8 @@ void Measurement::start()
 
 /*!
     \fn Measurement::requestStop()
+
+    callback for the request to stop the measurement
  */
 void Measurement::requestStop()
 {
@@ -148,6 +174,8 @@ void Measurement::requestStop()
 
 /*!
     \fn Measurement::stop()
+    
+    really stop the measurement
  */
 void Measurement::stop()
 {
@@ -165,6 +193,11 @@ void Measurement::stop()
 
 /*!
     \fn Measurement::setCounter(quint32 cNum, quint64 val)
+
+    fill a counter with a value
+
+    \param cNum number of the counter
+    \param val value of the counter
  */
 void Measurement::setCounter(quint32 cNum, quint64 val)
 {
@@ -187,6 +220,8 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 
 /*!
     \fn Measurement::calcRates()
+
+    calculates the rates for all counters
  */
 void Measurement::calcRates()
 {
@@ -196,6 +231,8 @@ void Measurement::calcRates()
 
 /*!
     \fn Measurement::calcMeanRates()
+
+    calculates the mean rates for all counters
  */
 void Measurement::calcMeanRates()
 {
@@ -205,6 +242,11 @@ void Measurement::calcMeanRates()
 
 /*!
     \fn Measurement::getCounter(quint8 cNum)
+
+    get the current value of the counter
+
+    \param cNum number of the counter
+    \return counter value
  */
 quint64 Measurement::getCounter(quint8 cNum)
 {
@@ -216,6 +258,11 @@ quint64 Measurement::getCounter(quint8 cNum)
 
 /*!
     \fn Measurement::getRate(quint8 cNum)
+
+    get the rate of a counter
+
+    \param cNum number of the counter
+    \return counter rate
  */
 ulong Measurement::getRate(quint8 cNum)
 {
@@ -227,6 +274,11 @@ ulong Measurement::getRate(quint8 cNum)
 
 /*!
     \fn Measurement::isOk(void)
+
+    return the status of the measurement
+	- 0 - online and working
+	- 1 - online and not working
+	- 2 - not oline
  */
 quint8 Measurement::isOk(void)
 {
@@ -247,9 +299,12 @@ quint8 Measurement::isOk(void)
     	return 2;
 }
 
-
 /*!
     \fn Measurement::setOnline(bool truth)
+
+    sets the measurement online/offline
+
+    \param truth online = true, offline = false
  */
 void Measurement::setOnline(bool truth)
 {
@@ -257,9 +312,15 @@ void Measurement::setOnline(bool truth)
 	protocol(tr("MCPD %1").arg(m_online ? tr("online") : tr("offline")), NOTICE);	
 }
 
-
 /*!
     \fn Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
+
+    sets the counter preset and master counter, all other counters will be set to slave
+    if the counter is set to master
+
+    \param cNum number of the counter
+    \param prval preset value
+    \param mast should the counter be master or not
  */
 void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 {
@@ -284,6 +345,11 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 
 /*!
     \fn Measurement::getPreset(quint8 cNum)
+
+    get the preset value of the counter
+
+    \param cNum number of the counter
+    \return preset value
  */
 ulong Measurement::getPreset(quint8 cNum)
 {
@@ -295,16 +361,22 @@ ulong Measurement::getPreset(quint8 cNum)
 
 /*!
     \fn Measurement::setListmode(bool truth)
+
+    sets the list mode 
+
+    \param truth list mode
  */
 void Measurement::setListmode(bool truth)
 {
 	emit acqListfile(truth);
 }
 
-
-
 /*!
     \fn Measurement::setRemote(bool truth)
+
+    sets the flag for remote control
+
+    \param truth remote on/off
  */
 void Measurement::setRemote(bool truth)
 {
@@ -314,6 +386,10 @@ void Measurement::setRemote(bool truth)
 
 /*!
     \fn Measurement::remoteStart(void)
+
+     gets information whether the remote control is switched on or not
+	
+     \return status of remote control
  */
 bool Measurement::remoteStart(void)
 {
@@ -322,16 +398,23 @@ bool Measurement::remoteStart(void)
 
 /*!
     \fn Measurement::isMaster(quint8 cNum)
+    
+    is counter master or not
+
+    \param cNum number of the counter
+    \return master state
  */
 bool Measurement::isMaster(quint8 cNum)
 {
 	return m_counter[cNum]->isMaster();
 }
 
-
-
 /*!
     \fn Measurement::clearCounter(quint8 cNum)
+
+    resets the counter, clear preset and set value to 0
+
+    \param cNum number of the counter
  */
 void Measurement::clearCounter(quint8 cNum)
 {
@@ -342,6 +425,8 @@ void Measurement::clearCounter(quint8 cNum)
 
 /*!
     \fn Measurement::clearAllHist(void)
+
+    clears all histograms
  */
 void Measurement::clearAllHist(void)
 {
@@ -356,6 +441,10 @@ void Measurement::clearAllHist(void)
 
 /*!
     \fn Measurement::clearChanHist(quint16 chan)
+
+    clears the spectra of a tube
+
+    \param chan tube number
  */
 void Measurement::clearChanHist(quint16 chan)
 {
@@ -367,6 +456,11 @@ void Measurement::clearChanHist(quint16 chan)
 
 /*!
     \fn Spectrum *Measurement::posData(quint16 line)
+
+    gets a position spectrum of a tube
+
+    \param line tube number
+    \return spectrum if line exist otherwise NULL pointer
 */
 Spectrum *Measurement::posData(quint16 line)
 {
@@ -378,6 +472,10 @@ Spectrum *Measurement::posData(quint16 line)
 
 /*!
     \fn Spectrum *Measurement::posData()
+
+    gets the position histogram
+
+    \return position histogram if exist otherwise NULL pointer
 */
 Spectrum *Measurement::posData()
 {
@@ -389,6 +487,10 @@ Spectrum *Measurement::posData()
 
 /*!
     \fn Spectrum *Measurement::ampData()
+
+    gets the amplitude histogram
+
+    \return amplitude histogram if exist otherwise NULL pointer
 */
 Spectrum *Measurement::ampData()
 {
@@ -400,6 +502,11 @@ Spectrum *Measurement::ampData()
 
 /*!
     \fn Spectrum *Measurement::ampData(quint16 line)
+
+    gets a amplitude spectrum of a tube
+
+    \param line tube number
+    \return spectrum if line exist otherwise NULL pointer
 */
 Spectrum *Measurement::ampData(quint16 line)
 {
@@ -411,6 +518,10 @@ Spectrum *Measurement::ampData(quint16 line)
 
 /*!
     \fn Spectrum *Measurement::timeData()
+
+    gets a time spectrum of all events
+
+    \return spectrum if line exist otherwise NULL pointer
 */
 Spectrum *Measurement::timeData()
 {
@@ -419,6 +530,10 @@ Spectrum *Measurement::timeData()
 
 /*!
     \fn Measurement::writeHistograms(const QString &name)
+
+    writes the position and amplitude histogram to a file
+
+    \param name file name
  */
 void Measurement::writeHistograms(const QString &name)
 {
@@ -443,6 +558,10 @@ void Measurement::writeHistograms(const QString &name)
 
 /*!
     \fn Measurement::analyzeBuffer(DATA_PACKET &pd)
+
+    analyze the data packet and put all events into the right counters and/or histogram
+
+    \param pd data packet
  */
 void Measurement::analyzeBuffer(DATA_PACKET &pd)
 {
