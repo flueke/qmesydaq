@@ -52,6 +52,14 @@
 #	include "caresscontrol.h"
 #endif
 
+/*!
+    \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
+
+    constructor
+
+    \param mesy Mesydaq2 object to control the hardware
+    \param parent Qt parent object
+*/
 MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	: QWidget(parent)
 	, Ui_Mesydaq2MainWidget()
@@ -87,7 +95,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
-	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(displayMpsdSlot(int)));
+	connect(devid, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
 
 	
 	channelLabel->setHidden(comgain->isChecked());
@@ -160,7 +168,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_dispTimer = startTimer(1000);
 }
 
-
+//! destructor
 MainWidget::~MainWidget()
 {
 	if (m_dispTimer)
@@ -171,11 +179,21 @@ MainWidget::~MainWidget()
 	m_meas = NULL;
 }
 
+/*!
+    \fn MainWidget::timerEvent(QTimerEvent *)
+
+    callback for the timer
+*/
 void MainWidget::timerEvent(QTimerEvent * /* event */)
 {
 	draw();
 }
 
+/*!
+    \fn MainWidget::allPulserOff(void)
+
+    callback to switch all pulsers off 
+*/
 void MainWidget::allPulserOff(void)
 {
 	m_theApp->allPulserOff();
@@ -611,7 +629,7 @@ void MainWidget::scanPeriSlot()
 	displayMpsdSlot();
 }
 
-void MainWidget::setModeSlot(qint32 mode)
+void MainWidget::setModeSlot(int mode)
 {
 	m_theApp->setMode(devid->value(), module->value(), mode); 
 }
@@ -701,7 +719,11 @@ void MainWidget::drawOpData()
 		pulserWarning->setText("");
 }
 
+/*!
+    \fn MainWidget::writeRegisterSlot()
 
+    callback to write into a MPSD register
+ */
 void MainWidget::writeRegisterSlot()
 {
 	bool ok;
@@ -712,8 +734,14 @@ void MainWidget::writeRegisterSlot()
 	m_theApp->writePeriReg(id, addr, reg, val);
 }
 
+/*!
+    \fn MainWidget::readRegisterSlot()
+
+    callback to read from a MPSD register
+*/
 void MainWidget::readRegisterSlot()
 {
+//! \todo display read values
 #warning TODO
 	quint16 id = (quint16) devid->value();	
 	quint16 addr = module->value();
@@ -721,6 +749,11 @@ void MainWidget::readRegisterSlot()
 	m_theApp->readPeriReg(id, addr, reg);
 }
 
+/*!
+    \fn MainWidget::selectConfigpathSlot()
+
+    callback to set the path for the configuration files
+*/
 void MainWidget::selectConfigpathSlot()
 {
 	QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Config File Path..."), m_theApp->getConfigfilepath());
@@ -729,7 +762,11 @@ void MainWidget::selectConfigpathSlot()
 	dispFiledata();
 }
 
+/*!
+    \fn MainWidget::selectConfigpathSlot()
 
+    callback to set the path for the histogram data files
+*/
 void MainWidget::selectHistpathSlot()
 {
 	QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Histogram File  Path..."), m_theApp->getHistfilepath());
@@ -738,7 +775,11 @@ void MainWidget::selectHistpathSlot()
 	dispFiledata();
 }
 
+/*!
+    \fn MainWidget::selectConfigpathSlot()
 
+    callback to set the path for the list mode data files
+*/
 void MainWidget::selectListpathSlot()
 {
 	QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select List File Path..."), m_theApp->getListfilepath());
@@ -763,16 +804,11 @@ void MainWidget::dispFiledata(void)
 	listfilepath->setText(m_theApp->getListfilepath());
 }
 
-
 /*!
-    \fn MainWidget::getDispId(void)
- */
-quint8 MainWidget::getDispId(void)
-{
-	return dispMcpd->value();
-}
+    \fn MainWidget::writeHistSlot()
 
-
+    callback to write a histogram data file
+*/
 void MainWidget::writeHistSlot()
 {
 	QString name = QFileDialog::getSaveFileName(this, tr("Write Histogram..."), m_theApp->getHistfilepath(), 
@@ -786,7 +822,13 @@ void MainWidget::writeHistSlot()
   	}
 }
 
+/*!
+   \fn MainWidget::ePresetSlot(bool pr)
 
+   callback to enable/disable event counter
+
+   \param pr enable the preset of the event counter
+ */
 void MainWidget::ePresetSlot(bool pr)
 {
 	if(pr)
@@ -806,7 +848,13 @@ void MainWidget::ePresetSlot(bool pr)
 	m_meas->setPreset(EVCT, evPreset->value(), pr);
 }
 
+/*!
+   \fn MainWidget::tPresetSlot(bool pr)
 
+   callback to enable/disable timer
+
+   \param pr enable the preset of the timer
+ */
 void MainWidget::tPresetSlot(bool pr)
 {
 	if(pr)
@@ -826,7 +874,13 @@ void MainWidget::tPresetSlot(bool pr)
 	m_meas->setPreset(TCT, tPreset->value() * 1000, pr);
 }
 
+/*!
+   \fn MainWidget::m1PresetSlot(bool pr)
 
+   callback to enable/disable monitor 1
+
+   \param pr enable the preset of the monitor 1
+ */
 void MainWidget::m1PresetSlot(bool pr)
 {
 	if(pr)
@@ -846,7 +900,13 @@ void MainWidget::m1PresetSlot(bool pr)
 	m_meas->setPreset(M1CT, m1Preset->value(), pr);
 }
 
+/*!
+   \fn MainWidget::m2PresetSlot(bool pr)
 
+   callback to enable/disable monitor 2
+
+   \param pr enable the preset of the monitor 2
+ */
 void MainWidget::m2PresetSlot(bool pr)
 {
 	if(pr)
@@ -866,6 +926,13 @@ void MainWidget::m2PresetSlot(bool pr)
 	m_meas->setPreset(M2CT, m2Preset->value(), pr);
 }
 
+/*!
+   \fn MainWidget::m3PresetSlot(bool pr)
+
+   callback to enable/disable monitor 3
+
+   \param pr enable the preset of the monitor 3
+ */
 void MainWidget::m3PresetSlot(bool pr)
 {
 	if(pr)
@@ -885,7 +952,13 @@ void MainWidget::m3PresetSlot(bool pr)
 	m_meas->setPreset(M3CT, m1Preset->value(), pr);
 }
 
+/*!
+   \fn MainWidget::m4PresetSlot(bool pr)
 
+   callback to enable/disable monitor 4
+
+   \param pr enable the preset of the monitor 4
+ */
 void MainWidget::m4PresetSlot(bool pr)
 {
 	if(pr)
@@ -907,6 +980,8 @@ void MainWidget::m4PresetSlot(bool pr)
 
 /*!
     \fn MainWidget::updatePresets(void)
+
+    callback to display all preset values
  */
 void MainWidget::updatePresets(void)
 {
@@ -930,36 +1005,66 @@ void MainWidget::updatePresets(void)
 	updateCaress();
 }
 
+/*!
+    \fn MainWidget::tResetSlot()
+
+    clears the timer
+ */
 void MainWidget::tResetSlot()
 {
 	m_meas->clearCounter(TCT);
 	update();
 }
 
+/*!
+    \fn MainWidget::eResetSlot()
+
+    clears the event counter
+ */
 void MainWidget::eResetSlot()
 {
 	m_meas->clearCounter(EVCT);
 	update();
 }
 
+/*!
+    \fn MainWidget::m1ResetSlot()
+
+    clears the Monitor 1 counter
+ */
 void MainWidget::m1ResetSlot()
 {
 	m_meas->clearCounter(M1CT);
 	update();
 }
 
+/*!
+    \fn MainWidget::m2ResetSlot()
+
+    clears the Monitor 2 counter
+ */
 void MainWidget::m2ResetSlot()
 {
 	m_meas->clearCounter(M2CT);
 	update();
 }
 
+/*!
+    \fn MainWidget::m3ResetSlot()
+
+    clears the Monitor 3 counter
+ */
 void MainWidget::m3ResetSlot()
 {
 	m_meas->clearCounter(M3CT);
 	update();
 }
 
+/*!
+    \fn MainWidget::m4ResetSlot()
+
+    clears the Monitor 4 counter
+ */
 void MainWidget::m4ResetSlot()
 {
 	m_meas->clearCounter(M4CT);
@@ -968,6 +1073,7 @@ void MainWidget::m4ResetSlot()
 
 /*!
     \fn MainWidget::updateCaress(void)
+    \todo remove the CARESS specific part
  */
 void MainWidget::updateCaress(void)
 {
@@ -981,9 +1087,12 @@ void MainWidget::updateCaress(void)
 
 /*!
     \fn MainWidget::saveConfigSlot(void)
+
+    callback to save configuration
  */
 void MainWidget::saveConfigSlot(void)
 {
+//! \todo implement me
 }
 
 void MainWidget::mpsdCheck(int mod)
@@ -1009,6 +1118,8 @@ void MainWidget::mpsdCheck(int mod)
 
 /*!
     \fn MainWidget::draw(void)
+
+    callback to redraw the data and additional informations
  */
 void MainWidget::draw(void)
 {

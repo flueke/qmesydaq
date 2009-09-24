@@ -46,16 +46,18 @@ public:
 
 	~MainWidget();
 
+private slots:
+	void setModeSlot(int);
+	void displayMpsdSlot(int = -1);
+
+private:
 	void 	update(void);
-	QString buildTimestring(quint64 timeval, bool nano);
 	void 	processDispData();
 	void 	drawOpData();
-	void 	dispFiledata(void);
-	quint8 	getDispId(void);
 	void 	updatePresets(void);
 	void 	updateCaress(void);
 
-public slots:
+private slots:
 	void sendAuxSlot();
 	void sendParamSlot();
 	void sendCellSlot();
@@ -68,13 +70,11 @@ public slots:
 	void clearAllSlot();
 	void setStreamSlot();
 	void setRunIdSlot();
-	void displayMpsdSlot(int = -1);
 	void displayMcpdSlot(int = -1);
 	void allPulserOff();
 
 	void mpsdCheck(int);
 
-	void setModeSlot(qint32);
 	void scanPeriSlot();
 
 // setup related methods
@@ -114,7 +114,7 @@ public slots:
 
 	void draw(void);
 
-protected slots:
+private slots:
 	void selectListfileSlot();
 	void setThresholdSlot();
 	void setGainSlot();
@@ -125,8 +125,13 @@ protected slots:
 	void zoomAreaSelected(const QwtDoubleRect&);
 	void zoomed(const QwtDoubleRect&);
 
-protected:
+private:
+	void 	dispFiledata(void);
+
 	void timerEvent(QTimerEvent *event);
+
+private:
+	QString buildTimestring(quint64 timeval, bool nano);
 
 private:
 	Mesydaq2	*m_theApp;

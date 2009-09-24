@@ -156,8 +156,8 @@ quint64 Histogram::max()
 
     gives the counts of the cell x,y. 
 
-    \param x number of the bin
-    \param y number of the tube
+    \param chan number of the bin
+    \param bin number of the tube
     \return 0 rief the cell does not exist, otherwise the counts
  */
 quint64 Histogram::value(quint16 chan, quint16 bin)
@@ -325,7 +325,7 @@ void Histogram::setWidth(quint8 width)
     writes the histogram to the opened file with a comment.
 
     \param f file pointer to the opened file
-    \param comment comment for the histogram
+    \param title title for the histogram
     \return true in case of success else false
  */
 bool Histogram::writeHistogram(QFile *f, const QString title)
