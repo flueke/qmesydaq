@@ -67,14 +67,31 @@ public:
 
 	bool	isMaster(quint8 cNum);
 	void	clearCounter(quint8 cNum);
-	void	copyCounters(void);
 
 	void 	readListfile(QString readfilename);
 
+	/** 
+		gets the value of the defined monitor 1
+		\todo monitor mapping configuration
+		\return counter value for the monitor 1 
+	 */
 	quint64	mon1() {return m_counter[M1CT]->value();}
+
+	/** 
+		gets the value of the defined monitor 2
+		\todo monitor mapping configuration
+		\return counter value for the monitor 2 
+	 */
 	quint64	mon2() {return m_counter[M2CT]->value();}
+
+	/** 
+		gets the value of the defined event counter
+		\todo counter mapping configuration
+		\return counter value for the event counter
+	 */
 	quint64	events() {return m_counter[EVCT]->value();}
 
+	//! \return time of the last header read from interface
 	quint64 getHeadertime(void) {return m_headertime;}
 
 	void writeHistograms(const QString &name);
@@ -86,11 +103,13 @@ public:
 	Spectrum *posData(quint16 line);
 	Spectrum *posData();
 
+	//! \return the position histogram
 	Histogram *posHist() {return m_posHist;}
 
 	Spectrum *ampData(quint16 line);	
 	Spectrum *ampData();	
 
+	//! \return the amplitude histogram
 	Histogram *ampHist() {return m_ampHist;}	
 
 	Spectrum *timeData();
@@ -110,12 +129,13 @@ private slots:
 	void requestStop(void);
 
 signals:
+	//! will be emitted if one of the master counter reaches its limit
 	void stopSignal(bool = false);
 
+	//! will be emitted in case of change in respect to the handling of list mode data files
 	void acqListfile(bool);
 
-	void setCountlimit(quint8, ulong);
-
+	//! will be emitted in case of a desired draw of the events
 	void draw();
 	
 protected:

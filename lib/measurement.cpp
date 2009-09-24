@@ -190,6 +190,13 @@ void Measurement::stop()
 #endif
 } 
 
+/*!
+    \fn Measurement::cont()
+    \todo implement me
+*/
+void Measurement::cont()
+{
+}
 
 /*!
     \fn Measurement::setCounter(quint32 cNum, quint64 val)
@@ -668,6 +675,14 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 	}
 }
 
+/*!
+    \fn Measurement::readListfile(QString readfilename)
+
+    reads a list mode data file and handles the read events as same as events coming
+    over the network interfaces
+
+    \param readfilename file name for the list mode data
+*/
 void Measurement::readListfile(QString readfilename)
 {
 	QDataStream datStream;
@@ -737,26 +752,69 @@ void Measurement::readListfile(QString readfilename)
 	emit draw();
 }
 
+/*!
+    \fn Measurement::getPosMean(float &mean, float &sigma)
+
+    gives the mean value and the standard deviation of the last position events
+  
+    \param mean mean value
+    \param sigma standard deviation
+ */
 void Measurement::getPosMean(float &mean, float &sigma)
 {
 	m_posHist->getMean(mean, sigma);
 }
 
+/*!
+    \fn Measurement::getPosMean(quint16 chan, float &mean, float &sigma)
+
+    gives the mean value and the standard deviation of the last events in the tube chan of the position histogram
+
+    \param chan the number of the tube
+    \param mean mean value
+    \param sigma standard deviation
+ */
 void Measurement::getPosMean(quint16 chan, float &mean, float &sigma)
 {
 	m_posHist->getMean(chan, mean, sigma);
 }
 
+/*!
+    \fn Measurement::getAmpMean(float &mean, float &sigma)
+
+    gives the mean value and the standard deviation of the last amplitude events
+  
+    \param mean mean value
+    \param sigma standard deviation
+ */
 void Measurement::getAmpMean(float &mean, float &sigma)
 {
 	m_ampHist->getMean(mean, sigma);
 }
 
+/*!
+    \fn Measurement::getAmpMean(quint16 chan, float &mean, float &sigma)
+
+    gives the mean value and the standard deviation of the last events in the tube chan of the amplitude histogram
+
+    \param chan the number of the tube
+    \param mean mean value
+    \param sigma standard deviation
+ */
 void Measurement::getAmpMean(quint16 chan, float &mean, float &sigma)
 {
 	m_ampHist->getMean(chan, mean, sigma);
 }
 
+/**
+    \fn Measurement::getTimeMean(float &mean, float &sigma)
+
+    gives the mean value and the standard deviation of the last events in the time spectrum
+
+    \param mean mean value
+    \param sigma standard deviation of the mean value
+    \return mean value
+ */
 void Measurement::getTimeMean(float &mean, float &sigma)
 {
 	mean = m_timeSpectrum->mean(sigma);

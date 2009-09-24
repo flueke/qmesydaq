@@ -37,24 +37,12 @@ class QFile;
 class Spectrum : public MesydaqObject
 {
 public:
-	/**
-	 * constructor
-	 *
-	 * \param bins number of points in the spectrum
-	 */
 	Spectrum(quint16 bins = LINBINS);
 
-	//! destructor
 	~Spectrum();
 
-	/**
-	 * add a event add position bin
-	 *
-	 * \param bin position inside the spectrum to increment
-	 */
 	bool incVal(quint16 bin);
 
-	//! clear the spectrum
 	void clear();
 
 	//! \return the maximum value of the spectrum
@@ -66,12 +54,6 @@ public:
 	//! \return sum of counts in the spectrum
 	quint16 getTotalCounts() {return m_totalCounts;}
 
-	/**
-	 * calculates the mean value and standard deviation of the mean value
-	 * 
-	 * \param s standard deviation of the mean value
-	 * \return mean value
-	 */
 	float mean(float &s);
 
 //	quint64 operator[](quint16 index) {return m_data[index];}
@@ -124,100 +106,42 @@ class Histogram : public MesydaqObject
 {
 Q_OBJECT
 public:
-	/**
-	 * constructor
-	 *
-	 * \param channels number of channels (i.e. number of tubes)
-	 * \param bins number of bins (inside a tube)
-	 */
 	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS);
 
 	~Histogram();
     
-	/**
-	 * increment value by 1 in cell[chan, bin]. If the cell does
-	 * not exist it will be created.
-	 *
-	 * \param chan number of the spectrum
-	 * \param bin number of the bin in the spectrum
-	 * \return true if it was ok otherwise false
-	 */
 	bool incVal(quint16 chan, quint16 bin);
 
-	//! clears the complete histogram
 	void clear(void);
 
-	/**
-	 * clears the spectrum channel
-	 *
-	 * \param channel number of the spectrum to be cleared
-	 */
 	void clear(quint16 channel);
 
-	//! returns the sum of all counts
 	quint64 getTotalCounts(void);
 
-	//! \return the pointer to the spectrum of the tube channel
 	Spectrum *spectrum(quint16 channel);
 
-	//! \return the pointer to the sum spectrum
+	//! \return the sum spectrum
 	Spectrum *spectrum() {return &m_sumSpectrum;}
 
-	//! \return the maximum of the spectrum of the tube channel
 	quint64 max(quint16 channel);
 
-	//! \return the maximum of the whole histogram
 	quint64 max(); 
 	
 	//! \return the number of the first tube containing the maximum value
 	quint16 maxpos() {return m_maximumPos;}
 
-	//! \return the number of the bin in the tube channel
 	quint16 maxpos(quint16 channel);
 
-	/**
-	 * gives the mean value and the standard deviation of the last events
-	 *
-	 * \param mean mean value
-	 * \param sigma standard deviation
-	 */
 	void getMean(float &mean, float &sigma);
 
-	/**
-	 * gives the mean value and the standard deviation of the last events in the tube chan
-	 *
-	 * \param chan the number of the tube
-	 * \param mean mean value
-	 * \param sigma standard deviation
-	 */
 	void getMean(quint16 chan, float &mean, float &sigma);
 
-	/**
-	 * sets the width of each cell
-	 *
-	 * \param width 
-	 */
 	void setWidth(quint8 width);
 
-	/**
-	 * writes the histogram to the opened file with a comment.
-	 *
-	 * \param f file pointer to the opened file
-	 * \param comment comment for the histogram
-	 * \return true in case of success else false
-	 */
 	bool writeHistogram(QFile *f, const QString comment = "");
 
-	/**
-	 * gives the counts of the cell x,y. 
-	 *
-	 * \param x number of the bin
-	 * \param y number of the tube
-	 * \return 0 rief the cell does not exist, otherwise the counts
-	 */
 	quint64 value(quint16 x, quint16 y);
 
-	//! \return number of tubes
 	quint16	height(); 
 
 private:

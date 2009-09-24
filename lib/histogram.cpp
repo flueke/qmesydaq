@@ -24,6 +24,13 @@
 
 #include <cmath>
 
+/**
+    \fn Spectrum::Spectrum(quint16 bins)
+
+    constructor
+
+    \param bins number of points in the spectrum
+ */
 Spectrum::Spectrum(quint16 bins)
 	: MesydaqObject()
 	, m_data(NULL)
@@ -36,14 +43,18 @@ Spectrum::Spectrum(quint16 bins)
 	clear();
 }
 
+//! destructor
 Spectrum::~Spectrum()
 {
 }
 
-/**
- \fn Spectrum::incVal(quint16 bin)
- \param bin number of the bin in the spectrum
- \return true or false if successful or not
+/*!
+    \fn Spectrum::incVal(quint16 bin)
+
+    add a event add position bin
+
+    \param bin position inside the spectrum to increment
+    \return true or false if successful or not
  */
 bool Spectrum::incVal(quint16 bin)
 {
@@ -65,8 +76,10 @@ bool Spectrum::incVal(quint16 bin)
 	return false;
 }
 
-/**
- \fn Spectrum::clear(void)
+/*!
+    \fn Spectrum::clear(void)
+
+    clear the spectrum
  */
 void Spectrum::clear(void)
 {
@@ -75,10 +88,13 @@ void Spectrum::clear(void)
 	m_maximumPos = m_meanCount = m_meanPos = 0;
 }
 
-/**
- \fn Spectrum::mean(float &s)
- \param s sigma of the floating mean value
- \return floating mean value
+/*!
+    \fn Spectrum::mean(float &s)
+  
+    calculates the mean value and standard deviation of the mean value
+
+    \param s standard deviation of the floating mean value
+    \return floating mean value
  */
 float Spectrum::mean(float &s)
 {
@@ -101,6 +117,14 @@ float Spectrum::mean(float &s)
 	return m;
 }
 
+/*!
+    \fn Histogram::Histogram(quint16 channels, quint16 bins)
+    
+    constructor
+
+    \param channels number of channels (i.e. number of tubes)
+    \param bins number of bins (inside a tube)
+ */
 Histogram::Histogram(quint16 , quint16 bins)
 	: MesydaqObject()
 	, m_totalCounts(0)
@@ -112,20 +136,45 @@ Histogram::Histogram(quint16 , quint16 bins)
 	clear();
 }
 
+//! destructor
 Histogram::~Histogram()
 {
 }
 
+/*!
+    \fn Histogram::max() 
+
+    \return the maximum of the whole histogram
+*/
 quint64 Histogram::max() 
 {
 	return m_data.size() ? m_data[m_maximumPos]->max() : 0;
 }
 
+/*!
+    \fn Histogram::value(quint16 chan, quint16 bin)
+
+    gives the counts of the cell x,y. 
+
+    \param x number of the bin
+    \param y number of the tube
+    \return 0 rief the cell does not exist, otherwise the counts
+ */
 quint64 Histogram::value(quint16 chan, quint16 bin)
 {
 	return m_data.contains(chan) ? m_data[chan]->value(bin) : 0;
 }
 
+/**
+    \fn Histogram::incVal(quint16 chan, quint16 bin)
+
+    increment value by 1 in cell[chan, bin]. If the cell does
+    not exist it will be created.
+
+    \param chan number of the spectrum
+    \param bin number of the bin in the spectrum
+    \return true if it was ok otherwise false
+ */
 bool Histogram::incVal(quint16 chan, quint16 bin)
 {
 	if (!m_data.contains(chan))
@@ -149,6 +198,10 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
 
 /*!
     \fn Histogram::clear(quint16 channel)
+
+    clears the spectrum channel
+
+    \param channel number of the spectrum to be cleared
  */
 void Histogram::clear(quint16 channel)
 {
@@ -162,6 +215,8 @@ void Histogram::clear(quint16 channel)
 
 /*!
     \fn Histogram::clear(void);
+
+    clears the complete histogram
  */
 void Histogram::clear(void)
 {
@@ -174,13 +229,20 @@ void Histogram::clear(void)
 
 /*!
     \fn Histogram::getTotalCounts(void)
+
+    \return the sum of all counts
  */
 quint64 Histogram::getTotalCounts(void)
 {
 	return m_totalCounts;
 }
 
+/*!
+    \fn Histogram::spectrum(quint16 channel)
 
+    \param channel number of the tube
+    \return the spectrum of the tube channel
+ */
 Spectrum *Histogram::spectrum(quint16 channel)
 {
    	return m_data.contains(channel) ?  m_data[channel] : NULL;
@@ -188,6 +250,9 @@ Spectrum *Histogram::spectrum(quint16 channel)
 
 /*!
     \fn Histogram::max(quint16 channel)
+
+    \param channel number of the tube
+    \return the maximum of the spectrum of the tube channel
  */
 quint64 Histogram::max(quint16 channel)
 {
@@ -196,6 +261,9 @@ quint64 Histogram::max(quint16 channel)
 
 /*!
     \fn Histogram::maxpos(quint16 channel)
+
+    \param channel number of the tube
+    \return the number of the bin in the tube channel
  */
 quint16 Histogram::maxpos(quint16 channel)
 {
@@ -204,21 +272,36 @@ quint16 Histogram::maxpos(quint16 channel)
 
 /*!
     \fn Histogram::getMean(quint16 chan, float &m, float &s)
+
+    gives the mean value and the standard deviation of the last events in the tube chan
+	
+    \param chan the number of the tube
+    \param m mean value
+    \param s standard deviation
  */
 void Histogram::getMean(quint16 chan, float &m, float &s)
 {
-// calculate mean for given channel:
 	m = m_data[chan]->mean(s);
 }
 
 /*!
     \fn Histogram::getMean(float &m, float &s)
+
+    gives the mean value and the standard deviation of the last events
+
+    \param m mean value
+    \param s standard deviation
  */
 void Histogram::getMean(float &m, float &s)
 {
 	m = m_sumSpectrum.mean(s);
 }
 
+/*!
+    \fn	Histogram::height() 
+
+    \return number of tubes
+*/
 quint16	Histogram::height() 
 {
 	return m_data.size();
@@ -226,6 +309,10 @@ quint16	Histogram::height()
 
 /*!
     \fn Histogram::setWidth(quint8 width)
+
+    sets the width of each cell
+
+    \param width 
  */
 void Histogram::setWidth(quint8 width)
 {
@@ -234,6 +321,12 @@ void Histogram::setWidth(quint8 width)
 
 /*!
     \fn Histogram::writeHistogram(QFile *f, const QString title)
+
+    writes the histogram to the opened file with a comment.
+
+    \param f file pointer to the opened file
+    \param comment comment for the histogram
+    \return true in case of success else false
  */
 bool Histogram::writeHistogram(QFile *f, const QString title)
 {
