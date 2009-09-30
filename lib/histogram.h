@@ -64,7 +64,7 @@ public:
 	 * \param index position inside the spectrum for the required counts
 	 * \return the number of neutrons
 	 */
-	quint64 value(quint16 index) {return m_data[index];}
+	quint64 value(quint16 index) {return index < m_data.size() ? m_data[index] : 0;}
 
 	//! \return the lenght of the spectrum
 	quint16	width() {return m_data.size();}

@@ -281,7 +281,12 @@ quint16 Histogram::maxpos(quint16 channel)
  */
 void Histogram::getMean(quint16 chan, float &m, float &s)
 {
-	m = m_data[chan]->mean(s);
+   	if (m_data.contains(chan))
+	{
+		m = m_data[chan]->mean(s);
+	}
+	else
+		m = s = 0.0;
 }
 
 /*!
