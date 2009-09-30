@@ -39,7 +39,7 @@ Spectrum::Spectrum(quint16 bins)
 	, m_meanPos(0)
 {
 	m_data.resize(bins);
-	m_floatingMean.resize(255);
+	m_floatingMean.resize(256);
 	clear();
 }
 
@@ -183,11 +183,11 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
 			if (!m_data.contains(i))
 				m_data[i] = new Spectrum(m_sumSpectrum.width());
 	}
+	if (!m_data.contains(m_maximumPos))
+		m_maximumPos = chan;
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
 	m_data[chan]->incVal(bin);
-	if (!m_data.contains(m_maximumPos))
-		qDebug("ERROR !!!!! chan = %d", m_maximumPos); 
 	if (m_data[chan]->max() > m_data[m_maximumPos]->max())
 		m_maximumPos = chan;
 // sum spectrum of all channels
