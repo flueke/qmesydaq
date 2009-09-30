@@ -7,6 +7,8 @@ TARGET 		= mesydaq
 DEPENDPATH 	+= .
 INCLUDEPATH 	+= .
 
+CONFIG		+= debug
+
 QT 		+= core network
 
 # Input
