@@ -25,6 +25,8 @@ INCLUDEPATH 	+= . ../lib
 VERSION 	= 0.0.0
 DEFINES		+= VERSION=\\\"$${VERSION}\\\" HAVE_CONFIG_H
 
+CONFIG		+= debug
+
 QT 		+= qt3support network
 
 QWT_ROOT 	= /usr/local/qwt5
