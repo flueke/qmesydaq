@@ -152,6 +152,8 @@ public:
 
 	QString getMpsdType(quint16 mod, quint8 addr);
 
+	float getMpsdVersion(quint16 mod, quint8 addr);
+
 	quint8 getGain(quint16 mod, quint8 addr, quint8 chan);
 
 	quint8 getThreshold(quint16 mod, quint8 addr);

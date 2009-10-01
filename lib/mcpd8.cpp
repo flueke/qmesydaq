@@ -113,6 +113,7 @@ bool MCPD8::init(void)
 		{
 			if (m_mpsd[c]->getMpsdId() == MPSD8P)
 				writePeriReg(c, 1, modus);
+			version(c);
 		}
 // Register 103 is the TX mode register
 // set tx capability 
@@ -227,7 +228,8 @@ bool MCPD8::setId(quint8 mcpdid)
 
 /*!
    \fn MCPD8::version(void)
-   \return firmware version of the MCPD whereas the integral places represents the major number and the decimal parts the minor number
+   \return firmware version of the MCPD whereas the integral places represents the major number 
+           and the decimal parts the minor number
  */
 float MCPD8::version(void)
 {
@@ -236,6 +238,30 @@ float MCPD8::version(void)
 	if(sendCommand())
 		return m_version;
 	return -1.0;
+}
+
+/*!
+   \fn MPCD8::version(quint16 mod)
+
+   In the peripheral register 2 is the version of its firmware. The upper byte is the major 
+   and the lower byte the minor number
+
+   \return firmware version of the MPSD whereas the integral places represents the major number 
+           and the decimal parts the minor number
+ */
+float MCPD8::version(quint16 mod)
+{
+	float tmpFloat(0.0);
+	if (m_mpsd.find(mod) != m_mpsd.end())
+	{
+		quint16 tmp = readPeriReg(mod, 2);
+		tmpFloat = tmp & 0xFF;
+		while(tmpFloat > 1)
+			tmpFloat /= 10.;
+		tmpFloat += (tmp >> 8);
+	}
+	protocol(tr("MPSD (ID  %1): Version number : %2").arg(mod).arg(tmpFloat), NOTICE);
+	return tmpFloat;
 }
 
 /*!

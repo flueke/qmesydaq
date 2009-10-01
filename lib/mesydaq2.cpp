@@ -1090,6 +1090,23 @@ QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
 }
 
 /*!
+    \fn Mesydaq2::getMspdVersion(quint16 id, quint8 addr)
+
+    get the detected version of the MPSD. If MPSD not exists it will return 0.
+
+    \param id number of the MCPD
+    \param addr module number
+    \return module ID (type)
+    \see readId
+*/
+float Mesydaq2::getMpsdVersion(quint16 id, quint8 addr)
+{
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->version(addr);
+	return 0.0;
+}
+
+/*!
     \fn Mesydaq2::getPulsChan(quint16 id, quint8 addr)
 
     gets the current set channel of the pulser of a module
