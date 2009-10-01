@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
 	QApplication app(argc, argv);
 
-	QPixmap pixmap(":/mesytec.jpg");
+	QPixmap pixmap(":/images/mesytec.jpg");
 
 	QSplashScreen splash(pixmap);
 	splash.show();

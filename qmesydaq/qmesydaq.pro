@@ -43,7 +43,8 @@ LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
 HEADERS 	+= mainwidget.h \
 		mainwindow.h \
 		mesydaqdata.h \
-		controlinterface.h 
+		controlinterface.h \
+		ModuleSpinBox.h
 
 FORMS 		+= mesydaq2mainwidget.ui \
 		mesydaq2mainwindow.ui
@@ -52,7 +53,8 @@ SOURCES 	+= main.cpp \
 		mainwidget.cpp \
 		mainwindow.cpp \
 		mesydaqdata.cpp \
-		controlinterface.cpp 
+		controlinterface.cpp \
+		ModuleSpinBox.cpp
 
 RESOURCES 	+= images.qrc
 

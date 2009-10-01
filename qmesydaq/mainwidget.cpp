@@ -543,38 +543,14 @@ void MainWidget::displayMpsdSlot(int)
 	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
     
 // Status display:
-	if(m_theApp->getMpsdId(id, 0))
-		status0->setText(tr("%1").arg(m_theApp->getMpsdType(id, 0)));
-	else
-		status0->setText("-");		
-	if(m_theApp->getMpsdId(id, 1))
-		status1->setText(tr("%1").arg(m_theApp->getMpsdType(id, 1)));
-	else
-		status1->setText("-");		
-	if(m_theApp->getMpsdId(id, 2))
-		status2->setText(tr("%1").arg(m_theApp->getMpsdType(id, 2)));
-	else
-		status2->setText("-");		
-	if(m_theApp->getMpsdId(id, 3))
-		status3->setText(tr("%1").arg(m_theApp->getMpsdType(id, 3)));
-	else
-		status3->setText("-");		
-	if(m_theApp->getMpsdId(id, 4))
-		status4->setText(tr("%1").arg(m_theApp->getMpsdType(id, 4)));
-	else
-		status4->setText("-");		
-	if(m_theApp->getMpsdId(id, 5))
-		status5->setText(tr("%1").arg(m_theApp->getMpsdType(id, 5)));
-	else
-		status5->setText("-");		
-	if(m_theApp->getMpsdId(id, 6))
-		status6->setText(tr("%1").arg(m_theApp->getMpsdType(id, 6)));
-	else
-		status6->setText("-");		
-	if(m_theApp->getMpsdId(id, 7))
-		status7->setText(tr("%1").arg(m_theApp->getMpsdType(id, 7)));
-	else
-		status7->setText("-");		
+	status0->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 0)).arg(m_theApp->getMpsdVersion(id, 0)));
+	status1->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 1)).arg(m_theApp->getMpsdVersion(id, 1)));
+	status2->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 2)).arg(m_theApp->getMpsdVersion(id, 2)));
+	status3->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 3)).arg(m_theApp->getMpsdVersion(id, 3)));
+	status4->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 4)).arg(m_theApp->getMpsdVersion(id, 4)));
+	status5->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 5)).arg(m_theApp->getMpsdVersion(id, 5)));
+	status6->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 6)).arg(m_theApp->getMpsdVersion(id, 6)));
+	status7->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 7)).arg(m_theApp->getMpsdVersion(id, 7)));
 		
 	id = /*mcpdId */devid->value();
 	quint8 mod = module->value();
@@ -625,7 +601,17 @@ void MainWidget::displayMpsdSlot(int)
 
 void MainWidget::scanPeriSlot()
 {
-	m_theApp->scanPeriph((quint16)devid_2->value());
+	quint16 id = devid_2->value();
+	m_theApp->scanPeriph(id);
+
+	QList<int> modList;
+	for (int i = 0; i < 8; ++i)
+		if (m_theApp->getMpsdId(id, i))
+			modList << i;
+
+	module->setModuleList(modList);
+	dispMpsd->setModuleList(modList);
+
 	displayMpsdSlot();
 }
 
@@ -1098,22 +1084,7 @@ void MainWidget::saveConfigSlot(void)
 void MainWidget::mpsdCheck(int mod)
 {
 	m_theApp->protocol(tr("MainWidget::mpsdCheck() : module %1").arg(mod), DEBUG);
-	quint8 id = mcpdId->value();
-	if (m_theApp->getMpsdId(id, mod))
-		displayMpsdSlot(mod);
-	else
-	{ 
-		for (int i = 0; i < 8; ++i) 
-		{
-			int nextmod = (mod + i + 1) % 8;
-			if (m_theApp->getMpsdId(id, nextmod))
-			{
-				module->setValue(nextmod);	
-				return;
-			}
-		}
-		module->setValue(0);	
-	}
+	displayMpsdSlot(mod);
 }
 
 /*!
