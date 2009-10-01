@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Mesydaq2MainWidget</class>
- <widget class="QWidget" name="Mesydaq2MainWidget" >
-  <property name="geometry" >
+ <widget class="QWidget" name="Mesydaq2MainWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,23 +10,23 @@
     <height>950</height>
    </rect>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>1280</width>
     <height>950</height>
    </size>
   </property>
-  <property name="baseSize" >
+  <property name="baseSize">
    <size>
     <width>1280</width>
     <height>980</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="Q3Frame" name="mainFrame" >
-   <property name="geometry" >
+  <widget class="Q3Frame" name="mainFrame">
+   <property name="geometry">
     <rect>
      <x>9</x>
      <y>9</y>
@@ -33,28 +34,28 @@
      <height>520</height>
     </rect>
    </property>
-   <property name="minimumSize" >
+   <property name="minimumSize">
     <size>
      <width>1150</width>
      <height>520</height>
     </size>
    </property>
-   <property name="maximumSize" >
+   <property name="maximumSize">
     <size>
      <width>1270</width>
      <height>520</height>
     </size>
    </property>
-   <property name="frameShape" >
+   <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
    </property>
-   <property name="frameShadow" >
+   <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <layout class="QGridLayout" name="gridLayout" >
-    <item row="0" column="0" >
-     <widget class="QwtPlot" name="dataFrame" >
-      <property name="minimumSize" >
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QwtPlot" name="dataFrame">
+      <property name="minimumSize">
        <size>
         <width>960</width>
         <height>480</height>
@@ -62,46 +63,46 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1" >
-     <layout class="QVBoxLayout" >
+    <item row="0" column="1">
+     <layout class="QVBoxLayout">
       <item>
-       <layout class="QVBoxLayout" >
+       <layout class="QVBoxLayout">
         <item>
-         <widget class="QLabel" name="textLabel1_5" >
-          <property name="text" >
+         <widget class="QLabel" name="textLabel1_5">
+          <property name="text">
            <string>Sliding Mean:</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="meanText" >
-          <property name="text" >
+         <widget class="QLabel" name="meanText">
+          <property name="text">
            <string>0.0</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="textLabel1_5_3" >
-          <property name="text" >
+         <widget class="QLabel" name="textLabel1_5_3">
+          <property name="text">
            <string>Sigma:</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="sigmaText" >
-          <property name="text" >
+         <widget class="QLabel" name="sigmaText">
+          <property name="text">
            <string>0.0</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
@@ -109,14 +110,14 @@
        </layout>
       </item>
       <item>
-       <spacer name="spacer1" >
-        <property name="orientation" >
+       <spacer name="spacer1">
+        <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeType" >
+        <property name="sizeType">
          <enum>QSizePolicy::Expanding</enum>
         </property>
-        <property name="sizeHint" stdset="0" >
+        <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
           <height>40</height>
@@ -128,8 +129,8 @@
     </item>
    </layout>
   </widget>
-  <widget class="Q3GroupBox" name="groupBox1" >
-   <property name="geometry" >
+  <widget class="Q3GroupBox" name="groupBox1">
+   <property name="geometry">
     <rect>
      <x>1050</x>
      <y>530</y>
@@ -137,50 +138,50 @@
      <height>321</height>
     </rect>
    </property>
-   <property name="title" >
+   <property name="title">
     <string>DAQ</string>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3" >
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QPushButton" name="startStopButton" >
-      <property name="toolTip" >
+     <widget class="QPushButton" name="startStopButton">
+      <property name="toolTip">
        <string>start / stop data acquisition</string>
       </property>
-      <property name="text" >
+      <property name="text">
        <string>S&amp;tart</string>
       </property>
-      <property name="shortcut" >
+      <property name="shortcut">
        <string>Alt+T</string>
       </property>
-      <property name="checkable" >
+      <property name="checkable">
        <bool>true</bool>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="daqStatusLine" >
-      <property name="enabled" >
+     <widget class="QLineEdit" name="daqStatusLine">
+      <property name="enabled">
        <bool>false</bool>
       </property>
-      <property name="toolTip" >
+      <property name="toolTip">
        <string>current DAQ status display</string>
       </property>
-      <property name="text" >
+      <property name="text">
        <string>idle</string>
       </property>
-      <property name="alignment" >
+      <property name="alignment">
        <set>Qt::AlignHCenter</set>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="pulserWarning" >
-      <property name="palette" >
+     <widget class="QLabel" name="pulserWarning">
+      <property name="palette">
        <palette>
         <active>
-         <colorrole role="WindowText" >
-          <brush brushstyle="SolidPattern" >
-           <color alpha="255" >
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
             <red>255</red>
             <green>0</green>
             <blue>0</blue>
@@ -189,9 +190,9 @@
          </colorrole>
         </active>
         <inactive>
-         <colorrole role="WindowText" >
-          <brush brushstyle="SolidPattern" >
-           <color alpha="255" >
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
             <red>255</red>
             <green>0</green>
             <blue>0</blue>
@@ -200,9 +201,9 @@
          </colorrole>
         </inactive>
         <disabled>
-         <colorrole role="WindowText" >
-          <brush brushstyle="SolidPattern" >
-           <color alpha="255" >
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
             <red>110</red>
             <green>111</green>
             <blue>114</blue>
@@ -212,36 +213,36 @@
         </disabled>
        </palette>
       </property>
-      <property name="text" >
-       <string>&lt;p align="center">Pulser!&lt;/p></string>
+      <property name="text">
+       <string>&lt;p align=&quot;center&quot;&gt;Pulser!&lt;/p&gt;</string>
       </property>
-      <property name="wordWrap" >
+      <property name="wordWrap">
        <bool>false</bool>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="acquireFile" >
-      <property name="text" >
+     <widget class="QCheckBox" name="acquireFile">
+      <property name="text">
        <string>ac&amp;quire
 Listfile</string>
       </property>
-      <property name="shortcut" >
+      <property name="shortcut">
        <string>Alt+Q</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="allPulsersoffButton" >
-      <property name="text" >
+     <widget class="QPushButton" name="allPulsersoffButton">
+      <property name="text">
        <string>All pulsers off</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QTabWidget" name="tabWidget2" >
-   <property name="geometry" >
+  <widget class="QTabWidget" name="tabWidget2">
+   <property name="geometry">
     <rect>
      <x>240</x>
      <y>540</y>
@@ -249,161 +250,153 @@ Listfile</string>
      <height>311</height>
     </rect>
    </property>
-   <property name="currentIndex" >
+   <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="tab" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>733</width>
-      <height>288</height>
-     </rect>
-    </property>
-    <attribute name="title" >
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
      <string>S&amp;tatus</string>
     </attribute>
-    <layout class="QGridLayout" name="gridLayout_23" >
-     <item row="0" column="0" >
-      <layout class="QHBoxLayout" >
+    <layout class="QGridLayout" name="gridLayout_23">
+     <item row="0" column="0">
+      <layout class="QHBoxLayout">
        <item>
-        <layout class="QVBoxLayout" >
+        <layout class="QVBoxLayout">
          <item>
-          <widget class="QLabel" name="versionLabel" >
-           <property name="text" >
+          <widget class="QLabel" name="versionLabel">
+           <property name="text">
             <string>mesydaq 2.1.0   16.10.2008</string>
            </property>
-           <property name="wordWrap" >
+           <property name="wordWrap">
             <bool>false</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="Q3GroupBox" name="groupBox17" >
-           <property name="title" >
+          <widget class="Q3GroupBox" name="groupBox17">
+           <property name="title">
             <string>Parameters</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="1" column="0" >
-             <widget class="QLabel" name="textLabel1_3" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="1" column="0">
+             <widget class="QLabel" name="textLabel1_3">
+              <property name="text">
                <string>P0:</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="textLabel1_3_3" >
-              <property name="text" >
+            <item row="2" column="0">
+             <widget class="QLabel" name="textLabel1_3_3">
+              <property name="text">
                <string>P1:</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="3" column="0" >
-             <widget class="QLabel" name="textLabel1_3_4" >
-              <property name="text" >
+            <item row="3" column="0">
+             <widget class="QLabel" name="textLabel1_3_4">
+              <property name="text">
                <string>P2:</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="4" column="0" >
-             <widget class="QLabel" name="textLabel1_3_5" >
-              <property name="text" >
+            <item row="4" column="0">
+             <widget class="QLabel" name="textLabel1_3_5">
+              <property name="text">
                <string>P3:</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" colspan="2" >
-             <widget class="QLabel" name="param0" >
-              <property name="text" >
-               <string>&lt;p align="right">0&lt;/p></string>
+            <item row="1" column="1" colspan="2">
+             <widget class="QLabel" name="param0">
+              <property name="text">
+               <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" colspan="2" >
-             <widget class="QLabel" name="param1" >
-              <property name="text" >
-               <string>&lt;p align="right">0&lt;/p></string>
+            <item row="2" column="1" colspan="2">
+             <widget class="QLabel" name="param1">
+              <property name="text">
+               <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="4" column="1" colspan="2" >
-             <widget class="QLabel" name="param3" >
-              <property name="text" >
-               <string>&lt;p align="right">0&lt;/p></string>
+            <item row="4" column="1" colspan="2">
+             <widget class="QLabel" name="param3">
+              <property name="text">
+               <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="2" >
-             <widget class="QSpinBox" name="paramId" >
-              <property name="enabled" >
+            <item row="0" column="2">
+             <widget class="QSpinBox" name="paramId">
+              <property name="enabled">
                <bool>true</bool>
               </property>
-              <property name="maximum" >
+              <property name="maximum">
                <number>0</number>
               </property>
              </widget>
             </item>
-            <item row="3" column="1" colspan="2" >
-             <widget class="QLabel" name="param2" >
-              <property name="text" >
-               <string>&lt;p align="right">0&lt;/p></string>
+            <item row="3" column="1" colspan="2">
+             <widget class="QLabel" name="param2">
+              <property name="text">
+               <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="5" column="1" colspan="2" >
-             <widget class="QLabel" name="hTimeText" >
-              <property name="text" >
+            <item row="5" column="1" colspan="2">
+             <widget class="QLabel" name="hTimeText">
+              <property name="text">
                <string>0</string>
               </property>
-              <property name="alignment" >
+              <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="5" column="0" >
-             <widget class="QLabel" name="textLabel1_2_3_2" >
-              <property name="text" >
+            <item row="5" column="0">
+             <widget class="QLabel" name="textLabel1_2_3_2">
+              <property name="text">
                <string>header time:</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="0" colspan="2" >
-             <widget class="QLabel" name="textLabel1_3_6" >
-              <property name="text" >
+            <item row="0" column="0" colspan="2">
+             <widget class="QLabel" name="textLabel1_3_6">
+              <property name="text">
                <string>MCPD-ID:</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
@@ -414,52 +407,44 @@ Listfile</string>
         </layout>
        </item>
        <item>
-        <widget class="QTabWidget" name="tabWidget11" >
-         <property name="currentIndex" >
+        <widget class="QTabWidget" name="tabWidget11">
+         <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="QWidget" name="tab" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>574</width>
-            <height>245</height>
-           </rect>
-          </property>
-          <attribute name="title" >
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
            <string>meas. data</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout_24" >
-           <item row="0" column="0" colspan="2" >
-            <widget class="QLabel" name="textLabel1_2_3_2_3" >
-             <property name="text" >
+          <layout class="QGridLayout" name="gridLayout_24">
+           <item row="0" column="0" colspan="2">
+            <widget class="QLabel" name="textLabel1_2_3_2_3">
+             <property name="text">
               <string>Timer [h:m:s]:</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="2" >
-            <widget class="QLabel" name="mTimeText" >
-             <property name="text" >
+           <item row="0" column="2">
+            <widget class="QLabel" name="mTimeText">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="3" >
-            <spacer name="horizontalSpacer" >
-             <property name="orientation" >
+           <item row="0" column="3">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" stdset="0">
               <size>
                <width>266</width>
                <height>22</height>
@@ -467,614 +452,598 @@ Listfile</string>
              </property>
             </spacer>
            </item>
-           <item row="0" column="9" >
-            <widget class="QLabel" name="textLabel1_10" >
-             <property name="text" >
+           <item row="0" column="9">
+            <widget class="QLabel" name="textLabel1_10">
+             <property name="text">
               <string>Rate</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="0" >
-            <widget class="QLabel" name="textLabel1_2_3_2_3_2" >
-             <property name="text" >
+           <item row="1" column="0">
+            <widget class="QLabel" name="textLabel1_2_3_2_3_2">
+             <property name="text">
               <string>Timer [s]:</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="1" colspan="2" >
-            <widget class="QPushButton" name="tPresetButton" >
-             <property name="toolTip" >
+           <item row="1" column="1" colspan="2">
+            <widget class="QPushButton" name="tPresetButton">
+             <property name="toolTip">
               <string>activate preset for timer</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Preset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="3" >
-            <widget class="QDoubleSpinBox" name="tPreset" >
-             <property name="enabled" >
+           <item row="1" column="3">
+            <widget class="QDoubleSpinBox" name="tPreset">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="toolTip" >
+             <property name="toolTip">
               <string>preset value for timer</string>
              </property>
-             <property name="accelerated" >
+             <property name="accelerated">
               <bool>true</bool>
              </property>
-             <property name="decimals" >
+             <property name="decimals">
               <number>3</number>
              </property>
-             <property name="maximum" >
+             <property name="maximum">
               <double>999999999.000000000000000</double>
              </property>
             </widget>
            </item>
-           <item row="1" column="6" >
-            <widget class="QLabel" name="tSecsText" >
-             <property name="text" >
+           <item row="1" column="6">
+            <widget class="QLabel" name="tSecsText">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="7" colspan="2" >
-            <widget class="QPushButton" name="tResetButton" >
-             <property name="toolTip" >
+           <item row="1" column="7" colspan="2">
+            <widget class="QPushButton" name="tResetButton">
+             <property name="toolTip">
               <string>reset timer</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>&amp;Reset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="0" >
-            <widget class="QLabel" name="textLabel1" >
-             <property name="text" >
+           <item row="2" column="0">
+            <widget class="QLabel" name="textLabel1">
+             <property name="text">
               <string>Events</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="1" colspan="2" >
-            <widget class="QPushButton" name="ePresetButton" >
-             <property name="toolTip" >
+           <item row="2" column="1" colspan="2">
+            <widget class="QPushButton" name="ePresetButton">
+             <property name="toolTip">
               <string>activate preset for event counter</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Preset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="3" >
-            <widget class="QSpinBox" name="evPreset" >
-             <property name="enabled" >
+           <item row="2" column="3">
+            <widget class="QSpinBox" name="evPreset">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="toolTip" >
+             <property name="toolTip">
               <string>preset value for event counter</string>
              </property>
-             <property name="maximum" >
+             <property name="maximum">
               <number>1000000000</number>
              </property>
             </widget>
            </item>
-           <item row="2" column="5" colspan="2" >
-            <widget class="QLabel" name="totalCounts" >
-             <property name="text" >
+           <item row="2" column="5" colspan="2">
+            <widget class="QLabel" name="totalCounts">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="7" colspan="2" >
-            <widget class="QPushButton" name="eResetButton" >
-             <property name="toolTip" >
+           <item row="2" column="7" colspan="2">
+            <widget class="QPushButton" name="eResetButton">
+             <property name="toolTip">
               <string>reset event counter</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Reset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="9" >
-            <widget class="QLabel" name="eventRate" >
-             <property name="text" >
+           <item row="2" column="9">
+            <widget class="QLabel" name="eventRate">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="0" >
-            <widget class="QLabel" name="textLabel1_11" >
-             <property name="text" >
+           <item row="3" column="0">
+            <widget class="QLabel" name="textLabel1_11">
+             <property name="text">
               <string>Monitor 1</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="1" colspan="2" >
-            <widget class="QPushButton" name="m1PresetButton" >
-             <property name="toolTip" >
+           <item row="3" column="1" colspan="2">
+            <widget class="QPushButton" name="m1PresetButton">
+             <property name="toolTip">
               <string>activate preset for monitor 1</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Preset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="3" >
-            <widget class="QSpinBox" name="m1Preset" >
-             <property name="enabled" >
+           <item row="3" column="3">
+            <widget class="QSpinBox" name="m1Preset">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="toolTip" >
+             <property name="toolTip">
               <string>preset value for monitor 1</string>
              </property>
-             <property name="maximum" >
+             <property name="maximum">
               <number>1000000000</number>
              </property>
             </widget>
            </item>
-           <item row="3" column="7" colspan="2" >
-            <widget class="QPushButton" name="m1ResetButton" >
-             <property name="toolTip" >
+           <item row="3" column="7" colspan="2">
+            <widget class="QPushButton" name="m1ResetButton">
+             <property name="toolTip">
               <string>reset monitor 1</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Reset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="9" >
-            <widget class="QLabel" name="monRate1" >
-             <property name="text" >
+           <item row="3" column="9">
+            <widget class="QLabel" name="monRate1">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="7" column="0" >
-            <widget class="QLabel" name="textLabel1_11_3" >
-             <property name="text" >
+           <item row="7" column="0">
+            <widget class="QLabel" name="textLabel1_11_3">
+             <property name="text">
               <string>Monitor 3</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="7" column="1" colspan="2" >
-            <widget class="QPushButton" name="m3PresetButton" >
-             <property name="toolTip" >
+           <item row="7" column="1" colspan="2">
+            <widget class="QPushButton" name="m3PresetButton">
+             <property name="toolTip">
               <string>activate preset for monitor 2</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Preset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="7" column="3" >
-            <widget class="QSpinBox" name="m3Preset" >
-             <property name="enabled" >
+           <item row="7" column="3">
+            <widget class="QSpinBox" name="m3Preset">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="toolTip" >
+             <property name="toolTip">
               <string>preset value for monitor 2</string>
              </property>
-             <property name="maximum" >
+             <property name="maximum">
               <number>1000000000</number>
              </property>
             </widget>
            </item>
-           <item row="7" column="7" colspan="2" >
-            <widget class="QPushButton" name="m3ResetButton" >
-             <property name="toolTip" >
+           <item row="7" column="7" colspan="2">
+            <widget class="QPushButton" name="m3ResetButton">
+             <property name="toolTip">
               <string>reset monitor 2</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Reset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="7" column="9" >
-            <widget class="QLabel" name="monRate3" >
-             <property name="text" >
+           <item row="7" column="9">
+            <widget class="QLabel" name="monRate3">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="8" column="0" >
-            <widget class="QLabel" name="textLabel1_11_4" >
-             <property name="text" >
+           <item row="8" column="0">
+            <widget class="QLabel" name="textLabel1_11_4">
+             <property name="text">
               <string>Monitor4</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="8" column="1" colspan="2" >
-            <widget class="QPushButton" name="m4PresetButton" >
-             <property name="toolTip" >
+           <item row="8" column="1" colspan="2">
+            <widget class="QPushButton" name="m4PresetButton">
+             <property name="toolTip">
               <string>activate preset for monitor 2</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Preset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="8" column="3" >
-            <widget class="QSpinBox" name="m4Preset" >
-             <property name="enabled" >
+           <item row="8" column="3">
+            <widget class="QSpinBox" name="m4Preset">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="toolTip" >
+             <property name="toolTip">
               <string>preset value for monitor 2</string>
              </property>
-             <property name="maximum" >
+             <property name="maximum">
               <number>1000000000</number>
              </property>
             </widget>
            </item>
-           <item row="8" column="7" colspan="2" >
-            <widget class="QPushButton" name="m4ResetButton" >
-             <property name="toolTip" >
+           <item row="8" column="7" colspan="2">
+            <widget class="QPushButton" name="m4ResetButton">
+             <property name="toolTip">
               <string>reset monitor 2</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Reset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="8" column="9" >
-            <widget class="QLabel" name="monRate4" >
-             <property name="text" >
+           <item row="8" column="9">
+            <widget class="QLabel" name="monRate4">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="5" column="0" >
-            <widget class="QLabel" name="textLabel1_11_2" >
-             <property name="text" >
+           <item row="5" column="0">
+            <widget class="QLabel" name="textLabel1_11_2">
+             <property name="text">
               <string>Monitor 2</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="5" column="1" colspan="2" >
-            <widget class="QPushButton" name="m2PresetButton" >
-             <property name="toolTip" >
+           <item row="5" column="1" colspan="2">
+            <widget class="QPushButton" name="m2PresetButton">
+             <property name="toolTip">
               <string>activate preset for monitor 2</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Preset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="5" column="3" >
-            <widget class="QSpinBox" name="m2Preset" >
-             <property name="enabled" >
+           <item row="5" column="3">
+            <widget class="QSpinBox" name="m2Preset">
+             <property name="enabled">
               <bool>false</bool>
              </property>
-             <property name="toolTip" >
+             <property name="toolTip">
               <string>preset value for monitor 2</string>
              </property>
-             <property name="maximum" >
+             <property name="maximum">
               <number>1000000000</number>
              </property>
             </widget>
            </item>
-           <item row="5" column="6" >
-            <widget class="QLabel" name="monitor2" >
-             <property name="text" >
+           <item row="5" column="6">
+            <widget class="QLabel" name="monitor2">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="5" column="7" colspan="2" >
-            <widget class="QPushButton" name="m2ResetButton" >
-             <property name="toolTip" >
+           <item row="5" column="7" colspan="2">
+            <widget class="QPushButton" name="m2ResetButton">
+             <property name="toolTip">
               <string>reset monitor 2</string>
              </property>
-             <property name="text" >
+             <property name="text">
               <string>Reset</string>
              </property>
-             <property name="checkable" >
+             <property name="checkable">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="5" column="9" >
-            <widget class="QLabel" name="monRate2" >
-             <property name="text" >
+           <item row="5" column="9">
+            <widget class="QLabel" name="monRate2">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="6" >
-            <widget class="QLabel" name="monitor1" >
-             <property name="text" >
+           <item row="3" column="6">
+            <widget class="QLabel" name="monitor1">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="7" column="6" >
-            <widget class="QLabel" name="monitor3" >
-             <property name="text" >
+           <item row="7" column="6">
+            <widget class="QLabel" name="monitor3">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="8" column="4" colspan="3" >
-            <widget class="QLabel" name="monitor4" >
-             <property name="text" >
+           <item row="8" column="4" colspan="3">
+            <widget class="QLabel" name="monitor4">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>800</width>
-            <height>480</height>
-           </rect>
-          </property>
-          <attribute name="title" >
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
            <string>statistics</string>
           </attribute>
-          <layout class="QGridLayout" >
-           <item row="1" column="0" >
-            <widget class="QLabel" name="textLabel1_2_3" >
-             <property name="text" >
+          <layout class="QGridLayout">
+           <item row="1" column="0">
+            <widget class="QLabel" name="textLabel1_2_3">
+             <property name="text">
               <string>cmd buffers reveived:</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="0" >
-            <widget class="QLabel" name="textLabel1_2" >
-             <property name="text" >
+           <item row="0" column="0">
+            <widget class="QLabel" name="textLabel1_2">
+             <property name="text">
               <string>cmd buffers transmitted:</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="1" >
-            <widget class="QLabel" name="cmdTx" >
-             <property name="text" >
+           <item row="0" column="1">
+            <widget class="QLabel" name="cmdTx">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="1" >
-            <widget class="QLabel" name="cmdRx" >
-             <property name="text" >
+           <item row="1" column="1">
+            <widget class="QLabel" name="cmdRx">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="0" >
-            <widget class="QLabel" name="textLabel1_2_2" >
-             <property name="text" >
+           <item row="2" column="0">
+            <widget class="QLabel" name="textLabel1_2_2">
+             <property name="text">
               <string>data buffers received:</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="1" >
-            <widget class="QLabel" name="dataRx" >
-             <property name="text" >
+           <item row="2" column="1">
+            <widget class="QLabel" name="dataRx">
+             <property name="text">
               <string>0</string>
              </property>
-             <property name="alignment" >
+             <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="TabPage" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>800</width>
-            <height>480</height>
-           </rect>
-          </property>
-          <attribute name="title" >
+         <widget class="QWidget" name="TabPage">
+          <attribute name="title">
            <string>Caress</string>
           </attribute>
-          <layout class="QGridLayout" >
-           <item row="0" column="0" >
-            <widget class="QLabel" name="textLabel1_12" >
-             <property name="text" >
+          <layout class="QGridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="textLabel1_12">
+             <property name="text">
               <string>height:</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="0" >
-            <widget class="QLabel" name="textLabel1_12_2" >
-             <property name="text" >
+           <item row="1" column="0">
+            <widget class="QLabel" name="textLabel1_12_2">
+             <property name="text">
               <string>width:</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="0" >
-            <widget class="QLabel" name="textLabel1_12_2_2" >
-             <property name="text" >
+           <item row="2" column="0">
+            <widget class="QLabel" name="textLabel1_12_2_2">
+             <property name="text">
               <string>run#</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="0" column="1" >
-            <widget class="QLabel" name="caressHeight" >
-             <property name="text" >
-              <string>&lt;p align="right">0&lt;/p></string>
+           <item row="0" column="1">
+            <widget class="QLabel" name="caressHeight">
+             <property name="text">
+              <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="1" column="1" >
-            <widget class="QLabel" name="caressWidth" >
-             <property name="text" >
-              <string>&lt;p align="right">0&lt;/p></string>
+           <item row="1" column="1">
+            <widget class="QLabel" name="caressWidth">
+             <property name="text">
+              <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="1" >
-            <widget class="QLabel" name="caressRun" >
-             <property name="text" >
-              <string>&lt;p align="right">0&lt;/p></string>
+           <item row="2" column="1">
+            <widget class="QLabel" name="caressRun">
+             <property name="text">
+              <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>false</bool>
              </property>
             </widget>
@@ -1087,42 +1056,34 @@ Listfile</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="tab" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>733</width>
-      <height>288</height>
-     </rect>
-    </property>
-    <attribute name="title" >
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
      <string>MCPD-&amp;8</string>
     </attribute>
-    <layout class="QGridLayout" name="gridLayout_2" >
-     <item row="0" column="0" >
-      <layout class="QVBoxLayout" name="verticalLayout" >
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" >
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLabel" name="textLabel1_5_2" >
-           <property name="text" >
+          <widget class="QLabel" name="textLabel1_5_2">
+           <property name="text">
             <string>ID</string>
            </property>
-           <property name="wordWrap" >
+           <property name="wordWrap">
             <bool>false</bool>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="mcpdId" >
-           <property name="enabled" >
+          <widget class="QSpinBox" name="mcpdId">
+           <property name="enabled">
             <bool>true</bool>
            </property>
-           <property name="toolTip" >
+           <property name="toolTip">
             <string>MCPD-ID to address </string>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <number>0</number>
            </property>
           </widget>
@@ -1130,52 +1091,52 @@ Listfile</string>
         </layout>
        </item>
        <item>
-        <widget class="Q3GroupBox" name="groupBox30" >
-         <property name="toolTip" >
+        <widget class="Q3GroupBox" name="groupBox30">
+         <property name="toolTip">
           <string/>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Master / Termination</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QCheckBox" name="master" >
-            <property name="text" >
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="master">
+            <property name="text">
              <string>Master</string>
             </property>
-            <property name="shortcut" >
+            <property name="shortcut">
              <string/>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QPushButton" name="resetTimer" >
-            <property name="toolTip" >
+          <item row="2" column="0">
+           <widget class="QPushButton" name="resetTimer">
+            <property name="toolTip">
              <string>reset master clock</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>&amp;Reset Timer</string>
             </property>
-            <property name="shortcut" >
+            <property name="shortcut">
              <string>Alt+R</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QCheckBox" name="terminate" >
-            <property name="enabled" >
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="terminate">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>&amp;terminate</string>
             </property>
-            <property name="shortcut" >
+            <property name="shortcut">
              <string>Alt+T</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
@@ -1185,121 +1146,113 @@ Listfile</string>
        </item>
       </layout>
      </item>
-     <item row="0" column="1" >
-      <widget class="QTabWidget" name="tabWidget5" >
-       <property name="currentIndex" >
+     <item row="0" column="1">
+      <widget class="QTabWidget" name="tabWidget5">
+       <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="tab" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>595</width>
-          <height>247</height>
-         </rect>
-        </property>
-        <attribute name="title" >
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
          <string>Settings</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="1" column="1" >
-          <widget class="Q3GroupBox" name="groupBox9_2_2" >
-           <property name="toolTip" >
+        <layout class="QGridLayout">
+         <item row="1" column="1">
+          <widget class="Q3GroupBox" name="groupBox9_2_2">
+           <property name="toolTip">
             <string/>
            </property>
-           <property name="title" >
+           <property name="title">
             <string>Parameter Source</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="1" >
-             <widget class="QLabel" name="textLabel1_7_4_2_2" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="1">
+             <widget class="QLabel" name="textLabel1_7_4_2_2">
+              <property name="text">
                <string>Source</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="textLabel1_7_4_2" >
-              <property name="text" >
+            <item row="0" column="0">
+             <widget class="QLabel" name="textLabel1_7_4_2">
+              <property name="text">
                <string>Param.</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" >
-             <widget class="QComboBox" name="paramSource" >
-              <property name="toolTip" >
+            <item row="1" column="1">
+             <widget class="QComboBox" name="paramSource">
+              <property name="toolTip">
                <string>select parameter source</string>
               </property>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>mon/chop1</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>mon/chop2</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>mon/chop3</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>mon/chop4</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>digInput1</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>digInput2</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>ADC1,2, DigIn1,2</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>event counter</string>
                </property>
               </item>
               <item>
-               <property name="text" >
+               <property name="text">
                 <string>master clock</string>
                </property>
               </item>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <widget class="QSpinBox" name="param" >
-              <property name="toolTip" >
+            <item row="1" column="0">
+             <widget class="QSpinBox" name="param">
+              <property name="toolTip">
                <string>select parameter number</string>
               </property>
-              <property name="maximum" >
+              <property name="maximum">
                <number>3</number>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
-             <widget class="QPushButton" name="sendParam" >
-              <property name="toolTip" >
+            <item row="2" column="1">
+             <widget class="QPushButton" name="sendParam">
+              <property name="toolTip">
                <string>send parameter settings for selected parameter</string>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Send</string>
               </property>
              </widget>
@@ -1307,22 +1260,22 @@ Listfile</string>
            </layout>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="Q3ButtonGroup" name="mcpdModeGroup" >
-           <property name="title" >
+         <item row="0" column="1">
+          <widget class="Q3ButtonGroup" name="mcpdModeGroup">
+           <property name="title">
             <string>MCPD mode</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QRadioButton" name="radioButton23" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="radioButton23">
+              <property name="text">
                <string>position</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <widget class="QRadioButton" name="radioButton24" >
-              <property name="text" >
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="radioButton24">
+              <property name="text">
                <string>energy</string>
               </property>
              </widget>
@@ -1330,58 +1283,58 @@ Listfile</string>
            </layout>
           </widget>
          </item>
-         <item row="1" column="0" >
-          <widget class="Q3GroupBox" name="groupBox9_2" >
-           <property name="toolTip" >
+         <item row="1" column="0">
+          <widget class="Q3GroupBox" name="groupBox9_2">
+           <property name="toolTip">
             <string/>
            </property>
-           <property name="title" >
+           <property name="title">
             <string>Aux Timer</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLabel" name="textLabel1_7_4" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="textLabel1_7_4">
+              <property name="text">
                <string>Timer</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" >
-             <widget class="QLabel" name="textLabel1_7_3_2" >
-              <property name="text" >
+            <item row="0" column="1">
+             <widget class="QLabel" name="textLabel1_7_3_2">
+              <property name="text">
                <string>Compare</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
-             <widget class="QSpinBox" name="timer" >
-              <property name="toolTip" >
+            <item row="1" column="0">
+             <widget class="QSpinBox" name="timer">
+              <property name="toolTip">
                <string>select timer number</string>
               </property>
-              <property name="maximum" >
+              <property name="maximum">
                <number>3</number>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" >
-             <widget class="QLineEdit" name="compareAux" >
-              <property name="toolTip" >
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="compareAux">
+              <property name="toolTip">
                <string>define compare value</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
-             <widget class="QPushButton" name="sendAux" >
-              <property name="toolTip" >
+            <item row="2" column="1">
+             <widget class="QPushButton" name="sendAux">
+              <property name="toolTip">
                <string>send timer setting</string>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Send</string>
               </property>
              </widget>
@@ -1389,157 +1342,157 @@ Listfile</string>
            </layout>
           </widget>
          </item>
-         <item row="0" column="0" >
-          <widget class="Q3GroupBox" name="groupBox9" >
-           <property name="toolTip" >
+         <item row="0" column="0">
+          <widget class="Q3GroupBox" name="groupBox9">
+           <property name="toolTip">
             <string/>
            </property>
-           <property name="title" >
+           <property name="title">
             <string>Counter/ ADC-Cell</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="1" >
-             <widget class="QLabel" name="textLabel1_7_3" >
-              <property name="text" >
+           <layout class="QGridLayout">
+            <item row="0" column="1">
+             <widget class="QLabel" name="textLabel1_7_3">
+              <property name="text">
                <string>Trigger</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="0" column="2" >
-             <widget class="QLabel" name="textLabel1_7_2" >
-              <property name="text" >
+            <item row="0" column="2">
+             <widget class="QLabel" name="textLabel1_7_2">
+              <property name="text">
                <string>Compare</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" colspan="2" >
-             <widget class="QPushButton" name="sendCellButton" >
-              <property name="toolTip" >
+            <item row="2" column="1" colspan="2">
+             <widget class="QPushButton" name="sendCellButton">
+              <property name="toolTip">
                <string>send cell data</string>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Send</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="textLabel1_7" >
-              <property name="text" >
+            <item row="0" column="0">
+             <widget class="QLabel" name="textLabel1_7">
+              <property name="text">
                <string>Cell</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" colspan="3" >
-             <layout class="QHBoxLayout" >
+            <item row="1" column="0" colspan="3">
+             <layout class="QHBoxLayout">
               <item>
-               <widget class="QComboBox" name="cellSource" >
-                <property name="toolTip" >
+               <widget class="QComboBox" name="cellSource">
+                <property name="toolTip">
                  <string>Select counter / ADC cell</string>
                 </property>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>mon/chop1</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>mon/chop2</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>mon/chop3</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>mon/chop4</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>digInput1</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>digInput2</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>ADC1</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>ADC2</string>
                  </property>
                 </item>
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="cellTrigger" >
-                <property name="toolTip" >
+               <widget class="QComboBox" name="cellTrigger">
+                <property name="toolTip">
                  <string>Select trigger for cell</string>
                 </property>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>no Trig</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>auxTimer1</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>auxTimer2</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>auxTimer3</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>auxTimer4</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>digInput1</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>digInput2</string>
                  </property>
                 </item>
                 <item>
-                 <property name="text" >
+                 <property name="text">
                   <string>compareReg</string>
                  </property>
                 </item>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="cellCompare" >
-                <property name="toolTip" >
+               <widget class="QSpinBox" name="cellCompare">
+                <property name="toolTip">
                  <string>Define compare source for cell</string>
                 </property>
-                <property name="maximum" >
+                <property name="maximum">
                  <number>22</number>
                 </property>
                </widget>
@@ -1551,20 +1504,12 @@ Listfile</string>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>595</width>
-          <height>247</height>
-         </rect>
-        </property>
-        <attribute name="title" >
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
          <string>Communication / Networ&amp;k</string>
         </attribute>
-        <widget class="Q3GroupBox" name="groupBox6" >
-         <property name="geometry" >
+        <widget class="Q3GroupBox" name="groupBox6">
+         <property name="geometry">
           <rect>
            <x>110</x>
            <y>20</y>
@@ -1572,155 +1517,155 @@ Listfile</string>
            <height>173</height>
           </rect>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>IP / UDP settings</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3" >
-          <item row="2" column="0" >
-           <widget class="QLabel" name="textLabel1_3_2" >
-            <property name="text" >
-             <string>&lt;b>Data pc&lt;/b></string>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="2" column="0">
+           <widget class="QLabel" name="textLabel1_3_2">
+            <property name="text">
+             <string>&lt;b&gt;Data pc&lt;/b&gt;</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="textLabel1_3_2_2" >
-            <property name="text" >
-             <string>&lt;b>MCPD-8&lt;/b></string>
+          <item row="1" column="0">
+           <widget class="QLabel" name="textLabel1_3_2_2">
+            <property name="text">
+             <string>&lt;b&gt;MCPD-8&lt;/b&gt;</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" >
-           <widget class="QLabel" name="textLabel1_3_2_2_2" >
-            <property name="text" >
-             <string>&lt;b>Cmd pc&lt;/b></string>
+          <item row="3" column="0">
+           <widget class="QLabel" name="textLabel1_3_2_2_2">
+            <property name="text">
+             <string>&lt;b&gt;Cmd pc&lt;/b&gt;</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="2" >
-           <widget class="QLabel" name="textLabel1_3_3_2_2" >
-            <property name="text" >
+          <item row="0" column="2">
+           <widget class="QLabel" name="textLabel1_3_3_2_2">
+            <property name="text">
              <string>ip address</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="2" column="3" >
-           <widget class="QSpinBox" name="dataUdpPort" >
-            <property name="maximum" >
+          <item row="2" column="3">
+           <widget class="QSpinBox" name="dataUdpPort">
+            <property name="maximum">
              <number>65535</number>
             </property>
-            <property name="value" >
+            <property name="value">
              <number>0</number>
             </property>
            </widget>
           </item>
-          <item row="3" column="3" >
-           <widget class="QSpinBox" name="cmdUdpPort" >
-            <property name="maximum" >
+          <item row="3" column="3">
+           <widget class="QSpinBox" name="cmdUdpPort">
+            <property name="maximum">
              <number>65535</number>
             </property>
-            <property name="value" >
+            <property name="value">
              <number>0</number>
             </property>
            </widget>
           </item>
-          <item row="0" column="3" >
-           <widget class="QLabel" name="textLabel1_3_3_2" >
-            <property name="text" >
+          <item row="0" column="3">
+           <widget class="QLabel" name="textLabel1_3_3_2">
+            <property name="text">
              <string>udp port</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="QCheckBox" name="dataThisPc" >
-            <property name="text" >
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="dataThisPc">
+            <property name="text">
              <string>this pc</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="3" column="1" >
-           <widget class="QCheckBox" name="cmdThisPc" >
-            <property name="text" >
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="cmdThisPc">
+            <property name="text">
              <string>this pc</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QCheckBox" name="modifyIp" >
-            <property name="text" >
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="modifyIp">
+            <property name="text">
              <string>modify</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2" >
-           <widget class="QPushButton" name="setIP" >
-            <property name="text" >
+          <item row="4" column="0" colspan="2">
+           <widget class="QPushButton" name="setIP">
+            <property name="text">
              <string>set &amp;comm
 parameters</string>
             </property>
-            <property name="shortcut" >
+            <property name="shortcut">
              <string>Alt+C</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="2" >
-           <widget class="QLineEdit" name="mcpdIPAddress" >
-            <property name="inputMask" >
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="mcpdIPAddress">
+            <property name="inputMask">
              <string>000.000.000.000; </string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>192.168.168.121</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2" >
-           <widget class="QLineEdit" name="dataIPAddress" >
-            <property name="inputMask" >
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="dataIPAddress">
+            <property name="inputMask">
              <string>000.000.000.000; </string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>192.168.168.5</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2" >
-           <widget class="QLineEdit" name="cmdIPAddress" >
-            <property name="inputMask" >
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="cmdIPAddress">
+            <property name="inputMask">
              <string>000.000.000.000; </string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>192.168.168.5</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
-        <widget class="Q3GroupBox" name="groupBox29" >
-         <property name="geometry" >
+        <widget class="Q3GroupBox" name="groupBox29">
+         <property name="geometry">
           <rect>
            <x>8</x>
            <y>18</y>
@@ -1728,20 +1673,20 @@ parameters</string>
            <height>84</height>
           </rect>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>MCPD-8 ID</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QSpinBox" name="deviceId" >
-            <property name="maximum" >
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QSpinBox" name="deviceId">
+            <property name="maximum">
              <number>255</number>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QPushButton" name="setID" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QPushButton" name="setID">
+            <property name="text">
              <string>set ID</string>
             </property>
            </widget>
@@ -1753,20 +1698,12 @@ parameters</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="TabPage" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>800</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <attribute name="title" >
+   <widget class="QWidget" name="TabPage">
+    <attribute name="title">
      <string>MPSD-8</string>
     </attribute>
-    <widget class="QTabWidget" name="tabWidget4" >
-     <property name="geometry" >
+    <widget class="QTabWidget" name="tabWidget4">
+     <property name="geometry">
       <rect>
        <x>9</x>
        <y>9</y>
@@ -1774,225 +1711,217 @@ parameters</string>
        <height>271</height>
       </rect>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>800</width>
-        <height>480</height>
-       </rect>
-      </property>
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>Status</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_13" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="textLabel1_4_2_4" >
-         <property name="text" >
+      <layout class="QGridLayout" name="gridLayout_13">
+       <item row="0" column="0">
+        <widget class="QLabel" name="textLabel1_4_2_4">
+         <property name="text">
           <string>MCPD-8 ID</string>
          </property>
-         <property name="wordWrap" >
+         <property name="wordWrap">
           <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QSpinBox" name="devid_2" >
-         <property name="enabled" >
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="devid_2">
+         <property name="enabled">
           <bool>true</bool>
          </property>
-         <property name="maximum" >
+         <property name="maximum">
           <number>0</number>
          </property>
         </widget>
        </item>
-       <item row="0" column="2" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
+       <item row="0" column="2">
+        <widget class="QLabel" name="label">
+         <property name="text">
           <string>Firmware-Version</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="3" >
-        <widget class="QLabel" name="firmwareVersion" >
-         <property name="text" >
+       <item row="0" column="3">
+        <widget class="QLabel" name="firmwareVersion">
+         <property name="text">
           <string/>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="4" >
-        <widget class="Q3GroupBox" name="groupBox17_2" >
-         <property name="title" >
+       <item row="1" column="0" colspan="4">
+        <widget class="Q3GroupBox" name="groupBox17_2">
+         <property name="title">
           <string>MPSD-8 status</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_15" >
-          <item row="0" column="0" >
-           <widget class="QLabel" name="textLabel1_4" >
-            <property name="text" >
+         <layout class="QGridLayout" name="gridLayout_15">
+          <item row="0" column="0">
+           <widget class="QLabel" name="textLabel1_4">
+            <property name="text">
              <string>0:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="textLabel1_4_10" >
-            <property name="text" >
+          <item row="0" column="1">
+           <widget class="QLabel" name="textLabel1_4_10">
+            <property name="text">
              <string>1:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="2" >
-           <widget class="QLabel" name="textLabel1_4_9" >
-            <property name="text" >
+          <item row="0" column="2">
+           <widget class="QLabel" name="textLabel1_4_9">
+            <property name="text">
              <string>2:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="3" >
-           <widget class="QLabel" name="textLabel1_4_8" >
-            <property name="text" >
+          <item row="0" column="3">
+           <widget class="QLabel" name="textLabel1_4_8">
+            <property name="text">
              <string>3:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="4" >
-           <widget class="QLabel" name="textLabel1_4_7" >
-            <property name="text" >
+          <item row="0" column="4">
+           <widget class="QLabel" name="textLabel1_4_7">
+            <property name="text">
              <string>4:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="5" >
-           <widget class="QLabel" name="textLabel1_4_6" >
-            <property name="text" >
+          <item row="0" column="5">
+           <widget class="QLabel" name="textLabel1_4_6">
+            <property name="text">
              <string>5:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="6" >
-           <widget class="QLabel" name="textLabel1_4_5" >
-            <property name="text" >
+          <item row="0" column="6">
+           <widget class="QLabel" name="textLabel1_4_5">
+            <property name="text">
              <string>6:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="7" >
-           <widget class="QLabel" name="textLabel1_4_4" >
-            <property name="text" >
+          <item row="0" column="7">
+           <widget class="QLabel" name="textLabel1_4_4">
+            <property name="text">
              <string>7:</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="8" >
-           <widget class="QPushButton" name="scanPeri" >
-            <property name="text" >
+          <item row="0" column="8">
+           <widget class="QPushButton" name="scanPeri">
+            <property name="text">
              <string>&amp;rescan</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="status0" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QLabel" name="status0">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QLabel" name="status1" >
-            <property name="text" >
+          <item row="1" column="1">
+           <widget class="QLabel" name="status1">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="2" >
-           <widget class="QLabel" name="status2" >
-            <property name="text" >
+          <item row="1" column="2">
+           <widget class="QLabel" name="status2">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="3" >
-           <widget class="QLabel" name="status3" >
-            <property name="text" >
+          <item row="1" column="3">
+           <widget class="QLabel" name="status3">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="4" >
-           <widget class="QLabel" name="status4" >
-            <property name="text" >
+          <item row="1" column="4">
+           <widget class="QLabel" name="status4">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="5" >
-           <widget class="QLabel" name="status5" >
-            <property name="text" >
+          <item row="1" column="5">
+           <widget class="QLabel" name="status5">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="6" >
-           <widget class="QLabel" name="status6" >
-            <property name="text" >
+          <item row="1" column="6">
+           <widget class="QLabel" name="status6">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="7" >
-           <widget class="QLabel" name="status7" >
-            <property name="text" >
+          <item row="1" column="7">
+           <widget class="QLabel" name="status7">
+            <property name="text">
              <string>active</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
@@ -2000,16 +1929,16 @@ parameters</string>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="4" >
-        <widget class="Q3GroupBox" name="groupBox39" >
-         <property name="enabled" >
+       <item row="2" column="0" colspan="4">
+        <widget class="Q3GroupBox" name="groupBox39">
+         <property name="enabled">
           <bool>false</bool>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Register op</string>
          </property>
-         <widget class="QPushButton" name="readRegisterButton" >
-          <property name="geometry" >
+         <widget class="QPushButton" name="readRegisterButton">
+          <property name="geometry">
            <rect>
             <x>110</x>
             <y>20</y>
@@ -2017,12 +1946,12 @@ parameters</string>
             <height>21</height>
            </rect>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Read</string>
           </property>
          </widget>
-         <widget class="QSpinBox" name="registerSelect" >
-          <property name="geometry" >
+         <widget class="QSpinBox" name="registerSelect">
+          <property name="geometry">
            <rect>
             <x>200</x>
             <y>20</y>
@@ -2030,12 +1959,12 @@ parameters</string>
             <height>21</height>
            </rect>
           </property>
-          <property name="maximum" >
+          <property name="maximum">
            <number>2</number>
           </property>
          </widget>
-         <widget class="QLineEdit" name="registerValue" >
-          <property name="geometry" >
+         <widget class="QLineEdit" name="registerValue">
+          <property name="geometry">
            <rect>
             <x>250</x>
             <y>20</y>
@@ -2044,8 +1973,8 @@ parameters</string>
            </rect>
           </property>
          </widget>
-         <widget class="QPushButton" name="writeRegisterButton" >
-          <property name="geometry" >
+         <widget class="QPushButton" name="writeRegisterButton">
+          <property name="geometry">
            <rect>
             <x>20</x>
             <y>20</y>
@@ -2053,7 +1982,7 @@ parameters</string>
             <height>21</height>
            </rect>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Write</string>
           </property>
          </widget>
@@ -2061,86 +1990,78 @@ parameters</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>800</width>
-        <height>480</height>
-       </rect>
-      </property>
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>Settings</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_14" >
-       <item row="0" column="0" >
-        <layout class="QGridLayout" name="gridLayout_12" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="textLabel1_4_2" >
-           <property name="text" >
+      <layout class="QGridLayout" name="gridLayout_14">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_12">
+         <item row="0" column="0">
+          <widget class="QLabel" name="textLabel1_4_2">
+           <property name="text">
             <string>MCPD-8 ID</string>
            </property>
-           <property name="wordWrap" >
+           <property name="wordWrap">
             <bool>false</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="QSpinBox" name="devid" >
-           <property name="enabled" >
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="devid">
+           <property name="enabled">
             <bool>true</bool>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <number>0</number>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="textLabel1_4_2_2" >
-           <property name="text" >
+         <item row="1" column="0">
+          <widget class="QLabel" name="textLabel1_4_2_2">
+           <property name="text">
             <string>MPSD-8
 (Bus-#)</string>
            </property>
-           <property name="wordWrap" >
+           <property name="wordWrap">
             <bool>false</bool>
            </property>
           </widget>
          </item>
-         <item row="1" column="1" >
-          <widget class="QSpinBox" name="module" >
-           <property name="maximum" >
+         <item row="1" column="1">
+          <widget class="ModuleSpinBox" name="module">
+           <property name="maximum">
             <number>7</number>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="0" column="1" >
-        <widget class="Q3ButtonGroup" name="modeGroup" >
-         <property name="title" >
+       <item row="0" column="1">
+        <widget class="Q3ButtonGroup" name="modeGroup">
+         <property name="title">
           <string>Mode</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_18" >
-          <item row="0" column="0" >
-           <widget class="QRadioButton" name="pos" >
-            <property name="text" >
+         <layout class="QGridLayout" name="gridLayout_18">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="pos">
+            <property name="text">
              <string>Position</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
-            <property name="buttonGroupId" stdset="0" >
+            <property name="buttonGroupId" stdset="0">
              <number>0</number>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QRadioButton" name="amp" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="amp">
+            <property name="text">
              <string>Amplitude</string>
             </property>
-            <property name="buttonGroupId" stdset="0" >
+            <property name="buttonGroupId" stdset="0">
              <number>1</number>
             </property>
            </widget>
@@ -2148,45 +2069,45 @@ parameters</string>
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" colspan="3" >
-        <widget class="Q3GroupBox" name="groupBox35" >
-         <property name="title" >
+       <item row="1" column="0" colspan="3">
+        <widget class="Q3GroupBox" name="groupBox35">
+         <property name="title">
           <string>Pulser</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_19" >
-          <item row="0" column="0" >
-           <layout class="QVBoxLayout" name="verticalLayout_2" >
+         <layout class="QGridLayout" name="gridLayout_19">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2" >
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
-               <widget class="QPushButton" name="pulserButton" >
-                <property name="toolTip" >
+               <widget class="QPushButton" name="pulserButton">
+                <property name="toolTip">
                  <string>toggle pulser on/off</string>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>Pulser</string>
                 </property>
-                <property name="checkable" >
+                <property name="checkable">
                  <bool>true</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="textLabel1_4_2_3_4" >
-                <property name="text" >
+               <widget class="QLabel" name="textLabel1_4_2_3_4">
+                <property name="text">
                  <string>Channel</string>
                 </property>
-                <property name="wordWrap" >
+                <property name="wordWrap">
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="pulsChan" >
-                <property name="toolTip" >
+               <widget class="QSpinBox" name="pulsChan">
+                <property name="toolTip">
                  <string>pulser channel</string>
                 </property>
-                <property name="maximum" >
+                <property name="maximum">
                  <number>7</number>
                 </property>
                </widget>
@@ -2195,56 +2116,56 @@ parameters</string>
             </item>
            </layout>
           </item>
-          <item row="0" column="1" >
-           <widget class="Q3ButtonGroup" name="buttonGroup5" >
-            <property name="title" >
+          <item row="0" column="1">
+           <widget class="Q3ButtonGroup" name="buttonGroup5">
+            <property name="title">
              <string>Amplitude (0...255)</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_17" >
-             <item row="0" column="0" >
-              <layout class="QHBoxLayout" name="horizontalLayout_3" >
+            <layout class="QGridLayout" name="gridLayout_17">
+             <item row="0" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
-                <widget class="QRadioButton" name="pulsampRadio1" >
-                 <property name="text" >
+                <widget class="QRadioButton" name="pulsampRadio1">
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="checked" >
+                 <property name="checked">
                   <bool>true</bool>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="pulsAmp1" >
-                 <property name="maximum" >
+                <widget class="QSpinBox" name="pulsAmp1">
+                 <property name="maximum">
                   <number>255</number>
                  </property>
-                 <property name="value" >
+                 <property name="value">
                   <number>50</number>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QRadioButton" name="pulsampRadio2" >
-                 <property name="text" >
+                <widget class="QRadioButton" name="pulsampRadio2">
+                 <property name="text">
                   <string/>
                  </property>
-                 <property name="checked" >
+                 <property name="checked">
                   <bool>false</bool>
                  </property>
-                 <property name="buttonGroupId" stdset="0" >
+                 <property name="buttonGroupId" stdset="0">
                   <number>1</number>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="pulsAmp2" >
-                 <property name="enabled" >
+                <widget class="QSpinBox" name="pulsAmp2">
+                 <property name="enabled">
                   <bool>false</bool>
                  </property>
-                 <property name="maximum" >
+                 <property name="maximum">
                   <number>255</number>
                  </property>
-                 <property name="value" >
+                 <property name="value">
                   <number>90</number>
                  </property>
                 </widget>
@@ -2254,38 +2175,38 @@ parameters</string>
             </layout>
            </widget>
           </item>
-          <item row="0" column="2" >
-           <widget class="Q3ButtonGroup" name="buttonGroup4" >
-            <property name="title" >
+          <item row="0" column="2">
+           <widget class="Q3ButtonGroup" name="buttonGroup4">
+            <property name="title">
              <string>Position</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_11" >
-             <item row="0" column="0" >
-              <widget class="QRadioButton" name="pulsLeft" >
-               <property name="text" >
+            <layout class="QGridLayout" name="gridLayout_11">
+             <item row="0" column="0">
+              <widget class="QRadioButton" name="pulsLeft">
+               <property name="text">
                 <string>left</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="1" >
-              <widget class="QRadioButton" name="pulsMid" >
-               <property name="text" >
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="pulsMid">
+               <property name="text">
                 <string>mid</string>
                </property>
-               <property name="checked" >
+               <property name="checked">
                 <bool>true</bool>
                </property>
-               <property name="buttonGroupId" stdset="0" >
+               <property name="buttonGroupId" stdset="0">
                 <number>2</number>
                </property>
               </widget>
              </item>
-             <item row="0" column="2" >
-              <widget class="QRadioButton" name="pulsRight" >
-               <property name="text" >
+             <item row="0" column="2">
+              <widget class="QRadioButton" name="pulsRight">
+               <property name="text">
                 <string>&amp;right</string>
                </property>
-               <property name="buttonGroupId" stdset="0" >
+               <property name="buttonGroupId" stdset="0">
                 <number>1</number>
                </property>
               </widget>
@@ -2296,113 +2217,113 @@ parameters</string>
          </layout>
         </widget>
        </item>
-       <item row="0" column="2" >
-        <widget class="Q3GroupBox" name="groupBox13" >
-         <property name="title" >
+       <item row="0" column="2">
+        <widget class="Q3GroupBox" name="groupBox13">
+         <property name="title">
           <string>Amplifiers, Discriminator</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_10" >
-          <item row="0" column="0" >
-           <widget class="QLabel" name="textLabel1_4_2_3_2" >
-            <property name="text" >
+         <layout class="QGridLayout" name="gridLayout_10">
+          <item row="0" column="0">
+           <widget class="QLabel" name="textLabel1_4_2_3_2">
+            <property name="text">
              <string>Gain</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="QCheckBox" name="comgain" >
-            <property name="text" >
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="comgain">
+            <property name="text">
              <string>common</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="2" >
-           <layout class="QHBoxLayout" name="horizontalLayout_4" >
+          <item row="0" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLabel" name="channelLabel" >
-              <property name="text" >
+             <widget class="QLabel" name="channelLabel">
+              <property name="text">
                <string>Channel</string>
               </property>
-              <property name="wordWrap" >
+              <property name="wordWrap">
                <bool>false</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="channel" >
-              <property name="enabled" >
+             <widget class="QSpinBox" name="channel">
+              <property name="enabled">
                <bool>true</bool>
               </property>
-              <property name="maximum" >
+              <property name="maximum">
                <number>7</number>
               </property>
              </widget>
             </item>
            </layout>
           </item>
-          <item row="0" column="3" >
-           <widget class="QLabel" name="textLabel1_4_2_3_3_3" >
-            <property name="text" >
+          <item row="0" column="3">
+           <widget class="QLabel" name="textLabel1_4_2_3_3_3">
+            <property name="text">
              <string>Gain (0...255)</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="0" column="4" >
-           <widget class="QLineEdit" name="gain" >
-            <property name="text" >
+          <item row="0" column="4">
+           <widget class="QLineEdit" name="gain">
+            <property name="text">
              <string>1</string>
             </property>
-            <property name="cursorPosition" >
+            <property name="cursorPosition">
              <number>0</number>
             </property>
            </widget>
           </item>
-          <item row="0" column="5" >
-           <widget class="QPushButton" name="setGain" >
-            <property name="text" >
+          <item row="0" column="5">
+           <widget class="QPushButton" name="setGain">
+            <property name="text">
              <string>set gain</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2" >
-           <widget class="QLabel" name="textLabel1_4_2_3_3" >
-            <property name="text" >
+          <item row="1" column="0" colspan="2">
+           <widget class="QLabel" name="textLabel1_4_2_3_3">
+            <property name="text">
              <string>Threshold</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="3" >
-           <widget class="QLabel" name="textLabel1_4_2_3_3_2" >
-            <property name="text" >
+          <item row="1" column="3">
+           <widget class="QLabel" name="textLabel1_4_2_3_3_2">
+            <property name="text">
              <string>Threshold</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="4" >
-           <widget class="QLineEdit" name="threshold" >
-            <property name="text" >
+          <item row="1" column="4">
+           <widget class="QLineEdit" name="threshold">
+            <property name="text">
              <string>20</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="5" >
-           <widget class="QPushButton" name="setThreshold" >
-            <property name="text" >
+          <item row="1" column="5">
+           <widget class="QPushButton" name="setThreshold">
+            <property name="text">
              <string>set &amp;threshold</string>
             </property>
            </widget>
@@ -2414,60 +2335,52 @@ parameters</string>
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="TabPage" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>800</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <attribute name="title" >
+   <widget class="QWidget" name="TabPage">
+    <attribute name="title">
      <string>General</string>
     </attribute>
-    <layout class="QGridLayout" name="gridLayout_9" >
-     <item row="0" column="0" >
-      <widget class="Q3GroupBox" name="groupBox15" >
-       <property name="title" >
+    <layout class="QGridLayout" name="gridLayout_9">
+     <item row="0" column="0">
+      <widget class="Q3GroupBox" name="groupBox15">
+       <property name="title">
         <string>Run ID</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_7" >
-        <item row="0" column="0" >
-         <widget class="QSpinBox" name="runId" >
-          <property name="enabled" >
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="0" column="0">
+         <widget class="QSpinBox" name="runId">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>RUN ID will be transmitted in every data buffer header</string>
           </property>
-          <property name="maximum" >
+          <property name="maximum">
            <number>65536</number>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <widget class="QCheckBox" name="runIdAuto" >
-          <property name="toolTip" >
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="runIdAuto">
+          <property name="toolTip">
            <string>increment run ID automatically at every start cmd</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Auto Incr.</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string/>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="2" >
-         <widget class="QPushButton" name="runIdButton" >
-          <property name="enabled" >
+        <item row="0" column="2">
+         <widget class="QPushButton" name="runIdButton">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>set Run ID</string>
           </property>
          </widget>
@@ -2475,29 +2388,29 @@ parameters</string>
        </layout>
       </widget>
      </item>
-     <item row="1" column="0" >
-      <widget class="Q3GroupBox" name="groupBox20" >
-       <property name="title" >
+     <item row="1" column="0">
+      <widget class="Q3GroupBox" name="groupBox20">
+       <property name="title">
         <string>Timing Delta Histogram</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_8" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="textLabel1_8" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="0" column="0">
+         <widget class="QLabel" name="textLabel1_8">
+          <property name="text">
            <string>Binwidth [bits]
 1 bit = 100 ns</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <widget class="QSpinBox" name="timingBox" >
-          <property name="minimum" >
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="timingBox">
+          <property name="minimum">
            <number>1</number>
           </property>
-          <property name="maximum" >
+          <property name="maximum">
            <number>48</number>
           </property>
          </widget>
@@ -2507,61 +2420,53 @@ parameters</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="TabPage" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>800</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <attribute name="title" >
+   <widget class="QWidget" name="TabPage">
+    <attribute name="title">
      <string>Fi&amp;les</string>
     </attribute>
-    <layout class="QGridLayout" >
-     <item row="1" column="0" >
-      <widget class="Q3GroupBox" name="groupBox79_2" >
-       <property name="title" >
+    <layout class="QGridLayout">
+     <item row="1" column="0">
+      <widget class="Q3GroupBox" name="groupBox79_2">
+       <property name="title">
         <string>Setup</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_6" >
-        <item row="0" column="0" >
-         <widget class="QPushButton" name="saveSetupButton" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="saveSetupButton">
+          <property name="text">
            <string>sa&amp;ve</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string>Alt+V</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <widget class="QPushButton" name="restoreSetupButton" >
-          <property name="text" >
+        <item row="0" column="1">
+         <widget class="QPushButton" name="restoreSetupButton">
+          <property name="text">
            <string>restore</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string/>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2" >
-         <widget class="QLabel" name="textLabel2_2" >
-          <property name="text" >
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="textLabel2_2">
+          <property name="text">
            <string>Currently loaded:</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2" >
-         <widget class="QLabel" name="configfilename" >
-          <property name="text" >
+        <item row="2" column="0" colspan="2">
+         <widget class="QLabel" name="configfilename">
+          <property name="text">
            <string>Default setup</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
@@ -2569,68 +2474,68 @@ parameters</string>
        </layout>
       </widget>
      </item>
-     <item row="1" column="1" colspan="2" >
-      <widget class="Q3GroupBox" name="groupBox35_2" >
-       <property name="title" >
+     <item row="1" column="1" colspan="2">
+      <widget class="Q3GroupBox" name="groupBox35_2">
+       <property name="title">
         <string>Default paths</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_4" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="textLabel1_9" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="textLabel1_9">
+          <property name="text">
            <string>Listmode files</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <widget class="QLineEdit" name="listfilepath" />
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="listfilepath"/>
         </item>
-        <item row="0" column="2" >
-         <widget class="QPushButton" name="selectListpath" >
-          <property name="text" >
+        <item row="0" column="2">
+         <widget class="QPushButton" name="selectListpath">
+          <property name="text">
            <string>...</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="textLabel1_9_2" >
-          <property name="text" >
+        <item row="1" column="0">
+         <widget class="QLabel" name="textLabel1_9_2">
+          <property name="text">
            <string>Histograms</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
-         <widget class="QLineEdit" name="histfilepath" />
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="histfilepath"/>
         </item>
-        <item row="1" column="2" >
-         <widget class="QPushButton" name="selectHistpath" >
-          <property name="text" >
+        <item row="1" column="2">
+         <widget class="QPushButton" name="selectHistpath">
+          <property name="text">
            <string>...</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="textLabel1_9_3" >
-          <property name="text" >
+        <item row="2" column="0">
+         <widget class="QLabel" name="textLabel1_9_3">
+          <property name="text">
            <string>Config files</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>false</bool>
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
-         <widget class="QLineEdit" name="configfilepath" />
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="configfilepath"/>
         </item>
-        <item row="2" column="2" >
-         <widget class="QPushButton" name="selectConfigpath" >
-          <property name="text" >
+        <item row="2" column="2">
+         <widget class="QPushButton" name="selectConfigpath">
+          <property name="text">
            <string>...</string>
           </property>
          </widget>
@@ -2638,38 +2543,38 @@ parameters</string>
        </layout>
       </widget>
      </item>
-     <item row="0" column="0" colspan="2" >
-      <widget class="Q3GroupBox" name="groupBox79" >
-       <property name="title" >
+     <item row="0" column="0" colspan="2">
+      <widget class="Q3GroupBox" name="groupBox79">
+       <property name="title">
         <string>Listmode data acquisition</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_5" >
-        <item row="0" column="0" >
-         <widget class="QCheckBox" name="acqListfile" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="acqListfile">
+          <property name="text">
            <string>ac&amp;quire listfile:</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string>Alt+Q</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QLineEdit" name="listFilename" />
+        <item row="1" column="0">
+         <widget class="QLineEdit" name="listFilename"/>
         </item>
-        <item row="1" column="1" >
-         <widget class="QPushButton" name="selectButton" >
-          <property name="text" >
+        <item row="1" column="1">
+         <widget class="QPushButton" name="selectButton">
+          <property name="text">
            <string>...</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
-         <widget class="QPushButton" name="replayButton" >
-          <property name="text" >
+        <item row="2" column="1">
+         <widget class="QPushButton" name="replayButton">
+          <property name="text">
            <string>Repla&amp;y Listfile</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string>Alt+Y</string>
           </property>
          </widget>
@@ -2677,13 +2582,13 @@ parameters</string>
        </layout>
       </widget>
      </item>
-     <item row="0" column="2" >
-      <widget class="Q3GroupBox" name="groupBox36" >
-       <property name="title" >
+     <item row="0" column="2">
+      <widget class="Q3GroupBox" name="groupBox36">
+       <property name="title">
         <string>Histograms</string>
        </property>
-       <widget class="QLabel" name="textLabel2_2_2" >
-        <property name="geometry" >
+       <widget class="QLabel" name="textLabel2_2_2">
+        <property name="geometry">
          <rect>
           <x>20</x>
           <y>50</y>
@@ -2691,15 +2596,15 @@ parameters</string>
           <height>16</height>
          </rect>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Currently loaded:</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="histfilename" >
-        <property name="geometry" >
+       <widget class="QLabel" name="histfilename">
+        <property name="geometry">
          <rect>
           <x>20</x>
           <y>70</y>
@@ -2707,18 +2612,18 @@ parameters</string>
           <height>16</height>
          </rect>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>-</string>
         </property>
-        <property name="wordWrap" >
+        <property name="wordWrap">
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QPushButton" name="writeHistButton" >
-        <property name="enabled" >
+       <widget class="QPushButton" name="writeHistButton">
+        <property name="enabled">
          <bool>true</bool>
         </property>
-        <property name="geometry" >
+        <property name="geometry">
          <rect>
           <x>20</x>
           <y>20</y>
@@ -2726,18 +2631,18 @@ parameters</string>
           <height>20</height>
          </rect>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Write</string>
         </property>
-        <property name="shortcut" >
+        <property name="shortcut">
          <string/>
         </property>
        </widget>
-       <widget class="QPushButton" name="LoadhistButton" >
-        <property name="enabled" >
+       <widget class="QPushButton" name="LoadhistButton">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="geometry" >
+        <property name="geometry">
          <rect>
           <x>80</x>
           <y>20</y>
@@ -2745,10 +2650,10 @@ parameters</string>
           <height>20</height>
          </rect>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Load</string>
         </property>
-        <property name="shortcut" >
+        <property name="shortcut">
          <string/>
         </property>
        </widget>
@@ -2757,8 +2662,8 @@ parameters</string>
     </layout>
    </widget>
   </widget>
-  <widget class="QTabWidget" name="tabWidget5_2" >
-   <property name="geometry" >
+  <widget class="QTabWidget" name="tabWidget5_2">
+   <property name="geometry">
     <rect>
      <x>10</x>
      <y>540</y>
@@ -2766,50 +2671,42 @@ parameters</string>
      <height>311</height>
     </rect>
    </property>
-   <property name="currentIndex" >
+   <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="tab" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>217</width>
-      <height>288</height>
-     </rect>
-    </property>
-    <attribute name="title" >
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
      <string>Display</string>
     </attribute>
-    <layout class="QGridLayout" name="gridLayout_25" >
-     <item row="0" column="0" colspan="4" >
-      <widget class="Q3ButtonGroup" name="buttonGroup10_2" >
-       <property name="title" >
+    <layout class="QGridLayout" name="gridLayout_25">
+     <item row="0" column="0" colspan="4">
+      <widget class="Q3ButtonGroup" name="buttonGroup10_2">
+       <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout" name="gridLayout_22" >
-        <item row="0" column="1" >
-         <widget class="QRadioButton" name="dispSpectra" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout_22">
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="dispSpectra">
+          <property name="text">
            <string>Spectra</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string/>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="0" >
-         <widget class="QRadioButton" name="dispHistogram" >
-          <property name="text" >
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="dispHistogram">
+          <property name="text">
            <string>Histogram</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string/>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>false</bool>
           </property>
          </widget>
@@ -2817,31 +2714,31 @@ parameters</string>
        </layout>
       </widget>
      </item>
-     <item row="1" column="2" colspan="2" >
-      <widget class="Q3ButtonGroup" name="buttonGroup10" >
-       <property name="title" >
+     <item row="1" column="2" colspan="2">
+      <widget class="Q3ButtonGroup" name="buttonGroup10">
+       <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout" name="gridLayout_21" >
-        <item row="0" column="1" >
-         <widget class="QRadioButton" name="dispAllAmpl" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout_21">
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="dispAllAmpl">
+          <property name="text">
            <string>Ampl</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string/>
           </property>
          </widget>
         </item>
-        <item row="0" column="0" >
-         <widget class="QRadioButton" name="dispAllPos" >
-          <property name="text" >
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="dispAllPos">
+          <property name="text">
            <string>Pos</string>
           </property>
-          <property name="shortcut" >
+          <property name="shortcut">
            <string/>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
@@ -2849,168 +2746,168 @@ parameters</string>
        </layout>
       </widget>
      </item>
-     <item row="2" column="0" colspan="3" >
-      <widget class="QCheckBox" name="dispAll" >
-       <property name="text" >
+     <item row="2" column="0" colspan="3">
+      <widget class="QCheckBox" name="dispAll">
+       <property name="text">
         <string>Sum spectra</string>
        </property>
-       <property name="shortcut" >
+       <property name="shortcut">
         <string/>
        </property>
-       <property name="checked" >
+       <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="2" column="3" >
-      <widget class="QPushButton" name="clearAll" >
-       <property name="text" >
+     <item row="2" column="3">
+      <widget class="QPushButton" name="clearAll">
+       <property name="text">
         <string>clear all</string>
        </property>
-       <property name="shortcut" >
+       <property name="shortcut">
         <string/>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" >
-      <widget class="QLabel" name="textLabel1_4_2_3_4_2" >
-       <property name="text" >
+     <item row="3" column="0">
+      <widget class="QLabel" name="textLabel1_4_2_3_4_2">
+       <property name="text">
         <string>MCPD</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" >
-      <widget class="QSpinBox" name="dispMcpd" >
-       <property name="enabled" >
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="dispMcpd">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="maximum" >
+       <property name="maximum">
         <number>0</number>
        </property>
       </widget>
      </item>
-     <item row="3" column="3" >
-      <widget class="QPushButton" name="clearMcpd" >
-       <property name="enabled" >
+     <item row="3" column="3">
+      <widget class="QPushButton" name="clearMcpd">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>clear</string>
        </property>
-       <property name="shortcut" >
+       <property name="shortcut">
         <string/>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2" >
-      <layout class="QHBoxLayout" >
+     <item row="4" column="0" colspan="2">
+      <layout class="QHBoxLayout">
        <item>
-        <widget class="QLabel" name="textLabel1_4_2_3_4_2_2" >
-         <property name="text" >
+        <widget class="QLabel" name="textLabel1_4_2_3_4_2_2">
+         <property name="text">
           <string>MPSD</string>
          </property>
-         <property name="wordWrap" >
+         <property name="wordWrap">
           <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="dispMpsd" >
-         <property name="enabled" >
+        <widget class="ModuleSpinBox" name="dispMpsd">
+         <property name="enabled">
           <bool>false</bool>
          </property>
-         <property name="maximum" >
+         <property name="maximum">
           <number>7</number>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="4" column="3" >
-      <widget class="QPushButton" name="clearMpsd" >
-       <property name="enabled" >
+     <item row="4" column="3">
+      <widget class="QPushButton" name="clearMpsd">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>clear</string>
        </property>
-       <property name="shortcut" >
+       <property name="shortcut">
         <string/>
        </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="3" >
-      <layout class="QHBoxLayout" >
+     <item row="5" column="0" colspan="3">
+      <layout class="QHBoxLayout">
        <item>
-        <widget class="QLabel" name="textLabel1_4_2_3_4_2_2_2" >
-         <property name="text" >
+        <widget class="QLabel" name="textLabel1_4_2_3_4_2_2_2">
+         <property name="text">
           <string>Channel</string>
          </property>
-         <property name="wordWrap" >
+         <property name="wordWrap">
           <bool>false</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="dispChan" >
-         <property name="enabled" >
+        <widget class="QSpinBox" name="dispChan">
+         <property name="enabled">
           <bool>false</bool>
          </property>
-         <property name="maximum" >
+         <property name="maximum">
           <number>15</number>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="5" column="3" >
-      <widget class="QPushButton" name="clearChan" >
-       <property name="enabled" >
+     <item row="5" column="3">
+      <widget class="QPushButton" name="clearChan">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>clear</string>
        </property>
-       <property name="shortcut" >
+       <property name="shortcut">
         <string/>
        </property>
       </widget>
      </item>
-     <item row="6" column="0" colspan="2" >
-      <widget class="QCheckBox" name="specialBox" >
-       <property name="enabled" >
+     <item row="6" column="0" colspan="2">
+      <widget class="QCheckBox" name="specialBox">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>delta-t</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="3" >
-      <widget class="Q3ButtonGroup" name="logGroup" >
-       <property name="enabled" >
+     <item row="6" column="3">
+      <widget class="Q3ButtonGroup" name="logGroup">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="title" >
+       <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout" name="gridLayout_20" >
-        <item row="0" column="0" >
-         <widget class="QRadioButton" name="lin" >
-          <property name="text" >
+       <layout class="QGridLayout" name="gridLayout_20">
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="lin">
+          <property name="text">
            <string>&amp;lin</string>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <widget class="QRadioButton" name="log" >
-          <property name="text" >
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="log">
+          <property name="text">
            <string>log</string>
           </property>
          </widget>
@@ -3020,69 +2917,61 @@ parameters</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="tab" >
-    <property name="geometry" >
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>800</width>
-      <height>480</height>
-     </rect>
-    </property>
-    <attribute name="title" >
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
      <string>Thresholds</string>
     </attribute>
-    <layout class="QGridLayout" >
-     <item row="1" column="1" >
-      <widget class="QLineEdit" name="loLim" >
-       <property name="enabled" >
+    <layout class="QGridLayout">
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="loLim">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>0</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="textLabel1_6" >
-       <property name="text" >
+     <item row="1" column="0">
+      <widget class="QLabel" name="textLabel1_6">
+       <property name="text">
         <string>low</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="textLabel1_6_2" >
-       <property name="text" >
+     <item row="2" column="0">
+      <widget class="QLabel" name="textLabel1_6_2">
+       <property name="text">
         <string>hi</string>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="QLineEdit" name="hiLim" >
-       <property name="enabled" >
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="hiLim">
+       <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>1000000000</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2" >
-      <widget class="QPushButton" name="applyDispThreshButton" >
-       <property name="text" >
+     <item row="3" column="0" colspan="2">
+      <widget class="QPushButton" name="applyDispThreshButton">
+       <property name="text">
         <string>apply</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0" colspan="2" >
-      <widget class="QCheckBox" name="useThresh" >
-       <property name="text" >
+     <item row="0" column="0" colspan="2">
+      <widget class="QCheckBox" name="useThresh">
+       <property name="text">
         <string>Thresholds</string>
        </property>
       </widget>
@@ -3091,7 +2980,7 @@ parameters</string>
    </widget>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>Q3GroupBox</class>
@@ -3116,6 +3005,11 @@ parameters</string>
    <extends>QFrame</extends>
    <header>qwt_plot.h</header>
   </customwidget>
+  <customwidget>
+   <class>ModuleSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>ModuleSpinBox.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -3125,11 +3019,11 @@ parameters</string>
    <receiver>acquireFile</receiver>
    <slot>setChecked(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>330</x>
      <y>594</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>1079</x>
      <y>652</y>
     </hint>
@@ -3141,11 +3035,11 @@ parameters</string>
    <receiver>acqListfile</receiver>
    <slot>setChecked(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1079</x>
      <y>652</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>330</x>
      <y>594</y>
     </hint>
@@ -3157,11 +3051,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>applyThreshSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>36</x>
      <y>881</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3173,11 +3067,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMcpdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>398</x>
      <y>587</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3189,11 +3083,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMpsdSlot(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>672</x>
      <y>645</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3205,11 +3099,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>clearAllSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>131</x>
      <y>670</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3221,11 +3115,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>clearChanSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>131</x>
      <y>769</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3237,11 +3131,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>clearMcpdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>131</x>
      <y>703</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3253,11 +3147,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>clearMpsdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>131</x>
      <y>736</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3269,11 +3163,11 @@ parameters</string>
    <receiver>channel</receiver>
    <slot>setHidden(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>575</x>
      <y>645</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>672</x>
      <y>645</y>
     </hint>
@@ -3285,11 +3179,11 @@ parameters</string>
    <receiver>specialBox</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>27</x>
      <y>686</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>22</x>
      <y>821</y>
     </hint>
@@ -3301,11 +3195,11 @@ parameters</string>
    <receiver>clearChan</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>27</x>
      <y>686</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>131</x>
      <y>769</y>
     </hint>
@@ -3317,11 +3211,11 @@ parameters</string>
    <receiver>clearMpsd</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>27</x>
      <y>686</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>131</x>
      <y>736</y>
     </hint>
@@ -3333,11 +3227,11 @@ parameters</string>
    <receiver>clearMcpd</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>27</x>
      <y>686</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>131</x>
      <y>703</y>
     </hint>
@@ -3349,11 +3243,11 @@ parameters</string>
    <receiver>dispChan</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>27</x>
      <y>686</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>118</x>
      <y>771</y>
     </hint>
@@ -3365,11 +3259,11 @@ parameters</string>
    <receiver>dispMpsd</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>27</x>
      <y>686</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>100</x>
      <y>738</y>
     </hint>
@@ -3381,11 +3275,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>ePresetSlot(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>538</x>
      <y>672</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3397,11 +3291,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>eResetSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>847</x>
      <y>672</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3413,11 +3307,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>linlogSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>131</x>
      <y>802</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3429,11 +3323,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>draw()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>131</x>
      <y>802</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3445,11 +3339,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m1PresetSlot(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>538</x>
      <y>705</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3461,11 +3355,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m1ResetSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>847</x>
      <y>705</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3477,11 +3371,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m2PresetSlot(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>538</x>
      <y>738</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3493,11 +3387,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m2ResetSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>847</x>
      <y>738</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3509,11 +3403,11 @@ parameters</string>
    <receiver>terminate</receiver>
    <slot>setChecked(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>347</x>
      <y>813</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>347</x>
      <y>834</y>
     </hint>
@@ -3525,11 +3419,11 @@ parameters</string>
    <receiver>resetTimer</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>347</x>
      <y>813</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>347</x>
      <y>867</y>
     </hint>
@@ -3541,11 +3435,11 @@ parameters</string>
    <receiver>terminate</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>347</x>
      <y>813</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>347</x>
      <y>834</y>
     </hint>
@@ -3557,11 +3451,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setTimingSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>347</x>
      <y>813</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3573,11 +3467,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMcpdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>365</x>
      <y>675</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3589,11 +3483,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setModeSlot(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>450</x>
      <y>602</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3605,11 +3499,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>mpsdCheck(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>363</x>
      <y>739</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3621,11 +3515,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMcpdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>447</x>
      <y>600</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3637,11 +3531,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setPulserSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>790</x>
      <y>865</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3653,11 +3547,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setPulserSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>988</x>
      <y>865</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3669,11 +3563,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setPulserSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>675</x>
      <y>861</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3685,11 +3579,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setPulserSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>362</x>
      <y>862</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3701,11 +3595,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setPulserSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1240</x>
      <y>868</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3717,11 +3611,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setPulserSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1373</x>
      <y>868</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3733,11 +3627,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setPulserSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1505</x>
      <y>868</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3749,11 +3643,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>readRegisterSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>452</x>
      <y>762</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3765,11 +3659,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>replayListfileSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1079</x>
      <y>678</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3781,11 +3675,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>resetTimerSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>347</x>
      <y>867</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3797,11 +3691,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>restoreSetupSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>654</x>
      <y>801</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3813,11 +3707,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>saveConfigSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>372</x>
      <y>802</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3829,11 +3723,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>saveSetupSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>372</x>
      <y>802</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3845,11 +3739,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>scanPeriSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>767</x>
      <y>678</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3861,11 +3755,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>selectListfileSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1079</x>
      <y>645</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3877,11 +3771,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>selectConfigpathSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1503</x>
      <y>884</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3893,11 +3787,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>selectHistpathSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1503</x>
      <y>851</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3909,11 +3803,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>selectListpathSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1503</x>
      <y>801</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3925,11 +3819,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>sendAuxSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>414</x>
      <y>599</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3941,11 +3835,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>sendCellSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>414</x>
      <y>588</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3957,11 +3851,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>sendParamSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>460</x>
      <y>599</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3973,11 +3867,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setGainSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1514</x>
      <y>648</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -3989,11 +3883,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setMcpdIdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>470</x>
      <y>663</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4005,11 +3899,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setThresholdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1514</x>
      <y>681</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4021,11 +3915,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>draw()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>22</x>
      <y>821</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4037,11 +3931,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>startStopSlot(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1079</x>
      <y>573</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4053,11 +3947,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMcpdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>310</x>
      <y>540</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4069,11 +3963,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMcpdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>449</x>
      <y>571</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4085,11 +3979,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setTimingSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>347</x>
      <y>834</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4101,11 +3995,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMcpdSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>400</x>
      <y>600</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4117,11 +4011,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>tPresetSlot(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>538</x>
      <y>639</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4133,11 +4027,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>tResetSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>847</x>
      <y>639</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4149,11 +4043,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>applyThreshSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>36</x>
      <y>643</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4165,11 +4059,11 @@ parameters</string>
    <receiver>hiLim</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>36</x>
      <y>643</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>57</x>
      <y>795</y>
     </hint>
@@ -4181,11 +4075,11 @@ parameters</string>
    <receiver>loLim</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>36</x>
      <y>643</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>57</x>
      <y>711</y>
     </hint>
@@ -4197,11 +4091,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>writeRegisterSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>362</x>
      <y>762</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4213,11 +4107,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setModeSlot(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>469</x>
      <y>580</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4229,11 +4123,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>setIpUdpSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>601</x>
      <y>754</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -4245,11 +4139,11 @@ parameters</string>
    <receiver>pulsAmp1</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>790</x>
      <y>865</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>888</x>
      <y>868</y>
     </hint>
@@ -4261,11 +4155,11 @@ parameters</string>
    <receiver>pulsAmp2</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>790</x>
      <y>865</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>1086</x>
      <y>868</y>
     </hint>
@@ -4277,11 +4171,11 @@ parameters</string>
    <receiver>pulsAmp2</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>988</x>
      <y>865</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>1086</x>
      <y>868</y>
     </hint>
@@ -4293,11 +4187,11 @@ parameters</string>
    <receiver>runId</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1023</x>
      <y>614</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>314</x>
      <y>600</y>
     </hint>
@@ -4309,11 +4203,11 @@ parameters</string>
    <receiver>setGain</receiver>
    <slot>click()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>852</x>
      <y>646</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>1514</x>
      <y>648</y>
     </hint>
@@ -4325,11 +4219,11 @@ parameters</string>
    <receiver>setThreshold</receiver>
    <slot>click()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>852</x>
      <y>679</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>1514</x>
      <y>681</y>
     </hint>
@@ -4341,11 +4235,11 @@ parameters</string>
    <receiver>channelLabel</receiver>
    <slot>setHidden(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>575</x>
      <y>645</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>621</x>
      <y>647</y>
     </hint>
@@ -4357,11 +4251,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>writeHistSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>1120</x>
      <y>610</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>646</x>
      <y>474</y>
     </hint>
@@ -4373,11 +4267,11 @@ parameters</string>
    <receiver>clearMcpd</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>69</x>
      <y>686</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>131</x>
      <y>703</y>
     </hint>
@@ -4389,11 +4283,11 @@ parameters</string>
    <receiver>logGroup</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>55</x>
      <y>821</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>176</x>
      <y>836</y>
     </hint>
@@ -4405,11 +4299,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m3PresetSlot(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>501</x>
      <y>780</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>646</x>
      <y>474</y>
     </hint>
@@ -4421,11 +4315,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m4PresetSlot(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>501</x>
      <y>813</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>646</x>
      <y>474</y>
     </hint>
@@ -4437,11 +4331,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m3ResetSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>884</x>
      <y>780</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>646</x>
      <y>474</y>
     </hint>
@@ -4453,11 +4347,11 @@ parameters</string>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>m4ResetSlot()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>884</x>
      <y>813</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>646</x>
      <y>474</y>
     </hint>
@@ -4469,11 +4363,11 @@ parameters</string>
    <receiver>dispMcpd</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>41</x>
      <y>683</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>74</x>
      <y>709</y>
     </hint>
@@ -4485,11 +4379,11 @@ parameters</string>
    <receiver>scanPeri</receiver>
    <slot>animateClick()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>530</x>
      <y>610</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>737</x>
      <y>661</y>
     </hint>
