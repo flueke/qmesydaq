@@ -23,7 +23,38 @@
 #include "networkdevice.h"
 #include "mdefines.h"
 
-/**
+
+/*!
+    \fn NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
+
+    factory method for creating a object of the class
+
+    \param parent parent object
+    \param target IP address of the communication target
+    \param port port number of the communication target
+    \param source IP address of the communication source
+    \return new object of the class
+    \see destroy
+ */
+NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
+{
+	return new NetworkDevice(parent, target, port, source);
+}
+
+/*!
+    \fn NetworkDevice::destroy(NetworkDevice *nd)
+
+    destroys a object of this class
+
+    \param nd object to destroy
+    \see create
+ */
+void NetworkDevice::destroy(NetworkDevice *nd)
+{
+	delete nd;
+}
+
+/*!
  * constructor
  *
  * \param parent parent object

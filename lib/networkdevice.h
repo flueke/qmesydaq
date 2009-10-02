@@ -31,16 +31,24 @@ class QSocketNotifier;
 /**
  * \short Base class for network devices like MCPD-2, MCPD-8
  *
+ * the objects of this class will be created and destroyed via a factory
+ *
  * \author Gregor Montermann <g.montermann@mesytec.com>
 */
 class NetworkDevice : public MesydaqObject
 {
 Q_OBJECT
 public:
+	static NetworkDevice *create(QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+
+	static void destroy(NetworkDevice *);
+
+private:
 	NetworkDevice(QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
 
 	~NetworkDevice();
 
+public:
 	/** 
 	 * sends the command buffer to the target
 	 *

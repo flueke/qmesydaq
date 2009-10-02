@@ -58,7 +58,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	, m_version(0)
 {
 	stdInit();
-	m_network = new NetworkDevice(this, ip, port, sourceIP);
+	m_network = NetworkDevice::create(this, ip, port, sourceIP);
 	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET &)), this, SLOT(analyzeBuffer(MDP_PACKET &)));
 
 	m_commTimer = new QTimer(this);
@@ -80,7 +80,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 MCPD8::~MCPD8()
 {
 	m_mpsd.clear();
-	delete m_network;
+	NetworkDevice::destroy(m_network);
 	m_network = NULL;
 	delete m_commTimer;
 	m_commTimer = NULL;
