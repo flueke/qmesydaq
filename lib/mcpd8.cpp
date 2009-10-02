@@ -256,8 +256,7 @@ float MCPD8::version(quint16 mod)
 	{
 		quint16 tmp = readPeriReg(mod, 2);
 		tmpFloat = tmp & 0xFF;
-		while(tmpFloat > 1)
-			tmpFloat /= 10.;
+		tmpFloat /= 100.;
 		tmpFloat += (tmp >> 8);
 	}
 	protocol(tr("MPSD (ID  %1): Version number : %2").arg(mod).arg(tmpFloat), NOTICE);
@@ -1107,8 +1106,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				break;
 			case GETVER:
 				m_version = recBuf.data[1];
-				while(m_version > 1)
-					m_version /= 10.;
+				m_version /= 100.;
 				m_version += recBuf.data[0];
 				protocol(tr("Modul (ID  %1): Version number : %2").arg(m_id).arg(m_version), NOTICE);
 				break;
