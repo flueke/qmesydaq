@@ -13,8 +13,13 @@ int main(int argc, char **argv)
 
 	QCoreApplication app(argc, argv);
 
-	MCPD8 *m = new MCPD8(0, NULL, "192.168.168.122");
-	qDebug() << QObject::tr("MCPD : %1").arg(m->version());
+	QString ip = "192.168.168.122";
+
+	if (argc > 1)
+		ip = argv[1];
+
+	MCPD8 *m = new MCPD8(0, NULL, ip);
+	qDebug() << QObject::tr("%2 : MCPD : %1").arg(m->version()).arg(ip);
 
 	for (int i = 0; i < 8; ++i)
 		qDebug() << QObject::tr("module %1 : %2 %3").arg(i + 1).arg(m->getMpsdId(i)).arg(m->version(i));
