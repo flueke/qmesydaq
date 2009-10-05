@@ -13,18 +13,23 @@ int main(int argc, char **argv)
 
 	QCoreApplication app(argc, argv);
 
-	MCPD8 *m = new MCPD8(0, NULL, "192.168.168.122");
+	QString fromIP = "192.168.168.122";
+	QString toIP = "192.168.168.121";
+
+	if (argc > 1)
+		toIP = argv[1];
+	if (argc > 2)
+	{
+		toIP = argv[2];
+		fromIP = argv[1];
+	}
+
+	MCPD8 *m = new MCPD8(0, NULL, fromIP);
+
 	qDebug() << QObject::tr("module 2 : %1").arg(m->version());
-//	qDebug() << QObject::tr("module 2 : %1").arg(m->version());
-//	qDebug() << QObject::tr("module 2 : %1").arg(m->version());
 
-	m->setProtocol("192.168.168.121");
+	m->setProtocol(toIP);
 
-#if 0
-# not really working
-	m[0]->readRegister(102);
-	m[0]->readRegister(103);
-#endif
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
 	app.exec();
