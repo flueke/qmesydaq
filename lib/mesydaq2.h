@@ -48,7 +48,7 @@ public:
     /**
      * Default Constructor
      */
-	Mesydaq2(QObject *parent);
+	Mesydaq2(QObject *parent = 0);
 
     /**
      * Default Destructor
@@ -196,7 +196,7 @@ public slots:
 	
 	void setMode(const quint16 id, quint8 addr, bool mode);
 
-	void setPulser(const quint16 id, quint8 addr, quint8 channel, quint8 position, quint8 amp, bool onoff);
+	void setPulser(const quint16 mod, quint8 addr, quint8 channel, quint8 position, quint8 amp, bool onoff);
 
 	void setCounterCell(quint16 mod, quint16 source, quint16 trigger, quint16 compare);
 
@@ -206,7 +206,7 @@ public slots:
 
 	void setMasterClock(quint16 mod, quint64);
 
-	void setTimingSetup(quint16 mod, bool master, bool sync);
+	void setTimingSetup(quint16 mod, bool master, bool term);
 
 	void setId(quint16 mod, quint8 mcpdid);
 
