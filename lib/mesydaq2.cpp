@@ -162,12 +162,13 @@ void Mesydaq2::acqListfile(bool yesno)
  */
 void Mesydaq2::startedDaq(void)
 {
-	if(m_acquireListfile)
+	if(m_acquireListfile && !m_datfile.isOpen())
 	{
 		m_datfile.setFileName(m_listfilename);
 		m_datfile.open(QIODevice::WriteOnly);
 		m_datStream.setDevice(&m_datfile);
 		writeListfileHeader();
+		writeHeaderSeparator();
 	}
 	m_daq = RUNNING;
 	emit statusChanged("RUNNING");
@@ -185,7 +186,8 @@ void Mesydaq2::startedDaq(void)
  */
 void Mesydaq2::stoppedDaq(void)
 {
-	if(m_acquireListfile)
+	qDebug("Mesydaq2::stoppedDaq()");
+	if(m_acquireListfile && m_datfile.isOpen())
 	{
 		writeClosingSignature();
 		m_datfile.close();
@@ -200,9 +202,11 @@ void Mesydaq2::stoppedDaq(void)
  */
 void Mesydaq2::initDevices(void)
 {
+#if 0
 	QString ip[] = {"192.168.168.121", "192.168.169.121", };	
 	quint16 port[] = {54321, 54321, };
 	QString sourceIP[] = {"192.168.168.1", "192.168.169.1", };
+#endif
 }
 
 /*!
@@ -245,10 +249,9 @@ void Mesydaq2::initTimers(void)
  */
 void Mesydaq2::writeListfileHeader(void)
 {
-	QTextStream txtStr; 
-	txtStr << "mesytec psd listmode data\n";
+	QTextStream txtStr(&m_datfile); 
+	txtStr << QString("mesytec psd listmode data\n");
 	txtStr << QString("header length: %1 lines \n").arg(2);
-	m_datStream << txtStr.string();
 }
 
 
@@ -757,7 +760,8 @@ void Mesydaq2::start(void)
 {
    	protocol("remote start", NOTICE);
 	foreach(MCPD8 *it, m_mcpd)
-		it->start();
+		if (it->isMaster())
+			it->start();
 	emit statusChanged("STARTED");
 }
 
@@ -769,7 +773,8 @@ void Mesydaq2::start(void)
 void Mesydaq2::stop(void)
 {
 	foreach(MCPD8 *it, m_mcpd)
-		it->stop();
+		if (it->isMaster())
+			it->stop();
 	emit statusChanged("STOPPED");
    	protocol("remote stop", NOTICE);
 }
@@ -949,18 +954,18 @@ void Mesydaq2::setMasterClock(quint16 id, quint64 val)
 }
 
 /*!
-    \fn Mesydaq2::setTimingSetup(quint16 id, bool master, bool sync)
+    \fn Mesydaq2::setTimingSetup(quint16 id, bool master, bool term)
 
     sets the communication parameters between the MCPD's
 
     \param id number of the MCPD
     \param master is this MCPD master or not
-    \param sync should the MCPD synchronized with the other MCPD's
+    \param term should the MCPD synchronization bus terminated or not
  */
-void Mesydaq2::setTimingSetup(quint16 id, bool master, bool sync)
+void Mesydaq2::setTimingSetup(quint16 id, bool master, bool term)
 {
 	if (m_mcpd.contains(id))
-		m_mcpd[id]->setTimingSetup(master, sync);
+		m_mcpd[id]->setTimingSetup(master, term);
 }
 
 /*!
@@ -1309,9 +1314,9 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			for(quint16 i = 0; i < pd.bufferLength; i++)
 				m_datStream << pD[i];
 			writeBlockSeparator();
-//			qDebug("------------------");
+			qDebug("------------------");
 		}
-		protocol(tr("buffer : length : %1").arg(pd.bufferLength), DEBUG);
+		protocol(tr("buffer : length : %1 type : %2").arg(pd.bufferLength).arg(pd.bufferType), DEBUG);
 		if(pd.bufferType < 0x0002) 
 		{
 // extract parameter values:
