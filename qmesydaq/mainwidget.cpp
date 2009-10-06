@@ -96,7 +96,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
 	connect(devid, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
-
+	connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
 	
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
@@ -503,15 +503,15 @@ void MainWidget::setRunIdSlot()
 /*!
     \fn MainWidget::displayMcpdSlot(int)
  */
-void MainWidget::displayMcpdSlot(int)
+void MainWidget::displayMcpdSlot(int id)
 {
-	quint16 values[4];
 // retrieve displayed ID
-	quint8 id = mcpdId->value();
+//	quint8 id = mcpdId->value();
 	if (!m_theApp->numMCPD())
 		return;
      
 // now get and display parameters:
+	quint16 values[4];
     
 // get cell parameters
 	m_theApp->getCounterCell(id, cellSource->currentIndex(), values);
@@ -538,6 +538,13 @@ void MainWidget::displayMpsdSlot(int)
     
 // retrieve displayed ID
 	quint8 id = devid_2->value();
+	QList<int> modList;
+	for (int i = 0; i < 8; ++i)
+		if (m_theApp->getMpsdId(id, i))
+			modList << i;
+
+	module->setModuleList(modList);
+	dispMpsd->setModuleList(modList);
 
 // firmware version
 	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
@@ -597,21 +604,10 @@ void MainWidget::displayMpsdSlot(int)
 		Ui_Mesydaq2MainWidget::pos->setChecked(true);
 }
 
-
-
 void MainWidget::scanPeriSlot()
 {
 	quint16 id = devid_2->value();
 	m_theApp->scanPeriph(id);
-
-	QList<int> modList;
-	for (int i = 0; i < 8; ++i)
-		if (m_theApp->getMpsdId(id, i))
-			modList << i;
-
-	module->setModuleList(modList);
-	dispMpsd->setModuleList(modList);
-
 	displayMpsdSlot();
 }
 
