@@ -28,9 +28,9 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 {
 	setupUi(this);
 
-	QString ip[] = {"192.168.168.121", "192.168.169.121", };	
+	QString ip[] = {"192.168.168.121", "192.168.168.122", };	
 	quint16 port[] = {54321, 54321, };
-	QString sourceIP[] = {"192.168.168.1", "192.168.169.1", };
+	QString sourceIP[] = {"192.168.168.5", "192.168.168.5", };
 
 	Mesydaq2 *mesy = new Mesydaq2(this);
 
