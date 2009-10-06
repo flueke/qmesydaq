@@ -66,7 +66,7 @@ public:
 
 	void getProtocol(quint16 *addr);
 
-	bool setTimingSetup(bool master, bool sync);
+	bool setTimingSetup(bool master, bool term);
 
 	//! \return whether this MCPD is configured as master or not
 	bool isMaster(void) {return m_master;}
@@ -157,6 +157,10 @@ public:
 	bool init(void);
 
 	bool setStream(quint16 strm);
+
+	quint16 capabilities();
+
+	quint16 capabilities(quint16 mod);
 
 	/**
 	 * ????
