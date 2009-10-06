@@ -139,10 +139,13 @@ int NetworkDevice::createSocket(void)
 /*!
  *   \fn NetworkDevice::sendBuffer(MDP_PACKET &buf)
  */
-int NetworkDevice::sendBuffer(MDP_PACKET &buf)
+int NetworkDevice::sendBuffer(QString target, MDP_PACKET &buf)
 {
-	protocol(tr("%1(%2) : send buffer").arg(ip()).arg(port()), DEBUG);
-	if (m_sock->writeDatagram((const char *)&buf, 200, m_cpuAddress, m_port) != -1)
+	QHostAddress ha(target);
+	protocol(tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(m_port).arg(buf.bufferLength * 2), NOTICE);
+	qint64 i = m_sock->writeDatagram((const char *)&buf, 100, ha, m_port);
+	protocol(tr("%1 sent bytes").arg(i), NOTICE);
+	if (i != -1)
 		return 1;
 	return 0;
 }
@@ -161,14 +164,16 @@ void NetworkDevice::readSocketData(void)
 		qint64 len = m_sock->readDatagram((char *)&m_recBuf, maxsize);
 		if (len != -1)
 		{
-			protocol(tr("%1(%2) : read datagram : %3 from %4 bytes").arg(ip()).arg(port()).arg(len).arg(maxsize), DEBUG);
+			protocol(tr("%1(%2) : ID = %5 read datagram : %3 from %4 bytes").arg(ip()).arg(port()).arg(len).arg(maxsize).arg(m_recBuf.deviceId), DEBUG);
 			protocol(tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(m_recBuf.bufferNumber).arg(m_recBuf.cmd).arg(m_recBuf.deviceStatus), DEBUG);
 			quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
 			protocol(tr("%1(%2) : read time : %3").arg(ip()).arg(port()).arg(tim), DEBUG);
+
 			quint16 diff = m_recBuf.bufferNumber - m_lastBufnum;
 			if(diff > 1)
 				protocol(tr("%1(%2) : Lost %3 Buffers: current: %4, last: %5").arg(ip()).arg(port()).arg(diff).arg(m_recBuf.bufferNumber).arg(m_lastBufnum), ERROR);
 			m_lastBufnum = m_recBuf.bufferNumber;
+
 			emit bufferReceived(m_recBuf);
 		}
 	}
