@@ -760,6 +760,9 @@ void Mesydaq2::start(void)
 {
    	protocol("remote start", NOTICE);
 	foreach(MCPD8 *it, m_mcpd)
+		if (!it->isMaster())
+			it->start();
+	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->start();
 	emit statusChanged("STARTED");
@@ -775,6 +778,9 @@ void Mesydaq2::stop(void)
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->stop();
+	foreach(MCPD8 *it, m_mcpd)
+		if (!it->isMaster())
+			it->stop();
 	emit statusChanged("STOPPED");
    	protocol("remote stop", NOTICE);
 }
@@ -788,7 +794,11 @@ void Mesydaq2::cont(void)
 {
 	protocol("remote cont", NOTICE);
 	foreach(MCPD8 *it, m_mcpd)
-		it->cont();
+		if (!it->isMaster())
+			it->cont();
+	foreach(MCPD8 *it, m_mcpd)
+		if (it->isMaster())
+			it->cont();
 	emit statusChanged("STARTED");
 }
 
