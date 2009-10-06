@@ -59,10 +59,10 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	for (quint8 i = 0; i < 8; ++i)
 	{
-		if (i != TCT)
-			m_counter[i] = new MesydaqCounter();
-		else
+		if (i == TCT)
 			m_counter[i] = new MesydaqTimer();
+		else
+			m_counter[i] = new MesydaqCounter();
 		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
 	}
 	m_ampHist = new Histogram(0, 960);
