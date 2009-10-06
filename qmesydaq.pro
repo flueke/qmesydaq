@@ -20,7 +20,7 @@
 
 TEMPLATE 	= 	subdirs
 
-SUBDIRS		+= lib qmesydaq test
+SUBDIRS		+= lib qmesydaq tools test
 
 TARGET = 	
 DEPENDPATH 	+= . lib qmesydaq
