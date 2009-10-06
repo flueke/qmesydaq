@@ -69,8 +69,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 
 	m_mpsd.clear();
 
-#warning TODO	setId(m_id);
-//! \todo	setId(m_id);
+//	setId(m_id);
 	version();
 	readId();
 	init();
@@ -97,6 +96,9 @@ bool MCPD8::init(void)
 {
 	int modus = TPA;
 
+	if (m_version < 9)
+		modus = TP;
+
 	for (quint8 c = 0; c < 8; c++)
 		if (m_mpsd.find(c) != m_mpsd.end())
 		{
@@ -108,6 +110,10 @@ bool MCPD8::init(void)
 					modus = P;
 			}
 		}
+// Register 103 is the TX mode register
+// set tx capability 
+	writeRegister(103, modus);
+
 	for(quint8 c = 0; c < 8; c++)
 		if (m_mpsd.find(c) != m_mpsd.end())
 		{
@@ -115,9 +121,6 @@ bool MCPD8::init(void)
 				writePeriReg(c, 1, modus);
 			version(c);
 		}
-// Register 103 is the TX mode register
-// set tx capability 
-	writeRegister(103, modus);
 	return true;
 }
 
@@ -210,20 +213,43 @@ quint8 MCPD8::getMpsdId(quint8 addr)
  */
 bool MCPD8::setId(quint8 mcpdid)
 {
-	if(mcpdid > 8)
-	{
-    		protocol(tr("Warning: Set id value (%1) for mcpd-8 #%2 too high! Id set to 8.").arg(mcpdid).arg(m_id), WARNING);
-    		m_id = 8;
-    	}
-    	else
+    	protocol(tr("Set id for mcpd-8 #%1 to %2.").arg(m_id).arg(mcpdid), NOTICE);
+	initCmdBuffer(SETID);
+	m_cmdBuf.data[0] = mcpdid;
+	finishCmdBuffer(1);
+	if (sendCommand())
 	{
     		m_id = mcpdid;
-    		protocol(tr("Set id for mcpd-8 #%1 to %2.").arg(m_id).arg(mcpdid), NOTICE);
+		return true;
 	}
-	initCmdBuffer(SETID);
-	m_cmdBuf.data[0] = m_id;
-	finishCmdBuffer(1);
-	return sendCommand();
+	return false;
+}
+
+/*!
+    \fn MCPD8::capabilities()
+
+    read out the capabilities register of the MCPD 
+
+    \return capabilities register of the MCPD
+ */
+quint16 MCPD8::capabilities()
+{
+	return readRegister(102);
+}
+
+/*!
+    \fn MCPD8::capabilities(quint16 mod)
+
+    read out the capabilities of the MPSD with number mod
+
+    \param mod number of the MPSD
+    \return capabilities register of the MPSD
+ */
+quint16 MCPD8::capabilities(quint16 mod)
+{
+	if (m_mpsd.find(mod) != m_mpsd.end())
+		return readPeriReg(mod, 0);
+	return 0;
 }
 
 /*!
@@ -255,7 +281,7 @@ float MCPD8::version(quint16 mod)
 	if (m_mpsd.find(mod) != m_mpsd.end())
 	{
 		quint16 tmp = readPeriReg(mod, 2);
-		tmpFloat = tmp & 0xFF;
+		tmpFloat = ((tmp > 4) & 0xF) * 10 + (tmp & 0xF);
 		tmpFloat /= 100.;
 		tmpFloat += (tmp >> 8);
 	}
@@ -643,11 +669,6 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 	m_cmdBuf.data[1] = (ip >> 16) & 0xff;
 	m_cmdBuf.data[2] = (ip >> 8) & 0xff;
 	m_cmdBuf.data[3] = (ip & 0xff);
-	if (ip > 0x00FFFFFF) 
-	{
-		m_ownIpAddress = addr;
-		protocol(tr("mcpd #%1: ip address set to %2").arg(m_id).arg(m_ownIpAddress), NOTICE);
-	}
 
 // IP address of data receiver
 	cmd = QHostAddress(datasink);
@@ -691,7 +712,16 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 		protocol(tr("mcpd #%1: cmd ip address set to %2").arg(m_id).arg(m_cmdIpAddress), NOTICE);
 	}
 	finishCmdBuffer(14);
-	return sendCommand();
+	if (sendCommand())
+	{
+		if (ip > 0x00FFFFFF) 
+		{
+			m_ownIpAddress = addr;
+			protocol(tr("mcpd #%1: ip address set to %2").arg(m_id).arg(m_ownIpAddress), NOTICE);
+		}
+		return true;
+	}
+	return false;
 }
 
 /*!
@@ -891,7 +921,7 @@ void MCPD8::initCmdBuffer(quint16 cmd)
 void MCPD8::finishCmdBuffer(quint16 buflen)
 {
 	m_cmdBuf.bufferNumber =	m_txCmdBufNum++;
-	m_cmdBuf.bufferLength = CMDHEADLEN + buflen + 1;
+	m_cmdBuf.bufferLength = CMDHEADLEN + buflen;
 	m_cmdBuf.data[buflen] = 0xFFFF;
 	m_cmdBuf.headerChksum = 0;
 	m_cmdBuf.headerChksum = calcChksum(m_cmdBuf);
@@ -899,10 +929,10 @@ void MCPD8::finishCmdBuffer(quint16 buflen)
 
 int MCPD8::sendCommand(void)
 {
-	if(m_network->sendBuffer(m_cmdBuf))
+	if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
 	{
-		QString pstring = tr("%4(%5) : %1. sent cmd: %2 to id: %3").arg(m_txCmdBufNum).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId).arg(m_network->ip()).arg(m_network->port());
-		protocol(pstring, DEBUG);
+		QString pstring = tr("%4(%5) : %1. sent cmd: %2 to id: %3").arg(m_cmdBuf.bufferNumber).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId).arg(m_network->ip()).arg(m_network->port());
+		protocol(pstring, NOTICE);
 		communicate(true);
 		m_commTimer->start(500);
 		protocol(tr("%1(%2) : timer started").arg(m_network->ip()).arg(m_network->port()), DEBUG);
@@ -935,22 +965,23 @@ quint16 MCPD8::calcChksum(MDP_PACKET &buffer)
  */
 void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 {
-	communicate(false);
-	m_commTimer->stop();
-	protocol(tr("%1(%2) : timer stopped").arg(m_network->ip()).arg(m_network->port()), DEBUG);
-	quint8 id = recBuf.deviceId;
-	
-	protocol(tr("%1(%2) : id %3").arg(m_network->ip()).arg(m_network->port()).arg(id), DEBUG);
-
-	m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
-	m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
-
-	protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
-		
 	if(recBuf.bufferType & 0x8000)
 	{
-		MPSD_8	*ptrMPSD;
+		if (recBuf.deviceId != m_id)
+			return;
+		communicate(false);
+		m_commTimer->stop();
+		protocol(tr("%1(%2) : timer stopped").arg(m_network->ip()).arg(m_network->port()), DEBUG);
+	
 		++m_cmdRxd;
+		protocol(tr("%1(%2) : id %3").arg(m_network->ip()).arg(m_network->port()).arg(recBuf.deviceId), DEBUG);
+
+		m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
+		m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
+
+		protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
+		
+		MPSD_8	*ptrMPSD;
 		quint16 chksum = recBuf.headerChksum;
 		recBuf.headerChksum = 0;
 		if (chksum != calcChksum(recBuf))
@@ -974,7 +1005,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				emit continuedDaq();
 				break;
 			case SETID:
-				protocol(tr("not handled command : SETID"), ERROR);
+				if (recBuf.cmd & 0x80)
+					protocol(tr("SETID : failed"), ERROR);
+				else
+					protocol(tr("SETID = %1").arg(recBuf.data[0]), NOTICE);
 				break;
 			case SETPROTOCOL:
 				// extract ip and eth addresses in case of "this pc"
@@ -1063,12 +1097,16 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				protocol(tr("not handled command : SCANPERI"), ERROR);
 				break;
 			case WRITEFPGA:
-				protocol(tr("not handled command : SCANPERI"), ERROR);
+				if (recBuf.cmd & 0x80)
+					protocol(tr("WRITEFPGA : failed"), ERROR);
 				break;
 			case WRITEREGISTER:
-				protocol(tr("not handled command : WRITEREGISTER"), ERROR);
+				if (recBuf.cmd & 0x80)
+					protocol(tr("WRITEREGISTER failed"), ERROR);
 				break;
 			case READREGISTER:
+				for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)
+					protocol(tr("READREGISTER : %1 = %2").arg(i).arg(recBuf.data[i]));
 				m_reg = recBuf.data[0];	
 				protocol(tr("READREGISTER : %1 %2").arg(m_reg).arg(recBuf.bufferLength), WARNING);
 				break;
@@ -1108,12 +1146,12 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				m_version = recBuf.data[1];
 				m_version /= 100.;
 				m_version += recBuf.data[0];
-				protocol(tr("Modul (ID  %1): Version number : %2").arg(m_id).arg(m_version), NOTICE);
+				protocol(tr("Modul (ID  %1): Version number : %2").arg(m_id).arg(m_version), DEBUG);
 				break;
 			case READPERIREG:
 				ptrMPSD = m_mpsd[recBuf.data[0]];
 				m_periReg = recBuf.data[2];
-				protocol(tr("READPERIREG %3 : %1 = %2").arg(recBuf.data[1]).arg(m_periReg).arg(recBuf.data[0]), NOTICE);
+				protocol(tr("READPERIREG %3 : %1 = %2").arg(recBuf.data[1]).arg(m_periReg).arg(recBuf.data[0]), DEBUG);
 				break;
 			case WRITEPERIREG:
 				ptrMPSD = m_mpsd[recBuf.data[0]];
@@ -1247,21 +1285,26 @@ bool MCPD8::setMasterClock(quint64 val)
 }
 
 /*!
-    \fn MCPD8::setTimingSetup(bool master, bool sync)
+    \fn MCPD8::setTimingSetup(bool master, bool term)
 
     sets the communication parameters between the MCPD's
 
     \param master is this MCPD master or not
-    \param sync should the MCPD synchronized with the other MCPD's
+    \param term should the MCPD synchronization bus terminated or not
     \return true if operation was succesful or not
  */
-bool MCPD8::setTimingSetup(bool master, bool sync)
+bool MCPD8::setTimingSetup(bool master, bool term)
 {
 	initCmdBuffer(SETTIMING);
 	m_cmdBuf.data[0] = master;
-	m_cmdBuf.data[1] = sync;
+	m_cmdBuf.data[1] = term;
 	finishCmdBuffer(2);
-	return sendCommand();
+	if (sendCommand())
+	{
+		m_master = master;
+		return true;
+	}
+	return false;
 }
 
 /*!
