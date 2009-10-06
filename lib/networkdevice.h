@@ -54,7 +54,7 @@ public:
 	 *
 	 * \param packet data packet to be send
 	 */
-	int sendBuffer(MDP_PACKET &packet);
+	int sendBuffer(QString target, MDP_PACKET &packet);
 
 	//! \return IP address of the target
 	QString ip() {return m_target;}
