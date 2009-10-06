@@ -68,7 +68,6 @@ MPSD_8::~MPSD_8()
 {
 }
 
-
 /*!
     \fn MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
 
