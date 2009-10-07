@@ -205,7 +205,7 @@ protected:
 	//! Common gain
 	bool 		m_comgain;
 
-private:
+protected:
 	//! Threshold poti values
 	quint8 		m_threshPoti[2];
 
@@ -215,11 +215,12 @@ private:
 	//! Pulser poti values
 	quint8 		m_pulsPoti[2];
 
-	//! Pulser position
-	quint8 		m_pulsPos[2];
-
 	//! Pulser amplitude
 	float		m_pulsAmp[2];
+
+private:
+	//! Pulser position
+	quint8 		m_pulsPos[2];
 
 	//! Pulser channel
 	quint8 		m_pulsChan[2];

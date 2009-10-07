@@ -39,7 +39,21 @@ MPSD_8p::MPSD_8p(quint8 id, QObject *parent)
 	, m_p1(4.167)
 	, m_p2(1.2083)
 {
-	protocol(tr("ID = %1").arg(id), INFO);
+	for(quint8 c = 0; c < 9; c++)
+	{
+		m_gainPoti[c][0] = 92;
+		m_gainVal[c][0] = 1.0;
+		m_gainPoti[c][1] = 92;
+		m_gainVal[c][1] = 1.0;
+	}
+	for (quint8 c = 0; c < 2; ++c)
+	{
+		m_threshPoti[c] = 48;
+		m_threshVal[c] = 22;
+		m_pulsPoti[c] = 128;
+		m_pulsAmp[c] = 50;
+	}
+	
 }
 
 /*!
@@ -65,7 +79,6 @@ quint8 MPSD_8p::calcGainpoti(float fval)
         quint8 ug = quint8(fg);
         if((fg - ug) > 0.5)
                 ug++;
-//      protocol(tr("gainval: %1, gainpoti: %2").arg(fval).arg(ug));
         return ug;
 }
 
@@ -90,7 +103,6 @@ quint8 MPSD_8p::calcThreshpoti(quint8 tval)
 	quint8 ut = quint8(ft);
 	if((ft - ut) > 0.5)
 		ut++;
-//	protocol(tr("threshold: %1, threshpoti: %2").arg(tval).arg(ut));	
 	return ut;
 }
 
@@ -108,7 +120,6 @@ float MPSD_8p::calcGainval(quint8 ga)
 	if(test >= 0.5)
 		g++;
 	fgain = g /100.0; 
-//	protocol(tr("m_gainPoti: %1, m_gainVal: %2").arg(ga).arg(fgain));	
 	return fgain;
 }
 
