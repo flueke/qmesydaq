@@ -343,6 +343,31 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 }
 
 /*!
+    \fn MCPD8::getGainPoti(quint16 addr,  quint8 chan)
+
+    gets the currently set gain value for a special module and channel
+
+    if the channel number is greater 7 than all channels of the module
+    will be set
+
+    \param addr number of the module
+    \param chan number of the channel of the module
+    \return poti value of the gain
+    \see setGain
+    \see getGainPoti
+ */
+quint8 MCPD8::getGainPoti(quint16 addr,  quint8 chan)
+{
+	if (m_mpsd.find(addr) != m_mpsd.end())
+	{
+		if (chan > 7)
+			chan = 8;
+		return m_mpsd[addr]->getGainpoti(chan, 0);
+	}
+	return 0;
+}
+
+/*!
     \fn MCPD8::getGain(quint16 addr,  quint8 chan)
 
     gets the currently set gain value for a special module and channel
@@ -354,14 +379,15 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
     \param chan number of the channel of the module
     \return poti value of the gain
     \see setGain
+    \see getGainPoti
  */
-quint8 MCPD8::getGain(quint16 addr,  quint8 chan)
+float MCPD8::getGainVal(quint16 addr,  quint8 chan)
 {
 	if (m_mpsd.find(addr) != m_mpsd.end())
 	{
 		if (chan > 7)
-			chan = 7;
-		return m_mpsd[addr]->getGainpoti(chan, 0);
+			chan = 8;
+		return m_mpsd[addr]->getGainval(chan, 0);
 	}
 	return 0;
 }
@@ -1075,12 +1101,12 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				break;
 			case SETTHRESH: // extract the set thresh value:
 				ptrMPSD = m_mpsd[recBuf.data[0]];
-				if (recBuf.data[1] != ptrMPSD->getThreshpoti(1))
+				if (recBuf.data[1] != ptrMPSD->getThreshold(1))
 				{
 					protocol(tr("Error setting threshold, mod %1, is: %2, should be: %3").
-						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[1]).arg(ptrMPSD->getThreshpoti(1)), ERROR);
+						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[1]).arg(ptrMPSD->getThreshold(1)), ERROR);
 				}
-				ptrMPSD->setThreshpoti(recBuf.data[1], 0);
+				ptrMPSD->setThreshold(recBuf.data[1], 0);
 				break;
 			case SETPULSER:
 				ptrMPSD = m_mpsd[recBuf.data[0]];

@@ -107,9 +107,13 @@ public:
 
 	bool setGain(quint16 addr, quint8 channel, float gain);
 
-	quint8	getGain(quint16 addr, quint8 chan);
+	quint8	getGainPoti(quint16 addr, quint8 chan);
+
+	float	getGainVal(quint16 addr, quint8 chan);
 
 	bool setThreshold(quint16 addr, quint8 thresh);
+
+	quint8 getThresholdPoti(quint16 addr);
 
 	quint8 getThreshold(quint16 addr);
 
