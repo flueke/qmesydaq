@@ -58,7 +58,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	, m_version(0)
 {
 	stdInit();
-	m_network = NetworkDevice::create(this, ip, port, sourceIP);
+	m_network = NetworkDevice::create(this, sourceIP, port);
 	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET &)), this, SLOT(analyzeBuffer(MDP_PACKET &)));
 
 	m_commTimer = new QTimer(this);

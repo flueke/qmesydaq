@@ -23,7 +23,10 @@
 #include "networkdevice.h"
 #include "mdefines.h"
 
-NetworkDevice	*NetworkDevice::m_instance = NULL;
+QList<NetworkDevice*> 	NetworkDevice::m_networks;
+QList<int>			NetworkDevice::m_inUse;
+
+// NetworkDevice	*NetworkDevice::m_instance = NULL;
 
 /*!
     \fn NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
@@ -31,17 +34,27 @@ NetworkDevice	*NetworkDevice::m_instance = NULL;
     factory method for creating a object of the class
 
     \param parent parent object
-    \param target IP address of the communication target
-    \param port port number of the communication target
     \param source IP address of the communication source
+    \param port port number of the communication source
     \return new object of the class
     \see destroy
  */
-NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
+NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 port)
 {
-	if (!m_instance)
-		m_instance = new NetworkDevice(parent, target, port, source);
-	return m_instance;
+	NetworkDevice *tmp;
+	for (int i = 0; i < m_networks.size(); ++i) 
+	{
+		tmp = m_networks.at(i);
+		if (tmp->ip() == source || tmp->port() == port)
+		{
+			m_inUse[i]++;
+			return tmp;
+		}
+	}
+	tmp = new NetworkDevice(parent, source, port);
+	m_networks.push_back(tmp);
+	m_inUse.push_back(1);
+	return tmp;
 }
 
 /*!
@@ -54,20 +67,33 @@ NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 po
  */
 void NetworkDevice::destroy(NetworkDevice *nd)
 {
-	delete nd;
+	NetworkDevice *tmp;
+	for (int i = 0; i < m_networks.size(); ++i) 
+	{
+		tmp = m_networks.at(i);
+		if (tmp->ip() == nd->ip() || tmp->port() == nd->port())
+		{
+			m_inUse[i]--;
+			if (!m_inUse.at(i))
+			{
+				m_inUse.takeAt(i);
+				tmp = m_networks.takeAt(i);
+				delete tmp;
+				return;
+			}
+		}
+	}
 }
 
 /*!
  * constructor
  *
  * \param parent parent object
- * \param target IP address of the communication target
- * \param port port number of the communication target
  * \param source IP address of the communication source
+ * \param port port number of the communication source
  */
-NetworkDevice::NetworkDevice(QObject *parent, QString target, quint16 port, QString source)
+NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
 	: MesydaqObject(parent)
-	, m_target(target)
 	, m_port(port)
 	, m_source(source)
 	, m_sock(NULL)
@@ -108,8 +134,7 @@ void NetworkDevice::destroySocket()
  */
 int NetworkDevice::createSocket(void)
 {
-	protocol(tr("%1(%2) : init socket: address").arg(m_target).arg(m_port), NOTICE);
-	m_cpuAddress.setAddress(m_target);
+	protocol(tr("%1(%2) : init socket: address").arg(m_source).arg(m_port), NOTICE);
 	
 // create server address
 	QHostAddress servaddr(m_source); // QHostAddress::Any);
@@ -140,16 +165,19 @@ int NetworkDevice::createSocket(void)
 
 /*!
  *   \fn NetworkDevice::sendBuffer(MDP_PACKET &buf)
+ *   
+ *   sends a command packet to the network partner with IP address target
+ *
+ *   \param target IP address to send
+ *   \param buf command packet to send
  */
-int NetworkDevice::sendBuffer(QString target, MDP_PACKET &buf)
+bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
 {
 	QHostAddress ha(target);
 	protocol(tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(m_port).arg(buf.bufferLength * 2), NOTICE);
 	qint64 i = m_sock->writeDatagram((const char *)&buf, 100, ha, m_port);
 	protocol(tr("%1 sent bytes").arg(i), NOTICE);
-	if (i != -1)
-		return 1;
-	return 0;
+	return (i != -1); 
 }
 
 /*!

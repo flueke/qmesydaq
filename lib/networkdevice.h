@@ -21,6 +21,7 @@
 #define NETWORKDEVICE_H
 
 #include <QHostAddress>
+#include <QList>
 
 #include "mesydaqobject.h"
 #include "structures.h"
@@ -39,25 +40,20 @@ class NetworkDevice : public MesydaqObject
 {
 Q_OBJECT
 public:
-	static NetworkDevice *create(QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+	static NetworkDevice *create(QObject *parent = 0, QString = "0.0.0.0", quint16 = 54321);
 
 	static void destroy(NetworkDevice *);
 
 private:
-	NetworkDevice(QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+	NetworkDevice(QObject *parent = 0, QString = "0.0.0.0", quint16 = 54321);
 
 	~NetworkDevice();
 
 public:
-	/** 
-	 * sends the command buffer to the target
-	 *
-	 * \param packet data packet to be send
-	 */
-	int sendBuffer(QString target, MDP_PACKET &packet);
+	bool sendBuffer(const QString &target, const MDP_PACKET &packet);
 
 	//! \return IP address of the target
-	QString ip() {return m_target;}
+	QString ip() {return m_source;}
 
 	//! \return port number of the communication target
 	quint16 port() {return m_port;}
@@ -76,15 +72,13 @@ private:
 	void destroySocket(void);
 
 private:
-	static NetworkDevice	*m_instance;
+	static QList<NetworkDevice*> m_networks;
 
-	QString 		m_target;
+	static QList<int>	m_inUse;
 
 	quint16			m_port;
 
 	QString			m_source;
-
-	QHostAddress		m_cpuAddress;
 
 	QUdpSocket 		*m_sock;
 
