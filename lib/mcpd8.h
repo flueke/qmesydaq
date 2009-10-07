@@ -268,6 +268,7 @@ private:
 
 	MDP_PACKET      m_cmdBuf;
 
+	//! last buffer number
 	quint32 	m_lastBufnum;
 
 	QTimer 		*m_commTimer;
@@ -290,7 +291,6 @@ private:
 	//! the accessed MPSD8 ????
 	QMap<int, MPSD_8 *> m_mpsd;
 	
-private:
 	//! the header time stamp
 	quint64		m_headertime;
 

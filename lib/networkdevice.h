@@ -91,8 +91,6 @@ private:
 	QSocketNotifier 	*m_notifyNet;
 
 	MDP_PACKET		m_recBuf;
-	
-	quint16 		m_lastBufnum;
 };
 
 #endif
