@@ -997,7 +997,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 
 	quint16 diff = recBuf.bufferNumber - m_lastBufnum;
 	if(diff > 1)
-		protocol(tr("%1(%2) : Lost %3 Buffers: current: %4, last: %5").arg(m_network->ip()).arg(m_network->port()).arg(diff).arg(recBuf.bufferNumber).arg(m_lastBufnum), ERROR);
+		protocol(tr("%1(%2)%6 : Lost %3 Buffers: current: %4, last: %5").arg(m_network->ip()).arg(m_network->port()).arg(diff).arg(recBuf.bufferNumber).arg(m_lastBufnum).arg(m_id), ERROR);
 	m_lastBufnum = recBuf.bufferNumber;
 
 	if(recBuf.bufferType & 0x8000)
