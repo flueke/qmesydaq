@@ -124,6 +124,33 @@ void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 }
 
 /*!
+    \fn Mesydaq2::isMaster(quint16 mod)
+    \param mod number of the MCPD
+    \return is the MCPD master or not 
+*/
+bool Mesydaq2::isMaster(quint16 mod)
+{
+	if (!m_mcpd.contains(mod))
+		return false;
+	return m_mcpd[mod]->isMaster();
+}
+
+/*!
+    \fn Mesydaq2::isTerminated(quint16 mod)
+    \param mod number of the MCPD
+    \return is the MCPD terminated or not 
+*/
+bool Mesydaq2::isTerminated(quint16 mod)
+{
+	if (!m_mcpd.contains(mod))
+		return false;
+	if (isMaster(mod))
+		return true;
+	else
+		return m_mcpd[mod]->isTerminated();
+}
+
+/*!
     \fn float Mesydaq2::getFirmware(quint16 id)
     
     gets the firmware version of a MCPD
@@ -133,7 +160,7 @@ void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 */
 float Mesydaq2::getFirmware(quint16 id)
 {
-	if (m_mcpd.empty())
+	if (!m_mcpd.contains(id))
 		return 0;
 	return m_mcpd[id]->version();
 }
@@ -417,24 +444,34 @@ bool Mesydaq2::saveSetup(const QString &name)
 		m_configfilename.append(".mcfg");
 
 	QSettings settings(m_configfilename, QSettings::IniFormat);
-	settings.setValue("general/date", QDateTime::currentDateTime());
-	settings.setValue("general/Config Path", m_configPath);
-	settings.setValue("general/Histogram Path", m_histPath);
-	settings.setValue("general/Listfile Path", m_listPath);
+	settings.setValue("MESYDAQ/date", QDateTime::currentDateTime());
+	settings.setValue("MESYDAQ/configPath", m_configPath);
+	settings.setValue("MESYDAQ/histogramPath", m_histPath);
+	settings.setValue("MESYDAQ/listfilePath", m_listPath);
+	settings.setValue("MESYDAQ/debugLevel", DEBUGLEVEL);
+
+	settings.setValue("MCPD-8/number", m_mcpd.size());
+
 	i = 0;
 	foreach(MCPD8 *value, m_mcpd) 
 	{
+		QString str = tr("MCPD-8/%1/").arg(value->getId());
+		settings.setValue(str + "id", value->getId());
+		settings.setValue(str + "ip", value->ip());
+		settings.setValue(str + "port", value->port());
+		settings.setValue(str + "master", value->isMaster());
+		settings.setValue(str + "terminate", value->isMaster() ? true : value->isTerminated());
 		for (int j = 0; j < 8; ++j)
 		{
 			if (value->getMpsdId(j))
 			{
-				QString str;
-				str.sprintf("MPSD-8 #%d/", i);
+				QString str = tr("MPSD-8/%1/").arg(i * 8 + j);
+				settings.setValue(str + "id", i * 8 + j);
 				settings.beginWriteArray(str + "gains");
 				for(int k = 0; k < 8; k++)
 				{
 					settings.setArrayIndex(k);
-					settings.setValue("gain", value->getGain(j, k));
+					settings.setValue("gain", value->getGainPoti(j, k));
 				}
 				settings.endArray();
 				settings.setValue(str + "threshold", value->getThreshold(j));
@@ -443,63 +480,6 @@ bool Mesydaq2::saveSetup(const QString &name)
 		++i;
 	}
 
-#if 0
-	QFile f(configfilename);
-	if ( f.open(QIODevice::WriteOnly) ) 
-	{    // file opened successfully
-		QTextStream t( &f );        // use a text stream
-		QString s;
-		// Title
-		t << "mesydaq configuration file   ";
-		t << dateTime.toString("dd.MM.yy") << " " << dateTime.toString("hh.mm.ss");
-		t << '\r' << '\n';
-		t << '\r' << '\n';
-		// default paths
-		t << "Config Path";
-		t << '\r' << '\n';
-		t << configPath;
-		t << '\r' << '\n';
-		t << "Histogram Path";
-		t << '\r' << '\n';
-		t << histPath;
-		t << '\r' << '\n';
-		t << "Listfile Path";
-		t << '\r' << '\n';
-		t << listPath;
-		t << '\r' << '\n';
-		t << "Setup:";
-		t << '\r' << '\n';
-/*		t << "MCPD-8 settings";
-		t << '\r' << '\n';
-		t << '\r' << '\n';
-		t << "MCPD-8 #" << 0 << ":";
-		t << '\r' << '\n';
-*/    	
-		t << "MPSD-8 settings";
-		t << '\r' << '\n';
-		t << '\r' << '\n';
-		for(int i=0; i<8*MCPDS; i++)
-		{
-			if(myMpsd[i]->getMpsdId())
-			{
-				t << "MPSD-8 #" << i << ":";
-				t << '\r' << '\n';
-				t << "gains:";
-				t << '\r' << '\n';
-				for(int j=0; j<8; j++)
-				{
-					t << myMpsd[i]->getGainpoti(j,0);
-					t << '\r' << '\n';
-				}
-				t << "threshold:";
-				t << '\r' << '\n';
-				t << myMpsd[i]->getThreshpoti(0);
-				t << '\r' << '\n';
-			}
-		}
-	}
-	f.close();
-#endif
 	return true;
 }
 
@@ -517,127 +497,51 @@ bool Mesydaq2::loadSetup(const QString &name)
 	if(name.isEmpty())
 		m_configfilename = "mesycfg.mcfg";
   
-	protocol(tr("Reading configfile %1").arg(m_configfilename), DEBUG);
+	protocol(tr("Reading configfile %1").arg(m_configfilename), NOTICE);
 
 	QSettings settings(m_configfilename, QSettings::IniFormat);
 
-	m_configPath = settings.value("general/Config Path", "/home").toString();
-	m_histPath = settings.value("general/Histogram Path", "/home").toString();
-	m_listPath = settings.value("general/Listfile Path", "/home").toString();
-	int i(0);
-	foreach(MCPD8 *value, m_mcpd)
+	m_configPath = settings.value("MESYDAQ/configPath", "/home").toString();
+	m_histPath = settings.value("MESYDAQ/histogramPath", "/home").toString();
+	m_listPath = settings.value("MESYDAQ/listfilePath", "/home").toString();
+	DEBUGLEVEL = settings.value("MESYDAQ/debugLevel", NOTICE).toInt();
+
+	int nMcpd = settings.value("MCPD-8/number", 1).toInt();
+	
+	for (int mod = 0; mod < nMcpd; ++mod)
 	{
-		protocol(tr("mcpd #%1 : number of groups %2").arg(i).arg(settings.childGroups().size()), NOTICE);
-		for (int j = 0; j < 8; ++j)
+		QString str = tr("MCPD-8/%1/").arg(mod);
+		QString ip = settings.value(str + "ip", "192.168.168.121").toString();
+		quint16 port = settings.value(str + "port", 54321).toUInt();
+
+		addMCPD(mod, ip, port);
+
+		bool master = settings.value(str + "master", true).toBool();
+		bool term = settings.value(str + "terminate", true).toBool();
+
+		setTimingSetup(mod, master, term);
+
+		for (int addr = 0; addr < 8; ++addr)
 		{
-			QString str;
-			str.sprintf("MPSD-8 #%d", j);
-			if (settings.childGroups().contains(str))
+			if (getMpsdId(mod, addr))
 			{
+				QString str = tr("MPSD-8/%1/").arg(mod * 8 + addr);
 				settings.beginGroup(str);
-				protocol("init " + str, NOTICE);
 				int size = settings.beginReadArray("gains");
 				protocol(tr("init size = %1").arg(size), DEBUG);
 				for (int l = 0; l < size; ++l)
 				{
 					settings.setArrayIndex(l);
-					quint8 gain = settings.value("gain", 128).toUInt() & 0xff;
-					value->setGain(j, l, gain);
+					quint8 gain = settings.value("gain", 92).toUInt() & 0xff;
+					setGain(mod, addr, l, gain);
 				}
 				settings.endArray();
-				quint8 thresh = settings.value(str + "threshold", 10).toUInt() & 0xff;
-				value->setThreshold(j, thresh);
+				quint8 thresh = settings.value(str + "threshold", 22).toUInt() & 0xff;
+				setThreshold(mod, addr, thresh);
 				settings.endGroup();
 			}
 		}
-		++i;
 	}
-#if 0
-	QFile f(configfilename);
-
-	QString s, str;
-
-
-	if (f.open(QIODevice::ReadOnly)) 
-	{    // file opened successfully
-		QTextStream t( &f );        // use a text stream
-
-// now read from stream
-    
-// Headline + empty line
-		s = t.readLine();
-		s = t.readLine();
-
-//  Headline + configPath
-		s = t.readLine();
-		configPath = t.readLine();
-
-// Headline + histPath
-		s = t.readLine();
-		histPath = t.readLine();
-
-// Headline + listPath
-		s = t.readLine();
-		listPath = t.readLine();
-	
-// three headlines
-		s = t.readLine();
-		s = t.readLine();
-		s = t.readLine();
-
-// now the MPSD-8, if any...
-		s = t.readLine();
-		char charpos = s.indexOf('#', 0);
-
-// loop through existing entries
-		while(charpos > 6)
-		{
-			// module address: next to # sign
-			QString as = s.right(s.length()-charpos-1);
-			as = as.left(1);
-			unsigned char modaddr = as.toUShort();
-			// one title row
-			s = t.readLine();
-			// 9 gain poti values
-			if(myMpsd[modaddr]->getMpsdId() > 0)
-			{
-				for(unsigned char i = 0; i < 8; i++)
-				{
-					s = t.readLine();
-					myMpsd[modaddr]->setGain(i, (unsigned char)s.toUShort(), 1);
-				}
-			}
-			// one title row
-			s = t.readLine();
-			// threshold poti
-			s = t.readLine();
-			if(myMpsd[modaddr]->getMpsdId() > 0)
-			{
-				myMpsd[modaddr]->setThreshpoti((unsigned char)s.toUShort(), 1);
-			}
-			if(myMpsd[modaddr]->getMpsdId() > 0)
-			{
-				initMpsd(modaddr);
-			}	
-			// further entries?
-			s = t.readLine();
-			qDebug(s.toStdString().c_str());
-			charpos = s.indexOf('#', 0);
-		}
-	
-		f.close();
-		mainWin->dispFiledata();
-		return true;
-	}
-  	else
-	{
-		pstring.sprintf("ERROR: opening configfile '");
-		pstring.append(name);
-		pstring.append("' failed");
-		protocol(pstring, ERROR);
-		return false;
-	}
-#endif
 	return true;
 }
 
@@ -1257,10 +1161,10 @@ quint64 Mesydaq2::getParameter(quint16 id, quint16 param)
     \return poti value of the gain
     \see setGain
  */
-quint8 Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
+float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 {
 	if (m_mcpd.contains(id))
-		return m_mcpd[id]->getGain(addr, chan);
+		return m_mcpd[id]->getGainVal(addr, chan);
 	return 0;
 }
 

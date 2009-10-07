@@ -154,7 +154,7 @@ public:
 
 	float getMpsdVersion(quint16 mod, quint8 addr);
 
-	quint8 getGain(quint16 mod, quint8 addr, quint8 chan);
+	float getGain(quint16 mod, quint8 addr, quint8 chan);
 
 	quint8 getThreshold(quint16 mod, quint8 addr);
 
@@ -188,6 +188,10 @@ public:
 
 	//! \return number of MCPD's
 	quint16 numMCPD(void) {return m_mcpd.size();}
+
+	bool isMaster(quint16 mod);
+
+	bool isTerminated(quint16 mod);
 
 public slots:
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
