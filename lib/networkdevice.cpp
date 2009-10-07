@@ -174,9 +174,9 @@ int NetworkDevice::createSocket(void)
 bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
 {
 	QHostAddress ha(target);
-	protocol(tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(m_port).arg(buf.bufferLength * 2), NOTICE);
+	protocol(tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(m_port).arg(buf.bufferLength * 2), INFO);
 	qint64 i = m_sock->writeDatagram((const char *)&buf, 100, ha, m_port);
-	protocol(tr("%1 sent bytes").arg(i), NOTICE);
+	protocol(tr("%1 sent bytes").arg(i), DEBUG);
 	return (i != -1); 
 }
 
