@@ -152,11 +152,11 @@ void Measurement::start()
 	m_starttime_msec = m_mesydaq->time();
 	m_running = true;
 	m_stopping = false;
-	protocol(tr("event counter limit : %1").arg(m_counter[EVCT]->limit()), NOTICE);
+	protocol(tr("event counter limit : %1").arg(m_counter[EVCT]->limit()), INFO);
 	for (quint8 c = 0; c < 8; ++c)
 	{
 		m_counter[c]->start(m_starttime_msec);
-		protocol(tr("counter %1 limit : %2").arg(c).arg(m_counter[c]->limit()), NOTICE);
+		protocol(tr("counter %1 limit : %2").arg(c).arg(m_counter[c]->limit()), INFO);
 	}
 }
 
