@@ -185,6 +185,20 @@ public:
 	 */
 	quint16 getRunId(void) {return m_runId;}
 
+	/**
+	 * gets the address of the MCPD module
+	 *
+	 * \return IP address of the MCPD
+	 */
+	QString ip(void) {return m_ownIpAddress;}
+
+	/**
+	 * gets the command port of the MCPD
+	 *
+	 * \return port number of the command port
+	 */
+	quint16 port(void) {return m_cmdPort;}
+
 public slots:
 	void analyzeBuffer(MDP_PACKET &pd);
 
@@ -242,11 +256,13 @@ private:
 
 	//! IP address for sending the commands
 	QString 	m_cmdIpAddress;
+
 	//! Port for commands
 	quint16 	m_cmdPort;
 
 	//! IP address for sending the data
 	QString 	m_dataIpAddress;
+
 	//! Port for the data
 	quint16 	m_dataPort;
 	
