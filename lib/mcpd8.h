@@ -71,6 +71,9 @@ public:
 	//! \return whether this MCPD is configured as master or not
 	bool isMaster(void) {return m_master;}
 
+	//! \return whether this MCPD is terminated on the synchronization bus or not
+	bool isTerminated(void) {return m_term;}
+
 	bool setMasterClock(quint64);
 
 	//! returns the number of received data packages
@@ -266,8 +269,11 @@ private:
 	//! Port for the data
 	quint16 	m_dataPort;
 	
-	//! is this MCPD master or not
+	//! is this MCPD master on sync bus or not
 	bool 		m_master;
+	
+	//! is this MCPD terminated on sync bus or not
+	bool 		m_term;
 	
 	//! 8 counter cells, trig source in [0], compare reg in [1]
 	quint8 		m_counterCell[8][2];
