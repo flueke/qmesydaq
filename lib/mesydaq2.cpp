@@ -386,42 +386,16 @@ void Mesydaq2::scanPeriph(quint16 id)
 /*!
     \fn Mesydaq2::initHardware(void)
 
-    initializes the hardware, counts the number of MPSD's and tries
-    to initialise them 
+    loads the default configuration file (better last config file)
 
     \todo it seems that this method is not necessary anymore
  */
 void Mesydaq2::initHardware(void)
 {
-// starts the init procedure:
-// 1) check all MCPD
-// 2) check all MPSD: read ID, read Registers
-// setup MCPDs
-// setup MPSDs
-	
-// set init values:
-	protocol(tr("initializing hardware"), NOTICE);
-	 
-// scan connected MCPDs
-	quint16 p = 0;
-	foreach(MCPD8 *value, m_mcpd)
-		p += value->numModules();
-	
-	protocol(tr("%1 mpsd-8 found").arg(p), NOTICE);
-	
-// initialize all connected hardware modules
-// try to read standard config file
-	protocol(tr("load setup ?"), DEBUG);
-	if(!loadSetup("mesycfg.mcfg"))
-	{
-		// initialize MPSD-8 by default values.
-		foreach(MCPD8 *value, m_mcpd)
-		{
-			for (int i = 0; i < 8; ++i)
-				if(value->getMpsdId(i))
-					value->initMpsd(i);
-		}
-	}
+	QSettings settings("MesyTec", "QMesyDAQ");
+
+	QString str = settings.value("lastconfigfile", "mesycfg.mcfg").toString();
+	loadSetup(str);
 }
 
 
@@ -479,8 +453,15 @@ bool Mesydaq2::saveSetup(const QString &name)
 		}
 		++i;
 	}
-
+	storeLastFile();
 	return true;
+}
+
+void Mesydaq2::storeLastFile(void)
+{
+	QSettings settings("MesyTec", "QMesyDAQ");
+	settings.setValue("lastconfigfile", m_configfilename);
+	settings.sync();
 }
 
 /*!
@@ -493,6 +474,8 @@ bool Mesydaq2::saveSetup(const QString &name)
  */
 bool Mesydaq2::loadSetup(const QString &name)
 {
+	m_mcpd.clear();
+
 	m_configfilename = name;
 	if(name.isEmpty())
 		m_configfilename = "mesycfg.mcfg";
@@ -542,6 +525,13 @@ bool Mesydaq2::loadSetup(const QString &name)
 			}
 		}
 	}
+// scan connected MCPDs
+	quint16 p = 0;
+	foreach(MCPD8 *value, m_mcpd)
+		p += value->numModules();
+	
+	protocol(tr("%1 mpsd-8 found").arg(p), NOTICE);
+	storeLastFile();
 	return true;
 }
 

@@ -259,11 +259,15 @@ protected:
 	void timerEvent(QTimerEvent *event);
 
 private:
+	void clear();
+	
 	void initHardware(void);
 
 	void initDevices(void);
 
 	void initTimers(void);
+
+	void storeLastFile(void);
 
 	QMap<int, MCPD8	*>	m_mcpd;
 
