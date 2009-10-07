@@ -23,6 +23,7 @@
 #include "networkdevice.h"
 #include "mdefines.h"
 
+NetworkDevice	*NetworkDevice::m_instance = NULL;
 
 /*!
     \fn NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
@@ -38,7 +39,9 @@
  */
 NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
 {
-	return new NetworkDevice(parent, target, port, source);
+	if (!m_instance)
+		m_instance = new NetworkDevice(parent, target, port, source);
+	return m_instance;
 }
 
 /*!
@@ -116,7 +119,7 @@ int NetworkDevice::createSocket(void)
 	m_sock = new QUdpSocket(this);
 
 // bind address
-	if (m_sock && m_sock->bind(servaddr, m_port, QUdpSocket::DontShareAddress))
+	if (m_sock && m_sock->bind(servaddr, m_port, QUdpSocket::/*Dont*/ShareAddress))
 	{
 		if (m_notifyNet)
 		{

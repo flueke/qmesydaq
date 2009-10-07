@@ -76,21 +76,23 @@ private:
 	void destroySocket(void);
 
 private:
-	QString 	m_target;
+	static NetworkDevice	*m_instance;
 
-	quint16		m_port;
+	QString 		m_target;
 
-	QString		m_source;
+	quint16			m_port;
 
-	QHostAddress	m_cpuAddress;
+	QString			m_source;
 
-	QUdpSocket 	*m_sock;
+	QHostAddress		m_cpuAddress;
 
-	QSocketNotifier *m_notifyNet;
+	QUdpSocket 		*m_sock;
 
-	MDP_PACKET	m_recBuf;
+	QSocketNotifier 	*m_notifyNet;
 
-	quint16 	m_lastBufnum;
+	MDP_PACKET		m_recBuf;
+	
+	quint16 		m_lastBufnum;
 };
 
 #endif
