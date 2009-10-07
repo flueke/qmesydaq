@@ -186,7 +186,6 @@ void Mesydaq2::startedDaq(void)
  */
 void Mesydaq2::stoppedDaq(void)
 {
-	qDebug("Mesydaq2::stoppedDaq()");
 	if(m_acquireListfile && m_datfile.isOpen())
 	{
 		writeClosingSignature();
