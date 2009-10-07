@@ -285,7 +285,7 @@ float MCPD8::version(quint16 mod)
 		tmpFloat /= 100.;
 		tmpFloat += (tmp >> 8);
 	}
-	protocol(tr("MPSD (ID  %1): Version number : %2").arg(mod).arg(tmpFloat), NOTICE);
+	protocol(tr("MPSD (ID  %1): Version number : %2").arg(mod).arg(tmpFloat), INFO);
 	return tmpFloat;
 }
 
@@ -932,7 +932,7 @@ int MCPD8::sendCommand(void)
 	if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
 	{
 		QString pstring = tr("%4(%5) : %1. sent cmd: %2 to id: %3").arg(m_cmdBuf.bufferNumber).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId).arg(m_network->ip()).arg(m_network->port());
-		protocol(pstring, NOTICE);
+		protocol(pstring, DEBUG);
 		communicate(true);
 		m_commTimer->start(500);
 		protocol(tr("%1(%2) : timer started").arg(m_network->ip()).arg(m_network->port()), DEBUG);
@@ -1020,7 +1020,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				// extract ip and eth addresses in case of "this pc"
 				break;
 			case SETTIMING:
-				protocol(tr("not handled command : SETTIMING"), ERROR);
+				if (recBuf.cmd & 0x80)
+					protocol(tr("SETTIMING : failed"), ERROR);
+				else
+					protocol(tr("SETTIMING : master %1 terminate %2").arg(recBuf.data[0]).arg(recBuf.data[1]), INFO);
 				break;
 			case SETCLOCK:
 				protocol(tr("not handled command : SETCLOCK"), ERROR);
