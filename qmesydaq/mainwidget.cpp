@@ -265,7 +265,7 @@ void MainWidget::sendParamSlot()
 
 void MainWidget::sendAuxSlot()
 {
-	m_theApp->protocol("set aux timer", 2);
+	m_theApp->protocol("set aux timer", NOTICE);
 	bool ok;
 	quint16 compare = (quint16)compareAux->text().toInt(&ok, 0);
 	m_theApp->setAuxTimer(mcpdId->value(), timer->value(), compare); 
@@ -274,7 +274,7 @@ void MainWidget::sendAuxSlot()
 void MainWidget::resetTimerSlot()
 {
 	quint16 id = mcpdId->value();
-	m_theApp->protocol("reset timer", 2);
+	m_theApp->protocol("reset timer", NOTICE);
 	m_theApp->setMasterClock(id, 0LL); 
 }
 
@@ -282,7 +282,7 @@ void MainWidget::setTimingSlot()
 {
 	quint16 id = mcpdId->value();
 	resetTimer->setEnabled(master->isChecked());
-	m_theApp->protocol("set timing", 2);
+	m_theApp->protocol("set timing", NOTICE);
 	m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked());
 }
 
@@ -497,7 +497,7 @@ void MainWidget::setRunIdSlot()
 	quint16 runid = (quint16) devid->value();
 #warning TODO 0 !!!!
 	m_theApp->setRunId(0, runid); 
-	m_theApp->protocol(tr("Set run ID to %1").arg(runid), 2);
+	m_theApp->protocol(tr("Set run ID to %1").arg(runid), NOTICE);
 }
 
 /*!
@@ -506,9 +506,16 @@ void MainWidget::setRunIdSlot()
 void MainWidget::displayMcpdSlot(int id)
 {
 // retrieve displayed ID
-//	quint8 id = mcpdId->value();
 	if (!m_theApp->numMCPD())
 		return;
+	if (id < 0)
+		id = mcpdId->value();
+
+// store the current termination value it will be change if switch from master to slave
+	bool term = m_theApp->isTerminated(id);
+	master->setChecked(m_theApp->isMaster(id));
+	if (!master->isChecked())
+		terminate->setChecked(term);
      
 // now get and display parameters:
 	quint16 values[4];
@@ -527,7 +534,6 @@ void MainWidget::displayMcpdSlot(int id)
 // get stream setting
 //	statusStream->setChecked(m_theApp->myMcpd[id]->getStream());	
 }
-
 
 /*!
     \fn MainWidget::displayMpsdSlot(int)

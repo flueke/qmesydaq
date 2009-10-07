@@ -251,7 +251,7 @@ Listfile</string>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -1149,7 +1149,7 @@ Listfile</string>
      <item row="0" column="1">
       <widget class="QTabWidget" name="tabWidget5">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -3465,7 +3465,7 @@ parameters</string>
    <sender>mcpdId</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>displayMcpdSlot()</slot>
+   <slot>displayMcpdSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>350</x>
@@ -4402,6 +4402,38 @@ parameters</string>
     <hint type="destinationlabel">
      <x>340</x>
      <y>629</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>mcpdId</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>devid_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>585</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>731</x>
+     <y>589</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>devid_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>mcpdId</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>731</x>
+     <y>589</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>300</x>
+     <y>585</y>
     </hint>
    </hints>
   </connection>
