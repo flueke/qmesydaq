@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-TEMPLATE 	= 	subdirs
+TEMPLATE 	= subdirs
 
 SUBDIRS		+= lib qmesydaq tools test
 
