@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "mpsd8.h"
+#include "mdefines.h"
 
 /*!
     \fn MPSD_8p::MPSD_8p(quint8 id, QObject *parent)
@@ -38,7 +39,7 @@ MPSD_8p::MPSD_8p(quint8 id, QObject *parent)
 	, m_p1(4.167)
 	, m_p2(1.2083)
 {
-	protocol(tr("ID = %1").arg(id));
+	protocol(tr("ID = %1").arg(id), INFO);
 }
 
 /*!
