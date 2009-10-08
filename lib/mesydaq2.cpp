@@ -439,6 +439,19 @@ bool Mesydaq2::saveSetup(const QString &name)
 		settings.value(str + "dataport", 0);
 		settings.setValue(str + "master", value->isMaster());
 		settings.setValue(str + "terminate", value->isMaster() ? true : value->isTerminated());
+		for (int c = 0; c < 4; ++c)
+		{
+			settings.setValue(str + tr("auxtimer%1").arg(c), value->getAuxTimer(c));
+			settings.setValue(str + tr("paramsource%1").arg(c), value->getParamSource(c));
+		}
+		for (int c = 0; c < 8; ++c)
+		{
+			quint16	cells[2];
+			value->getCounterCell(c, cells);
+			QList<QVariant> l;
+			l << cells[0] << cells[1];
+			settings.setValue(str + tr("countercell%1").arg(c), l);
+		}
 		for (int j = 0; j < 8; ++j)
 		{
 			if (value->getMpsdId(j))
@@ -505,10 +518,23 @@ bool Mesydaq2::loadSetup(const QString &name)
 		quint16 cmdPort = settings.value(str + "cmdport", 0).toUInt();
 		quint16 dataPort = settings.value(str + "dataport", 0).toUInt();
 
-		addMCPD(mod, IP, port);
+		addMCPD(mod, IP, port, cmdIP);
 
 		bool master = settings.value(str + "master", true).toBool();
 		bool term = settings.value(str + "terminate", true).toBool();
+		
+		for (int c = 0; c < 4; ++c)
+		{
+			quint16 val = settings.value(str + tr("auxtimer%1").arg(c), 0).toUInt();
+			setAuxTimer(mod, c, val);
+			val = settings.value(str + tr("paramsource%1").arg(c), c).toUInt();
+			setParamSource(mod, c, val);
+		}
+		for (int c = 0; c < 8; ++c)
+		{
+			QList<QVariant> l = settings.value(str + tr("countercell%1").arg(c), "7, 22").toList();
+			setCounterCell(mod, c, l[0].toUInt(), l[1].toUInt());
+		}
 
 		setTimingSetup(mod, master, term);
 
