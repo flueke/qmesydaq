@@ -85,14 +85,11 @@ Measurement::~Measurement()
 	if (m_onlineTimer)
 		killTimer(m_onlineTimer);
 	m_onlineTimer = 0;
-	if (m_ampHist)
-		delete m_ampHist;
+	delete m_ampHist;
 	m_ampHist = NULL;
-	if (m_posHist)
-		delete m_posHist;
+	delete m_posHist;
 	m_posHist = NULL;
-	if (m_timeSpectrum)
-		delete m_timeSpectrum;
+	delete m_timeSpectrum;
 	m_timeSpectrum = NULL;
 }
 
