@@ -124,7 +124,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
         connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
-	connect(lin, SIGNAL(toggled(bool)), this, SLOT(changeScale(bool)));
 
 #if 0
 #if QT_VERSION < 0x040000
