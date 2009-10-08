@@ -637,7 +637,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			{
 				neutrons++;
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
-				quint8 chan = (id << 3) + slotId;
+				quint8 chan = (id << 3) + slotId + (mod << 7);
 				quint16 amp(0), 
 					pos(0);
 				if (m_mesydaq->getMpsdId(mod, slotId) == MPSD8)
@@ -658,14 +658,14 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				}
 				++(*m_counter[EVCT]);
 				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), DEBUG);
+
+// BUG in firmware, every first neutron event seems to be "buggy" or virtual
+				if (neutrons == 1 && chan == 0 && pos == 0 && amp == 0)
+					continue;
 				if (m_posHist)
-				{
 					m_posHist->incVal(chan, pos);
-				}
 				if (m_ampHist)
-				{
 					m_ampHist->incVal(chan, amp);
-				}
 				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), DEBUG);
 			}
 		}
