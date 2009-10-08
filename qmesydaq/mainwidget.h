@@ -46,10 +46,6 @@ public:
 
 	~MainWidget();
 
-private slots:
-	void setModeSlot(int);
-	void displayMpsdSlot(int = -1);
-
 private:
 	void 	update(void);
 	void 	processDispData();
@@ -58,6 +54,9 @@ private:
 	void 	updateCaress(void);
 
 private slots:
+	void setModeSlot(int);
+	void displayMpsdSlot(int = -1);
+
 	void sendAuxSlot();
 	void sendParamSlot();
 	void sendCellSlot();
@@ -84,6 +83,7 @@ private slots:
 
 // list mode files related methods
 	void replayListfileSlot();
+	void checkListfilename(bool);
 
 	void linlogSlot();
 	void applyThreshSlot();
@@ -114,7 +114,6 @@ private slots:
 
 	void draw(void);
 
-private slots:
 	void selectListfileSlot();
 	void setThresholdSlot();
 	void setGainSlot();
@@ -128,9 +127,8 @@ private slots:
 private:
 	void 	dispFiledata(void);
 
-	void timerEvent(QTimerEvent *event);
+	void 	timerEvent(QTimerEvent *event);
 
-private:
 	QString buildTimestring(quint64 timeval, bool nano);
 
 private:

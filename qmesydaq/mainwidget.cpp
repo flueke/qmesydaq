@@ -97,6 +97,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
 	connect(devid, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
 	connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
+	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 	
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
@@ -380,10 +381,20 @@ void MainWidget::selectListfileSlot()
 		if(i == -1)
 			name.append(".mdat");
  		listFilename->setText(name);
+		m_theApp->setListfilename(name);
   	}
-	m_theApp->setListfilename(name);
 	dispFiledata();
 }
+
+void MainWidget::checkListfilename(bool checked)
+{
+	if (checked && listFilename->text().isEmpty())
+	{
+		selectListfileSlot();
+		if (listFilename->text().isEmpty())
+			acquireFile->setChecked(false);
+	}
+}	
 
 /*!
     \fn MainWidget::update(void)
