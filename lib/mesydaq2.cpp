@@ -253,7 +253,6 @@ void Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
 	connect(m_mcpd[id], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 }
 
-
 /*!
     \fn Mesydaq2::initTimers(void)
 
@@ -418,7 +417,8 @@ bool Mesydaq2::saveSetup(const QString &name)
 		m_configfilename.append(".mcfg");
 
 	QSettings settings(m_configfilename, QSettings::IniFormat);
-	settings.setValue("MESYDAQ/date", QDateTime::currentDateTime());
+	settings.setValue("MESYDAQ/comment", "QMesyDAQ configuration file");
+	settings.setValue("MESYDAQ/date", QDateTime::currentDateTime().toString(Qt::ISODate));
 	settings.setValue("MESYDAQ/configPath", m_configPath);
 	settings.setValue("MESYDAQ/histogramPath", m_histPath);
 	settings.setValue("MESYDAQ/listfilePath", m_listPath);
@@ -433,6 +433,10 @@ bool Mesydaq2::saveSetup(const QString &name)
 		settings.setValue(str + "id", value->getId());
 		settings.setValue(str + "ip", value->ip());
 		settings.setValue(str + "port", value->port());
+		settings.value(str + "cmdip", "0.0.0.0");
+		settings.value(str + "dataip", "0.0.0.0");
+		settings.value(str + "cmdport", 0);
+		settings.value(str + "dataport", 0);
 		settings.setValue(str + "master", value->isMaster());
 		settings.setValue(str + "terminate", value->isMaster() ? true : value->isTerminated());
 		for (int j = 0; j < 8; ++j)
@@ -494,10 +498,14 @@ bool Mesydaq2::loadSetup(const QString &name)
 	for (int mod = 0; mod < nMcpd; ++mod)
 	{
 		QString str = tr("MCPD-8/%1/").arg(mod);
-		QString ip = settings.value(str + "ip", "192.168.168.121").toString();
+		QString IP = settings.value(str + "ip", "192.168.168.121").toString();
+		QString cmdIP = settings.value(str + "cmdip", "0.0.0.0"). toString();
+		QString dataIP = settings.value(str + "dataip", "0.0.0.0").toString();
 		quint16 port = settings.value(str + "port", 54321).toUInt();
+		quint16 cmdPort = settings.value(str + "cmdport", 0).toUInt();
+		quint16 dataPort = settings.value(str + "dataport", 0).toUInt();
 
-		addMCPD(mod, ip, port);
+		addMCPD(mod, IP, port);
 
 		bool master = settings.value(str + "master", true).toBool();
 		bool term = settings.value(str + "terminate", true).toBool();
@@ -544,15 +552,12 @@ void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 {
 #warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
 #warning TODO 		cInt->caressTask();
-#warning TODO
 //! \todo CARESS binding and checks for the hardware
 #if 0
 	if (event->timerId() == m_checkTimer)	
 		checkMcpd(0);
 #endif
 }
-
-
 
 /*!
     \fn Mesydaq2::initMcpd(quint8 id)
