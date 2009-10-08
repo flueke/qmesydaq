@@ -25,14 +25,14 @@
 #include "mdefines.h"
 
 #include <QVector>
-
+#include <QList>
 #include <QMap>
 
 class QFile;
 
 /**
  * \short represents a single spectrum 
- * \author Jens Krüger <jens.krueger@frm2.tum.de>
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
 class Spectrum : public MesydaqObject
 {
@@ -100,7 +100,9 @@ private:
  * \short represents a histogram
  * This histogram object will automatically increase its size, if
  * the incVal method gives values which are not exist.
+ *
  * \author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Jens Kr&uuml;ger <jens.kruege@frm2.tum.de>
  */
 class Histogram : public MesydaqObject
 {
@@ -150,6 +152,8 @@ private:
 	quint8 				m_twidth;
 
 	QMap<quint16, Spectrum*>	m_data;
+
+	QList<quint16>			m_dataKeys;
 
 	Spectrum			m_sumSpectrum;
 

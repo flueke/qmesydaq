@@ -156,13 +156,22 @@ quint64 Histogram::max()
 
     gives the counts of the cell x,y. 
 
+    The implementation is a little bit tricky. In the m_dataKeys list
+    are stored all keys for the single tube spectra. The will mapped
+    to a number of the tube. This saves some space in the memory.
+
     \param chan number of the bin
     \param bin number of the tube
     \return 0 rief the cell does not exist, otherwise the counts
  */
 quint64 Histogram::value(quint16 chan, quint16 bin)
 {
-	return m_data.contains(chan) ? m_data[chan]->value(bin) : 0;
+	if (chan < m_dataKeys.size())
+	{
+		quint16 i = m_dataKeys[chan];
+		return /* m_data.contains(i) ? */ m_data[i]->value(bin)/* : 0 */;
+	}
+	return 0;
 }
 
 /**
@@ -182,6 +191,7 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
 		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
 			if (!m_data.contains(i))
 				m_data[i] = new Spectrum(m_sumSpectrum.width());
+		m_dataKeys = m_data.keys();
 	}
 	if (!m_data.contains(m_maximumPos))
 		m_maximumPos = chan;
