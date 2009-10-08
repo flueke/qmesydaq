@@ -637,7 +637,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			{
 				neutrons++;
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
-				quint8 chan = (id << 3) + slotId + (mod << 7);
+				quint8 chan = (id << 3) + slotId + (mod << 6);
 				quint16 amp(0), 
 					pos(0);
 				if (m_mesydaq->getMpsdId(mod, slotId) == MPSD8)
