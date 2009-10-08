@@ -996,7 +996,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 		return;
 
 	quint16 diff = recBuf.bufferNumber - m_lastBufnum;
-	if(diff > 1)
+	if(diff > 1 && recBuf.bufferNumber > 0 && m_lastBufnum != 255)
 		protocol(tr("%1(%2)%6 : Lost %3 Buffers: current: %4, last: %5").arg(m_network->ip()).arg(m_network->port()).arg(diff).arg(recBuf.bufferNumber).arg(m_lastBufnum).arg(m_id), ERROR);
 	m_lastBufnum = recBuf.bufferNumber;
 
@@ -1444,7 +1444,7 @@ quint8	MCPD8::getPulsChan(quint8 addr, bool preset)
  */
 void MCPD8::initMpsd(quint8 id)
 {
-#warning TODO
+#warning TODO gain initialization
 //! \todo gain initialization
 #if 0
 	quint8 	start = 8,
