@@ -169,7 +169,7 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
 	if (chan < m_dataKeys.size())
 	{
 		quint16 i = m_dataKeys[chan];
-		return /* m_data.contains(i) ? */ m_data[i]->value(bin)/* : 0 */;
+		return m_data[i]->value(bin);
 	}
 	return 0;
 }
