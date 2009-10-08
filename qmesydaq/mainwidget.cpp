@@ -36,6 +36,7 @@
 #include <qwt_plot_spectrogram.h>
 #include <qwt_color_map.h>
 #include <qwt_scale_widget.h>
+#include <qwt_scale_engine.h>
 
 #include <cmath>
 
@@ -95,8 +96,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
+	connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
+	connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
 	connect(devid, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
-	connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
 	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 	
 	channelLabel->setHidden(comgain->isChecked());
@@ -122,6 +124,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
         connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+	connect(lin, SIGNAL(toggled(bool)), this, SLOT(changeScale(bool)));
 
 #if 0
 #if QT_VERSION < 0x040000
@@ -675,13 +678,13 @@ void MainWidget::applyThreshSlot()
 /*!
     \fn MainWidget::linlogSlot()
  */
-void MainWidget::linlogSlot()
+void MainWidget::linlogSlot(bool bLog)
 {
-	m_dispLog = log->isChecked();
-	if (m_dispLog)
-		qDebug("log");
+	if (bLog)
+		dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 	else
-		qDebug("lin");
+		dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+	draw();
 }
 
 /*!
@@ -741,7 +744,7 @@ void MainWidget::writeRegisterSlot()
 void MainWidget::readRegisterSlot()
 {
 //! \todo display read values
-#warning TODO
+#warning TODO display read values
 	quint16 id = (quint16) devid->value();	
 	quint16 addr = module->value();
 	quint16 reg = registerSelect->value();

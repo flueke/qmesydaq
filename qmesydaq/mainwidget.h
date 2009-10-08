@@ -85,7 +85,7 @@ private slots:
 	void replayListfileSlot();
 	void checkListfilename(bool);
 
-	void linlogSlot();
+	void linlogSlot(bool);
 	void applyThreshSlot();
 	void readRegisterSlot();
 	void writeRegisterSlot();
