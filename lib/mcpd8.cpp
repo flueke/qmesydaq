@@ -197,7 +197,7 @@ bool MCPD8::cont(void)
  */
 quint8 MCPD8::getMpsdId(quint8 addr)
 {
-	if (m_mpsd.find(addr) != m_mpsd.end())
+	if (m_mpsd.contains(addr))
 		return m_mpsd[addr]->getMpsdId();
 	else
 		return 0;
@@ -553,14 +553,19 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
  */
 bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 {
+	protocol(tr("MCPD8::setAuxTimer(%1, %2)").arg(tim).arg(val));
 	if(tim > 3)
 		tim = 3;
 	initCmdBuffer(SETAUXTIMER);
 	m_cmdBuf.data[0] = tim;
 	m_cmdBuf.data[1] = val;
 	finishCmdBuffer(2);
-	m_auxTimer[tim] = val;
-	return sendCommand();
+	if(sendCommand())
+	{
+		m_auxTimer[tim] = val;
+		return true;
+	}
+	return false;
 }
 
 /*!
@@ -575,27 +580,24 @@ bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
  */
 bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 {
-	bool errorflag = false;
+	bool errorflag = true;
 	if(source > 7)
 	{
 		protocol(tr("Error: mcpd %1: trying to set counter cell #%2. Range exceeded! Max. cell# is 7").arg(m_id).arg(source), ERROR);
-		errorflag = true;
+		errorflag = false;
 	}
 	if(trigger > 7)
 	{
 		protocol(tr("Error: mcpd %1: trying to set counter cell trigger # to %2. Range exceeded! Max. trigger# is 7").arg(m_id).arg(trigger), ERROR);
-		errorflag = true;
+		errorflag = false;
 	}
 	if(compare > 22)
 	{
 		protocol(tr("Error: mcpd %1: trying to set counter cell compare value to %2. Range exceeded! Max. value is 22").arg(m_id).arg(compare), ERROR);
-		errorflag = true;
+		errorflag = false;
 	}
-	if(!errorflag)
+	if(errorflag)
 	{
-		m_counterCell[source][0] = trigger;
-		m_counterCell[source][1] = compare;
-		
 		protocol(tr("mcpd %1: set counter cell %2: trigger # is %3, compare value %4.").arg(m_id).arg(source).arg(trigger).arg(compare), NOTICE);
 	
 		initCmdBuffer(SETCELL);
@@ -603,7 +605,13 @@ bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 		m_cmdBuf.data[1] = trigger;
 		m_cmdBuf.data[2] = compare;
 		finishCmdBuffer(3);
-		return sendCommand();
+		if (sendCommand())
+		{
+			m_counterCell[source][0] = trigger;
+			m_counterCell[source][1] = compare;
+		}
+		else
+			errorflag = false;
 	}
 	return errorflag;
 }
@@ -619,6 +627,8 @@ bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
  */
 void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
 {
+	if (cell > 7)
+		cell = 7;
 	celldata[0] = m_counterCell[cell][0];
 	celldata[1] = m_counterCell[cell][1];
 }
@@ -1056,10 +1066,12 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				protocol(tr("not handled command : SETCLOCK"), ERROR);
 				break;
 			case SETCELL:
-				protocol(tr("not handled command : SETCELL"), ERROR);
+				if (recBuf.cmd & 0x80)
+					protocol(tr("SETCELL : failed"), ERROR);
+				else
+					protocol(tr(": SETCELL"), INFO);
 				break;
 			case SETAUXTIMER:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
 				if (recBuf.data[2] != m_auxTimer[recBuf.data[1]])
 				{
 					protocol(tr("Error setting auxiliary timer, tim %1, is: %2, should be %3").
@@ -1067,7 +1079,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				}
 				break;
 			case SETPARAM:
-				protocol(tr("not handled command : SETPARAM"), ERROR);
+				if (recBuf.cmd & 0x80)
+					protocol(tr("SETPARAM : failed"), ERROR);
+				else
+					protocol(tr("SETPARAM"), INFO);
 				break;
 			case GETPARAM:
 				protocol(tr("not handled command : GETPARAM"), ERROR);
