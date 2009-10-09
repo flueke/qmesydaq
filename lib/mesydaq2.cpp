@@ -530,9 +530,12 @@ bool Mesydaq2::loadSetup(const QString &name)
 			val = settings.value(str + tr("paramsource%1").arg(c), c).toUInt();
 			setParamSource(mod, c, val);
 		}
+		QList<QVariant> defaultList;
+		defaultList << quint16(7) << quint16(22);
 		for (int c = 0; c < 8; ++c)
 		{
-			QList<QVariant> l = settings.value(str + tr("countercell%1").arg(c), "7, 22").toList();
+			
+			QList<QVariant> l = settings.value(str + tr("countercell%1").arg(c), defaultList).toList();
 			setCounterCell(mod, c, l[0].toUInt(), l[1].toUInt());
 		}
 
