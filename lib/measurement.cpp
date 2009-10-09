@@ -703,10 +703,13 @@ void Measurement::readListfile(QString readfilename)
 		bcount(0);
 
 	str = textStream.readLine();
-//	qDebug(str.toStdString().c_str());
+	qint64	seekPos;
+	seekPos = str.size() + 1;
 	str = textStream.readLine();
-//	qDebug(str.toStdString().c_str());
+	seekPos += str.size() + 1;
+	textStream.seek(seekPos);
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
+
 	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
 	protocol(tr("readListfile : %1").arg(ok), NOTICE);
 	QChar c('0');
@@ -720,6 +723,8 @@ void Measurement::readListfile(QString readfilename)
 			break;
 		}
 		DATA_PACKET 	dataBuf;
+
+		memset(&dataBuf, 0, sizeof(dataBuf));
 		dataBuf.bufferLength = sep1;
 		dataBuf.bufferType = sep2;
 		dataBuf.headerLength = sep3;
@@ -740,11 +745,18 @@ void Measurement::readListfile(QString readfilename)
 		blocks++;
 		bcount++;
 // check for next separator:
+		qint64 p = textStream.device()->pos();
+		protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), ERROR);
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
 		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), DEBUG);
 		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
 		if (!ok)
+		{
 			protocol(tr("File structure error - read aborted after %1 buffers").arg(blocks), ERROR);
+			p = textStream.device()->pos();
+			protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), ERROR);
+			protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), ERROR);
+		}
 		if(bcount == 1000)
 		{
 			bcount = 0;

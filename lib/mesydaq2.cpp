@@ -1247,11 +1247,27 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		quint16 mod = pd.deviceId;	
 		if(m_acquireListfile)
 		{
-			quint16 *pD = (quint16 *) &pd.bufferLength;
-			for(quint16 i = 0; i < pd.bufferLength; i++)
+			quint16 *pD = (quint16 *)&pd;
+			if (pd.bufferLength == 0)
+			{
+				protocol(tr("BUFFER with length 0"), ERROR);
+				return;
+			}
+			if (pd.bufferLength == 21)
+				return;
+			if (pd.bufferLength > sizeof(DATA_PACKET) / 2)
+			{
+				protocol(tr("BUFFER with length ").arg(pd.bufferLength), ERROR);
+				return;
+			}
+			m_datStream << pd.bufferLength;
+			m_datStream << pd.bufferType;
+			m_datStream << pd.headerLength;
+			m_datStream << pd.bufferNumber;
+			for(quint16 i = 4; i < pd.bufferLength; i++)
 				m_datStream << pD[i];
 			writeBlockSeparator();
-			qDebug("------------------");
+//			qDebug("------------------");
 		}
 		protocol(tr("buffer : length : %1 type : %2").arg(pd.bufferLength).arg(pd.bufferType), DEBUG);
 		if(pd.bufferType < 0x0002) 
