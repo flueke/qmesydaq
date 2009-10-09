@@ -637,7 +637,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			{
 				neutrons++;
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
-				quint8 chan = (id << 3) + slotId + (mod << 6);
+				quint8 modChan = (id << 3) + slotId;
+				quint8 chan = modChan + (mod << 6);
 				quint16 amp(0), 
 					pos(0);
 				if (m_mesydaq->getMpsdId(mod, slotId) == MPSD8)
@@ -660,8 +661,13 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), DEBUG);
 
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
-				if (neutrons == 1 && chan == 0 && pos == 0 && amp == 0)
+// Only on newer modules with a distinct CPLD firmware
+// BUG is reported
+				if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0)
+				{
+					protocol(tr("GHOST EVENT"), WARNING);
 					continue;
+				}
 				if (m_posHist)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
