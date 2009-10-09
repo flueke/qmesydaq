@@ -665,7 +665,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 // BUG is reported
 				if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0)
 				{
-					protocol(tr("GHOST EVENT"), WARNING);
+					protocol(tr("GHOST EVENT: SlotID %1 Mod %2 %3").arg(slotId).arg(id), WARNING);
 					continue;
 				}
 				if (m_posHist)
