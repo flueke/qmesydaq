@@ -3433,7 +3433,7 @@ parameters</string>
    <sender>module</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>mpsdCheck(int)</slot>
+   <slot>displayMpsdSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>361</x>
