@@ -98,12 +98,10 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
 	connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
 	connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
-	connect(devid, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
 	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 	
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
-	scanPeriSlot();
 
 	versionLabel->setText("QMesyDAQ " VERSION " " __DATE__);
 
@@ -160,7 +158,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_histData = new MesydaqHistogramData();
 	m_histogram->setData(*m_histData);
 
-	displayMcpdSlot();
+	scanPeriSlot();
 	dispFiledata();
 #if TACO
 	m_cInt = new TACOControl(this);
@@ -524,6 +522,14 @@ void MainWidget::displayMcpdSlot(int id)
 	if (id < 0)
 		id = mcpdId->value();
 
+	QList<int> modList;
+	for (int i = 0; i < 8; ++i)
+		if (m_theApp->getMpsdId(id, i))
+			modList << i;
+
+	module->setModuleList(modList);
+	dispMpsd->setModuleList(modList);
+
 // store the current termination value it will be change if switch from master to slave
 	bool term = m_theApp->isTerminated(id);
 	master->setChecked(m_theApp->isMaster(id));
@@ -551,44 +557,34 @@ void MainWidget::displayMcpdSlot(int id)
 /*!
     \fn MainWidget::displayMpsdSlot(int)
  */
-void MainWidget::displayMpsdSlot(int)
+void MainWidget::displayMpsdSlot(int id)
 {
 	QString dstr;
     
 // retrieve displayed ID
-	quint8 id = devid_2->value();
-	QList<int> modList;
-	for (int i = 0; i < 8; ++i)
-		if (m_theApp->getMpsdId(id, i))
-			modList << i;
-
-	module->setModuleList(modList);
-	dispMpsd->setModuleList(modList);
-
+	quint8 mod = devid_2->value();
 // firmware version
 	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
     
 // Status display:
-	status0->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 0)).arg(m_theApp->getMpsdVersion(id, 0)));
-	status1->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 1)).arg(m_theApp->getMpsdVersion(id, 1)));
-	status2->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 2)).arg(m_theApp->getMpsdVersion(id, 2)));
-	status3->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 3)).arg(m_theApp->getMpsdVersion(id, 3)));
-	status4->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 4)).arg(m_theApp->getMpsdVersion(id, 4)));
-	status5->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 5)).arg(m_theApp->getMpsdVersion(id, 5)));
-	status6->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 6)).arg(m_theApp->getMpsdVersion(id, 6)));
-	status7->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(id, 7)).arg(m_theApp->getMpsdVersion(id, 7)));
+	status0->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 0)).arg(m_theApp->getMpsdVersion(mod, 0)));
+	status1->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 1)).arg(m_theApp->getMpsdVersion(mod, 1)));
+	status2->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 2)).arg(m_theApp->getMpsdVersion(mod, 2)));
+	status3->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 3)).arg(m_theApp->getMpsdVersion(mod, 3)));
+	status4->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 4)).arg(m_theApp->getMpsdVersion(mod, 4)));
+	status5->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 5)).arg(m_theApp->getMpsdVersion(mod, 5)));
+	status6->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 6)).arg(m_theApp->getMpsdVersion(mod, 6)));
+	status7->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 7)).arg(m_theApp->getMpsdVersion(mod, 7)));
 		
-	id = /*mcpdId */devid->value();
-	quint8 mod = module->value();
 	quint8 chan = channel->value();
 // gain:
-	gain->setText(tr("%1").arg(double(m_theApp->getGain(id, mod, chan)), 4, 'f', 2));	
+	gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));	
 	
 // threshold:
-	threshold->setText(tr("%1").arg(m_theApp->getThreshold(id, mod)));
+	threshold->setText(tr("%1").arg(m_theApp->getThreshold(mod, id)));
 		
 // pulser:  on/off
-	if(m_theApp->isPulserOn(id, mod))
+	if(m_theApp->isPulserOn(mod, id))
 	{
 		pulserButton->setChecked(true);
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
@@ -599,12 +595,12 @@ void MainWidget::displayMpsdSlot(int)
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
 	}
 // channel
-	pulsChan->setValue((int)m_theApp->getPulsChan(id, mod));
+	pulsChan->setValue((int)m_theApp->getPulsChan(mod, id));
 // amplitude
-	dstr.sprintf("%3d", m_theApp->getPulsAmp(id, mod));
-//	pulsAmp->setValue((int)m_theApp->getPulsAmp(id, mod));
+	dstr.sprintf("%3d", m_theApp->getPulsAmp(mod, id));
+//	pulsAmp->setValue((int)m_theApp->getPulsAmp(mod, id));
 // position
-	switch(m_theApp->getPulsPos(id, mod))
+	switch(m_theApp->getPulsPos(mod, id))
 	{
 		case LEFT:
 			pulsLeft->setChecked(true);
@@ -617,7 +613,7 @@ void MainWidget::displayMpsdSlot(int)
 			break;
 	}
 // mode
-	if(m_theApp->getMode(id, mod))
+	if(m_theApp->getMode(mod, id))
 		amp->setChecked(true);
 	else
 		Ui_Mesydaq2MainWidget::pos->setChecked(true);
@@ -627,7 +623,7 @@ void MainWidget::scanPeriSlot()
 {
 	quint16 id = devid_2->value();
 	m_theApp->scanPeriph(id);
-	displayMpsdSlot();
+	displayMcpdSlot();
 }
 
 void MainWidget::setModeSlot(int mode)
