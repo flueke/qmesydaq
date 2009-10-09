@@ -57,7 +57,8 @@ typedef struct _DATA_PACKET
 	//! number of the packet 
 	quint16 bufferNumber;
 	//! the command number
-	quint16 cmd;
+	//! the run ID 
+	quint16 runID; // cmd;
 	//! the device state
 	quint8  deviceStatus;
 	//! device time
