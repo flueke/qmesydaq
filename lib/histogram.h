@@ -26,7 +26,7 @@
 
 #include <QVector>
 #include <QList>
-#include <QMap>
+#include <QHash>
 
 class QFile;
 
@@ -151,7 +151,7 @@ private:
 
 	quint8 				m_twidth;
 
-	QMap<quint16, Spectrum*>	m_data;
+	QHash<quint16, Spectrum*>	m_data;
 
 	QList<quint16>			m_dataKeys;
 
