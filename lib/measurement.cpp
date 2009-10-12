@@ -588,8 +588,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			quint64 var = 0;
 			for(j = 0; j < 3; j++)
 			{
-				var *= 0x10000ULL;
-				var += pd.param[i][2-j];
+				var <<= 16;
+				var |= pd.param[i][2 - j];
 			}
 			protocol(tr("set counter %1 to %2").arg(i).arg(var), DEBUG);
 			setCounter(i, var);
