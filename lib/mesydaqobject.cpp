@@ -55,7 +55,7 @@ void MesydaqObject::protocol(QString str, quint8 level)
 	if(level <= DEBUGLEVEL)
 	{
 		QDateTime datetime;
-		QString datestring = datetime.currentDateTime().toString("hh:mm:ss.zzz");
+		QString datestring = datetime.currentDateTime().toString("yyyy/dd/MM hh:mm:ss.zzz");
 		str.prepend(" - ");
 		str.prepend(datestring);
 		qDebug("[%d] %s", level, str.toStdString().c_str());
