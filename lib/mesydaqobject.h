@@ -32,7 +32,8 @@
 
 class MesydaqObject : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
+
 public:
     /**
      * Default Constructor
@@ -43,8 +44,8 @@ public:
      * Default Destructor
      */
 	virtual ~MesydaqObject();
-public slots:
-	void protocol(QString str, quint8 level = 1);
+
+	static void protocol(QString str, quint8 level = 1);
 };
 
 
