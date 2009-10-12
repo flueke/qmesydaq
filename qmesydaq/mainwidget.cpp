@@ -83,6 +83,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_meas = new Measurement(mesy, this);
 	setupUi(this);
 
+
 //	deviceId->setMaximum(mesy->numMCPD() - 1);
 	dispMcpd->setMaximum(mesy->numMCPD() - 1);
 	devid->setMaximum(mesy->numMCPD() - 1);
@@ -99,6 +100,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
 	connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
 	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
+	connect(dispHistogram, SIGNAL(toggled(bool)), this, SLOT(setDisplayMode(bool)));
 	
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
@@ -116,7 +118,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	dataFrame->enableAxis(QwtPlot::yRight, false);
 //	dataFrame->plotLayout()->setAlignCanvasToScales(true);
 	dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
-	dataFrame->replot();
+	dataFrame->setAutoReplot(false);
 
 	m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, dataFrame->canvas());
 
@@ -146,7 +148,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_data = new MesydaqSpectrumData();
 	m_curve->setData(*m_data);
 
-	m_histogram = new QwtPlotSpectrogram();
+	m_histogram = new MesydaqPlotSpectrogram();
 	QwtLinearColorMap colorMap(Qt::darkBlue, Qt::darkRed);
 	colorMap.addColorStop(0.2, Qt::blue);
 	colorMap.addColorStop(0.4, Qt::green);
@@ -250,7 +252,6 @@ void MainWidget::startStopSlot(bool checked)
 		m_meas->stop();
 	}
 }
-
 
 void MainWidget::sendCellSlot()
 {
@@ -397,9 +398,9 @@ void MainWidget::checkListfilename(bool checked)
 }	
 
 /*!
-    \fn MainWidget::update(void)
+    \fn MainWidget::updateDisplay(void)
  */
-void MainWidget::update(void)
+void MainWidget::updateDisplay(void)
 {
    	quint16 id = (quint16) paramId->value();	
 	dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
@@ -1010,7 +1011,7 @@ void MainWidget::updatePresets(void)
 void MainWidget::tResetSlot()
 {
 	m_meas->clearCounter(TCT);
-	update();
+	updateDisplay();
 }
 
 /*!
@@ -1021,7 +1022,7 @@ void MainWidget::tResetSlot()
 void MainWidget::eResetSlot()
 {
 	m_meas->clearCounter(EVCT);
-	update();
+	updateDisplay();
 }
 
 /*!
@@ -1032,7 +1033,7 @@ void MainWidget::eResetSlot()
 void MainWidget::m1ResetSlot()
 {
 	m_meas->clearCounter(M1CT);
-	update();
+	updateDisplay();
 }
 
 /*!
@@ -1043,7 +1044,7 @@ void MainWidget::m1ResetSlot()
 void MainWidget::m2ResetSlot()
 {
 	m_meas->clearCounter(M2CT);
-	update();
+	updateDisplay();
 }
 
 /*!
@@ -1054,7 +1055,7 @@ void MainWidget::m2ResetSlot()
 void MainWidget::m3ResetSlot()
 {
 	m_meas->clearCounter(M3CT);
-	update();
+	updateDisplay();
 }
 
 /*!
@@ -1065,7 +1066,7 @@ void MainWidget::m3ResetSlot()
 void MainWidget::m4ResetSlot()
 {
 	m_meas->clearCounter(M4CT);
-	update();
+	updateDisplay();
 }
 
 /*!
@@ -1098,6 +1099,25 @@ void MainWidget::mpsdCheck(int mod)
 	displayMpsdSlot(mod);
 }
 
+void MainWidget::setDisplayMode(bool histo)
+{
+	dataFrame->enableAxis(QwtPlot::yRight, histo);
+	m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, histo);
+	m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
+	if (histo)
+	{
+		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
+		m_curve->detach();
+		m_histogram->attach(dataFrame);
+	}
+	else
+	{
+		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
+		m_histogram->detach();
+		m_curve->attach(dataFrame);
+	}
+}
+
 /*!
     \fn MainWidget::draw(void)
 
@@ -1105,30 +1125,26 @@ void MainWidget::mpsdCheck(int mod)
  */
 void MainWidget::draw(void)
 {
-	bool on = dispHistogram->isChecked();
+	bool histo = dispHistogram->isChecked();
 
-	m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, on);
-	m_histogram->setDefaultContourPen(on ? QPen() : QPen(Qt::NoPen));
-	dataFrame->enableAxis(QwtPlot::yRight, on);
-
-	if (on)
+	if (histo)
 	{
-		m_curve->detach();
-		m_histogram->attach(dataFrame);
+		int log = 0;
 		m_histData->setData(m_meas->posHist());
 		
 		QwtDoubleInterval interval = m_histogram->data().range();
 
 		dataFrame->setAxisScale(QwtPlot::yRight,  interval.minValue(), interval.maxValue());
 		dataFrame->axisWidget(QwtPlot::yRight)->setColorMap(interval, m_histogram->colorMap());
+
 		m_histogram->setData(*m_histData);
+
 		if (!m_zoomEnabled)
 			dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->posHist()->height());
-		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
+		dataFrame->replot();									
 	}
 	else
 	{
-		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
 		if(dispAll->isChecked())
 		{
 			if(dispAllPos->isChecked())
@@ -1151,16 +1167,14 @@ void MainWidget::draw(void)
 					m_data->setData(m_meas->ampData(chan));
 			}
 		}
-		m_histogram->detach();
-		m_curve->attach(dataFrame);	
 		m_curve->setData(*m_data);
 // reduce data in case of threshold settings:
 		if (m_dispThresh)
 			dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
 		else if (!m_zoomEnabled)
         	        dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+		dataFrame->replot();
 	}
-	dataFrame->replot();
 	drawOpData();
-	update();
+	updateDisplay();
 }

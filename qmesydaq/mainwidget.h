@@ -23,9 +23,9 @@
 #include "ui_mesydaq2mainwidget.h"
 
 class QwtPlotCurve;
-class QwtPlotSpectrogram;
 class QwtPlotZoomer;
 class QTimer;
+class MesydaqPlotSpectrogram;
 class MesydaqSpectrumData;
 class MesydaqHistogramData;
 class Mesydaq2;
@@ -47,7 +47,7 @@ public:
 	~MainWidget();
 
 private:
-	void 	update(void);
+	void 	updateDisplay(void);
 	void 	processDispData();
 	void 	drawOpData();
 	void 	updatePresets(void);
@@ -124,6 +124,8 @@ private slots:
 	void zoomAreaSelected(const QwtDoubleRect&);
 	void zoomed(const QwtDoubleRect&);
 
+	void setDisplayMode(bool);
+
 private:
 	void 	dispFiledata(void);
 
@@ -152,10 +154,10 @@ private:
 	bool		m_dispLog;
 
 	//! plot curve
-	QwtPlotCurve	*m_curve;
+	QwtPlotCurve		*m_curve;
 
 	//! plot diffractogram
-	QwtPlotSpectrogram	*m_histogram;
+	MesydaqPlotSpectrogram	*m_histogram;
 
 	//! spectrum to be plotted
 	MesydaqSpectrumData	*m_data;

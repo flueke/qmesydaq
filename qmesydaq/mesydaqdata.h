@@ -25,6 +25,7 @@
 
 #include <qwt_data.h>
 #include <qwt_raster_data.h>
+#include <qwt_plot_spectrogram.h>
 
 class Spectrum;
 class Histogram;
@@ -101,9 +102,25 @@ public:
 	 * \param data pointer to the data histogram
 	 */
 	void setData(Histogram *data);
+
+	virtual void initRaster(const QwtDoubleRect &, const QSize &);
+
+	QSize rasterHint(const QwtDoubleRect &) const;
 	
 private:
 	Histogram	*m_histogram;
+};
+
+class MesydaqPlotSpectrogram : public QwtPlotSpectrogram
+{
+public:
+	MesydaqPlotSpectrogram(const QString &title = QString::null)
+		: QwtPlotSpectrogram(title)
+	{
+	}
+
+protected:
+	virtual QImage renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area) const;
 };
 
 #endif

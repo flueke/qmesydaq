@@ -18,8 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <QDebug>
+#include <qwt_color_map.h>
+#include <qwt_scale_map.h>
+
 #include "mesydaqdata.h"
 #include "histogram.h"
+
+#include "mesydaqobject.h"
 
 MesydaqSpectrumData::MesydaqSpectrumData()
 	: QwtData()
@@ -103,4 +109,61 @@ double MesydaqHistogramData::value(double x, double y) const
 void MesydaqHistogramData::setData(Histogram *data)
 {
 	m_histogram = data;
+	setBoundingRect(QwtDoubleRect(0.0, 0.0, 960.0, data ? data->height(): 0.0));
+}
+
+void MesydaqHistogramData::initRaster(const QwtDoubleRect &, const QSize &)
+{
+}
+
+QSize MesydaqHistogramData::rasterHint(const QwtDoubleRect &r) const
+{
+	return QwtRasterData::rasterHint(r);
+}
+	
+QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area)	const
+{
+	if (area.isEmpty())
+		return QImage();
+	QRect rect = transform(xMap, yMap, area);
+
+	QwtRasterData &d_data = const_cast<QwtRasterData &>(data());
+	if (d_data.boundingRect().isEmpty())
+		return QImage();
+	
+	QRect dataRect = transform(xMap, yMap, d_data.boundingRect());
+
+	QwtColorMap::Format format = colorMap().format();
+	
+	QImage image(rect.size(), format == QwtColorMap::RGB ? QImage::Format_ARGB32 : QImage::Format_Indexed8);
+	
+	const QwtDoubleInterval intensityRange = d_data.range();
+	if (!intensityRange.isValid())
+		return image;
+
+	d_data.initRaster(area, rect.size());
+	if (format == QwtColorMap::RGB)
+	{
+		for (int x = rect.left(); x <= rect.right(); ++x)
+		{
+			const double tx = xMap.invTransform(x);
+
+			double ty = 0;
+			double val = 0;
+			QRgb rgb = colorMap().rgb(intensityRange, val);
+			for (int y = rect.top(); y <= rect.bottom(); ++y)
+			{
+				const double t = yMap.invTransform(y);
+				if (int(t) != ty)
+				{
+					ty = int(t);
+					val = d_data.value(tx, ty);
+					rgb = colorMap().rgb(intensityRange, val);
+				}	
+				image.setPixel(x - rect.left(), y - rect.top(), rgb);
+			}
+		}	
+	}
+	return image;	
+//	return QwtPlotSpectrogram::renderImage(xMap, yMap, area);
 }
