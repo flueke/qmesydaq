@@ -452,7 +452,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 		val = timeval / 1000;
 		nsec = timeval - (1000 * val);
 	}
-//	qDebug("%d %d %d", timeval, val, nsec);
+//	qDebug("%lu %lu %lu", timeval, val, nsec);
 // hours = val / 3600 (s/h)
 	hr = val / 3600;
 // remaining seconds:
