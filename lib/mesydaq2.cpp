@@ -517,8 +517,9 @@ bool Mesydaq2::loadSetup(const QString &name)
 		quint16 port = settings.value(str + "port", 54321).toUInt();
 		quint16 cmdPort = settings.value(str + "cmdport", 0).toUInt();
 		quint16 dataPort = settings.value(str + "dataport", 0).toUInt();
+		quint16 id = settings.value(str + "id", 0).toUInt();
 
-		addMCPD(mod, IP, port, cmdIP);
+		addMCPD(id, IP, port, cmdIP);
 
 		bool master = settings.value(str + "master", true).toBool();
 		bool term = settings.value(str + "terminate", true).toBool();
