@@ -72,7 +72,7 @@ bool Spectrum::incVal(quint16 bin)
 			m_meanCount++;
 		return true;
 	}
-	qDebug("bin(%d) > size(%d)", bin, m_data.size());
+//	qDebug("bin(%d) > size(%d)", bin, m_data.size());
 	return false;
 }
 

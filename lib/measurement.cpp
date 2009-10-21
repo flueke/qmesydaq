@@ -746,7 +746,7 @@ void Measurement::readListfile(QString readfilename)
 		bcount++;
 // check for next separator:
 		qint64 p = textStream.device()->pos();
-		protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), ERROR);
+		protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), DEBUG);
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
 		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), DEBUG);
 		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
