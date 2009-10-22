@@ -55,10 +55,12 @@ double MesydaqSpectrumData::x(size_t i) const
 
 double MesydaqSpectrumData::y(size_t i) const
 {
+	double tmp = 0.0;
 	if (m_spectrum)
-		return m_spectrum->value(i);
-	else
-		return 0.0;
+		tmp = m_spectrum->value(i);
+	if (tmp == 0.0)
+		tmp = 0.1;
+	return tmp;
 }
 
 void MesydaqSpectrumData::setData(Spectrum *data)
