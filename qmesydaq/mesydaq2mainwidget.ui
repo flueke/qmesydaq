@@ -247,7 +247,7 @@ Listfile</string>
      <x>240</x>
      <y>540</y>
      <width>740</width>
-     <height>310</height>
+     <height>351</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -2600,7 +2600,7 @@ parameters</string>
      <x>10</x>
      <y>540</y>
      <width>213</width>
-     <height>327</height>
+     <height>351</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -2804,7 +2804,7 @@ parameters</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="2">
+     <item row="6" column="0" colspan="2">
       <layout class="QHBoxLayout">
        <item>
         <widget class="QLabel" name="textLabel1_4_2_3_4_2_2_2">
@@ -2822,13 +2822,13 @@ parameters</string>
           <bool>false</bool>
          </property>
          <property name="maximum">
-          <number>15</number>
+          <number>7</number>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="5" column="2">
+     <item row="6" column="2">
       <widget class="QPushButton" name="clearChan">
        <property name="enabled">
         <bool>false</bool>
@@ -2841,13 +2841,23 @@ parameters</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="7" column="0">
       <widget class="QCheckBox" name="specialBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="text">
         <string>delta-t</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QCheckBox" name="dispAllChannels">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>All Channels</string>
        </property>
       </widget>
      </item>
@@ -3004,8 +3014,8 @@ parameters</string>
    <slot>displayMcpdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>410</x>
-     <y>642</y>
+     <x>412</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3020,8 +3030,8 @@ parameters</string>
    <slot>displayMpsdSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>670</x>
-     <y>623</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3037,7 +3047,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>137</x>
-     <y>705</y>
+     <y>677</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3069,7 +3079,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>137</x>
-     <y>738</y>
+     <y>710</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3085,7 +3095,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>137</x>
-     <y>771</y>
+     <y>743</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3101,11 +3111,11 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>573</x>
-     <y>623</y>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
-     <x>670</x>
-     <y>623</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
    </hints>
   </connection>
@@ -3116,8 +3126,8 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>29</x>
-     <y>707</y>
+     <x>31</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>24</x>
@@ -3132,8 +3142,8 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>29</x>
-     <y>707</y>
+     <x>31</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>137</x>
@@ -3148,12 +3158,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>29</x>
-     <y>707</y>
+     <x>31</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>137</x>
-     <y>771</y>
+     <y>743</y>
     </hint>
    </hints>
   </connection>
@@ -3164,12 +3174,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>29</x>
-     <y>707</y>
+     <x>31</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>137</x>
-     <y>738</y>
+     <y>710</y>
     </hint>
    </hints>
   </connection>
@@ -3180,8 +3190,8 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>29</x>
-     <y>707</y>
+     <x>31</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>125</x>
@@ -3196,12 +3206,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>29</x>
-     <y>707</y>
+     <x>31</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>125</x>
-     <y>773</y>
+     <y>745</y>
     </hint>
    </hints>
   </connection>
@@ -3244,8 +3254,8 @@ parameters</string>
    <slot>linlogSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>21</x>
-     <y>626</y>
+     <x>34</x>
+     <y>646</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3340,12 +3350,12 @@ parameters</string>
    <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>813</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>357</x>
-     <y>834</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
    </hints>
   </connection>
@@ -3356,12 +3366,12 @@ parameters</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>813</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>357</x>
-     <y>867</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
    </hints>
   </connection>
@@ -3372,12 +3382,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>813</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>357</x>
-     <y>834</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
    </hints>
   </connection>
@@ -3388,8 +3398,8 @@ parameters</string>
    <slot>setTimingSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>813</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3404,8 +3414,8 @@ parameters</string>
    <slot>displayMcpdSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>365</x>
-     <y>675</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3436,8 +3446,8 @@ parameters</string>
    <slot>displayMpsdSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>361</x>
-     <y>717</y>
+     <x>359</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3452,8 +3462,8 @@ parameters</string>
    <slot>displayMcpdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1476</x>
-     <y>841</y>
+     <x>1478</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3468,8 +3478,8 @@ parameters</string>
    <slot>setPulserSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>788</x>
-     <y>843</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3484,8 +3494,8 @@ parameters</string>
    <slot>setPulserSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>986</x>
-     <y>843</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3500,8 +3510,8 @@ parameters</string>
    <slot>setPulserSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>673</x>
-     <y>839</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3516,8 +3526,8 @@ parameters</string>
    <slot>setPulserSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>360</x>
-     <y>841</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3532,8 +3542,8 @@ parameters</string>
    <slot>setPulserSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1238</x>
-     <y>846</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3548,8 +3558,8 @@ parameters</string>
    <slot>setPulserSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1371</x>
-     <y>846</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3564,8 +3574,8 @@ parameters</string>
    <slot>setPulserSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1503</x>
-     <y>846</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3581,7 +3591,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>450</x>
-     <y>617</y>
+     <y>816</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3596,8 +3606,8 @@ parameters</string>
    <slot>replayListfileSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1079</x>
-     <y>678</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3612,8 +3622,8 @@ parameters</string>
    <slot>resetTimerSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>867</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3628,8 +3638,8 @@ parameters</string>
    <slot>scanPeriSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>332</x>
-     <y>600</y>
+     <x>334</x>
+     <y>622</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3644,8 +3654,8 @@ parameters</string>
    <slot>selectListfileSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1079</x>
-     <y>645</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3660,8 +3670,8 @@ parameters</string>
    <slot>selectConfigpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1503</x>
-     <y>884</y>
+     <x>774</x>
+     <y>801</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3676,8 +3686,8 @@ parameters</string>
    <slot>selectHistpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1503</x>
-     <y>851</y>
+     <x>774</x>
+     <y>801</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3692,8 +3702,8 @@ parameters</string>
    <slot>selectListpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1503</x>
-     <y>818</y>
+     <x>774</x>
+     <y>801</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3708,8 +3718,8 @@ parameters</string>
    <slot>sendAuxSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>483</x>
-     <y>874</y>
+     <x>485</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3724,8 +3734,8 @@ parameters</string>
    <slot>sendCellSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>779</x>
-     <y>676</y>
+     <x>487</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3740,8 +3750,8 @@ parameters</string>
    <slot>sendParamSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1532</x>
-     <y>874</y>
+     <x>1534</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3756,8 +3766,8 @@ parameters</string>
    <slot>setGainSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1512</x>
-     <y>626</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3772,8 +3782,8 @@ parameters</string>
    <slot>setMcpdIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>470</x>
-     <y>663</y>
+     <x>472</x>
+     <y>618</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3788,8 +3798,8 @@ parameters</string>
    <slot>setThresholdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1512</x>
-     <y>659</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3868,8 +3878,8 @@ parameters</string>
    <slot>setTimingSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>357</x>
-     <y>834</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3884,8 +3894,8 @@ parameters</string>
    <slot>displayMcpdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>413</x>
-     <y>841</y>
+     <x>415</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3981,7 +3991,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>360</x>
-     <y>617</y>
+     <y>816</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -4012,8 +4022,8 @@ parameters</string>
    <slot>setIpUdpSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>599</x>
-     <y>754</y>
+     <x>588</x>
+     <y>620</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -4028,12 +4038,12 @@ parameters</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>788</x>
-     <y>843</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
-     <x>886</x>
-     <y>846</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
    </hints>
   </connection>
@@ -4044,12 +4054,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>788</x>
-     <y>843</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1084</x>
-     <y>846</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
    </hints>
   </connection>
@@ -4060,12 +4070,12 @@ parameters</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>986</x>
-     <y>843</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1084</x>
-     <y>846</y>
+     <x>359</x>
+     <y>810</y>
     </hint>
    </hints>
   </connection>
@@ -4076,8 +4086,8 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>778</x>
-     <y>614</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>314</x>
@@ -4092,12 +4102,12 @@ parameters</string>
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1131</x>
-     <y>624</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1512</x>
-     <y>626</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
    </hints>
   </connection>
@@ -4108,12 +4118,12 @@ parameters</string>
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1131</x>
-     <y>657</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1512</x>
-     <y>659</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
    </hints>
   </connection>
@@ -4125,11 +4135,11 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>573</x>
-     <y>623</y>
+     <y>609</y>
     </hint>
     <hint type="destinationlabel">
-     <x>619</x>
-     <y>625</y>
+     <x>573</x>
+     <y>609</y>
     </hint>
    </hints>
   </connection>
@@ -4140,12 +4150,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>707</y>
+     <x>73</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>137</x>
-     <y>738</y>
+     <y>710</y>
     </hint>
    </hints>
   </connection>
@@ -4236,12 +4246,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>43</x>
-     <y>707</y>
+     <x>45</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
-     <x>77</x>
-     <y>740</y>
+     <x>125</x>
+     <y>712</y>
     </hint>
    </hints>
   </connection>
@@ -4256,8 +4266,8 @@ parameters</string>
      <y>568</y>
     </hint>
     <hint type="destinationlabel">
-     <x>332</x>
-     <y>600</y>
+     <x>334</x>
+     <y>622</y>
     </hint>
    </hints>
   </connection>
@@ -4268,12 +4278,12 @@ parameters</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>282</x>
-     <y>577</y>
+     <x>576</x>
+     <y>598</y>
     </hint>
     <hint type="destinationlabel">
-     <x>340</x>
-     <y>629</y>
+     <x>342</x>
+     <y>609</y>
     </hint>
    </hints>
   </connection>
@@ -4284,12 +4294,12 @@ parameters</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>363</x>
-     <y>675</y>
+     <x>350</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>297</x>
-     <y>577</y>
+     <x>576</x>
+     <y>598</y>
     </hint>
    </hints>
   </connection>
@@ -4300,12 +4310,44 @@ parameters</string>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>297</x>
-     <y>577</y>
+     <x>576</x>
+     <y>598</y>
     </hint>
     <hint type="destinationlabel">
-     <x>363</x>
-     <y>675</y>
+     <x>350</x>
+     <y>600</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispAllChannels</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>688</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>73</x>
+     <y>785</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAllChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispChan</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>785</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>101</x>
+     <y>815</y>
     </hint>
    </hints>
   </connection>
