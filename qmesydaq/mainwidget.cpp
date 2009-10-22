@@ -95,12 +95,14 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
         connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
+        connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
 	connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
 	connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
-	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 	connect(dispHistogram, SIGNAL(toggled(bool)), this, SLOT(setDisplayMode(bool)));
+
+//	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 	
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
@@ -228,6 +230,7 @@ void MainWidget::startStopSlot(bool checked)
 {
 	if(checked)
 	{
+		checkListfilename(acquireFile->isChecked());
 		// get timing binwidth
 		m_theApp->setTimingwidth(timingBox->value());
 		
@@ -250,6 +253,7 @@ void MainWidget::startStopSlot(bool checked)
 		startStopButton->setText("Start");
 		// set device idto 0 -> will be filled by mesydaq for master
 		m_meas->stop();
+		listFilename->setText(QString::null);
 	}
 }
 
@@ -564,6 +568,8 @@ void MainWidget::displayMpsdSlot(int id)
     
 // retrieve displayed ID
 	quint8 mod = devid_2->value();
+	if (id < 0)
+		id = 0;
 // firmware version
 	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
     
@@ -624,7 +630,7 @@ void MainWidget::scanPeriSlot()
 {
 	quint16 id = devid_2->value();
 	m_theApp->scanPeriph(id);
-	displayMcpdSlot();
+	displayMpsdSlot();
 }
 
 void MainWidget::setModeSlot(int mode)
@@ -680,6 +686,7 @@ void MainWidget::linlogSlot(bool bLog)
 		dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 	else
 		dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+	m_zoomEnabled = false;
 	draw();
 }
 
@@ -1129,7 +1136,6 @@ void MainWidget::draw(void)
 
 	if (histo)
 	{
-		int log = 0;
 		m_histData->setData(m_meas->posHist());
 		
 		QwtDoubleInterval interval = m_histogram->data().range();
@@ -1178,3 +1184,11 @@ void MainWidget::draw(void)
 	drawOpData();
 	updateDisplay();
 }
+
+#if 0
+void MainWidget::paintEvent(QPaintEvent *e)
+{
+	qDebug() << "MainWidget::paintEvent";
+	QWidget::paintEvent(e);
+}
+#endif
