@@ -348,7 +348,7 @@ bool Mesydaq2::isPulserOn()
  */
 bool Mesydaq2::isPulserOn(quint16 id)
 {
-	if (m_mcpd.empty())
+	if (!m_mcpd.contains(id))
 		return false;
 	return m_mcpd[id]->isPulserOn();
 }
@@ -364,7 +364,7 @@ bool Mesydaq2::isPulserOn(quint16 id)
  */
 bool Mesydaq2::isPulserOn(quint16 id, quint8 addr)
 {
-	if (m_mcpd.empty())
+	if (!m_mcpd.contains(id))
 		return false;
 	return m_mcpd[id]->isPulserOn(addr);
 }
