@@ -22,6 +22,7 @@
 #include <QTextStream>
 #include <QDateTime>
 #include <QTimerEvent>
+#include <QCoreApplication>
 
 #include "measurement.h"
 #include "mdefines.h"
@@ -759,6 +760,7 @@ void Measurement::readListfile(QString readfilename)
 		}
 		if(bcount == 1000)
 		{
+			QCoreApplication::processEvents();
 			bcount = 0;
 			emit draw();
 		}  
