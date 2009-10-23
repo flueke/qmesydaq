@@ -36,6 +36,9 @@
     <addaction name="actionSave_Histogram_File"/>
     <addaction name="actionLoad_Histogram_File"/>
     <addaction name="separator"/>
+    <addaction name="actionPrint"/>
+    <addaction name="actionExport_PDF"/>
+    <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
    <addaction name="menu_Files"/>
@@ -69,6 +72,16 @@
   <action name="action_Quit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="text">
+    <string>&amp;Print ...</string>
+   </property>
+  </action>
+  <action name="actionExport_PDF">
+   <property name="text">
+    <string>E&amp;xport PDF </string>
    </property>
   </action>
  </widget>

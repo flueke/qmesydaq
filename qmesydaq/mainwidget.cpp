@@ -29,6 +29,7 @@
 #include <QRadioButton>
 #include <QHostAddress>
 #include <QTimer>
+#include <QPrintDialog>
 
 #include <qwt_plot_curve.h>
 #include <qwt_plot_zoomer.h>
@@ -169,6 +170,11 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #elif CARESS
 	m_cInt = new CARESSControl(this);
 #endif
+
+	m_printer.setOrientation(QPrinter::Landscape);
+	m_printer.setDocName("PlotCurves");
+	m_printer.setCreator("QMesyDAQ Version: " VERSION);
+
 // display refresh timer
 	m_dispTimer = startTimer(1000);
 }
@@ -1136,7 +1142,10 @@ void MainWidget::draw(void)
 
 	if (histo)
 	{
-		m_histData->setData(m_meas->posHist());
+		if(dispAllPos->isChecked())
+			m_histData->setData(m_meas->posHist());
+		else
+			m_histData->setData(m_meas->ampHist());
 		
 		QwtDoubleInterval interval = m_histogram->data().range();
 
@@ -1192,3 +1201,42 @@ void MainWidget::paintEvent(QPaintEvent *e)
 	QWidget::paintEvent(e);
 }
 #endif
+
+void MainWidget::exportPDF()
+{
+        QString fileName = QFileDialog::getSaveFileName(this, "Export PDF File", "Plot1.pdf", "PDF Documents (*.pdf)");
+        if(!fileName.isEmpty())
+        {
+                if(!fileName.endsWith(".pdf"))
+                        fileName += ".pdf";
+                m_printer.setOutputFormat(QPrinter::PdfFormat);
+		m_printer.setOutputFileName(fileName);
+                QwtPlotPrintFilter filter;
+                filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
+                print(m_printer, filter);
+        }
+}
+
+void MainWidget::printPlot()
+{
+//      QPrinter printer(QPrinter::HighResolution);
+        m_printer.setOutputFormat(QPrinter::NativeFormat);
+        QPrintDialog dialog(&m_printer);
+        if(dialog.exec() == QDialog::Accepted)
+        {
+                QwtPlotPrintFilter filter;
+                filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
+                print(m_printer, filter);
+        }
+}
+
+void MainWidget::print(QPrinter &printer, QwtPlotPrintFilter &filter)
+{
+	QPen pen = m_curve->pen();
+	pen.setWidth(1);
+	m_curve->setPen(pen);
+	dataFrame->print(printer, filter);
+        pen.setWidth(0);
+	m_curve->setPen(pen);
+}
+

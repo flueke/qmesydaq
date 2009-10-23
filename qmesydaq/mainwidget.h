@@ -20,6 +20,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QPrinter>
+
+#include <qwt_plot_printfilter.h>
+
 #include "ui_mesydaq2mainwidget.h"
 
 class QwtPlotCurve;
@@ -46,7 +50,16 @@ public:
 
 	~MainWidget();
 
+public slots:
+	void	exportPDF();
+
+	void 	printPlot();
+
+protected:
+//	void 	paintEvent(QPaintEvent *);
+
 private:
+	void	print(QPrinter &, QwtPlotPrintFilter &);
 	void 	updateDisplay(void);
 	void 	processDispData();
 	void 	drawOpData();
@@ -177,6 +190,8 @@ private:
 	CorbaThread	*m_ct;
 
 	ControlInterface *m_cInt;
+
+	QPrinter	m_printer;
 };	
 
 #endif
