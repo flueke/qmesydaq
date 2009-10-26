@@ -44,7 +44,8 @@ HEADERS 	+= mainwidget.h \
 		mainwindow.h \
 		mesydaqdata.h \
 		controlinterface.h \
-		ModuleSpinBox.h
+		ModuleSpinBox.h \
+		MCPDSpinBox.h
 
 FORMS 		+= mesydaq2mainwidget.ui \
 		mesydaq2mainwindow.ui
@@ -54,7 +55,8 @@ SOURCES 	+= main.cpp \
 		mainwindow.cpp \
 		mesydaqdata.cpp \
 		controlinterface.cpp \
-		ModuleSpinBox.cpp
+		ModuleSpinBox.cpp \
+		MCPDSpinBox.cpp
 
 RESOURCES 	+= images.qrc
 
