@@ -349,7 +349,7 @@ Listfile</string>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QSpinBox" name="paramId">
+             <widget class="MCPDSpinBox" name="paramId">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -1076,7 +1076,7 @@ Listfile</string>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="mcpdId">
+          <widget class="MCPDSpinBox" name="mcpdId">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -1149,7 +1149,7 @@ Listfile</string>
      <item row="0" column="1">
       <widget class="QTabWidget" name="tabWidget5">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -1678,7 +1678,7 @@ parameters</string>
          </property>
          <layout class="QGridLayout">
           <item row="0" column="0">
-           <widget class="QSpinBox" name="deviceId">
+           <widget class="MCPDSpinBox" name="deviceId">
             <property name="maximum">
              <number>255</number>
             </property>
@@ -1730,7 +1730,7 @@ parameters</string>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QSpinBox" name="devid_2">
+        <widget class="MCPDSpinBox" name="devid_2">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -2008,7 +2008,7 @@ parameters</string>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QSpinBox" name="devid">
+          <widget class="MCPDSpinBox" name="devid">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -2743,7 +2743,7 @@ parameters</string>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="dispMcpd">
+        <widget class="MCPDSpinBox" name="dispMcpd">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -2956,6 +2956,11 @@ parameters</string>
    <extends>QSpinBox</extends>
    <header>ModuleSpinBox.h</header>
   </customwidget>
+  <customwidget>
+   <class>MCPDSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>MCPDSpinBox.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -3027,7 +3032,7 @@ parameters</string>
    <sender>channel</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>displayMpsdSlot(int)</slot>
+   <slot>displayMpsdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>573</x>
@@ -4348,6 +4353,22 @@ parameters</string>
     <hint type="destinationlabel">
      <x>101</x>
      <y>815</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispHistogram</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispAll</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>591</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>73</x>
+     <y>712</y>
     </hint>
    </hints>
   </connection>
