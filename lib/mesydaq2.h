@@ -22,11 +22,13 @@
 #ifndef _MESYDAQ2_H_
 #define _MESYDAQ2_H_
 
+#include <list>
+
 #include <QFile>
 #include <QDataStream>
 #include <QString>
 #include <QTimer>
-#include <QMap>
+#include <QHash>
 
 #include "mesydaqobject.h"
 #include "structures.h"
@@ -137,6 +139,8 @@ public:
 
 	bool checkMcpd(quint8 device);
 
+	qint16 firstMcpd(void);
+
 	//! \return if data acquisition started or not
 	quint8 isDaq(void) {return m_daq;}
 
@@ -188,6 +192,13 @@ public:
 
 	//! \return number of MCPD's
 	quint16 numMCPD(void) {return m_mcpd.size();}
+
+	QList<int> mcpdId(void) 
+	{
+		std::list<int> st = m_mcpd.keys().toStdList();
+		st.sort();
+		return QList<int>::fromStdList(st);
+	}
 
 	bool isMaster(quint16 mod);
 
@@ -269,7 +280,7 @@ private:
 
 	void storeLastFile(void);
 
-	QMap<int, MCPD8	*>	m_mcpd;
+	QHash<int, MCPD8 *>	m_mcpd;
 
 private:
 	static const quint16  	sep0 = 0x0000;

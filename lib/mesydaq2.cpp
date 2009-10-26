@@ -23,6 +23,7 @@
 #include <QTextStream>
 #include <QTimerEvent>
 #include <QStringList>
+#include <QDebug>
 
 #include "mdefines.h"
 #include "mesydaq2.h"
@@ -429,7 +430,7 @@ bool Mesydaq2::saveSetup(const QString &name)
 	i = 0;
 	foreach(MCPD8 *value, m_mcpd) 
 	{
-		QString str = tr("MCPD-8/%1/").arg(value->getId());
+		QString str = tr("MCPD-8/%1/").arg(i);
 		settings.setValue(str + "id", value->getId());
 		settings.setValue(str + "ip", value->ip());
 		settings.setValue(str + "port", value->port());
@@ -527,9 +528,9 @@ bool Mesydaq2::loadSetup(const QString &name)
 		for (int c = 0; c < 4; ++c)
 		{
 			quint16 val = settings.value(str + tr("auxtimer%1").arg(c), 0).toUInt();
-			setAuxTimer(mod, c, val);
+			setAuxTimer(id, c, val);
 			val = settings.value(str + tr("paramsource%1").arg(c), c).toUInt();
-			setParamSource(mod, c, val);
+			setParamSource(id, c, val);
 		}
 		QList<QVariant> defaultList;
 		defaultList << quint16(7) << quint16(22);
@@ -537,29 +538,36 @@ bool Mesydaq2::loadSetup(const QString &name)
 		{
 			
 			QList<QVariant> l = settings.value(str + tr("countercell%1").arg(c), defaultList).toList();
-			setCounterCell(mod, c, l[0].toUInt(), l[1].toUInt());
+			setCounterCell(id, c, l[0].toUInt(), l[1].toUInt());
 		}
 
-		setTimingSetup(mod, master, term);
+		setTimingSetup(id, master, term);
 
 		for (int addr = 0; addr < 8; ++addr)
 		{
-			if (getMpsdId(mod, addr))
+			if (getMpsdId(id, addr))
 			{
 				QString str = tr("MPSD-8/%1/").arg(mod * 8 + addr);
-				settings.beginGroup(str);
-				int size = settings.beginReadArray("gains");
-				protocol(tr("init size = %1").arg(size), DEBUG);
-				for (int l = 0; l < size; ++l)
+				int size = settings.beginReadArray(str + "gains");
+				quint8 gains[8];
+				settings.setArrayIndex(0);
+				gains[0] = settings.value("gain", 92).toUInt() & 0xff;
+				bool comgain = true;
+				for (int l = 1; l < 8; ++l)
 				{
 					settings.setArrayIndex(l);
-					quint8 gain = settings.value("gain", 92).toUInt() & 0xff;
-					setGain(mod, addr, l, gain);
+					gains[l] = settings.value("gain", 92).toUInt() & 0xff;
+					if (gains[0] != gains[l])
+						comgain = false;
 				}
 				settings.endArray();
 				quint8 thresh = settings.value(str + "threshold", 22).toUInt() & 0xff;
-				setThreshold(mod, addr, thresh);
-				settings.endGroup();
+				if (comgain)
+					setGain(id, addr, 8, gains[0]);
+				else
+					for (int l = 0; l < 8; ++l)
+						setGain(id, addr, l, gains[l]);
+				setThreshold(id, addr, thresh);
 			}
 		}
 	}
@@ -1190,6 +1198,7 @@ float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getGainVal(addr, chan);
+	qDebug() << "getGain not found id " << id;
 	return 0;
 }
 
