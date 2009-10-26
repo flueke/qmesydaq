@@ -71,7 +71,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_dispLoThresh(0)
 	, m_dispHiThresh(0)
 	, m_dispLog(false)
-	, m_curve(NULL)
+//	, m_curve(NULL)
 	, m_histogram(NULL)
 	, m_data(NULL)
 	, m_histData(NULL)
@@ -84,14 +84,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_meas = new Measurement(mesy, this);
 	setupUi(this);
 
+	init();
 
-//	deviceId->setMaximum(mesy->numMCPD() - 1);
-	dispMcpd->setMaximum(mesy->numMCPD() - 1);
-	devid->setMaximum(mesy->numMCPD() - 1);
-	devid_2->setMaximum(mesy->numMCPD() - 1);
-	paramId->setMaximum(mesy->numMCPD() - 1);
-	mcpdId->setMaximum(mesy->numMCPD() - 1);
-	
         connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
@@ -140,16 +134,19 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_zoomer->setTrackerPen(QColor(Qt::black));
 	m_zoomer->setEnabled(true);
 
-	m_curve = new QwtPlotCurve("");
-	m_curve->setStyle(QwtPlotCurve::Steps);
+	for (int i = 0; i < 8; ++i)
+	{
+		m_curve[i] = new QwtPlotCurve("");
+		m_curve[i]->setStyle(QwtPlotCurve::Steps);
 #if QT_VERSION >= 0x040000
-	m_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
+		m_curve[i]->setRenderHint(QwtPlotItem::RenderAntialiased);
 #endif
-	m_curve->setPen(QPen(Qt::black));
-	m_curve->attach(dataFrame);
+		m_curve[i]->setPen(QPen(Qt::black));
+		m_curve[i]->attach(dataFrame);
+	}
 
 	m_data = new MesydaqSpectrumData();
-	m_curve->setData(*m_data);
+	m_curve[0]->setData(*m_data);
 
 	m_histogram = new MesydaqPlotSpectrogram();
 	QwtLinearColorMap colorMap(Qt::darkBlue, Qt::darkRed);
@@ -190,6 +187,20 @@ MainWidget::~MainWidget()
 	m_meas = NULL;
 }
 
+void MainWidget::init()
+{
+	QList<int> mcpdList = m_theApp->mcpdId();
+	int mcpd = 0;
+	if (mcpdList.size())
+		mcpd = mcpdList[0];
+//	deviceId->setMCPDList(mcpdList);
+	dispMcpd->setMCPDList(mcpdList);
+	devid->setMCPDList(mcpdList);
+	devid_2->setMCPDList(mcpdList);
+	paramId->setMCPDList(mcpdList);
+	mcpdId->setMCPDList(mcpdList);
+}
+	
 /*!
     \fn MainWidget::timerEvent(QTimerEvent *)
 
@@ -511,7 +522,9 @@ void MainWidget::replayListfileSlot()
 {
 	QString name = QFileDialog::getOpenFileName(this, "Load...", m_theApp->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
 	if(!name.isEmpty())
+	{
 		m_meas->readListfile(name);
+	}
 }
 
 void MainWidget::setRunIdSlot()
@@ -575,9 +588,9 @@ void MainWidget::displayMpsdSlot(int id)
 // retrieve displayed ID
 	quint8 mod = devid_2->value();
 	if (id < 0)
-		id = 0;
+		id = module->value();
 // firmware version
-	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(id)));
+	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod)));
     
 // Status display:
 	status0->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 0)).arg(m_theApp->getMpsdVersion(mod, 0)));
@@ -589,7 +602,8 @@ void MainWidget::displayMpsdSlot(int id)
 	status6->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 6)).arg(m_theApp->getMpsdVersion(mod, 6)));
 	status7->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 7)).arg(m_theApp->getMpsdVersion(mod, 7)));
 		
-	quint8 chan = channel->value();
+	quint8 chan = comgain->isChecked() ? 8 : channel->value();
+
 // gain:
 	gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));	
 	
@@ -636,7 +650,15 @@ void MainWidget::scanPeriSlot()
 {
 	quint16 id = devid_2->value();
 	m_theApp->scanPeriph(id);
-	displayMpsdSlot();
+	
+	QList<int> modList;
+	for (int i = 0; i < 8; ++i)
+		if (m_theApp->getMpsdId(id, i))
+			modList << i;
+
+	module->setModuleList(modList);
+	dispMpsd->setModuleList(modList);
+	displayMpsdSlot(modList.size() ? modList.at(0) : -1);
 }
 
 void MainWidget::setModeSlot(int mode)
@@ -658,6 +680,7 @@ void MainWidget::restoreSetupSlot()
 	{
 		m_theApp->loadSetup(name);
 		configfilename->setText(m_theApp->getConfigfilename());
+		init();
 	}
 }
 
@@ -1120,14 +1143,16 @@ void MainWidget::setDisplayMode(bool histo)
 	if (histo)
 	{
 		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
-		m_curve->detach();
+		for (int i = 0; i < 8; ++i)
+			m_curve[i]->detach();
 		m_histogram->attach(dataFrame);
 	}
 	else
 	{
 		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
 		m_histogram->detach();
-		m_curve->attach(dataFrame);
+		for (int i = 0; i < 8; ++i)
+			m_curve[i]->attach(dataFrame);
 	}
 }
 
@@ -1171,6 +1196,22 @@ void MainWidget::draw(void)
 		{
 			if (specialBox->isChecked())
 				m_data->setData(m_meas->timeData());
+#if 0
+			else if (dispAllChannels->isChecked())
+			{
+				quint32 chan = dispMcpd->value() * 64;
+				chan += dispMpsd->value() * 8;
+				for (int i = 7; i >= 0; ++i)
+				{
+					if(dispAllPos->isChecked())
+						m_data->setData(m_meas->posData(chan + i));
+					else
+						m_data->setData(m_meas->ampData(chan + i));
+					if (m_data->size())
+						m_curve[i]->setData(*m_data);
+				}
+			}
+#endif
 			else
 			{
 				quint32 chan = dispMcpd->value() * 64;
@@ -1182,7 +1223,7 @@ void MainWidget::draw(void)
 					m_data->setData(m_meas->ampData(chan));
 			}
 		}
-		m_curve->setData(*m_data);
+		m_curve[0]->setData(*m_data);
 // reduce data in case of threshold settings:
 		if (m_dispThresh)
 			dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
@@ -1232,11 +1273,11 @@ void MainWidget::printPlot()
 
 void MainWidget::print(QPrinter &printer, QwtPlotPrintFilter &filter)
 {
-	QPen pen = m_curve->pen();
+	QPen pen = m_curve[0]->pen();
 	pen.setWidth(1);
-	m_curve->setPen(pen);
+	m_curve[0]->setPen(pen);
 	dataFrame->print(printer, filter);
         pen.setWidth(0);
-	m_curve->setPen(pen);
+	m_curve[0]->setPen(pen);
 }
 
