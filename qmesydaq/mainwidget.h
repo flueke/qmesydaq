@@ -146,6 +146,8 @@ private:
 
 	QString buildTimestring(quint64 timeval, bool nano);
 
+	void	init();
+
 private:
 	Mesydaq2	*m_theApp;
 	
@@ -167,7 +169,7 @@ private:
 	bool		m_dispLog;
 
 	//! plot curve
-	QwtPlotCurve		*m_curve;
+	QwtPlotCurve		*m_curve[8];
 
 	//! plot diffractogram
 	MesydaqPlotSpectrogram	*m_histogram;
