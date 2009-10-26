@@ -581,7 +581,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 	if(pd.bufferType < 0x0002) 
 	{
-		protocol(tr("Measurement::analyzeBuffer()"), DEBUG);
+//		protocol(tr("Measurement::analyzeBuffer()"), DEBUG);
 // extract parameter values:
 		QChar c('0');
 		for(i = 0; i < 4; i++)
@@ -592,15 +592,15 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				var <<= 16;
 				var |= pd.param[i][2 - j];
 			}
-			protocol(tr("set counter %1 to %2").arg(i).arg(var), DEBUG);
+//			protocol(tr("set counter %1 to %2").arg(i).arg(var), DEBUG);
 			setCounter(i, var);
 		}		
 // 		data length = (buffer length - header length) / (3 words per event) - 4 parameters.
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
-		protocol(tr("datalen = %1, m_stopping = %2").arg(datalen).arg(m_stopping), DEBUG);
+//		protocol(tr("datalen = %1, m_stopping = %2").arg(datalen).arg(m_stopping), DEBUG);
 		for(i = 0; i < datalen && !m_stopping; ++i, counter += 3)
 		{
-			protocol(tr("i = %1").arg(i), DEBUG);
+//			protocol(tr("i = %1").arg(i), DEBUG);
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
 			tim += pd.data[counter];
@@ -631,7 +631,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					default:
 						break;
 				}
-				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId), DEBUG);
+//				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId), DEBUG);
 			}
 // neutron event:
 			else
@@ -659,7 +659,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
 				}
 				++(*m_counter[EVCT]);
-				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), DEBUG);
+//				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), DEBUG);
 
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
@@ -673,7 +673,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
 					m_ampHist->incVal(chan, amp);
-				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), DEBUG);
+//				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), DEBUG);
 			}
 		}
 	}
@@ -714,6 +714,7 @@ void Measurement::readListfile(QString readfilename)
 	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
 	protocol(tr("readListfile : %1").arg(ok), NOTICE);
 	QChar c('0');
+	DATA_PACKET 	dataBuf;
 	while(ok)
 	{
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
@@ -723,9 +724,8 @@ void Measurement::readListfile(QString readfilename)
 			protocol(tr("EOF reached after %1 buffers").arg(blocks), NOTICE);
 			break;
 		}
-		DATA_PACKET 	dataBuf;
 
-		memset(&dataBuf, 0, sizeof(dataBuf));
+//		memset(&dataBuf, 0, sizeof(dataBuf));
 		dataBuf.bufferLength = sep1;
 		dataBuf.bufferType = sep2;
 		dataBuf.headerLength = sep3;
@@ -746,27 +746,24 @@ void Measurement::readListfile(QString readfilename)
 		blocks++;
 		bcount++;
 // check for next separator:
-		qint64 p = textStream.device()->pos();
-		protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), DEBUG);
+//		qint64 p = textStream.device()->pos();
+//		protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), DEBUG);
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), DEBUG);
+//		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), DEBUG);
 		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
 		if (!ok)
 		{
 			protocol(tr("File structure error - read aborted after %1 buffers").arg(blocks), ERROR);
-			p = textStream.device()->pos();
+			qint64 p = textStream.device()->pos();
 			protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), ERROR);
 			protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), ERROR);
 		}
-		if(bcount == 1000)
+		if(!(bcount % 1000))
 		{
 			QCoreApplication::processEvents();
-			bcount = 0;
-			emit draw();
 		}  
 	}	
 	datfile.close();
-	emit draw();
 }
 
 /*!

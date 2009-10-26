@@ -1014,15 +1014,15 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 	{
 		communicate(false);
 		m_commTimer->stop();
-		protocol(tr("%1(%2) : timer stopped").arg(m_network->ip()).arg(m_network->port()), DEBUG);
+//		protocol(tr("%1(%2) : timer stopped").arg(m_network->ip()).arg(m_network->port()), DEBUG);
 	
 		++m_cmdRxd;
-		protocol(tr("%1(%2) : id %3").arg(m_network->ip()).arg(m_network->port()).arg(recBuf.deviceId), DEBUG);
+//		protocol(tr("%1(%2) : id %3").arg(m_network->ip()).arg(m_network->port()).arg(recBuf.deviceId), DEBUG);
 
 		m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
 		m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
 
-		protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
+//		protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
 		
 		MPSD_8	*ptrMPSD;
 		quint16 chksum = recBuf.headerChksum;
@@ -1221,7 +1221,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 	else
 	{
 		++m_dataRxd;
-		protocol(tr("ID %1 : emit analyzeBuffer(recBuf)").arg(m_id), DEBUG);
+//		protocol(tr("ID %1 : emit analyzeBuffer(recBuf)").arg(m_id), DEBUG);
 		emit analyzeDataBuffer((DATA_PACKET &)recBuf); 
 	}
 }
