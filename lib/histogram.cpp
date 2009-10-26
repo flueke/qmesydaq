@@ -186,6 +186,15 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
  */
 bool Histogram::incVal(quint16 chan, quint16 bin)
 {
+#if 0
+	if (chan > 79 && chan < 96)
+	{
+		if (chan < 88)
+			chan += 8;
+		else if (chan > 87)
+			chan -= 8;
+	}
+#endif
 	if (!m_data.contains(chan))
 	{
 		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
