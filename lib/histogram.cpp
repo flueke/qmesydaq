@@ -241,6 +241,7 @@ void Histogram::clear(void)
 {
 	foreach (Spectrum *value, m_data)
 		value->clear();
+	m_data.clear();
 	m_sumSpectrum.clear();
 	m_totalCounts = 0;
 	m_twidth = 1;
