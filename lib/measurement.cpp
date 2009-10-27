@@ -644,12 +644,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					pos(0);
 				if (m_mesydaq->getMpsdId(mod, slotId) == MPSD8)
 				{
-					if (m_mesydaq->getMode(mod, id))
-					{
+					if (m_mesydaq->getMode(mod, id)) // amplitude mode
 						amp = (pd.data[counter+1] >> 3) & 0x3FF;
-						if (amp != 0)
-							protocol(tr("amp = %1").arg(amp), NOTICE);
-					}
 					else
 						pos = (pd.data[counter+1] >> 3) & 0x3FF;
 				}
@@ -713,6 +709,7 @@ void Measurement::readListfile(QString readfilename)
 
 	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
 	protocol(tr("readListfile : %1").arg(ok), NOTICE);
+	clearAllHist();
 	QChar c('0');
 	DATA_PACKET 	dataBuf;
 	while(ok)
