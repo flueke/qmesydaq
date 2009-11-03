@@ -28,6 +28,7 @@ MesydaqCounter :: MesydaqCounter()
 	, m_meastime_msec(0)
 	, m_ratetime_msec(0)
 	, m_rateflag(false)
+	, m_meanRate(0)
 	, m_ratepointer(0)
 {
 }
@@ -107,14 +108,14 @@ void MesydaqCounter::calcMeanRate(void)
 	for(quint16 c = 1; c < m_rate.size(); ++c)
 		val2 += m_rate[c];
 	if(m_rate.size() > 2)
-		m_rate.enqueue(val2 / (m_rate.size() - 1));
+		m_meanRate = val2 / (m_rate.size() - 1);
 	else
-		m_rate.enqueue(0);			
+		m_meanRate = 0;			
 }
 
 quint64 MesydaqCounter::rate()
 {
-	return m_rate.last();
+	return m_meanRate;
 }
 
 MesydaqTimer::MesydaqTimer()

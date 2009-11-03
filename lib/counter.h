@@ -162,6 +162,8 @@ private:
 
 	QQueue<quint64>	m_rate;
 
+	quint64		m_meanRate;
+
 	quint8		m_ratepointer;
 };
 
