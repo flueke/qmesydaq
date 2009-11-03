@@ -355,30 +355,31 @@ void Histogram::setWidth(quint8 width)
  */
 bool Histogram::writeHistogram(QFile *f, const QString title)
 {
-	quint32 i, j, k;
-  
 	QTextStream t( f );        // use a text stream
 	QString s;
 	// Title
 	t << title << '\r' << '\n'; 
-	for(i = 0; i < 64; i++)		// why 64 ??? 
+	for(int i = 0; i < m_data.size(); i++)		// why 64 ??? 
 		t << '\t' << i; 
 	t << '\r' << '\n';
-	for(i = 0; i < m_data[k]->width(); i++)	// ???? why 960
+	t.flush();
+	int size = m_sumSpectrum.width(); 
+	for(int i = 0; i < size; ++i)
 	{
-		for(k = 0; k < 8 ; k++)
+		t << i;
+		for(int j = 0; j < m_data.size(); j++)	// ???? why 960
 		{
-			for(j = 0; j < 8 ; j++)
-			{
-				t << '\t' << m_data[k]->value(i);
-			}
+			
+			t << '\t' << (m_data[j] ? m_data[j]->value(i) : 0);
 		}
 		t << '\r' << '\n';
+		t.flush();
 	}
 	t << '\r' << '\n';
+	t.flush();
 
 // "position data: 1 row title (8 x 8 detectors), position data in columns";
-// 	t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns";
+// "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns";
 	return true;
 }
 
