@@ -581,7 +581,6 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 	if(pd.bufferType < 0x0002) 
 	{
-//		protocol(tr("Measurement::analyzeBuffer()"), DEBUG);
 // extract parameter values:
 		QChar c('0');
 		for(i = 0; i < 4; i++)
@@ -592,26 +591,18 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				var <<= 16;
 				var |= pd.param[i][2 - j];
 			}
-//			protocol(tr("set counter %1 to %2").arg(i).arg(var), DEBUG);
 			setCounter(i, var);
 		}		
-// 		data length = (buffer length - header length) / (3 words per event) - 4 parameters.
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
-//		protocol(tr("datalen = %1, m_stopping = %2").arg(datalen).arg(m_stopping), DEBUG);
 		for(i = 0; i < datalen && !m_stopping; ++i, counter += 3)
 		{
-//			protocol(tr("i = %1").arg(i), DEBUG);
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
 			tim += pd.data[counter];
-//			protocol(tr("time : %1 (%2 %3)").arg(tim).arg(pd.data[counter + 1] & 0x7).arg(pd.data[counter])); //, 8, 16, c));
 			tim += m_headertime;
 // id stands for the trigId and modId depending on the package type
 			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
-//			ulong delta = tim - m_lastTime;
-//			m_lastTime = tim;
 // not neutron event (counter, chopper, ...)
-//			protocol(tr("%1 %2 %3").arg(pd.data[counter + 2],4,16,c).arg(pd.data[counter + 1],4,16,c).arg(pd.data[counter], 4, 16,c));
 			if((pd.data[counter + 2] & 0x8000))
 			{
 				triggers++;
@@ -631,7 +622,6 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					default:
 						break;
 				}
-//				protocol(tr("Trigger : %1 id %2 data %3").arg(triggers).arg(id).arg(dataId), DEBUG);
 			}
 // neutron event:
 			else
@@ -640,23 +630,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
 				quint8 modChan = (id << 3) + slotId;
 				quint8 chan = modChan + (mod << 6);
-				quint16 amp(0), 
-					pos(0);
-				if (m_mesydaq->getMpsdId(mod, slotId) == MPSD8)
-				{
-					if (m_mesydaq->getMode(mod, id)) // amplitude mode
-						amp = (pd.data[counter+1] >> 3) & 0x3FF;
-					else
-						pos = (pd.data[counter+1] >> 3) & 0x3FF;
-				}
-				else
-				{
-					amp = ((pd.data[counter+2] & 0x7F) << 3) + ((pd.data[counter+1] >> 13) & 0x7);
+				quint16 amp = ((pd.data[counter+2] & 0x7F) << 3) + ((pd.data[counter+1] >> 13) & 0x7),
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
-				}
-				++(*m_counter[EVCT]);
-//				protocol(tr("events %1 %2").arg(quint64(*m_counter[EVCT])).arg(m_counter[EVCT]->limit()), DEBUG);
-
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
 // BUG is reported
@@ -665,11 +640,11 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					protocol(tr("GHOST EVENT: SlotID %1 Mod %2 %3").arg(slotId).arg(id), WARNING);
 					continue;
 				}
+				++(*m_counter[EVCT]);
 				if (m_posHist)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
 					m_ampHist->incVal(chan, amp);
-//				protocol(tr("Neutron : %1 id %2 slot %3 pos 0x%4 amp 0x%5").arg(neutrons).arg(id).arg(slotId).arg(pos, 4, 16, c).arg(amp, 4, 16, c), DEBUG);
 			}
 		}
 	}

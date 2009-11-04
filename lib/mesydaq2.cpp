@@ -1255,6 +1255,25 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 	if(m_daq == RUNNING)
 	{
 		quint16 mod = pd.deviceId;	
+ 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		quint16 counter = 0;
+		for(quint32 i = 0; i < datalen; ++i, counter += 3)
+		{
+			if((pd.data[counter + 2] & 0x8000))
+			{
+				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
+				quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
+				if (getMpsdId(mod, slotId) == MPSD8 && getMode(mod, id)) // amplitude mode
+				{
+					// put the amplitude to the new format position
+					quint16 amp = (pd.data[counter + 1] >> 3) & 0x3FF;
+					pd.data[counter + 2] &= 0xFF80;	// clear amp and pos field
+					pd.data[counter + 1] &= 0x0007;	
+					pd.data[counter + 2] |= (amp >> 3);
+					pd.data[counter + 1] |= ((amp & 0x7) << 13);
+				}
+			}
+		}
 		if(m_acquireListfile)
 		{
 			quint16 *pD = (quint16 *)&pd;
