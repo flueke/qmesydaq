@@ -97,6 +97,10 @@ bool MCPD8::init(void)
 {
 	int modus = TPA;
 
+	quint16 cap = capabilities();
+
+	protocol(tr("capabilities : %1").arg(cap), NOTICE);
+
 	if (m_version < 8)
 		modus = TP;
 
@@ -106,6 +110,10 @@ bool MCPD8::init(void)
 			switch (m_mpsd[c]->getMpsdId())
 			{
 				case MPSD8P:
+					cap = capabilities(c);
+					protocol(tr("module : %2 capabilities : %1").arg(cap).arg(c), NOTICE);
+					modus &= cap;
+					protocol(tr("modus : %1").arg(modus), NOTICE);
 					break;
 				default:
 					modus = P;
