@@ -97,7 +97,7 @@ bool MCPD8::init(void)
 {
 	int modus = TPA;
 
-	if (m_version < 9)
+	if (m_version < 8)
 		modus = TP;
 
 	for (quint8 c = 0; c < 8; c++)
