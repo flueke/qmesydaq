@@ -20,6 +20,7 @@
 
 #include <QApplication>
 #include <QSplashScreen>
+#include <QPlastiqueStyle>
 
 #include "mainwindow.h"
 
@@ -33,6 +34,7 @@ int main(int argc, char **argv)
 //    about.addAuthor( "Gregor Montermann", 0, "g.montermann@mesytec.com" );
 
 	QApplication app(argc, argv);
+	app.setStyle(new QPlastiqueStyle());
 
 	QPixmap pixmap(":/images/mesytec.jpg");
 
