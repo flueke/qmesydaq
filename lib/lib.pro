@@ -7,6 +7,10 @@ TARGET 		= mesydaq
 DEPENDPATH 	+= .
 INCLUDEPATH 	+= .
 
+INSTALLS	= target
+
+target.path    = /usr/local/lib64
+
 CONFIG		+= debug
 
 QT 		+= core network
