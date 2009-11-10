@@ -25,6 +25,10 @@ INCLUDEPATH 	+= . ../lib
 VERSION 	= 0.0.0
 DEFINES		+= VERSION=\\\"$${VERSION}\\\" HAVE_CONFIG_H
 
+INSTALLS	= target
+
+target.path	= /usr/local/bin
+
 CONFIG		+= debug
 
 QT 		+= qt3support network
@@ -37,7 +41,7 @@ INTERFACES	=
 
 INCLUDEPATH 	+= $${QWT_ROOT}/include 
 DEPENDPATH  	+= $${QWT_ROOT}/include 
-LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
+LIBS        	+= -L$${QWT_ROOT}/lib64 -l$${QWTLIB} -L../lib -lmesydaq
 
 # Input
 HEADERS 	+= mainwidget.h \
