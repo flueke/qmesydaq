@@ -9,7 +9,7 @@ INCLUDEPATH 	+= .
 
 INSTALLS	= target
 
-target.path    = /usr/local/lib64
+target.path    = /usr/local/lib
 
 CONFIG		+= debug
 
