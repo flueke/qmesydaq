@@ -375,7 +375,7 @@ bool Histogram::writeHistogram(QFile *f, const QString title)
 
 		for(int j = 0; j < width; j++)	// ???? why 960
 		{
-			t << '\t' << (m_data[j] ? m_data[j]->value(i) : 0);
+			t << '\t' << (m_data.contains(j) ? m_data[j]->value(i) : 0);
 		}
 		t << '\r' << '\n';
 		t.flush();
