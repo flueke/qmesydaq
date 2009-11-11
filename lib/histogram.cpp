@@ -359,7 +359,8 @@ bool Histogram::writeHistogram(QFile *f, const QString title)
 	QString s;
 	// Title
 	t << title << '\r' << '\n'; 
-	for(int i = 0; i < m_data.size(); i++)		// why 64 ??? 
+	int width = m_data.size();
+	for(int i = 0; i < width; i++)		// why 64 ??? 
 		t << '\t' << i; 
 	t << '\r' << '\n';
 	t.flush();
@@ -367,9 +368,13 @@ bool Histogram::writeHistogram(QFile *f, const QString title)
 	for(int i = 0; i < size; ++i)
 	{
 		t << i;
-		for(int j = 0; j < m_data.size(); j++)	// ???? why 960
+//
+// There's something buggy because the number of m_data seems to be increase
+// !!!!
+// 
+
+		for(int j = 0; j < width; j++)	// ???? why 960
 		{
-			
 			t << '\t' << (m_data[j] ? m_data[j]->value(i) : 0);
 		}
 		t << '\r' << '\n';
