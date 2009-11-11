@@ -101,7 +101,7 @@ bool MCPD8::init(void)
 
 	protocol(tr("capabilities : %1").arg(cap), NOTICE);
 
-	if (m_version < 8)
+	if (m_version < 8.18)
 		modus = TP;
 
 	for (quint8 c = 0; c < 8; c++)
