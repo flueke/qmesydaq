@@ -20,6 +20,7 @@
 #ifndef CARESSCONTROL_H
 #define CARESSCONTROL_H
 
+#if USE_CARESS
 #include "controlinterface.h"
 
 class CorbaThread;
@@ -64,5 +65,7 @@ protected:
 private:
 	CorbaThread	*m_ct;
 };
+
+#endif
 
 #endif

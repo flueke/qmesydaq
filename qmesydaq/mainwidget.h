@@ -139,6 +139,8 @@ private slots:
 
 	void setDisplayMode(bool);
 
+//	void closeEvent(QCloseEvent *);
+
 private:
 	void 	dispFiledata(void);
 

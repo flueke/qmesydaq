@@ -23,16 +23,16 @@
 #include "tacothread.h"
 #include <API.h>
 
+#include <QThreadPool>
+
 TACOControl::TACOControl(QObject *parent)
 	: ControlInterface(parent)
 {
 	m_tt = new TACOThread(this);
-	m_tt->start();
+	QThreadPool::globalInstance()->start(m_tt);
 }
 
 TACOControl::~TACOControl()
 {
-	if (m_tt->isRunning())
-		m_tt->quit();
 }
 

@@ -21,7 +21,7 @@
 #ifndef TACOTHREAD_H
 #define TACOTHREAD_H
 
-#include <QThread>
+#include <QRunnable>
 
 class TACOControl;
 
@@ -30,7 +30,7 @@ class TACOControl;
   * CORBA / CARESS modules by Lutz Rossa, Helmholtz Zentrum Berlin
   */
 
-class TACOThread : public QThread  
+class TACOThread : public QRunnable  
 {
 public: 
 	//! Constructor

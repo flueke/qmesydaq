@@ -21,7 +21,7 @@
 TEMPLATE 	= app
 TARGET 		= qmesydaq
 DEPENDPATH 	+= . ../lib
-INCLUDEPATH 	+= . ../lib
+INCLUDEPATH 	+= . ../lib ..
 VERSION 	= 0.0.0
 DEFINES		+= VERSION=\\\"$${VERSION}\\\" HAVE_CONFIG_H
 
@@ -37,11 +37,11 @@ QWT_ROOT 	= /usr/local/qwt5
 
 QWTLIB 		= qwt
 
-INTERFACES	= 
+INTERFACE	+= 
 
 INCLUDEPATH 	+= $${QWT_ROOT}/include 
 DEPENDPATH  	+= $${QWT_ROOT}/include 
-LIBS        	+= -L$${QWT_ROOT}/lib64 -l$${QWTLIB} -L../lib -lmesydaq
+LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
 
 # Input
 HEADERS 	+= mainwidget.h \
@@ -66,8 +66,9 @@ RESOURCES 	+= images.qrc
 
 DISTFILES	+= 
 
-contains(INTERFACES, TACO) {
-DEFINES		+= TACO=1
+contains(INTERFACE, TACO) {
+DEFINES		+= HAVE_CONFIG_H 
+DEFINES		+= USE_TACO=1
 TACO_ROOT	= /opt/taco
 
 INCLUDEPATH 	+= $${TACO_ROOT}/include
@@ -86,8 +87,8 @@ SOURCES		+= tacocontrol.cpp \
 		MesyDAQDetectorDetectorImpl.cpp 
 }
 
-contains(INTERFACES, CARESS) {
-DEFINES		+= CARESS=1
+contains(INTERFACE, CARESS) {
+DEFINES		+= USE_CARESS=1
 
 HEADERS		+= corbathread.h \
 		caresscontrol.h 

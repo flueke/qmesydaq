@@ -983,7 +983,7 @@ void MainWidget::m3PresetSlot(bool pr)
 		m4PresetButton->setChecked(false);
 	}
 	m3Preset->setEnabled(pr);
-	m_meas->setPreset(M3CT, m1Preset->value(), pr);
+	m_meas->setPreset(M3CT, m3Preset->value(), pr);
 }
 
 /*!
@@ -1008,8 +1008,8 @@ void MainWidget::m4PresetSlot(bool pr)
 		m3Preset->setEnabled(false);
 		m3PresetButton->setChecked(false);
 	}
-	m3Preset->setEnabled(pr);
-	m_meas->setPreset(M4CT, m1Preset->value(), pr);
+	m4Preset->setEnabled(pr);
+	m_meas->setPreset(M4CT, m4Preset->value(), pr);
 }
 
 /*!

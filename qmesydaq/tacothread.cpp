@@ -34,7 +34,7 @@
 extern std::vector< ::TACO::Server *> taco_devices;
 
 TACOThread::TACOThread(TACOControl *pcInt)
-	: QThread(reinterpret_cast<QObject *>(pcInt))
+	: QRunnable()
 	, m_pInt(NULL)
 	, m_terminate(false)
 {
@@ -43,12 +43,12 @@ TACOThread::TACOThread(TACOControl *pcInt)
 
 TACOThread::~TACOThread()
 {
-	qDebug(tr("CorbaThread::~CorbaThread()"));
+	qDebug(QObject::tr("CorbaThread::~CorbaThread()"));
 }
 
 void TACOThread::run()
 {
-	qDebug(tr("TACOThread::run()"));
+	qDebug(QObject::tr("TACOThread::run()"));
 	QString server("qmesydaq");
 	QString personal("srv0");
 	QString device("test/qmesydaq/det");
@@ -59,19 +59,17 @@ void TACOThread::run()
 
 	nethost_alloc(&error);
 	DevLong status = device_server(const_cast<char *>(server.toStdString().c_str()), const_cast<char *>(personal.toStdString().c_str()), 0, 1, 0, 0, 1, &devlist); 
-
+	qDebug(QObject::tr("device_server runs"));
 	if (status == DS_OK)	
 	{
 		for (std::vector< ::TACO::Server *>::iterator it = taco_devices.begin(); it != taco_devices.end(); ++it)
 			reinterpret_cast<MesyDAQ::Detector::Detector *>(*it)->setControlInterface(m_pInt);
-		exec();
 	}
-	quit();
 }
 
 bool TACOThread::initialize(TACOControl *pcInt)
 {
-	qDebug("initialize TACO");
+	qDebug(QObject::tr("initialize TACO"));
 	m_pInt = pcInt;
 	return true;
 }
