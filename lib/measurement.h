@@ -83,7 +83,21 @@ public:
 		\return counter value for the monitor 2 
 	 */
 	quint64	mon2() {return m_counter[M2CT]->value();}
-
+	
+	/** 
+		gets the value of the defined monitor 2
+		\todo monitor mapping configuration
+		\return counter value for the monitor 2 
+	 */
+	quint64	mon3() {return m_counter[M3CT]->value();}
+	
+	/** 
+		gets the value of the defined monitor 2
+		\todo monitor mapping configuration
+		\return counter value for the monitor 2 
+	 */
+	quint64	mon4() {return m_counter[M4CT]->value();}
+	
 	/** 
 		gets the value of the defined event counter
 		\todo counter mapping configuration
@@ -177,10 +191,11 @@ private:
 	//! definitions of the counters
 	MesydaqCounter	*m_counter[8];
 
+	MesydaqTimer	*m_timer;
+
 	int		m_rateTimer;
 
 	int 		m_onlineTimer;
-
 };
 
 #if CARESS

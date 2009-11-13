@@ -183,13 +183,14 @@ public:
 	//! \return current timer value
 	virtual quint64 value(void); 
 
-private slots:
-	void timerStop(void);
-
+	/**
+	 * Sets the counter time
+	 *
+	 * \param val the time in 100ns ticks
+	 */
+	virtual void setTime(quint64 val);
 private:
-	QTime	m_time;
-
-	QTimer	m_timer;
+	quint64		m_start;
 };
 
 #endif // COUNTER_H

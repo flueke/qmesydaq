@@ -125,7 +125,8 @@ void Measurement::setCurrentTime(quint64 msecs)
 	{
     		m_meastime_msec = msecs - m_starttime_msec;
 		for (quint8 i = 0; i < 8; ++i)
-			m_counter[i]->setTime(m_meastime_msec);
+			if (i != TCT)	// this will be updated during the events 
+				m_counter[i]->setTime(m_meastime_msec);
 	}
 }
 
@@ -594,6 +595,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			setCounter(i, var);
 		}		
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		if (datalen == 0)
+			m_counter[TCT]->setTime(m_headertime / 10000);
 		for(i = 0; i < datalen && !m_stopping; ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
@@ -603,6 +606,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 // id stands for the trigId and modId depending on the package type
 			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
 // not neutron event (counter, chopper, ...)
+			m_counter[TCT]->setTime(tim / 10000);
 			if((pd.data[counter + 2] & 0x8000))
 			{
 				triggers++;
