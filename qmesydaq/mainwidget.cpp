@@ -272,6 +272,7 @@ void MainWidget::startStopSlot(bool checked)
 		m_meas->stop();
 		listFilename->setText(QString::null);
 	}
+	emit started(checked);
 }
 
 void MainWidget::sendCellSlot()
@@ -523,7 +524,10 @@ void MainWidget::replayListfileSlot()
 	QString name = QFileDialog::getOpenFileName(this, "Load...", m_theApp->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
 	if(!name.isEmpty())
 	{
+		startStopButton->setDisabled(true);
+		clearAllSlot();
 		m_meas->readListfile(name);
+		startStopButton->setEnabled(true);
 	}
 }
 

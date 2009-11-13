@@ -50,6 +50,9 @@ public:
 
 	~MainWidget();
 
+signals:
+	void	started(bool);
+
 public slots:
 	void	exportPDF();
 

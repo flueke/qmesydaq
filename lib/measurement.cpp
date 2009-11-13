@@ -719,6 +719,8 @@ void Measurement::readListfile(QString readfilename)
 		if (!blocks)
 		{
 			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
+			for (quint8 i = 0; i < 8; ++i)
+				m_counter[i]->reset();
 			m_counter[TCT]->start(tmp / 10000);
 		}
 // hand over data buffer for processing

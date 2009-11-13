@@ -38,6 +38,7 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 	connect(actionSave_Histogram_File, SIGNAL(activated()), m_main, SLOT(writeHistSlot()));
 	connect(actionPrint, SIGNAL(activated()), m_main, SLOT(printPlot()));
 	connect(actionExport_PDF, SIGNAL(activated()), m_main, SLOT(exportPDF()));
+	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
 	m_main->resize(1280, 980);
 }
 
