@@ -562,7 +562,10 @@ Listfile</string>
               <string>preset value for event counter</string>
              </property>
              <property name="maximum">
-              <number>1000000000</number>
+              <number>2000000000</number>
+             </property>
+             <property name="singleStep">
+              <number>10000</number>
              </property>
             </widget>
            </item>
@@ -637,7 +640,10 @@ Listfile</string>
               <string>preset value for monitor 1</string>
              </property>
              <property name="maximum">
-              <number>1000000000</number>
+              <number>2000000000</number>
+             </property>
+             <property name="singleStep">
+              <number>1000</number>
              </property>
             </widget>
            </item>
@@ -699,7 +705,10 @@ Listfile</string>
               <string>preset value for monitor 2</string>
              </property>
              <property name="maximum">
-              <number>1000000000</number>
+              <number>2000000000</number>
+             </property>
+             <property name="singleStep">
+              <number>1000</number>
              </property>
             </widget>
            </item>
@@ -761,7 +770,10 @@ Listfile</string>
               <string>preset value for monitor 2</string>
              </property>
              <property name="maximum">
-              <number>1000000000</number>
+              <number>2000000000</number>
+             </property>
+             <property name="singleStep">
+              <number>1000</number>
              </property>
             </widget>
            </item>
@@ -823,7 +835,10 @@ Listfile</string>
               <string>preset value for monitor 2</string>
              </property>
              <property name="maximum">
-              <number>1000000000</number>
+              <number>2000000000</number>
+             </property>
+             <property name="singleStep">
+              <number>1000</number>
              </property>
             </widget>
            </item>
