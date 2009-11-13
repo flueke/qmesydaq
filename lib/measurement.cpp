@@ -716,6 +716,11 @@ void Measurement::readListfile(QString readfilename)
 		quint16 *pD = (quint16 *)&dataBuf.bufferLength;
 		for(int i = 4; i < dataBuf.bufferLength; i++)
 			datStream >> pD[i];
+		if (!blocks)
+		{
+			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
+			m_counter[TCT]->start(tmp / 10000);
+		}
 // hand over data buffer for processing
 		analyzeBuffer(dataBuf);
 // increment local counters
