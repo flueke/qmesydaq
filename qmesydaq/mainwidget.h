@@ -90,7 +90,7 @@ private slots:
 
 	void mpsdCheck(int);
 
-	void scanPeriSlot();
+	void scanPeriSlot(bool = true);
 
 // setup related methods
 	void restoreSetupSlot();

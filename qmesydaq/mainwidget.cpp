@@ -160,7 +160,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_histData = new MesydaqHistogramData();
 	m_histogram->setData(*m_histData);
 
-	scanPeriSlot();
+	scanPeriSlot(false);
 	dispFiledata();
 #if TACO
 	m_cInt = new TACOControl(this);
@@ -609,6 +609,7 @@ void MainWidget::displayMpsdSlot(int id)
 	quint8 chan = comgain->isChecked() ? 8 : channel->value();
 
 // gain:
+	qDebug() << tr("set gain : %1").arg(m_theApp->getGain(mod, id, chan));
 	gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));	
 	
 // threshold:
@@ -650,10 +651,11 @@ void MainWidget::displayMpsdSlot(int id)
 		Ui_Mesydaq2MainWidget::pos->setChecked(true);
 }
 
-void MainWidget::scanPeriSlot()
+void MainWidget::scanPeriSlot(bool real)
 {
 	quint16 id = devid_2->value();
-	m_theApp->scanPeriph(id);
+	if (real)
+		m_theApp->scanPeriph(id);
 	
 	QList<int> modList;
 	for (int i = 0; i < 8; ++i)
