@@ -109,6 +109,7 @@ private slots:
 	void selectHistpathSlot();
 	void selectListpathSlot();
 	void writeHistSlot();
+	void loadHistSlot();
 
 	void tPresetSlot(bool pr);
 	void tResetSlot();

@@ -36,6 +36,7 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 	connect(action_Save_Config_File, SIGNAL(activated()), m_main, SLOT(saveSetupSlot()));
 	connect(action_Replay_List_File, SIGNAL(activated()), m_main, SLOT(replayListfileSlot()));
 	connect(actionSave_Histogram_File, SIGNAL(activated()), m_main, SLOT(writeHistSlot()));
+	connect(actionLoad_Histogram_File, SIGNAL(activated()), m_main, SLOT(loadHistSlot()));
 	connect(actionPrint, SIGNAL(activated()), m_main, SLOT(printPlot()));
 	connect(actionExport_PDF, SIGNAL(activated()), m_main, SLOT(exportPDF()));
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));

@@ -110,6 +110,8 @@ public:
 
 	void writeHistograms(const QString &name);
 
+	void readHistograms(const QString &name);
+
 	void clearAllHist(void);
 
 	void clearChanHist(quint16 chan);

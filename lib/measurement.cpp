@@ -563,6 +563,36 @@ void Measurement::writeHistograms(const QString &name)
 }
 
 /*!
+    \fn Measurement::readHistograms(const QString &name)
+
+    reads the position and amplitude histogram from a file
+
+    \param name file name
+ */
+void Measurement::readHistograms(const QString &name)
+{
+	if(name.isEmpty())
+		return;
+
+	QFile f;
+	f.setFileName(name);
+	if (f.open(QIODevice::ReadOnly)) 
+	{    // file opened successfully
+		QTextStream t( &f );        // use a text stream
+		// Title
+#if 0
+		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
+		t.flush();
+		if (m_posHist)
+    			m_posHist->writeHistogram(&f, "position data: 1 row title (8 x 8 detectors), position data in columns");
+		if (m_ampHist)
+			m_ampHist->writeHistogram(&f, "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns");
+#endif
+		f.close();
+	}
+}
+
+/*!
     \fn Measurement::analyzeBuffer(DATA_PACKET &pd)
 
     analyze the data packet and put all events into the right counters and/or histogram

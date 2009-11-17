@@ -863,6 +863,20 @@ void MainWidget::writeHistSlot()
 }
 
 /*!
+   \fn MainWidget::loadHistSlot()
+
+   callback to read a histogram data file
+*/
+void MainWidget::loadHistSlot()
+{
+	QString name = QFileDialog::getOpenFileName(this, tr("Load Histogram..."), m_theApp->getHistfilepath(), "mesydaq histogram files (*.mtxt);;all files (*.*)");
+  	if(!name.isEmpty())
+	{
+		m_meas->readHistograms(name);
+	}
+}
+
+/*!
    \fn MainWidget::ePresetSlot(bool pr)
 
    callback to enable/disable event counter
