@@ -104,7 +104,7 @@ void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 	m_comgain = (channel > 7);
 	if (m_comgain)
 	{
-		for(quint8 c = 0; c < 8; c++)
+		for(quint8 c = 0; c < 9; c++)
 		{
 			m_gainPoti[c][preset] = val;
 			m_gainVal[c][preset] = gainv;
@@ -135,7 +135,7 @@ void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
 	m_comgain = (channel > 7);
 	if (m_comgain)
 	{
-		for(quint8 c = 0; c < 8; c++)
+		for(quint8 c = 0; c < 9; c++)
 		{
 			m_gainPoti[c][preset] = gain;
 			m_gainVal[c][preset] = gv;
