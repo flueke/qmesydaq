@@ -690,6 +690,11 @@ void Measurement::readListfile(QString readfilename)
 	protocol(tr("readListfile : %1").arg(ok), NOTICE);
 	clearAllHist();
 	QChar c('0');
+	if (m_running)
+	{
+		stop();
+		QCoreApplication::processEvents();
+	}
 	DATA_PACKET 	dataBuf;
 	while(ok)
 	{
