@@ -22,6 +22,7 @@
 
 #include <QString>
 #include "mesydaqobject.h"
+#include "mdefines.h"
 
 /**
  * \short representation of MPSD-8 peripheral module 

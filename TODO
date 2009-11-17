@@ -1,0 +1,8 @@
+list mode data files:
+	- the interpretation of the data depends on the mode of the 
+	  MPSD's:
+		for the MPSD-8 modules is the setup the decision point
+		whether the data are position or amplitude !!!!!
+	- 
+
+
