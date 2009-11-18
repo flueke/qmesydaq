@@ -609,7 +609,6 @@ void MainWidget::displayMpsdSlot(int id)
 	quint8 chan = comgain->isChecked() ? 8 : channel->value();
 
 // gain:
-	qDebug() << tr("set gain : %1").arg(m_theApp->getGain(mod, id, chan));
 	gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));	
 	
 // threshold:
