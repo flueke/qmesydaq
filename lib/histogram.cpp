@@ -20,6 +20,8 @@
 #include <QTextStream>
 #include <QFile>
 
+#include <QDebug>
+
 #include "histogram.h"
 
 #include <cmath>
@@ -61,15 +63,66 @@ bool Spectrum::incVal(quint16 bin)
 	if (bin < m_data.size())
 	{
 		m_data[bin]++;
-		if (m_data[bin] > m_data[m_maximumPos])
-			m_maximumPos = bin;
+		calcMaximumPosition(bin);
+		calcFloatingMean(bin);
+		return true;
+	}
+	return false;
+}
 
+void Spectrum::calcMaximumPosition(quint16 bin)
+{
+	if (m_data[bin] > m_data[m_maximumPos])
+		m_maximumPos = bin;
+}
+
+void Spectrum::calcFloatingMean(quint16 bin)
+{
 #warning TODO mean value determination
 //! \todo mean value determination
-		m_floatingMean[m_meanPos] = bin;
-		m_meanPos++;
-		if(m_meanCount < 255)
-			m_meanCount++;
+	m_floatingMean[m_meanPos] = bin;
+	m_meanPos++;
+	if(m_meanCount < 255)
+		m_meanCount++;
+}
+
+/*!
+    \fn Spectrum::setValue(quint16 bin, quint64 val)
+
+    sets the events at position bin
+
+    \param bin position inside the spectrum to set
+    \param val events 
+    \return true or false if successful or not
+ */
+bool Spectrum::setValue(quint16 bin, quint64 val)
+{
+	if (bin < m_data.size())
+	{
+		m_data[bin] = val;
+		calcMaximumPosition(bin);
+		calcFloatingMean(bin);
+		return true;
+	}
+	return false;
+}
+
+/*!
+    \fn Spectrum::addValue(quint16 bin, quint64 val)
+
+    adds events at position bin
+
+    \param bin position inside the spectrum to set
+    \param val events 
+    \return true or false if successful or not
+ */
+bool Spectrum::addValue(quint16 bin, quint64 val)
+{
+	if (bin < m_data.size())
+	{
+		m_data[bin] += val;
+		calcMaximumPosition(bin);
+		calcFloatingMean(bin);
 		return true;
 	}
 //	qDebug("bin(%d) > size(%d)", bin, m_data.size());
@@ -174,6 +227,26 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
 	return 0;
 }
 
+void Histogram::checkChannel(quint16 chan)
+{
+	if (!m_data.contains(chan))
+	{
+		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
+			if (!m_data.contains(i))
+				m_data.insert(i, new Spectrum(m_sumSpectrum.width()));
+		m_dataKeys = m_data.keys();
+		qSort(m_dataKeys);
+	}
+	if (!m_data.contains(m_maximumPos))
+		m_maximumPos = chan;
+}
+
+void Histogram::calcMaximumPosition(quint16 chan)
+{
+	if (m_data[chan]->max() > m_data[m_maximumPos]->max())
+		m_maximumPos = chan;
+}
+
 /**
     \fn Histogram::incVal(quint16 chan, quint16 bin)
 
@@ -186,35 +259,40 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
  */
 bool Histogram::incVal(quint16 chan, quint16 bin)
 {
-#if 0
-	if (chan > 79 && chan < 96)
-	{
-		if (chan < 88)
-			chan += 8;
-		else if (chan > 87)
-			chan -= 8;
-	}
-#endif
-	if (!m_data.contains(chan))
-	{
-		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
-			if (!m_data.contains(i))
-				m_data[i] = new Spectrum(m_sumSpectrum.width());
-		m_dataKeys = m_data.keys();
-	}
-	if (!m_data.contains(m_maximumPos))
-		m_maximumPos = chan;
+	checkChannel(chan);
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
 	m_data[chan]->incVal(bin);
-	if (m_data[chan]->max() > m_data[m_maximumPos]->max())
-		m_maximumPos = chan;
+	calcMaximumPosition(chan);
 // sum spectrum of all channels
 	m_sumSpectrum.incVal(bin);
 
 	return true;
 }
 
+/**
+    \fn Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
+
+    set the event value in cell[chan, bin]. If the cell does
+    not exist it will be created.
+
+    \param chan number of the spectrum
+    \param bin number of the bin in the spectrum
+    \param val events
+    \return true if it was ok otherwise false
+ */
+bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
+{
+	checkChannel(chan);
+// total counts of histogram (like monitor ??)
+	m_totalCounts += val;
+	m_data[chan]->setValue(bin, val);
+	calcMaximumPosition(chan);
+// sum spectrum of all channels
+	m_sumSpectrum.addValue(bin, val);
+
+	return true;
+}
 /*!
     \fn Histogram::clear(quint16 channel)
 
@@ -364,19 +442,12 @@ bool Histogram::writeHistogram(QFile *f, const QString title)
 		t << '\t' << i; 
 	t << '\r' << '\n';
 	t.flush();
-	int size = m_sumSpectrum.width(); 
+	int size = m_sumSpectrum.width();
 	for(int i = 0; i < size; ++i)
 	{
 		t << i;
-//
-// There's something buggy because the number of m_data seems to be increase
-// !!!!
-// 
-
-		for(int j = 0; j < width; j++)	// ???? why 960
-		{
-			t << '\t' << (m_data.contains(j) ? m_data[j]->value(i) : 0);
-		}
+		for(int j = 0; j < width; j++)	
+			t << '\t' << value(j, i);
 		t << '\r' << '\n';
 		t.flush();
 	}

@@ -23,6 +23,10 @@
 #include <QDateTime>
 #include <QTimerEvent>
 #include <QCoreApplication>
+#include <QRegExp>
+#include <QStringList>
+
+#include <QDebug>
 
 #include "measurement.h"
 #include "mdefines.h"
@@ -579,15 +583,52 @@ void Measurement::readHistograms(const QString &name)
 	if (f.open(QIODevice::ReadOnly)) 
 	{    // file opened successfully
 		QTextStream t( &f );        // use a text stream
+		QString tmp = t.readLine();
 		// Title
-#if 0
-		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
-		t.flush();
-		if (m_posHist)
-    			m_posHist->writeHistogram(&f, "position data: 1 row title (8 x 8 detectors), position data in columns");
-		if (m_ampHist)
-			m_ampHist->writeHistogram(&f, "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns");
-#endif
+		QStringList list = tmp.split(QRegExp("\\s+"));
+		if (list.size() >= 3 && list[0] == "mesydaq" && list[1] == "Histogram" && list[2] == "File")
+		{
+			tmp = t.readLine();
+			list = tmp.split(QRegExp("\\s+"));
+			if (list.size() >= 2 && list[0] == "position" && list[1].startsWith("data"))
+			{
+				tmp = t.readLine();
+				list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+				int tubes = list.size();
+				m_posHist->clear();
+				while(!(tmp = t.readLine()).isEmpty())
+				{
+					list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+					if (list.size() == (tubes + 1))
+					{
+//						add values to histogram
+						quint16 bin = list[0].toUShort();
+						for(int i = 1; i < list.size(); ++i)
+							m_posHist->setValue((i - 1), bin, list[i].toULongLong());
+					}
+				}
+			}
+			tmp = t.readLine();
+			list = tmp.split(QRegExp("\\s+"));
+			if (list.size() >= 2 && list[0] == "amplitude/energy" && list[1].startsWith("data"))
+			{
+				tmp = t.readLine();
+				list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+				int tubes = list.size();
+				m_ampHist->clear();
+				while(!(tmp = t.readLine()).isEmpty())
+				{
+					list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+					if (list.size() == (tubes + 1))
+					{
+//						add values to histogram
+						quint16 bin = list[0].toUShort();
+						for(int i = 1; i < list.size(); ++i)
+							m_ampHist->setValue((i - 1), bin, list[i].toULongLong());
+					}
+				}
+			}	
+		}
 		f.close();
 	}
 }

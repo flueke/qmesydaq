@@ -43,6 +43,10 @@ public:
 
 	bool incVal(quint16 bin);
 
+	bool setValue(quint16 bin, quint64 val);
+
+	bool addValue(quint16 bin, quint64 val);
+
 	void clear();
 
 	//! \return the maximum value of the spectrum
@@ -80,6 +84,11 @@ public:
 	void resize(quint16 bins) {m_data.resize(bins);}
 
 private:
+	void calcFloatingMean(quint16 bin);
+
+	void calcMaximumPosition(quint16 bin);
+
+private:
 	QVector<quint64>	m_data;
 
 	quint64			m_maximumPos;
@@ -114,6 +123,8 @@ public:
     
 	bool incVal(quint16 chan, quint16 bin);
 
+	bool setValue(quint16 chan, quint16 bin, quint64 val);
+
 	void clear(void);
 
 	void clear(quint16 channel);
@@ -145,6 +156,11 @@ public:
 	quint64 value(quint16 x, quint16 y);
 
 	quint16	height(); 
+
+private:
+	void calcMaximumPosition(quint16 chan);
+
+	void checkChannel(quint16 chan);
 
 private:
 	quint64 			m_totalCounts;
