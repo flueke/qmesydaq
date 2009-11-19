@@ -1106,9 +1106,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 							protocol(tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
 								arg(8 * recBuf.deviceId + recBuf.data[0]).arg(c).arg(recBuf.data[2+c]).arg(ptrMPSD->getGainpoti(c, 1)), ERROR);
 							// set back to received value
+							ptrMPSD->setGain(8, (quint8)recBuf.data[c + 2], 0);
 						}
-						ptrMPSD->setGain(c, (quint8)recBuf.data[2 + c], 0);
 					}
+					ptrMPSD->setGain(8, (quint8)recBuf.data[2], 0);
 				}
 				else// set one channel
 				{
