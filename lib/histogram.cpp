@@ -293,6 +293,31 @@ bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
 
 	return true;
 }
+
+/**
+    \fn Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
+
+    set the event value in cell[chan, bin]. If the cell does
+    not exist it will be created.
+
+    \param chan number of the spectrum
+    \param bin number of the bin in the spectrum
+    \param val events
+    \return true if it was ok otherwise false
+ */
+bool Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
+{
+	checkChannel(chan);
+// total counts of histogram (like monitor ??)
+	m_totalCounts += val;
+	m_data[chan]->addValue(bin, val);
+	calcMaximumPosition(chan);
+// sum spectrum of all channels
+	m_sumSpectrum.addValue(bin, val);
+
+	return true;
+}
+
 /*!
     \fn Histogram::clear(quint16 channel)
 

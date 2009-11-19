@@ -19,7 +19,6 @@
  ***************************************************************************/
 #include <QString>
 #include <QFile>
-#include <QTextStream>
 #include <QDateTime>
 #include <QTimerEvent>
 #include <QCoreApplication>
@@ -588,48 +587,49 @@ void Measurement::readHistograms(const QString &name)
 		QStringList list = tmp.split(QRegExp("\\s+"));
 		if (list.size() >= 3 && list[0] == "mesydaq" && list[1] == "Histogram" && list[2] == "File")
 		{
-			tmp = t.readLine();
-			list = tmp.split(QRegExp("\\s+"));
-			if (list.size() >= 2 && list[0] == "position" && list[1].startsWith("data"))
+			m_posHist->clear();
+			m_ampHist->clear();
+
+			while(!t.atEnd())
 			{
 				tmp = t.readLine();
-				list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-				int tubes = list.size();
-				m_posHist->clear();
-				while(!(tmp = t.readLine()).isEmpty())
+				list = tmp.split(QRegExp("\\s+"));
+				if (list.size() >= 2 && list[1].startsWith("data"))
 				{
-					list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-					if (list.size() == (tubes + 1))
-					{
-//						add values to histogram
-						quint16 bin = list[0].toUShort();
-						for(int i = 1; i < list.size(); ++i)
-							m_posHist->setValue((i - 1), bin, list[i].toULongLong());
-					}
-				}
-			}
-			tmp = t.readLine();
-			list = tmp.split(QRegExp("\\s+"));
-			if (list.size() >= 2 && list[0] == "amplitude/energy" && list[1].startsWith("data"))
-			{
-				tmp = t.readLine();
-				list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-				int tubes = list.size();
-				m_ampHist->clear();
-				while(!(tmp = t.readLine()).isEmpty())
-				{
-					list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-					if (list.size() == (tubes + 1))
-					{
-//						add values to histogram
-						quint16 bin = list[0].toUShort();
-						for(int i = 1; i < list.size(); ++i)
-							m_ampHist->setValue((i - 1), bin, list[i].toULongLong());
-					}
+					if (list[0] == "position")
+						fillHistogram(t, m_posHist);
+					else if (list[0] == "amplitude/energy")
+						fillHistogram(t, m_ampHist);
 				}
 			}	
 		}
 		f.close();
+	}
+}
+
+/*!
+    \fn Measurement::fillHistogram(QTextStream &t, Histogram *hist)
+
+    analyzes the text stream down to a empty line and put the values
+    into a histogram
+*/
+
+void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
+{
+	QString tmp = t.readLine();
+	QStringList list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+	int tubes = list.size();
+
+	while(!(tmp = t.readLine()).isEmpty())
+	{
+		list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+		if (list.size() == (tubes + 1))
+		{
+//			add values to histogram
+			quint16 bin = list[0].toUShort();
+			for(int i = 1; i < list.size(); ++i)
+				hist->addValue((i - 1), bin, list[i].toULongLong());
+		}
 	}
 }
 

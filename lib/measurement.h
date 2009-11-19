@@ -20,6 +20,8 @@
 #ifndef MEASUREMENT_H
 #define MEASUREMENT_H
 
+#include <QTextStream>
+
 #include "mesydaqobject.h"
 #include "counter.h"
 #include "structures.h"
@@ -156,6 +158,9 @@ signals:
 	
 protected:
 	void timerEvent(QTimerEvent *event);
+
+private:
+	void fillHistogram(QTextStream &t, Histogram *hist);
 
 private:
 	static const quint16  	sep0 = 0x0000;

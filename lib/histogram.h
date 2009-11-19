@@ -125,6 +125,8 @@ public:
 
 	bool setValue(quint16 chan, quint16 bin, quint64 val);
 
+	bool addValue(quint16 chan, quint16 bin, quint64 val);
+
 	void clear(void);
 
 	void clear(quint16 channel);
