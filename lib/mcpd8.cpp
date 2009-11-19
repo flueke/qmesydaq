@@ -332,15 +332,8 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 		return false;
 	if (chan > 8)
 		chan = 8;
-#warning TODO common gain handling
-//! \todo common gain handling
-	if (chan == 8)
-	{
-		for (int i = 0; i < 8; ++i)
-			m_mpsd[addr]->setGain(chan, gainval, 1);
-	}
-	else
-		m_mpsd[addr]->setGain(chan, gainval, 1);
+
+	m_mpsd[addr]->setGain(chan, gainval, 1);
 	initCmdBuffer(SETGAIN);
 	m_cmdBuf.data[0] = addr;
 	m_cmdBuf.data[1] = chan;
