@@ -74,10 +74,7 @@ public:
 	 * 
 	 * \param val new counter value
 	 */
-	void set(quint64 val) 
-	{
-   		m_value = m_offset + val - m_start;
-	}
+	void set(quint64 val); 
 	
 	//! sets the counter value to zero
 	void reset(void); 

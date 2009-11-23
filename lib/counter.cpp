@@ -30,6 +30,7 @@ MesydaqCounter :: MesydaqCounter()
 	, m_rateflag(false)
 	, m_meanRate(0)
 	, m_ratepointer(0)
+	, m_lastValue(0)
 {
 }
 
@@ -51,6 +52,12 @@ void MesydaqCounter::operator++(void)
 		emit stop();
 }
 
+void MesydaqCounter::set(quint64 val)
+{
+	protocol(tr("MesydaqCounter::set(%1)").arg(val));
+	m_value = m_offset + val - m_start;
+}
+
 bool MesydaqCounter::isStopped(void) 
 {
 	if (!m_limit)
@@ -67,9 +74,10 @@ void MesydaqCounter::setMaster(const bool val)
 
 void MesydaqCounter::reset(void) 
 {
-	set(0);
+	m_value = 0;
 	m_offset = 0;
 	m_start = 0;
+	m_lastValue = 0;
 	m_rate.clear();
 }
 
@@ -89,13 +97,22 @@ void MesydaqCounter::calcRate(void)
 	}
 	if (m_rateflag == true)
 	{
-		quint64 tval = (m_meastime_msec - m_ratetime_msec);
-		if (m_rate.size() > 10)
-			m_rate.dequeue();
-		if (m_rate.size() > 1)
-			m_rate.enqueue((m_value - m_lastValue) * 1000 / tval);
+		if (m_meastime_msec > m_ratetime_msec)
+		{
+			quint64 tval = (m_meastime_msec - m_ratetime_msec);
+			if (m_rate.size() > 10)
+				m_rate.removeFirst();
+			if (m_rate.size() > 1 && (m_value >= m_lastValue))
+				m_rate.enqueue((m_value - m_lastValue) * 1000 / tval);
+			else
+			{
+				if (m_value)
+					protocol(tr("size : %3; m_value : %1, m_lastValue : %2").arg(m_value).arg(m_lastValue).arg(m_rate.size()));
+				m_rate.enqueue(0);
+			}
+		}
 		else
-			m_rate.enqueue(0);
+			protocol(tr("m_meastime_msec : %1,  m_ratetime_msec %2").arg(m_meastime_msec).arg(m_ratetime_msec));
 		m_lastValue = m_value;
 	}
 	m_ratetime_msec = m_meastime_msec;
