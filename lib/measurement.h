@@ -203,6 +203,10 @@ private:
 	int		m_rateTimer;
 
 	int 		m_onlineTimer;
+
+	quint32		m_packages;
+
+	quint64		m_triggers;
 };
 
 #if CARESS

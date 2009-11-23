@@ -58,6 +58,8 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_headertime(0)
 	, m_rateTimer(0)
 	, m_onlineTimer(0)
+	, m_packages(0)
+	, m_triggers(0)
 {
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
@@ -150,6 +152,10 @@ quint64 Measurement::getMeastime(void)
  */
 void Measurement::start()
 {
+	for (quint8 c = 0; c < 8; ++c)
+		m_counter[c]->reset();	
+	m_packages = 0;
+	m_triggers = 0;
 	m_mesydaq->start();
 	m_starttime_msec = m_mesydaq->time();
 	m_running = true;
@@ -158,7 +164,7 @@ void Measurement::start()
 	for (quint8 c = 0; c < 8; ++c)
 	{
 		m_counter[c]->start(m_starttime_msec);
-		protocol(tr("counter %1 limit : %2").arg(c).arg(m_counter[c]->limit()), INFO);
+		protocol(tr("counter %1 value : %2 limit : %3").arg(c).arg(m_counter[c]->value()).arg(m_counter[c]->limit()), INFO);
 	}
 }
 
@@ -187,6 +193,8 @@ void Measurement::stop()
 	m_stopping = false;
 	for (quint8 c = 0; c < 8; ++c)
 		m_counter[c]->stop(time);
+
+	protocol(tr("packages : %1 triggers : %2").arg(m_packages).arg(m_triggers));
 #if 0
  	m_counterOffset[TCT] = m_counter[1][TCT];
 #endif
@@ -211,6 +219,7 @@ void Measurement::cont()
 void Measurement::setCounter(quint32 cNum, quint64 val)
 {
 // set counter
+	protocol(tr("Measurement::setCounter(cNum = %1, val = %2)").arg(cNum).arg(val));
 	if(cNum < 8)
 	{
 		if (val == 0)
@@ -642,7 +651,7 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
  */
 void Measurement::analyzeBuffer(DATA_PACKET &pd)
 {
-	quint16 time, counter = 0;
+	quint16 time;
 	ulong 	data;
 	quint32 i, j;
 	quint16 neutrons = 0;
@@ -651,23 +660,16 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 	quint16 mod = pd.deviceId;	
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
+
+	m_packages++;
 	if(pd.bufferType < 0x0002) 
 	{
 // extract parameter values:
 		QChar c('0');
-		for(i = 0; i < 4; i++)
-		{
-			quint64 var = 0;
-			for(j = 0; j < 3; j++)
-			{
-				var <<= 16;
-				var |= pd.param[i][2 - j];
-			}
-			setCounter(i, var);
-		}		
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 		if (datalen == 0)
 			m_counter[TCT]->setTime(m_headertime / 10000);
+		quint16 counter = 0;
 		for(i = 0; i < datalen && !m_stopping; ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
@@ -693,8 +695,10 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					case MON3ID :
 					case MON4ID :
 						++(*m_counter[dataId]);
+//						protocol(tr("counter %1 : (%3 - %4)%2").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers));
 						break;
 					default:
+						protocol(tr("counter %1 : %2").arg(dataId).arg(i));
 						break;
 				}
 			}
@@ -722,6 +726,21 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_ampHist->incVal(chan, amp);
 			}
 		}
+		m_triggers += triggers;
+		for(i = 0; i < 4; i++)
+		{
+			quint64 var = 0;
+			for(j = 0; j < 3; j++)
+			{
+				var <<= 16;
+				var |= pd.param[i][2 - j];
+			}
+			if (var && m_counter[i]->value() != var)
+			{
+				protocol(tr("counter %1 : %3 <-> %2").arg(i).arg(m_counter[i]->value()).arg(var));
+				setCounter(i, var);
+			}
+		}		
 	}
 }
 
