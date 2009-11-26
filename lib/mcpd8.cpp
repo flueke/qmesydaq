@@ -1197,7 +1197,8 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				break;
 			case GETVER:
 				m_version = recBuf.data[1];
-				m_version /= 100.;
+				while (m_version > 1)
+					m_version /= 10.;
 				m_version += recBuf.data[0];
 				protocol(tr("Modul (ID  %1): Version number : %2").arg(m_id).arg(m_version), DEBUG);
 				break;
