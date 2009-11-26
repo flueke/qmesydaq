@@ -28,6 +28,7 @@
 
 class QwtPlotCurve;
 class QwtPlotZoomer;
+class QwtPlotPicker;
 class QTimer;
 class MesydaqPlotSpectrogram;
 class MesydaqSpectrumData;
@@ -200,6 +201,8 @@ private:
 	ControlInterface *m_cInt;
 
 	QPrinter	m_printer;
+
+	QwtPlotPicker	*m_picker;
 };	
 
 #endif

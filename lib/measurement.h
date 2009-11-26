@@ -21,6 +21,7 @@
 #define MEASUREMENT_H
 
 #include <QTextStream>
+#include <QRectF>
 
 #include "mesydaqobject.h"
 #include "counter.h"
@@ -72,6 +73,10 @@ public:
 
 	void 	readListfile(QString readfilename);
 
+	quint64	getROICounts(void);
+
+	void 	setROI(QRectF r);
+
 	/** 
 		gets the value of the defined monitor 1
 		\todo monitor mapping configuration
@@ -106,6 +111,20 @@ public:
 		\return counter value for the event counter
 	 */
 	quint64	events() {return m_counter[EVCT]->value();}
+
+	/** 
+		gets the number of all events in the selected ROI
+		\todo counter mapping configuration
+		\return events in ROI 
+	 */
+	quint64 ampEventsInROI();
+
+	/** 
+		gets the number of all events in the selected ROI
+		\todo counter mapping configuration
+		\return events in ROI 
+	 */
+	quint64 posEventsInROI();
 
 	//! \return time of the last header read from interface
 	quint64 getHeadertime(void) {return m_headertime;}
@@ -204,6 +223,8 @@ private:
 
 	int 		m_onlineTimer;
 
+	QRect		m_roi;
+
 	quint32		m_packages;
 
 	quint64		m_triggers;
@@ -247,6 +268,8 @@ private:
 	quint32 	m_histHeight;
 	quint32 	m_histWidth;
 	quint32 	m_step;
+
+	QRect		m_roi;
 };
 
 #endif

@@ -596,6 +596,7 @@ void Measurement::readHistograms(const QString &name)
 		QStringList list = tmp.split(QRegExp("\\s+"));
 		if (list.size() >= 3 && list[0] == "mesydaq" && list[1] == "Histogram" && list[2] == "File")
 		{
+			m_mesydaq->setHistfilename(name);
 			m_posHist->clear();
 			m_ampHist->clear();
 
@@ -912,3 +913,38 @@ void Measurement::getTimeMean(float &mean, float &sigma)
 	mean = m_timeSpectrum->mean(sigma);
 }
 
+void Measurement::setROI(QRectF r)
+{
+	m_roi = QRect(r.x(), r.y(), r.width(), r.height());
+	qDebug() << "set ROI : " << m_roi;
+
+}
+
+quint64 Measurement::ampEventsInROI()
+{
+	quint64 tmp(0);
+	qDebug() << "amp : " << m_roi;
+
+	if (!m_roi.width() && !m_roi.height())
+		return events();
+
+	for (int i = m_roi.x(); i <= m_roi.x() + m_roi.width(); ++i)
+		for (int j = m_roi.y(); j <= m_roi.y() + m_roi.height(); ++j)
+			tmp += m_ampHist->value(i, j);
+
+	return tmp;
+}
+
+quint64 Measurement::posEventsInROI()
+{
+	quint64 tmp(0);
+	qDebug() << "pos : " << m_roi;
+	
+	if (!m_roi.width() && !m_roi.height())
+		return events();
+
+	for (int i = m_roi.x(); i <= m_roi.x() + m_roi.width(); ++i)
+		for (int j = m_roi.y(); j <= m_roi.y() + m_roi.height(); ++j)
+			tmp += m_posHist->value(i, j);
+	return tmp;
+}

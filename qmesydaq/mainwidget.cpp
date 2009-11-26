@@ -31,6 +31,8 @@
 #include <QTimer>
 #include <QPrintDialog>
 
+#include <QDebug>
+
 #include <qwt_plot_curve.h>
 #include <qwt_plot_zoomer.h>
 #include <qwt_plot_layout.h>
@@ -86,7 +88,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	init();
 
-        connect(acqListfile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
+	connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
         connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
@@ -132,7 +134,16 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #endif
 	m_zoomer->setRubberBandPen(QColor(Qt::black));
 	m_zoomer->setTrackerPen(QColor(Qt::black));
+	m_zoomer->setTrackerMode(QwtPicker::ActiveOnly);
 	m_zoomer->setEnabled(true);
+
+	m_picker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
+        			QwtPicker::PointSelection | QwtPicker::DragSelection,
+        			QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,
+        			dataFrame->canvas());
+	m_picker->setRubberBandPen(QColor(Qt::green));
+	m_picker->setRubberBand(QwtPicker::CrossRubberBand);
+	m_picker->setTrackerPen(QColor(Qt::black));
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -241,6 +252,9 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
                 dataFrame->replot();
                 m_zoomEnabled = false;
         }
+	QPointF left(ceil(rect.x()), ceil(rect.y())),
+		right(trunc(rect.x() + rect.width()), trunc(rect.y() + rect.height()));
+	m_meas->setROI(QwtDoubleRect(left, right));
 }
 
 void MainWidget::startStopSlot(bool checked)
@@ -270,7 +284,6 @@ void MainWidget::startStopSlot(bool checked)
 		startStopButton->setText("Start");
 		// set device idto 0 -> will be filled by mesydaq for master
 		m_meas->stop();
-		listFilename->setText(QString::null);
 	}
 	emit started(checked);
 }
@@ -403,20 +416,17 @@ void MainWidget::selectListfileSlot()
     		int i = name.indexOf(".mdat");
 		if(i == -1)
 			name.append(".mdat");
- 		listFilename->setText(name);
 		m_theApp->setListfilename(name);
   	}
+	else
+		acquireFile->setChecked(false);
 	dispFiledata();
 }
 
 void MainWidget::checkListfilename(bool checked)
 {
-	if (checked && listFilename->text().isEmpty())
-	{
+	if (checked)
 		selectListfileSlot();
-		if (listFilename->text().isEmpty())
-			acquireFile->setChecked(false);
-	}
 }	
 
 /*!
@@ -491,6 +501,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 void MainWidget::clearAllSlot()
 {
 	m_meas->clearAllHist();
+	m_theApp->setHistfilename("");
 	draw();
 }
 
@@ -740,7 +751,8 @@ void MainWidget::drawOpData()
 		else
 			m_meas->getAmpMean(mean, sigma);
 	}
-	else{
+	else
+	{
 		if(specialBox->isChecked())
 			m_meas->getTimeMean(mean, sigma);
 		else if(dispAllPos->isChecked())
@@ -1165,6 +1177,9 @@ void MainWidget::setDisplayMode(bool histo)
 		for (int i = 0; i < 8; ++i)
 			m_curve[i]->detach();
 		m_histogram->attach(dataFrame);
+		m_picker->setTrackerPen(QColor(Qt::white));
+		m_zoomer->setRubberBandPen(QColor(Qt::white));
+		m_zoomer->setTrackerPen(QColor(Qt::white));
 	}
 	else
 	{
@@ -1172,6 +1187,9 @@ void MainWidget::setDisplayMode(bool histo)
 		m_histogram->detach();
 		for (int i = 0; i < 8; ++i)
 			m_curve[i]->attach(dataFrame);
+		m_picker->setTrackerPen(QColor(Qt::black));
+		m_zoomer->setRubberBandPen(QColor(Qt::black));
+		m_zoomer->setTrackerPen(QColor(Qt::black));
 	}
 }
 
@@ -1186,10 +1204,17 @@ void MainWidget::draw(void)
 
 	if (histo)
 	{
+		quint64 counts;
 		if(dispAllPos->isChecked())
+		{
 			m_histData->setData(m_meas->posHist());
+			counts = m_meas->posEventsInROI();
+		}
 		else
+		{
 			m_histData->setData(m_meas->ampHist());
+			counts = m_meas->ampEventsInROI();
+		}
 		
 		QwtDoubleInterval interval = m_histogram->data().range();
 
@@ -1201,6 +1226,7 @@ void MainWidget::draw(void)
 		if (!m_zoomEnabled)
 			dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->posHist()->height());
 		dataFrame->replot();									
+		qDebug() << "counts in ROI " << counts;
 	}
 	else
 	{
