@@ -30,6 +30,7 @@
 #include <QHostAddress>
 #include <QTimer>
 #include <QPrintDialog>
+#include <QSvgGenerator>
 
 #include <QDebug>
 
@@ -1300,6 +1301,22 @@ void MainWidget::exportPDF()
                 QwtPlotPrintFilter filter;
                 filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
                 print(m_printer, filter);
+        }
+}
+
+void MainWidget::exportSVG()
+{
+        QString fileName = QFileDialog::getSaveFileName(this, "Export SVG File", "Plot1.svg", "SVG Documents (*.svg)");
+        if(!fileName.isEmpty())
+        {
+                if(!fileName.endsWith(".svg"))
+                        fileName += ".svg";
+		QSvgGenerator generator;
+		generator.setFileName(fileName);
+		generator.setTitle(tr("QMesyDAQ data plot"));
+		generator.setDescription(tr("QMesydaq generated data plot"));
+		generator.setSize(QSize(800, 600));
+		dataFrame->print(generator);
         }
 }
 

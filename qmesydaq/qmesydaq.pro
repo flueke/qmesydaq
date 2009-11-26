@@ -31,7 +31,7 @@ target.path	= /usr/local/bin
 
 CONFIG		+= debug
 
-QT 		+= qt3support network
+QT 		+= qt3support network svg
 
 QWT_ROOT 	= /usr/local/qwt5
 

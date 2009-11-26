@@ -57,6 +57,8 @@ signals:
 public slots:
 	void	exportPDF();
 
+	void	exportSVG();
+
 	void 	printPlot();
 
 protected:
