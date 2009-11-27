@@ -916,21 +916,18 @@ void Measurement::getTimeMean(float &mean, float &sigma)
 void Measurement::setROI(QRectF r)
 {
 	m_roi = QRect(r.x(), r.y(), r.width(), r.height());
-	qDebug() << "set ROI : " << m_roi;
-
 }
 
 quint64 Measurement::ampEventsInROI()
 {
 	quint64 tmp(0);
-	qDebug() << "amp : " << m_roi;
 
 	if (!m_roi.width() && !m_roi.height())
 		return events();
 
-	for (int i = m_roi.x(); i <= m_roi.x() + m_roi.width(); ++i)
-		for (int j = m_roi.y(); j <= m_roi.y() + m_roi.height(); ++j)
-			tmp += m_ampHist->value(i, j);
+	for (int i = m_roi.x(); i < m_roi.x() + m_roi.width(); ++i)
+		for (int j = m_roi.y(); j < m_roi.y() + m_roi.height(); ++j)
+			tmp += m_ampHist->value(j, i);
 
 	return tmp;
 }
@@ -938,13 +935,12 @@ quint64 Measurement::ampEventsInROI()
 quint64 Measurement::posEventsInROI()
 {
 	quint64 tmp(0);
-	qDebug() << "pos : " << m_roi;
 	
 	if (!m_roi.width() && !m_roi.height())
 		return events();
 
-	for (int i = m_roi.x(); i <= m_roi.x() + m_roi.width(); ++i)
-		for (int j = m_roi.y(); j <= m_roi.y() + m_roi.height(); ++j)
-			tmp += m_posHist->value(i, j);
+	for (int i = m_roi.x(); i < m_roi.x() + m_roi.width(); ++i)
+		for (int j = m_roi.y(); j < m_roi.y() + m_roi.height(); ++j)
+			tmp += m_posHist->value(j, i);
 	return tmp;
 }

@@ -105,6 +105,13 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
 
+	clearMcpd->setHidden(true);
+	clearMpsd->setHidden(true);
+	clearChan->setHidden(true);
+
+	labelCountsInROI->setHidden(true);
+	countsInROI->setHidden(true);
+
 	versionLabel->setText("QMesyDAQ " VERSION " " __DATE__);
 
 	QRegExp ex("(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.){3}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"); 
@@ -112,15 +119,15 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	dataIPAddress->setValidator(new QRegExpValidator(ex, dataIPAddress));
 	cmdIPAddress->setValidator(new QRegExpValidator(ex, cmdIPAddress));
 
-	dataFrame->setAxisTitle(QwtPlot::xBottom, "channels");
-	dataFrame->setAxisTitle(QwtPlot::yLeft, "counts");
-	dataFrame->setAxisTitle(QwtPlot::yRight, "intensity");
-	dataFrame->enableAxis(QwtPlot::yRight, false);
-//	dataFrame->plotLayout()->setAlignCanvasToScales(true);
-	dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
-	dataFrame->setAutoReplot(false);
+	m_dataFrame->setAxisTitle(QwtPlot::xBottom, "channels");
+	m_dataFrame->setAxisTitle(QwtPlot::yLeft, "counts");
+	m_dataFrame->setAxisTitle(QwtPlot::yRight, "intensity");
+	m_dataFrame->enableAxis(QwtPlot::yRight, false);
+//	m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
+	m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
+	m_dataFrame->setAutoReplot(false);
 
-	m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, dataFrame->canvas());
+	m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, m_dataFrame->canvas());
 
 	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
         connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
@@ -141,7 +148,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_picker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
         			QwtPicker::PointSelection | QwtPicker::DragSelection,
         			QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,
-        			dataFrame->canvas());
+        			m_dataFrame->canvas());
 	m_picker->setRubberBandPen(QColor(Qt::green));
 	m_picker->setRubberBand(QwtPicker::CrossRubberBand);
 	m_picker->setTrackerPen(QColor(Qt::black));
@@ -154,7 +161,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 		m_curve[i]->setRenderHint(QwtPlotItem::RenderAntialiased);
 #endif
 		m_curve[i]->setPen(QPen(Qt::black));
-		m_curve[i]->attach(dataFrame);
+		m_curve[i]->attach(m_dataFrame);
 	}
 
 	m_data = new MesydaqSpectrumData();
@@ -168,7 +175,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	colorMap.addColorStop(0.8, Qt::red);
 	m_histogram->setColorMap(colorMap);
 
-	dataFrame->axisWidget(QwtPlot::yRight)->setColorBarEnabled(true);
+	m_dataFrame->axisWidget(QwtPlot::yRight)->setColorBarEnabled(true);
 	m_histData = new MesydaqHistogramData();
 	m_histogram->setData(*m_histData);
 
@@ -247,10 +254,10 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
 {
         if(rect == m_zoomer->zoomBase())
         {
-                dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-//		dataFrame->setAxisAutoScale(QwtPlot::xBottom);
-		dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
-                dataFrame->replot();
+                m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+//		m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
+		m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
+                m_dataFrame->replot();
                 m_zoomEnabled = false;
         }
 	QPointF left(ceil(rect.x()), ceil(rect.y())),
@@ -502,7 +509,9 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 void MainWidget::clearAllSlot()
 {
 	m_meas->clearAllHist();
+	m_meas->setROI(QwtDoubleRect(0,0,0,0));
 	m_theApp->setHistfilename("");
+	m_zoomer->setZoomBase();
 	draw();
 }
 
@@ -729,9 +738,9 @@ void MainWidget::applyThreshSlot()
 void MainWidget::linlogSlot(bool bLog)
 {
 	if (bLog)
-		dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+		m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 	else
-		dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+		m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
 	m_zoomEnabled = false;
 	draw();
 }
@@ -1169,25 +1178,28 @@ void MainWidget::mpsdCheck(int mod)
 
 void MainWidget::setDisplayMode(bool histo)
 {
-	dataFrame->enableAxis(QwtPlot::yRight, histo);
+	m_dataFrame->enableAxis(QwtPlot::yRight, histo);
 	m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, histo);
 	m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
 	if (histo)
 	{
-		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
+		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
 		for (int i = 0; i < 8; ++i)
 			m_curve[i]->detach();
-		m_histogram->attach(dataFrame);
+		m_histogram->attach(m_dataFrame);
 		m_picker->setTrackerPen(QColor(Qt::white));
 		m_zoomer->setRubberBandPen(QColor(Qt::white));
 		m_zoomer->setTrackerPen(QColor(Qt::white));
+		QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
+			right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
+		m_meas->setROI(QwtDoubleRect(left, right));
 	}
 	else
 	{
-		dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
+		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
 		m_histogram->detach();
 		for (int i = 0; i < 8; ++i)
-			m_curve[i]->attach(dataFrame);
+			m_curve[i]->attach(m_dataFrame);
 		m_picker->setTrackerPen(QColor(Qt::black));
 		m_zoomer->setRubberBandPen(QColor(Qt::black));
 		m_zoomer->setTrackerPen(QColor(Qt::black));
@@ -1216,18 +1228,18 @@ void MainWidget::draw(void)
 			m_histData->setData(m_meas->ampHist());
 			counts = m_meas->ampEventsInROI();
 		}
+		countsInROI->setText(tr("%1").arg(counts));
 		
 		QwtDoubleInterval interval = m_histogram->data().range();
 
-		dataFrame->setAxisScale(QwtPlot::yRight,  interval.minValue(), interval.maxValue());
-		dataFrame->axisWidget(QwtPlot::yRight)->setColorMap(interval, m_histogram->colorMap());
+		m_dataFrame->setAxisScale(QwtPlot::yRight,  interval.minValue(), interval.maxValue());
+		m_dataFrame->axisWidget(QwtPlot::yRight)->setColorMap(interval, m_histogram->colorMap());
 
 		m_histogram->setData(*m_histData);
 
 		if (!m_zoomEnabled)
-			dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->posHist()->height());
-		dataFrame->replot();									
-		qDebug() << "counts in ROI " << counts;
+			m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->posHist()->height());
+		m_dataFrame->replot();									
 	}
 	else
 	{
@@ -1272,10 +1284,10 @@ void MainWidget::draw(void)
 		m_curve[0]->setData(*m_data);
 // reduce data in case of threshold settings:
 		if (m_dispThresh)
-			dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
+			m_dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
 		else if (!m_zoomEnabled)
-        	        dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-		dataFrame->replot();
+        	        m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+		m_dataFrame->replot();
 	}
 	drawOpData();
 	updateDisplay();
@@ -1316,7 +1328,7 @@ void MainWidget::exportSVG()
 		generator.setTitle(tr("QMesyDAQ data plot"));
 		generator.setDescription(tr("QMesydaq generated data plot"));
 		generator.setSize(QSize(800, 600));
-		dataFrame->print(generator);
+		m_dataFrame->print(generator);
         }
 }
 
@@ -1338,7 +1350,7 @@ void MainWidget::print(QPrinter &printer, QwtPlotPrintFilter &filter)
 	QPen pen = m_curve[0]->pen();
 	pen.setWidth(1);
 	m_curve[0]->setPen(pen);
-	dataFrame->print(printer, filter);
+	m_dataFrame->print(printer, filter);
         pen.setWidth(0);
 	m_curve[0]->setPen(pen);
 }

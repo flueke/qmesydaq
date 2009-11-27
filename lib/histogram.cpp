@@ -348,6 +348,7 @@ void Histogram::clear(void)
 	m_sumSpectrum.clear();
 	m_totalCounts = 0;
 	m_twidth = 1;
+	m_dataKeys = m_data.keys();
 }
 
 /*!
