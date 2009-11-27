@@ -89,6 +89,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	init();
 
+	versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
+
 	connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
@@ -112,7 +114,15 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	labelCountsInROI->setHidden(true);
 	countsInROI->setHidden(true);
 
-	versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
+	tResetButton->setHidden(true);
+	eResetButton->setHidden(true);
+	m1ResetButton->setHidden(true);
+	m2ResetButton->setHidden(true);
+	m3ResetButton->setHidden(true);
+	m4ResetButton->setHidden(true);
+
+	labelEventSingle->setHidden(true);
+	eventSingle->setHidden(true);
 
 	QRegExp ex("(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.){3}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"); 
 	mcpdIPAddress->setValidator(new QRegExpValidator(ex, mcpdIPAddress));
@@ -1275,10 +1285,17 @@ void MainWidget::draw(void)
 				quint32 chan = dispMcpd->value() * 64;
 				chan += dispMpsd->value() * 8;
 				chan += dispChan->value();
+				labelEventSingle->setText(tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value()));
+				quint64 counts(0);
+				Spectrum *spec(NULL);
 				if(dispAllPos->isChecked())
-					m_data->setData(m_meas->posData(chan));
+					spec = m_meas->posData(chan);
 				else
-					m_data->setData(m_meas->ampData(chan));
+					spec = m_meas->ampData(chan);
+				m_data->setData(spec);
+				if (spec)
+					counts = spec->getTotalCounts();	
+				eventSingle->setText(tr("%1").arg(counts));
 			}
 		}
 		m_curve[0]->setData(*m_data);

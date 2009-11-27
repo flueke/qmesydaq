@@ -39,6 +39,7 @@ Spectrum::Spectrum(quint16 bins)
 	, m_maximumPos(0)
 	, m_meanCount(0)
 	, m_meanPos(0)
+	, m_totalCounts(0)
 {
 	m_data.resize(bins);
 	m_floatingMean.resize(256);
@@ -63,6 +64,7 @@ bool Spectrum::incVal(quint16 bin)
 	if (bin < m_data.size())
 	{
 		m_data[bin]++;
+		m_totalCounts++;
 		calcMaximumPosition(bin);
 		calcFloatingMean(bin);
 		return true;
@@ -99,7 +101,9 @@ bool Spectrum::setValue(quint16 bin, quint64 val)
 {
 	if (bin < m_data.size())
 	{
+		m_totalCounts -= m_data[bin];
 		m_data[bin] = val;
+		m_totalCounts += val;
 		calcMaximumPosition(bin);
 		calcFloatingMean(bin);
 		return true;
@@ -121,6 +125,7 @@ bool Spectrum::addValue(quint16 bin, quint64 val)
 	if (bin < m_data.size())
 	{
 		m_data[bin] += val;
+		m_totalCounts += val;
 		calcMaximumPosition(bin);
 		calcFloatingMean(bin);
 		return true;
@@ -138,7 +143,7 @@ void Spectrum::clear(void)
 {
 	m_data.fill(0);
 	m_floatingMean.fill(0);
-	m_maximumPos = m_meanCount = m_meanPos = 0;
+	m_totalCounts = m_maximumPos = m_meanCount = m_meanPos = 0;
 }
 
 /*!

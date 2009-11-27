@@ -56,7 +56,7 @@ public:
 	quint16 maxpos() {return m_maximumPos;}
 
 	//! \return sum of counts in the spectrum
-	quint16 getTotalCounts() {return m_totalCounts;}
+	quint64 getTotalCounts() {return m_totalCounts;}
 
 	float mean(float &s);
 

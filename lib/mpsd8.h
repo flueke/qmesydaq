@@ -134,7 +134,7 @@ public:
 	 * \see setGain
 	 * \see getGainval
 	 */
-	quint8		getGainpoti(quint8 chan, bool preset = 0) {return m_gainPoti[chan][preset];}
+	quint8	getGainpoti(quint8 chan, bool preset = 0) {return m_gainPoti[chan][preset];}
 
 	/**
 	 * get the user value for the gain
@@ -143,14 +143,14 @@ public:
 	 * \see setGain
 	 * \see getGainpoti
 	 */
-	float		getGainval(quint8 chan, bool preset = 0) 
+	float	getGainval(quint8 chan, bool preset = 0) 
 	{
 		protocol(tr("gain val %1 %2").arg(chan).arg(m_gainVal[chan][preset]), DEBUG);
 		return m_gainVal[chan][preset];
 	}
 
 	//! \return use the same gain for all channels ?
-	bool		comGain() {return m_comgain;}
+	bool	comGain() {return m_comgain;}
 
 // Mode related methods
 	/**
