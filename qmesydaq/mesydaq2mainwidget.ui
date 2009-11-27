@@ -4155,22 +4155,6 @@ parameters</string>
    </hints>
   </connection>
   <connection>
-   <sender>dispHistogram</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>logGroup</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>72</x>
-     <y>591</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>23</x>
-     <y>627</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>m3PresetButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
@@ -4359,22 +4343,6 @@ parameters</string>
     <hint type="destinationlabel">
      <x>73</x>
      <y>712</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispHistogram</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>lin</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>109</x>
-     <y>596</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>57</x>
-     <y>648</y>
     </hint>
    </hints>
   </connection>

@@ -38,8 +38,8 @@
 #include <qwt_plot_zoomer.h>
 #include <qwt_plot_layout.h>
 #include <qwt_plot_spectrogram.h>
-#include <qwt_color_map.h>
 #include <qwt_scale_widget.h>
+#include <qwt_color_map.h>
 #include <qwt_scale_engine.h>
 
 #include <cmath>
@@ -178,12 +178,20 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_curve[0]->setData(*m_data);
 
 	m_histogram = new MesydaqPlotSpectrogram();
-	QwtLinearColorMap colorMap(Qt::darkBlue, Qt::darkRed);
-	colorMap.addColorStop(0.2, Qt::blue);
-	colorMap.addColorStop(0.4, Qt::green);
-	colorMap.addColorStop(0.6, Qt::yellow);
-	colorMap.addColorStop(0.8, Qt::red);
-	m_histogram->setColorMap(colorMap);
+
+	m_linColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
+	m_linColorMap->addColorStop(0.2, Qt::blue);
+	m_linColorMap->addColorStop(0.4, Qt::green);
+	m_linColorMap->addColorStop(0.6, Qt::yellow);
+	m_linColorMap->addColorStop(0.8, Qt::red);
+
+	m_logColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
+	m_logColorMap->addColorStop(0.1585, Qt::blue);
+	m_logColorMap->addColorStop(0.2511, Qt::green);
+	m_logColorMap->addColorStop(0.3981, Qt::yellow);
+	m_logColorMap->addColorStop(0.631, Qt::red);
+
+	m_histogram->setColorMap(*m_linColorMap);
 
 	m_dataFrame->axisWidget(QwtPlot::yRight)->setColorBarEnabled(true);
 	m_histData = new MesydaqHistogramData();
@@ -747,10 +755,21 @@ void MainWidget::applyThreshSlot()
  */
 void MainWidget::linlogSlot(bool bLog)
 {
-	if (bLog)
-		m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
-	else
+	if (dispHistogram->isChecked())
+	{
 		m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+		if (bLog)
+			m_histogram->setColorMap(*m_logColorMap);
+		else
+			m_histogram->setColorMap(*m_linColorMap);
+	}
+	else
+	{
+		if (bLog)
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+		else
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+	}
 	m_zoomEnabled = false;
 	draw();
 }
@@ -1188,6 +1207,7 @@ void MainWidget::mpsdCheck(int mod)
 
 void MainWidget::setDisplayMode(bool histo)
 {
+	linlogSlot(log->isChecked());
 	m_dataFrame->enableAxis(QwtPlot::yRight, histo);
 	m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, histo);
 	m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
