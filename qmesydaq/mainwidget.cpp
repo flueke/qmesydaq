@@ -112,7 +112,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	labelCountsInROI->setHidden(true);
 	countsInROI->setHidden(true);
 
-	versionLabel->setText("QMesyDAQ " VERSION " " __DATE__);
+	versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
 
 	QRegExp ex("(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.){3}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"); 
 	mcpdIPAddress->setValidator(new QRegExpValidator(ex, mcpdIPAddress));

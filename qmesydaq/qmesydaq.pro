@@ -22,8 +22,9 @@ TEMPLATE 	= app
 TARGET 		= qmesydaq
 DEPENDPATH 	+= . ../lib
 INCLUDEPATH 	+= . ../lib ..
-VERSION 	= 0.0.0
-DEFINES		+= VERSION=\\\"$${VERSION}\\\" HAVE_CONFIG_H
+VERSION 	= 0.0.0 
+SVNVERSION	= $$system(svnversion .)
+DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target
 
