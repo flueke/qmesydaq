@@ -73,15 +73,12 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_dispThresh(false)
 	, m_dispLoThresh(0)
 	, m_dispHiThresh(0)
-	, m_dispLog(false)
-//	, m_curve(NULL)
 	, m_histogram(NULL)
 	, m_data(NULL)
 	, m_histData(NULL)
 	, m_meas(NULL)
 	, m_dispTimer(0)
 	, m_zoomer(NULL)
-	, m_zoomEnabled(false)
 	, m_cInt(NULL)
 {
 	m_meas = new Measurement(mesy, this);
@@ -96,6 +93,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
         connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
         connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
+        connect(this, SIGNAL(redraw()), this, SLOT(draw()));
 //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
 	connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
@@ -154,6 +152,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_zoomer->setTrackerPen(QColor(Qt::black));
 	m_zoomer->setTrackerMode(QwtPicker::ActiveOnly);
 	m_zoomer->setEnabled(true);
+	m_zoomer->setZoomBase();
 
 	m_picker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
         			QwtPicker::PointSelection | QwtPicker::DragSelection,
@@ -224,6 +223,17 @@ MainWidget::~MainWidget()
 	m_meas = NULL;
 }
 
+void MainWidget::about()
+{
+        QString text = tr("<h3>About QMesyDAQ </h3>")
+                + tr("<p>Copyright (C) 2008 Gregor Montermann <a href=\"mailto:g.montermann@mesytec.com\">&lt;g.montermann@mesytec.com&gt;</a</p>")
+                + tr("<p>Copyright (C) 2009 Jens Kr&uuml;ger <a href=\"mailto:jens.krueger@frm2.tum.de\">&lt;jens.krueger@frm2.tum.de&gt;</a></p>")
+                + tr("<p>This program controls the data acquisition and display for the MesyTec MCPD-8 modules the <b>TACO</b> devices</p>")
+                + tr("<p>It is published under GPL (GNU General Public License) <tt><a href=\"http://www.gnu.org/licenses/gpl.html\">http://www.gnu.org/licenses/gpl.html</a></tt></p>")
+                + tr("<p>Version : <b>%1</b></p>").arg(VERSION);
+        QMessageBox::about(this, tr("About QMesyDAQ"), text);
+}
+
 void MainWidget::init()
 {
 	QList<int> mcpdList = m_theApp->mcpdId();
@@ -243,9 +253,10 @@ void MainWidget::init()
 
     callback for the timer
 */
-void MainWidget::timerEvent(QTimerEvent * /* event */)
+void MainWidget::timerEvent(QTimerEvent *event)
 {
-	draw();
+	if (event->timerId() == m_dispTimer)
+		emit redraw();
 }
 
 /*!
@@ -259,13 +270,12 @@ void MainWidget::allPulserOff(void)
 	pulserButton->setChecked(false);
 }
 
-void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
+void MainWidget::zoomAreaSelected(const QwtDoubleRect &rect)
 {
-        if(!m_zoomEnabled)
-        {
-                m_zoomer->setZoomBase();
-                m_zoomEnabled = true;
-        }
+	if (!m_zoomer->zoomRectIndex())
+		m_zoomer->setZoomBase();
+	qDebug() << m_zoomer->zoomRect();
+	qDebug() << rect;
 }
 
 void MainWidget::zoomed(const QwtDoubleRect &rect)
@@ -273,14 +283,9 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         if(rect == m_zoomer->zoomBase())
         {
                 m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-//		m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
 		m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
-                m_dataFrame->replot();
-                m_zoomEnabled = false;
+                emit redraw();
         }
-	QPointF left(ceil(rect.x()), ceil(rect.y())),
-		right(trunc(rect.x() + rect.width()), trunc(rect.y() + rect.height()));
-	m_meas->setROI(QwtDoubleRect(left, right));
 }
 
 void MainWidget::startStopSlot(bool checked)
@@ -304,9 +309,13 @@ void MainWidget::startStopSlot(bool checked)
 		startStopButton->setText("Stop");
 		// set device id to 0 -> will be filled by mesydaq for master
 		m_meas->start(); 
+		m_dispTimer = startTimer(1000);
 	}
 	else
 	{
+		if (m_dispTimer)
+			killTimer(m_dispTimer);
+		m_dispTimer = 0;
 		startStopButton->setText("Start");
 		// set device idto 0 -> will be filled by mesydaq for master
 		m_meas->stop();
@@ -530,7 +539,7 @@ void MainWidget::clearAllSlot()
 	m_meas->setROI(QwtDoubleRect(0,0,0,0));
 	m_theApp->setHistfilename("");
 	m_zoomer->setZoomBase();
-	draw();
+	emit redraw();
 }
 
 void MainWidget::clearMcpdSlot()
@@ -538,7 +547,7 @@ void MainWidget::clearMcpdSlot()
 	quint32 start = dispMcpd->value() * 64;
 	for(quint32 i = start; i < start + 64; i++)
 		m_meas->clearChanHist(i);
-	draw();
+	emit redraw();
 }
 
 void MainWidget::clearMpsdSlot()
@@ -547,14 +556,14 @@ void MainWidget::clearMpsdSlot()
 //	qDebug("clearMpsd: %d", start);
 	for(quint32 i = start; i < start + 8; i++)
 		m_meas->clearChanHist(i);
-	draw();
+	emit redraw();
 }
 
 void MainWidget::clearChanSlot()
 {
 	ulong chan = dispChan->value() + dispMpsd->value() * 8 + dispMcpd->value() * 64;
 	m_meas->clearChanHist(chan);
-	draw();
+	emit redraw();
 }
 
 
@@ -757,7 +766,6 @@ void MainWidget::linlogSlot(bool bLog)
 {
 	if (dispHistogram->isChecked())
 	{
-		m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
 		if (bLog)
 			m_histogram->setColorMap(*m_logColorMap);
 		else
@@ -770,8 +778,7 @@ void MainWidget::linlogSlot(bool bLog)
 		else
 			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
 	}
-	m_zoomEnabled = false;
-	draw();
+	emit redraw();
 }
 
 /*!
@@ -1207,12 +1214,19 @@ void MainWidget::mpsdCheck(int mod)
 
 void MainWidget::setDisplayMode(bool histo)
 {
-	linlogSlot(log->isChecked());
 	m_dataFrame->enableAxis(QwtPlot::yRight, histo);
 	m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, histo);
 	m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
+	
+	QRectF tmpRect = m_zoomer->zoomRect();
+	
+	qDebug() << tmpRect;
+	qDebug() << m_lastZoom;
+
 	if (histo)
 	{
+		if (log->isChecked())
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
 		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
 		for (int i = 0; i < 8; ++i)
 			m_curve[i]->detach();
@@ -1226,6 +1240,10 @@ void MainWidget::setDisplayMode(bool histo)
 	}
 	else
 	{
+		if (log->isChecked())
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+		else
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
 		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
 		m_histogram->detach();
 		for (int i = 0; i < 8; ++i)
@@ -1234,6 +1252,10 @@ void MainWidget::setDisplayMode(bool histo)
 		m_zoomer->setRubberBandPen(QColor(Qt::black));
 		m_zoomer->setTrackerPen(QColor(Qt::black));
 	}
+	if (!m_lastZoom.isEmpty())
+		m_zoomer->zoom(m_lastZoom);
+	m_lastZoom = tmpRect;
+	emit redraw();
 }
 
 /*!
@@ -1267,7 +1289,7 @@ void MainWidget::draw(void)
 
 		m_histogram->setData(*m_histData);
 
-		if (!m_zoomEnabled)
+		if (!m_zoomer->zoomRectIndex())
 			m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->posHist()->height());
 		m_dataFrame->replot();									
 	}
@@ -1322,7 +1344,7 @@ void MainWidget::draw(void)
 // reduce data in case of threshold settings:
 		if (m_dispThresh)
 			m_dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
-		else if (!m_zoomEnabled)
+		else if (!m_zoomer->zoomRectIndex())
         	        m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
 		m_dataFrame->replot();
 	}

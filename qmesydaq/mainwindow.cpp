@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <QApplication>
+
 #include "mainwindow.h"
 #include "mainwidget.h"
 #include "mesydaq2.h"
@@ -40,6 +42,8 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 	connect(actionPrint, SIGNAL(activated()), m_main, SLOT(printPlot()));
 	connect(actionExport_PDF, SIGNAL(activated()), m_main, SLOT(exportPDF()));
 	connect(actionExport_SVG, SIGNAL(activated()), m_main, SLOT(exportSVG()));
+	connect(action_About, SIGNAL(activated()), m_main, SLOT(about()));
+	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
 	m_main->resize(1280, 980);
 }

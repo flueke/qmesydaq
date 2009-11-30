@@ -55,12 +55,16 @@ public:
 signals:
 	void	started(bool);
 
+	void	redraw(void);
+
 public slots:
 	void	exportPDF();
 
 	void	exportSVG();
 
 	void 	printPlot();
+
+	void	about();
 
 protected:
 //	void 	paintEvent(QPaintEvent *);
@@ -159,24 +163,21 @@ private:
 	void	init();
 
 private:
-	Mesydaq2	*m_theApp;
+	Mesydaq2		*m_theApp;
 	
-	ulong 		*m_pDispBuffer;
+	ulong 			*m_pDispBuffer;
 
-	quint16 	m_width;
+	quint16 		m_width;
 
 // using thresholds for display
 	//! using thresholds ?
-	bool		m_dispThresh;
+	bool			m_dispThresh;
 
 	//! lower limit of the threshold
-	ulong 		m_dispLoThresh;
+	ulong 			m_dispLoThresh;
 
 	//! upper limit of the threshold
-	ulong 		m_dispHiThresh;
-
-	//! scale the Y axis logarithmic
-	bool		m_dispLog;
+	ulong 			m_dispHiThresh;
 
 	//! plot curve
 	QwtPlotCurve		*m_curve[8];
@@ -191,25 +192,25 @@ private:
 	MesydaqHistogramData	*m_histData;	
 
 	//! measurement objct
-	Measurement 	*m_meas;
+	Measurement 		*m_meas;
 
-	int 		m_dispTimer;
+	int 			m_dispTimer;
 
-	QwtPlotZoomer	*m_zoomer;
+	QwtPlotZoomer		*m_zoomer;
 
-	bool		m_zoomEnabled;
+	CorbaThread		*m_ct;
 
-	CorbaThread	*m_ct;
+	ControlInterface 	*m_cInt;
 
-	ControlInterface *m_cInt;
+	QPrinter		m_printer;
 
-	QPrinter	m_printer;
+	QwtPlotPicker		*m_picker;
 
-	QwtPlotPicker	*m_picker;
+	QwtLinearColorMap 	*m_linColorMap;
 
-	QwtLinearColorMap *m_linColorMap;
+	QwtLinearColorMap 	*m_logColorMap;
 
-	QwtLinearColorMap *m_logColorMap;
+	QRectF			m_lastZoom;
 };	
 
 #endif
