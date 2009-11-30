@@ -49,6 +49,7 @@ int main(int argc, char **argv)
 	Mesydaq2MainWindow *mainWin = new Mesydaq2MainWindow();
 	mainWin->resize(1280, 980);
 	mainWin->show();
+	app.processEvents();
 	splash.finish(mainWin);
 
 	return app.exec();
