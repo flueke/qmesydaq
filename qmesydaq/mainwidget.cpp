@@ -51,6 +51,7 @@
 #include "histogram.h"
 #include "mesydaqdata.h"
 
+#include "controlinterface.h"
 #if TACO
 #	include "tacocontrol.h"
 #elif CARESS
@@ -202,6 +203,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_controlInt = new TACOControl(this);
 #elif CARESS
 	m_controlInt = new CARESSControl(this);
+#else
+	m_controlInt = new ControlInterface(this);
 #endif
 
 	m_printer.setOrientation(QPrinter::Landscape);
