@@ -22,38 +22,40 @@
 #define MDEFINES_H
 
 // general definitions for mesydaq
-/*
-// 
-// old command numbers for mcpd-2
-#define DATAREQUEST 0
-#define START 1
-#define STOP 2
-#define SETGAIN 3
-#define SETTHRESH 4
-#define SETPULSER 5
-#define SETMODE 6
-#define WRITEFPGA 7
-#define WRITEREGISTER 8
-#define RESET 9
-#define SETIP 10
-#define SETID 11
-#define PING 12
-#define REGISTERHOST 13
-#define SETINIT 14
-#define SCANPERI 15
-#define FREE1 16
-#define FREE2 17
-#define WRITESER 18
-#define READSER 19
-#define FREE3 20
-#define SEARCHMCPD 21
-#define FREE4 22
-#define FREE5 23
-#define FREE6 24
-#define FREE7 25
-*/
 
-// official commands
+// 
+// command numbers for MCPD-2
+//
+#define O_DATAREQUEST 		0
+#define DAQSTART 		1
+#define DAQSTOP 		2
+#define O_SETGAIN 		3
+#define DAQSETTHRESH 		4
+#define O_SETPULSER 		5
+#define O_SETMODE 		6
+#define O_WRITEFPGA 		7
+#define O_WRITEREGISTER 	8
+#define DAQRESET 		9
+#define O_SETIP 		10
+#define O_SETID 		11
+#define O_PING 			12
+#define O_REGISTERHOST 		13
+#define O_SETINIT 		14
+#define O_SCANPERI 		15
+#define O_FREE1 		16
+#define O_FREE2 		17
+#define O_WRITESER 		18
+#define O_READSER 		19
+#define O_FREE3 		20
+#define O_SEARCHMCPD 		21
+#define O_FREE4 		22
+#define O_FREE5 		23
+#define O_FREE6 		24
+#define O_FREE7 		25
+
+//
+// official commands for MCPD-8
+//
 #define RESET 			0
 #define START 			1
 #define STOP 			2
@@ -76,7 +78,9 @@
 #define READSERIAL 		19
 #define SCANPERI 		20
 
-// internal commands
+//
+// internal commands for the MCPD-8
+//
 #define WRITEFPGA 		30
 #define WRITEREGISTER 		31
 #define READREGISTER 		32
@@ -155,14 +159,15 @@
 #define DEBUG			5
 
 // Module ID's
+#define	MPSD8OLD		1
 #define	MPSD8			103
-#define MSTD16			104
-#define MPSD8P			105
+#define	MSTD16			104
+#define	MPSD8P			105
 
 // TX modes
 #define	P			1
-#define TP			2
-#define TPA			4
+#define	TP			2
+#define	TPA			4
 
 extern int DEBUGLEVEL;
 

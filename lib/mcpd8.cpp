@@ -1180,10 +1180,18 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 					{
 						if (m_mpsd.find(c) == m_mpsd.end())
 						{
-							if (recBuf.data[c] == MPSD8)
-								m_mpsd[c] = new MPSD_8(c, this);
-							else
-								m_mpsd[c] = new MPSD_8p(c, this);
+							switch (recBuf.data[c])
+							{
+								case MPSD8P :
+									m_mpsd[c] = new MPSD_8p(c, this);
+									break;
+								case MPSD8OLD:
+								case MPSD8 :
+									m_mpsd[c] = new MPSD_8(c, this);
+									break;
+								default :
+									break;
+							}
 						}
 						m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
 					}
