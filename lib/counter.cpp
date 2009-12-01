@@ -22,6 +22,7 @@
 MesydaqCounter :: MesydaqCounter() 
 	: MesydaqObject()
 	, m_value(0)
+	, m_lastValue(0)
 	, m_limit(0)
 	, m_start(0)
 	, m_offset(0)
@@ -30,7 +31,6 @@ MesydaqCounter :: MesydaqCounter()
 	, m_rateflag(false)
 	, m_meanRate(0)
 	, m_ratepointer(0)
-	, m_lastValue(0)
 {
 }
 
