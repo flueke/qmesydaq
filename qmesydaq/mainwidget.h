@@ -200,7 +200,7 @@ private:
 
 	CorbaThread		*m_ct;
 
-	ControlInterface 	*m_cInt;
+	ControlInterface 	*m_controlInt;
 
 	QPrinter		m_printer;
 

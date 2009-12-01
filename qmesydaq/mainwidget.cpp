@@ -79,7 +79,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_meas(NULL)
 	, m_dispTimer(0)
 	, m_zoomer(NULL)
-	, m_cInt(NULL)
+	, m_controlInt(NULL)
 {
 	m_meas = new Measurement(mesy, this);
 	setupUi(this);
@@ -199,9 +199,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	scanPeriSlot(false);
 	dispFiledata();
 #if TACO
-	m_cInt = new TACOControl(this);
+	m_controlInt = new TACOControl(this);
 #elif CARESS
-	m_cInt = new CARESSControl(this);
+	m_controlInt = new CARESSControl(this);
 #endif
 
 	m_printer.setOrientation(QPrinter::Landscape);
@@ -274,8 +274,6 @@ void MainWidget::zoomAreaSelected(const QwtDoubleRect &rect)
 {
 	if (!m_zoomer->zoomRectIndex())
 		m_zoomer->setZoomBase();
-	qDebug() << m_zoomer->zoomRect();
-	qDebug() << rect;
 }
 
 void MainWidget::zoomed(const QwtDoubleRect &rect)
@@ -1220,9 +1218,6 @@ void MainWidget::setDisplayMode(bool histo)
 	
 	QRectF tmpRect = m_zoomer->zoomRect();
 	
-	qDebug() << tmpRect;
-	qDebug() << m_lastZoom;
-
 	if (histo)
 	{
 		if (log->isChecked())
@@ -1351,14 +1346,6 @@ void MainWidget::draw(void)
 	drawOpData();
 	updateDisplay();
 }
-
-#if 0
-void MainWidget::paintEvent(QPaintEvent *e)
-{
-	qDebug() << "MainWidget::paintEvent";
-	QWidget::paintEvent(e);
-}
-#endif
 
 void MainWidget::exportPDF()
 {
