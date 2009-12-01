@@ -48,8 +48,7 @@ void CARESSControl::caressTask()
 {
 	quint8 devMap[5] = {0, M1CT, TCT, M2CT, EVCT};
 	
-	QString pstring, str;
-	pstring.sprintf("caress: ");
+	QString pstring(tr("caress: ")); 
 	
 	if(m_caressDevice == HISTO)
 	{
@@ -57,8 +56,7 @@ void CARESSControl::caressTask()
 	}
 	else
 	{
-   		str.sprintf("counter %d (mesydaq #%d) ", m_caressDevice, devMap[m_caressDevice]);
-   		pstring.append(str);
+   		pstring.append(tr("counter %1 (mesydaq #%2) ").arg(m_caressDevice).arg(devMap[m_caressDevice]));
 	}
 	
 	switch(m_caressTaskNum)
@@ -130,9 +128,7 @@ void CARESSControl::caressTask()
 				if(m_caressSubTaskNum == CAR_MASTER)
 				{
 #warning TODO				m_theApp->meas->setPreset(devMap[m_caressDevice], m_caressPreset, true); 
-					pstring.append("load master preset: ");
-					str.sprintf("%ld", m_caressPreset);
-					pstring.append(str);
+					pstring.append(tr("load master preset: %1").arg(m_caressPreset));
 #warning TODO 				m_theApp->mainWin->updatePresets();
 					m_caressMaster = m_caressDevice; 
 				}
@@ -179,18 +175,8 @@ void CARESSControl::caressTask()
 			{		
 #warning TODO			m_theApp->copyData(c+start, &m_transferBuffer[c*960]);
 			}
-			pstring.append("readblock module start: ");
-			str.sprintf("%ld",m_caressStartChannel);
-			pstring.append(str);
-			str.sprintf(" / %ld",start);
-			pstring.append(str);
-			pstring.append(" stop: ");
-			str.sprintf("%ld",m_caressEndChannel);
-			pstring.append(str);
-			str.sprintf(" / %ld",stop);
-			pstring.append(str);
-			str.sprintf(" rows: %ld",rows);
-			pstring.append(str);
+			pstring.append(tr("readblock module start: %1 / %2 stop : %3 / %4 rows: %5")
+				.arg(m_caressStartChannel).arg(start).arg(m_caressEndChannel).arg(stop).arg(rows));
 			break;
     	
 		default:
