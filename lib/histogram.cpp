@@ -38,8 +38,8 @@ Spectrum::Spectrum(quint16 bins)
 	, m_data(NULL)
 	, m_maximumPos(0)
 	, m_meanCount(0)
-	, m_meanPos(0)
 	, m_totalCounts(0)
+	, m_meanPos(0)
 {
 	m_data.resize(bins);
 	m_floatingMean.resize(256);
