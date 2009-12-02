@@ -18,13 +18,44 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-TEMPLATE 	= subdirs
+VERSION 	= 0.0.0 
+SVNVERSION	= $$system(svnversion .)
+DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
-SUBDIRS		+= lib interfaces qmesydaq tools test
+INSTALLS	= target
 
-TARGET = 	
-DEPENDPATH 	+= . lib qmesydaq
-INCLUDEPATH 	+= . qmesydaq lib
+INTERFACE	+= TACO
 
-DISTFILES	+= AUTHOR COPYING qmesydaq.desktop
+target.path	= /usr/local
+
+CONFIG		+= debug
+
+QWT_ROOT 	= /usr/local/qwt5
+
+QWTLIB 		= qwt
+
+INCLUDEPATH 	+= $${QWT_ROOT}/include 
+DEPENDPATH  	+= $${QWT_ROOT}/include 
+LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
+
+contains(INTERFACE, TACO) {
+DEFINES		+= HAVE_CONFIG_H 
+DEFINES		+= USE_TACO=1
+TACO_ROOT	= /opt/taco
+
+INCLUDEPATH 	+= $${TACO_ROOT}/include
+DEPENDPATH  	+= $${TACO_ROOT}/include
+LIBS		+= -L$${TACO_ROOT}/lib -ltaco++ -llog4taco -llog4cpp -lTACOExtensions
+}
+
+contains(INTERFACE, CARESS) {
+DEFINES		+= USE_CARESS=1
+
+HEADERS		+= corbathread.h \
+		caresscontrol.h 
+
+SOURCES		+= corbathread.cpp \
+		caresscontrol.cpp \
+		caressmeasurement.cpp 
+}
 
