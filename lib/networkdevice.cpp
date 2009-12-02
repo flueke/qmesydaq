@@ -181,6 +181,23 @@ bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
 }
 
 /*!
+ *   \fn NetworkDevice::sendBuffer(MDP_PACKET2 &buf)
+ *   
+ *   sends a command packet to the network partner with IP address target
+ *
+ *   \param target IP address to send
+ *   \param buf command packet to send
+ */
+bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET2 &buf)
+{
+	QHostAddress ha(target);
+	protocol(tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(m_port).arg(buf.headerlength), INFO);
+	qint64 i = m_sock->writeDatagram((const char *)&buf, 200, ha, m_port);
+	protocol(tr("%1 sent bytes").arg(i), DEBUG);
+	return (i != -1); 
+}
+
+/*!
  *   \fn NetworkDevice::readSocketData();
  */
 void NetworkDevice::readSocketData(void)

@@ -25,6 +25,7 @@ HEADERS 	+= counter.h \
         	   mesydaqobject.h \
         	   mpsd8.h \
 		   mstd16.h \
+		   mcpd2.h \
         	   networkdevice.h \
         	   structures.h
 
@@ -37,4 +38,5 @@ SOURCES 	+= counter.cpp \
         	   mpsd8.cpp \
         	   mpsd8p.cpp \
 		   mstd16.cpp \
+		   mcpd2.cpp \
         	   networkdevice.cpp

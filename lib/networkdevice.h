@@ -52,6 +52,9 @@ private:
 public:
 	bool sendBuffer(const QString &target, const MDP_PACKET &packet);
 
+	bool sendBuffer(const QString &target, const MDP_PACKET2 &packet);
+
+	//! \return IP address of the target
 	//! \return IP address of the target
 	QString ip() {return m_source;}
 
