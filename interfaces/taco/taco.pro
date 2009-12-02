@@ -1,4 +1,4 @@
-include( ../../qmesydaq.pri )
+include( ../../qmesydaqconfig.pri )
 
 TEMPLATE 	= lib
 TARGET 		= tacoInterface
