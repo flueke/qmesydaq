@@ -711,6 +711,7 @@ void Mesydaq2::start(void)
  */
 void Mesydaq2::stop(void)
 {
+   	protocol("remote stop", NOTICE);
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->stop();
@@ -718,7 +719,6 @@ void Mesydaq2::stop(void)
 		if (!it->isMaster())
 			it->stop();
 	emit statusChanged("STOPPED");
-   	protocol("remote stop", NOTICE);
 }
 
 /*!
