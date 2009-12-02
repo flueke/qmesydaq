@@ -77,6 +77,8 @@ protected:
 
 	// TACODEVEL CODEGEN METHOD DECLARATIONS END
 
+	DevShort deviceState(void) throw (::TACO::Exception);
+
 public:
 	void setControlInterface(ControlInterface *);
 

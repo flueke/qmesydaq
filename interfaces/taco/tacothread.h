@@ -21,16 +21,15 @@
 #ifndef TACOTHREAD_H
 #define TACOTHREAD_H
 
-#include <QRunnable>
+#include <QThread>
 
 class TACOControl;
 
-/** implementation of corba server threads
-  * \author Gregor Montermann
-  * CORBA / CARESS modules by Lutz Rossa, Helmholtz Zentrum Berlin
+/** implementation of TACO server threads
+  * \author Jens Krüger <jens.krueger@frm2.tum.de>
   */
 
-class TACOThread : public QRunnable  
+class TACOThread : public QThread  
 {
 public: 
 	//! Constructor

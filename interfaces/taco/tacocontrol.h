@@ -20,11 +20,7 @@
 #ifndef TACOCONTROL_H
 #define TACOCONTROL_H
 
-#if USE_TACO
 #include "controlinterface.h"
-
-#include <sys/types.h>
-#include <signal.h>
 
 class TACOThread;
 
@@ -49,4 +45,3 @@ private:
 };
 #endif
 
-#endif

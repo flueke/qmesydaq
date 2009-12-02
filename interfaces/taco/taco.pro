@@ -16,5 +16,6 @@ HEADERS 	+= MesyDAQDetectorDetector.h \
 SOURCES 	+= MesyDAQDetectorDetector.cpp \
            	MesyDAQDetectorDetectorImpl.cpp \
            	tacocontrol.cpp \
-           	tacothread.cpp
+           	tacothread.cpp \
+		startup.cpp
 

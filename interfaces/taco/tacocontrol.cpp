@@ -17,22 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "tacocontrol.h"
-#include "mesydaq2.h"
-#include "mdefines.h"
-#include "tacothread.h"
-#include <API.h>
+#include <QCoreApplication>
 
-#include <QThreadPool>
+#include "tacocontrol.h"
+#include "tacothread.h"
+
+#include <sys/types.h>
+#include <signal.h>
+
 
 TACOControl::TACOControl(QObject *parent)
 	: ControlInterface(parent)
+	, m_tt(NULL)
 {
 	m_tt = new TACOThread(this);
-	QThreadPool::globalInstance()->start(m_tt);
+	m_tt->start();
 }
 
 TACOControl::~TACOControl()
 {
+	if (m_tt && m_tt->isRunning())
+	{
+		kill(QCoreApplication::applicationPid(), SIGTERM);
+		m_tt->terminate();
+		m_tt->wait();
+	}
 }
 

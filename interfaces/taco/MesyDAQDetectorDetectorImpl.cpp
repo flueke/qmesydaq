@@ -50,14 +50,6 @@ DevVoid MesyDAQ::Detector::Detector::stop() throw (::TACO::Exception)
 	m_pInt->stop();
 }
 
-DevVoid MesyDAQ::Detector::Detector::setPreselection(const DevDouble input) throw (::TACO::Exception)
-{
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::setPrelection(" << input << ")" << log4cpp::eol;
-	if (!m_pInt)
-		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-	throw ::TACO::Exception( ::TACO::Error::COMMAND_NOT_IMPLEMENTED);
-}
-
 DevVoid MesyDAQ::Detector::Detector::resume() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::Detector::Detector::resume()" << log4cpp::eol;
@@ -71,7 +63,16 @@ DevVoid MesyDAQ::Detector::Detector::clear() throw (::TACO::Exception)
 	logStream->infoStream() << "MesyDAQ::Detector::Detector::clear()" << log4cpp::eol;
 	if (!m_pInt)
 		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-	throw ::TACO::Exception( ::TACO::Error::COMMAND_NOT_IMPLEMENTED);
+	m_pInt->clear();
+}
+
+#warning TODO preselection values
+DevVoid MesyDAQ::Detector::Detector::setPreselection(const DevDouble input) throw (::TACO::Exception)
+{
+	logStream->infoStream() << "MesyDAQ::Detector::Detector::setPrelection(" << input << ")" << log4cpp::eol;
+	if (!m_pInt)
+		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+	m_pInt->setTimePreselection(input);
 }
 
 DevDouble MesyDAQ::Detector::Detector::preselection() throw (::TACO::Exception)
@@ -79,7 +80,7 @@ DevDouble MesyDAQ::Detector::Detector::preselection() throw (::TACO::Exception)
 	logStream->infoStream() << "MesyDAQ::Detector::Detector::preselection()" << log4cpp::eol;
 	if (!m_pInt)
 		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-	throw ::TACO::Exception( ::TACO::Error::COMMAND_NOT_IMPLEMENTED);
+	return m_pInt->timePreselection();
 }
 
 const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::Exception)
@@ -101,6 +102,20 @@ void MesyDAQ::Detector::Detector::v_Init(void) throw (::TACO::Exception)
 	{
 		setDeviceState(::TACO::State::FAULT);
 		throw e;
+	}
+}
+
+DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception)
+{
+	if (!m_pInt)
+		return ::TACO::State::FAULT;
+	switch (m_pInt->status())
+	{
+		case 1 :
+			return ::TACO::State::COUNTING;
+		default:
+		case 0 :
+			return ::TACO::Server::deviceState();
 	}
 }
 
