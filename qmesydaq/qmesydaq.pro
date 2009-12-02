@@ -18,31 +18,18 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
+include(../qmesydaq.pri)
+
 TEMPLATE 	= app
 TARGET 		= qmesydaq
 DEPENDPATH 	+= . ../lib
 INCLUDEPATH 	+= . ../lib ..
-VERSION 	= 0.0.0 
-SVNVERSION	= $$system(svnversion .)
-DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target
 
 target.path	= /usr/local/bin
 
-CONFIG		+= debug
-
-QT 		+= qt3support network svg
-
-QWT_ROOT 	= /usr/local/qwt5
-
-QWTLIB 		= qwt
-
-INTERFACE	+= 
-
-INCLUDEPATH 	+= $${QWT_ROOT}/include 
-DEPENDPATH  	+= $${QWT_ROOT}/include 
-LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
+QT 		+= network svg
 
 # Input
 HEADERS 	+= mainwidget.h \
@@ -65,37 +52,5 @@ SOURCES 	+= main.cpp \
 
 RESOURCES 	+= images.qrc
 
-DISTFILES	+= 
-
-contains(INTERFACE, TACO) {
-DEFINES		+= HAVE_CONFIG_H 
-DEFINES		+= USE_TACO=1
-TACO_ROOT	= /opt/taco
-
-INCLUDEPATH 	+= $${TACO_ROOT}/include
-DEPENDPATH  	+= $${TACO_ROOT}/include
-LIBS		+= -L$${TACO_ROOT}/lib -ltaco++ -llog4taco -llog4cpp -lTACOExtensions
-
-TACO_ROOT	= /opt/taco
-
-HEADERS		+= tacocontrol.h \
-		tacothread.h
-
-SOURCES		+= tacocontrol.cpp \
-		tacothread.cpp \
-		startup.cpp \
-		MesyDAQDetectorDetector.cpp \
-		MesyDAQDetectorDetectorImpl.cpp 
-}
-
-contains(INTERFACE, CARESS) {
-DEFINES		+= USE_CARESS=1
-
-HEADERS		+= corbathread.h \
-		caresscontrol.h 
-
-SOURCES		+= corbathread.cpp \
-		caresscontrol.cpp \
-		caressmeasurement.cpp 
-}
+DISTFILES	+= images/mesytec.jpg
 

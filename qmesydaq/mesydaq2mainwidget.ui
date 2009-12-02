@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="Q3Frame" name="mainFrame">
+  <widget class="QFrame" name="mainFrame">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -68,7 +68,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="Q3GroupBox" name="groupBox1">
+  <widget class="QGroupBox" name="groupBox1">
    <property name="geometry">
     <rect>
      <x>1140</x>
@@ -231,7 +231,7 @@ Listfile</string>
     </attribute>
     <layout class="QGridLayout" name="gridLayout_25">
      <item row="0" column="0" colspan="3">
-      <widget class="Q3ButtonGroup" name="dispGroup">
+      <widget class="QGroupBox" name="dispGroup">
        <property name="title">
         <string/>
        </property>
@@ -266,7 +266,7 @@ Listfile</string>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="Q3ButtonGroup" name="logGroup">
+      <widget class="QGroupBox" name="logGroup">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -295,7 +295,7 @@ Listfile</string>
       </widget>
      </item>
      <item row="1" column="1" colspan="2">
-      <widget class="Q3ButtonGroup" name="buttonGroup10">
+      <widget class="QGroupBox" name="buttonGroup10">
        <property name="title">
         <string/>
        </property>
@@ -576,7 +576,7 @@ Listfile</string>
           </widget>
          </item>
          <item>
-          <widget class="Q3GroupBox" name="groupBox17">
+          <widget class="QGroupBox" name="groupBox17">
            <property name="title">
             <string>Parameters</string>
            </property>
@@ -1256,7 +1256,7 @@ Listfile</string>
         </layout>
        </item>
        <item>
-        <widget class="Q3GroupBox" name="groupBox30">
+        <widget class="QGroupBox" name="groupBox30">
          <property name="toolTip">
           <string/>
          </property>
@@ -1322,7 +1322,7 @@ Listfile</string>
         </attribute>
         <layout class="QGridLayout">
          <item row="1" column="1">
-          <widget class="Q3GroupBox" name="groupBox9_2_2">
+          <widget class="QGroupBox" name="groupBox9_2_2">
            <property name="toolTip">
             <string/>
            </property>
@@ -1426,7 +1426,7 @@ Listfile</string>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="Q3ButtonGroup" name="mcpdModeGroup">
+          <widget class="QGroupBox" name="mcpdModeGroup">
            <property name="title">
             <string>MCPD mode</string>
            </property>
@@ -1449,7 +1449,7 @@ Listfile</string>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="Q3GroupBox" name="groupBox9_2">
+          <widget class="QGroupBox" name="groupBox9_2">
            <property name="toolTip">
             <string/>
            </property>
@@ -1508,7 +1508,7 @@ Listfile</string>
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="Q3GroupBox" name="groupBox9">
+          <widget class="QGroupBox" name="groupBox9">
            <property name="toolTip">
             <string/>
            </property>
@@ -1673,7 +1673,7 @@ Listfile</string>
         <attribute name="title">
          <string>Communication / Networ&amp;k</string>
         </attribute>
-        <widget class="Q3GroupBox" name="groupBox6">
+        <widget class="QGroupBox" name="groupBox6">
          <property name="geometry">
           <rect>
            <x>110</x>
@@ -1829,7 +1829,7 @@ parameters</string>
           </item>
          </layout>
         </widget>
-        <widget class="Q3GroupBox" name="groupBox29">
+        <widget class="QGroupBox" name="groupBox29">
          <property name="geometry">
           <rect>
            <x>8</x>
@@ -1913,7 +1913,7 @@ parameters</string>
           </widget>
          </item>
          <item row="1" column="0" colspan="4">
-          <widget class="Q3GroupBox" name="groupBox17_2">
+          <widget class="QGroupBox" name="groupBox17_2">
            <property name="title">
             <string>MPSD-8 status</string>
            </property>
@@ -2089,7 +2089,7 @@ parameters</string>
           </widget>
          </item>
          <item row="2" column="0" colspan="4">
-          <widget class="Q3GroupBox" name="groupBox39">
+          <widget class="QGroupBox" name="groupBox39">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -2197,7 +2197,7 @@ parameters</string>
           </layout>
          </item>
          <item row="0" column="1">
-          <widget class="Q3ButtonGroup" name="modeGroup">
+          <widget class="QGroupBox" name="modeGroup">
            <property name="title">
             <string>Mode</string>
            </property>
@@ -2229,7 +2229,7 @@ parameters</string>
           </widget>
          </item>
          <item row="1" column="0" colspan="3">
-          <widget class="Q3GroupBox" name="groupBox35">
+          <widget class="QGroupBox" name="groupBox35">
            <property name="title">
             <string>Pulser</string>
            </property>
@@ -2276,7 +2276,7 @@ parameters</string>
              </layout>
             </item>
             <item row="0" column="1">
-             <widget class="Q3ButtonGroup" name="buttonGroup5">
+             <widget class="QGroupBox" name="buttonGroup5">
               <property name="title">
                <string>Amplitude (0...255)</string>
               </property>
@@ -2335,7 +2335,7 @@ parameters</string>
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="Q3ButtonGroup" name="buttonGroup4">
+             <widget class="QGroupBox" name="buttonGroup4">
               <property name="title">
                <string>Position</string>
               </property>
@@ -2377,7 +2377,7 @@ parameters</string>
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="Q3GroupBox" name="groupBox13">
+          <widget class="QGroupBox" name="groupBox13">
            <property name="title">
             <string>Amplifiers, Discriminator</string>
            </property>
@@ -2502,7 +2502,7 @@ parameters</string>
     </attribute>
     <layout class="QGridLayout" name="gridLayout_9">
      <item row="0" column="0">
-      <widget class="Q3GroupBox" name="groupBox15">
+      <widget class="QGroupBox" name="groupBox15">
        <property name="title">
         <string>Run ID</string>
        </property>
@@ -2550,7 +2550,7 @@ parameters</string>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="Q3GroupBox" name="groupBox20">
+      <widget class="QGroupBox" name="groupBox20">
        <property name="title">
         <string>Timing Delta Histogram</string>
        </property>
@@ -2587,7 +2587,7 @@ parameters</string>
     </attribute>
     <layout class="QGridLayout" name="gridLayout_5">
      <item row="0" column="0">
-      <widget class="Q3GroupBox" name="groupBox79_2">
+      <widget class="QGroupBox" name="groupBox79_2">
        <property name="title">
         <string>Setup</string>
        </property>
@@ -2616,7 +2616,7 @@ parameters</string>
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="Q3GroupBox" name="groupBox35_2">
+      <widget class="QGroupBox" name="groupBox35_2">
        <property name="title">
         <string>Default paths</string>
        </property>
@@ -2685,7 +2685,7 @@ parameters</string>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="Q3GroupBox" name="groupBox36">
+      <widget class="QGroupBox" name="groupBox36">
        <property name="title">
         <string>Histograms</string>
        </property>
@@ -2982,24 +2982,6 @@ parameters</string>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>Q3GroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>Qt3Support/Q3GroupBox</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends>QFrame</extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>QwtPlot</class>
    <extends>QFrame</extends>
@@ -3451,10 +3433,10 @@ parameters</string>
    </hints>
   </connection>
   <connection>
-   <sender>modeGroup</sender>
-   <signal>clicked(int)</signal>
+   <sender>amp</sender>
+   <signal>toggled(bool)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>setModeSlot(int)</slot>
+   <slot>setModeSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>450</x>
@@ -3995,10 +3977,10 @@ parameters</string>
    </hints>
   </connection>
   <connection>
-   <sender>mcpdModeGroup</sender>
-   <signal>clicked(int)</signal>
+   <sender>log</sender>
+   <signal>toggled(bool)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>setModeSlot(int)</slot>
+   <slot>setModeSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1455</x>
