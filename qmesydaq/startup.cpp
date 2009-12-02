@@ -51,6 +51,8 @@
 
 extern log4cpp::Category       *logStream;
 
+extern ControlInterface	*globalControlInterface;
+
 /**
  * This function will initialise the log4cpp logging service.
  * The service will be configured via the ${LOGCONFIG} environment variable.
@@ -104,7 +106,7 @@ std::vector< ::TACO::Server *> taco_devices;
  *
  * @return DS_NOTOK in case of error, DS_OK else
  */
-long startup(char *serverName, DevLong *e)
+extern "C" long startup(char *serverName, DevLong *e)
 {
 	init_logstream(serverName);
 
@@ -159,6 +161,7 @@ long startup(char *serverName, DevLong *e)
 		try {
 			if (type == Detector::DETECTOR_ID) {
 				device = new MesyDAQ::Detector::Detector( deviceList [i], *e);
+				reinterpret_cast<MesyDAQ::Detector::Detector *>(device)->setControlInterface(globalControlInterface);
 			} else {
 				logStream->errorStream() << "startup: error: unsupported type: " << deviceList[i].c_str()
 					<< " : " << type << log4cpp::eol;
@@ -201,7 +204,7 @@ long startup(char *serverName, DevLong *e)
  * Unregisters the device server from the static database and the portmapper and
  * closes open handles to database and messages services.
  */
-void unregister_server (void)
+extern "C" void unregister_server (void)
 {
 	for (std::vector< ::TACO::Server *>::iterator it = taco_devices.begin(); it != taco_devices.end(); ++it)
 	{

@@ -78,7 +78,7 @@ private:
 	void 	updateCaress(void);
 
 private slots:
-	void setModeSlot(int);
+	void setModeSlot(bool);
 	void displayMpsdSlot(int = -1);
 
 	void sendAuxSlot();
@@ -151,7 +151,7 @@ private slots:
 
 	void setDisplayMode(bool);
 
-//	void closeEvent(QCloseEvent *);
+	void closeEvent(QCloseEvent *);
 
 private:
 	void 	dispFiledata(void);

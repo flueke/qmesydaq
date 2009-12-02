@@ -31,6 +31,7 @@
 #include <QTimer>
 #include <QPrintDialog>
 #include <QSvgGenerator>
+#include <QCoreApplication>
 
 #include <QDebug>
 
@@ -52,11 +53,13 @@
 #include "mesydaqdata.h"
 
 #include "controlinterface.h"
-#if TACO
+#if USE_TACO
 #	include "tacocontrol.h"
-#elif CARESS
+#elif USE_CARESS
 #	include "caresscontrol.h"
 #endif
+
+extern ControlInterface	*globalControlInterface;
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -87,7 +90,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	init();
 
-	versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
+	versionLabel->setText("QMesyDAQ " + QCoreApplication::applicationVersion() + "\n" __DATE__);
 
 	connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
         connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
@@ -199,13 +202,23 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	scanPeriSlot(false);
 	dispFiledata();
-#if TACO
+#if USE_TACO
 	m_controlInt = new TACOControl(this);
 #elif CARESS
 	m_controlInt = new CARESSControl(this);
 #else
 	m_controlInt = new ControlInterface(this);
 #endif
+	globalControlInterface = m_controlInt;
+	connect(m_controlInt, SIGNAL(sigStartStop()), startStopButton, SLOT(animateClick()));
+	connect(m_controlInt, SIGNAL(sigClear()), this, SLOT(clearAllSlot()));
+	connect(this, SIGNAL(started(bool)), m_controlInt, SLOT(statusChanged(bool)));
+	connect(m_controlInt, SIGNAL(sigEnableTimer(bool)), tPresetButton, SLOT(setChecked(bool)));
+	connect(m_controlInt, SIGNAL(sigEnableMonitor(bool)), m1PresetButton, SLOT(setChecked(bool)));
+	connect(m_controlInt, SIGNAL(sigSetTimer(double)), tPreset, SLOT(setValue(double)));
+	connect(m_controlInt, SIGNAL(sigSetMonitor(int)), m1Preset, SLOT(setValue(int)));
+	connect(tPreset, SIGNAL(valueChanged(double)), m_controlInt, SLOT(timePreselectionChanged(double)));
+	connect(m1Preset, SIGNAL(valueChanged(int)), m_controlInt, SLOT(monitorPreselectionChanged(int)));
 
 	m_printer.setOrientation(QPrinter::Landscape);
 	m_printer.setDocName("PlotCurves");
@@ -301,7 +314,7 @@ void MainWidget::startStopSlot(bool checked)
 		if(m_meas->isMaster(TCT))
 			m_meas->setPreset(TCT, tPreset->value() * 1000, true);
 		if(m_meas->isMaster(EVCT))
-			m_meas->setPreset(EVCT, evPreset->value(), true);
+			m_meas->setPreset(EVCT, ePreset->value(), true);
 		if(m_meas->isMaster(M1CT))
 			m_meas->setPreset(M1CT, m1Preset->value(), true);
 		if(m_meas->isMaster(M2CT))
@@ -715,7 +728,7 @@ void MainWidget::scanPeriSlot(bool real)
 	displayMpsdSlot(modList.size() ? modList.at(0) : -1);
 }
 
-void MainWidget::setModeSlot(int mode)
+void MainWidget::setModeSlot(bool mode)
 {
 	m_theApp->setMode(devid->value(), module->value(), mode); 
 }
@@ -956,8 +969,8 @@ void MainWidget::ePresetSlot(bool pr)
 		m4PresetButton->setChecked(false);
 		m4Preset->setEnabled(false);
 	}
-	evPreset->setEnabled(pr);
-	m_meas->setPreset(EVCT, evPreset->value(), pr);
+	ePreset->setEnabled(pr);
+	m_meas->setPreset(EVCT, ePreset->value(), pr);
 }
 
 /*!
@@ -972,7 +985,7 @@ void MainWidget::tPresetSlot(bool pr)
 	if(pr)
 	{
 		ePresetButton->setChecked(false);
-		evPreset->setEnabled(false);
+		ePreset->setEnabled(false);
 		m1PresetButton->setChecked(false);
 		m2PresetButton->setChecked(false);
 		m1Preset->setEnabled(false);
@@ -1000,7 +1013,7 @@ void MainWidget::m1PresetSlot(bool pr)
 		tPresetButton->setChecked(false);
 		tPreset->setEnabled(false);
 		ePresetButton->setChecked(false);
-		evPreset->setEnabled(false);
+		ePreset->setEnabled(false);
 		m2Preset->setEnabled(false);
 		m2PresetButton->setChecked(false);
 		m3Preset->setEnabled(false);
@@ -1026,7 +1039,7 @@ void MainWidget::m2PresetSlot(bool pr)
 		tPresetButton->setChecked(false);
 		tPreset->setEnabled(false);
 		ePresetButton->setChecked(false);
-		evPreset->setEnabled(false);
+		ePreset->setEnabled(false);
 		m1PresetButton->setChecked(false);
 		m1Preset->setEnabled(false);
 		m3Preset->setEnabled(false);
@@ -1052,7 +1065,7 @@ void MainWidget::m3PresetSlot(bool pr)
 		tPresetButton->setChecked(false);
 		tPreset->setEnabled(false);
 		ePresetButton->setChecked(false);
-		evPreset->setEnabled(false);
+		ePreset->setEnabled(false);
 		m1Preset->setEnabled(false);
 		m1PresetButton->setChecked(false);
 		m2Preset->setEnabled(false);
@@ -1078,7 +1091,7 @@ void MainWidget::m4PresetSlot(bool pr)
 		tPresetButton->setChecked(false);
 		tPreset->setEnabled(false);
 		ePresetButton->setChecked(false);
-		evPreset->setEnabled(false);
+		ePreset->setEnabled(false);
 		m1Preset->setEnabled(false);
 		m1PresetButton->setChecked(false);
 		m2Preset->setEnabled(false);
@@ -1099,7 +1112,7 @@ void MainWidget::updatePresets(void)
 {
 // presets
 	tPreset->setValue(m_meas->getPreset(TCT));
-	evPreset->setValue(m_meas->getPreset(EVCT));
+	ePreset->setValue(m_meas->getPreset(EVCT));
 	m1Preset->setValue(m_meas->getPreset(M1CT));
 	m2Preset->setValue(m_meas->getPreset(M2CT));
 	m3Preset->setValue(m_meas->getPreset(M3CT));
@@ -1404,3 +1417,8 @@ void MainWidget::print(QPrinter &printer, QwtPlotPrintFilter &filter)
 	m_curve[0]->setPen(pen);
 }
 
+void MainWidget::closeEvent(QCloseEvent *e)
+{
+	qDebug() << "MainWidget::closeEvent";
+	m_controlInt->finish();
+}

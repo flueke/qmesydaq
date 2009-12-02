@@ -22,18 +22,30 @@
 #include <QSplashScreen>
 #include <QPlastiqueStyle>
 
-#include "mainwindow.h"
+#include <QDebug>
 
-static const char version[] = VERSION;
+#include "mainwindow.h"
+#include <cstdlib>
 
 int main(int argc, char **argv)
 {
-	
-//    KAboutData about("mesydaq2", I18N_NOOP("mesydaq2"), version, description,
-//                      KAboutData::License_GPL, "(C) 2008 Gregor Montermann", 0, 0, "g.montermann@mesytec.com");
-//    about.addAuthor( "Gregor Montermann", 0, "g.montermann@mesytec.com" );
-
 	QApplication app(argc, argv);
+	app.setApplicationVersion(VERSION);
+#if USE_TACO
+	QStringList argList = app.arguments();
+	for (int i = 0; i < argList.size(); ++i)
+	{
+		if (argList[i].startsWith("-n") && (++i < argList.size()))
+			setenv("NETHOST",  argList[i].toStdString().c_str(), 1); 
+	}
+	if (!getenv("NETHOST"))
+	{
+		qDebug() << "Environment variable \"NETHOST\" is not set";
+		qDebug() << "You may set it explicitly in the command shell";
+		qDebug() << "or by using command line option -n 'nethost.domain'";
+		return 1;
+	}
+#endif
 	app.setStyle(new QPlastiqueStyle());
 
 	QPixmap pixmap(":/images/mesytec.jpg");

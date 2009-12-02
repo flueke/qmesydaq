@@ -26,8 +26,14 @@
  *
  * \param parent parant object
  */
+
+ControlInterface	*globalControlInterface = NULL;
+
 ControlInterface::ControlInterface(QObject *parent)
 	: MesydaqObject(parent)
+	, m_status(false)
+	, m_monitor(0)
+	, m_time(0.0)
 {
 	protocol(tr("Initialize remote control interface"));
 	m_theApp = reinterpret_cast<Mesydaq2*>(parent);
@@ -37,18 +43,56 @@ ControlInterface::~ControlInterface()
 {
 }
 
+void ControlInterface::finish()
+{
+}
+
 void ControlInterface::start()
 {
-	m_theApp->start();
+	if (!m_status)
+		emit sigStartStop();
 }
 
 void ControlInterface::stop()
 {
-	m_theApp->stop();
+	if (m_status)
+		emit sigStartStop();
 }
 
 void ControlInterface::cont()
 {
-	m_theApp->cont();
+	if (!m_status)
+		emit sigStartStop();
 }
 
+void ControlInterface::clear()
+{
+	emit sigClear();
+}
+
+void ControlInterface::setTimePreselection(const double time)
+{
+	emit sigEnableTimer(true);
+	emit sigSetTimer(time);
+}
+	
+void ControlInterface::setMonitorPreselection(const quint32 counts)
+{
+	emit sigEnableMonitor(true);
+	emit sigSetMonitor(counts);
+}
+
+void ControlInterface::statusChanged(bool status)
+{
+	m_status = status;
+}
+
+void ControlInterface::timePreselectionChanged(double time)
+{
+	m_time = time;
+}
+
+void ControlInterface::monitorPreselectionChanged(int monitor)
+{
+	m_monitor = monitor;
+}

@@ -808,7 +808,7 @@ Listfile</string>
             </widget>
            </item>
            <item row="2" column="3">
-            <widget class="QSpinBox" name="evPreset">
+            <widget class="QSpinBox" name="ePreset">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -3980,7 +3980,7 @@ parameters</string>
    <sender>log</sender>
    <signal>toggled(bool)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
-   <slot>setModeSlot(bool)</slot>
+   <slot>linlogSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1455</x>

@@ -38,19 +38,61 @@ public:
 	~ControlInterface();
 
 	//! starts the data aquisition
-	virtual void start();
+	void start();
 
 	//! stops the data aquisition
-	virtual void stop();
+	void stop();
 
 	//! continues a stopped data aquisition
-	virtual void cont();
+	void cont();
+
+	//! clears the histogram
+	void clear();
+
+	//! sets the timer preselection
+	void setTimePreselection(const double);
+
+	double timePreselection(void) {return m_time;}
+
+	//! sets the monitor preselection
+	void setMonitorPreselection(const quint32);
+
+	quint32 monitorPreselection(void) {return m_monitor;}
+
+	//! returns the current state
+	int status() {return m_status;}
+
+	virtual void finish();
+
+public slots:
+	void statusChanged(bool);
+
+	void timePreselectionChanged(double);
+
+	void monitorPreselectionChanged(int);
 
 signals:
+	void sigStartStop();
+
+	void sigClear();
+
+	void sigEnableTimer(bool);
+
+	void sigEnableMonitor(bool);
+
+	void sigSetTimer(double);
+
+	void sigSetMonitor(int);
 
 protected:
 	//! the object to control the measurement
 	Mesydaq2	*m_theApp;
+
+	int		m_status;
+
+	int		m_monitor;
+
+	double		m_time;
 };
 
 #endif
