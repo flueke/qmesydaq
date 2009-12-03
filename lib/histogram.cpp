@@ -453,6 +453,15 @@ void Histogram::setWidth(quint8 width)
 	m_twidth = width; 
 }
 
+quint16 Histogram::width(void)
+{
+	quint16 bins(0);
+	foreach(Spectrum *value, m_data)
+		if (value->width() > bins)
+			bins = value->width();
+	return bins;
+}
+
 /*!
     \fn Histogram::writeHistogram(QFile *f, const QString title)
 

@@ -159,6 +159,8 @@ public:
 
 	quint16	height(); 
 
+	quint16 width();
+
 private:
 	void calcMaximumPosition(quint16 chan);
 

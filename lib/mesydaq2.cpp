@@ -323,6 +323,21 @@ void Mesydaq2::writeClosingSignature(void)
 	m_datStream << sepF << sepA << sep5 << sep0;
 }
 
+/*!
+    \fn Mesydaq2::bins()
+
+    the maximum number of bins over all modules
+
+    \return number of bins
+ */
+quint16 Mesydaq2::bins()
+{
+	quint16 bins(0);
+	foreach(MCPD8 *value, m_mcpd) 
+		if (value->bins() > bins)
+			bins = value->bins();
+	return bins;
+}
 
 /*!
     \fn Mesydaq2::isPulserOn()

@@ -185,6 +185,9 @@ public:
 	quint16	getInternalreg(quint8 reg, bool preset = 0) {return m_internalReg[reg][preset];}
 	
 	virtual quint8	calcGainpoti(float fval);
+
+	virtual quint16 bins() {return 960;}
+
 protected:
 	virtual float	calcGainval(quint8 ga);
 	virtual quint8	calcPulsPoti(quint8 val, float gv);
@@ -244,18 +247,29 @@ private:
 	quint16 	m_internalReg[3][2];
 };
 
+class MPSD_8OLD : public MPSD_8
+{
+public:
+	MPSD_8OLD(quint8 id, QObject *parent = 0)
+		: MPSD_8(id, parent)
+	{
+	}
+
+	quint16 bins() {return 255;}
+};
+
 /**
  * \short representation of MPSD-8+ peripheral module 
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MPSD_8p : public MPSD_8
+class MPSD_8P : public MPSD_8
 {
 Q_OBJECT
 public:
-	MPSD_8p(quint8 id, QObject *parent = 0);
+	MPSD_8P(quint8 id, QObject *parent = 0);
 
-	~MPSD_8p() {}
+	~MPSD_8P() {}
 
 	virtual void 	setGain(quint8 channel, float gainv, bool preset = 0);
 	virtual void	setThreshold(quint8 threshold, bool preset = 0);

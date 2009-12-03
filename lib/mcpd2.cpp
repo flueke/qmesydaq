@@ -1191,7 +1191,7 @@ void MCPD2::analyzeBuffer(MDP_PACKET &recBuf)
 							if (recBuf.data[c] == MPSD8)
 								m_mpsd[c] = new MPSD_8(c, this);
 							else
-								m_mpsd[c] = new MPSD_8p(c, this);
+								m_mpsd[c] = new MPSD_8P(c, this);
 						}
 						m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
 					}

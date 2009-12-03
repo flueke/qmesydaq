@@ -206,6 +206,8 @@ public:
 	 */
 	quint16 port(void) {return m_cmdPort;}
 
+	quint16 bins();
+
 public slots:
 	void analyzeBuffer(MDP_PACKET &pd);
 

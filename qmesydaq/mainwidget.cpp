@@ -73,7 +73,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	: QWidget(parent)
 	, Ui_Mesydaq2MainWidget()
 	, m_theApp(mesy)
-	, m_width(960)
+	, m_width(mesy->bins() - 1)
 	, m_dispThresh(false)
 	, m_dispLoThresh(0)
 	, m_dispHiThresh(0)
@@ -136,7 +136,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_dataFrame->setAxisTitle(QwtPlot::yRight, "intensity");
 	m_dataFrame->enableAxis(QwtPlot::yRight, false);
 //	m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
-	m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
+	m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
 	m_dataFrame->setAutoReplot(false);
 
 	m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, m_dataFrame->canvas());
@@ -204,7 +204,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	dispFiledata();
 #if USE_TACO
 	m_controlInt = new TACOControl(this);
-#elif CARESS
+#elif USE_CARESS
 	m_controlInt = new CARESSControl(this);
 #else
 	m_controlInt = new ControlInterface(this);
@@ -297,7 +297,7 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         if(rect == m_zoomer->zoomBase())
         {
                 m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-		m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, 959);
+		m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
                 emit redraw();
         }
 }
@@ -722,7 +722,7 @@ void MainWidget::scanPeriSlot(bool real)
 	for (int i = 0; i < 8; ++i)
 		if (m_theApp->getMpsdId(id, i))
 			modList << i;
-
+	m_width = m_theApp->bins() - 1;
 	module->setModuleList(modList);
 	dispMpsd->setModuleList(modList);
 	displayMpsdSlot(modList.size() ? modList.at(0) : -1);

@@ -1183,9 +1183,11 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 							switch (recBuf.data[c])
 							{
 								case MPSD8P :
-									m_mpsd[c] = new MPSD_8p(c, this);
+									m_mpsd[c] = new MPSD_8P(c, this);
 									break;
 								case MPSD8OLD:
+									m_mpsd[c] = new MPSD_8OLD(c, this);
+									break;
 								case MPSD8 :
 									m_mpsd[c] = new MPSD_8(c, this);
 									break;
@@ -1385,6 +1387,21 @@ bool MCPD8::isPulserOn(quint8 addr)
 	if (getMpsdId(addr) && m_mpsd[addr]->isPulserOn())
 		return true;
 	return false;
+}
+
+/*! 
+    \fn MCPD8::bins()
+
+    \return the maximum number of bins over all MPSD
+ */
+quint16 MCPD8::bins()
+{
+	quint16 bins(0);
+	for (quint8 i = 0; i < 8; ++i)
+		if (m_mpsd.find(i) != m_mpsd.end() && getMpsdId(i))
+			if (m_mpsd[i]->bins() > bins)
+				bins = m_mpsd[i]->bins();
+	return bins;
 }
 
 /*! 

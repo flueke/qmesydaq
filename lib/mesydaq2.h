@@ -204,6 +204,8 @@ public:
 
 	bool isTerminated(quint16 mod);
 
+	quint16 bins();
+
 public slots:
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
 
