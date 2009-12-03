@@ -49,7 +49,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_lastTime(0)
 	, m_starttime_msec(0)
 	, m_meastime_msec(0)
-	, m_status(0)
+	, m_status(IDLE)
 	, m_rateflag(false)
 	, m_online(false)
 	, m_working(true)
@@ -70,7 +70,6 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 			m_counter[i] = new MesydaqCounter();
 		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
 	}
-	protocol(tr("BINS : %1").arg(mesy->bins()));
 	m_ampHist = new Histogram(0, mesy->bins());
 	m_posHist = new Histogram(0, mesy->bins());
 	m_timeSpectrum = new Spectrum(mesy->bins());
@@ -125,7 +124,7 @@ void Measurement::timerEvent(QTimerEvent *event)
  */
 void Measurement::setCurrentTime(quint64 msecs)
 {
-	if(m_status == 1)
+	if(m_status == STARTED)
 	{
     		m_meastime_msec = msecs - m_starttime_msec;
 		for (quint8 i = 0; i < 8; ++i)
@@ -155,8 +154,8 @@ void Measurement::start()
 		m_counter[c]->reset();	
 	m_packages = 0;
 	m_triggers = 0;
-	m_status = 1;
 	m_mesydaq->start();
+	m_status = STARTED;
 	m_starttime_msec = m_mesydaq->time();
 	protocol(tr("event counter limit : %1").arg(m_counter[EVCT]->limit()), INFO);
 	for (quint8 c = 0; c < 8; ++c)
@@ -173,15 +172,12 @@ void Measurement::start()
  */
 void Measurement::requestStop()
 {
-	protocol(tr("Measurement::requestStop() : m_status %1").arg(m_status));
-	if (m_status != 2)
+	if (m_status == STARTED)
 	{
-		m_status = 2;
-		protocol(tr("Measurement::requestStop()"), NOTICE);
+		m_status = STOPPED;
 		emit stopSignal(false);
 		protocol(tr("Max %1 was at pos %2").arg(m_posHist->max(0)).arg(m_posHist->maxpos(0)), NOTICE);
 	}
-	protocol(tr("Measurement::requestStop() end : m_status %1").arg(m_status));
 }
 
 /*!
@@ -191,17 +187,16 @@ void Measurement::requestStop()
  */
 void Measurement::stop()
 {
-	protocol(tr("Measurement::stop(): m_status %1").arg(m_status));
-	if (m_status > 0)
+	if (m_status != IDLE)
 	{ 
-		m_mesydaq->stop(); 
+		if (m_status == STARTED)
+			m_mesydaq->stop(); 
 		quint64 time = m_mesydaq->time();
 		for (quint8 c = 0; c < 8; ++c)
 			m_counter[c]->stop(time);
-
 		protocol(tr("packages : %1 triggers : %2").arg(m_packages).arg(m_triggers));
-		m_status = 0;
 	}
+	m_status = IDLE;
 } 
 
 /*!
@@ -231,10 +226,10 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 		else
    			m_counter[cNum]->set(val);
 // is counter master and is limit reached?
-		if(m_counter[cNum]->isStopped() && m_status != 2)
+		if(m_counter[cNum]->isStopped() && m_status != STOPPED)
 		{
 			protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[cNum]->value()).arg(m_counter[cNum]->limit()), NOTICE);
-			m_status = 2;
+			m_status = STOPPED;
 			emit stopSignal();
 		}
 	}
@@ -675,7 +670,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 		if (datalen == 0)
 			m_counter[TCT]->setTime(m_headertime / 10000);
 		quint16 counter = 0;
-		for(i = 0; i < datalen && m_status == 1; ++i, counter += 3)
+		for(i = 0; i < datalen && m_status == STARTED; ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
@@ -793,7 +788,7 @@ void Measurement::readListfile(QString readfilename)
 	protocol(tr("readListfile : %1").arg(ok), NOTICE);
 	clearAllHist();
 	QChar c('0');
-	if (m_status == 1)
+	if (m_status == STARTED)
 	{
 		stop();
 		QCoreApplication::processEvents();

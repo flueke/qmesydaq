@@ -204,7 +204,7 @@ private:
 	quint64 	m_starttime_msec;
 	quint64 	m_meastime_msec;
 
-	bool 		m_status;
+	quint8 		m_status;
 	bool 		m_rateflag;
 	bool 		m_online;
 	bool 		m_working; 		// it's set to true and nothing else ????
