@@ -28,34 +28,49 @@ INTERFACE	+= TACO
 
 target.path	= /usr/local
 
-CONFIG		+= debug
+CONFIG		+= debug bit64
 
 QWT_ROOT 	= /usr/local/qwt5
 
 QWTLIB 		= qwt
 
+contains(CONFIG, bit64) {
+	DEFINES	+= HAVE_BIT64
+	QWTLIBS	= -L$${QWT_ROOT}/lib64 
+}
+else {
+	QWTLIBS	= -L$${QWT_ROOT}/lib 
+}
+QWTLIBS		+= -l$${QWTLIB}
+
 INCLUDEPATH 	+= $${QWT_ROOT}/include 
 DEPENDPATH  	+= $${QWT_ROOT}/include 
-LIBS        	+= -L$${QWT_ROOT}/lib -l$${QWTLIB} -L../lib -lmesydaq
+LIBS        	+= $${QWTLIBS} -L../lib -lmesydaq
 
 contains(INTERFACE, TACO) {
-DEFINES		+= HAVE_CONFIG_H 
-DEFINES		+= USE_TACO=1
-TACO_ROOT	= /opt/taco
+	DEFINES		+= HAVE_CONFIG_H 
+	DEFINES		+= USE_TACO=1
+	TACO_ROOT	= /opt/taco
 
-INCLUDEPATH 	+= $${TACO_ROOT}/include
-DEPENDPATH  	+= $${TACO_ROOT}/include
-LIBS		+= -L$${TACO_ROOT}/lib -ltaco++ -llog4taco -llog4cpp -lTACOExtensions
+	contains(CONFIG, bit64) {
+		TACOLIBS	= -L$${TACO_ROOT}/lib64
+	}
+	else {
+		TACOLIBS	= -L$${TACO_ROOT}/lib
+	}
+	TACOLIBS	+= -ltaco++ -llog4taco -llog4cpp -lTACOExtensions
+	INCLUDEPATH 	+= $${TACO_ROOT}/include
+	DEPENDPATH  	+= $${TACO_ROOT}/include
 }
 
 contains(INTERFACE, CARESS) {
-DEFINES		+= USE_CARESS=1
+	DEFINES		+= USE_CARESS=1
 
-HEADERS		+= corbathread.h \
-		caresscontrol.h 
+	HEADERS		+= corbathread.h \
+			caresscontrol.h 
 
-SOURCES		+= corbathread.cpp \
-		caresscontrol.cpp \
-		caressmeasurement.cpp 
+	SOURCES		+= corbathread.cpp \
+			caresscontrol.cpp \
+			caressmeasurement.cpp 
 }
 
