@@ -5,7 +5,7 @@ TARGET 		= tacoInterface
 DEPENDPATH 	+= . .. ../.. ../../qmesydaq ../../lib
 INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
 
-LIBS		+= -L../../lib
+LIBS		+= -L../../lib $${TACOLIBS}
 
 # Input
 HEADERS 	+= MesyDAQDetectorDetector.h \
