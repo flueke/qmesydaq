@@ -327,12 +327,12 @@ void MainWidget::startStopSlot(bool checked)
 	}
 	else
 	{
+		m_meas->stop();
 		if (m_dispTimer)
 			killTimer(m_dispTimer);
 		m_dispTimer = 0;
 		startStopButton->setText("Start");
-		// set device idto 0 -> will be filled by mesydaq for master
-		m_meas->stop();
+		emit redraw();
 	}
 	emit started(checked);
 }
