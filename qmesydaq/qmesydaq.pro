@@ -58,5 +58,5 @@ contains(INTERFACE, TACO) {
 SOURCES		+= startup.cpp
 DEPENDPATH	+= ../interfaces/taco
 INCLUDEPATH	+= ../interfaces/taco
-LIBS		= -L ../interfaces/taco -ltacoInterface $${LIBS}
+LIBS		= $${TACOLIBS} -L ../interfaces/taco -ltacoInterface $${LIBS}
 }
