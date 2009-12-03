@@ -9,7 +9,12 @@ INCLUDEPATH 	+= .
 
 INSTALLS	= target
 
-target.path    = /usr/local/lib
+contains(CONFIG, bit64) {
+	target.path    = /usr/local/lib64
+}
+else {
+	target.path    = /usr/local/lib
+}
 
 CONFIG		+= debug
 
