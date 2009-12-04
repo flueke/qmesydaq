@@ -590,6 +590,7 @@ void MainWidget::replayListfileSlot()
 		clearAllSlot();
 		m_meas->readListfile(name);
 		startStopButton->setEnabled(true);
+		emit redraw();
 	}
 }
 
