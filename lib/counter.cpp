@@ -54,7 +54,7 @@ void MesydaqCounter::operator++(void)
 
 void MesydaqCounter::set(quint64 val)
 {
-	protocol(tr("MesydaqCounter::set(%1)").arg(val));
+	protocol(tr("MesydaqCounter::set(%1)").arg(val), INFO);
 	m_value = m_offset + val - m_start;
 }
 
