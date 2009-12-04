@@ -24,11 +24,24 @@ DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target
 
-INTERFACE	+= TACO
+#
+# emtpy
+# TACO		work as TACO server
+# CARESS	work as CARESS server
+#
+INTERFACE	= TACO 
+
+interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS")
+count(interfaces, 2) {
+	error(you may either use TACO or CARESS or nothing as remote interface)
+}
 
 target.path	= /usr/local
 
-CONFIG		+= debug bit64
+#
+# for 64 bit machines add bit64
+#
+CONFIG		+= debug 
 
 QWT_ROOT 	= /usr/local/qwt5
 
@@ -61,6 +74,7 @@ contains(INTERFACE, TACO) {
 	TACOLIBS	+= -ltaco++ -llog4taco -llog4cpp -lTACOExtensions
 	INCLUDEPATH 	+= $${TACO_ROOT}/include
 	DEPENDPATH  	+= $${TACO_ROOT}/include
+	message(build the TACO remote interface)
 }
 
 contains(INTERFACE, CARESS) {
@@ -72,5 +86,6 @@ contains(INTERFACE, CARESS) {
 	SOURCES		+= corbathread.cpp \
 			caresscontrol.cpp \
 			caressmeasurement.cpp 
+	message(build the CARESS remote interface)
 }
 
