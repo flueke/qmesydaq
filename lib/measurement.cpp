@@ -218,7 +218,7 @@ void Measurement::cont()
 void Measurement::setCounter(quint32 cNum, quint64 val)
 {
 // set counter
-	protocol(tr("Measurement::setCounter(cNum = %1, val = %2)").arg(cNum).arg(val));
+	protocol(tr("Measurement::setCounter(cNum = %1, val = %2)").arg(cNum).arg(val), NOTICE);
 	if(cNum < 8)
 	{
 		if (val == 0)
@@ -669,8 +669,11 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 		if (datalen == 0)
 			m_counter[TCT]->setTime(m_headertime / 10000);
-		quint16 counter = 0;
-		for(i = 0; i < datalen && m_status == STARTED; ++i, counter += 3)
+		quint16 counter; 
+//
+// status IDLE is for replaying files
+// 
+		for(counter = 0, i = 0; i < datalen && (m_status == STARTED || m_status == IDLE); ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
@@ -743,10 +746,15 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				var <<= 16;
 				var |= pd.param[i][2 - j];
 			}
-			if (var && m_counter[i]->value() != var)
+			quint64 tmp = m_counter[i]->value();
+			if (var)
 			{
-				protocol(tr("counter %1 : %3 <-> %2").arg(i).arg(m_counter[i]->value()).arg(var));
-				setCounter(i, var);
+// only differences > 1 should be logged
+				if ((tmp > var && tmp > (var + 1))|| (tmp < var && (tmp + 1) < var))
+				{
+					protocol(tr("%4 counter %1 : is %3 <-> should be %2").arg(i).arg(m_counter[i]->value()).arg(var).arg(m_packages));
+					setCounter(i, var);
+				}
 			}
 		}		
 	}
