@@ -7,6 +7,13 @@ INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
 
 LIBS		+= -L../../lib $${TACOLIBS}
 
+contains(CONFIG, bit64) {
+target.path	= /usr/local/lib64
+}
+else {
+target.path	= /usr/local/lib
+}
+
 # Input
 HEADERS 	+= MesyDAQDetectorDetector.h \
 		MesyDAQServer.h \
