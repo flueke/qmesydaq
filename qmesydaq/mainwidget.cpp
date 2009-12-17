@@ -77,6 +77,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_dispThresh(false)
 	, m_dispLoThresh(0)
 	, m_dispHiThresh(0)
+	, m_diffractogram(NULL)
 	, m_histogram(NULL)
 	, m_data(NULL)
 	, m_histData(NULL)
@@ -102,7 +103,14 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
 	connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
 	connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
-	connect(dispHistogram, SIGNAL(toggled(bool)), this, SLOT(setDisplayMode(bool)));
+	connect(dispHistogram, SIGNAL(toggled(bool)), this, SLOT(setHistogramMode(bool)));
+	connect(dispSpectra, SIGNAL(toggled(bool)), this, SLOT(setSpectraMode(bool)));
+	connect(dispDiffractogram, SIGNAL(toggled(bool)), this, SLOT(setDiffractogramMode(bool)));
+	connect(dispChan, SIGNAL(valueChanged(int)), this, SLOT(draw()));
+	connect(dispAll, SIGNAL(toggled(bool)), this, SLOT(draw()));
+	connect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(draw()));
+	connect(dispMpsd, SIGNAL(valueChanged(int)), this, SLOT(draw()));
+	connect(dispAllChannels, SIGNAL(toggled(bool)), this, SLOT(draw()));
 
 //	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 	
@@ -173,9 +181,23 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #if QT_VERSION >= 0x040000
 		m_curve[i]->setRenderHint(QwtPlotItem::RenderAntialiased);
 #endif
-		m_curve[i]->setPen(QPen(Qt::black));
 		m_curve[i]->attach(m_dataFrame);
 	}
+	m_curve[0]->setPen(QPen(Qt::red));
+	m_curve[1]->setPen(QPen(Qt::black));
+	m_curve[2]->setPen(QPen(Qt::green));
+	m_curve[3]->setPen(QPen(Qt::blue));
+	m_curve[4]->setPen(QPen(Qt::yellow));
+	m_curve[5]->setPen(QPen(Qt::magenta));
+	m_curve[6]->setPen(QPen(Qt::cyan));
+	m_curve[7]->setPen(QPen(Qt::white));
+	
+	m_diffractogram = new QwtPlotCurve("");
+//	m_diffractogram->setStyle(QwtPlotCurve::Steps);
+#if QT_VERSION >= 0x040000
+	m_diffractogram->setRenderHint(QwtPlotItem::RenderAntialiased);
+#endif
+	m_diffractogram->setPen(QPen(Qt::black));
 
 	m_data = new MesydaqSpectrumData();
 	m_curve[0]->setData(*m_data);
@@ -225,7 +247,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	m_printer.setCreator("QMesyDAQ Version: " VERSION);
 
 // display refresh timer
-	m_dispTimer = startTimer(1000);
+//	m_dispTimer = startTimer(1000);
 }
 
 //! destructor
@@ -953,6 +975,7 @@ void MainWidget::loadHistSlot()
   	if(!name.isEmpty())
 	{
 		m_meas->readHistograms(name);
+		emit redraw();
 	}
 }
 
@@ -1235,16 +1258,17 @@ void MainWidget::mpsdCheck(int mod)
 	displayMpsdSlot(mod);
 }
 
-void MainWidget::setDisplayMode(bool histo)
+void MainWidget::setHistogramMode(bool histo)
 {
-	m_dataFrame->enableAxis(QwtPlot::yRight, histo);
-	m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, histo);
-	m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
-	
-	QRectF tmpRect = m_zoomer->zoomRect();
-	
 	if (histo)
 	{
+		m_dataFrame->enableAxis(QwtPlot::yRight, true);
+		m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, true);
+		m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
+	
+		QRectF tmpRect = m_zoomer->zoomRect();
+	
+		m_diffractogram->detach();
 		for (int i = 0; i < 8; ++i)
 			m_curve[i]->detach();
 		if (log->isChecked())
@@ -1261,9 +1285,17 @@ void MainWidget::setDisplayMode(bool histo)
 		m_meas->setROI(QwtDoubleRect(right, left));
 		m_histogram->attach(m_dataFrame);
 	}
-	else
-	{
+	m_zoomer->zoom(0);
+	emit redraw();
+}
+
+void MainWidget::setSpectraMode(bool spectra)
+{
+	if (spectra)
+	{ 
 		m_histogram->detach();
+		m_diffractogram->detach();
+		m_dataFrame->enableAxis(QwtPlot::yRight, false);
 		if (log->isChecked())
 			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 		else
@@ -1287,6 +1319,31 @@ void MainWidget::setDisplayMode(bool histo)
 	emit redraw();
 }
 
+void MainWidget::setDiffractogramMode(bool diff)
+{
+	if (diff)
+	{
+		for (int i = 0; i < 8; ++i)
+			m_curve[i]->detach();
+		m_histogram->detach();
+		m_dataFrame->enableAxis(QwtPlot::yRight, false);
+		if (log->isChecked())
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+		else
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+		m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
+		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
+		m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
+		m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+		m_picker->setTrackerPen(QColor(Qt::black));
+		m_zoomer->setRubberBandPen(QColor(Qt::black));
+		m_zoomer->setTrackerPen(QColor(Qt::black));
+		m_diffractogram->attach(m_dataFrame);
+	}
+	m_zoomer->zoom(0);
+	emit redraw();
+}
+
 /*!
     \fn MainWidget::draw(void)
 
@@ -1294,9 +1351,7 @@ void MainWidget::setDisplayMode(bool histo)
  */
 void MainWidget::draw(void)
 {
-	bool histo = dispHistogram->isChecked();
-
-	if (histo)
+	if (dispHistogram->isChecked())
 	{
 		quint64 counts;
 		if(dispAllPos->isChecked())
@@ -1322,10 +1377,20 @@ void MainWidget::draw(void)
 			m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
 		m_dataFrame->replot();									
 	}
+	else if (dispDiffractogram->isChecked())
+	{
+		m_data->setData(m_meas->diffractogram());
+		m_diffractogram->setData(*m_data);
+		if (!m_zoomer->zoomRectIndex())
+			m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
+		m_dataFrame->replot();									
+	}
 	else
 	{
 		if(dispAll->isChecked())
 		{
+			for (int i = 1; i < 8; ++i)
+				m_curve[i]->detach();
 			if(dispAllPos->isChecked())
 				m_data->setData(m_meas->posData());
 			else
@@ -1333,14 +1398,19 @@ void MainWidget::draw(void)
 		}
 		else
 		{
+			for (int i = 1; i < 8; ++i)
+			{
+				if (!dispAllChannels->isChecked())
+					m_curve[i]->detach();
+				else
+					m_curve[i]->attach(m_dataFrame);
+			}
 			if (specialBox->isChecked())
 				m_data->setData(m_meas->timeData());
-#if 0
 			else if (dispAllChannels->isChecked())
 			{
-				quint32 chan = dispMcpd->value() * 64;
-				chan += dispMpsd->value() * 8;
-				for (int i = 7; i >= 0; ++i)
+				quint32 chan = dispMcpd->value() * 64 + dispMpsd->value() * 8;
+				for (int i = 7; i >= 0; --i)
 				{
 					if(dispAllPos->isChecked())
 						m_data->setData(m_meas->posData(chan + i));
@@ -1350,12 +1420,9 @@ void MainWidget::draw(void)
 						m_curve[i]->setData(*m_data);
 				}
 			}
-#endif
 			else
 			{
-				quint32 chan = dispMcpd->value() * 64;
-				chan += dispMpsd->value() * 8;
-				chan += dispChan->value();
+				quint32 chan = dispMcpd->value() * 64 + dispMpsd->value() * 8 + dispChan->value();
 				labelEventSingle->setText(tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value()));
 				quint64 counts(0);
 				Spectrum *spec(NULL);

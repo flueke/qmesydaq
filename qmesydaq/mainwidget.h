@@ -149,7 +149,9 @@ private slots:
 	void zoomAreaSelected(const QwtDoubleRect&);
 	void zoomed(const QwtDoubleRect&);
 
-	void setDisplayMode(bool);
+	void setHistogramMode(bool);
+	void setSpectraMode(bool);
+	void setDiffractogramMode(bool);
 
 	void closeEvent(QCloseEvent *);
 
@@ -182,6 +184,9 @@ private:
 	//! plot curve
 	QwtPlotCurve		*m_curve[8];
 
+	//! diffractogram curve
+	QwtPlotCurve		*m_diffractogram;
+
 	//! plot diffractogram
 	MesydaqPlotSpectrogram	*m_histogram;
 
@@ -189,7 +194,7 @@ private:
 	MesydaqSpectrumData	*m_data;
 
 	//! histogram to be plotted
-	MesydaqHistogramData	*m_histData;	
+	MesydaqHistogramData	*m_histData;
 
 	//! measurement objct
 	Measurement 		*m_meas;
