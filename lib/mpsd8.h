@@ -250,12 +250,29 @@ private:
 class MPSD_8OLD : public MPSD_8
 {
 public:
-	MPSD_8OLD(quint8 id, QObject *parent = 0)
-		: MPSD_8(id, parent)
-	{
-	}
+	MPSD_8OLD(quint8 id, QObject *parent = 0);
 
 	quint16 bins() {return 255;}
+
+	virtual void 	setGain(quint8 channel, float gainv, bool preset = 0);
+	virtual void	setThreshold(quint8 threshold, bool preset = 0);
+
+	virtual quint8	calcGainpoti(float fval);
+	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
+
+protected:
+	virtual float	calcGainval(quint8 ga);
+	virtual quint8	calcThreshval(quint8 thr);
+//	virtual quint8	calcPulsPoti(quint8 val, float gv);
+//	virtual quint8	calcPulsAmp(quint8 val, float gv);
+
+private:
+	float 		m_g1;
+	float 		m_g2;
+	float 		m_t1;
+	float 		m_t2;
+	float 		m_p1;
+	float 		m_p2;
 };
 
 /**
@@ -279,9 +296,9 @@ public:
 
 protected:
 	virtual float	calcGainval(quint8 ga);
+	virtual quint8	calcThreshval(quint8 thr);
 	virtual quint8	calcPulsPoti(quint8 val, float gv);
 	virtual quint8	calcPulsAmp(quint8 val, float gv);
-	virtual quint8	calcThreshval(quint8 thr);
 
 private:
 	float 		m_g1;
