@@ -42,6 +42,7 @@ SOURCES 	+= counter.cpp \
         	   mesydaqobject.cpp \
         	   mpsd8.cpp \
         	   mpsd8p.cpp \
+		   mpsd8old.cpp \
 		   mstd16.cpp \
 		   mcpd2.cpp \
         	   networkdevice.cpp
