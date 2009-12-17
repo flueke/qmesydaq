@@ -46,6 +46,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_posHist(NULL)
 	, m_ampHist(NULL)
 	, m_timeSpectrum(NULL)
+	, m_diffractogram(NULL)
 	, m_lastTime(0)
 	, m_starttime_msec(0)
 	, m_meastime_msec(0)
@@ -73,6 +74,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	m_ampHist = new Histogram(0, mesy->bins());
 	m_posHist = new Histogram(0, mesy->bins());
 	m_timeSpectrum = new Spectrum(mesy->bins());
+	m_diffractogram = new Spectrum(0);
 
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
 
@@ -95,6 +97,8 @@ Measurement::~Measurement()
 	m_posHist = NULL;
 	delete m_timeSpectrum;
 	m_timeSpectrum = NULL;
+	delete m_diffractogram;
+	m_diffractogram = NULL;
 }
 
 /*!
@@ -453,6 +457,8 @@ void Measurement::clearAllHist(void)
 		m_ampHist->clear();
 	if (m_timeSpectrum)
 		m_timeSpectrum->clear();
+	if (m_diffractogram)
+		m_diffractogram->clear();
 	m_lastTime = 0;
 }
 
@@ -735,6 +741,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
 					m_ampHist->incVal(chan, amp);
+				if (m_diffractogram)
+					m_diffractogram->incVal(chan);
 			}
 		}
 		m_triggers += triggers;
@@ -958,4 +966,16 @@ quint64 Measurement::posEventsInROI()
 		for (int j = m_roi.y(); j < m_roi.y() + m_roi.height(); ++j)
 			tmp += m_posHist->value(j, i);
 	return tmp;
+}
+
+Spectrum *Measurement::diffractogram()
+{
+	m_diffractogram->resize(m_posHist->height());
+	for (int i = 0; i < m_diffractogram->width(); ++i)
+	{
+		Spectrum *spec = m_ampHist->spectrum(i);
+		if (spec)
+			m_diffractogram->setValue(i, spec->getTotalCounts());
+	}
+	return m_diffractogram;
 }

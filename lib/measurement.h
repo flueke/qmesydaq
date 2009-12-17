@@ -151,6 +151,9 @@ public:
 
 	Spectrum *timeData();
 
+	//! \return the diffractogram
+	Spectrum *diffractogram(); 
+
 	void getPosMean(float &, float &);
 	void getPosMean(quint16, float &, float &);
 	void getAmpMean(float &, float &);
@@ -198,6 +201,9 @@ private:
 
 	//! time spectrum
 	Spectrum	*m_timeSpectrum;
+
+	//! 'diffractogram'
+	Spectrum	*m_diffractogram;
 
 	quint64 	m_lastTime;
 
