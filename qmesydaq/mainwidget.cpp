@@ -296,8 +296,16 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
 {
         if(rect == m_zoomer->zoomBase())
         {
-                m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-		m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+		if (!dispHistogram->isChecked())
+		{
+                	m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+			m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+		}
+		else
+		{
+                	m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
+			m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_width);
+		}
                 emit redraw();
         }
 }
@@ -1237,36 +1245,45 @@ void MainWidget::setDisplayMode(bool histo)
 	
 	if (histo)
 	{
-		if (log->isChecked())
-			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
-		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("tube"));
 		for (int i = 0; i < 8; ++i)
 			m_curve[i]->detach();
-		m_histogram->attach(m_dataFrame);
+		if (log->isChecked())
+			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+		m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
+		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("channels"));
+		m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_width);
+		m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
 		m_picker->setTrackerPen(QColor(Qt::white));
 		m_zoomer->setRubberBandPen(QColor(Qt::white));
 		m_zoomer->setTrackerPen(QColor(Qt::white));
 		QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
 			right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
-		m_meas->setROI(QwtDoubleRect(left, right));
+		m_meas->setROI(QwtDoubleRect(right, left));
+		m_histogram->attach(m_dataFrame);
 	}
 	else
 	{
+		m_histogram->detach();
 		if (log->isChecked())
 			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 		else
 			m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine); 
+		m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channels"));
 		m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-		m_histogram->detach();
-		for (int i = 0; i < 8; ++i)
-			m_curve[i]->attach(m_dataFrame);
+		m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+		m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
 		m_picker->setTrackerPen(QColor(Qt::black));
 		m_zoomer->setRubberBandPen(QColor(Qt::black));
 		m_zoomer->setTrackerPen(QColor(Qt::black));
+		for (int i = 0; i < 8; ++i)
+			m_curve[i]->attach(m_dataFrame);
 	}
+	m_zoomer->zoom(0);
+/*
 	if (!m_lastZoom.isEmpty())
 		m_zoomer->zoom(m_lastZoom);
 	m_lastZoom = tmpRect;
+*/
 	emit redraw();
 }
 
@@ -1302,7 +1319,7 @@ void MainWidget::draw(void)
 		m_histogram->setData(*m_histData);
 
 		if (!m_zoomer->zoomRectIndex())
-			m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->posHist()->height());
+			m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
 		m_dataFrame->replot();									
 	}
 	else

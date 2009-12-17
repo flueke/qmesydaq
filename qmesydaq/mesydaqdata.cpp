@@ -103,7 +103,7 @@ QwtDoubleInterval MesydaqHistogramData::range() const
 double MesydaqHistogramData::value(double x, double y) const
 {
 	if (m_histogram)
-		return m_histogram->value(quint16(y), quint16(x));
+		return m_histogram->value(quint16(x), quint16(y));
 	else
 		return 0.0;
 }
@@ -111,7 +111,7 @@ double MesydaqHistogramData::value(double x, double y) const
 void MesydaqHistogramData::setData(Histogram *data)
 {
 	m_histogram = data;
-	setBoundingRect(QwtDoubleRect(0.0, 0.0, data ? data->width() : 0.0, data ? data->height(): 0.0));
+	setBoundingRect(QwtDoubleRect(0.0, 0.0, data ? data->height() : 0.0, data ? data->width(): 0.0));
 }
 
 void MesydaqHistogramData::initRaster(const QwtDoubleRect &, const QSize &)
