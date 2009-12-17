@@ -862,8 +862,9 @@ void Measurement::readListfile(QString readfilename)
 		}
 		if(!(bcount % 1000))
 		{
+			emit draw();
 			QCoreApplication::processEvents();
-		}  
+		}
 	}	
 	datfile.close();
 }
