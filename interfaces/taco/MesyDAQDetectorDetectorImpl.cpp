@@ -32,13 +32,16 @@
 
 // TACODEVEL CODEGEN INCLUDES END
 
-#include "controlinterface.h"
+#include <TACOStringConverters.h>
+
+#include "tacocontrol.h"
 
 DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::Detector::Detector::start()" << log4cpp::eol;
 	if (!m_pInt)
 		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+	reinterpret_cast<TACOControl *>(m_pInt)->setListFileName(incNumber("lastlistfile", "tacolistfile") + ".mdat");
 	m_pInt->start();
 }
 
@@ -122,4 +125,21 @@ DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception
 void MesyDAQ::Detector::Detector::setControlInterface(ControlInterface *pInt)
 {
 	m_pInt = pInt;
+}
+
+std::string MesyDAQ::Detector::Detector::incNumber(std::string resource, std::string filename)
+{
+	std::string tmpString = queryResource<std::string>("lastlistfile");
+	if (tmpString.empty())
+		tmpString = filename;
+	DevLong currIndex = strtol(tmpString.substr(tmpString.length() - 5).c_str(), NULL, 10);
+	if (currIndex)
+		tmpString.erase(tmpString.length() - 5);
+	currIndex += 1;
+	std::string tmp = ::TACO::numberToString(currIndex, 5);
+	for (int i = tmp.length(); i < 5; ++i)
+		tmpString += '0';
+	tmpString += tmp;
+	updateResource<std::string>("lastlistfile", tmpString);
+	return tmpString;
 }

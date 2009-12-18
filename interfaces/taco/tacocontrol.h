@@ -21,6 +21,7 @@
 #define TACOCONTROL_H
 
 #include "controlinterface.h"
+#include <string>
 
 class TACOThread;
 
@@ -38,10 +39,21 @@ public:
 
 	~TACOControl();
 
+	QString getListFileName(void) {return m_listFileName;}
+
+	void setListFileName(std::string name); 
+
+	QString getHistogramFileName(void) {return m_histFileName;}
+
+	void setHistogramFileName(std::string name);
 protected:
 
 private:
 	TACOThread	*m_tt;
+
+	QString		m_listFileName;
+
+	QString		m_histFileName;
 };
 #endif
 

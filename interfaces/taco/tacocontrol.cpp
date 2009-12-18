@@ -18,13 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <QCoreApplication>
+#include <QDebug>
 
 #include "tacocontrol.h"
 #include "tacothread.h"
 
 #include <sys/types.h>
 #include <signal.h>
-
 
 TACOControl::TACOControl(QObject *parent)
 	: ControlInterface(parent)
@@ -44,3 +44,12 @@ TACOControl::~TACOControl()
 	}
 }
 
+void TACOControl::setHistogramFileName(std::string name) 
+{
+	m_histFileName = name.c_str();
+}
+
+void TACOControl::setListFileName(std::string name) 
+{
+	m_listFileName = name.c_str();
+}

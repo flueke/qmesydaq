@@ -104,6 +104,10 @@ private:
 
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
 
+private:
+	std::string incNumber(std::string, std::string);
+
+private:
 	ControlInterface	*m_pInt;
 };
 
