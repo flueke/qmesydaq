@@ -315,7 +315,12 @@ bool Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
 	checkChannel(chan);
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
-	m_data[chan]->addValue(bin, val);
+	
+	if (chan < m_dataKeys.size())
+	{
+		quint16 i = m_dataKeys[chan];
+		m_data[i]->addValue(bin, val);
+	}
 	calcMaximumPosition(chan);
 // sum spectrum of all channels
 	m_sumSpectrum.addValue(bin, val);
