@@ -139,7 +139,6 @@ private slots:
 
 	void draw(void);
 
-	void selectListfileSlot();
 	void setThresholdSlot();
 	void setGainSlot();
 	void setPulserSlot();
@@ -163,6 +162,8 @@ private:
 	QString buildTimestring(quint64 timeval, bool nano);
 
 	void	init();
+
+	QString selectListfile(void);
 
 private:
 	Mesydaq2		*m_theApp;

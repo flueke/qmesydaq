@@ -486,7 +486,7 @@ void MainWidget::setThresholdSlot()
 	m_theApp->setThreshold(id, addr, thresh); 
 }
 
-void MainWidget::selectListfileSlot()
+QString MainWidget::selectListfile(void)
 {
 	QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_theApp->getListfilepath(), 
 			"mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
@@ -495,17 +495,26 @@ void MainWidget::selectListfileSlot()
     		int i = name.indexOf(".mdat");
 		if(i == -1)
 			name.append(".mdat");
-		m_theApp->setListfilename(name);
   	}
-	else
-		acquireFile->setChecked(false);
-	dispFiledata();
+	return name;
 }
 
 void MainWidget::checkListfilename(bool checked)
 {
 	if (checked)
-		selectListfileSlot();
+	{
+		QString name = m_controlInt->getListFileName(); 
+		if (name.isEmpty())
+			name = selectListfile();
+		else
+			name = m_theApp->getListfilepath() + "/" + name;
+  		if(!name.isEmpty())
+			m_theApp->setListfilename(name);
+		else
+			acquireFile->setChecked(false);
+		qDebug() << name;
+		dispFiledata();
+	}
 }	
 
 /*!
