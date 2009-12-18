@@ -64,6 +64,17 @@ public:
 
 	virtual void finish();
 
+	virtual QString getListFileName(void)
+	{
+		return QString(NULL);
+	}
+
+
+	virtual QString getHistogramFileName(void)
+	{
+		return QString(NULL);
+	}
+
 public slots:
 	void statusChanged(bool);
 
