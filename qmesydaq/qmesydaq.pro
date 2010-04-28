@@ -1,6 +1,6 @@
 ############################################################################
 #   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    
-#   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          
+#   Copyright (C) 2009-2010 by Jens Krüger <jens.krueger@frm2.tum.de>          
 #                                                                         
 #   This program is free software; you can redistribute it and/or modify  
 #   it under the terms of the GNU General Public License as published by  
@@ -55,7 +55,6 @@ RESOURCES 	+= images.qrc
 DISTFILES	+= images/mesytec.jpg
 
 contains(INTERFACE, TACO) {
-SOURCES		+= startup.cpp
 DEPENDPATH	+= ../interfaces/taco
 INCLUDEPATH	+= ../interfaces/taco
 LIBS		= $${TACOLIBS} -L ../interfaces/taco -ltacoInterface $${LIBS}
