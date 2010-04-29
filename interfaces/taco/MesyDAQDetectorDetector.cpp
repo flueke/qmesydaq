@@ -32,6 +32,9 @@
 
 // TACODEVEL CODEGEN INCLUDES END
 
+#include "MultipleLoopApplication.h"
+#include "QMesydaqDetectorInterface.h"
+
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
@@ -40,7 +43,7 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS END
 
-	, m_pInt(NULL)
+        , m_interface(NULL)
 
 	/* , MyFirstBaseClass(), MySecondBaseClass(), ... */
 {
@@ -74,6 +77,9 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 		Server::setDeviceState(DEVON_NOT_REACHED);
 	}
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE END
+        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+        if (app)
+		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 }
 
 MesyDAQ::Detector::Detector::~Detector() throw ()

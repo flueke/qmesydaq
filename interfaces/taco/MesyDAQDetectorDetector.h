@@ -30,7 +30,7 @@
 
 // TACODEVEL CODEGEN INCLUDES END
 
-class ControlInterface;
+class QMesyDAQDetectorInterface;
 
 namespace MesyDAQ {
 	namespace Detector {
@@ -79,9 +79,6 @@ protected:
 
 	DevShort deviceState(void) throw (::TACO::Exception);
 
-public:
-	void setControlInterface(ControlInterface *);
-
 private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
@@ -108,7 +105,7 @@ private:
 	std::string incNumber(std::string, std::string);
 
 private:
-	ControlInterface	*m_pInt;
+        QMesyDAQDetectorInterface	*m_interface;
 };
 
 #endif // MESY_D_A_Q_DETECTOR_DETECTOR_H
