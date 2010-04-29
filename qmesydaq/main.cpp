@@ -18,9 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <QApplication>
+#include "MultipleLoopApplication.h"
 #include <QSplashScreen>
 #include <QPlastiqueStyle>
+
+#include "QMesydaqDetectorInterface.h"
+
+#if USE_TACO
+#	include "TACOLoop.h"
+#endif
 
 #include <QDebug>
 
@@ -29,10 +35,17 @@
 
 int main(int argc, char **argv)
 {
-	QApplication app(argc, argv);
-	app.setApplicationVersion(VERSION);
-#if USE_TACO
+#if 1
+    	QApplication app(argc, argv);
+#else
+    	MultipleLoopApplication app(argc, argv);
+#endif
 	QStringList argList = app.arguments();
+
+	app.setApplicationVersion(VERSION);
+
+	LoopObject *loop = NULL;
+#if USE_TACO
 	for (int i = 0; i < argList.size(); ++i)
 	{
 		if (argList[i].startsWith("-n") && (++i < argList.size()))
@@ -45,6 +58,8 @@ int main(int argc, char **argv)
 		qDebug() << "or by using command line option -n 'nethost.domain'";
 		return 1;
 	}
+
+	loop = new TACOLoop;
 #endif
 	app.setStyle(new QPlastiqueStyle());
 
@@ -60,6 +75,15 @@ int main(int argc, char **argv)
 
 	Mesydaq2MainWindow *mainWin = new Mesydaq2MainWindow();
 	mainWin->resize(1280, 980);
+#if 0
+    	app.setLoopObject(loop);
+	QMesyDAQDetectorInterface *qtInterface = new QMesyDAQDetectorInterface;
+
+	app.setQtInterface(qtInterface);
+    	qtInterface->setReceiver(mainWin);
+    	app.setLoopEventReceiver(mainWin);
+#endif
+
 	mainWin->show();
 	app.processEvents();
 	splash.finish(mainWin);

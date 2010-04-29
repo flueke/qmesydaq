@@ -59,8 +59,6 @@
 #	include "caresscontrol.h"
 #endif
 
-extern ControlInterface	*globalControlInterface;
-
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
 
@@ -224,14 +222,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
 	scanPeriSlot(false);
 	dispFiledata();
-#if USE_TACO
-	m_controlInt = new TACOControl(this);
-#elif USE_CARESS
-	m_controlInt = new CARESSControl(this);
-#else
-	m_controlInt = new ControlInterface(this);
-#endif
-	globalControlInterface = m_controlInt;
+#if 0
 	connect(m_controlInt, SIGNAL(sigStartStop()), startStopButton, SLOT(animateClick()));
 	connect(m_controlInt, SIGNAL(sigClear()), this, SLOT(clearAllSlot()));
 	connect(this, SIGNAL(started(bool)), m_controlInt, SLOT(statusChanged(bool)));
@@ -239,6 +230,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(m_controlInt, SIGNAL(sigEnableMonitor(bool)), m1PresetButton, SLOT(setChecked(bool)));
 	connect(m_controlInt, SIGNAL(sigSetTimer(double)), tPreset, SLOT(setValue(double)));
 	connect(m_controlInt, SIGNAL(sigSetMonitor(int)), m1Preset, SLOT(setValue(int)));
+#endif
 	connect(tPreset, SIGNAL(valueChanged(double)), m_controlInt, SLOT(timePreselectionChanged(double)));
 	connect(m1Preset, SIGNAL(valueChanged(int)), m_controlInt, SLOT(monitorPreselectionChanged(int)));
 

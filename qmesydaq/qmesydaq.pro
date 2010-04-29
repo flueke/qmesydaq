@@ -37,7 +37,12 @@ HEADERS 	+= mainwidget.h \
 		mesydaqdata.h \
 		controlinterface.h \
 		ModuleSpinBox.h \
-		MCPDSpinBox.h
+		MCPDSpinBox.h \
+		LoopObject.h \
+		QMesydaqDetectorInterface.h \
+		CommandEvent.h \
+		QtInterface.h \
+		MultipleLoopApplication.h 
 
 FORMS 		+= mesydaq2mainwidget.ui \
 		mesydaq2mainwindow.ui
@@ -48,7 +53,12 @@ SOURCES 	+= main.cpp \
 		mesydaqdata.cpp \
 		controlinterface.cpp \
 		ModuleSpinBox.cpp \
-		MCPDSpinBox.cpp
+		MCPDSpinBox.cpp \
+		LoopObject.cpp \
+		QMesydaqDetectorInterface.cpp \
+		CommandEvent.cpp \
+		QtInterface.cpp \
+		MultipleLoopApplication.cpp 
 
 RESOURCES 	+= images.qrc
 
