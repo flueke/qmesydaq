@@ -29,7 +29,7 @@ INSTALLS	= target
 # TACO		work as TACO server
 # CARESS	work as CARESS server
 #
-INTERFACE	= TACO
+INTERFACE	= 
 
 interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS")
 count(interfaces, 2) {
