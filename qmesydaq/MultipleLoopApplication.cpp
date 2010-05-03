@@ -29,14 +29,11 @@
 
 MultipleLoopApplication::MultipleLoopApplication(int argc, char**argv, LoopObject *loop)
 	: QApplication(argc, argv)
-#if 0
 	, m_loop(loop)
 	, m_interface(NULL)
-#endif
 {
 }
 
-#if 0
 void MultipleLoopApplication::setLoopEventReceiver(QObject *receiver)
 {
 	if (m_interface)
@@ -76,6 +73,4 @@ QtInterface *MultipleLoopApplication::getQtInterface()
 {
 	return m_interface;
 }
-
-#endif
 

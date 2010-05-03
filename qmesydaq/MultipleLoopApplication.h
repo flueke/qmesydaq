@@ -33,7 +33,8 @@ class MultipleLoopApplication : public QApplication
 public:
 	MultipleLoopApplication(int argc, char **argv, LoopObject *loop = 0);
 
-#if 0
+	MultipleLoopApplication *instance() {return this;}
+
 	void setLoopEventReceiver(QObject *receiver);
 	QObject *getLoopEventReceiver();
 
@@ -48,7 +49,6 @@ public:
 private:
 	LoopObject 	*m_loop;
 	QtInterface 	*m_interface;
-#endif
 };
 
 #endif // MULTIPLELOOPAPPLICATION_H
