@@ -52,13 +52,6 @@
 #include "histogram.h"
 #include "mesydaqdata.h"
 
-#include "controlinterface.h"
-#if USE_TACO
-#	include "tacocontrol.h"
-#elif USE_CARESS
-#	include "caresscontrol.h"
-#endif
-
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
 
@@ -230,9 +223,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(m_controlInt, SIGNAL(sigEnableMonitor(bool)), m1PresetButton, SLOT(setChecked(bool)));
 	connect(m_controlInt, SIGNAL(sigSetTimer(double)), tPreset, SLOT(setValue(double)));
 	connect(m_controlInt, SIGNAL(sigSetMonitor(int)), m1Preset, SLOT(setValue(int)));
-#endif
 	connect(tPreset, SIGNAL(valueChanged(double)), m_controlInt, SLOT(timePreselectionChanged(double)));
 	connect(m1Preset, SIGNAL(valueChanged(int)), m_controlInt, SLOT(monitorPreselectionChanged(int)));
+#endif
 
 	m_printer = new QPrinter;
 	m_printer->setOrientation(QPrinter::Landscape);
@@ -496,6 +489,7 @@ void MainWidget::checkListfilename(bool checked)
 {
 	if (checked)
 	{
+#if 0
 		QString name = m_controlInt->getListFileName(); 
 		if (name.isEmpty())
 			name = selectListfile();
@@ -506,6 +500,7 @@ void MainWidget::checkListfilename(bool checked)
 		else
 			acquireFile->setChecked(false);
 		qDebug() << name;
+#endif
 		dispFiledata();
 	}
 }	
@@ -1507,5 +1502,5 @@ void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
 void MainWidget::closeEvent(QCloseEvent *e)
 {
 	qDebug() << "MainWidget::closeEvent";
-	m_controlInt->finish();
+//	m_controlInt->finish();
 }

@@ -35,7 +35,6 @@ QT 		+= network svg
 HEADERS 	+= mainwidget.h \
 		mainwindow.h \
 		mesydaqdata.h \
-		controlinterface.h \
 		ModuleSpinBox.h \
 		MCPDSpinBox.h \
 		LoopObject.h \
@@ -51,7 +50,6 @@ SOURCES 	+= main.cpp \
 		mainwidget.cpp \
 		mainwindow.cpp \
 		mesydaqdata.cpp \
-		controlinterface.cpp \
 		ModuleSpinBox.cpp \
 		MCPDSpinBox.cpp \
 		LoopObject.cpp \
