@@ -29,7 +29,7 @@ INSTALLS	= target
 # TACO		work as TACO server
 # CARESS	work as CARESS server
 #
-INTERFACE	= 
+INTERFACE	= TACO
 
 interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS")
 count(interfaces, 2) {
@@ -41,7 +41,7 @@ target.path	= /usr/local
 #
 # for 64 bit machines add bit64
 #
-CONFIG		+= debug 
+CONFIG		+= debug
 
 QWT_ROOT 	= /usr/local/qwt5
 
