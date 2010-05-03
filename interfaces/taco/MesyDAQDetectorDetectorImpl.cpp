@@ -34,9 +34,7 @@
 
 #include <TACOStringConverters.h>
 
-// #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
-// #include "commandevent.h"
 
 DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 {
