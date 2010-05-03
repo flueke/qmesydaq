@@ -35,7 +35,7 @@
 
 int main(int argc, char **argv)
 {
-#if 1
+#if 0
     	QApplication app(argc, argv);
 #else
     	MultipleLoopApplication app(argc, argv);
@@ -44,8 +44,8 @@ int main(int argc, char **argv)
 
 	app.setApplicationVersion(VERSION);
 
-	LoopObject *loop = NULL;
 #if USE_TACO
+	LoopObject *loop = NULL;
 	for (int i = 0; i < argList.size(); ++i)
 	{
 		if (argList[i].startsWith("-n") && (++i < argList.size()))
@@ -75,16 +75,16 @@ int main(int argc, char **argv)
 
 	Mesydaq2MainWindow *mainWin = new Mesydaq2MainWindow();
 	mainWin->resize(1280, 980);
-#if 0
+
     	app.setLoopObject(loop);
 	QMesyDAQDetectorInterface *qtInterface = new QMesyDAQDetectorInterface;
 
 	app.setQtInterface(qtInterface);
     	qtInterface->setReceiver(mainWin);
     	app.setLoopEventReceiver(mainWin);
-#endif
 
 	mainWin->show();
+
 	app.processEvents();
 	splash.finish(mainWin);
 
