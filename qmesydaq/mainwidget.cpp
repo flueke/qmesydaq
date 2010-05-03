@@ -234,9 +234,10 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	connect(tPreset, SIGNAL(valueChanged(double)), m_controlInt, SLOT(timePreselectionChanged(double)));
 	connect(m1Preset, SIGNAL(valueChanged(int)), m_controlInt, SLOT(monitorPreselectionChanged(int)));
 
-	m_printer.setOrientation(QPrinter::Landscape);
-	m_printer.setDocName("PlotCurves");
-	m_printer.setCreator("QMesyDAQ Version: " VERSION);
+	m_printer = new QPrinter;
+	m_printer->setOrientation(QPrinter::Landscape);
+	m_printer->setDocName("PlotCurves");
+	m_printer->setCreator("QMesyDAQ Version: " VERSION);
 
 // display refresh timer
 //	m_dispTimer = startTimer(1000);
@@ -1456,8 +1457,8 @@ void MainWidget::exportPDF()
         {
                 if(!fileName.endsWith(".pdf"))
                         fileName += ".pdf";
-                m_printer.setOutputFormat(QPrinter::PdfFormat);
-		m_printer.setOutputFileName(fileName);
+                m_printer->setOutputFormat(QPrinter::PdfFormat);
+		m_printer->setOutputFileName(fileName);
                 QwtPlotPrintFilter filter;
                 filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
                 print(m_printer, filter);
@@ -1483,8 +1484,8 @@ void MainWidget::exportSVG()
 void MainWidget::printPlot()
 {
 //      QPrinter printer(QPrinter::HighResolution);
-        m_printer.setOutputFormat(QPrinter::NativeFormat);
-        QPrintDialog dialog(&m_printer);
+        m_printer->setOutputFormat(QPrinter::NativeFormat);
+        QPrintDialog dialog(m_printer);
         if(dialog.exec() == QDialog::Accepted)
         {
                 QwtPlotPrintFilter filter;
@@ -1493,12 +1494,12 @@ void MainWidget::printPlot()
         }
 }
 
-void MainWidget::print(QPrinter &printer, QwtPlotPrintFilter &filter)
+void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
 {
 	QPen pen = m_curve[0]->pen();
 	pen.setWidth(1);
 	m_curve[0]->setPen(pen);
-	m_dataFrame->print(printer, filter);
+	m_dataFrame->print(*printer, filter);
         pen.setWidth(0);
 	m_curve[0]->setPen(pen);
 }

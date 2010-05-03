@@ -70,7 +70,7 @@ protected:
 //	void 	paintEvent(QPaintEvent *);
 
 private:
-	void	print(QPrinter &, QwtPlotPrintFilter &);
+	void	print(QPrinter *, QwtPlotPrintFilter &);
 	void 	updateDisplay(void);
 	void 	processDispData();
 	void 	drawOpData();
@@ -208,7 +208,7 @@ private:
 
 	ControlInterface 	*m_controlInt;
 
-	QPrinter		m_printer;
+	QPrinter		*m_printer;
 
 	QwtPlotPicker		*m_picker;
 
