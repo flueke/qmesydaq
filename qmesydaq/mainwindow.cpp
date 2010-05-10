@@ -24,8 +24,8 @@
 #include "mainwidget.h"
 #include "mesydaq2.h"
 
-Mesydaq2MainWindow::Mesydaq2MainWindow()
-	: QMainWindow( 0 )
+Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
+	: QMainWindow(parent)
 	, Ui_Mesydaq2MainWindow()
 {
 	setupUi(this);

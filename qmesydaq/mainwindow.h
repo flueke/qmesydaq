@@ -55,7 +55,7 @@ public:
     /**
      * Default Constructor
      */
-	Mesydaq2MainWindow();
+	Mesydaq2MainWindow(QWidget *parent = 0);
 
     /**
      * Default Destructor
