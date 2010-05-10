@@ -90,7 +90,7 @@ MesyDAQ::Detector::Detector::~Detector() throw ()
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS BEGIN
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-void MesyDAQ::Detector::Detector::tacoStart( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::tacoStart( ::TACO::Server* server, DevArgument , DevArgument ) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>( server);
 	if (s != 0) {
@@ -100,7 +100,7 @@ void MesyDAQ::Detector::Detector::tacoStart( ::TACO::Server* server, DevArgument
 	}
 }
 
-void MesyDAQ::Detector::Detector::tacoStop( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::tacoStop( ::TACO::Server* server, DevArgument , DevArgument ) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>( server);
 	if (s != 0) {
@@ -110,7 +110,7 @@ void MesyDAQ::Detector::Detector::tacoStop( ::TACO::Server* server, DevArgument 
 	}
 }
 
-void MesyDAQ::Detector::Detector::tacoSetPreselection( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::tacoSetPreselection( ::TACO::Server* server, DevArgument argin, DevArgument ) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>( server);
 	if (s != 0) {
@@ -120,7 +120,7 @@ void MesyDAQ::Detector::Detector::tacoSetPreselection( ::TACO::Server* server, D
 	}
 }
 
-void MesyDAQ::Detector::Detector::tacoResume( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::tacoResume( ::TACO::Server* server, DevArgument , DevArgument ) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>( server);
 	if (s != 0) {
@@ -130,7 +130,7 @@ void MesyDAQ::Detector::Detector::tacoResume( ::TACO::Server* server, DevArgumen
 	}
 }
 
-void MesyDAQ::Detector::Detector::tacoClear( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::tacoClear( ::TACO::Server* server, DevArgument , DevArgument ) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>( server);
 	if (s != 0) {
@@ -140,7 +140,7 @@ void MesyDAQ::Detector::Detector::tacoClear( ::TACO::Server* server, DevArgument
 	}
 }
 
-void MesyDAQ::Detector::Detector::tacoPreselection( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::tacoPreselection( ::TACO::Server* server, DevArgument , DevArgument argout) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>( server);
 	if (s != 0) {
@@ -150,7 +150,7 @@ void MesyDAQ::Detector::Detector::tacoPreselection( ::TACO::Server* server, DevA
 	}
 }
 
-void MesyDAQ::Detector::Detector::tacoRead( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::tacoRead( ::TACO::Server* server, DevArgument , DevArgument argout) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>( server);
 	if (s != 0) {
