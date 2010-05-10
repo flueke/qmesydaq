@@ -43,6 +43,9 @@ target.path	= /usr/local
 #
 CONFIG		+= debug
 
+# QMAKE_CXXFLAGS	+= -fstack-check
+# QMAKE_LFLAGS	+= --stack=0x1000000
+
 QWT_ROOT 	= /usr/local/qwt5
 
 QWTLIB 		= qwt
