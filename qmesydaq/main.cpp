@@ -73,20 +73,19 @@ int main(int argc, char **argv)
 	app.setOrganizationDomain("mesytec.com");
 	app.setApplicationName("Mesydaq2");
 
-	Mesydaq2MainWindow *mainWin = new Mesydaq2MainWindow();
-	mainWin->resize(1280, 980);
+	Mesydaq2MainWindow mainWin;
+	//mainWin.resize(1280, 980);
 
     	app.setLoopObject(loop);
 	QMesyDAQDetectorInterface *qtInterface = new QMesyDAQDetectorInterface;
 
 	app.setQtInterface(qtInterface);
-    	qtInterface->setReceiver(mainWin);
-    	app.setLoopEventReceiver(mainWin);
+    	app.setLoopEventReceiver(&mainWin);
 
-	mainWin->show();
+	mainWin.show();
 
 	app.processEvents();
-	splash.finish(mainWin);
+	splash.finish(&mainWin);
 
 	return app.exec();
 }

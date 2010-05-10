@@ -65,5 +65,5 @@ DISTFILES	+= images/mesytec.jpg
 contains(INTERFACE, TACO) {
 DEPENDPATH	+= ../interfaces/taco
 INCLUDEPATH	+= ../interfaces/taco
-LIBS		= $${TACOLIBS} -L ../interfaces/taco -ltacoInterface $${LIBS}
+LIBS		= -L ../interfaces/taco -ltacoInterface $${LIBS} $${TACOLIBS}
 }

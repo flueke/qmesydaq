@@ -31,7 +31,6 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 	setupUi(this);
 
 	Mesydaq2 *mesy = new Mesydaq2(this);
-#if 0
 	m_main = new MainWidget(mesy, this);
 	setCentralWidget(m_main);
 	connect(action_Load_Config_File, SIGNAL(activated()), m_main, SLOT(restoreSetupSlot()));
@@ -46,7 +45,6 @@ Mesydaq2MainWindow::Mesydaq2MainWindow()
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
 	m_main->resize(1280, 980);
-#endif
 }
 
 Mesydaq2MainWindow::~Mesydaq2MainWindow()
