@@ -83,9 +83,6 @@ DevVoid MesyDAQ::Detector::Detector::setPreselection(const DevDouble input) thro
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
         m_interface->setPreSelection(input);
 #warning TODO preselection values
-#if 0
-	m_pInt->setTimePreselection(input);
-#endif
 }
 
 DevDouble MesyDAQ::Detector::Detector::preselection() throw (::TACO::Exception)
@@ -96,22 +93,18 @@ DevDouble MesyDAQ::Detector::Detector::preselection() throw (::TACO::Exception)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
         return m_interface->preSelection();
 #warning TODO preselection values
-#if 0
-	return m_pInt->timePreselection();
-#endif
 }
 
 const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::Exception)
 {
+	static std::vector<DevULong> tmp;
 	logStream->infoStream() << "MesyDAQ::Detector::Detector::read()" << log4cpp::eol;
 
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-        return m_interface->read();
+        tmp = m_interface->read();
 // 1 1 1 value
-#if 0
-	hrow ::TACO::Exception( ::TACO::Error::COMMAND_NOT_IMPLEMENTED);
-#endif
+	return tmp;
 }
 
 void MesyDAQ::Detector::Detector::v_Init(void) throw (::TACO::Exception)

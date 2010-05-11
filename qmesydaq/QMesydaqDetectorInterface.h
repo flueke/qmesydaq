@@ -41,7 +41,7 @@ class QMesyDAQDetectorInterface : public QtInterface
 	Q_PROPERTY(QString listFileName READ getListFileName WRITE setListFileName)
 	Q_PROPERTY(QString histFileName READ getHistogramFileName WRITE setHistogramFileName)
 public:
-	QMesyDAQDetectorInterface();
+        QMesyDAQDetectorInterface(QObject *receiver = 0, QObject *parent = 0);
 
 	void start();
 	void stop();
@@ -63,20 +63,12 @@ public:
 protected:
 	void customEvent(QEvent *);
 
-	void postCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
-
-	void postRequestCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
-
-	void waitForEvent();
-
 protected:
 	double 	m_preSelection;
 
 	double 	m_value;
 
-	double 	m_status;
-
-	bool 	m_eventReceived;
+	int 	m_status;
 
 	QString	m_listFileName;
 

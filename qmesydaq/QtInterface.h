@@ -24,20 +24,27 @@
 #define QTINTERFACE_H
 
 #include <QObject>
+#include "CommandEvent.h"
 
 class QtInterface : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	QtInterface(QObject *receiver = 0);
+    QtInterface(QObject *receiver = 0, QObject *parent = 0);
 
-	void setReceiver(QObject *receiver);
-	QObject *getReceiver();
+    void setReceiver(QObject *receiver);
+    QObject *getReceiver();
 
-	void postEvent(QEvent *);
+    void postEvent(QEvent *);
+    void postCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
+    void postCommandToInterface(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
 
 protected:
-	QObject *m_receiver;
+    void postRequestCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
+    void waitForEvent();
+
+    QObject *m_receiver;
+    bool 	m_eventReceived;
 };
 
 #endif // QTINTERFACE_H

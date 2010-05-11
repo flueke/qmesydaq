@@ -33,62 +33,47 @@
 #include <iostream>
 #include <QThread>
 
-QMesyDAQDetectorInterface::QMesyDAQDetectorInterface()
+QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject *parent)
+    	: QtInterface(receiver, parent)
+	, m_status(0)
 {
     //
 }
 
-void QMesyDAQDetectorInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
-{
-	CommandEvent *newEvent;
-	if(args.isEmpty())
-        	newEvent = new CommandEvent(cmd);
-	else
-        	newEvent = new CommandEvent(cmd, args);
-	postEvent(newEvent);
-}
-
-void QMesyDAQDetectorInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
-{
-	m_eventReceived = false;
-	postCommand(cmd, args);
-	waitForEvent();
-}
-
 void QMesyDAQDetectorInterface::start()
 {
-	postCommand(CommandEvent::START);
+        postCommand(CommandEvent::C_START);
 }
 
 void QMesyDAQDetectorInterface::stop()
 {
-	postCommand(CommandEvent::STOP);
+        postCommand(CommandEvent::C_STOP);
 }
 
 void QMesyDAQDetectorInterface::clear()
 {
-	postCommand(CommandEvent::CLR);
+        postCommand(CommandEvent::C_CLEAR);
 }
 
 void QMesyDAQDetectorInterface::resume()
 {
-	postCommand(CommandEvent::RESUME);
+        postCommand(CommandEvent::C_RESUME);
 }
 
 void QMesyDAQDetectorInterface::setPreSelection(double value)
 {
-	postCommand(CommandEvent::SET_PRESELECTION,QList<QVariant>() << value);
+        postCommand(CommandEvent::C_SET_PRESELECTION,QList<QVariant>() << value);
 }
 
 double QMesyDAQDetectorInterface::preSelection()
 {
-	postRequestCommand(CommandEvent::PRESELECTION);
+        postRequestCommand(CommandEvent::C_PRESELECTION);
 	return m_preSelection;
 }
 
 std::vector<DevULong> QMesyDAQDetectorInterface::read()
 {
-	postRequestCommand(CommandEvent::READ);
+        postRequestCommand(CommandEvent::C_READ);
 	std::vector<DevULong> rtn(3,1);
 	rtn.push_back(m_value);
 	return rtn;
@@ -96,7 +81,7 @@ std::vector<DevULong> QMesyDAQDetectorInterface::read()
 
 int QMesyDAQDetectorInterface::status()
 {
-	postRequestCommand(CommandEvent::STATUS);
+        postRequestCommand(CommandEvent::C_STATUS);
 	return m_status;
 }
 
@@ -117,15 +102,15 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 		{
 			switch(cmd)
 			{
-				case CommandEvent::PRESELECTION:
+                                case CommandEvent::C_PRESELECTION:
 					m_preSelection = args[0].toDouble();
 					m_eventReceived = true;
                 			break;
-				case CommandEvent::READ:
+                                case CommandEvent::C_READ:
 					m_value = args[0].toDouble();
 					m_eventReceived = true;
 					break;
-				case CommandEvent::STATUS:
+                                case CommandEvent::C_STATUS:
 					m_status = args[0].toInt();
 					m_eventReceived = true;
 					break;
@@ -133,21 +118,6 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					break;
 			}
 		}
-	}
-}
-
-void QMesyDAQDetectorInterface::waitForEvent()
-{
-	m_eventReceived = false;
-
-	while(true)
-	{
-		if (m_eventReceived)
-			break;
-
-		LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
-		if (loop)
-			loop->pSleep(1);
 	}
 }
 

@@ -31,14 +31,14 @@ class CommandEvent : public QEvent
 {
 public:
 	enum Command{
-		START,
-		STOP,
-		CLR,
-		RESUME,
-		SET_PRESELECTION,
-		PRESELECTION,
-		READ,
-		STATUS
+                C_START,
+                C_STOP,
+                C_CLEAR,
+                C_RESUME,
+                C_SET_PRESELECTION,
+                C_PRESELECTION,
+                C_READ,
+                C_STATUS
 	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());

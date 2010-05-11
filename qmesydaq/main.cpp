@@ -18,34 +18,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "MultipleLoopApplication.h"
+#include <iostream>
+
 #include <QSplashScreen>
 #include <QPlastiqueStyle>
-
-#include "QMesydaqDetectorInterface.h"
+#include <QDebug>
 
 #if USE_TACO
 #	include "TACOLoop.h"
 #endif
 
-#include <QDebug>
-
+#include "LoopObject.h"
+#include "QMesydaqDetectorInterface.h"
+#include "MultipleLoopApplication.h"
 #include "mainwindow.h"
-#include <cstdlib>
 
 int main(int argc, char **argv)
 {
-#if 0
-    	QApplication app(argc, argv);
-#else
+#if 1
     	MultipleLoopApplication app(argc, argv);
+#else
+        QApplication app(argc,argv);
 #endif
-	QStringList argList = app.arguments();
 
-	app.setApplicationVersion(VERSION);
+        QStringList argList = app.arguments();
+
+        app.setApplicationVersion(VERSION);
+
+        LoopObject *loop = NULL;
 
 #if USE_TACO
-	LoopObject *loop = NULL;
 	for (int i = 0; i < argList.size(); ++i)
 	{
 		if (argList[i].startsWith("-n") && (++i < argList.size()))
@@ -61,31 +63,28 @@ int main(int argc, char **argv)
 
 	loop = new TACOLoop;
 #endif
-	app.setStyle(new QPlastiqueStyle());
+        app.setStyle(new QPlastiqueStyle());
 
-	QPixmap pixmap(":/images/mesytec.jpg");
+        QPixmap pixmap(":/images/mesytec.jpg");
 
-	QSplashScreen splash(pixmap);
-	splash.show();
-	app.processEvents();
+        QSplashScreen splash(pixmap);
+        splash.show();
+        app.processEvents();
 
-	app.setOrganizationName("MesyTec");
-	app.setOrganizationDomain("mesytec.com");
-	app.setApplicationName("Mesydaq2");
+        app.setOrganizationName("MesyTec");
+        app.setOrganizationDomain("mesytec.com");
+        app.setApplicationName("Mesydaq2");
 
-	Mesydaq2MainWindow mainWin;
-	//mainWin.resize(1280, 980);
+        Mesydaq2MainWindow mainWin;
 
-    	app.setLoopObject(loop);
-	QMesyDAQDetectorInterface *qtInterface = new QMesyDAQDetectorInterface;
+        app.setLoopObject(loop);
+        app.setQtInterface(new QMesyDAQDetectorInterface);
+        app.setLoopEventReceiver(mainWin.centralWidget());
 
-	app.setQtInterface(qtInterface);
-    	app.setLoopEventReceiver(&mainWin);
+        mainWin.show();
 
-	mainWin.show();
-
-	app.processEvents();
-	splash.finish(&mainWin);
+        app.processEvents();
+        splash.finish(&mainWin);
 
 	return app.exec();
 }

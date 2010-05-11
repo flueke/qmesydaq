@@ -23,24 +23,69 @@
 #include "QtInterface.h"
 
 #include "QApplication"
+#include"LoopObject.h"
 
-QtInterface::QtInterface(QObject *receiver)
-	: m_receiver(receiver)
+QtInterface::QtInterface(QObject *receiver, QObject *parent)
+    : QObject(parent)
+    , m_receiver(receiver)
 {
 }
 
 void QtInterface::setReceiver(QObject *receiver)
 {
-	this->m_receiver = receiver;
+    this->m_receiver = receiver;
 }
 
 QObject *QtInterface::getReceiver()
 {
-	return this->m_receiver;
+    return this->m_receiver;
 }
 
 void QtInterface::postEvent(QEvent *event)
 {
-	if (this->m_receiver)
-		QApplication::postEvent(this->m_receiver, event);
+    if (this->m_receiver)
+        QApplication::postEvent(this->m_receiver, event);
+}
+
+void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
+{
+    CommandEvent *newEvent;
+    if(args.isEmpty())
+        newEvent = new CommandEvent(cmd);
+    else
+        newEvent = new CommandEvent(cmd, args);
+    postEvent(newEvent);
+}
+
+void QtInterface::waitForEvent()
+{
+        m_eventReceived = false;
+
+        while(true)
+        {
+                if (m_eventReceived)
+                        break;
+
+                LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
+                if (loop)
+                        loop->pSleep(1);
+        	QApplication::processEvents();
+        }
+}
+
+void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
+{
+        m_eventReceived = false;
+        postCommand(cmd, args);
+        waitForEvent();
+}
+
+void QtInterface::postCommandToInterface(CommandEvent::Command cmd, QList<QVariant> args)
+{
+    CommandEvent *newEvent;
+    if(args.isEmpty())
+        newEvent = new CommandEvent(cmd);
+    else
+        newEvent = new CommandEvent(cmd, args);
+    QApplication::postEvent(this, newEvent);
 }

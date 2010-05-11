@@ -44,7 +44,7 @@ public:
 	void setQtInterface(QtInterface *interface);
 	QtInterface *getQtInterface();
 
-	int exec(void);
+        int exec();
 
 private:
 	LoopObject 	*m_loop;

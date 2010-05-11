@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <QApplication>
+#include "MultipleLoopApplication.h"
 
 #include "mainwindow.h"
 #include "mainwidget.h"
@@ -33,15 +33,20 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 	Mesydaq2 *mesy = new Mesydaq2(this);
 	m_main = new MainWidget(mesy, this);
 	setCentralWidget(m_main);
-	connect(action_Load_Config_File, SIGNAL(activated()), m_main, SLOT(restoreSetupSlot()));
-	connect(action_Save_Config_File, SIGNAL(activated()), m_main, SLOT(saveSetupSlot()));
-	connect(action_Replay_List_File, SIGNAL(activated()), m_main, SLOT(replayListfileSlot()));
-	connect(actionSave_Histogram_File, SIGNAL(activated()), m_main, SLOT(writeHistSlot()));
-	connect(actionLoad_Histogram_File, SIGNAL(activated()), m_main, SLOT(loadHistSlot()));
-	connect(actionPrint, SIGNAL(activated()), m_main, SLOT(printPlot()));
-	connect(actionExport_PDF, SIGNAL(activated()), m_main, SLOT(exportPDF()));
-	connect(actionExport_SVG, SIGNAL(activated()), m_main, SLOT(exportSVG()));
-	connect(action_About, SIGNAL(activated()), m_main, SLOT(about()));
+
+        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+        if(app)
+            app->setLoopEventReceiver(m_main);
+
+        connect(action_Load_Config_File, SIGNAL(triggered()), m_main, SLOT(restoreSetupSlot()));
+        connect(action_Save_Config_File, SIGNAL(triggered()), m_main, SLOT(saveSetupSlot()));
+        connect(action_Replay_List_File, SIGNAL(triggered()), m_main, SLOT(replayListfileSlot()));
+        connect(actionSave_Histogram_File, SIGNAL(triggered()), m_main, SLOT(writeHistSlot()));
+        connect(actionLoad_Histogram_File, SIGNAL(triggered()), m_main, SLOT(loadHistSlot()));
+        connect(actionPrint, SIGNAL(triggered()), m_main, SLOT(printPlot()));
+	connect(actionExport_PDF, SIGNAL(triggered()), m_main, SLOT(exportPDF()));
+	connect(actionExport_SVG, SIGNAL(triggered()), m_main, SLOT(exportSVG()));
+	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
 	m_main->resize(1280, 980);
