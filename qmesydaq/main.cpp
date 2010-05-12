@@ -35,11 +35,7 @@
 
 int main(int argc, char **argv)
 {
-#if 1
     	MultipleLoopApplication app(argc, argv);
-#else
-        QApplication app(argc,argv);
-#endif
 
         QStringList argList = app.arguments();
 
@@ -58,10 +54,9 @@ int main(int argc, char **argv)
 		qDebug() << "Environment variable \"NETHOST\" is not set";
 		qDebug() << "You may set it explicitly in the command shell";
 		qDebug() << "or by using command line option -n 'nethost.domain'";
-		return 1;
 	}
-
-	loop = new TACOLoop;
+	else 
+		loop = new TACOLoop;
 #endif
         app.setStyle(new QPlastiqueStyle());
 
@@ -77,9 +72,12 @@ int main(int argc, char **argv)
 
         Mesydaq2MainWindow mainWin;
 
-        app.setLoopObject(loop);
-        app.setQtInterface(new QMesyDAQDetectorInterface);
-        app.setLoopEventReceiver(mainWin.centralWidget());
+	if (loop)
+	{
+        	app.setLoopObject(loop);
+        	app.setQtInterface(new QMesyDAQDetectorInterface);
+        	app.setLoopEventReceiver(mainWin.centralWidget());
+	}
 
         mainWin.show();
 

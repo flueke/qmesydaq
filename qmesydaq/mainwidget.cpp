@@ -219,17 +219,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     scanPeriSlot(false);
     dispFiledata();
-#if 0
-    connect(m_controlInt, SIGNAL(sigStartStop()), startStopButton, SLOT(animateClick()));
-    connect(m_controlInt, SIGNAL(sigClear()), this, SLOT(clearAllSlot()));
-    connect(this, SIGNAL(started(bool)), m_controlInt, SLOT(statusChanged(bool)));
-    connect(m_controlInt, SIGNAL(sigEnableTimer(bool)), tPresetButton, SLOT(setChecked(bool)));
-    connect(m_controlInt, SIGNAL(sigEnableMonitor(bool)), m1PresetButton, SLOT(setChecked(bool)));
-    connect(m_controlInt, SIGNAL(sigSetTimer(double)), tPreset, SLOT(setValue(double)));
-    connect(m_controlInt, SIGNAL(sigSetMonitor(int)), m1Preset, SLOT(setValue(int)));
-    connect(tPreset, SIGNAL(valueChanged(double)), m_controlInt, SLOT(timePreselectionChanged(double)));
-    connect(m1Preset, SIGNAL(valueChanged(int)), m_controlInt, SLOT(monitorPreselectionChanged(int)));
-#endif
 
     m_printer = new QPrinter;
     m_printer->setOrientation(QPrinter::Landscape);
@@ -298,10 +287,10 @@ void MainWidget::allPulserOff(void)
     pulserButton->setChecked(false);
 }
 
-void MainWidget::zoomAreaSelected(const QwtDoubleRect &rect)
+void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
 {
-    if (!m_zoomer->zoomRectIndex())
-        m_zoomer->setZoomBase();
+	if (!m_zoomer->zoomRectIndex())
+		m_zoomer->setZoomBase();
 }
 
 void MainWidget::zoomed(const QwtDoubleRect &rect)
@@ -491,22 +480,31 @@ QString MainWidget::selectListfile(void)
 
 void MainWidget::checkListfilename(bool checked)
 {
-    if (checked)
-    {
-#if 0
-        QString name = m_controlInt->getListFileName();
-        if (name.isEmpty())
-            name = selectListfile();
-        else
-            name = m_theApp->getListfilepath() + "/" + name;
-        if(!name.isEmpty())
-            m_theApp->setListfilename(name);
-        else
-            acquireFile->setChecked(false);
-        qDebug() << name;
-#endif
-        dispFiledata();
-    }
+	if (checked)
+	{
+		MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+		QMesyDAQDetectorInterface *interface;
+		QString name(QString::null); 
+		if(app)
+		{
+			interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
+			if (interface)
+            			name = interface->getListFileName();
+		}
+
+	
+		if (name.isEmpty())
+			name = selectListfile();
+		else
+			name = m_theApp->getListfilepath() + "/" + name;
+		if(!name.isEmpty())
+			m_theApp->setListfilename(name);
+		else
+			acquireFile->setChecked(false);
+		qDebug() << name;
+		qWarning() << name;
+		dispFiledata();
+	}
 }	
 
 /*!
@@ -1235,8 +1233,8 @@ void MainWidget::m4ResetSlot()
  */
 void MainWidget::updateCaress(void)
 {
+#if USE_CARESS
 #warning TODO remove the CARESS specific part
-#if 0
     caressWidth->setText(tr("%1").arg(m_meas->getCarWidth()));
     caressHeight->setText(tr("%1").arg(m_meas->getCarHeight()));
     caressRun->setText(tr("%1").arg(m_meas->getRun()));
@@ -1503,40 +1501,45 @@ void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
     m_curve[0]->setPen(pen);
 }
 
-void MainWidget::closeEvent(QCloseEvent *e)
+void MainWidget::closeEvent(QCloseEvent *)
 {
-    qDebug() << "MainWidget::closeEvent";
+	qDebug() << "MainWidget::closeEvent";
 }
 
 void MainWidget::customEvent(QEvent *e)
 {
     CommandEvent *event = dynamic_cast<CommandEvent*>(e);
-    if(!event){
+    if(!event)
+    {
         QWidget::customEvent(e);
         return;
-    }else{
+    }
+    else
+    {
         CommandEvent::Command cmd = event->getCommand();
         QList<QVariant> args = event->getArgs();
 
         MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
         QMesyDAQDetectorInterface *interface;
-        if(app){
+        if(app)
+	{
             interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
         }
 
         switch(cmd)
 	{
         	case CommandEvent::C_START:
-            		startStopButton->animateClick();
+			// clear anything 
+        	case CommandEvent::C_RESUME:
+			if (!startStopButton->isChecked())
+                        	startStopButton->animateClick();
             		break;
         	case CommandEvent::C_STOP:
-            		startStopButton->animateClick();
+			if (startStopButton->isChecked())
+            			startStopButton->animateClick();
             		break;
         	case CommandEvent::C_CLEAR:
-                        qDebug() << "MainWidget::customEvent(): C_CLEAR not implemented";
-            		break;
-        	case CommandEvent::C_RESUME:
-                        startStopButton->animateClick();
+                        qWarning() << "MainWidget::customEvent(): C_CLEAR not implemented";
             		break;
         	case CommandEvent::C_PRESELECTION:
             		if(interface)
@@ -1594,7 +1597,7 @@ void MainWidget::customEvent(QEvent *e)
                 		break;
 			default:
 				break;
-            }
+            	}
         }
     }
 }

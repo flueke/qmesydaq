@@ -42,9 +42,8 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-#if 0
-    	m_interface->setListFileName(incNumber("lastlistfile", "tacolistfile") + ".mdat");
-#endif
+
+    	m_interface->setListFileName((incNumber("tacolistfile") + ".mdat").c_str());
 	m_interface->start();
 }
 
@@ -112,12 +111,12 @@ void MesyDAQ::Detector::Detector::v_Init(void) throw (::TACO::Exception)
 	// Please implement this for the startup
 	try
 	{
-		::TACO::Server::deviceUpdate(std::string());
+		Server::deviceUpdate("lastlistfile");
 	}
 	catch (const ::TACO::Exception &e)
 	{
-		setDeviceState(::TACO::State::FAULT);
-		throw e;
+//		setDeviceState(::TACO::State::FAULT);
+//		throw e;
 	}
 }
 
@@ -135,7 +134,40 @@ DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception
 	}
 }
 
-std::string MesyDAQ::Detector::Detector::incNumber(std::string resource, std::string filename)
+void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
+{
+        std::string     tmpString;
+
+        if (resourceUpdateRequest("lastlistfile"))
+                try
+                {
+                        tmpString = queryResource<std::string>("lastlistfile");
+			if (!m_interface)
+        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+                        m_interface->setListFileName(tmpString.c_str());
+                }
+                catch (::TACO::Exception &e)
+                {
+                        throw "could not update 'lastlistfile' " >> e;
+                }
+}
+
+void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Exception)
+{
+        TACO::Server::deviceQueryResource();
+
+        if (resourceQueryRequest("lastlistfile"))
+                try
+                {
+                        updateResource<std::string>("lastlistfile", m_interface->getListFileName().toStdString());
+                }
+                catch (TACO::Exception &e)
+                {
+                        throw "Could not query resource 'lastlistfile' " >> e;
+                }
+}
+
+std::string MesyDAQ::Detector::Detector::incNumber(std::string filename)
 {
 	std::string tmpString = queryResource<std::string>("lastlistfile");
 	if (tmpString.empty())

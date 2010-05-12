@@ -79,6 +79,10 @@ protected:
 
 	DevShort deviceState(void) throw (::TACO::Exception);
 
+	void deviceUpdate(void) throw (::TACO::Exception);
+
+	void deviceQueryResource(void) throw (::TACO::Exception);
+
 private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
@@ -102,7 +106,7 @@ private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
 
 private:
-	std::string incNumber(std::string, std::string);
+	std::string incNumber(std::string);
 
 private:
         QMesyDAQDetectorInterface	*m_interface;
