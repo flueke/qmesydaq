@@ -61,16 +61,17 @@ void QtInterface::waitForEvent()
 {
         m_eventReceived = false;
 
-        while(true)
-        {
-                if (m_eventReceived)
-                        break;
+	LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
 
-                LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
-                if (loop)
-                        loop->pSleep(1);
-        	QApplication::processEvents();
-        }
+	if(loop){
+        	while(true)
+        	{
+                	if (m_eventReceived)
+                        	break;
+
+                	loop->pSleep(1);
+        	}
+	}
 }
 
 void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
