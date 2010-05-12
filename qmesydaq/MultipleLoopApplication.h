@@ -30,6 +30,7 @@ class QtInterface;
 
 class MultipleLoopApplication : public QApplication
 {
+	Q_OBJECT
 public:
 	MultipleLoopApplication(int argc, char **argv, LoopObject *loop = 0);
 
