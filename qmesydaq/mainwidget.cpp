@@ -1533,8 +1533,10 @@ void MainWidget::customEvent(QEvent *e)
             		startStopButton->animateClick();
             		break;
         	case CommandEvent::C_CLEAR:
+                        qDebug() << "MainWidget::customEvent(): C_CLEAR not implemented";
             		break;
         	case CommandEvent::C_RESUME:
+                        startStopButton->animateClick();
             		break;
         	case CommandEvent::C_PRESELECTION:
             		if(interface)
