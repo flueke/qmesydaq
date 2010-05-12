@@ -32,6 +32,7 @@ MultipleLoopApplication::MultipleLoopApplication(int argc, char**argv, LoopObjec
 	, m_loop(loop)
 	, m_interface(NULL)
 {
+	setAttribute(Qt::AA_ImmediateWidgetCreation);
 }
 
 void MultipleLoopApplication::setLoopEventReceiver(QObject *receiver)
