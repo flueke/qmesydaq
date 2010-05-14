@@ -106,10 +106,12 @@ private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
 
 private:
-	std::string incNumber(std::string);
+	std::string incNumber();
 
 private:
         QMesyDAQDetectorInterface	*m_interface;
+
+	std::string			m_listFilename;
 };
 
 #endif // MESY_D_A_Q_DETECTOR_DETECTOR_H

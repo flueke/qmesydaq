@@ -36,6 +36,8 @@
 
 #include "QMesydaqDetectorInterface.h"
 
+#include "libgen.h"
+
 DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::Detector::Detector::start()" << log4cpp::eol;
@@ -43,7 +45,9 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 
-    	m_interface->setListFileName((incNumber("tacolistfile") + ".mdat").c_str());
+	m_listFilename = incNumber();
+	updateResource<std::string>("lastlistfile", m_listFilename);
+    	m_interface->setListFileName(m_listFilename.c_str());
 	m_interface->start();
 }
 
@@ -136,15 +140,15 @@ DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception
 
 void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 {
-        std::string     tmpString;
-
         if (resourceUpdateRequest("lastlistfile"))
                 try
                 {
-                        tmpString = queryResource<std::string>("lastlistfile");
+                        m_listFilename = queryResource<std::string>("lastlistfile");
+			if (m_listFilename == "")
+				m_listFilename = "tacolistfile00000.mdat";
 			if (!m_interface)
         			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-                        m_interface->setListFileName(tmpString.c_str());
+                        m_interface->setListFileName(m_listFilename.c_str());
                 }
                 catch (::TACO::Exception &e)
                 {
@@ -154,32 +158,48 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 
 void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Exception)
 {
-        TACO::Server::deviceQueryResource();
-
         if (resourceQueryRequest("lastlistfile"))
                 try
                 {
+			if (m_interface->getListFileName().isEmpty())
+				m_interface->setListFileName(m_listFilename.c_str());
                         updateResource<std::string>("lastlistfile", m_interface->getListFileName().toStdString());
                 }
                 catch (TACO::Exception &e)
                 {
                         throw "Could not query resource 'lastlistfile' " >> e;
                 }
+
+        TACO::Server::deviceQueryResource();
 }
 
-std::string MesyDAQ::Detector::Detector::incNumber(std::string filename)
+std::string MesyDAQ::Detector::Detector::incNumber()
 {
-	std::string tmpString = queryResource<std::string>("lastlistfile");
-	if (tmpString.empty())
-        	tmpString = filename;
-	DevLong currIndex = strtol(tmpString.substr(tmpString.length() - 5).c_str(), NULL, 10);
-	if (currIndex)
-        	tmpString.erase(tmpString.length() - 5);
-	currIndex += 1;
-	std::string tmp = ::TACO::numberToString(currIndex, 5);
+	std::string tmpString = m_listFilename;
+	std::string baseName = basename(const_cast<char *>(tmpString.c_str()));
+	std::string::size_type pos = baseName.rfind(".");
+	std::string ext("");
+	if (pos == std::string::npos)
+		ext = ".mdat";
+	else
+	{
+		ext = baseName.substr(pos);
+		baseName.erase(pos);
+	}
+	DevLong currIndex(0);
+	if (baseName.length() > 5)
+	{
+		currIndex = strtol(baseName.substr(baseName.length() - 5).c_str(), NULL, 10);
+		if (currIndex)
+        		baseName.erase(baseName.length() - 5);
+	}
+	std::string tmp = ::TACO::numberToString(++currIndex, 5);
+	pos = tmpString.find(baseName);
+	pos += baseName.length();
+	tmpString.erase(pos);
 	for (int i = tmp.length(); i < 5; ++i)
         	tmpString += '0';
 	tmpString += tmp;
-	updateResource<std::string>("lastlistfile", tmpString);
+	tmpString += ext;
 	return tmpString;
 }

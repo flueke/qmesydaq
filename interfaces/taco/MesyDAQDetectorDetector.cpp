@@ -62,6 +62,10 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 	setDeviceVersion( VERSION );
 
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE END
+
+	addResource("lastlistfile", D_STRING_TYPE, "name of the last/currently used list mode data file");
+	addResource("lasthistfile", D_STRING_TYPE, "name of the last/currently used histogram datat file");
+
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 	try
