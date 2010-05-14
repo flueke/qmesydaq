@@ -34,7 +34,7 @@ public:
 	void pSleep(long ms);
 
 protected:
-	virtual void runLoop();
+	virtual void runLoop() = 0;
 };
 
 #endif // LOOPOBJECT_H
