@@ -22,7 +22,6 @@
 
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
-#	warning HAVE_CONFIG_H
 #endif
 
 #include "QMesydaqDetectorInterface.h"
