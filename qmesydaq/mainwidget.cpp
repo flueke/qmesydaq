@@ -32,6 +32,7 @@
 #include <QPrintDialog>
 #include <QSvgGenerator>
 #include <QCoreApplication>
+#include <QSettings>
 
 #include <QDebug>
 
@@ -86,6 +87,11 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     init();
 
+    QSettings settings("MesyTec", "QMesyDAQ");
+
+    QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
+    acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
+
     versionLabel->setText("QMesyDAQ " + QCoreApplication::applicationVersion() + "\n" __DATE__);
 
     connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
@@ -134,9 +140,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     dataIPAddress->setValidator(new QRegExpValidator(ex, dataIPAddress));
     cmdIPAddress->setValidator(new QRegExpValidator(ex, cmdIPAddress));
 
-    m_dataFrame->setAxisTitle(QwtPlot::xBottom, "channels");
-    m_dataFrame->setAxisTitle(QwtPlot::yLeft, "counts");
-    m_dataFrame->setAxisTitle(QwtPlot::yRight, "intensity");
+    m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channels"));
+    m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
+    m_dataFrame->setAxisTitle(QwtPlot::yRight, tr("intensity"));
     m_dataFrame->enableAxis(QwtPlot::yRight, false);
     //	m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
@@ -448,34 +454,34 @@ void MainWidget::setPulserSlot()
 
 void MainWidget::setGainSlot()
 {
-    bool 	ok;
-    quint16 chan = comgain->isChecked() ? 8 : channel->text().toUInt(&ok, 0),
-    id = (quint16) devid->value(),
-    addr = module->value();
-    float 	gainval = gain->text().toFloat(&ok);
-    m_theApp->setGain(id, addr, chan, gainval);
+	bool 	ok;
+	quint16 chan = comgain->isChecked() ? 8 : channel->text().toUInt(&ok, 0),
+	id = (quint16) devid->value(),
+	addr = module->value();
+	float 	gainval = gain->text().toFloat(&ok);
+	m_theApp->setGain(id, addr, chan, gainval);
 }
 
 void MainWidget::setThresholdSlot()
 {
-    bool ok;
-    quint16 id = (quint16) devid->value();
-    quint16 addr = module->value();
-    quint16 thresh = threshold->text().toUInt(&ok, 0);
-    m_theApp->setThreshold(id, addr, thresh);
+	bool ok;
+	quint16 id = (quint16) devid->value();
+	quint16 addr = module->value();
+	quint16 thresh = threshold->text().toUInt(&ok, 0);
+	m_theApp->setThreshold(id, addr, thresh);
 }
 
 QString MainWidget::selectListfile(void)
 {
-    QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_theApp->getListfilepath(),
+	QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_theApp->getListfilepath(),
                                                 "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
-    if(!name.isEmpty())
-    {
-        int i = name.indexOf(".mdat");
-        if(i == -1)
-            name.append(".mdat");
-    }
-    return name;
+	if(!name.isEmpty())
+	{
+		int i = name.indexOf(".mdat");
+		if(i == -1)
+			name.append(".mdat");
+	}
+	return name;
 }
 
 void MainWidget::checkListfilename(bool checked)
@@ -501,8 +507,6 @@ void MainWidget::checkListfilename(bool checked)
 			m_theApp->setListfilename(name);
 		else
 			acquireFile->setChecked(false);
-		qDebug() << name;
-		qWarning() << name;
 		dispFiledata();
 	}
 }	
@@ -612,7 +616,7 @@ void MainWidget::clearChanSlot()
 
 void MainWidget::replayListfileSlot()
 {
-    QString name = QFileDialog::getOpenFileName(this, "Load...", m_theApp->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
+    QString name = QFileDialog::getOpenFileName(this, tr("Load..."), m_theApp->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
     if(!name.isEmpty())
     {
         startStopButton->setDisabled(true);
@@ -767,7 +771,11 @@ void MainWidget::saveSetupSlot()
 {
     QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
     if (!name.isEmpty())
+    {
         m_theApp->saveSetup(name);
+    	QSettings setup(name, QSettings::IniFormat);
+	setup.setValue("MESYDAQ/listmode", acquireFile->isChecked());
+    }
 }
 
 void MainWidget::restoreSetupSlot()
@@ -778,6 +786,8 @@ void MainWidget::restoreSetupSlot()
         m_theApp->loadSetup(name);
         configfilename->setText(m_theApp->getConfigfilename());
         init();
+    	QSettings setup(m_theApp->getConfigfilename(), QSettings::IniFormat);
+        acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
     }
 }
 
@@ -855,7 +865,7 @@ void MainWidget::drawOpData()
 
     // pulser warning
     if(m_theApp->isPulserOn())
-        pulserWarning->setText("<p align=\"center\">PULSER ON!</p>");
+        pulserWarning->setText(tr("<p align=\"center\">PULSER ON!</p>"));
     else
         pulserWarning->setText("");
 }
@@ -1501,6 +1511,16 @@ void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
     m_curve[0]->setPen(pen);
 }
 
+void MainWidget::quitContinue(void)
+{
+	if (QMessageBox::warning(this, tr("Remote control interface"), tr("Remote control interface is not initialized!<br>"
+			"Do you want continue?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+	{
+		MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+		app->quit();
+	}
+}
+
 void MainWidget::closeEvent(QCloseEvent *)
 {
 	qDebug() << "MainWidget::closeEvent";
@@ -1529,7 +1549,7 @@ void MainWidget::customEvent(QEvent *e)
         switch(cmd)
 	{
         	case CommandEvent::C_START:
-			// clear anything 
+                        clearMpsd->click();
         	case CommandEvent::C_RESUME:
 			if (!startStopButton->isChecked())
                         	startStopButton->animateClick();
@@ -1539,7 +1559,7 @@ void MainWidget::customEvent(QEvent *e)
             			startStopButton->animateClick();
             		break;
         	case CommandEvent::C_CLEAR:
-                        qWarning() << "MainWidget::customEvent(): C_CLEAR not implemented";
+                        clearMpsd->click();
             		break;
         	case CommandEvent::C_PRESELECTION:
             		if(interface)

@@ -66,6 +66,8 @@ public slots:
 
 	void	about();
 
+	void	quitContinue();
+
 protected:
         void    customEvent(QEvent *);
 //	void 	paintEvent(QPaintEvent *);
