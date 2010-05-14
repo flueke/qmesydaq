@@ -77,6 +77,7 @@ int main(int argc, char **argv)
         	app.setLoopObject(loop);
         	app.setQtInterface(new QMesyDAQDetectorInterface);
         	app.setLoopEventReceiver(mainWin.centralWidget());
+		QObject::connect(loop, SIGNAL(terminated()), mainWin.centralWidget(), SLOT(quitContinue()));
 	}
 
         mainWin.show();
