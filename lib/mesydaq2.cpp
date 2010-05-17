@@ -1270,7 +1270,7 @@ void Mesydaq2::setHistfilename(QString name)
 void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
 	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), DEBUG);
-	if(m_daq == RUNNING)
+	if (m_daq == RUNNING)
 	{
 		quint16 mod = pd.deviceId;	
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
@@ -1300,8 +1300,10 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 				protocol(tr("BUFFER with length 0"), ERROR);
 				return;
 			}
+#if 0
 			if (pd.bufferLength == 21)
 				return;
+#endif
 			if (pd.bufferLength > sizeof(DATA_PACKET) / 2)
 			{
 				protocol(tr("BUFFER with length ").arg(pd.bufferLength), ERROR);
