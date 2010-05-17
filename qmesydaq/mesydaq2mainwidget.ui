@@ -356,7 +356,7 @@ Listfile</string>
        <item>
         <widget class="QLabel" name="textLabel1_4_2_3_4_2_2">
          <property name="text">
-          <string>MPSD</string>
+          <string>Module</string>
          </property>
          <property name="wordWrap">
           <bool>false</bool>
@@ -1230,7 +1230,7 @@ Listfile</string>
    </widget>
    <widget class="QWidget" name="tabMCPD8">
     <attribute name="title">
-     <string>MCPD-&amp;8</string>
+     <string>&amp;MCPD</string>
     </attribute>
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
@@ -1872,7 +1872,7 @@ parameters</string>
    </widget>
    <widget class="QWidget" name="tabMPSD8">
     <attribute name="title">
-     <string>MPSD-8</string>
+     <string>Mo&amp;dule</string>
     </attribute>
     <layout class="QGridLayout" name="gridLayout_26">
      <item row="0" column="0">
@@ -1888,7 +1888,7 @@ parameters</string>
          <item row="0" column="0">
           <widget class="QLabel" name="textLabel1_4_2_4">
            <property name="text">
-            <string>MCPD-8 ID</string>
+            <string>MCPD ID</string>
            </property>
            <property name="wordWrap">
             <bool>false</bool>
@@ -1922,7 +1922,7 @@ parameters</string>
          <item row="1" column="0" colspan="4">
           <widget class="QGroupBox" name="groupBox17_2">
            <property name="title">
-            <string>MPSD-8 status</string>
+            <string>Module status</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_15">
             <item row="0" column="0">
@@ -2166,7 +2166,7 @@ parameters</string>
            <item row="0" column="0">
             <widget class="QLabel" name="textLabel1_4_2">
              <property name="text">
-              <string>MCPD-8 ID</string>
+              <string>MCPD ID</string>
              </property>
              <property name="wordWrap">
               <bool>false</bool>
@@ -2186,7 +2186,7 @@ parameters</string>
            <item row="1" column="0">
             <widget class="QLabel" name="textLabel1_4_2_2">
              <property name="text">
-              <string>MPSD-8
+              <string>Module
 (Bus-#)</string>
              </property>
              <property name="wordWrap">
@@ -2970,7 +2970,7 @@ parameters</string>
     <item row="5" column="0" colspan="2">
      <widget class="QLabel" name="labelEventSingle">
       <property name="text">
-       <string>MCPD %1 MPSD %2 Chan %3</string>
+       <string>MCPD %1 Module %2 Chan %3</string>
       </property>
      </widget>
     </item>
