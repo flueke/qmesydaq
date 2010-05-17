@@ -87,11 +87,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     init();
 
-    QSettings settings("MesyTec", "QMesyDAQ");
-
-    QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
-    acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
-
     versionLabel->setText("QMesyDAQ " + QCoreApplication::applicationVersion() + "\n" __DATE__);
 
     connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
@@ -233,6 +228,12 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     // display refresh timer
     //	m_dispTimer = startTimer(1000);
+
+    QSettings settings("MesyTec", "QMesyDAQ");
+
+    QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
+    acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
+    tPresetButton->setChecked(setup.value("MESYDAQ/Preset/time", true).toBool());
 }
 
 //! destructor
@@ -586,6 +587,12 @@ void MainWidget::clearAllSlot()
     m_meas->setROI(QwtDoubleRect(0,0,0,0));
     m_theApp->setHistfilename("");
     m_zoomer->setZoomBase();
+    m_meas->clearCounter(TCT);
+    m_meas->clearCounter(EVCT);
+    m_meas->clearCounter(M1CT);
+    m_meas->clearCounter(M2CT);
+    m_meas->clearCounter(M3CT);
+    m_meas->clearCounter(M4CT);
     emit redraw();
 }
 
@@ -1559,7 +1566,7 @@ void MainWidget::customEvent(QEvent *e)
             			startStopButton->animateClick();
             		break;
         	case CommandEvent::C_CLEAR:
-                        clearMpsd->click();
+                        clearAll->click();
             		break;
         	case CommandEvent::C_PRESELECTION:
             		if(interface)
