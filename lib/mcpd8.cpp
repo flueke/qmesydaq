@@ -24,6 +24,7 @@
 #include "networkdevice.h"
 #include "mpsd8.h"
 #include "mcpd8.h"
+#include "mstd16.h"
 #include "mdefines.h"
 
 /**
@@ -1004,7 +1005,10 @@ quint16 MCPD8::calcChksum(MDP_PACKET &buffer)
 void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 {
 	if (recBuf.deviceId != m_id)
+	{
+		protocol(tr("deviceId : %1 <-> %2").arg(recBuf.deviceId).arg(m_id), ERROR);
 		return;
+	}
 
 	quint16 diff = recBuf.bufferNumber - m_lastBufnum;
 	if(diff > 1 && recBuf.bufferNumber > 0 && m_lastBufnum != 255)
@@ -1192,9 +1196,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 									m_mpsd[c] = new MPSD_8(c, this);
 									break;
 								case MSTD16 :
-									m_mpsd[c] = new MPSD_8(c, this);
+									m_mpsd[c] = new MSTD_16(c, this);
 									break;
 								default :
+									continue;
 									break;
 							}
 						}
