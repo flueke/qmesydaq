@@ -1191,6 +1191,9 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 								case MPSD8 :
 									m_mpsd[c] = new MPSD_8(c, this);
 									break;
+								case MSTD16 :
+									m_mpsd[c] = new MPSD_8(c, this);
+									break;
 								default :
 									break;
 							}
