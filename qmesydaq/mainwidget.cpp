@@ -1510,8 +1510,10 @@ void MainWidget::exportSVG()
             fileName += ".svg";
         QSvgGenerator generator;
         generator.setFileName(fileName);
+#if QT_VERSION >= 0x040500
         generator.setTitle(tr("QMesyDAQ data plot"));
         generator.setDescription(tr("QMesydaq generated data plot"));
+#endif
         generator.setSize(QSize(800, 600));
         m_dataFrame->print(generator);
     }
