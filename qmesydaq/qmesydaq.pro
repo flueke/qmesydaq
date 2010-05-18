@@ -31,6 +31,8 @@ target.path	= /usr/local/bin
 
 QT 		+= network svg
 
+RESOURCES       += qmesydaq.qrc
+
 # Input
 HEADERS 	+= mainwidget.h \
 		mainwindow.h \
@@ -58,9 +60,8 @@ SOURCES 	+= main.cpp \
 		QtInterface.cpp \
 		MultipleLoopApplication.cpp 
 
-RESOURCES 	+= images.qrc
-
-DISTFILES	+= images/mesytec.jpg
+DISTFILES	+= images/mesytec.jpg \
+		images/mesylogo_200x95_yellow.png
 
 contains(INTERFACE, TACO) {
 DEPENDPATH	+= ../interfaces/taco

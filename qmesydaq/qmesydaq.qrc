@@ -1,0 +1,7 @@
+<RCC version="1.0">
+  <qresource>
+    <file alias="logo.png">images/mesylogo_200x95_yellow.png</file>
+    <file>images/mesytec.jpg</file>
+  </qresource>
+</RCC>
+

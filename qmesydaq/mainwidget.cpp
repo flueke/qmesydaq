@@ -250,12 +250,34 @@ MainWidget::~MainWidget()
 void MainWidget::about()
 {
     QString text = tr("<h3>About QMesyDAQ </h3>")
-                   + tr("<p>Copyright (C) 2008 Gregor Montermann <a href=\"mailto:g.montermann@mesytec.com\">&lt;g.montermann@mesytec.com&gt;</a</p>")
-                   + tr("<p>Copyright (C) 2009 Jens Kr&uuml;ger <a href=\"mailto:jens.krueger@frm2.tum.de\">&lt;jens.krueger@frm2.tum.de&gt;</a></p>")
-                   + tr("<p>This program controls the data acquisition and display for the MesyTec MCPD-8 modules the <b>TACO</b> devices</p>")
+		   + tr("<p>Authors</p><ul>")
+                   + tr("<li>Copyright (C) 2008 <a href=\"mailto:g.montermann@mesytec.com\">Gregor Montermann</a</li>")
+                   + tr("<li>Copyright (C) 2009-2010 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
+		   + tr("</ul><p>Contributors</p><ul>")
+		   + tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
+		   + tr("<li><a href=\"mailto:rossa@helmholtz-berlin\">Lutz Rossa</a> CARESS remote control</li>")
+                   + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>")
+#if USE_TACO || USE_CARESS
+		   + tr("<p>It may be remotely controlled by:")
+		   + tr("<ul>")
+#if USE_TACO
+		   + tr("<li><b>TACO</b></li>")
+#endif
+#if USE_CARESS
+		   + tr("<li><b>CARESS</b></li>")
+#endif
+		   + tr("</ul></p>")
+#endif
                    + tr("<p>It is published under GPL (GNU General Public License) <tt><a href=\"http://www.gnu.org/licenses/gpl.html\">http://www.gnu.org/licenses/gpl.html</a></tt></p>")
                    + tr("<p>Version : <b>%1</b></p>").arg(VERSION);
-    QMessageBox::about(this, tr("About QMesyDAQ"), text);
+
+    QMessageBox msgBox(this);
+    msgBox.setText(text);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setWindowTitle(tr("About QMesyDAQ"));
+    msgBox.setIconPixmap(QPixmap(":/logo.png"));
+
+    msgBox.exec();
 }
 
 void MainWidget::init()
