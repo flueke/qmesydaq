@@ -34,7 +34,7 @@
 TACOLoop::TACOLoop(QtInterface *interface)
 	: m_server("qmesydaq")
 	, m_personal("srv0")
-	, m_device("test/qmesydaq/det")
+	, m_device("puma/qmesydaq/det")
 {
 	setObjectName("TACOLoop");
 // testing
