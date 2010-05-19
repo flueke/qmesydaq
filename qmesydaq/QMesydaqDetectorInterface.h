@@ -64,15 +64,15 @@ protected:
 	void customEvent(QEvent *);
 
 protected:
-	double 	m_preSelection;
+	double 			m_preSelection;
 
-	double 	m_value;
+	QList<unsigned long> 	m_values;
 
-	int 	m_status;
+	int 			m_status;
 
-	QString	m_listFileName;
+	QString			m_listFileName;
 
-	QString m_histFileName;
+	QString 		m_histFileName;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H

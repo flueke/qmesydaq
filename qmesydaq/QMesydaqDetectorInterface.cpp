@@ -74,7 +74,9 @@ std::vector<DevULong> QMesyDAQDetectorInterface::read()
 {
         postRequestCommand(CommandEvent::C_READ);
 	std::vector<DevULong> rtn(3,1);
-	rtn.push_back(m_value);
+	rtn[0] = m_values.length();
+	for (QList<unsigned long>::const_iterator it = m_values.begin(); it != m_values.end(); ++it)
+		rtn.push_back(*it);
 	return rtn;
 }
 
@@ -106,7 +108,9 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_eventReceived = true;
                 			break;
                                 case CommandEvent::C_READ:
-					m_value = args[0].toDouble();
+					m_values.clear();
+					for (QList<QVariant>::const_iterator it = args.begin(); it != args.end(); ++it)
+						m_values.push_back((*it).toUInt());
 					m_eventReceived = true;
 					break;
                                 case CommandEvent::C_STATUS:

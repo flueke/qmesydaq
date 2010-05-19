@@ -1614,7 +1614,16 @@ void MainWidget::customEvent(QEvent *e)
             	case CommandEvent::C_READ:
             		if(interface)
 			{
-                		interface->postCommandToInterface(CommandEvent::C_READ,QList<QVariant>() << totalCounts->text().toUInt());
+				QList<QVariant> retVal;
+				Spectrum *tmpSpectrum = m_meas->diffractogram();
+				if (tmpSpectrum->width() > 0)
+				{
+					for (int i = 0; i < tmpSpectrum->width(); ++i)
+						retVal << tmpSpectrum->value(i);
+				}
+				else
+					retVal << m_meas->events();
+                		interface->postCommandToInterface(CommandEvent::C_READ, retVal);
             		}
             		break;
             	case CommandEvent::C_STATUS:

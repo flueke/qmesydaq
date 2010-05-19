@@ -101,6 +101,8 @@ Measurement::~Measurement()
 	m_timeSpectrum = NULL;
 	delete m_diffractogram;
 	m_diffractogram = NULL;
+	delete m_tubeSpectrum;
+	m_tubeSpectrum = NULL;
 }
 
 /*!
@@ -749,8 +751,17 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_diffractogram->incVal(chan);
 				if (m_mesydaq->getMpsdId(mod, id) == MSTD16)
 				{
-					protocol(tr("MSTD-16 event : chan : %1").arg(chan), INFO);
+//					protocol(tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id), INFO);
+					chan <<= 1;
+					chan += (pos >> 9) & 0x1;
+					amp &= 0x1FF;
+//					if (pos >= 480)
+//						++chan;
+					protocol(tr("Put this event into channel : %1").arg(chan), INFO);
+					if (m_tubeSpectrum->width() <= chan)
+						m_tubeSpectrum->resize(chan + 1);
 					m_tubeSpectrum->incVal(chan);
+//					protocol(tr("Value of this channel : %1").arg(m_tubeSpectrum->value(chan)), INFO);
 				}
 			}
 		}
@@ -982,6 +993,8 @@ quint64 Measurement::posEventsInROI()
 
 Spectrum *Measurement::diffractogram()
 {
+	if (m_tubeSpectrum->width() > 0)
+		return m_tubeSpectrum;
 	m_diffractogram->resize(m_posHist->height());
 	for (int i = 0; i < m_diffractogram->width(); ++i)
 	{
