@@ -39,7 +39,7 @@ class Mesydaq2;
 */
 class Measurement : public MesydaqObject
 {
-Q_OBJECT
+	Q_OBJECT
 public:
 	Measurement(Mesydaq2 *mesy, QObject *parent = 0);
 
@@ -204,6 +204,9 @@ private:
 
 	//! 'diffractogram'
 	Spectrum	*m_diffractogram;
+
+	//! spectrum for the MSTD-16, it's only a hack not a solution
+	Spectrum	*m_tubeSpectrum;
 
 	quint64 	m_lastTime;
 

@@ -47,6 +47,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_ampHist(NULL)
 	, m_timeSpectrum(NULL)
 	, m_diffractogram(NULL)
+	, m_tubeSpectrum(NULL)
 	, m_lastTime(0)
 	, m_starttime_msec(0)
 	, m_meastime_msec(0)
@@ -75,6 +76,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	m_posHist = new Histogram(0, mesy->bins());
 	m_timeSpectrum = new Spectrum(mesy->bins());
 	m_diffractogram = new Spectrum(0);
+	m_tubeSpectrum = new Spectrum(0);
 
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
 
@@ -459,6 +461,8 @@ void Measurement::clearAllHist(void)
 		m_timeSpectrum->clear();
 	if (m_diffractogram)
 		m_diffractogram->clear();
+	if (m_tubeSpectrum)
+		m_tubeSpectrum->clear();
 	m_lastTime = 0;
 }
 
@@ -723,7 +727,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
-				if (m_mesydaq->getMpsdId(mod, id) == 1)
+				if (m_mesydaq->getMpsdId(mod, id) == MPSD8OLD)
 				{
 					amp >>= 2;
 					pos >>= 2;
@@ -743,6 +747,11 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_ampHist->incVal(chan, amp);
 				if (m_diffractogram)
 					m_diffractogram->incVal(chan);
+				if (m_mesydaq->getMpsdId(mod, id) == MSTD16)
+				{
+					protocol(tr("MSTD-16 event : chan : %1").arg(chan), INFO);
+					m_tubeSpectrum->incVal(chan);
+				}
 			}
 		}
 		m_triggers += triggers;
