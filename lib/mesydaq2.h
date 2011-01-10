@@ -251,7 +251,7 @@ public slots:
 
 	void allPulserOff();
 
-	void analyzeBuffer(DATA_PACKET &pd);
+	virtual void analyzeBuffer(DATA_PACKET &pd);
 
 signals:
 	/**
