@@ -27,7 +27,7 @@
 
 #include <iostream>
 
-MultipleLoopApplication::MultipleLoopApplication(int argc, char**argv, LoopObject *loop)
+MultipleLoopApplication::MultipleLoopApplication(int &argc, char**argv, LoopObject *loop)
 	: QApplication(argc, argv)
 	, m_loop(loop)
 	, m_interface(NULL)
