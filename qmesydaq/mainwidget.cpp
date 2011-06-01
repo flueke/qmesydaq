@@ -769,7 +769,7 @@ void MainWidget::displayMpsdSlot(int id)
         	break;
     }
     // mode
-    if(m_theApp->getMode(mod, id))
+    if (m_theApp->getMode(mod, id))
         amp->setChecked(true);
     else
         Ui_Mesydaq2MainWidget::pos->setChecked(true);
