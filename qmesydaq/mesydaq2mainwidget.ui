@@ -1807,7 +1807,7 @@ parameters</string>
           <item row="1" column="2">
            <widget class="QLineEdit" name="mcpdIPAddress">
             <property name="inputMask">
-             <string>000.000.000.000; </string>
+             <string>000.000.000.000;0</string>
             </property>
             <property name="text">
              <string>192.168.168.121</string>
@@ -1817,7 +1817,7 @@ parameters</string>
           <item row="2" column="2">
            <widget class="QLineEdit" name="dataIPAddress">
             <property name="inputMask">
-             <string>000.000.000.000; </string>
+             <string>000.000.000.000;0</string>
             </property>
             <property name="text">
              <string>192.168.168.5</string>
@@ -1827,7 +1827,7 @@ parameters</string>
           <item row="3" column="2">
            <widget class="QLineEdit" name="cmdIPAddress">
             <property name="inputMask">
-             <string>000.000.000.000; </string>
+             <string>000.000.000.000;0</string>
             </property>
             <property name="text">
              <string>192.168.168.5</string>
@@ -2217,18 +2217,12 @@ parameters</string>
               <property name="checked">
                <bool>true</bool>
               </property>
-              <property name="buttonGroupId" stdset="0">
-               <number>0</number>
-              </property>
              </widget>
             </item>
             <item row="1" column="0">
              <widget class="QRadioButton" name="amp">
               <property name="text">
                <string>Amplitude</string>
-              </property>
-              <property name="buttonGroupId" stdset="0">
-               <number>1</number>
               </property>
              </widget>
             </item>
@@ -2318,9 +2312,6 @@ parameters</string>
                    <property name="checked">
                     <bool>false</bool>
                    </property>
-                   <property name="buttonGroupId" stdset="0">
-                    <number>1</number>
-                   </property>
                   </widget>
                  </item>
                  <item>
@@ -2362,18 +2353,12 @@ parameters</string>
                  <property name="checked">
                   <bool>true</bool>
                  </property>
-                 <property name="buttonGroupId" stdset="0">
-                  <number>2</number>
-                 </property>
                 </widget>
                </item>
                <item row="0" column="2">
                 <widget class="QRadioButton" name="pulsRight">
                  <property name="text">
                   <string>&amp;right</string>
-                 </property>
-                 <property name="buttonGroupId" stdset="0">
-                  <number>1</number>
                  </property>
                 </widget>
                </item>
