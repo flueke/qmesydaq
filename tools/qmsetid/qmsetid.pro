@@ -16,3 +16,8 @@ INCLUDEPATH 	+= ../../lib .
 SOURCES 	+= main.cpp
 
 LIBS        	+= -L../../lib -lmesydaq
+
+INSTALLS        = target
+
+target.path     = /usr/local/bin
+

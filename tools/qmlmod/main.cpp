@@ -13,12 +13,22 @@ int main(int argc, char **argv)
 
 	QCoreApplication app(argc, argv);
 
-	QString ip = "192.168.168.122";
+	QString ip = "192.168.168.121";
+	int	id = 0;
 
 	if (argc > 1)
+	{
+		if (QString(argv[1]) == "-h")
+		{
+			qDebug() << argv[0] << ": [ipadress [default=192.168.168.121]] [module id [default=0]]";
+			return 1;
+		}
 		ip = argv[1];
+	}
+	if (argc > 2)
+		id = QString(argv[2]).toInt();
 
-	MCPD8 *m = new MCPD8(0, NULL, ip);
+	MCPD8 *m = new MCPD8(id, NULL, ip);
 	qDebug() << QObject::tr("%2 : MCPD : %1").arg(m->version()).arg(ip);
 
 	for (int i = 0; i < 8; ++i)
