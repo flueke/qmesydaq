@@ -43,7 +43,8 @@ HEADERS 	+= mainwidget.h \
 		QMesydaqDetectorInterface.h \
 		CommandEvent.h \
 		QtInterface.h \
-		MultipleLoopApplication.h 
+		MultipleLoopApplication.h \
+		ipaddresswidget.h
 
 FORMS 		+= mesydaq2mainwidget.ui \
 		mesydaq2mainwindow.ui
@@ -58,7 +59,8 @@ SOURCES 	+= main.cpp \
 		QMesydaqDetectorInterface.cpp \
 		CommandEvent.cpp \
 		QtInterface.cpp \
-		MultipleLoopApplication.cpp 
+		MultipleLoopApplication.cpp \
+		ipaddresswidget.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png

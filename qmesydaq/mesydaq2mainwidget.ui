@@ -1805,7 +1805,7 @@ parameters</string>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QLineEdit" name="mcpdIPAddress">
+           <widget class="IPAddressWidget" name="mcpdIPAddress">
             <property name="inputMask">
              <string>000.000.000.000;0</string>
             </property>
@@ -1815,7 +1815,7 @@ parameters</string>
            </widget>
           </item>
           <item row="2" column="2">
-           <widget class="QLineEdit" name="dataIPAddress">
+           <widget class="IPAddressWidget" name="dataIPAddress">
             <property name="inputMask">
              <string>000.000.000.000;0</string>
             </property>
@@ -1825,7 +1825,7 @@ parameters</string>
            </widget>
           </item>
           <item row="3" column="2">
-           <widget class="QLineEdit" name="cmdIPAddress">
+           <widget class="IPAddressWidget" name="cmdIPAddress">
             <property name="inputMask">
              <string>000.000.000.000;0</string>
             </property>
@@ -2988,6 +2988,11 @@ parameters</string>
    <class>MCPDSpinBox</class>
    <extends>QSpinBox</extends>
    <header>MCPDSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>IPAddressWidget</class>
+   <extends>QLineEdit</extends>
+   <header>ipaddresswidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

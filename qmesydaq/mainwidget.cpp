@@ -130,19 +130,14 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     labelEventSingle->setHidden(true);
     eventSingle->setHidden(true);
 
-    QRegExp ex("(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.){3}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
-    mcpdIPAddress->setInputMask("000.000.000.000;0");
-    mcpdIPAddress->setValidator(new QRegExpValidator(ex, mcpdIPAddress));
-    dataIPAddress->setValidator(new QRegExpValidator(ex, dataIPAddress));
     dataIPAddress->setText("192.168.168.005");
-    cmdIPAddress->setValidator(new QRegExpValidator(ex, cmdIPAddress));
     cmdIPAddress->setText("192.168.168.005");
 
     m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channels"));
     m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
     m_dataFrame->setAxisTitle(QwtPlot::yRight, tr("intensity"));
     m_dataFrame->enableAxis(QwtPlot::yRight, false);
-    //	m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
+//  m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
     m_dataFrame->setAutoReplot(false);
 
