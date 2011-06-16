@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QTimer>
 #include <QDebug>
+#include <QStringList>
 
 #include <iostream>
 #include <mcpd8.h>
@@ -9,38 +10,46 @@
 
 int main(int argc, char **argv)
 {
-	DEBUGLEVEL = NOTICE;
+	DEBUGLEVEL = FATAL /* NOTICE */;
 
 	QCoreApplication app(argc, argv);
 
 	QString toIP = "192.168.168.121";
-	quint16	id = 0;
-	quint16	fromId = 0;
+	qint16	id = 1;
+	qint16	fromId = 0;
+	qint16	idCount = 0;
+	
+	QStringList args = app.arguments();
+	if (args.size() > 1)
+	{
+		for (int i = 1; i < args.size(); ++i)
+			if (args.at(i) == "-h")
+			{
+				qDebug() << argv[0] << ": [ipadress [default=192.168.168.121]] [from module id [default=0]] [module id [default=1]]";
+				return 1;
+			}
+			else if (args.at(i).count('.'))	// may be ip address
+				toIP = args.at(i);
+			else
+			{
+				if (!idCount)
+					fromId = args.at(i).toUInt();
+				else
+					id = args.at(i).toInt();
+				++idCount;
+			}
+	}
 
-	if (argc > 1)
+	if (idCount == 1)
 	{
-		if (QString(argv[1]) == "-h")
-		{
-			qDebug() << argv[0] << ": [ipadress [default=192.168.168.121]] [from module id [default=0]] [module id [default=0]]";
-			return 1;
-		}
-		id = QString(argv[1]).toUInt();
-	}
-	if (argc > 2)
-	{
-		toIP = argv[1];
-		id = QString(argv[2]).toUInt();
-	}
-	if (argc > 3)
-	{
-		toIP = argv[1];
-		fromId = QString(argv[2]).toUInt();
-		id = QString(argv[3]).toUInt();
+		id = fromId;
+		fromId = 0;
 	}
 
 	MCPD8 *m = new MCPD8(fromId, NULL, toIP);
 
-	qDebug() << QObject::tr("module 2 : %1").arg(m->version());
+	qDebug() << QObject::tr("%2 MCPD : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(fromId);
+	qDebug() << QObject::tr("new id : %1").arg(id);
 
 	m->setId(id);
 
