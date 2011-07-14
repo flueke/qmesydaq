@@ -48,7 +48,7 @@ QObject *MultipleLoopApplication::getLoopEventReceiver()
 
 void MultipleLoopApplication::setLoopObject(LoopObject *loop)
 {
-	if(m_loop)
+	if (m_loop)
 		m_loop->terminate();
 	m_loop = loop;
 }
@@ -60,9 +60,13 @@ LoopObject *MultipleLoopApplication::getLoopObject()
 
 int MultipleLoopApplication::exec()
 {
+	int iResult;
 	if (m_loop)
 		m_loop->start();
-	return QApplication::exec();
+	iResult=QApplication::exec();
+	if (m_interface)
+		m_interface->postCommandToInterface(CommandEvent::C_QUIT);
+	return iResult;
 }
 
 void MultipleLoopApplication::setQtInterface(QtInterface *interface)
@@ -74,4 +78,3 @@ QtInterface *MultipleLoopApplication::getQtInterface()
 {
 	return m_interface;
 }
-

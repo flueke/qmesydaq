@@ -24,10 +24,12 @@
 
 #include "QApplication"
 #include"LoopObject.h"
+#include <QDateTime>
 
 QtInterface::QtInterface(QObject *receiver, QObject *parent)
     : QObject(parent)
     , m_receiver(receiver)
+    , m_eventReceived(false)
 {
 }
 
@@ -59,26 +61,33 @@ void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
 
 void QtInterface::waitForEvent()
 {
-        m_eventReceived = false;
-
 	LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
-
-	if(loop){
-        	while(true)
-        	{
-                	if (m_eventReceived)
-                        	break;
-
-                	loop->pSleep(1);
-        	}
+	QTime tStart=QTime::currentTime();
+	for (;;)
+	{
+		if (m_eventReceived)
+		{
+			m_eventReceived = false;
+			break;
+		}
+		if (loop)
+			loop->pSleep(1);
+		else
+		{
+			int tDiff=tStart.msecsTo(QTime::currentTime());
+			if (tDiff<0) tDiff+=86400000;
+			if (tDiff>5000)
+				break;
+			usleep(1000);
+		}
 	}
 }
 
 void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
 {
         m_eventReceived = false;
-        postCommand(cmd, args);
-        waitForEvent();
+	postCommand(cmd, args);
+	waitForEvent();
 }
 
 void QtInterface::postCommandToInterface(CommandEvent::Command cmd, QList<QVariant> args)

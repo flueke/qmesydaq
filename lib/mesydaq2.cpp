@@ -522,7 +522,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 	m_listPath = settings.value("MESYDAQ/listfilePath", "/home").toString();
 	DEBUGLEVEL = settings.value("MESYDAQ/debugLevel", NOTICE).toInt();
 
-	int nMcpd = settings.value("MCPD-8/number", 0).toInt();
+        int nMcpd = settings.value("MCPD-8/number", 0).toInt();
 	
 	for (int mod = 0; mod < nMcpd; ++mod)
 	{

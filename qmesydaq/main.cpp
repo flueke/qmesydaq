@@ -27,6 +27,9 @@
 #if USE_TACO
 #	include "TACOLoop.h"
 #endif
+#if USE_CARESS
+#	include "CARESSLoop.h"
+#endif
 
 #include "LoopObject.h"
 #include "QMesydaqDetectorInterface.h"
@@ -39,17 +42,15 @@ int main(int argc, char **argv)
 
         QStringList argList = app.arguments();
 
-        app.setApplicationVersion(VERSION);
-
         LoopObject *loop = NULL;
 
 #if USE_TACO
-	for (int i = 0; i < argList.size(); ++i)
+        for (int i = 0; i < argList.size(); ++i)
 	{
 		if (argList[i].startsWith("-n") && (++i < argList.size()))
 			setenv("NETHOST",  argList[i].toStdString().c_str(), 1); 
 	}
-	if (!getenv("NETHOST"))
+        if (!getenv("NETHOST"))
 	{
 		qDebug() << "Environment variable \"NETHOST\" is not set";
 		qDebug() << "You may set it explicitly in the command shell";
@@ -57,6 +58,9 @@ int main(int argc, char **argv)
 	}
 	else 
 		loop = new TACOLoop;
+#endif
+#if USE_CARESS
+	loop = new CARESSLoop(argList);
 #endif
         app.setStyle(new QPlastiqueStyle());
 
@@ -87,4 +91,3 @@ int main(int argc, char **argv)
 
 	return app.exec();
 }
-

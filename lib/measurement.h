@@ -238,48 +238,4 @@ private:
 	quint64		m_triggers;
 };
 
-#if CARESS
-
-class CARESSMeasurement : public Measurement
-{
-Q_OBJECT
-public:
-	CARESSMeasurement(Mesydaq2 *mesy, QObject *parent);
-
-	~CARESSMeasurement(){}
-
-	/*!
-	    \fn Measurement::setRunnumber(quint32 number)
-	 */
-	void	setRunnumber(quint32 number) {m_runNumber = number;}
-
-	/*!
-	    \fn Measurement::getRun()
-	 */
-	quint32	getRun() {return m_runNumber;}
-
-	void	setStep(quint32 step) {m_step = step;}
-
-	void	setHistSize(quint32 h, quint32 w)
-	{
-		m_histWidth = w;
-		m_histHeight = h;
-	}
-
-	quint32	getHistHeight() {return m_histHeight;}
-
-	quint32	getHistWidth() {return m_histWidth;}
-	
-private:
-	//! CARESS 
-	quint32 	m_runNumber;
-	quint32 	m_histHeight;
-	quint32 	m_histWidth;
-	quint32 	m_step;
-
-	QRect		m_roi;
-};
-
-#endif
-
 #endif

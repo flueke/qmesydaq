@@ -37,9 +37,16 @@ public:
                 C_RESUME,
                 C_SET_PRESELECTION,
                 C_PRESELECTION,
-                C_READ,
-                C_STATUS
-	};
+                C_READ_DIFFRACTOGRAM,
+                C_STATUS,
+		C_READ_HISTOGRAM_SIZE,
+		C_READ_HISTOGRAM,
+		C_READ_SPECTROGRAM,
+		C_READ_COUNTER,
+		C_SELECT_COUNTER,
+		C_SET_LISTMODE,
+		C_QUIT
+        };
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());
 

@@ -23,8 +23,9 @@
 #include "networkdevice.h"
 #include "mdefines.h"
 
+QMutex			NetworkDevice::m_mutex(QMutex::Recursive);
 QList<NetworkDevice*> 	NetworkDevice::m_networks;
-QList<int>			NetworkDevice::m_inUse;
+QList<int>		NetworkDevice::m_inUse;
 
 // NetworkDevice	*NetworkDevice::m_instance = NULL;
 
@@ -42,18 +43,21 @@ QList<int>			NetworkDevice::m_inUse;
 NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 port)
 {
 	NetworkDevice *tmp;
-	for (int i = 0; i < m_networks.size(); ++i) 
+	m_mutex.lock();
+	for (int i = 0; i < m_networks.size(); ++i)
 	{
 		tmp = m_networks.at(i);
 		if (tmp->ip() == source || tmp->port() == port)
 		{
 			m_inUse[i]++;
+			m_mutex.unlock();
 			return tmp;
 		}
 	}
 	tmp = new NetworkDevice(parent, source, port);
 	m_networks.push_back(tmp);
 	m_inUse.push_back(1);
+	m_mutex.unlock();
 	return tmp;
 }
 
@@ -68,7 +72,8 @@ NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 po
 void NetworkDevice::destroy(NetworkDevice *nd)
 {
 	NetworkDevice *tmp;
-	for (int i = 0; i < m_networks.size(); ++i) 
+	m_mutex.lock();
+	for (int i = 0; i < m_networks.size(); ++i)
 	{
 		tmp = m_networks.at(i);
 		if (tmp->ip() == nd->ip() || tmp->port() == nd->port())
@@ -79,10 +84,11 @@ void NetworkDevice::destroy(NetworkDevice *nd)
 				m_inUse.takeAt(i);
 				tmp = m_networks.takeAt(i);
 				delete tmp;
-				return;
+				break;
 			}
 		}
 	}
+	m_mutex.unlock();
 }
 
 /*!

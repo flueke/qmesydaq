@@ -87,7 +87,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     init();
 
-    versionLabel->setText("QMesyDAQ " + QCoreApplication::applicationVersion() + "\n" __DATE__);
+    versionLabel->setText("QMesyDAQ " + QString(VERSION) + "\n" __DATE__);
 
     connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
     connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
@@ -107,6 +107,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(draw()));
     connect(dispMpsd, SIGNAL(valueChanged(int)), this, SLOT(draw()));
     connect(dispAllChannels, SIGNAL(toggled(bool)), this, SLOT(draw()));
+    connect(dispAllPos, SIGNAL(toggled(bool)), this, SLOT(draw()));
+    connect(dispAllAmpl, SIGNAL(toggled(bool)), this, SLOT(draw()));
 
     //	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 
@@ -253,7 +255,7 @@ void MainWidget::about()
                    + tr("<li>Copyright (C) 2009-2010 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
 		   + tr("</ul><p>Contributors</p><ul>")
 		   + tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
-		   + tr("<li><a href=\"mailto:rossa@helmholtz-berlin\">Lutz Rossa</a> CARESS remote control</li>")
+                   + tr("<li><a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a> CARESS remote control</li>")
                    + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>")
 #if USE_TACO || USE_CARESS
 		   + tr("<p>It may be remotely controlled by:")
@@ -281,9 +283,9 @@ void MainWidget::about()
 void MainWidget::init()
 {
     QList<int> mcpdList = m_theApp->mcpdId();
-    int mcpd = 0;
-    if (mcpdList.size())
-        mcpd = mcpdList[0];
+//  int mcpd = 0;
+//  if (mcpdList.size())
+//      mcpd = mcpdList[0];
     //	deviceId->setMCPDList(mcpdList);
     dispMcpd->setMCPDList(mcpdList);
     devid->setMCPDList(mcpdList);
@@ -359,7 +361,7 @@ void MainWidget::startStopSlot(bool checked)
         startStopButton->setText("Stop");
         // set device id to 0 -> will be filled by mesydaq for master
         m_meas->start();
-        m_dispTimer = startTimer(1000);
+	m_dispTimer = startTimer(500);
     }
     else
     {
@@ -575,17 +577,17 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
     //->
     QString str;
     quint64 val;
-    ulong nsec, sec, min, hr;
+    ulong /*nsec,*/ sec, min, hr;
     // calculate raw seconds
     if(nano)
     {
         val = timeval / 10000000;
-        nsec = timeval - (10000000 * val);
+//      nsec = timeval - (10000000 * val);
     }
     else
     {
         val = timeval / 1000;
-        nsec = timeval - (1000 * val);
+//      nsec = timeval - (1000 * val);
     }
     //	qDebug("%lu %lu %lu", timeval, val, nsec);
     // hours = val / 3600 (s/h)
@@ -1193,9 +1195,6 @@ void MainWidget::updatePresets(void)
     m2PresetButton->setChecked(m_meas->isMaster(M2CT));
     m1PresetButton->setChecked(m_meas->isMaster(M3CT));
     m2PresetButton->setChecked(m_meas->isMaster(M4CT));
-
-    // Caress values
-    updateCaress();
 }
 
 /*!
@@ -1265,20 +1264,6 @@ void MainWidget::m4ResetSlot()
 }
 
 /*!
-    \fn MainWidget::updateCaress(void)
-    \todo remove the CARESS specific part
- */
-void MainWidget::updateCaress(void)
-{
-#if USE_CARESS
-#warning TODO remove the CARESS specific part
-    caressWidth->setText(tr("%1").arg(m_meas->getCarWidth()));
-    caressHeight->setText(tr("%1").arg(m_meas->getCarHeight()));
-    caressRun->setText(tr("%1").arg(m_meas->getRun()));
-#endif
-}
-
-/*!
     \fn MainWidget::saveConfigSlot(void)
 
     callback to save configuration
@@ -1302,7 +1287,7 @@ void MainWidget::setHistogramMode(bool histo)
         m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, true);
         m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
 	
-        QRectF tmpRect = m_zoomer->zoomRect();
+//      QRectF tmpRect = m_zoomer->zoomRect();
 	
         m_diffractogram->detach();
         for (int i = 0; i < 8; ++i)
@@ -1569,7 +1554,7 @@ void MainWidget::customEvent(QEvent *e)
         QList<QVariant> args = event->getArgs();
 
         MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-        QMesyDAQDetectorInterface *interface;
+        QMesyDAQDetectorInterface *interface = NULL;
         if(app)
 	{
             interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
@@ -1609,7 +1594,7 @@ void MainWidget::customEvent(QEvent *e)
                 		interface->postCommandToInterface(CommandEvent::C_PRESELECTION,QList<QVariant>() << value);
             		}
             		break;
-            	case CommandEvent::C_READ:
+		case CommandEvent::C_READ_DIFFRACTOGRAM:
             		if(interface)
 			{
 				QList<QVariant> retVal;
@@ -1621,10 +1606,67 @@ void MainWidget::customEvent(QEvent *e)
 				}
 				else
 					retVal << m_meas->events();
-                		interface->postCommandToInterface(CommandEvent::C_READ, retVal);
+				interface->postCommandToInterface(CommandEvent::C_READ_DIFFRACTOGRAM, retVal);
             		}
             		break;
-            	case CommandEvent::C_STATUS:
+		case CommandEvent::C_READ_HISTOGRAM_SIZE:
+			if (interface)
+			{
+			  QList<QVariant> retVal;
+			  Histogram *tmpHistogram= m_meas->posHist();
+			  retVal << tmpHistogram->height(); // width  (should be equal to number of MPSD inputs)
+			  retVal << (m_width+1);            // height (should be 960)
+			  interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM_SIZE, retVal);
+			}
+			break;
+		case CommandEvent::C_READ_HISTOGRAM:
+			if(interface)
+			{
+				QList<QVariant> retVal;
+				QList<quint64>* tmpData=new QList<quint64>();
+				Histogram *tmpHistogram=m_meas->posHist();
+				if (tmpHistogram->height()>0 && tmpHistogram->width()>0)
+				{
+					// CARESS has it's x=0:y=0 position at top left corner
+					for (int y=tmpHistogram->width()-1; y>=0; --y)
+						for (int x=0; x<tmpHistogram->height(); ++x)
+							tmpData->append(tmpHistogram->value(x,y));
+				}
+				else
+					tmpData->append(m_meas->events());
+//! \todo hack to transfer a QList<quint64> to QtInterface without to copy it
+#warning TODO hack to transfer a QList<quint64> to QtInterface without to copy it
+				retVal << ((quint64)tmpData);
+				interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM, retVal);
+			}
+			break;
+		case CommandEvent::C_READ_SPECTROGRAM:
+			if(interface)
+			{
+				QList<QVariant> retVal;
+				Histogram *tmpHistogram= m_meas->posHist();
+				Spectrum* tmpSpectrum=NULL;
+				int i=-1;
+				if (!args.isEmpty())
+				{
+					i=args[0].toInt();
+					if (i<0 || i>tmpHistogram->height()) i=-1;
+				}
+				if (i>=0)
+					tmpSpectrum=tmpHistogram->spectrum(i);
+				else
+					tmpSpectrum=tmpHistogram->spectrum();
+				if (tmpSpectrum->width() > 0)
+				{
+					for (int x = 0; x < tmpSpectrum->width(); ++x)
+						retVal << tmpSpectrum->value(x);
+				}
+				else
+					retVal << m_meas->events();
+				interface->postCommandToInterface(CommandEvent::C_READ_SPECTROGRAM, retVal);
+			}
+			break;
+		case CommandEvent::C_STATUS:
             		if(interface)
 			{
 				int i = startStopButton->isChecked();
@@ -1639,20 +1681,69 @@ void MainWidget::customEvent(QEvent *e)
 	{
             	switch(cmd)
 		{
-            		case CommandEvent::C_SET_PRESELECTION:
+			case CommandEvent::C_READ_COUNTER:
+				if (interface)
+				{
+					double value(0);
+					int id=args[0].toInt();
+					switch (id)
+					{
+						case M1CT: value=monitor1->text().toDouble(); break;
+						case M2CT: value=monitor2->text().toDouble(); break;
+						case M3CT: value=monitor3->text().toDouble(); break;
+						case M4CT: value=monitor4->text().toDouble(); break;
+						case EVCT: value=totalCounts->text().toDouble(); break;
+						case TCT:  value=tSecsText->text().toDouble(); break;
+					}
+					interface->postCommandToInterface(CommandEvent::C_READ_COUNTER,QList<QVariant>() << value);
+				}
+				break;
+			case CommandEvent::C_SELECT_COUNTER:
+				switch (args[0].toInt())
+				{
+					case M1CT: m1PresetButton->setChecked(true); break;
+					case M2CT: m2PresetButton->setChecked(true); break;
+					case M3CT: m3PresetButton->setChecked(true); break;
+					case M4CT: m4PresetButton->setChecked(true); break;
+					case EVCT: ePresetButton->setChecked(true);  break;
+					case TCT:  tPresetButton->setChecked(true);  break;
+				}
+				break;
+			case CommandEvent::C_SET_PRESELECTION:
 				if (tPresetButton->isChecked())
-					tPreset->setValue(args[0].toDouble());
+				{
+				  tPreset->setValue(args[0].toDouble());
+				  m_meas->setPreset(TCT, tPreset->value() * 1000, true);
+				}
 				else if (ePresetButton->isChecked())
-					ePreset->setValue(args[0].toInt());
+				{
+				  ePreset->setValue(args[0].toInt());
+				  m_meas->setPreset(EVCT, ePreset->value(), true);
+				}
 				else if (m1PresetButton->isChecked())
-					m1Preset->setValue(args[0].toInt());
+				{
+				  m1Preset->setValue(args[0].toInt());
+				  m_meas->setPreset(M1CT, m1Preset->value(), true);
+				}
 				else if (m2PresetButton->isChecked())
-					m2Preset->setValue(args[0].toInt());
+				{
+				  m2Preset->setValue(args[0].toInt());
+				  m_meas->setPreset(M2CT, m2Preset->value(), true);
+				}
 				else if (m3PresetButton->isChecked())
-					m3Preset->setValue(args[0].toInt());
+				{
+				  m3Preset->setValue(args[0].toInt());
+				  m_meas->setPreset(M3CT, m3Preset->value(), true);
+				}
 				else if (m4PresetButton->isChecked())
-					m4Preset->setValue(args[0].toInt());
-                		break;
+				{
+				  m4Preset->setValue(args[0].toInt());
+				  m_meas->setPreset(M4CT, m4Preset->value(), true);
+				}
+				break;
+			case CommandEvent::C_SET_LISTMODE:
+				acquireFile->setChecked(args[0].toBool());
+				break;
 			default:
 				break;
             	}

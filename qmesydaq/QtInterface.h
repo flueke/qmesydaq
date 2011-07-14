@@ -44,7 +44,7 @@ protected:
     void waitForEvent();
 
     QObject *m_receiver;
-    bool 	m_eventReceived;
+    bool     m_eventReceived;
 };
 
 #endif // QTINTERFACE_H

@@ -23,8 +23,8 @@
 #ifndef MESYDAQ_DETECTOR_INTERFACE_H
 #define MESYDAQ_DETECTOR_INTERFACE_H
 
+#include <QMutex>
 #include "QtInterface.h"
-
 #include "CommandEvent.h"
 
 #if SIZEOF_UNSIGNED_LONG == 4
@@ -43,18 +43,27 @@ class QMesyDAQDetectorInterface : public QtInterface
 public:
         QMesyDAQDetectorInterface(QObject *receiver = 0, QObject *parent = 0);
 
+	bool doLoop() const { return m_bDoLoop; }
+
 	void start();
 	void stop();
 	void clear();
 	void resume();
+	double readCounter(int id);
+	void selectCounter(int id);
 	void setPreSelection(double);
 	double preSelection();
-	std::vector<DevULong> read();
-	int status();
+        std::vector<DevULong> read();
+	void readHistogramSize(quint16& width, quint16& height);
+	QList<quint64> readHistogram();
+	QList<quint64> readDiffractogram();
+	QList<quint64> readSpectrogram(int iSpectrogram=-1);
+        int status();
 
         QString getListFileName(void) const {return m_listFileName;} 
 
         void setListFileName(const QString name);
+	void setListMode(bool bEnable);
 
         QString getHistogramFileName(void) const {return m_histFileName;}
 
@@ -64,9 +73,15 @@ protected:
 	void customEvent(QEvent *);
 
 protected:
-	double 			m_preSelection;
+	QMutex			m_mutex;
 
-	QList<unsigned long> 	m_values;
+	bool                    m_bDoLoop;
+	double 			m_preSelection;
+	double 			m_counter;
+
+	quint16			m_width;
+	quint16			m_height;
+	QList<quint64>		m_values;
 
 	int 			m_status;
 

@@ -356,7 +356,7 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 		{
     			// clear all other master flags
     			for (quint8 c = 0; c < 8;c++)
-    				m_counter[cNum]->setMaster(false);
+				m_counter[c]->setMaster(false);
     			// set new master
     			m_counter[cNum]->setMaster(true);
     		}

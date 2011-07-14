@@ -70,3 +70,9 @@ DEPENDPATH	+= ../interfaces/taco
 INCLUDEPATH	+= ../interfaces/taco
 LIBS		= -L ../interfaces/taco -ltacoInterface $${LIBS} $${TACOLIBS}
 }
+
+contains(INTERFACE, CARESS) {
+DEPENDPATH	+= ../interfaces/caress
+INCLUDEPATH	+= ../interfaces/caress
+LIBS		= -L../interfaces/caress -lcaressInterface $${LIBS}
+}

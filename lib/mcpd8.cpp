@@ -81,8 +81,9 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 MCPD8::~MCPD8()
 {
 	m_mpsd.clear();
-	NetworkDevice::destroy(m_network);
+	NetworkDevice* network=m_network;
 	m_network = NULL;
+	NetworkDevice::destroy(network);
 	delete m_commTimer;
 	m_commTimer = NULL;
 }

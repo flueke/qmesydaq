@@ -94,23 +94,6 @@
 #define READPERIREG 		52
 #define WRITEPERIREG 		53
 
-// CARESS cmds
-#define CAR_INIT		1
-#define CAR_RELEASE		2
-#define CAR_START		3
-#define CAR_STOP		4
-#define CAR_DRIVE		5
-#define CAR_LOAD		6
-#define CAR_LOADBLOCK		7
-#define CAR_READ		8
-#define CAR_READBLOCKP		9
-#define CAR_READBLOCKM		10
-
-// CARESS sub cmds
-#define CAR_MASTER		1
-#define CAR_SLAVE		2
-#define CAR_RESET		3
-
 // histogram sizes
 // 128 channels + 1 sum per MCPD
 // 64 channels + 1 sum per MCPD for position

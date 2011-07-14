@@ -22,6 +22,7 @@
 
 #include <QHostAddress>
 #include <QList>
+#include <QMutex>
 
 #include "mesydaqobject.h"
 #include "structures.h"
@@ -75,6 +76,8 @@ private:
 	void destroySocket(void);
 
 private:
+	static QMutex		m_mutex;
+
 	static QList<NetworkDevice*> m_networks;
 
 	static QList<int>	m_inUse;

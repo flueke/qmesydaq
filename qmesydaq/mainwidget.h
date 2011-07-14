@@ -78,7 +78,6 @@ private:
 	void 	processDispData();
 	void 	drawOpData();
 	void 	updatePresets(void);
-	void 	updateCaress(void);
 
 private slots:
 	void setModeSlot(bool);

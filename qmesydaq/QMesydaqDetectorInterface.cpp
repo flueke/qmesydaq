@@ -34,9 +34,11 @@
 
 QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject *parent)
     	: QtInterface(receiver, parent)
+	, m_bDoLoop(true)
+	, m_width(0)
+	, m_height(0)
 	, m_status(0)
 {
-    //
 }
 
 void QMesyDAQDetectorInterface::start()
@@ -59,6 +61,21 @@ void QMesyDAQDetectorInterface::resume()
         postCommand(CommandEvent::C_RESUME);
 }
 
+double QMesyDAQDetectorInterface::readCounter(int id)
+{
+	double r(0.0);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_READ_COUNTER, QList<QVariant>() << id);
+	r = m_counter;
+	m_mutex.unlock();
+	return r;
+}
+
+void QMesyDAQDetectorInterface::selectCounter(int id)
+{
+	postCommand(CommandEvent::C_SELECT_COUNTER,QList<QVariant>() << id);
+}
+
 void QMesyDAQDetectorInterface::setPreSelection(double value)
 {
         postCommand(CommandEvent::C_SET_PRESELECTION,QList<QVariant>() << value);
@@ -66,24 +83,91 @@ void QMesyDAQDetectorInterface::setPreSelection(double value)
 
 double QMesyDAQDetectorInterface::preSelection()
 {
-        postRequestCommand(CommandEvent::C_PRESELECTION);
-	return m_preSelection;
+	double r(0.0);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_PRESELECTION);
+	r=m_preSelection;
+	m_mutex.unlock();
+	return r;
 }
 
 std::vector<DevULong> QMesyDAQDetectorInterface::read()
 {
-        postRequestCommand(CommandEvent::C_READ);
 	std::vector<DevULong> rtn(3,1);
-	rtn[0] = m_values.length();
-	for (QList<unsigned long>::const_iterator it = m_values.begin(); it != m_values.end(); ++it)
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_READ_DIFFRACTOGRAM);
+        rtn[0] = m_values.count();
+	for (QList<quint64>::const_iterator it = m_values.begin(); it != m_values.end(); ++it)
 		rtn.push_back(*it);
+	m_mutex.unlock();
 	return rtn;
+}
+
+void QMesyDAQDetectorInterface::readHistogramSize(quint16& width, quint16& height)
+{
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_READ_HISTOGRAM_SIZE);
+	width=m_width;
+	height=m_height;
+	m_mutex.unlock();
+}
+
+QList<quint64> QMesyDAQDetectorInterface::readHistogram()
+{
+	QList<quint64> r;
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_READ_HISTOGRAM);
+	r=m_values;
+	m_mutex.unlock();
+	return r;
+}
+
+QList<quint64> QMesyDAQDetectorInterface::readDiffractogram()
+{
+	QList<quint64> r;
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_READ_DIFFRACTOGRAM);
+	r=m_values;
+	m_mutex.unlock();
+	return r;
+}
+
+QList<quint64> QMesyDAQDetectorInterface::readSpectrogram(int iSpectrogram/*=-1*/)
+{
+	QList<quint64> r;
+	m_mutex.lock();
+	if (iSpectrogram>=0)
+		postRequestCommand(CommandEvent::C_READ_SPECTROGRAM, QList<QVariant>() << iSpectrogram);
+	else
+		postRequestCommand(CommandEvent::C_READ_SPECTROGRAM);
+	r=m_values;
+	m_mutex.unlock();
+	return r;
 }
 
 int QMesyDAQDetectorInterface::status()
 {
-        postRequestCommand(CommandEvent::C_STATUS);
-	return m_status;
+	int r(0);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_STATUS);
+	r=m_status;
+	m_mutex.unlock();
+	return r;
+}
+
+void QMesyDAQDetectorInterface::setHistogramFileName(const QString name)
+{
+	m_histFileName = name;
+}
+
+void QMesyDAQDetectorInterface::setListFileName(const QString name)
+{
+	m_listFileName = name;
+}
+
+void QMesyDAQDetectorInterface::setListMode(bool bEnable)
+{
+	postCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable);
 }
 
 void QMesyDAQDetectorInterface::customEvent(QEvent *e)
@@ -106,32 +190,58 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
                                 case CommandEvent::C_PRESELECTION:
 					m_preSelection = args[0].toDouble();
 					m_eventReceived = true;
-                			break;
-                                case CommandEvent::C_READ:
+					break;
+				case CommandEvent::C_READ_DIFFRACTOGRAM:
+				case CommandEvent::C_READ_SPECTROGRAM:
 					m_values.clear();
 					for (QList<QVariant>::const_iterator it = args.begin(); it != args.end(); ++it)
-						m_values.push_back((*it).toUInt());
+						m_values.push_back(it->toULongLong());
 					m_eventReceived = true;
 					break;
-                                case CommandEvent::C_STATUS:
+				case CommandEvent::C_READ_HISTOGRAM:
+				{
+//! \todo hack to transfer a QList<quint64> to QtInterface without to copy it
+#warning TODO hack to transfer a QList<quint64> to QtInterface without to copy it
+					QList<quint64>* tmpData=(QList<quint64>*)args[0].toULongLong();
+					if (tmpData!=NULL)
+					{
+						m_values=*tmpData;
+						delete tmpData;
+					}
+					else
+						m_values.clear();
+					m_eventReceived = true;
+					break;
+				}
+				case CommandEvent::C_READ_HISTOGRAM_SIZE:
+				{
+					int i=0;
+					for (QList<QVariant>::const_iterator it = args.begin(); it != args.end(); ++it, ++i)
+					{
+						switch (i)
+						{
+							case 0: m_width=it->toUInt(); m_height=0; break;
+							case 1: m_height=it->toUInt(); break;
+							default: break;
+						}
+					}
+					m_eventReceived = true;
+					break;
+				}
+				case CommandEvent::C_STATUS:
 					m_status = args[0].toInt();
+					m_eventReceived = true;
+					break;
+				case CommandEvent::C_READ_COUNTER:
+					m_counter = args[0].toDouble();
 					m_eventReceived = true;
 					break;
 				default:
 					break;
 			}
 		}
+		else
+			if (cmd == CommandEvent::C_QUIT)
+				m_bDoLoop = false;
 	}
 }
-
-void QMesyDAQDetectorInterface::setHistogramFileName(const QString name)
-{
-        m_histFileName = name;
-}
-
-void QMesyDAQDetectorInterface::setListFileName(const QString name)
-{
-        m_listFileName = name;
-}
-
-
