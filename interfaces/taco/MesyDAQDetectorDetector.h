@@ -30,6 +30,12 @@
 
 // TACODEVEL CODEGEN INCLUDES END
 
+#if SIZEOF_UNSIGNED_LONG == 4
+typedef unsigned long DevULong;
+#else
+typedef unsigned int DevULong;
+#endif
+
 class QMesyDAQDetectorInterface;
 
 namespace MesyDAQ {
