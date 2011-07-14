@@ -91,14 +91,16 @@ double QMesyDAQDetectorInterface::preSelection()
 	return r;
 }
 
-std::vector<DevULong> QMesyDAQDetectorInterface::read()
+QList<quint32> QMesyDAQDetectorInterface::read()
 {
-	std::vector<DevULong> rtn(3,1);
+	QList<quint32> rtn;
+	for (int i = 0; i < 3; ++i)
+		rtn.push_back(1);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_READ_DIFFRACTOGRAM);
         rtn[0] = m_values.count();
 	for (QList<quint64>::const_iterator it = m_values.begin(); it != m_values.end(); ++it)
-		rtn.push_back(*it);
+		rtn.push_back(quint32(*it));
 	m_mutex.unlock();
 	return rtn;
 }
