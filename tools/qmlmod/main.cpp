@@ -8,6 +8,34 @@
 #include <mesydaq2.h>
 #include <mdefines.h>
 
+QString getMpsdModel(int id)
+{
+	switch(id)
+	{
+		case MPSD8 :
+			return QObject::tr("MPSD-8");
+		case MPSD8P:
+			return QObject::tr("MPSD-8+");
+		case MPSD8OLD :
+			return QObject::tr("MPSD-8 (old)");
+		case MSTD16 :
+			return QObject::tr("MSTD-16");
+		default:
+			return QObject::tr("-");
+	}
+}
+
+void version(void)
+{
+	qDebug() << "version : " << VERSION;
+}
+
+void help(const QString &program)
+{
+	qDebug() << program << ": [ipadress [default=192.168.168.121]] [module id [default=0]]";
+	version();
+}
+
 int main(int argc, char **argv)
 {
 	DEBUGLEVEL = FATAL;
@@ -23,7 +51,12 @@ int main(int argc, char **argv)
 		for (int i = 1; i < args.size(); ++i)
 			if (args.at(i) == "-h")
 			{
-				qDebug() << argv[0] << ": [ipadress [default=192.168.168.121]] [module id [default=0]]";
+				help(argv[0]);
+				return 1;
+			}
+			else if (args.at(i) == "-v")
+			{
+				version();
 				return 1;
 			}
 			else if (args.at(i).count('.'))	// may be ip address
@@ -36,7 +69,7 @@ int main(int argc, char **argv)
 	qDebug() << QObject::tr("%2 : MCPD : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(id);
 
 	for (int i = 0; i < 8; ++i)
-		qDebug() << QObject::tr("module %1 : %2 %3").arg(i + 1).arg(m->getMpsdId(i)).arg(m->version(i));
+		qDebug() << QObject::tr("module %1 (%4): %2 %3").arg(i + 1).arg(m->getMpsdId(i)).arg(m->version(i), 0, 'f', 1).arg(getMpsdModel(m->getMpsdId(i)));
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
