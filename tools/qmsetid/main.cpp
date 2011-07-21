@@ -8,6 +8,17 @@
 #include <mesydaq2.h>
 #include <mdefines.h>
 
+void version(void)
+{
+	qDebug() << "version : " << VERSION;
+}
+
+void help(const QString &program)
+{
+	qDebug() << program << ": [-v] [-h] [ipadress [default=192.168.168.121]] [from module id [default=0]] [module id [default=1]]";
+	version();
+}
+
 int main(int argc, char **argv)
 {
 	DEBUGLEVEL = FATAL /* NOTICE */;
@@ -25,7 +36,12 @@ int main(int argc, char **argv)
 		for (int i = 1; i < args.size(); ++i)
 			if (args.at(i) == "-h")
 			{
-				qDebug() << argv[0] << ": [ipadress [default=192.168.168.121]] [from module id [default=0]] [module id [default=1]]";
+				help(argv[0]);
+				return 1;
+			}
+			else if (args.at(i) == "-v")
+			{
+				version();
 				return 1;
 			}
 			else if (args.at(i).count('.'))	// may be ip address

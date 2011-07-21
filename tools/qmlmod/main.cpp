@@ -32,7 +32,7 @@ void version(void)
 
 void help(const QString &program)
 {
-	qDebug() << program << ": [ipadress [default=192.168.168.121]] [module id [default=0]]";
+	qDebug() << program << ": [-h] [-v] [ipadress [default=192.168.168.121]] [module id [default=0]]";
 	version();
 }
 
