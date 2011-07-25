@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #ifndef __MCPD_SPIN_BOX_H
-#define __CPDE_SPIN_BOX_H
+#define __MCPD_SPIN_BOX_H
 
 #include <QSpinBox>
 #include <QList>
