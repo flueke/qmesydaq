@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009-2011 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -68,6 +68,8 @@ public slots:
 
 	void	quitContinue();
 
+	void	setupGeneral();
+
 protected:
         void    customEvent(QEvent *);
 //	void 	paintEvent(QPaintEvent *);
@@ -115,9 +117,11 @@ private slots:
 	void applyThreshSlot();
 	void readRegisterSlot();
 	void writeRegisterSlot();
+#if 0
 	void selectConfigpathSlot();
 	void selectHistpathSlot();
 	void selectListpathSlot();
+#endif
 	void writeHistSlot();
 	void loadHistSlot();
 

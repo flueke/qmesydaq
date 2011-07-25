@@ -29,7 +29,7 @@ INSTALLS	= target
 # TACO		work as TACO server
 # CARESS	work as CARESS server
 #
-INTERFACE	= 
+INTERFACE	= TACO
 
 interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS")
 count(interfaces, 2) {
@@ -48,19 +48,23 @@ CONFIG		+= debug
 
 QWT_ROOT 	= /usr/local/qwt5
 
-QWTLIB 		= qwt
+QWTLIB		= qwt
 
 contains(CONFIG, bit64) {
 	DEFINES	+= HAVE_BIT64
-	QWTLIBS	= -L$${QWT_ROOT}/lib64 
+	QWTLIBS	= -L$${QWT_ROOT}/lib64
 }
 else {
-	QWTLIBS	= -L$${QWT_ROOT}/lib 
+	QWTLIBS	= -L$${QWT_ROOT}/lib
 }
+
+# additional debug messages for QMesyDAQDetectorInterface and CARESS interface
+#DEFINES         += DEBUGBUILD
+
 QWTLIBS		+= -l$${QWTLIB}
 
-INCLUDEPATH 	+= $${QWT_ROOT}/include 
-DEPENDPATH  	+= $${QWT_ROOT}/include 
+INCLUDEPATH 	+= $${QWT_ROOT}/include
+DEPENDPATH  	+= $${QWT_ROOT}/include
 LIBS        	+= $${QWTLIBS} -L../lib -lmesydaq
 
 contains(INTERFACE, TACO) {
@@ -81,14 +85,17 @@ contains(INTERFACE, TACO) {
 }
 
 contains(INTERFACE, CARESS) {
+# the CARESS interface needs the omniORB CORBA implementation
+#   please look at  http://omniorb.sourceforge.net/
+#
+# if you have a omniORB 4.x installation on non-standard directories,
+# point the variables INCLUDEPATH and CARESSLIBS to the correct directories
+# note: Debian and Ubuntu have prebuild packages for omniORB and SuSE can
+#       build a RPM package with command rpmbuild and the omniORB sources
+
 	DEFINES		+= USE_CARESS=1
-
-	HEADERS		+= corbathread.h \
-			caresscontrol.h 
-
-	SOURCES		+= corbathread.cpp \
-			caresscontrol.cpp \
-			caressmeasurement.cpp 
+#	INCLUDEPATH	+= $${OMNIORB_ROOT}/include
+#	CARESSLIBS	+= -L$${OMNIORB_ROOT}/lib
+	CARESSLIBS	= -lomniDynamic4 -lomniORB4 -lomnithread
 	message(build the CARESS remote interface)
 }
-

@@ -45,6 +45,7 @@
 #include <qwt_scale_engine.h>
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 
 #include "mainwidget.h"
@@ -56,6 +57,7 @@
 #include "CommandEvent.h"
 #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
+#include "generalsetup.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -230,6 +232,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     //	m_dispTimer = startTimer(1000);
 
     QSettings settings("MesyTec", "QMesyDAQ");
+    m_theApp->setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
+    m_theApp->setListfilepath(getenv("HOME"));
+    m_theApp->setHistfilepath(getenv("HOME"));
 
     QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
     acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
@@ -247,6 +252,10 @@ MainWidget::~MainWidget()
     m_meas = NULL;
 }
 
+/*!
+    \fn void MainWidget::about()
+
+*/
 void MainWidget::about()
 {
     QString text = tr("<h3>About QMesyDAQ </h3>")
@@ -256,6 +265,7 @@ void MainWidget::about()
 		   + tr("</ul><p>Contributors</p><ul>")
 		   + tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
                    + tr("<li><a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a> CARESS remote control</li>")
+                   + tr("<li><a href=\"mailto:m.drochner@fz-juelich.de\">Matthias Drochner</a> Bug reports</li>")
                    + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>")
 #if USE_TACO || USE_CARESS
 		   + tr("<p>It may be remotely controlled by:")
@@ -280,6 +290,10 @@ void MainWidget::about()
     msgBox.exec();
 }
 
+/*!
+    \fn void MainWidget::init()
+
+*/
 void MainWidget::init()
 {
     QList<int> mcpdList = m_theApp->mcpdId();
@@ -295,7 +309,7 @@ void MainWidget::init()
 }
 
 /*!
-    \fn MainWidget::timerEvent(QTimerEvent *)
+    \fn void MainWidget::timerEvent(QTimerEvent *)
 
     callback for the timer
 */
@@ -306,7 +320,7 @@ void MainWidget::timerEvent(QTimerEvent *event)
 }
 
 /*!
-    \fn MainWidget::allPulserOff(void)
+    \fn void MainWidget::allPulserOff(void)
 
     callback to switch all pulsers off 
 */
@@ -316,12 +330,22 @@ void MainWidget::allPulserOff(void)
     pulserButton->setChecked(false);
 }
 
+/*!
+    \fn void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
+
+    \param 
+*/
 void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
 {
 	if (!m_zoomer->zoomRectIndex())
 		m_zoomer->setZoomBase();
 }
 
+/*!
+    \fn void MainWidget::zoomed(const QwtDoubleRect &rect)
+
+    \param rect
+*/
 void MainWidget::zoomed(const QwtDoubleRect &rect)
 {
     if(rect == m_zoomer->zoomBase())
@@ -340,6 +364,11 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
     }
 }
 
+/*!
+    \fn void MainWidget::startStopSlot(bool checked)
+
+    \param checked
+*/
 void MainWidget::startStopSlot(bool checked)
 {
     if(checked)
@@ -375,18 +404,30 @@ void MainWidget::startStopSlot(bool checked)
     emit started(checked);
 }
 
+/*!
+    \fn void MainWidget::sendCellSlot()
+
+*/
 void MainWidget::sendCellSlot()
 {
     quint16 id = mcpdId->value();
     m_theApp->setCounterCell(id, cellSource->currentIndex(), cellTrigger->currentIndex(), cellCompare->value());
 }
 
+/*!
+    \fn void MainWidget::sendParamSlot()
+
+*/
 void MainWidget::sendParamSlot()
 {
     qint16 id = mcpdId->value();
     m_theApp->setParamSource(id, param->value(), paramSource->currentIndex());
 }
 
+/*
+    \fn void MainWidget::sendAuxSlot()
+
+*/
 void MainWidget::sendAuxSlot()
 {
     m_theApp->protocol("set aux timer", NOTICE);
@@ -395,6 +436,10 @@ void MainWidget::sendAuxSlot()
     m_theApp->setAuxTimer(mcpdId->value(), timer->value(), compare);
 }
 
+/*!
+    \fn void MainWidget::resetTimerSlot()
+
+*/
 void MainWidget::resetTimerSlot()
 {
     quint16 id = mcpdId->value();
@@ -402,6 +447,10 @@ void MainWidget::resetTimerSlot()
     m_theApp->setMasterClock(id, 0LL);
 }
 
+/*!
+    \fn void MainWidget::setTimingSlot()
+
+*/
 void MainWidget::setTimingSlot()
 {
     quint16 id = mcpdId->value();
@@ -410,11 +459,18 @@ void MainWidget::setTimingSlot()
     m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked());
 }
 
+/*!
+    \fn void MainWidget::setMcpdIdSlot()
+*/
 void MainWidget::setMcpdIdSlot()
 {
     m_theApp->setId(mcpdId->value(), deviceId->value());
 }
 
+/*!
+    \fn void MainWidget::setStreamSlot()
+
+*/
 void MainWidget::setStreamSlot()
 {
 #warning TODO  MainWidget::setStreamSlot()
@@ -434,6 +490,10 @@ void MainWidget::setStreamSlot()
 #endif
 }
 
+/*!
+    \fn void MainWidget::setIpUdpSlot()
+
+*/
 void MainWidget::setIpUdpSlot()
 {
     quint16 id =  mcpdId->value();
@@ -445,6 +505,10 @@ void MainWidget::setIpUdpSlot()
     m_theApp->setProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }
 
+/*!
+    \fn void MainWidget::setPulserSlot()
+
+*/
 void MainWidget::setPulserSlot()
 {
     bool ok;
@@ -475,25 +539,42 @@ void MainWidget::setPulserSlot()
     m_theApp->setPulser(id, mod, chan, pos, ampl, pulse);
 }
 
+/*!
+    \fn void MainWidget::setGainSlot()
+
+*/
 void MainWidget::setGainSlot()
 {
-	bool 	ok;
-	quint16 chan = comgain->isChecked() ? 8 : channel->text().toUInt(&ok, 0),
-	id = (quint16) devid->value(),
-	addr = module->value();
-	float 	gainval = gain->text().toFloat(&ok);
-	m_theApp->setGain(id, addr, chan, gainval);
+    bool 	ok;
+    quint16 chan = comgain->isChecked() ? 8 : channel->text().toUInt(&ok, 0),
+    id = (quint16) devid->value(),
+    addr = module->value();
+    float 	gainval = gain->text().toFloat(&ok);
+    m_theApp->setGain(id, addr, chan, gainval);
 }
 
+/*!
+    \fn void MainWidget::setThresholdSlot()
+
+*/
 void MainWidget::setThresholdSlot()
 {
-	bool ok;
-	quint16 id = (quint16) devid->value();
-	quint16 addr = module->value();
-	quint16 thresh = threshold->text().toUInt(&ok, 0);
-	m_theApp->setThreshold(id, addr, thresh);
+    bool ok;
+    quint16 id = (quint16) devid->value();
+    quint16 addr = module->value();
+    quint16 thresh = threshold->text().toUInt(&ok, 0);
+    m_theApp->setThreshold(id, addr, thresh);
 }
 
+/*!
+    \fn QString MainWidget::selectListfile(void)
+
+    Opens a user dialog for selecting a file name to store the list mode data into.
+
+    It checks also the extension of the file name and if not 'mdat' it will added.
+    \returns selected file name, if no file name is selected or aborted it will retur
+             an empty string
+*/
 QString MainWidget::selectListfile(void)
 {
 	QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_theApp->getListfilepath(),
@@ -507,6 +588,11 @@ QString MainWidget::selectListfile(void)
 	return name;
 }
 
+/*!
+    \fn void MainWidget::checkListfilename(bool checked)
+
+    \param checked
+*/
 void MainWidget::checkListfilename(bool checked)
 {
 	if (checked)
@@ -535,7 +621,7 @@ void MainWidget::checkListfilename(bool checked)
 }	
 
 /*!
-    \fn MainWidget::updateDisplay(void)
+    \fn void MainWidget::updateDisplay(void)
  */
 void MainWidget::updateDisplay(void)
 {
@@ -568,7 +654,7 @@ void MainWidget::updateDisplay(void)
 }
 
 /*!
-    \fn MainWidget::buildTimestring(quint64 timeval, bool nano)
+    \fn QString MainWidget::buildTimestring(quint64 timeval, bool nano)
  */
 QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 {
@@ -603,6 +689,10 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
     return str;
 }
 
+/*!
+    \fn void MainWidget::clearAllSlot()
+
+*/
 void MainWidget::clearAllSlot()
 {
     m_meas->clearAllHist();
@@ -618,6 +708,10 @@ void MainWidget::clearAllSlot()
     emit redraw();
 }
 
+/*!
+    \fn void MainWidget::clearMcpdSlot()
+
+*/
 void MainWidget::clearMcpdSlot()
 {
     quint32 start = dispMcpd->value() * 64;
@@ -626,15 +720,23 @@ void MainWidget::clearMcpdSlot()
     emit redraw();
 }
 
+/*!
+    \fn void MainWidget::clearMpsdSlot()
+
+*/
 void MainWidget::clearMpsdSlot()
 {
     quint32 start = dispMpsd->value() * 8 + dispMcpd->value() * 64;
-    //	qDebug("clearMpsd: %d", start);
+//  qDebug("clearMpsd: %d", start);
     for(quint32 i = start; i < start + 8; i++)
         m_meas->clearChanHist(i);
     emit redraw();
 }
 
+/*!
+    \fn void MainWidget::clearChanSlot()
+
+*/
 void MainWidget::clearChanSlot()
 {
     ulong chan = dispChan->value() + dispMpsd->value() * 8 + dispMcpd->value() * 64;
@@ -642,7 +744,11 @@ void MainWidget::clearChanSlot()
     emit redraw();
 }
 
+/*!
+    \fn void MainWidget::replayListfileSlot()
 
+    callback function to replay a listmode file
+*/
 void MainWidget::replayListfileSlot()
 {
     QString name = QFileDialog::getOpenFileName(this, tr("Load..."), m_theApp->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
@@ -656,6 +762,10 @@ void MainWidget::replayListfileSlot()
     }
 }
 
+/*!
+     \fn void MainWidget::setRunIdSlot()
+
+*/
 void MainWidget::setRunIdSlot()
 {
     quint16 runid = (quint16) devid->value();
@@ -665,7 +775,9 @@ void MainWidget::setRunIdSlot()
 }
 
 /*!
-    \fn MainWidget::displayMcpdSlot(int)
+    \fn void MainWidget::displayMcpdSlot(int)
+
+    \param id
  */
 void MainWidget::displayMcpdSlot(int id)
 {
@@ -708,7 +820,9 @@ void MainWidget::displayMcpdSlot(int id)
 }
 
 /*!
-    \fn MainWidget::displayMpsdSlot(int)
+    \fn void MainWidget::displayMpsdSlot(int)
+
+    \param id
  */
 void MainWidget::displayMpsdSlot(int id)
 {
@@ -775,6 +889,11 @@ void MainWidget::displayMpsdSlot(int id)
         Ui_Mesydaq2MainWidget::pos->setChecked(true);
 }
 
+/*!
+    \fn void MainWidget::scanPeriSlot(bool real)
+
+    \param real
+*/
 void MainWidget::scanPeriSlot(bool real)
 {
     quint16 id = devid_2->value();
@@ -791,11 +910,21 @@ void MainWidget::scanPeriSlot(bool real)
     displayMpsdSlot(modList.size() ? modList.at(0) : -1);
 }
 
+/*!
+    \fn void MainWidget::setModeSlot(bool mode)
+
+    \param mode
+*/
 void MainWidget::setModeSlot(bool mode)
 {
     m_theApp->setMode(devid->value(), module->value(), mode);
 }
 
+/*!
+    \fn void MainWidget::saveSetupSlot()
+
+    callback to save a configuration into a file
+*/
 void MainWidget::saveSetupSlot()
 {
     QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
@@ -807,6 +936,11 @@ void MainWidget::saveSetupSlot()
     }
 }
 
+/*!
+    \fn void MainWidget::restoreSetupSlot()
+
+    callback to load a configuration from a file
+*/
 void MainWidget::restoreSetupSlot()
 {
     QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
@@ -821,15 +955,15 @@ void MainWidget::restoreSetupSlot()
 }
 
 /*!
-    \fn MainWidget::processDispData()
+    \fn void MainWidget::processDispData()
+    \todo implement me
  */
 void MainWidget::processDispData()
 {
-    /// @todo implement me
 }
 
 /*!
-    \fn MainWidget::applyThreshSlot()
+    \fn void MainWidget::applyThreshSlot()
  */
 void MainWidget::applyThreshSlot()
 {
@@ -843,7 +977,9 @@ void MainWidget::applyThreshSlot()
 }
 
 /*!
-    \fn MainWidget::linlogSlot()
+    \fn void MainWidget::linlogSlot(bool bLog)
+
+    \param bLog
  */
 void MainWidget::linlogSlot(bool bLog)
 {
@@ -865,7 +1001,7 @@ void MainWidget::linlogSlot(bool bLog)
 }
 
 /*!
-    \fn MainWidget::drawOpData()
+    \fn void MainWidget::drawOpData()
  */
 void MainWidget::drawOpData()
 {
@@ -900,7 +1036,7 @@ void MainWidget::drawOpData()
 }
 
 /*!
-    \fn MainWidget::writeRegisterSlot()
+    \fn void MainWidget::writeRegisterSlot()
 
     callback to write into a MPSD register
  */
@@ -915,13 +1051,13 @@ void MainWidget::writeRegisterSlot()
 }
 
 /*!
-    \fn MainWidget::readRegisterSlot()
+    \fn void MainWidget::readRegisterSlot()
 
     callback to read from a MPSD register
+    //! \todo display read values
 */
 void MainWidget::readRegisterSlot()
 {
-    //! \todo display read values
 #warning TODO display read values
     quint16 id = (quint16) devid->value();
     quint16 addr = module->value();
@@ -930,46 +1066,7 @@ void MainWidget::readRegisterSlot()
 }
 
 /*!
-    \fn MainWidget::selectConfigpathSlot()
-
-    callback to set the path for the configuration files
-*/
-void MainWidget::selectConfigpathSlot()
-{
-    QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Config File Path..."), m_theApp->getConfigfilepath());
-    if(!name.isEmpty())
-        m_theApp->setConfigfilepath(name);
-    dispFiledata();
-}
-
-/*!
-    \fn MainWidget::selectConfigpathSlot()
-
-    callback to set the path for the histogram data files
-*/
-void MainWidget::selectHistpathSlot()
-{
-    QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Histogram File  Path..."), m_theApp->getHistfilepath());
-    if(!name.isEmpty())
-        m_theApp->setHistfilepath(name);
-    dispFiledata();
-}
-
-/*!
-    \fn MainWidget::selectConfigpathSlot()
-
-    callback to set the path for the list mode data files
-*/
-void MainWidget::selectListpathSlot()
-{
-    QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select List File Path..."), m_theApp->getListfilepath());
-    if(!name.isEmpty())
-        m_theApp->setListfilepath(name);
-    dispFiledata();
-}
-
-/*!
-    \fn MainWidget::dispFiledata(void)
+    \fn void MainWidget::dispFiledata(void)
  */
 void MainWidget::dispFiledata(void)
 {
@@ -978,14 +1075,10 @@ void MainWidget::dispFiledata(void)
         histfilename->setText("-");
     else
         histfilename->setText(m_theApp->getHistfilename());
-
-    configfilepath->setText(m_theApp->getConfigfilepath());
-    histfilepath->setText(m_theApp->getHistfilepath());
-    listfilepath->setText(m_theApp->getListfilepath());
 }
 
 /*!
-    \fn MainWidget::writeHistSlot()
+    \fn void MainWidget::writeHistSlot()
 
     callback to write a histogram data file
 */
@@ -1003,7 +1096,7 @@ void MainWidget::writeHistSlot()
 }
 
 /*!
-   \fn MainWidget::loadHistSlot()
+   \fn void MainWidget::loadHistSlot()
 
    callback to read a histogram data file
 */
@@ -1018,7 +1111,7 @@ void MainWidget::loadHistSlot()
 }
 
 /*!
-   \fn MainWidget::ePresetSlot(bool pr)
+   \fn void MainWidget::ePresetSlot(bool pr)
 
    callback to enable/disable event counter
 
@@ -1044,7 +1137,7 @@ void MainWidget::ePresetSlot(bool pr)
 }
 
 /*!
-   \fn MainWidget::tPresetSlot(bool pr)
+   \fn void MainWidget::tPresetSlot(bool pr)
 
    callback to enable/disable timer
 
@@ -1070,7 +1163,7 @@ void MainWidget::tPresetSlot(bool pr)
 }
 
 /*!
-   \fn MainWidget::m1PresetSlot(bool pr)
+   \fn void MainWidget::m1PresetSlot(bool pr)
 
    callback to enable/disable monitor 1
 
@@ -1096,7 +1189,7 @@ void MainWidget::m1PresetSlot(bool pr)
 }
 
 /*!
-   \fn MainWidget::m2PresetSlot(bool pr)
+   \fn void MainWidget::m2PresetSlot(bool pr)
 
    callback to enable/disable monitor 2
 
@@ -1122,7 +1215,7 @@ void MainWidget::m2PresetSlot(bool pr)
 }
 
 /*!
-   \fn MainWidget::m3PresetSlot(bool pr)
+   \fn void MainWidget::m3PresetSlot(bool pr)
 
    callback to enable/disable monitor 3
 
@@ -1148,7 +1241,7 @@ void MainWidget::m3PresetSlot(bool pr)
 }
 
 /*!
-   \fn MainWidget::m4PresetSlot(bool pr)
+   \fn void MainWidget::m4PresetSlot(bool pr)
 
    callback to enable/disable monitor 4
 
@@ -1174,7 +1267,7 @@ void MainWidget::m4PresetSlot(bool pr)
 }
 
 /*!
-    \fn MainWidget::updatePresets(void)
+    \fn void MainWidget::updatePresets(void)
 
     callback to display all preset values
  */
@@ -1198,7 +1291,7 @@ void MainWidget::updatePresets(void)
 }
 
 /*!
-    \fn MainWidget::tResetSlot()
+    \fn void MainWidget::tResetSlot()
 
     clears the timer
  */
@@ -1209,7 +1302,7 @@ void MainWidget::tResetSlot()
 }
 
 /*!
-    \fn MainWidget::eResetSlot()
+    \fn void MainWidget::eResetSlot()
 
     clears the event counter
  */
@@ -1220,7 +1313,7 @@ void MainWidget::eResetSlot()
 }
 
 /*!
-    \fn MainWidget::m1ResetSlot()
+    \fn void MainWidget::m1ResetSlot()
 
     clears the Monitor 1 counter
  */
@@ -1231,7 +1324,7 @@ void MainWidget::m1ResetSlot()
 }
 
 /*!
-    \fn MainWidget::m2ResetSlot()
+    \fn void MainWidget::m2ResetSlot()
 
     clears the Monitor 2 counter
  */
@@ -1242,7 +1335,7 @@ void MainWidget::m2ResetSlot()
 }
 
 /*!
-    \fn MainWidget::m3ResetSlot()
+    \fn void MainWidget::m3ResetSlot()
 
     clears the Monitor 3 counter
  */
@@ -1253,7 +1346,7 @@ void MainWidget::m3ResetSlot()
 }
 
 /*!
-    \fn MainWidget::m4ResetSlot()
+    \fn void MainWidget::m4ResetSlot()
 
     clears the Monitor 4 counter
  */
@@ -1264,21 +1357,31 @@ void MainWidget::m4ResetSlot()
 }
 
 /*!
-    \fn MainWidget::saveConfigSlot(void)
+    \fn void MainWidget::saveConfigSlot(void)
 
     callback to save configuration
+    \todo implement me
  */
 void MainWidget::saveConfigSlot(void)
 {
-    //! \todo implement me
 }
 
+/*!
+    \fn void MainWidget::mpsdCheck(int mod)
+
+    \param mod
+*/
 void MainWidget::mpsdCheck(int mod)
 {
     m_theApp->protocol(tr("MainWidget::mpsdCheck() : module %1").arg(mod), DEBUG);
     displayMpsdSlot(mod);
 }
 
+/*!
+    \fn void MainWidget::setHistogramMode(bool histo)
+
+    \param histo
+*/
 void MainWidget::setHistogramMode(bool histo)
 {
     if (histo)
@@ -1310,6 +1413,11 @@ void MainWidget::setHistogramMode(bool histo)
     emit redraw();
 }
 
+/*!
+    \fn void MainWidget::setSpectraMode(bool spectra)
+
+    \param spectra
+*/
 void MainWidget::setSpectraMode(bool spectra)
 {
     if (spectra)
@@ -1340,6 +1448,11 @@ void MainWidget::setSpectraMode(bool spectra)
     emit redraw();
 }
 
+/*!
+    \fn void MainWidget::setDiffractogramMode(bool diff)
+
+    \param diff
+*/
 void MainWidget::setDiffractogramMode(bool diff)
 {
     if (diff)
@@ -1366,7 +1479,7 @@ void MainWidget::setDiffractogramMode(bool diff)
 }
 
 /*!
-    \fn MainWidget::draw(void)
+    \fn void MainWidget::draw(void)
 
     callback to redraw the data and additional informations
  */
@@ -1469,6 +1582,11 @@ void MainWidget::draw(void)
     updateDisplay();
 }
 
+/*!
+    \fn void MainWidget::exportPDF(void)
+
+    callback to export the plot data as PDF
+ */
 void MainWidget::exportPDF()
 {
     QString fileName = QFileDialog::getSaveFileName(this, "Export PDF File", "Plot1.pdf", "PDF Documents (*.pdf)");
@@ -1484,6 +1602,11 @@ void MainWidget::exportPDF()
     }
 }
 
+/*!
+    \fn void MainWidget::exportSVG(void)
+
+    callback to export the plot data as SVG
+ */
 void MainWidget::exportSVG()
 {
     QString fileName = QFileDialog::getSaveFileName(this, "Export SVG File", "Plot1.svg", "SVG Documents (*.svg)");
@@ -1502,9 +1625,37 @@ void MainWidget::exportSVG()
     }
 }
 
-void MainWidget::printPlot()
+/*!
+    \fn void MainWidget::setupGeneral(void)
+
+    callback to setup the directories to store the different files like
+    - histograms
+    - listmode data
+    - configuration files
+ */
+void MainWidget::setupGeneral()
 {
-    //      QPrinter printer(QPrinter::HighResolution);
+    GeneralSetup d(m_theApp);
+    if (d.exec() == QDialog::Accepted)
+    {
+    	QSettings settings("MesyTec", "QMesyDAQ");
+	settings.setValue("config/configfilepath", d.configFilePath());
+//	settings.setValue("config/listfilepath", d.listFilePath());
+//	settings.setValue("config/histfilepath", d.histFilePath());
+
+        m_theApp->setListfilepath(d.listFilePath());
+        m_theApp->setHistfilepath(d.histFilePath());
+        m_theApp->setConfigfilepath(d.configFilePath());
+    }
+}
+
+/*!
+    \fn void MainWidget::printPlot(void)
+
+*/
+void MainWidget::printPlot(void)
+{
+//  QPrinter printer(QPrinter::HighResolution);
     m_printer->setOutputFormat(QPrinter::NativeFormat);
     QPrintDialog dialog(m_printer);
     if(dialog.exec() == QDialog::Accepted)
@@ -1515,6 +1666,10 @@ void MainWidget::printPlot()
     }
 }
 
+/*!
+    \fn void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
+
+*/
 void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
 {
     QPen pen = m_curve[0]->pen();
@@ -1525,6 +1680,10 @@ void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
     m_curve[0]->setPen(pen);
 }
 
+/*!
+    \fn void MainWidget::quitContinue(void)
+
+*/
 void MainWidget::quitContinue(void)
 {
 	if (QMessageBox::warning(this, tr("Remote control interface"), tr("Remote control interface is not initialized!<br>"
@@ -1535,11 +1694,19 @@ void MainWidget::quitContinue(void)
 	}
 }
 
+/*!
+    \fn void MainWidget::closeEvent(QCloseEvent *)
+
+*/
 void MainWidget::closeEvent(QCloseEvent *)
 {
 	qDebug() << "MainWidget::closeEvent";
 }
 
+/*!
+   \fn void MainWidget::customEvent(QEvent *e)
+
+*/
 void MainWidget::customEvent(QEvent *e)
 {
     CommandEvent *event = dynamic_cast<CommandEvent*>(e);

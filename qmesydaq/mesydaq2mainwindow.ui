@@ -20,13 +20,14 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Files">
     <property name="title">
      <string>&amp;Files</string>
     </property>
+    <addaction name="action_NewSetup"/>
     <addaction name="separator"/>
     <addaction name="action_Save_Config_File"/>
     <addaction name="action_Load_Config_File"/>
@@ -49,7 +50,14 @@
     <addaction name="action_About"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
+   <widget class="QMenu" name="menu_Configuration">
+    <property name="title">
+     <string>&amp;Configuration</string>
+    </property>
+    <addaction name="action_General"/>
+   </widget>
    <addaction name="menu_Files"/>
+   <addaction name="menu_Configuration"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -106,6 +114,16 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About &amp;Qt ...</string>
+   </property>
+  </action>
+  <action name="action_General">
+   <property name="text">
+    <string>&amp;General</string>
+   </property>
+  </action>
+  <action name="action_NewSetup">
+   <property name="text">
+    <string>&amp;New Setup</string>
    </property>
   </action>
  </widget>
