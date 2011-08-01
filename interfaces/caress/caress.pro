@@ -18,8 +18,11 @@ DISTFILES       += corbadevice.idl
 QMAKE_DISTCLEAN += corbadevice.h corbadeviceSK.cpp
 
 # Input
-HEADERS 	+= CARESSLoop.h corbadevice.h
-SOURCES 	+= CARESSLoop.cpp corbadeviceSK.cpp
+HEADERS 	+= CARESSLoop.h corbadevice.h \
+    mapcorrectparser.h
+SOURCES 	+= CARESSLoop.cpp corbadeviceSK.cpp \
+    mapcorrectparser.cpp
+OTHER_FILES     += corbadevice.idl
 
 # CORBA interface to C++ compiler
 idl1intermediate.target = corbadeviceSK.cpp

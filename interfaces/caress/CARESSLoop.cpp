@@ -54,6 +54,8 @@
  ***************************************************************************/
 
 #include "CARESSLoop.h"
+#include "mapcorrect.h"
+#include "mapcorrectparser.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -1232,17 +1234,29 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
   if (kind==18/*SPECIALLOAD*/ && start_channel==1 && start_channel<end_channel &&
       data._d()==CARESS::TypeArrayByte && (CORBA::ULong)end_channel==data.ab().length())
   {
-    // load special configuration file, e.g. firmware
-    // data is binary data from a user selected file in variable data.ab()[]
-    const unsigned char* pStart=(const unsigned char*)(&data.ab()[0]);
-    CORBA::ULong uLen=data.ab().length();
-    if (iDevice<ARRAY_SIZE(g_asDevices))
-      DBG("loadblock(binary device %s) - %lu bytes of binary data",g_asDevices[iDevice],uLen);
-    else
-      DBG("loadblock(binary device %ld) - %lu bytes of binary data",id,uLen);
+    // load special mapping and correction data
+    QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+    quint16 w,h;
+    const unsigned char* pData=&data.ab()[0];
+    CORBA::ULong uLength=data.ab().length();
 
-#warning "note: CARESS is able to load arbitrary binary data after INIT in variable data.ab()[]"
-    (void) pStart;
+    if (!pInterface)
+    {
+      strcpy(m_szErrorMessage,"control interface not initialized");
+      DBG("loadblock - %s",m_szErrorMessage);
+      module_status=LOADED;
+      return CARESS::NOT_OK;
+    }
+
+    if (iDevice<ARRAY_SIZE(g_asDevices))
+      DBG("loadblock(binary device %s) - %lu bytes of binary data",g_asDevices[iDevice],uLength);
+    else
+      DBG("loadblock(binary device %ld) - %lu bytes of binary data",id,uLength);
+
+    pInterface->readHistogramSize(w,h);
+    pInterface->setMappingCorrection(parseCaressMapCorrection((const char*) \
+      pData,uLength,w,h,m_lHistogramX,m_lHistogramY));
+    pInterface->setListFileHeader(pData,(int)uLength);
     module_status=LOADED;
     return CARESS::OK;
   }

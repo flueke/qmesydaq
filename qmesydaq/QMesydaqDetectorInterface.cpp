@@ -28,6 +28,7 @@
 
 #include "CommandEvent.h"
 #include "LoopObject.h"
+#include "mapcorrect.h"
 
 #include <iostream>
 #include <QThread>
@@ -37,6 +38,7 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
 	, m_bDoLoop(true)
 	, m_width(0)
 	, m_height(0)
+	, m_pObject(NULL)
 	, m_status(0)
 {
 }
@@ -157,6 +159,55 @@ int QMesyDAQDetectorInterface::status()
 	return r;
 }
 
+const MapCorrection* QMesyDAQDetectorInterface::getMappingCorrection()
+{
+	MapCorrection* pResult=NULL;
+	m_mutex.lock();
+	m_pObject=NULL;
+	postRequestCommand(CommandEvent::C_MAPCORRECTION);
+	pResult=dynamic_cast<MapCorrection*>(m_pObject);
+	m_mutex.unlock();
+	return pResult;
+}
+
+void QMesyDAQDetectorInterface::setMappingCorrection(const MapCorrection& map)
+{
+	if (!map.isValid()) return;
+	MapCorrection* pMap=NULL;
+	m_mutex.lock();
+	m_pObject=NULL;
+	postRequestCommand(CommandEvent::C_MAPCORRECTION);
+	pMap=dynamic_cast<MapCorrection*>(m_pObject);
+	if (map.isNoMap())
+	{
+		if (pMap!=NULL)
+		{
+			delete pMap;
+			pMap=NULL;
+			postCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
+		}
+	}
+	else if (pMap==NULL)
+	{
+		pMap=new MapCorrection(map);
+		postCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
+	}
+	else
+		(*pMap)=map;
+	m_mutex.unlock();
+}
+
+const MappedHistogram* QMesyDAQDetectorInterface::getMappedHistogram()
+{
+	MappedHistogram* pResult=NULL;
+	m_mutex.lock();
+	m_pObject=NULL;
+	postRequestCommand(CommandEvent::C_MAPPEDHISTOGRAM);
+	pResult=dynamic_cast<MappedHistogram*>(m_pObject);
+	m_mutex.unlock();
+	return pResult;
+}
+
 void QMesyDAQDetectorInterface::setHistogramFileName(const QString name)
 {
 	m_histFileName = name;
@@ -170,6 +221,13 @@ void QMesyDAQDetectorInterface::setListFileName(const QString name)
 void QMesyDAQDetectorInterface::setListMode(bool bEnable)
 {
 	postCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable);
+}
+
+void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength)
+{
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_SET_LISTHEADER,QList<QVariant>() << ((quint64)pData) << iLength);
+	m_mutex.unlock();
 }
 
 void QMesyDAQDetectorInterface::customEvent(QEvent *e)
@@ -238,12 +296,28 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_counter = args[0].toDouble();
 					m_eventReceived = true;
 					break;
+				case CommandEvent::C_MAPPEDHISTOGRAM:
+				case CommandEvent::C_MAPCORRECTION:
+					m_pObject = (QObject*)args[0].toULongLong();
+					m_eventReceived = true;
+					break;
 				default:
 					break;
 			}
 		}
 		else
-			if (cmd == CommandEvent::C_QUIT)
-				m_bDoLoop = false;
+		{
+			switch (cmd)
+			{
+				case CommandEvent::C_QUIT:
+					m_bDoLoop = false;
+					break;
+				case CommandEvent::C_SET_LISTHEADER:
+					m_eventReceived = true;
+					break;
+				default:
+					break;
+			}
+		}
 	}
 }

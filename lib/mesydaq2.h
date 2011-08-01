@@ -32,6 +32,7 @@
 
 #include "mesydaqobject.h"
 #include "structures.h"
+#include "inifile.h"
 
 
 class MCPD8;
@@ -91,6 +92,12 @@ public:
 	void writeBlockSeparator(void);
 
 	void writeHeaderSeparator(void);
+
+	//! \brief store header for list mode file
+	void setListFileHeader(const QByteArray& header) { m_datHeader=header; }
+
+	//! \return header for list mode file
+	const QByteArray& getListFileHeader() const { return m_datHeader; }
 
 // histogram file oriented methods
 	/**
@@ -282,6 +289,9 @@ private:
 
 	void storeLastFile(void);
 
+	static void saveSetup_helper(CConfigFile& file, const QString& szSection, int iPriority, const QString& szItem, QString szValue);
+	static QString loadSetup_helper(CConfigSection* pSection, const QString& szItem, const QString& szDefault);
+
 	QHash<int, MCPD8 *>	m_mcpd;
 
 private:
@@ -307,6 +317,8 @@ private:
 
 	quint8  	m_timingwidth;
 	int 		m_checkTimer;
+
+	QByteArray 	m_datHeader;
 };
 
 

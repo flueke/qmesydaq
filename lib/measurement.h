@@ -30,6 +30,8 @@
 
 class Histogram;
 class Spectrum;
+class MapCorrection;
+class MappedHistogram;
 class Mesydaq2;
 
 /**
@@ -154,11 +156,20 @@ public:
 	//! \return the diffractogram
 	Spectrum *diffractogram(); 
 
+	//! \return the mapping and correction data for position histogram
+	MapCorrection*& posHistMapCorrection() { return m_posHistMapCorrection; }
+
+	//! \return a mapped and corrected position histogram
+	MappedHistogram*& posHistCorrected() { return m_posHistCorrected; }
+
 	void getPosMean(float &, float &);
 	void getPosMean(quint16, float &, float &);
 	void getAmpMean(float &, float &);
 	void getAmpMean(quint16, float &, float &);
 	void getTimeMean(float &, float &);
+
+	//! \brief store header for list mode file
+	void setListFileHeader(const QByteArray& header);
 
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
@@ -207,6 +218,12 @@ private:
 
 	//! spectrum for the MSTD-16, it's only a hack not a solution
 	Spectrum	*m_tubeSpectrum;
+
+	//! mapping and correction data for position histogram
+	MapCorrection   *m_posHistMapCorrection;
+
+	//! position histogram with mapped and corrected data
+	MappedHistogram	*m_posHistCorrected;
 
 	quint64 	m_lastTime;
 

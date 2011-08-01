@@ -58,6 +58,8 @@
 #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
 #include "generalsetup.h"
+#include "mapcorrectparser.h"
+#include "inifile.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -1840,6 +1842,47 @@ void MainWidget::customEvent(QEvent *e)
                 		interface->postCommandToInterface(CommandEvent::C_STATUS,QList<QVariant>() << i);
             		}
             		break;
+		case CommandEvent::C_MAPCORRECTION: // mapping and correction data
+			if (interface)
+			{
+				MapCorrection*& pMap=m_meas->posHistMapCorrection();
+				if (!args.isEmpty())
+				{
+					MappedHistogram*& pHist=m_meas->posHistCorrected();
+					MapCorrection* pNewMap=dynamic_cast<MapCorrection*>((QObject*)args[0].toULongLong());
+					if (pNewMap!=NULL)
+					{
+						// new mapping and correction data
+						QRect mapRect;
+						if (pMap!=NULL) delete pMap;
+						pMap=pNewMap;
+						mapRect=pMap->getMapRect();
+						if (pHist==NULL)
+							pHist=new MappedHistogram(pMap);
+						else
+							pHist->setMapCorrection(pMap,m_meas->posHist());
+					}
+					else
+					{
+						// delete existing mapping
+						delete pHist;
+						pHist=NULL;
+						delete pMap;
+						pMap=NULL;
+					}
+				}
+				else
+					// query for current mapping and correction data
+					interface->postCommandToInterface(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
+			}
+			break;
+		case CommandEvent::C_MAPPEDHISTOGRAM: // mapped and corrected position histogram
+			if (interface)
+			{
+				MappedHistogram*& pHist=m_meas->posHistCorrected();
+				interface->postCommandToInterface(CommandEvent::C_MAPPEDHISTOGRAM,QList<QVariant>() << ((quint64)pHist));
+			}
+			break;
 		default :
 			break;
         }
@@ -1911,6 +1954,14 @@ void MainWidget::customEvent(QEvent *e)
 			case CommandEvent::C_SET_LISTMODE:
 				acquireFile->setChecked(args[0].toBool());
 				break;
+			case CommandEvent::C_SET_LISTHEADER:
+				if (interface)
+				{
+					QByteArray header((const char*)args[0].toULongLong(),args[1].toInt());
+					m_meas->setListFileHeader(header);
+					interface->postCommandToInterface(CommandEvent::C_SET_LISTHEADER);
+					break;
+				}
 			default:
 				break;
             	}

@@ -765,6 +765,20 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 }
 
 /*!
+    \fn MCPD8::getProtocol(QString& ip, quint16& port, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const
+
+    \see setProtocol
+ */
+void MCPD8::getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const
+{
+  ip=m_ownIpAddress;
+  cmdip=m_cmdIpAddress;
+  cmdport=m_cmdPort;
+  dataip=m_dataIpAddress;
+  dataport=m_dataPort;
+}
+
+/*!
     \fn MCPD8::getProtocol(quint16 *addr)
 
     \param addr ????

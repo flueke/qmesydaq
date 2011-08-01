@@ -225,7 +225,7 @@ Listfile</string>
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="tab">
+   <widget class="QWidget" name="tab1">
     <attribute name="title">
      <string>Display</string>
     </attribute>
@@ -489,7 +489,7 @@ Listfile</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="tab">
+   <widget class="QWidget" name="tab2">
     <attribute name="title">
      <string>Thresholds</string>
     </attribute>
@@ -1640,7 +1640,7 @@ Listfile</string>
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="tab5">
         <attribute name="title">
          <string>Settings</string>
         </attribute>
@@ -1993,7 +1993,7 @@ Listfile</string>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="tab6">
         <attribute name="title">
          <string>Communication / Networ&amp;k</string>
         </attribute>
@@ -2672,7 +2672,7 @@ parameters</string>
    <property name="title">
     <string>Status</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_1">
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
@@ -2974,6 +2974,22 @@ parameters</string>
     <hint type="sourcelabel">
      <x>442</x>
      <y>681</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>channel</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>displayMpsdSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>668</x>
+     <y>679</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -3366,6 +3382,118 @@ parameters</string>
    </hints>
   </connection>
   <connection>
+   <sender>pulsampRadio1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>781</x>
+     <y>917</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsampRadio2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>976</x>
+     <y>917</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsChan</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>639</x>
+     <y>913</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulserButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>366</x>
+     <y>916</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsLeft</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1209</x>
+     <y>921</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsMid</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1340</x>
+     <y>921</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsRight</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1470</x>
+     <y>921</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>resetTimer</sender>
    <signal>clicked()</signal>
    <receiver>Mesydaq2MainWidget</receiver>
@@ -3650,6 +3778,54 @@ parameters</string>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsampRadio1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsAmp1</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>781</x>
+     <y>917</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>878</x>
+     <y>920</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsampRadio1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsAmp2</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>781</x>
+     <y>917</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1073</x>
+     <y>920</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulsampRadio2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsAmp2</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>976</x>
+     <y>917</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1073</x>
+     <y>920</y>
     </hint>
    </hints>
   </connection>

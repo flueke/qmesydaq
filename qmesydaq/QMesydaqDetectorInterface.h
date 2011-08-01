@@ -29,6 +29,9 @@
 
 #include <vector>
 
+class MapCorrection;
+class MappedHistogram;
+
 class QMesyDAQDetectorInterface : public QtInterface
 {
 	Q_OBJECT
@@ -54,9 +57,16 @@ public:
 	QList<quint64> readSpectrogram(int iSpectrogram=-1);
         int status();
 
+	const MapCorrection* getMappingCorrection();
+	void setMappingCorrection(const MapCorrection& map);
+	const MappedHistogram* getMappedHistogram();
+
 	void setListMode(bool bEnable);
         QString getListFileName(void) const {return m_listFileName;} 
         void setListFileName(const QString name);
+
+	//! \brief store header for list mode file
+	void setListFileHeader(const void* pData, int iLength);
 
         QString getHistogramFileName(void) const {return m_histFileName;}
         void setHistogramFileName(const QString name);
@@ -65,7 +75,7 @@ protected:
 	void customEvent(QEvent *);
 
 protected:
-	QMutex			m_mutex;
+	mutable QMutex		m_mutex;
 
 	bool                    m_bDoLoop;
 	double 			m_preSelection;
@@ -74,6 +84,7 @@ protected:
 	quint16			m_width;
 	quint16			m_height;
 	QList<quint64>		m_values;
+	QObject*                m_pObject;
 
 	int 			m_status;
 

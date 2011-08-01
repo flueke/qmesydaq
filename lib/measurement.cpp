@@ -30,6 +30,7 @@
 #include "measurement.h"
 #include "mdefines.h"
 #include "histogram.h"
+#include "mapcorrect.h"
 #include "mesydaq2.h"
 
 /*!
@@ -48,6 +49,8 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_timeSpectrum(NULL)
 	, m_diffractogram(NULL)
 	, m_tubeSpectrum(NULL)
+	, m_posHistMapCorrection(NULL)
+	, m_posHistCorrected(NULL)
 	, m_lastTime(0)
 	, m_starttime_msec(0)
 	, m_meastime_msec(0)
@@ -93,6 +96,16 @@ Measurement::~Measurement()
 	if (m_onlineTimer)
 		killTimer(m_onlineTimer);
 	m_onlineTimer = 0;
+	if (m_posHistCorrected)
+	{
+		delete m_posHistCorrected;
+		m_posHistCorrected = NULL;
+	}
+	if (m_posHistMapCorrection)
+	{
+		delete m_posHistMapCorrection;
+		m_posHistMapCorrection = NULL;
+	}
 	delete m_ampHist;
 	m_ampHist = NULL;
 	delete m_posHist;
@@ -465,6 +478,8 @@ void Measurement::clearAllHist(void)
 		m_diffractogram->clear();
 	if (m_tubeSpectrum)
 		m_tubeSpectrum->clear();
+	if (m_posHistCorrected)
+		m_posHistCorrected->clear();
 	m_lastTime = 0;
 }
 
@@ -481,6 +496,8 @@ void Measurement::clearChanHist(quint16 chan)
 		m_posHist->clear(chan);
 	if (m_ampHist)
 		m_ampHist->clear(chan);
+//	if (m_posHistCorrected)
+//		m_posHistCorrected->clear(chan);
 }
 
 /*!
@@ -749,6 +766,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_ampHist->incVal(chan, amp);
 				if (m_diffractogram)
 					m_diffractogram->incVal(chan);
+				if (m_posHistCorrected)
+					m_posHistCorrected->incVal(chan, amp);
 				if (m_mesydaq->getMpsdId(mod, id) == MSTD16)
 				{
 //					protocol(tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id), INFO);
@@ -1003,4 +1022,10 @@ Spectrum *Measurement::diffractogram()
 			m_diffractogram->setValue(i, spec->getTotalCounts());
 	}
 	return m_diffractogram;
+}
+
+void Measurement::setListFileHeader(const QByteArray& header)
+{
+  if (m_mesydaq)
+    m_mesydaq->setListFileHeader(header);
 }

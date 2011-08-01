@@ -23,6 +23,8 @@ QT 		+= core network
 # Input
 HEADERS 	+= counter.h \
         	   histogram.h \
+        	   inifile.h \
+		   mapcorrect.h \
         	   mcpd8.h \
         	   mdefines.h \
         	   measurement.h \
@@ -36,6 +38,8 @@ HEADERS 	+= counter.h \
 
 SOURCES 	+= counter.cpp \
         	   histogram.cpp \
+        	   inifile.cpp \
+		   mapcorrect.cpp \
         	   mcpd8.cpp \
         	   measurement.cpp \
         	   mesydaq2.cpp \

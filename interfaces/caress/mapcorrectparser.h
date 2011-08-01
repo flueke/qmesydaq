@@ -1,8 +1,7 @@
 /***************************************************************************
- *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2008 by Lutz Rossa <rossa@hmi.de>                       *
- *   Copyright (C) 2009-2010 by Jens Krüger <jens.krueger@frm2.tum.de>     *
- *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2011 by Lutz Rossa <rossa@helmholtz-berlin.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,45 +19,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef TACOEVENT_H
-#define TACOEVENT_H
+////////////////////////////////////////////////////////////////////////////
+// $$HeadURL$$
+//
+// last change:
+// $$Author$$
+// $$Date$$
+// revision $$Rev$$
+////////////////////////////////////////////////////////////////////////////
 
-#include <QEvent>
-#include <QVariant>
-#include <QList>
+#ifndef __MAPCORRECTPARSER_H__8C42E71B_F6B6_49E9_B2B3_A53982C9165D__
+#define __MAPCORRECTPARSER_H__8C42E71B_F6B6_49E9_B2B3_A53982C9165D__
 
-class CommandEvent : public QEvent
-{
-public:
-	enum Command{
-                C_START,
-                C_STOP,
-                C_CLEAR,
-                C_RESUME,
-                C_SET_PRESELECTION,
-                C_PRESELECTION,
-                C_READ_DIFFRACTOGRAM,
-                C_STATUS,
-		C_READ_HISTOGRAM_SIZE,
-		C_READ_HISTOGRAM,
-		C_READ_SPECTROGRAM,
-		C_READ_COUNTER,
-		C_SELECT_COUNTER,
-		C_SET_LISTMODE,
-		C_SET_LISTHEADER,
-		C_MAPCORRECTION,
-		C_MAPPEDHISTOGRAM,
-		C_QUIT
-        };
+#include "mapcorrect.h"
 
-	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());
+MapCorrection parseCaressMapCorrection(const char* pMapping, int iLength, int iSrcWidth, int iSrcHeight, int iDstWidth, int iDstHeight);
+MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, int iSrcHeight, int iDstWidth, int iDstHeight);
 
-	Command getCommand() const { return m_command; }
-	QList<QVariant> getArgs() const { return m_args; }
-
-private:
-	Command 	m_command;
-	QList<QVariant> m_args;
-};
-
-#endif // TACOEVENT_H
+#endif /*__MAPCORRECTPARSER_H__8C42E71B_F6B6_49E9_B2B3_A53982C9165D__*/
