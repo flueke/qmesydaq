@@ -136,6 +136,8 @@ public:
 
 	quint8 getMpsdId(quint8 addr);
 
+	QString getMpsdType(quint8 addr);
+
 	void initMpsd(quint8 id);
 
 // commands: MCPD-8 ports

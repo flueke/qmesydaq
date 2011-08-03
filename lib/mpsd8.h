@@ -42,6 +42,9 @@ public:
 	//! \return the ID of the MPSD
 	quint8 	getMpsdId(void) {return m_mpsdId;}
 
+	//! \return the type of the MPSD as string
+	virtual QString getType(void) {return tr("MPSD-8");}
+
 // Pulser related methods
 	void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 	void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
@@ -260,6 +263,9 @@ public:
 	virtual quint8	calcGainpoti(float fval);
 	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
+	//! \return the type of the MPSD as string
+	QString getType(void) {return tr("MPSD-8 (old)");}
+
 protected:
 	virtual float	calcGainval(quint8 ga);
 	virtual quint8	calcThreshval(quint8 thr);
@@ -288,6 +294,9 @@ public:
 
 	~MPSD_8P() {}
 
+	//! \return the type of the MPSD as string
+	QString getType(void) {return tr("MPSD-8+");}
+
 	virtual void 	setGain(quint8 channel, float gainv, bool preset = 0);
 	virtual void	setThreshold(quint8 threshold, bool preset = 0);
 
@@ -307,6 +316,21 @@ private:
 	float 		m_t2;
 	float 		m_p1;
 	float 		m_p2;
+};
+
+/** 
+ * \short representation of the MPSD-8 pheripheral module with a single ADC like at DNS
+ *
+ * \author Jens Krueger <jens.krueger@frm2.tum.de>
+ */ 
+class MPSD_8SADC : public MPSD_8
+{
+Q_OBJECT
+public:
+	MPSD_8SADC(quint8 id, QObject *parent = 0);
+
+	//! \return the type of the MPSD as string
+	QString getType(void) {return tr("MPSD-8 (single ADC)");}
 };
 
 #endif

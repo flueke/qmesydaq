@@ -1208,20 +1208,7 @@ quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
-		switch(m_mcpd[id]->getMpsdId(addr))
-		{
-			case MPSD8 :
-				return tr("MPSD-8");
-			case MPSD8P:
-				return tr("MPSD-8+");
-			case MPSD8OLD :
-				return tr("MPSD-8 (old)");
-			case MSTD16 :
-				return tr("MSTD-16");
-			default:
-			case 0:
-				return tr("-");
-		}
+		return m_mcpd[id]->getMpsdType(addr);
 	return "-";
 }
 

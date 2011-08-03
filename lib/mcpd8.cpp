@@ -1207,6 +1207,9 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 								case MPSD8OLD:
 									m_mpsd[c] = new MPSD_8OLD(c, this);
 									break;
+								case MPSD8SADC:
+									m_mpsd[c] = new MPSD_8SADC(c, this);
+									break;
 								case MPSD8 :
 									m_mpsd[c] = new MPSD_8(c, this);
 									break;
@@ -1544,3 +1547,17 @@ void MCPD8::initMpsd(quint8 id)
 	}
 }
 
+/*!
+    \fn QString MPCD8::getMpsdType(quint8 id)
+
+    \param id id number of the MPSD
+ */
+QString MCPD8::getMpsdType(quint8 id)
+{
+	if (m_mpsd.find(id) != m_mpsd.end())
+	{
+		return m_mpsd[id]->getType();
+	}
+	return "-";
+}
+	
