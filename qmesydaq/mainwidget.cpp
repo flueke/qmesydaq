@@ -58,7 +58,7 @@
 #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
 #include "generalsetup.h"
-#include "mapcorrectparser.h"
+#include "mapcorrect.h"
 #include "inifile.h"
 
 /*!
