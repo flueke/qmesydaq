@@ -757,12 +757,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 	setThreshold(iMCPDId,j,threshold);
       }
     }
-#if 0
-    //! \todo does SETPROTOCOL command 5 work with MCPD-8? firmware 9.2 does not ...
     setProtocol(iMCPDId,QString("0.0.0.0"),dataIP,dataPort,cmdIP,cmdPort);
-#else
-    setProtocol(iMCPDId,QString("0.0.0.0"));
-#endif
   }
 
 // scan connected MCPDs
