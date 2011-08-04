@@ -49,6 +49,7 @@
 #include <QRegExp>
 #include <QDateTime>
 #include <QStringList>
+#include <zlib.h>
 #include "mapcorrectparser.h"
 
 #ifdef DEBUGBUILD
@@ -111,6 +112,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
   bool bDetSection=true;
 
   result.setNoMap();
+  if (iSrcWidth<1 || iSrcHeight<1) return result;
   for (iLine=1; pStart<pEnd; ++iLine, pStart=pEOL+1)
   {
     bool bCorrE=false;
@@ -153,16 +155,88 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     value.remove(QRegExp("[ \t]+$"));
     ++pEOL;
 
-    if (!item.compare("corr",Qt::CaseInsensitive)) bCorrE=false;
-    else if (!item.compare("corre",Qt::CaseInsensitive)) bCorrE=true;
-    else
-    {
-      DBG("mapping and correction: ignoring invalid line %d",iLine);
-      continue;
-    }
-
     QStringList tmp(value.split(QRegExp("[, \t]+")));
-    if (tmp.count() < (bCorrE ? 5 : 4))
+    if (!item.compare("corr",Qt::CaseInsensitive))
+    {
+      if (tmp.count()<4)
+      {
+	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	continue;
+      }
+      bCorrE=false;
+    }
+    else if (!item.compare("corre",Qt::CaseInsensitive))
+    {
+      if (tmp.count()<5)
+      {
+	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	continue;
+      }
+      bCorrE=true;
+    }
+    else if (!item.compare("corrz",Qt::CaseInsensitive))
+    {
+      // zlib compressed + base64/mime coded
+      QByteArray abyIn=QByteArray::fromBase64(tmp.last().toLatin1());
+      QByteArray abyOut;
+      z_stream strm;
+      int iSize=1024;
+
+      if (abyIn.isEmpty())
+      {
+	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	continue;
+      }
+
+      memset(&strm,0,sizeof(strm));
+      strm.zalloc=Z_NULL;
+      strm.zfree=Z_NULL;
+      strm.opaque=Z_NULL;
+      strm.next_in=Z_NULL;
+      strm.avail_in=0;
+      i=inflateInit(&strm);
+      if (i!=Z_OK)
+      {
+	inflateEnd(&strm);
+	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	continue;
+      }
+
+      strm.next_in=(Bytef*)abyIn.constData();
+      strm.avail_in=abyIn.count();
+
+      for (j=0;;)
+      {
+	if ((j+32)>=iSize) iSize+=32;
+	abyOut.resize(iSize);
+	strm.next_out=(Bytef*)(&(abyOut.data())[j]);
+	strm.avail_out=abyOut.count()-j;
+	i=inflate(&strm,Z_NO_FLUSH);
+	switch (i)
+	{
+	  case Z_NEED_DICT: i=Z_DATA_ERROR;
+	  case Z_DATA_ERROR:
+	  case Z_MEM_ERROR:
+	    break;
+	  default:
+	    j+=iSize-strm.avail_out;
+	    if (strm.avail_out==0)
+	      continue;
+	}
+	abyOut.resize(j);
+	break;
+      }
+      inflateEnd(&strm);
+      if (i!=Z_OK || abyOut.isEmpty())
+      {
+	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	continue;
+      }
+
+      tmp.last()=QString::fromLatin1(abyOut.constData(),abyOut.count());
+      bCorrE=(tmp.count()>4);
+    }
+    else
     {
       DBG("mapping and correction: ignoring invalid line %d",iLine);
       continue;
@@ -183,6 +257,9 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     //  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14
     // mapped to
     // -1 -1 -1 -1 -1 10 10 11 11 12 12 12 13 13 -1 -1 -1 ...
+    //
+    // additional line like "corre" named "corrz": the "coded_length_array" is
+    // libz-compressed + base64(mime)-coded data
 
     mapstorage s;
     s.m_iTube=tmp.takeFirst().toInt();
@@ -252,6 +329,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
   {
     CRITICAL("mapped size is greater than source:  source=%d*%d  mapped=%d*%d",iSrcWidth,iSrcHeight,iDstWidth,iDstHeight);
     Q_ASSERT(iSrcWidth<=iDstWidth && iSrcHeight<=iDstHeight);
+    return result;
   }
 
   // store size of mapped data

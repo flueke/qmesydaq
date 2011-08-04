@@ -64,9 +64,13 @@
 
 // omniORB needs to know the platform as define __??__
 #if defined(__amd64) || defined(__amd64__) || defined(amd64) || defined(__x86_64)
+#ifndef __x86_64__
 #define __x86_64__
+#endif
 #elif defined(__i386) || defined(__i386__) || defined(i386)
+#ifndef __x86__
 #define __x86__
+#endif
 #endif
 
 #include <omniORB4/CORBA.h>

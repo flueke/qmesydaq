@@ -675,7 +675,7 @@ quint16 MCPD8::getParamSource(quint16 param)
 
 
 /*!
-    \fn MCPD8::setProtocol(const QString addr, const QString datasink, const quint16 dataport, const QString cmdsink, const quint16 cmdport)
+    \fn MCPD8::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
 
     configures the MCPD for the communication it will set the IP address of the module, the IP address and ports of the data and command sink
 
@@ -687,7 +687,7 @@ quint16 MCPD8::getParamSource(quint16 param)
     \return true if operation was succesful or not
     \see getProtocol
  */
-bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint16 dataport, const QString cmdsink, const quint16 cmdport)
+bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
 {
 // addresses are in addr buffer like follows:
 // own addr: [0].[1].[2].[3]
@@ -703,21 +703,21 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 
 // IP address of MCPD-8
 	QHostAddress cmd(addr);
-	quint32 ip = cmd.toIPv4Address();
+	quint32 ownip = cmd.toIPv4Address();
 
-	m_cmdBuf.data[0] = (ip >> 24) & 0xff;
-	m_cmdBuf.data[1] = (ip >> 16) & 0xff;
-	m_cmdBuf.data[2] = (ip >> 8) & 0xff;
-	m_cmdBuf.data[3] = (ip & 0xff);
+	m_cmdBuf.data[0] = (ownip >> 24) & 0xff;
+	m_cmdBuf.data[1] = (ownip >> 16) & 0xff;
+	m_cmdBuf.data[2] = (ownip >> 8) & 0xff;
+	m_cmdBuf.data[3] = (ownip & 0xff);
 
 // IP address of data receiver
 	cmd = QHostAddress(datasink);
-	ip = cmd.toIPv4Address();
-	m_cmdBuf.data[4] = (ip >> 24) & 0xff;
-	m_cmdBuf.data[5] = (ip >> 16) & 0xff;
-	m_cmdBuf.data[6] = (ip >> 8) & 0xff;
-	m_cmdBuf.data[7] = ip & 0xff;
-	if (ip > 0x00FFFFFF) 
+	quint32 dataip = cmd.toIPv4Address();
+	m_cmdBuf.data[4] = (dataip >> 24) & 0xff;
+	m_cmdBuf.data[5] = (dataip >> 16) & 0xff;
+	m_cmdBuf.data[6] = (dataip >> 8) & 0xff;
+	m_cmdBuf.data[7] = dataip & 0xff;
+	if (dataip > 0x00FFFFFF)
 	{
 		m_dataIpAddress = datasink;
 		protocol(tr("mcpd #%1: data ip address set to %2").arg(m_id).arg(m_dataIpAddress), NOTICE);
@@ -741,12 +741,12 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 
 // IP address of command receiver
 	cmd = QHostAddress(cmdsink);
-	ip = cmd.toIPv4Address();
-	m_cmdBuf.data[10] = (ip >> 24) & 0xff;
-	m_cmdBuf.data[11] = (ip >> 16) & 0xff;
-	m_cmdBuf.data[12] = (ip >> 8) & 0xff;
-	m_cmdBuf.data[13] = ip & 0xff;
-	if (ip > 0x00FFFFFF) 
+	quint32 cmdip = cmd.toIPv4Address();
+	m_cmdBuf.data[10] = (cmdip >> 24) & 0xff;
+	m_cmdBuf.data[11] = (cmdip >> 16) & 0xff;
+	m_cmdBuf.data[12] = (cmdip >> 8) & 0xff;
+	m_cmdBuf.data[13] = cmdip & 0xff;
+	if (cmdip > 0x00FFFFFF)
 	{
 		m_cmdIpAddress = cmdsink;
 		protocol(tr("mcpd #%1: cmd ip address set to %2").arg(m_id).arg(m_cmdIpAddress), NOTICE);
@@ -754,7 +754,8 @@ bool MCPD8::setProtocol(const QString addr, const QString datasink, const quint1
 	finishCmdBuffer(14);
 	if (sendCommand())
 	{
-		if (ip > 0x00FFFFFF) 
+		sleep(1);
+		if (ownip > 0x00FFFFFF)
 		{
 			m_ownIpAddress = addr;
 			protocol(tr("mcpd #%1: ip address set to %2").arg(m_id).arg(m_ownIpAddress), NOTICE);

@@ -62,7 +62,7 @@ public:
 	//! \return the ID of this MCPD
 	quint8 getId(void) { return m_id; }
 
-	bool setProtocol(const QString addr, const QString datasink = "0.0.0.0", const quint16 dataport = 0, const QString cmdsink = "0.0.0.0", const quint16 cmdport = 0);
+	bool setProtocol(const QString& addr, const QString& datasink = QString("0.0.0.0"), const quint16 dataport = 0, const QString& cmdsink = QString("0.0.0.0"), const quint16 cmdport = 0);
 
 	void getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const;
 	void getProtocol(quint16 *addr);

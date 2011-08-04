@@ -10,6 +10,7 @@ TEMPLATE 	= lib
 TARGET 		= mesydaq
 DEPENDPATH 	+= .
 INCLUDEPATH 	+= .
+LIBS        	-= -lmesydaq
 
 INSTALLS	= target
 

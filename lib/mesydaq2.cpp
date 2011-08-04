@@ -662,11 +662,38 @@ bool Mesydaq2::loadSetup(const QString &name)
     quint16 cmdPort  =loadSetup_helper(pSection,szPrefix+"cmdport","0").toUInt();
     QString dataIP   =loadSetup_helper(pSection,szPrefix+"dataip","0.0.0.0");
     quint16 dataPort =loadSetup_helper(pSection,szPrefix+"dataport","0").toUInt();
-    bool    master   =(loadSetup_helper(pSection,szPrefix+"master","1").toInt()!=0);
-    bool    terminate=(loadSetup_helper(pSection,szPrefix+"terminate","1").toInt()!=0);
+    bool    master   =true;
+    bool    terminate=true;
 
-    if (QHostAddress(cmdIP).isNull()) cmdPort=0;
-    if (QHostAddress(dataIP).isNull()) dataPort=0;
+    do
+    {
+      QString sz=loadSetup_helper(pSection,szPrefix+"master","1");
+      bool bOK=false;
+      master=(sz.toInt(&bOK)!=0);
+      if (!bOK) master=!sz.contains("false",Qt::CaseInsensitive);
+      sz=loadSetup_helper(pSection,szPrefix+"terminate","1");
+      terminate=(sz.toInt(&bOK)!=0);
+      if (!bOK) terminate=!sz.contains("false",Qt::CaseInsensitive);
+    } while (0);
+
+    do
+    {
+      QHostAddress cmd(cmdIP);
+      if (cmd==QHostAddress::Any || cmd==QHostAddress::AnyIPv6)
+      {
+	cmdIP="0.0.0.0";
+	cmdPort=0;
+      }
+    } while (0);
+    do
+    {
+      QHostAddress data(dataIP);
+      if (data==QHostAddress::Any || data==QHostAddress::AnyIPv6)
+      {
+	dataIP="0.0.0.0";
+	dataPort=0;
+      }
+    } while (0);
 
     addMCPD(iMCPDId, IP, port>0 ? port : cmdPort, cmdIP);
     for (j=0; j<4; ++j)
@@ -730,7 +757,12 @@ bool Mesydaq2::loadSetup(const QString &name)
 	setThreshold(iMCPDId,j,threshold);
       }
     }
-    setProtocol(iMCPDId,IP,dataIP,dataPort,cmdIP,cmdPort);
+#if 0
+    //! \todo does SETPROTOCOL command 5 work with MCPD-8? firmware 9.2 does not ...
+    setProtocol(iMCPDId,QString("0.0.0.0"),dataIP,dataPort,cmdIP,cmdPort);
+#else
+    setProtocol(iMCPDId,QString("0.0.0.0"));
+#endif
   }
 
 // scan connected MCPDs
@@ -947,7 +979,7 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
 }
 
 /*!
-    \fn Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString dataIP, const quint16 dataPort, const QString cmdIP, const quint16 cmdPort)
+    \fn Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, const quint16 dataPort, const QString &cmdIP, const quint16 cmdPort)
 
     configures a MCPD for the communication it will set the IP address of the module, the IP address and ports of the data and command sink
 
@@ -959,9 +991,9 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
     \param cmdPort port number for cmd answer packets (if 0 the port number won't be changed)
     \see getProtocol
  */
-void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString dataIP, const quint16 dataPort, const QString cmdIP, const quint16 cmdPort)
+void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, quint16 dataPort, const QString &cmdIP, quint16 cmdPort)
 {
-	m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
+  m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }	
 
 /*!

@@ -675,7 +675,7 @@ quint16 MCPD2::getParamSource(quint16 param)
 
 
 /*!
-    \fn MCPD2::setProtocol(const QString addr, const QString datasink, const quint16 dataport, const QString cmdsink, const quint16 cmdport)
+    \fn MCPD2::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
 
     configures the MCPD for the communication it will set the IP address of the module, the IP address and ports of the data and command sink
 
@@ -687,7 +687,7 @@ quint16 MCPD2::getParamSource(quint16 param)
     \return true if operation was succesful or not
     \see getProtocol
  */
-bool MCPD2::setProtocol(const QString addr, const QString datasink, const quint16 dataport, const QString cmdsink, const quint16 cmdport)
+bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
 {
 // addresses are in addr buffer like follows:
 // own addr: [0].[1].[2].[3]

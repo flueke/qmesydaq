@@ -18,7 +18,9 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
+isEmpty(VERSION) {
 VERSION 	= 0.0.3 
+}
 SVNVERSION	= $$system(svnversion .)
 DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
@@ -96,6 +98,6 @@ contains(INTERFACE, CARESS) {
 	DEFINES		+= USE_CARESS=1
 #	INCLUDEPATH	+= $${OMNIORB_ROOT}/include
 #	CARESSLIBS	+= -L$${OMNIORB_ROOT}/lib
-	CARESSLIBS	= -lomniDynamic4 -lomniORB4 -lomnithread
+	CARESSLIBS	= -lomniDynamic4 -lomniORB4 -lomnithread -lz
 	message(build the CARESS remote interface)
 }
