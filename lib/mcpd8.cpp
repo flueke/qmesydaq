@@ -754,7 +754,7 @@ bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quin
 	finishCmdBuffer(14);
 	if (sendCommand())
 	{
-		sleep(1);
+		sleep(2);
 		if (ownip > 0x00FFFFFF)
 		{
 			m_ownIpAddress = addr;
@@ -988,6 +988,9 @@ int MCPD8::sendCommand(void)
 	{
 		QString pstring = tr("%4(%5) : %1. sent cmd: %2 to id: %3").arg(m_cmdBuf.bufferNumber).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId).arg(m_network->ip()).arg(m_network->port());
 		protocol(pstring, DEBUG);
+// block other commands due to the writing on flash to avoid crashes on MCPD-8
+		if (m_cmdBuf.cmd == SETPROTOCOL)
+			sleep(2);
 		communicate(true);
 		m_commTimer->start(500);
 		protocol(tr("%1(%2) : timer started").arg(m_network->ip()).arg(m_network->port()), DEBUG);
