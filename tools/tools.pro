@@ -20,7 +20,7 @@
 
 TEMPLATE 	= subdirs
 
-SUBDIRS		+= qmsetip qmlmod qmsetid qmmaster
+SUBDIRS		+= qmsetip qmlsmod qmsetid qmmaster
 
 TARGET = 	
 DEPENDPATH 	+= ../lib 

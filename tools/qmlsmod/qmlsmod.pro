@@ -7,7 +7,7 @@ VERSION		= 1.0.2
 include(../../qmesydaqconfig.pri)
 
 TEMPLATE 	= app
-TARGET 		= qmlmod
+TARGET 		= qmlsmod
 
 QT		+= core network
 
