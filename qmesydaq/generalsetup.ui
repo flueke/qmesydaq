@@ -225,6 +225,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>runIdAuto</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>runId</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>586</x>
+     <y>660</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>327</x>
+     <y>660</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>selectListpathSlot()</slot>

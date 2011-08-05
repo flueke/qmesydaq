@@ -40,9 +40,9 @@ class CorbaThread;
 class ControlInterface;
 
 /**
- 	\short Main Widget in the application
+    \short Main Widget in the application
 
-	\author Gregor Montermann <g.montermann@mesytec.com>
+    \author Gregor Montermann <g.montermann@mesytec.com>
 */
 class MainWidget : public QWidget, public Ui_Mesydaq2MainWidget
 {
@@ -70,34 +70,47 @@ public slots:
 
 	void	setupGeneral();
 
+	void 	setupModule();
+
+	void 	setupModule(quint8 id);
+
+	void	setupMCPD();
+
 protected:
         void    customEvent(QEvent *);
+
 //	void 	paintEvent(QPaintEvent *);
 
 private:
 	void	print(QPrinter *, QwtPlotPrintFilter &);
+
 	void 	updateDisplay(void);
+
 	void 	processDispData();
+
 	void 	drawOpData();
+
 	void 	updatePresets(void);
 
 private slots:
-	void setModeSlot(bool);
 	void displayMpsdSlot(int = -1);
 
-	void sendAuxSlot();
-	void sendParamSlot();
-	void sendCellSlot();
 	void startStopSlot(bool = false);
-	void setTimingSlot();
-	void resetTimerSlot();
+
 	void clearChanSlot();
+
 	void clearMpsdSlot();
+
 	void clearMcpdSlot();
+
 	void clearAllSlot();
+
 	void setStreamSlot();
+
 	void setRunIdSlot();
+
 	void displayMcpdSlot(int = -1);
+
 	void allPulserOff();
 
 	void mpsdCheck(int);
@@ -106,56 +119,58 @@ private slots:
 
 // setup related methods
 	void restoreSetupSlot();
+
 	void saveSetupSlot();
+
 	void saveConfigSlot();
 
 // list mode files related methods
 	void replayListfileSlot();
+
 	void checkListfilename(bool);
 
 	void linlogSlot(bool);
+
 	void applyThreshSlot();
-	void readRegisterSlot();
-	void writeRegisterSlot();
-#if 0
-	void selectConfigpathSlot();
-	void selectHistpathSlot();
-	void selectListpathSlot();
-#endif
+
 	void writeHistSlot();
+
 	void loadHistSlot();
 
 	void tPresetSlot(bool pr);
+
 	void tResetSlot();
 
 	void ePresetSlot(bool pr);
+
 	void eResetSlot();
 
 	void m1PresetSlot(bool pr);
+
 	void m1ResetSlot();
 
 	void m2PresetSlot(bool pr);
+
 	void m2ResetSlot();
 
 	void m3PresetSlot(bool pr);
+
 	void m3ResetSlot();
 
 	void m4PresetSlot(bool pr);
+
 	void m4ResetSlot();
 
 	void draw(void);
 
-	void setThresholdSlot();
-	void setGainSlot();
-	void setPulserSlot();
-	void setIpUdpSlot();
-	void setMcpdIdSlot();
-
 	void zoomAreaSelected(const QwtDoubleRect&);
+
 	void zoomed(const QwtDoubleRect&);
 
 	void setHistogramMode(bool);
+
 	void setSpectraMode(bool);
+
 	void setDiffractogramMode(bool);
 
 	void closeEvent(QCloseEvent *);

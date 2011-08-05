@@ -46,7 +46,9 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
         connect(actionPrint, SIGNAL(triggered()), m_main, SLOT(printPlot()));
 	connect(actionExport_PDF, SIGNAL(triggered()), m_main, SLOT(exportPDF()));
 	connect(actionExport_SVG, SIGNAL(triggered()), m_main, SLOT(exportSVG()));
-	connect(action_General, SIGNAL(triggered()), m_main, SLOT(setupGeneral()));
+	connect(actionGeneral, SIGNAL(triggered()), m_main, SLOT(setupGeneral()));
+	connect(actionModule, SIGNAL(triggered()), m_main, SLOT(setupModule()));
+	connect(actionMCPD, SIGNAL(triggered()), m_main, SLOT(setupMCPD()));
 	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));

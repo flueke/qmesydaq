@@ -45,14 +45,19 @@ HEADERS 	+= mainwidget.h \
 		QtInterface.h \
 		MultipleLoopApplication.h \
 		ipaddresswidget.h \
-		generalsetup.h
+		generalsetup.h \
+		mcpdsetup.h \
+		modulestatus.h \
+		modulesetup.h
 
 FORMS 		+= mesydaq2mainwidget.ui \
 		mesydaq2mainwindow.ui \
-		generalsetup.ui
+		generalsetup.ui \
+		mcpdsetup.ui \
+		modulestatus.ui \
+		modulesetup.ui 
 
 SOURCES 	+= main.cpp \
-		mainwidget.cpp \
 		mainwindow.cpp \
 		mesydaqdata.cpp \
 		ModuleSpinBox.cpp \
@@ -63,7 +68,11 @@ SOURCES 	+= main.cpp \
 		QtInterface.cpp \
 		MultipleLoopApplication.cpp \
 		ipaddresswidget.cpp \
-		generalsetup.cpp
+		generalsetup.cpp \
+		mcpdsetup.cpp \
+		modulesetup.cpp \
+		modulestatus.cpp \
+		mainwidget.cpp 
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png

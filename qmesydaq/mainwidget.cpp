@@ -58,8 +58,12 @@
 #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
 #include "generalsetup.h"
+
 #include "mapcorrect.h"
 #include "inifile.h"
+
+#include "modulesetup.h"
+#include "mcpdsetup.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -88,6 +92,25 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 {
     m_meas = new Measurement(mesy, this);
     setupUi(this);
+    statusTab->setCurrentIndex(0);
+
+    moduleStatus0->setId(0);
+    moduleStatus1->setId(1);
+    moduleStatus2->setId(2);
+    moduleStatus3->setId(3);
+    moduleStatus4->setId(4);
+    moduleStatus5->setId(5);
+    moduleStatus6->setId(6);
+    moduleStatus7->setId(7);
+
+    connect(moduleStatus0, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus1, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus2, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus3, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus4, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus5, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus6, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus7, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
 
     init();
 
@@ -99,10 +122,12 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
     connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
     connect(this, SIGNAL(redraw()), this, SLOT(draw()));
-    //	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
+#if 0
+    connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
     connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
     connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
     connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
+#endif
     connect(dispHistogram, SIGNAL(toggled(bool)), this, SLOT(setHistogramMode(bool)));
     connect(dispSpectra, SIGNAL(toggled(bool)), this, SLOT(setSpectraMode(bool)));
     connect(dispDiffractogram, SIGNAL(toggled(bool)), this, SLOT(setDiffractogramMode(bool)));
@@ -114,10 +139,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispAllPos, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(dispAllAmpl, SIGNAL(toggled(bool)), this, SLOT(draw()));
 
-    //	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
-
-    channelLabel->setHidden(comgain->isChecked());
-    channel->setHidden(comgain->isChecked());
+//  connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 
     clearMcpd->setHidden(true);
     clearMpsd->setHidden(true);
@@ -135,9 +157,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     labelEventSingle->setHidden(true);
     eventSingle->setHidden(true);
-
-    dataIPAddress->setText("192.168.168.005");
-    cmdIPAddress->setText("192.168.168.005");
 
     m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channels"));
     m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
@@ -299,15 +318,9 @@ void MainWidget::about()
 void MainWidget::init()
 {
     QList<int> mcpdList = m_theApp->mcpdId();
-//  int mcpd = 0;
-//  if (mcpdList.size())
-//      mcpd = mcpdList[0];
-    //	deviceId->setMCPDList(mcpdList);
     dispMcpd->setMCPDList(mcpdList);
-    devid->setMCPDList(mcpdList);
     devid_2->setMCPDList(mcpdList);
     paramId->setMCPDList(mcpdList);
-    mcpdId->setMCPDList(mcpdList);
 }
 
 /*!
@@ -329,7 +342,9 @@ void MainWidget::timerEvent(QTimerEvent *event)
 void MainWidget::allPulserOff(void)
 {
     m_theApp->allPulserOff();
+#if 0
     pulserButton->setChecked(false);
+#endif
 }
 
 /*!
@@ -407,69 +422,6 @@ void MainWidget::startStopSlot(bool checked)
 }
 
 /*!
-    \fn void MainWidget::sendCellSlot()
-
-*/
-void MainWidget::sendCellSlot()
-{
-    quint16 id = mcpdId->value();
-    m_theApp->setCounterCell(id, cellSource->currentIndex(), cellTrigger->currentIndex(), cellCompare->value());
-}
-
-/*!
-    \fn void MainWidget::sendParamSlot()
-
-*/
-void MainWidget::sendParamSlot()
-{
-    qint16 id = mcpdId->value();
-    m_theApp->setParamSource(id, param->value(), paramSource->currentIndex());
-}
-
-/*
-    \fn void MainWidget::sendAuxSlot()
-
-*/
-void MainWidget::sendAuxSlot()
-{
-    m_theApp->protocol("set aux timer", NOTICE);
-    bool ok;
-    quint16 compare = (quint16)compareAux->text().toInt(&ok, 0);
-    m_theApp->setAuxTimer(mcpdId->value(), timer->value(), compare);
-}
-
-/*!
-    \fn void MainWidget::resetTimerSlot()
-
-*/
-void MainWidget::resetTimerSlot()
-{
-    quint16 id = mcpdId->value();
-    m_theApp->protocol("reset timer", NOTICE);
-    m_theApp->setMasterClock(id, 0LL);
-}
-
-/*!
-    \fn void MainWidget::setTimingSlot()
-
-*/
-void MainWidget::setTimingSlot()
-{
-    quint16 id = mcpdId->value();
-    resetTimer->setEnabled(master->isChecked());
-    m_theApp->protocol("set timing", NOTICE);
-    m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked());
-}
-
-/*!
-    \fn void MainWidget::setMcpdIdSlot()
-*/
-void MainWidget::setMcpdIdSlot()
-{
-    m_theApp->setId(mcpdId->value(), deviceId->value());
-}
-
-/*!
     \fn void MainWidget::setStreamSlot()
 
 */
@@ -490,82 +442,6 @@ void MainWidget::setStreamSlot()
 
     m_theApp->setStream(mcpdId->value(), statusStream->isChecked());
 #endif
-}
-
-/*!
-    \fn void MainWidget::setIpUdpSlot()
-
-*/
-void MainWidget::setIpUdpSlot()
-{
-    quint16 id =  mcpdId->value();
-    QString mcpdIP = modifyIp->isChecked() ? mcpdIPAddress->text() : "0.0.0.0",
-    cmdIP = !cmdThisPc->isChecked() ? cmdIPAddress->text() : "0.0.0.0",
-    dataIP = !dataThisPc->isChecked() ? dataIPAddress->text() : "0.0.0.0";
-    quint16 cmdPort = (quint16) cmdUdpPort->value(),
-    dataPort = (quint16) dataUdpPort->value();
-    m_theApp->setProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
-}
-
-/*!
-    \fn void MainWidget::setPulserSlot()
-
-*/
-void MainWidget::setPulserSlot()
-{
-    bool ok;
-    quint16 id = (quint16) devid->value();
-    quint16 mod = module->value();
-    quint16 chan = pulsChan->value();
-
-    quint8 ampl;
-    if(pulsampRadio1->isChecked())
-        ampl = (quint8) pulsAmp1->text().toInt(&ok);
-    else
-        ampl = (quint8) pulsAmp2->text().toInt(&ok);
-
-    quint16 pos = MIDDLE;
-    if(pulsLeft->isChecked())
-        pos = LEFT;
-    else if(pulsRight->isChecked())
-        pos = RIGHT;
-    else if(pulsMid->isChecked())
-        pos = MIDDLE;
-
-    bool pulse = pulserButton->isChecked();
-    if (pulse)
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
-    else
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
-
-    m_theApp->setPulser(id, mod, chan, pos, ampl, pulse);
-}
-
-/*!
-    \fn void MainWidget::setGainSlot()
-
-*/
-void MainWidget::setGainSlot()
-{
-    bool 	ok;
-    quint16 chan = comgain->isChecked() ? 8 : channel->text().toUInt(&ok, 0),
-    id = (quint16) devid->value(),
-    addr = module->value();
-    float 	gainval = gain->text().toFloat(&ok);
-    m_theApp->setGain(id, addr, chan, gainval);
-}
-
-/*!
-    \fn void MainWidget::setThresholdSlot()
-
-*/
-void MainWidget::setThresholdSlot()
-{
-    bool ok;
-    quint16 id = (quint16) devid->value();
-    quint16 addr = module->value();
-    quint16 thresh = threshold->text().toUInt(&ok, 0);
-    m_theApp->setThreshold(id, addr, thresh);
 }
 
 /*!
@@ -770,10 +646,13 @@ void MainWidget::replayListfileSlot()
 */
 void MainWidget::setRunIdSlot()
 {
+#warning TODO
+#if 0
     quint16 runid = (quint16) devid->value();
 #warning TODO 0 !!!!
     m_theApp->setRunId(0, runid);
     m_theApp->protocol(tr("Set run ID to %1").arg(runid), NOTICE);
+#endif
 }
 
 /*!
@@ -783,42 +662,15 @@ void MainWidget::setRunIdSlot()
  */
 void MainWidget::displayMcpdSlot(int id)
 {
-    // retrieve displayed ID
+    if (id < 0)
+        return;
     if (!m_theApp->numMCPD())
         return;
-    if (id < 0)
-        id = mcpdId->value();
-
     QList<int> modList;
     for (int i = 0; i < 8; ++i)
         if (m_theApp->getMpsdId(id, i))
             modList << i;
-
-    module->setModuleList(modList);
     dispMpsd->setModuleList(modList);
-
-    // store the current termination value it will be change if switch from master to slave
-    bool term = m_theApp->isTerminated(id);
-    master->setChecked(m_theApp->isMaster(id));
-    if (!master->isChecked())
-        terminate->setChecked(term);
-
-    // now get and display parameters:
-    quint16 values[4];
-    
-    // get cell parameters
-    m_theApp->getCounterCell(id, cellSource->currentIndex(), values);
-    cellTrigger->setCurrentIndex(values[0]);
-    cellCompare->setValue(values[1]);
-    
-    // get parameter settings
-    paramSource->setCurrentIndex(m_theApp->getParamSource(id, param->value()));
-
-    // get timer settings
-    compareAux->setText(tr("%1").arg(m_theApp->getAuxTimer(id, timer->value()), 0, 16));
-
-    // get stream setting
-    //	statusStream->setChecked(m_theApp->myMcpd[id]->getStream());
 }
 
 /*!
@@ -826,69 +678,22 @@ void MainWidget::displayMcpdSlot(int id)
 
     \param id
  */
-void MainWidget::displayMpsdSlot(int id)
+void MainWidget::displayMpsdSlot(int)
 {
-    QString dstr;
-    
-    // retrieve displayed ID
+// retrieve displayed ID
     quint8 mod = devid_2->value();
-    if (id < 0)
-        id = module->value();
-    // firmware version
+// firmware version
     firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod)));
     
-    // Status display:
-    status0->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 0)).arg(m_theApp->getMpsdVersion(mod, 0)));
-    status1->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 1)).arg(m_theApp->getMpsdVersion(mod, 1)));
-    status2->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 2)).arg(m_theApp->getMpsdVersion(mod, 2)));
-    status3->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 3)).arg(m_theApp->getMpsdVersion(mod, 3)));
-    status4->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 4)).arg(m_theApp->getMpsdVersion(mod, 4)));
-    status5->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 5)).arg(m_theApp->getMpsdVersion(mod, 5)));
-    status6->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 6)).arg(m_theApp->getMpsdVersion(mod, 6)));
-    status7->setText(tr("%1\n%2").arg(m_theApp->getMpsdType(mod, 7)).arg(m_theApp->getMpsdVersion(mod, 7)));
-
-    quint8 chan = comgain->isChecked() ? 8 : channel->value();
-
-    // gain:
-    gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));
-
-    // threshold:
-    threshold->setText(tr("%1").arg(m_theApp->getThreshold(mod, id)));
-
-    // pulser:  on/off
-    if(m_theApp->isPulserOn(mod, id))
-    {
-        pulserButton->setChecked(true);
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
-    }
-    else
-    {
-        pulserButton->setChecked(false);
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
-    }
-    // channel
-    pulsChan->setValue((int)m_theApp->getPulsChan(mod, id));
-    // amplitude
-    dstr.sprintf("%3d", m_theApp->getPulsAmp(mod, id));
-    //	pulsAmp->setValue((int)m_theApp->getPulsAmp(mod, id));
-    // position
-    switch(m_theApp->getPulsPos(mod, id))
-    {
-    	case LEFT:
-        	pulsLeft->setChecked(true);
-        	break;
-    	case RIGHT:
-        	pulsRight->setChecked(true);
-        	break;
-    	case MIDDLE:
-        	pulsMid->setChecked(true);
-        	break;
-    }
-    // mode
-    if (m_theApp->getMode(mod, id))
-        amp->setChecked(true);
-    else
-        Ui_Mesydaq2MainWidget::pos->setChecked(true);
+// Status display:
+    moduleStatus0->update(m_theApp->getMpsdType(mod, 0), m_theApp->getMpsdVersion(mod, 0), m_theApp->online(mod, 0));
+    moduleStatus1->update(m_theApp->getMpsdType(mod, 1), m_theApp->getMpsdVersion(mod, 1), m_theApp->online(mod, 1));
+    moduleStatus2->update(m_theApp->getMpsdType(mod, 2), m_theApp->getMpsdVersion(mod, 2), m_theApp->online(mod, 2));
+    moduleStatus3->update(m_theApp->getMpsdType(mod, 3), m_theApp->getMpsdVersion(mod, 3), m_theApp->online(mod, 3));
+    moduleStatus4->update(m_theApp->getMpsdType(mod, 4), m_theApp->getMpsdVersion(mod, 4), m_theApp->online(mod, 4));
+    moduleStatus5->update(m_theApp->getMpsdType(mod, 5), m_theApp->getMpsdVersion(mod, 5), m_theApp->online(mod, 5));
+    moduleStatus6->update(m_theApp->getMpsdType(mod, 6), m_theApp->getMpsdVersion(mod, 6), m_theApp->online(mod, 6));
+    moduleStatus7->update(m_theApp->getMpsdType(mod, 7), m_theApp->getMpsdVersion(mod, 7), m_theApp->online(mod, 7));
 }
 
 /*!
@@ -906,20 +711,10 @@ void MainWidget::scanPeriSlot(bool real)
     for (int i = 0; i < 8; ++i)
         if (m_theApp->getMpsdId(id, i))
             modList << i;
-    m_width = m_theApp->bins() - 1;
-    module->setModuleList(modList);
     dispMpsd->setModuleList(modList);
     displayMpsdSlot(modList.size() ? modList.at(0) : -1);
-}
 
-/*!
-    \fn void MainWidget::setModeSlot(bool mode)
-
-    \param mode
-*/
-void MainWidget::setModeSlot(bool mode)
-{
-    m_theApp->setMode(devid->value(), module->value(), mode);
+    m_width = m_theApp->bins() - 1;
 }
 
 /*!
@@ -1030,36 +825,6 @@ void MainWidget::drawOpData()
         pulserWarning->setText(tr("<p align=\"center\">PULSER ON!</p>"));
     else
         pulserWarning->setText("");
-}
-
-/*!
-    \fn void MainWidget::writeRegisterSlot()
-
-    callback to write into a MPSD register
- */
-void MainWidget::writeRegisterSlot()
-{
-    bool ok;
-    quint16 id = (quint16) devid->value();
-    quint16 addr = module->value();
-    quint16 reg = registerSelect->value();
-    quint16 val = registerValue->text().toUInt(&ok, 0);
-    m_theApp->writePeriReg(id, addr, reg, val);
-}
-
-/*!
-    \fn void MainWidget::readRegisterSlot()
-
-    callback to read from a MPSD register
-    //! \todo display read values
-*/
-void MainWidget::readRegisterSlot()
-{
-#warning TODO display read values
-    quint16 id = (quint16) devid->value();
-    quint16 addr = module->value();
-    quint16 reg = registerSelect->value();
-    m_theApp->readPeriReg(id, addr, reg);
 }
 
 /*!
@@ -1620,6 +1385,39 @@ void MainWidget::exportSVG()
         generator.setSize(QSize(800, 600));
         m_dataFrame->print(generator);
     }
+}
+
+/*!
+    \fn void MainWidget::setupMCPD()
+*/
+void MainWidget::setupMCPD(void)
+{
+    MCPDSetup d(m_theApp);
+    if (d.exec() == QDialog::Accepted)
+    {
+    }
+}
+
+/*!
+    \fn void MainWidget::setupModule(quint8)
+
+    \parm id
+ */
+void MainWidget::setupModule(quint8 id)
+{
+    ModuleSetup d(m_theApp, this);
+    d.setModule(devid_2->value());
+    d.setModule(id);
+    d.exec();
+}
+
+/*!
+    \fn void MainWidget::setupModule()
+*/
+void MainWidget::setupModule(void)
+{
+    ModuleSetup d(m_theApp, this);
+    d.exec();
 }
 
 /*!

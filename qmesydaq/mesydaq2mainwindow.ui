@@ -54,7 +54,9 @@
     <property name="title">
      <string>&amp;Configuration</string>
     </property>
-    <addaction name="action_General"/>
+    <addaction name="actionGeneral"/>
+    <addaction name="actionMCPD"/>
+    <addaction name="actionModule"/>
    </widget>
    <addaction name="menu_Files"/>
    <addaction name="menu_Configuration"/>
@@ -116,7 +118,7 @@
     <string>About &amp;Qt ...</string>
    </property>
   </action>
-  <action name="action_General">
+  <action name="actionGeneral">
    <property name="text">
     <string>&amp;General</string>
    </property>
@@ -124,6 +126,16 @@
   <action name="action_NewSetup">
    <property name="text">
     <string>&amp;New Setup</string>
+   </property>
+  </action>
+  <action name="actionModule">
+   <property name="text">
+    <string>Module</string>
+   </property>
+  </action>
+  <action name="actionMCPD">
+   <property name="text">
+    <string>MCPD</string>
    </property>
   </action>
  </widget>
