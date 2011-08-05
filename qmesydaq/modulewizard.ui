@@ -14,7 +14,20 @@
    <string>Add a module ...</string>
   </property>
   <widget class="ModuleIdentificationPage" name="wizardPage1"/>
+  <widget class="ModuleMasterPage" name="wizardPage2"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ModuleIdentificationPage</class>
+   <extends>QWizardPage</extends>
+   <header>moduleidentificationpage.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ModuleMasterPage</class>
+   <extends>QWizardPage</extends>
+   <header>modulemasterpage.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

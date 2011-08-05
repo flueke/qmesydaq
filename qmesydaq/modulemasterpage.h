@@ -17,29 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MODULE_WIZARD_H
-#define MODULE_WIZARD_H
+#ifndef MODULE_MASTER_PAGE_H
+#define MODULE_MASTER_PAGE_H
 
-#include <QWizard>
-#include "ui_modulewizard.h"
+#include <QWizardPage>
+#include "ui_modulemasterpage.h"
 
 class QMouseEvent;
 
-class ModuleWizard : public QWizard, public Ui_ModuleWizard
+class ModuleMasterPage : public QWizardPage, public Ui_ModuleMasterPage
 {
 	Q_OBJECT
 public:
-	ModuleWizard(const QString & = "192.168.168.121", const quint16 = 0, QWidget * = 0);
-	
-	QString ip(void);
+	ModuleMasterPage(QWidget * = 0);
 
-	quint16 id(void);
-
-	bool master(void);
-
-	bool terminate(void);
-
-protected:
-	void accept();
+private slots:
+	void valueChanged(bool);
 };
 #endif

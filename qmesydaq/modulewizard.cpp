@@ -48,10 +48,26 @@ QString ModuleWizard::ip(void)
 }
 
 /*!
-    \fn QString ModuleWizard::id(void)
+    \fn quint16 ModuleWizard::id(void)
  */
 quint16 ModuleWizard::id(void)
 {  
     return field("moduleid").toUInt();
+}
+
+/*!
+    \fn bool ModuleWizard::master(void)
+ */
+bool ModuleWizard::master(void)
+{  
+    return field("master").toBool();
+}
+
+/*!
+    \fn bool ModuleWizard::terminate(void)
+ */
+bool ModuleWizard::terminate(void)
+{  
+    return field("terminate").toBool();
 }
 

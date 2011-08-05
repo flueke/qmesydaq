@@ -60,10 +60,9 @@ LoopObject *MultipleLoopApplication::getLoopObject()
 
 int MultipleLoopApplication::exec()
 {
-	int iResult;
 	if (m_loop)
 		m_loop->start();
-	iResult=QApplication::exec();
+	int iResult = QApplication::exec();
 	if (m_interface)
 		m_interface->postCommandToInterface(CommandEvent::C_QUIT);
 	return iResult;

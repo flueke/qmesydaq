@@ -329,7 +329,7 @@ void MainWidget::init()
     acquireFile->setDisabled(mcpdList.empty());
     allPulsersoffButton->setDisabled(mcpdList.empty());
     displayTabWidget->setDisabled(mcpdList.empty());
-    statusTabWidget->setDisabled(mcpdList.empty());
+    statusGroupBox->setDisabled(mcpdList.empty());
 }
 
 /*!
@@ -1435,6 +1435,7 @@ void MainWidget::addMCPD(void)
 	qDebug() << d.id();
         m_theApp->addMCPD(d.id(), d.ip());
 	init();
+	m_theApp->setTimingSetup(d.id(), d.master(), d.terminate());
     }
 }
 

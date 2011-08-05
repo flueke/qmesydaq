@@ -20,45 +20,26 @@
 #include <QMouseEvent>
 #include <QAbstractButton>
 
-#include "moduleidentificationpage.h"
+#include "modulemasterpage.h"
 #include "mcpd8.h"
 
 /*!
     constructor
  */
-ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
+ModuleMasterPage::ModuleMasterPage(QWidget *parent)
 	: QWizardPage(parent)
 {
     setupUi(this);
-    registerField("ipaddress*", moduleIPInput);
-    registerField("moduleid*", moduleIDInput); 
-    initialize();
 
-    connect(moduleIPInput, SIGNAL(textChanged(const QString &)), this, SLOT(valueChanged()));
-    connect(moduleIPInput, SIGNAL(textEdited(const QString &)), this, SLOT(valueChanged()));
-    connect(moduleIDInput, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
+    registerField("master", masterCheckBox);
+    registerField("terminate", terminateCheckBox); 
+
+    connect(masterCheckBox, SIGNAL(toggled(bool)), this, SLOT(valueChanged(bool)));
+    setFinalPage(true);
 }
 
-void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
+void ModuleMasterPage::valueChanged(bool val)
 {
-    moduleIPInput->setText(ip);
-    moduleIDInput->setValue(id);
-}
-
-bool ModuleIdentificationPage::isComplete() const
-{
-     MCPD8 *mcpd = new MCPD8(moduleIDInput->value(), NULL, moduleIPInput->text());
-
-     bool ret = mcpd->version() != 0;
-     delete mcpd;
-     return ret;
-}
-
-void ModuleIdentificationPage::valueChanged()
-{
-        enum QWizard::WizardButton bt = QWizard::NextButton;
-	if (isFinalPage())
-		bt = QWizard::FinishButton;
-	wizard()->button(bt)->setEnabled(false);
-	wizard()->button(bt)->setEnabled(isComplete());
+	if (val)
+		terminateCheckBox->setChecked(true);
 }
