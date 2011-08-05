@@ -1214,7 +1214,7 @@ void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 }
 
 /*!
-    \fn Mesydaq2::getMpsdId(quint16 id, quint8 addr)
+    \fn quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 
     get the detected ID of the MPSD. If MPSD not exists it will return 0.
 
@@ -1228,6 +1228,22 @@ quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMpsdId(addr);
 	return 0;
+}
+
+/*!
+    \fn bool Mesydaq2::online(quint16 id, quint8 addr)
+
+    returns whether the module is detected and online or not
+
+    \param id number of the MCPD
+    \param addr module number
+    \return true or false
+ */
+bool Mesydaq2::online(quint16 id, quint8 addr)
+{
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->online(addr);
+	return false;
 }
 
 /*!

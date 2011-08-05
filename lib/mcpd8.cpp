@@ -214,6 +214,21 @@ quint8 MCPD8::getMpsdId(quint8 addr)
 }
 
 /*!
+    \fn bool MCPD8::online(quint8)
+
+    returns whether the module with id was found and online or not
+
+    \param addr module number
+    \return true or false
+ */
+bool MCPD8::online(quint8 addr)
+{
+	if (m_mpsd.contains(addr))
+		return m_mpsd[addr]->online();
+	return false;
+}
+
+/*!
     \fn MCPD8::setId(quint8 mcpdid)
 
     sets the id of the MCPD

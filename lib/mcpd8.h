@@ -138,6 +138,8 @@ public:
 
 	QString getMpsdType(quint8 addr);
 
+	bool online(quint8 addr);
+
 	void initMpsd(quint8 id);
 
 // commands: MCPD-8 ports

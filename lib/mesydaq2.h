@@ -165,6 +165,8 @@ public:
 
 	float getMpsdVersion(quint16 mod, quint8 addr);
 
+	bool online(quint16 mod, quint8 addr);
+
 	float getGain(quint16 mod, quint8 addr, quint8 chan);
 
 	quint8 getThreshold(quint16 mod, quint8 addr);

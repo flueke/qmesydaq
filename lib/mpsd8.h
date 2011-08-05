@@ -45,6 +45,9 @@ public:
 	//! \return the type of the MPSD as string
 	virtual QString getType(void) {return tr("MPSD-8");}
 
+	//! \return is the module online or not
+	bool online(void);
+
 // Pulser related methods
 	void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 	void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
