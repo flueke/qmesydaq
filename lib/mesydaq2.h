@@ -29,6 +29,7 @@
 #include <QString>
 #include <QTimer>
 #include <QHash>
+#include <QFileInfo>
 
 #include "mesydaqobject.h"
 #include "structures.h"
@@ -126,10 +127,10 @@ public:
 	 *
 	 * \param name config file name
 	 */
-	void setConfigfilename(QString name) {m_configfilename = name;}
+	void setConfigfilename(const QString &name);
 
 	//! \return last loaded config file name
-	QString getConfigfilename(void) {return m_configfilename;}
+	QString getConfigfilename(void);
 
 	/**
 	 * sets the path for the config files
@@ -204,9 +205,9 @@ public:
 
 	QList<int> mcpdId(void) 
 	{
-		std::list<int> st = m_mcpd.keys().toStdList();
-		st.sort();
-		return QList<int>::fromStdList(st);
+		QList<int> st = m_mcpd.keys();
+		qSort(st);
+		return st;
 	}
 
 	bool isMaster(quint16 mod);
@@ -309,7 +310,7 @@ private:
 	bool 		m_acquireListfile;
 	QString 	m_listfilename;
 	QString 	m_histfilename;
-	QString 	m_configfilename;
+	QFileInfo 	m_configfile;
 
 	QFile 		m_datfile;
 	QDataStream 	m_datStream;

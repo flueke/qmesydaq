@@ -62,7 +62,7 @@ Mesydaq2::~Mesydaq2()
 	m_mcpd.clear();
 	if (m_checkTimer)
 		killTimer(m_checkTimer);
-	m_checkTimer = 0;
+	m_checkTimer = NULL;
 }
 
 //! \return number of received data packages for the whole setup
@@ -102,11 +102,23 @@ quint64 Mesydaq2::sentCmds(void)
  */
 quint64 Mesydaq2::time(void)
 {
-	if (m_mcpd.empty())
-		return 0;
+	quint64 ret(0);
+	if (!m_mcpd.empty())
+	{
 #warning TODO what if the number of MCPD is > 1
 //! \todo what if the number of MCPD is > 1
-	return (*m_mcpd.begin())->time();
+#if 1
+		foreach (MCPD8	*value, m_mcpd)
+			if (value->isMaster())
+			{
+				ret = value->time();
+				break;
+			}
+#else
+		ret = (*m_mcpd.begin())->time();
+#endif
+	}
+	return ret;
 }
 
 /*!
@@ -250,6 +262,8 @@ void Mesydaq2::initDevices(void)
 */
 void Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
 {
+	if (m_mcpd.contains(id))
+		return;
 	m_mcpd[id] = new MCPD8(id, this, ip, port, sourceIP);
 	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(m_mcpd[id], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
@@ -287,14 +301,16 @@ void Mesydaq2::writeListfileHeader(void)
 	{
 		QByteArray header(m_datHeader);
 		QByteArray lengthinfo;
-		int iLen;
-		if (!header.endsWith('\n')) header.append('\n');
+
+		if (!header.endsWith('\n')) 
+			header.append('\n');
 		header.append("# offset (bytes) where binary tof data begins\n Data = ");
-		iLen=header.count();
+		int iLen = header.count();
 		for (;;)
 		{
-			lengthinfo=tr("%1\n").arg(iLen).toLatin1();
-			if ((header.count()+lengthinfo.count())>=iLen) break;
+			lengthinfo = QString("%1\n").arg(iLen).toLatin1();
+			if ((header.count() + lengthinfo.count()) >= iLen) 
+				break;
 			++iLen;
 		}
 		header.append(lengthinfo);
@@ -450,72 +466,68 @@ void Mesydaq2::initHardware(void)
  */
 bool Mesydaq2::saveSetup(const QString &name)
 {
-	m_configfilename = name;
-	if(m_configfilename.isEmpty())
-		m_configfilename = "mesycfg.mcfg";
+	if(name.isEmpty())
+		m_configfile.setFile("mesycfg.mcfg");
+	m_configfile.setFile(name);
   
-	int i = m_configfilename.indexOf(".mcfg");
-	if(i == -1)
-		m_configfilename.append(".mcfg");
+	if(m_configfile.fileName().indexOf(".mcfg") == -1)
+		m_configfile.setFile(m_configfile.absoluteFilePath().append(".mcfg"));
 
-	CConfigFile settings(m_configfilename);
-	saveSetup_helper(settings,"MESYDAQ",-10,"comment","QMesyDAQ configuration file");
-	saveSetup_helper(settings,"MESYDAQ",-10,"date",QDateTime::currentDateTime().toString(Qt::ISODate));
-	saveSetup_helper(settings,"MESYDAQ",-10,"configPath",m_configPath);
-	saveSetup_helper(settings,"MESYDAQ",-10,"histogramPath",m_histPath);
-	saveSetup_helper(settings,"MESYDAQ",-10,"listfilePath",m_listPath);
-	saveSetup_helper(settings,"MESYDAQ",-10,"debugLevel",tr("%1").arg(DEBUGLEVEL));
-	saveSetup_helper(settings,"MESYDAQ",-10,"listmode",m_acquireListfile?"true":"false");
-	settings[settings.FindSectionIndex("MESYDAQ")].AddComment(tr("QMesyDAQ configuration file, created %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
+	CConfigFile settings(m_configfile.absoluteFilePath());
+	saveSetup_helper(settings,"MESYDAQ", -10, "comment", "QMesyDAQ configuration file");
+	saveSetup_helper(settings,"MESYDAQ", -10, "date", QDateTime::currentDateTime().toString(Qt::ISODate));
+//	saveSetup_helper(settings,"MESYDAQ", -10, "configPath", m_configPath);
+	saveSetup_helper(settings,"MESYDAQ", -10, "histogramPath", m_histPath);
+	saveSetup_helper(settings,"MESYDAQ", -10, "listfilePath", m_listPath);
+	saveSetup_helper(settings,"MESYDAQ", -10, "debugLevel", QString("%1").arg(DEBUGLEVEL));
+	saveSetup_helper(settings,"MESYDAQ", -10, "listmode", m_acquireListfile ? "true" : "false");
+	settings[settings.FindSectionIndex("MESYDAQ")].AddComment(QString("QMesyDAQ configuration file, created %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
 
-	i = 0;
+	int i = 0;
 	foreach(MCPD8 *value, m_mcpd) 
 	{
-	  CConfigSection mcpd8_section("MCPD-8",i);
-	  int j;
+		CConfigSection mcpd8_section("MCPD", i);
 
-	  QString ip,dataip,cmdip;
-	  quint16 dataport,cmdport;
-	  value->getProtocol(ip,cmdip,cmdport,dataip,dataport);
+		QString ip, dataip, cmdip;
+		quint16 dataport, cmdport;
+		value->getProtocol(ip, cmdip, cmdport, dataip, dataport);
 
-	  mcpd8_section.AddItem(CConfigItem("id",tr("%1").arg(i),0));
-	  mcpd8_section.AddItem(CConfigItem("ipAddress",ip,1));
-	  mcpd8_section.AddItem(CConfigItem("port",tr("%1").arg(cmdport),2));
-	  mcpd8_section.AddItem(CConfigItem("cmdport",tr("%1").arg(cmdport),5));
-	  mcpd8_section.AddItem(CConfigItem("cmdip",cmdip,4));
-	  mcpd8_section.AddItem(CConfigItem("dataip",dataip,6));
-	  mcpd8_section.AddItem(CConfigItem("dataport",tr("%1").arg(dataport),7));
-	  mcpd8_section.AddItem(CConfigItem("master",value->isMaster()?"true":"false",8));
-	  mcpd8_section.AddItem(CConfigItem("terminate",value->isMaster()?"true":value->isTerminated()?"true":"false",9));
+		mcpd8_section.AddItem(CConfigItem("id", QString("%1").arg(i), 0));
+		mcpd8_section.AddItem(CConfigItem("ipAddress", ip, 1));
+		mcpd8_section.AddItem(CConfigItem("port", QString("%1").arg(cmdport), 2));
+		mcpd8_section.AddItem(CConfigItem("cmdip", cmdip, 4));
+		mcpd8_section.AddItem(CConfigItem("cmdport", QString("%1").arg(cmdport), 5));
+		mcpd8_section.AddItem(CConfigItem("dataip", dataip, 6));
+		mcpd8_section.AddItem(CConfigItem("dataport", QString("%1").arg(dataport), 7));
+		mcpd8_section.AddItem(CConfigItem("master", value->isMaster() ? "true" : "false", 8));
+		mcpd8_section.AddItem(CConfigItem("terminate", value->isTerminated() ? "true" : "false", 9));
 
-	  for (j=0; j<4; ++j)
-	  {
-	    mcpd8_section.AddItem(CConfigItem(tr("auxtimer%1").arg(j),tr("%1").arg(value->getAuxTimer(j)),200+j));
-	    mcpd8_section.AddItem(CConfigItem(tr("paramsource%1").arg(j),tr("%1").arg(value->getParamSource(j)),300+j));
-	  }
-	  for (j=0; j<8; ++j)
-	  {
-	    quint16 cells[2];
-	    value->getCounterCell(j,&cells[0]);
-	    CConfigItem item(tr("counterCell%1").arg(j),"",100+j);
-	    item.SetValueCount(2);
-	    item.SetLongValue(cells[0],CConfigItem::dec,0);
-	    item.SetLongValue(cells[1],CConfigItem::dec,1);
-	    mcpd8_section.AddItem(item);
-
-	    if (value->getMpsdId(j))
-	    {
-	      CConfigSection mpsd_section("MPSD-8",8*(i+1)+j);
-	      int k;
-	      mpsd_section.AddItem(CConfigItem("id",tr("%1").arg(i*8+j),0));
-	      for (k=0; k<8; ++k)
-		mpsd_section.AddItem(CConfigItem(tr("gain%1").arg(k),tr("%1").arg(value->getGainPoti(j,k)),10+k));
-	      mpsd_section.AddItem(CConfigItem("threshold",tr("%1").arg(value->getThreshold(j)),20));
-	      settings.AddSection(mpsd_section);
-	    }
-	  }
-	  settings.AddSection(mcpd8_section);
-	  ++i;
+		for (int j =0; j < 4; ++j)
+		{
+			mcpd8_section.AddItem(CConfigItem(QString("auxtimer%1").arg(j), QString("%1").arg(value->getAuxTimer(j)), 200 + j));
+			mcpd8_section.AddItem(CConfigItem(QString("paramsource%1").arg(j), QString("%1").arg(value->getParamSource(j)), 300 + j));
+		}
+		for (int j = 0; j < 8; ++j)
+		{
+			quint16 cells[2];
+	    		value->getCounterCell(j, &cells[0]);
+			CConfigItem item(QString("counterCell%1").arg(j), "", 100 + j);
+			item.SetValueCount(2);
+			item.SetLongValue(cells[0], CConfigItem::dec, 0);
+			item.SetLongValue(cells[1], CConfigItem::dec, 1);
+			mcpd8_section.AddItem(item);
+		
+			if (value->getMpsdId(j))
+			{
+				CConfigSection mpsd_section("MODULE", 8 * (i + 1) + j);
+				mpsd_section.AddItem(CConfigItem("id", QString("%1").arg( i * 8 + j), 0));
+				for (int k = 0; k < 8; ++k)
+					mpsd_section.AddItem(CConfigItem(QString("gain%1").arg(k), QString("%1").arg(value->getGainPoti(j, k)), 10 + k));
+				mpsd_section.AddItem(CConfigItem("threshold", QString("%1").arg(value->getThreshold(j)), 20));
+				settings.AddSection(mpsd_section);
+			}
+		}
+		++i;
 	}
 	settings.SaveFile();
 	storeLastFile();
@@ -534,28 +546,28 @@ bool Mesydaq2::saveSetup(const QString &name)
  */
 void Mesydaq2::saveSetup_helper(CConfigFile& file, const QString& szSection, int iPriority, const QString& szItem, QString szValue)
 {
-  int i=file.FindSectionIndex(szSection);
-  if (i<0)
-  {
-    CConfigSection section(szSection,iPriority);
-    i=file.AddSection(section);
-  }
+	int i = file.FindSectionIndex(szSection);
+	if (i < 0)
+	{
+		CConfigSection section(szSection,iPriority);
+		i = file.AddSection(section);
+	}
 
-  CConfigSection& section=file[i];
-  i=section.FindItemIndex(szItem);
-  if (i<0)
-  {
-    CConfigItem item(szItem,szValue);
-    section.AddItem(item);
-  }
-  else
-    section[i].SetValue(szValue);
+	CConfigSection &section = file[i];
+	i = section.FindItemIndex(szItem);
+	if (i < 0)
+	{
+		CConfigItem item(szItem, szValue);
+		section.AddItem(item);
+	}
+	else
+		section[i].SetValue(szValue);
 }
 
 void Mesydaq2::storeLastFile(void)
 {
 	QSettings settings("MesyTec", "QMesyDAQ");
-	settings.setValue("lastconfigfile", m_configfilename);
+	settings.setValue("lastconfigfile", getConfigfilename());
 	settings.sync();
 }
 
@@ -566,7 +578,7 @@ void Mesydaq2::storeLastFile(void)
     "MesyDAQ" files and also "QMesyDAQ" files (using QSettings class which is
     not easy human readable).
 
-    Note: MesyDAQ INI file format is not used correctly, because the section
+    \note MesyDAQ INI file format is not used correctly, because the section
 	  names are not unique: imagine you don't have a single MCPD-8 + MPSD-8 ...
 
     \param name file name
@@ -574,209 +586,210 @@ void Mesydaq2::storeLastFile(void)
  */
 bool Mesydaq2::loadSetup(const QString &name)
 {
-  int i,j,k;
-  CConfigSection* pSection=NULL;
-  int nMcpd=0;
-  QHash<int,int> hMCPDId2Pos, hMPSDId2Pos;
-  QList<int>     hMCPDPos2Id, hMPSDPos2Id;
-  bool bQSettingsSpecial=false; // special INI format of QSettings class
+	setConfigfilename(name);
+	if (getConfigfilename().isEmpty())
+		return false;
 
-  m_mcpd.clear();
-  m_configfilename = name;
-  if (name.isEmpty())
-    m_configfilename = "mesycfg.mcfg";
+	CConfigSection *pSection=NULL;
+	int 		nMcpd(0);
+	QHash<int,int> 	hMCPDId2Pos, hMPSDId2Pos;
+	QList<int>     	hMCPDPos2Id, hMPSDPos2Id;
+	bool 		bQSettingsSpecial(false); // special INI format of QSettings class
 
-  protocol(tr("Reading configfile %1").arg(m_configfilename), NOTICE);
+	m_mcpd.clear();
 
-  CConfigFile settings(m_configfilename);
-  settings.LoadFile();
+	protocol(tr("Reading configfile %1").arg(getConfigfilename()), NOTICE);
 
-  pSection=&settings[settings.FindSectionIndex("MESYDAQ")];
-  i=pSection->FindItemIndex("configPath");
-  m_configPath=loadSetup_helper(pSection,"configPath","/home");
-  m_histPath=loadSetup_helper(pSection,"histogramPath","/home");
-  m_listPath=loadSetup_helper(pSection,"listfilePath","/home");
-  DEBUGLEVEL=loadSetup_helper(pSection,"debugLevel",tr("%1").arg(NOTICE)).toInt();
-  do
-  {
-    QString sz=loadSetup_helper(pSection,"listmode","1");
-    bool bOK=false;
-    m_acquireListfile=(sz.toInt(&bOK)!=0);
-    if (!bOK) m_acquireListfile=!sz.contains("false",Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
-  } while (0);
+	CConfigFile settings(getConfigfilename());
+	settings.LoadFile();
 
-  for (i=0; i<settings.GetSectionCount(); ++i)
-  {
-    pSection=&settings[i];
-    if (pSection->GetName()=="MCPD-8")
-    {
-      int iId=loadSetup_helper(pSection,"id","-1").toInt();
-      if (iId<0 && nMcpd==0 && pSection->FindItemIndex("0\\id")>=0 && pSection->FindItemIndex("number")>=0)
-	bQSettingsSpecial=true;
-      else if (iId<0 && !bQSettingsSpecial)
-      {
-	qCritical("found no or invalid MCPD-8 id");
-	continue;
-      }
-      hMCPDId2Pos[iId]=i;
-      hMCPDPos2Id.append(iId);
-      ++nMcpd;
-    }
-    if (pSection->GetName()=="MPSD-8")
-    {
-      int iId=loadSetup_helper(pSection,"id","-1").toInt();
-      if (iId<0 && !bQSettingsSpecial)
-      {
-	qCritical("found no or invalid MPSD-8 id");
-	continue;
-      }
-      hMPSDId2Pos[iId]=i;
-      hMPSDPos2Id.append(iId);
-    }
-  }
-  if (bQSettingsSpecial)
-  {
-    bQSettingsSpecial=false;
-    pSection=&settings[hMCPDId2Pos[hMCPDPos2Id[0]]];
-    i=pSection->FindItemIndex("number");
-    if (i>=0)
-    {
-      long l=0;
-      if (pSection->GetItem(i).GetLongValue(l,0)!=CConfigItem::ILLEGALVALUE && l>0)
-      {
-	bQSettingsSpecial=true;
-	nMcpd=l;
-      }
-    }
-  }
-  for (i=0; i<nMcpd; ++i)
-  {
-    QString szPrefix;
-    int iMCPDId;
-    if (bQSettingsSpecial)
-    {
-      iMCPDId=i;
-      szPrefix=tr("%1\\").arg(i);
-    }
-    else
-    {
-      iMCPDId=hMCPDPos2Id[i];
-      pSection=&settings[hMCPDId2Pos[iMCPDId]];
-      szPrefix.clear();
-    }
+	pSection = &settings[settings.FindSectionIndex("MESYDAQ")];
+	int i = pSection->FindItemIndex("configPath");
+	QString	home(getenv("HOME"));
+//	m_configPath=loadSetup_helper(pSection,"configPath","/home");
+	m_histPath = loadSetup_helper(pSection, "histogramPath", home);
+	m_listPath = loadSetup_helper(pSection, "listfilePath", home);
+	DEBUGLEVEL = loadSetup_helper(pSection, "debugLevel", QString("%1").arg(NOTICE)).toInt();
+	do
+	{
+		QString sz = loadSetup_helper(pSection,"listmode", "1");
+    		bool bOK(false);
+		m_acquireListfile = (loadSetup_helper(pSection, "listmode", "1").toInt() != 0);
+		m_acquireListfile = (sz.toInt(&bOK) != 0);
+		if (!bOK) 
+			m_acquireListfile = !sz.contains("false", Qt::CaseInsensitive) && !sz.contains("no", Qt::CaseInsensitive);
+	} while (0);
 
-    QString IP       =loadSetup_helper(pSection,tr("%1%2").arg(szPrefix).arg(bQSettingsSpecial?"ip":"ipAddress"),"192.168.168.121");
-    quint16 port     =loadSetup_helper(pSection,szPrefix+"port","0").toUInt();
-    QString cmdIP    =loadSetup_helper(pSection,szPrefix+"cmdip","0.0.0.0");
-    quint16 cmdPort  =loadSetup_helper(pSection,szPrefix+"cmdport","0").toUInt();
-    QString dataIP   =loadSetup_helper(pSection,szPrefix+"dataip","0.0.0.0");
-    quint16 dataPort =loadSetup_helper(pSection,szPrefix+"dataport","0").toUInt();
-    bool    master   =true;
-    bool    terminate=true;
-
-    do
-    {
-      QString sz=loadSetup_helper(pSection,szPrefix+"master","1");
-      bool bOK=false;
-      master=(sz.toInt(&bOK)!=0);
-      if (!bOK) master=!sz.contains("false",Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
-      sz=loadSetup_helper(pSection,szPrefix+"terminate","1");
-      terminate=(sz.toInt(&bOK)!=0);
-      if (!bOK) terminate=!sz.contains("false",Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
-    } while (0);
-
-    do
-    {
-      QHostAddress cmd(cmdIP);
-      if (cmd==QHostAddress::Any || cmd==QHostAddress::AnyIPv6)
-      {
-	cmdIP="0.0.0.0";
-	cmdPort=0;
-      }
-    } while (0);
-    do
-    {
-      QHostAddress data(dataIP);
-      if (data==QHostAddress::Any || data==QHostAddress::AnyIPv6)
-      {
-	dataIP="0.0.0.0";
-	dataPort=0;
-      }
-    } while (0);
-
-    addMCPD(iMCPDId, IP, port>0 ? port : cmdPort, cmdIP);
-    for (j=0; j<4; ++j)
-    {
-      setAuxTimer   (iMCPDId, j, loadSetup_helper(pSection,tr("%1auxtimer%2").arg(szPrefix).arg(j),"0").toUInt());
-      setParamSource(iMCPDId, j, loadSetup_helper(pSection,tr("%1paramsource%2").arg(szPrefix).arg(j),tr("%1").arg(j)).toUInt());
-    }
-    for (j=0; j<8; ++j)
-    {
-      int k=pSection->FindItemIndex(tr("countercell%1").arg(j));
-      long cells[2];
-      if (k>=0)
-      {
-	CConfigItem& item=pSection->GetItem(k);
-	if (item.GetLongValue(&cells[0],0)!=CConfigItem::SUCCESS) cells[0]=7;
-	if (item.GetLongValue(&cells[1],1)!=CConfigItem::SUCCESS) cells[1]=22;
-      }
-      else
-      {
-	cells[0]=7;
-	cells[1]=22;
-      }
-      setCounterCell(iMCPDId, j, cells[0], cells[1]);
-    }
-    setTimingSetup(iMCPDId,master,terminate);
-    for (j=0; j<8; ++j)
-    {
-      if (getMpsdId(iMCPDId,j))
-      {
-	CConfigSection* pMPSD;
-	quint8 gains[8],threshold;
-	bool comgain=true;
-	int iMPSDId=i*8+j;
+	for (int i = 0; i < settings.GetSectionCount(); ++i)
+	{
+		pSection = &settings[i];
+		if (pSection->GetName().startsWith("MCPD"))
+		{
+			int iId = loadSetup_helper(pSection, "id", "-1").toInt();
+			if (iId < 0 && nMcpd == 0 && pSection->FindItemIndex("0\\id") >= 0 && pSection->FindItemIndex("number") >= 0)
+				bQSettingsSpecial = true;
+			else if (iId < 0 && !bQSettingsSpecial)
+			{
+				qCritical(tr("found no or invalid MCPD id").toStdString().c_str());
+				continue;
+			}
+			hMCPDId2Pos[iId] = i;
+			hMCPDPos2Id.append(iId);
+			++nMcpd;
+		}
+		if (pSection->GetName().startsWith("MPSD") || pSection->GetName() == "MODULE")
+		{
+			int iId = loadSetup_helper(pSection, "id", "-1").toInt();
+			if (iId < 0 && !bQSettingsSpecial)
+			{
+				qCritical(tr("found no or invalid Module id").toStdString().c_str());
+				continue;
+			}
+			hMPSDId2Pos[iId] = i;
+			hMPSDPos2Id.append(iId);
+		}
+	}
 	if (bQSettingsSpecial)
 	{
-	  pMPSD=&settings[hMPSDId2Pos.begin().value()];
-	  for (k=0; k<8; ++k)
-	    gains[k]=loadSetup_helper(pMPSD,tr("%1\\gains\\%2\\gain").arg(iMPSDId).arg(k),"92").toUInt();
-	  threshold=loadSetup_helper(pMPSD,tr("%1threshold").arg(iMPSDId),"22").toUInt();
-	}
-	else
+		bQSettingsSpecial = false;
+		pSection = &settings[hMCPDId2Pos[hMCPDPos2Id[0]]];
+		i = pSection->FindItemIndex("number");
+		if (i >= 0)
+		{
+			long l = 0;
+			if (pSection->GetItem(i).GetLongValue(l,0) != CConfigItem::ILLEGALVALUE && l > 0)
+      			{
+				bQSettingsSpecial = true;
+				nMcpd = l;
+			}
+		}
+  	}
+	for (int i = 0; i < nMcpd; ++i)
 	{
-	  pMPSD=&settings[hMPSDId2Pos[hMPSDId2Pos[iMPSDId]]];
-	  for (k=0; k<8; ++k)
-	    gains[k]=loadSetup_helper(pMPSD,tr("gain%1").arg(k),"92").toUInt();
-	  threshold=loadSetup_helper(pMPSD,"threshold","22").toUInt();
+		QString szPrefix;
+		int iMCPDId;
+		if (bQSettingsSpecial)
+		{
+			iMCPDId = i;
+			szPrefix = QString("%1\\").arg(i);
+		}
+		else
+		{
+			iMCPDId = hMCPDPos2Id[i];
+			pSection = &settings[hMCPDId2Pos[iMCPDId]];
+			szPrefix.clear();
+		}
+
+		QString IP = loadSetup_helper(pSection, QString("%1%2").arg(szPrefix).arg(bQSettingsSpecial ? "ip" : "ipAddress"), "192.168.168.121");
+		quint16 port = loadSetup_helper(pSection, szPrefix + "port", "0").toUInt();
+		QString cmdIP = loadSetup_helper(pSection, szPrefix + "cmdip", "0.0.0.0");
+		quint16 cmdPort = loadSetup_helper(pSection, szPrefix + "cmdport", "0").toUInt();
+		QString dataIP = loadSetup_helper(pSection, szPrefix + "dataip", "0.0.0.0");
+		quint16 dataPort = loadSetup_helper(pSection, szPrefix + "dataport", "0").toUInt();
+		bool    master(true);
+		bool    terminate(true);
+
+		do
+		{
+			QString sz = loadSetup_helper(pSection, szPrefix + "master", "1");
+			bool bOK(false);
+			master = (sz.toInt(&bOK) != 0);
+			if (!bOK) 
+				master = !sz.contains("false", Qt::CaseInsensitive)  && !sz.contains("no", Qt::CaseInsensitive);
+			sz = loadSetup_helper(pSection, szPrefix + "terminate", "1");
+			terminate = (sz.toInt(&bOK) != 0);
+			if (!bOK) 
+				terminate = !sz.contains("false", Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
+		} while (0);
+
+		do
+		{
+			QHostAddress cmd(cmdIP);
+			if (cmd == QHostAddress::Any || cmd == QHostAddress::AnyIPv6)
+			{
+				cmdIP = "0.0.0.0";
+				cmdPort = 0;
+			}
+		} while (0);
+		do
+		{
+			QHostAddress data(dataIP);
+			if (data == QHostAddress::Any || data == QHostAddress::AnyIPv6)
+			{
+				dataIP = "0.0.0.0";
+				dataPort = 0;
+			}
+		} while (0);
+
+		addMCPD(iMCPDId, IP, port > 0 ? port : cmdPort, cmdIP);
+		for (int j = 0; j < 4; ++j)
+		{
+			setAuxTimer(iMCPDId, j, loadSetup_helper(pSection, QString("%1auxtimer%2").arg(szPrefix).arg(j), "0").toUInt());
+			setParamSource(iMCPDId, j, loadSetup_helper(pSection, QString("%1paramsource%2").arg(szPrefix).arg(j), QString("%1").arg(j)).toUInt());
+		}
+		for (int j = 0; j < 8; ++j)
+		{
+			long cells[2] = {7, 22};
+			int k = pSection->FindItemIndex(QString("countercell%1").arg(j));
+			if (k >= 0)
+			{
+				CConfigItem &item = pSection->GetItem(k);
+				if (item.GetLongValue(&cells[0], 0) != CConfigItem::SUCCESS) 
+					cells[0] = 7;
+				if (item.GetLongValue(&cells[1], 1) != CConfigItem::SUCCESS) 
+					cells[1] = 22;
+      			}
+			setCounterCell(iMCPDId, j, cells[0], cells[1]);
+		}
+		setTimingSetup(iMCPDId, master, terminate);
+		for (int j = 0; j < 8; ++j)
+		{
+			if (getMpsdId(iMCPDId, j))
+			{
+				CConfigSection *pMPSD;
+				quint8 	gains[8],
+					threshold;
+				bool 	comgain(true);
+				int 	iMPSDId(i * 8 + j);
+				if (bQSettingsSpecial)
+				{
+					pMPSD = &settings[hMPSDId2Pos.begin().value()];
+					for (int k = 0; k < 8; ++k)
+						gains[k] = loadSetup_helper(pMPSD, QString("%1\\gains\\%2\\gain").arg(iMPSDId).arg(k), "92").toUInt();
+					threshold = loadSetup_helper(pMPSD, QString("%1threshold").arg(iMPSDId), "22").toUInt();
+				}
+				else
+				{
+					pMPSD = &settings[hMPSDId2Pos[hMPSDId2Pos[iMPSDId]]];
+					for (int k = 0; k < 8; ++k)
+						gains[k] = loadSetup_helper(pMPSD, QString("gain%1").arg(k), "92").toUInt();
+					threshold = loadSetup_helper(pMPSD, "threshold", "22").toUInt();
+				}
+				for (int k = 0; k < 8; ++k)
+					if (gains[0] != gains[k])
+	  				{
+	    					comgain = false;
+						break;
+					}
+				if (comgain)
+					setGain(iMCPDId, j, 8, gains[0]);
+				else
+					for (int k = 0; k < 8; ++k)
+						setGain(iMCPDId, j, k, gains[k]);
+				setThreshold(iMCPDId, j, threshold);
+			}
+		}
+		setProtocol(iMCPDId,QString("0.0.0.0"),dataIP,dataPort,cmdIP,cmdPort);
 	}
-	for (k=0; k<8; ++k)
-	{
-	  if (gains[0]!=gains[k])
-	  {
-	    comgain=false;
-	    break;
-	  }
-	}
-	if (comgain)
-	  setGain(iMCPDId,j,8,gains[0]);
-	else
-	  for (k=0; k<8; ++k)
-	    setGain(iMCPDId,j,k,gains[k]);
-	setThreshold(iMCPDId,j,threshold);
-      }
-    }
-    setProtocol(iMCPDId,QString("0.0.0.0"),dataIP,dataPort,cmdIP,cmdPort);
-  }
 
 // scan connected MCPDs
-  quint16 p = 0;
-  foreach(MCPD8 *value, m_mcpd)
-    p += value->numModules();
+	quint16 p = 0;
+	foreach(MCPD8 *value, m_mcpd)
+		p += value->numModules();
 
-  protocol(tr("%1 mcpd-8 and %2 mpsd-8 found").arg(nMcpd).arg(p),NOTICE);
-  storeLastFile();
-  return true;
+	protocol(tr("%1 mcpd-8 and %2 mpsd-8 found").arg(nMcpd).arg(p),NOTICE);
+	storeLastFile();
+	return true;
 }
 
 
@@ -997,7 +1010,7 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
  */
 void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, quint16 dataPort, const QString &cmdIP, quint16 cmdPort)
 {
-  m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
+	m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }	
 
 /*!
@@ -1541,4 +1554,20 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			emit analyzeDataBuffer(pd);
 		}
 	}
+}
+
+void Mesydaq2::setConfigfilename(const QString &name)
+{
+	if (name.isEmpty())
+		m_configfile.setFile("mesycfg.mcfg");
+	else
+		m_configfile.setFile(name);
+}
+
+QString Mesydaq2::getConfigfilename(void) 
+{
+	if (m_configfile.exists())
+		return m_configfile.absoluteFilePath();
+	else
+		return QString("");
 }
