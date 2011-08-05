@@ -146,7 +146,7 @@
 #define MPSD8SADC		102	// 10bit, single ADC, DNS
 #define	MPSD8			103
 #define	MSTD16			104
-#define	MPSD8P			105
+#define	MPSD8P			105	
 
 // TX modes
 #define	P			1
