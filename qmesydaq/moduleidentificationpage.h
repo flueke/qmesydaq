@@ -25,6 +25,13 @@
 
 class QMouseEvent;
 
+/*!
+    \class ModuleIdentificationPage
+
+    \short This class handles the wizard page for identifying the given data for the MCPD
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class ModuleIdentificationPage : public QWizardPage, public Ui_ModuleIdentificationPage
 {
 	Q_OBJECT

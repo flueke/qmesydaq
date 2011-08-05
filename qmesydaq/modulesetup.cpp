@@ -24,6 +24,12 @@
 #include "modulesetup.h"
 #include "mesydaq2.h"
 
+/*!
+    constructor
+
+    \param mesy
+    \param parent
+ */
 ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	: QDialog(parent)
 	, m_theApp(mesy)

@@ -27,9 +27,17 @@
 #include <QVariant>
 #include <QList>
 
+/*!
+    \class CommandEvent
+
+    \short This class handles commands sent via the remote interfaces
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class CommandEvent : public QEvent
 {
 public:
+	//! definitions of the commands
 	enum Command{
                 C_START,
                 C_STOP,
@@ -53,7 +61,10 @@ public:
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());
 
+	//! \return command number
 	Command getCommand() const { return m_command; }
+
+	//! \return command argument list
 	QList<QVariant> getArgs() const { return m_args; }
 
 private:

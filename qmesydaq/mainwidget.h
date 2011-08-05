@@ -53,8 +53,10 @@ public:
 	~MainWidget();
 
 signals:
+	//! will be emitted in case of start of data acquisition
 	void	started(bool);
 
+	//! will be emitted to indicate that the data have do be redrawn
 	void	redraw(void);
 
 public slots:

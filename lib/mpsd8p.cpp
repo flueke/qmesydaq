@@ -71,7 +71,11 @@ void MPSD_8P::setGain(quint8 channel, float gainv, bool preset)
 }
 
 /*!
-    \fn MPSD_8P::calcGainpoti(float fval)
+    \fn quint8 MPSD_8P::calcGainpoti(float fval)
+
+    \param fval floating point value
+ 
+    \return an integer value to be set in the MPSD registers
  */
 quint8 MPSD_8P::calcGainpoti(float fval)
 {
@@ -151,7 +155,7 @@ quint8 MPSD_8P::calcPulsPoti(quint8 val, float gv)
 }
 
 /*!
-    \fn MPSD_8P::calcPulsAmp(quint8 val, float gv)
+    \fn quint8 MPSD_8P::calcPulsAmp(quint8 val, float gv)
  */
 quint8 MPSD_8P::calcPulsAmp(quint8 val, float gv)
 {

@@ -39,12 +39,28 @@ ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
     connect(moduleIDInput, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
 }
 
+/*!
+    \fn void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
+ 
+    initializes the input fields for IP address and module ID
+
+    \param ip IP address 
+    \param id Module ID
+ */
 void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
 {
     moduleIPInput->setText(ip);
     moduleIDInput->setValue(id);
 }
 
+/*!
+    \fn bool ModuleIdentificationPage::isComplete() const
+
+    checks for completeness of input. In our case it tries to connect to the MCPD and
+    tries to read the connected modules. If found a MCPD it will return true.
+   
+    \return true in case of found a MCPD otherwise false
+ */
 bool ModuleIdentificationPage::isComplete() const
 {
      MCPD8 *mcpd = new MCPD8(moduleIDInput->value(), NULL, moduleIPInput->text());
@@ -54,6 +70,11 @@ bool ModuleIdentificationPage::isComplete() const
      return ret;
 }
 
+/*!
+    \fn void ModuleIdentificationPage::valueChanged()
+
+    sets the Next button true if a value was changed
+ */
 void ModuleIdentificationPage::valueChanged()
 {
         enum QWizard::WizardButton bt = QWizard::NextButton;

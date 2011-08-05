@@ -1290,7 +1290,7 @@ QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::getMspdVersion(quint16 id, quint8 addr)
+    \fn float Mesydaq2::getMpsdVersion(quint16 id, quint8 addr)
 
     get the detected version of the MPSD. If MPSD not exists it will return 0.
 

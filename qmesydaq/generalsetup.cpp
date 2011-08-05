@@ -23,6 +23,12 @@
 #include "generalsetup.h"
 #include "mesydaq2.h"
 
+/*!
+    constructor
+
+    \param mesy
+    \param parent
+ */
 GeneralSetup::GeneralSetup(Mesydaq2 *mesy, QWidget *parent)
 	 : QDialog(parent)
 {
@@ -33,7 +39,7 @@ GeneralSetup::GeneralSetup(Mesydaq2 *mesy, QWidget *parent)
 }
 
 /*!
-    \fn General::selectConfigpathSlot()
+    \fn void GeneralSetup::selectConfigpathSlot()
 
     callback to set the path for the config data files
 */
@@ -45,7 +51,7 @@ void GeneralSetup::selectConfigpathSlot()
 }
 
 /*!
-    \fn General::selectListpathSlot()
+    \fn GeneralSetup::selectListpathSlot()
 
     callback to set the path for the list mode data files
 */
@@ -57,7 +63,7 @@ void GeneralSetup::selectListpathSlot()
 }
 
 /*!
-    \fn General::selectHistpathSlot()
+    \fn GeneralSetup::selectHistpathSlot()
 
     callback to set the path for the histogram data files
 */

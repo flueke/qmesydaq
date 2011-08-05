@@ -25,6 +25,7 @@
 #include "mdefines.h"
 
 /**
+ * \class MPSD_8
  * \short representation of MPSD-8 peripheral module 
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
@@ -192,6 +193,7 @@ public:
 	
 	virtual quint8	calcGainpoti(float fval);
 
+        //! returns the number of bins per module
 	virtual quint16 bins() {return 960;}
 
 protected:
@@ -253,27 +255,34 @@ private:
 	quint16 	m_internalReg[3][2];
 };
 
+/**
+ * \class MPSD_8OLD
+ * \short representation of old MPSD-8 peripheral module 
+ *
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+ */
 class MPSD_8OLD : public MPSD_8
 {
 public:
 	MPSD_8OLD(quint8 id, QObject *parent = 0);
 
+        //! returns the number of bins per module
 	quint16 bins() {return 255;}
 
-	virtual void 	setGain(quint8 channel, float gainv, bool preset = 0);
-	virtual void	setThreshold(quint8 threshold, bool preset = 0);
+	void 	setGain(quint8 channel, float gainv, bool preset = 0);
+	void	setThreshold(quint8 threshold, bool preset = 0);
 
-	virtual quint8	calcGainpoti(float fval);
-	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
+	quint8	calcGainpoti(float fval);
+	quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
 	//! \return the type of the MPSD as string
 	QString getType(void) {return tr("MPSD-8 (old)");}
 
 protected:
-	virtual float	calcGainval(quint8 ga);
-	virtual quint8	calcThreshval(quint8 thr);
-//	virtual quint8	calcPulsPoti(quint8 val, float gv);
-//	virtual quint8	calcPulsAmp(quint8 val, float gv);
+	float	calcGainval(quint8 ga);
+	quint8	calcThreshval(quint8 thr);
+//	quint8	calcPulsPoti(quint8 val, float gv);
+//	quint8	calcPulsAmp(quint8 val, float gv);
 
 private:
 	float 		m_g1;
@@ -285,6 +294,7 @@ private:
 };
 
 /**
+ * \class MPSD_8P
  * \short representation of MPSD-8+ peripheral module 
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
@@ -300,17 +310,17 @@ public:
 	//! \return the type of the MPSD as string
 	QString getType(void) {return tr("MPSD-8+");}
 
-	virtual void 	setGain(quint8 channel, float gainv, bool preset = 0);
-	virtual void	setThreshold(quint8 threshold, bool preset = 0);
+	void 	setGain(quint8 channel, float gainv, bool preset = 0);
+	void	setThreshold(quint8 threshold, bool preset = 0);
 
-	virtual quint8	calcGainpoti(float fval);
-	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
+	quint8	calcGainpoti(float fval);
+	quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
 protected:
-	virtual float	calcGainval(quint8 ga);
-	virtual quint8	calcThreshval(quint8 thr);
-	virtual quint8	calcPulsPoti(quint8 val, float gv);
-	virtual quint8	calcPulsAmp(quint8 val, float gv);
+	float	calcGainval(quint8 ga);
+	quint8	calcThreshval(quint8 thr);
+	quint8	calcPulsPoti(quint8 val, float gv);
+	quint8	calcPulsAmp(quint8 val, float gv);
 
 private:
 	float 		m_g1;
@@ -322,6 +332,7 @@ private:
 };
 
 /** 
+ * \class MPSD_8SADC
  * \short representation of the MPSD-8 pheripheral module with a single ADC like at DNS
  *
  * \author Jens Krueger <jens.krueger@frm2.tum.de>

@@ -983,6 +983,13 @@ void Measurement::getTimeMean(float &mean, float &sigma)
 	mean = m_timeSpectrum->mean(sigma);
 }
 
+/*!
+    \fn void Measurement::setROI(QRectF r)
+
+    define a region of interest (ROI) for counting all events in it
+ 
+    \param r rectangle as ROI
+ */
 void Measurement::setROI(QRectF r)
 {
 	m_roi = QRect(r.x(), r.y(), r.width(), r.height());

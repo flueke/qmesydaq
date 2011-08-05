@@ -24,6 +24,12 @@
 #include "mcpdsetup.h"
 #include "mesydaq2.h"
 
+/*!
+    constructor
+
+    \param mesy
+    \param parent
+ */
 MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 	 : QDialog(parent)
 	, m_theApp(mesy)

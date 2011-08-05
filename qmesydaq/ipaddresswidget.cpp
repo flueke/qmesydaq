@@ -21,6 +21,12 @@
 #include <QRegExp>
 #include <QRegExpValidator>
 
+/*!
+    constructor
+
+    \param address
+    \param parent
+ */
 IPAddressWidget::IPAddressWidget(const QString &address, QWidget *parent)
 	: QLineEdit(address, parent)
 {
@@ -30,6 +36,11 @@ IPAddressWidget::IPAddressWidget(const QString &address, QWidget *parent)
 	setText(address);
 }
 
+/*!
+    default constructor
+
+    \param parent
+ */
 IPAddressWidget::IPAddressWidget(QWidget *parent)
 	: QLineEdit(parent)
 {

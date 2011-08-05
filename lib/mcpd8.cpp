@@ -279,7 +279,7 @@ quint16 MCPD8::capabilities(quint16 mod)
 }
 
 /*!
-   \fn MCPD8::version(void)
+   \fn float MCPD8::version(void)
    \return firmware version of the MCPD whereas the integral places represents the major number 
            and the decimal parts the minor number
  */
@@ -293,10 +293,14 @@ float MCPD8::version(void)
 }
 
 /*!
-   \fn MPCD8::version(quint16 mod)
+   \fn float MCPD8::version(quint16 mod)
+
+   Returns the version number of a connected MPSD module.
 
    In the peripheral register 2 is the version of its firmware. The upper byte is the major 
    and the lower byte the minor number
+
+   \param mod the modul number
 
    \return firmware version of the MPSD whereas the integral places represents the major number 
            and the decimal parts the minor number
@@ -386,7 +390,7 @@ quint8 MCPD8::getGainPoti(quint16 addr,  quint8 chan)
 }
 
 /*!
-    \fn MCPD8::getGain(quint16 addr,  quint8 chan)
+    \fn float MCPD8::getGainVal(quint16 addr,  quint8 chan)
 
     gets the currently set gain value for a special module and channel
 
@@ -411,7 +415,7 @@ float MCPD8::getGainVal(quint16 addr,  quint8 chan)
 }
 
 /*!
-    \overload MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
+    \overload bool MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
 
     the gain value will be set as a user value
     \param addr number of the module
@@ -428,7 +432,7 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, float gainval)
 }
 
 /*!
-    \fn MCPD8::setThreshold(quint16 addr, quint8 thresh)
+    \fn bool MCPD8::setThreshold(quint16 addr, quint8 thresh)
 
     set the threshold value as poti value
 
@@ -452,7 +456,7 @@ bool MCPD8::setThreshold(quint16 addr, quint8 thresh)
 }
 
 /*!
-    \fn MCPD8::getThreshold(quint16 addr)
+    \fn quint8 MCPD8::getThreshold(quint16 addr)
 
     get the threshold value as poti value
 
@@ -468,7 +472,7 @@ quint8 MCPD8::getThreshold(quint16 addr)
 }
 
 /*!
-    \fn MCPD8::setMode(quint16 addr, bool mode)
+    \fn bool MCPD8::setMode(quint16 addr, bool mode)
 
     set the mode to amplitude or position
 
@@ -690,7 +694,7 @@ quint16 MCPD8::getParamSource(quint16 param)
 
 
 /*!
-    \fn MCPD8::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
+    \fn bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
 
     configures the MCPD for the communication it will set the IP address of the module, the IP address and ports of the data and command sink
 
@@ -781,21 +785,21 @@ bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quin
 }
 
 /*!
-    \fn MCPD8::getProtocol(QString& ip, quint16& port, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const
+    \fn void MCPD8::getProtocol(QString& ip, QString &cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const
 
     \see setProtocol
  */
 void MCPD8::getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const
 {
-  ip=m_ownIpAddress;
-  cmdip=m_cmdIpAddress;
-  cmdport=m_cmdPort;
-  dataip=m_dataIpAddress;
-  dataport=m_dataPort;
+	ip = m_ownIpAddress;
+	cmdip = m_cmdIpAddress;
+	cmdport = m_cmdPort;
+	dataip = m_dataIpAddress;
+	dataport = m_dataPort;
 }
 
 /*!
-    \fn MCPD8::getProtocol(quint16 *addr)
+    \fn void MCPD8::getProtocol(quint16 *addr)
 
     \param addr ????
     \see setProtocol
@@ -1572,6 +1576,8 @@ void MCPD8::initMpsd(quint8 id)
     \fn QString MPCD8::getMpsdType(quint8 id)
 
     \param id id number of the MPSD
+
+    \return the type of the MPSD
  */
 QString MCPD8::getMpsdType(quint8 id)
 {

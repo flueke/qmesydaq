@@ -114,6 +114,7 @@ public:
 
 	bool setThreshold(quint16 addr, quint8 thresh);
 
+	//! \todo implementation
 	quint8 getThresholdPoti(quint16 addr);
 
 	quint8 getThreshold(quint16 addr);

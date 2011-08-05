@@ -22,6 +22,12 @@
 
 #include "CommandEvent.h"
 
+/*!
+    constructor
+
+    \param command
+    \param args
+ */
 CommandEvent::CommandEvent(Command command, QList<QVariant> args)
 	: QEvent(QEvent::User)
 	, m_command(command)

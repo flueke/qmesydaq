@@ -170,7 +170,7 @@ int NetworkDevice::createSocket(void)
 }
 
 /*!
- *   \fn NetworkDevice::sendBuffer(MDP_PACKET &buf)
+ *   \fn bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
  *   
  *   sends a command packet to the network partner with IP address target
  *
@@ -187,7 +187,7 @@ bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
 }
 
 /*!
- *   \fn NetworkDevice::sendBuffer(MDP_PACKET2 &buf)
+ *   \fn bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET2 &buf)
  *   
  *   sends a command packet to the network partner with IP address target
  *

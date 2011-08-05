@@ -27,6 +27,9 @@
 
 #include "mesydaqobject.h"
 
+/*!
+    constructor
+ */
 MesydaqSpectrumData::MesydaqSpectrumData()
 	: QwtData()
 	, m_spectrum(NULL)
@@ -114,15 +117,39 @@ void MesydaqHistogramData::setData(Histogram *data)
 	setBoundingRect(QwtDoubleRect(0.0, 0.0, data ? data->height() : 0.0, data ? data->width(): 0.0));
 }
 
+/*!
+    \fn void MesydaqHistogramData::initRaster(const QwtDoubleRect &, const QSize &)
+
+    initialize the raster data
+
+ */
 void MesydaqHistogramData::initRaster(const QwtDoubleRect &, const QSize &)
 {
 }
 
+/*!
+    \fn QSize MesydaqHistogramData::rasterHint(const QwtDoubleRect &r) const
+
+    \note set Qwt library
+
+    \param r
+ */
 QSize MesydaqHistogramData::rasterHint(const QwtDoubleRect &r) const
 {
 	return QwtRasterData::rasterHint(r);
 }
 	
+/*!
+     \fn QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area) const
+
+     creates the image to display
+
+    \param xMap
+    \param yMap
+    \param area
+ 
+    \return image of the rendered spectrogram
+ */
 QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area)	const
 {
 	if (area.isEmpty())

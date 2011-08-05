@@ -25,16 +25,26 @@
 
 class Mesydaq2;
 
+/*!
+    \class GeneralSetup
+
+    \short This class handles the general settings dialog
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class GeneralSetup : public QDialog, public Ui_GeneralSetup
 {
 	Q_OBJECT
 public:
 	GeneralSetup(Mesydaq2 *, QWidget * = 0);
 
+	//! \return the path for the configuration files
 	QString configFilePath(void) {return configfilepath->text();}
 
+	//! \return the path for the listmode data files
 	QString listFilePath(void) {return listfilepath->text();}
 
+	//! \return the path for the histogram data file
 	QString histFilePath(void) {return histfilepath->text();}
 
 private slots:

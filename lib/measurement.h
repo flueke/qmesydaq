@@ -73,9 +73,12 @@ public:
 	bool	isMaster(quint8 cNum);
 	void	clearCounter(quint8 cNum);
 
+	//! \return stream the data into a separate file too
 	bool	acqListfile() const;
+
 	void	readListfile(QString readfilename);
 
+	//! \returns the number of counts in the defined ROI
 	quint64	getROICounts(void);
 
 	void 	setROI(QRectF r);

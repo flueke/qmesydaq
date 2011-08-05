@@ -21,8 +21,10 @@
 include (qmesydaqconfig.pri)
 
 TEMPLATE 	= subdirs
+CONFIG		+= ordered
 
 SUBDIRS		+= lib interfaces qmesydaq tools test
+
 
 TARGET = 	
 DEPENDPATH 	+= . lib qmesydaq

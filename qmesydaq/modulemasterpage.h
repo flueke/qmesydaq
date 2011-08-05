@@ -25,6 +25,13 @@
 
 class QMouseEvent;
 
+/*!
+    \class ModuleMasterPage
+
+    \short This class handles the setup dialog for master settings the MCPD in the MCPD adding wizard
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class ModuleMasterPage : public QWizardPage, public Ui_ModuleMasterPage
 {
 	Q_OBJECT

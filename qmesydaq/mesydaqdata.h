@@ -31,6 +31,8 @@ class Spectrum;
 class Histogram;
 
 /**
+ * \class MesydaqSpectrumData
+ *
  * \short wrapper class to display spectrum data
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de
@@ -111,9 +113,19 @@ private:
 	Histogram	*m_histogram;
 };
 
+/**
+ * \short wrapper class to display spectrogram data
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de
+ */
 class MesydaqPlotSpectrogram : public QwtPlotSpectrogram
 {
 public:
+	/*!
+             constructor
+          
+	     \param title
+         */
 	MesydaqPlotSpectrogram(const QString &title = QString::null)
 		: QwtPlotSpectrogram(title)
 	{

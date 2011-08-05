@@ -25,6 +25,13 @@
 
 class Mesydaq2;
 
+/*!
+    \class ModuleSetup
+
+    \short This class handles the setup dialog for setting up the MPSD modules
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class ModuleSetup : public QDialog, public Ui_ModuleSetup
 {
 	Q_OBJECT

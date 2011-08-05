@@ -22,6 +22,13 @@
 
 #include <QLineEdit>
 
+/*!
+    \class IPAddressWidget
+
+    \short This class handles the IP address input field
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class IPAddressWidget : public QLineEdit
 {
 Q_OBJECT

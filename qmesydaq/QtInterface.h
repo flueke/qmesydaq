@@ -26,25 +26,35 @@
 #include <QObject>
 #include "CommandEvent.h"
 
+/*!
+    \class QtInterface
+
+    \short This class defines the Qt interface for the remote interface
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class QtInterface : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    QtInterface(QObject *receiver = 0, QObject *parent = 0);
+	QtInterface(QObject *receiver = 0, QObject *parent = 0);
 
-    void setReceiver(QObject *receiver);
-    QObject *getReceiver();
+	void setReceiver(QObject *receiver);
+	QObject *getReceiver();
 
-    void postEvent(QEvent *);
-    void postCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
-    void postCommandToInterface(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
+	void postEvent(QEvent *);
+	void postCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
+	void postCommandToInterface(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
 
 protected:
-    void postRequestCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
-    void waitForEvent();
+	void postRequestCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
+	void waitForEvent();
 
-    QObject *m_receiver;
-    bool     m_eventReceived;
+	//! receiver object 
+	QObject *m_receiver;
+
+	//! indicator for received events
+	bool     m_eventReceived;
 };
 
 #endif // QTINTERFACE_H

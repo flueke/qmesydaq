@@ -147,6 +147,7 @@ public:
 
 	bool checkMcpd(quint8 device);
 
+	//! \returns the number of the first MCPD
 	qint16 firstMcpd(void);
 
 	//! \return if data acquisition started or not
@@ -203,6 +204,7 @@ public:
 	//! \return number of MCPD's
 	quint16 numMCPD(void) {return m_mcpd.size();}
 
+	//! \return list containing the found MPSD's
 	QList<int> mcpdId(void) 
 	{
 		QList<int> st = m_mcpd.keys();
@@ -246,6 +248,8 @@ public slots:
 	void setThreshold(quint16 mod, quint8 addr, quint16 thresh);
 
     	void acqListfile(bool yesno);
+
+	//! \return stream the data into a separate file too
 	bool acqListfile() const { return m_acquireListfile; }
 
 	void start(void);

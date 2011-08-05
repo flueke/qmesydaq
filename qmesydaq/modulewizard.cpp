@@ -32,7 +32,11 @@ ModuleWizard::ModuleWizard(const QString &ip, const quint16 id, QWidget *parent)
 }
 
 /*!
-    \fn void ModuleWizard::accecpt(void)
+    \fn void ModuleWizard::accept(void)
+
+    the end of the wizard is called
+
+    At the moment do nothing.
  */
 void ModuleWizard::accept(void)
 {
@@ -41,6 +45,8 @@ void ModuleWizard::accept(void)
 
 /*!
     \fn QString ModuleWizard::ip(void)
+
+    \return the IP address set in the IP input field
  */
 QString ModuleWizard::ip(void)
 {
@@ -49,6 +55,8 @@ QString ModuleWizard::ip(void)
 
 /*!
     \fn quint16 ModuleWizard::id(void)
+
+    \return the value of the module id input field
  */
 quint16 ModuleWizard::id(void)
 {  
@@ -57,6 +65,8 @@ quint16 ModuleWizard::id(void)
 
 /*!
     \fn bool ModuleWizard::master(void)
+
+    \return the checkstate of the master checkbox
  */
 bool ModuleWizard::master(void)
 {  
@@ -65,6 +75,8 @@ bool ModuleWizard::master(void)
 
 /*!
     \fn bool ModuleWizard::terminate(void)
+
+    \return the checkstate of the terminate checkbox
  */
 bool ModuleWizard::terminate(void)
 {  

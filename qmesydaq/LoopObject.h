@@ -24,6 +24,13 @@
 
 #include <QThread>
 
+/*!
+    \class LoopObject
+
+    \short This class defines the interace for the remote interface threads
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class LoopObject : public QThread
 {
 public:

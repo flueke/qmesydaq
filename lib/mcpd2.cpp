@@ -371,7 +371,7 @@ quint8 MCPD2::getGainPoti(quint16 addr,  quint8 chan)
 }
 
 /*!
-    \fn MCPD2::getGain(quint16 addr,  quint8 chan)
+    \fn float MCPD2::getGainVal(quint16 addr,  quint8 chan)
 
     gets the currently set gain value for a special module and channel
 
@@ -420,7 +420,7 @@ bool MCPD2::setGain(quint16 addr, quint8 chan, float gainval)
     \param addr number of the module
     \param thresh threshold value as poti value
     \return true if operation was succesful or not
-    \see getThresh
+    \see getThreshold
  */
 bool MCPD2::setThreshold(quint16 addr, quint8 thresh)
 {

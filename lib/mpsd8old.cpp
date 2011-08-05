@@ -20,6 +20,12 @@
 
 #include "mpsd8.h"
 
+/*!
+    constructor
+
+    \param id ID of the module
+    \param parent Qt parent object
+ */
 MPSD_8OLD::MPSD_8OLD(quint8 id, QObject *parent)
 	: MPSD_8(id, parent)
 	, m_g1(0.75)
@@ -30,6 +36,14 @@ MPSD_8OLD::MPSD_8OLD(quint8 id, QObject *parent)
 	, m_p2(1.2083)
 {
 }
+
+/*!
+    Sets the gain of the channel
+
+    \param channel channel in the module
+    \param gainv gain value of the channel in the module
+    \param preset 
+ */
 void 	MPSD_8OLD::setGain(quint8 channel, float gainv, bool preset)
 {
 // boundary check
@@ -41,6 +55,13 @@ void 	MPSD_8OLD::setGain(quint8 channel, float gainv, bool preset)
 	MPSD_8::setGain(channel, gainv, preset);
 }
 
+/*!
+    \fn void MPSD_8OLD::setThreshold(quint8 threshold, bool preset)
+    Sets the threshold value.
+
+    \param threshold
+    \param preset
+ */
 void	MPSD_8OLD::setThreshold(quint8 threshold, bool preset)
 {
 // boundary check
@@ -52,7 +73,12 @@ void	MPSD_8OLD::setThreshold(quint8 threshold, bool preset)
 	MPSD_8::setThreshold(threshold, preset);
 }
 
-
+/*!
+    \fn quint8	MPSD_8OLD::calcGainpoti(float fval)
+    \param fval floating point value
+ 
+    \return an integer value to be set in the MPSD registers
+ */
 quint8	MPSD_8OLD::calcGainpoti(float fval)
 {
         float fg = (fval - m_g1) * m_g2;

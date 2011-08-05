@@ -280,6 +280,7 @@ MainWidget::~MainWidget()
 /*!
     \fn void MainWidget::about()
 
+    opens an about dialog
 */
 void MainWidget::about()
 {
@@ -1414,17 +1415,21 @@ void MainWidget::exportSVG()
 
 /*!
     \fn void MainWidget::setupMCPD()
+
+    opens a dialog to handle the MCPD setup
 */
 void MainWidget::setupMCPD(void)
 {
     MCPDSetup d(m_theApp);
-    if (d.exec() == QDialog::Accepted)
-    {
-    }
+    d.exec();
 }
 
 /*!
     \fn void MainWidget::addMCPD()
+
+    opens the add MCPD wizard dialog for adding a MCPD module.
+
+    It adds this module to the setup if the 'finish' button is pressed.
 */
 void MainWidget::addMCPD(void)
 {
@@ -1442,7 +1447,9 @@ void MainWidget::addMCPD(void)
 /*!
     \fn void MainWidget::setupModule(quint8)
 
-    \parm id
+    opens the dialog to handle the a distinct MPSD module setup
+
+    \param id module id of the currently select MCPD
  */
 void MainWidget::setupModule(quint8 id)
 {
@@ -1454,6 +1461,8 @@ void MainWidget::setupModule(quint8 id)
 
 /*!
     \fn void MainWidget::setupModule()
+
+    opens the dialog to handle the MPSD Module setup 
 */
 void MainWidget::setupModule(void)
 {
@@ -1488,6 +1497,7 @@ void MainWidget::setupGeneral()
 /*!
     \fn void MainWidget::printPlot(void)
 
+    opens a dialog to select the printer and if the ok button pressed printout the plot area widget
 */
 void MainWidget::printPlot(void)
 {
@@ -1519,6 +1529,7 @@ void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
 /*!
     \fn void MainWidget::quitContinue(void)
 
+    asks for continue or abort in case of not initialized remote interface
 */
 void MainWidget::quitContinue(void)
 {
@@ -1533,6 +1544,7 @@ void MainWidget::quitContinue(void)
 /*!
     \fn void MainWidget::closeEvent(QCloseEvent *)
 
+    overwrites the default closeEvent method
 */
 void MainWidget::closeEvent(QCloseEvent *)
 {
@@ -1542,6 +1554,7 @@ void MainWidget::closeEvent(QCloseEvent *)
 /*!
    \fn void MainWidget::customEvent(QEvent *e)
 
+   handles the customEvents sent via the remote interface
 */
 void MainWidget::customEvent(QEvent *e)
 {

@@ -32,6 +32,13 @@
 class MapCorrection;
 class MappedHistogram;
 
+/*!
+    \class QMesyDAQDetectorInterface
+
+    \short This class handles the detector remote interface
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class QMesyDAQDetectorInterface : public QtInterface
 {
 	Q_OBJECT

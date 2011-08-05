@@ -21,7 +21,7 @@
 #include "mstd16.h"
 
 /*!
-    \fn MSTD_16::STD_16(quint8 id, QObject *parent)
+    \fn MSTD_16::MSTD_16(quint8 id, QObject *parent)
 
     constructor
 

@@ -28,6 +28,13 @@
 class LoopObject;
 class QtInterface;
 
+/*!
+    \class MultipleLoopApplication
+
+    \short This class handles the creation of a remote interface and interaction with the frontend
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class MultipleLoopApplication : public QApplication
 {
 	Q_OBJECT

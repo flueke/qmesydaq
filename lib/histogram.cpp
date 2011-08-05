@@ -447,7 +447,7 @@ quint16	Histogram::height()
 }
 
 /*!
-    \fn Histogram::setWidth(quint8 width)
+    \fn void Histogram::setWidth(quint8 width)
 
     sets the width of each cell
 
@@ -458,6 +458,11 @@ void Histogram::setWidth(quint8 width)
 	m_twidth = width; 
 }
 
+/*!
+    \fn quin16 Histogram::width(void)
+
+    \return the width of the histogram
+ */
 quint16 Histogram::width(void)
 {
 	quint16 bins(0);

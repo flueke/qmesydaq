@@ -25,6 +25,13 @@
 
 class Mesydaq2;
 
+/*!
+    \class MCPDSetup
+
+    \short This class handles the setup dialog for setting up the MCPD's
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class MCPDSetup : public QDialog, public Ui_MCPDSetup
 {
 	Q_OBJECT

@@ -25,6 +25,13 @@
 
 class QMouseEvent;
 
+/*!
+    \class ModuleWizard
+
+    \short This class handles the wizard for adding a MCPD to the setup
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class ModuleWizard : public QWizard, public Ui_ModuleWizard
 {
 	Q_OBJECT

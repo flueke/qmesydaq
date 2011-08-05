@@ -25,6 +25,13 @@
 
 class QMouseEvent;
 
+/*!
+    \class ModuleStatus
+
+    \short This class handles displaying of the status of connected MPSD modules
+
+    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class ModuleStatus : public QWidget, public Ui_ModuleStatus
 {
 	Q_OBJECT
@@ -36,6 +43,7 @@ public:
 	void setId(const quint8);
 
 signals:
+	//! is emitted if a double clicked was made on this widget
 	void clicked(quint8);
 
 protected:
