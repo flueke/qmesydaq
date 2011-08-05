@@ -495,10 +495,17 @@ bool Mesydaq2::saveSetup(const QString &name)
 		mcpd8_section.AddItem(CConfigItem("id", QString("%1").arg(i), 0));
 		mcpd8_section.AddItem(CConfigItem("ipAddress", ip, 1));
 		mcpd8_section.AddItem(CConfigItem("port", QString("%1").arg(cmdport), 2));
-		mcpd8_section.AddItem(CConfigItem("cmdip", cmdip, 4));
-		mcpd8_section.AddItem(CConfigItem("cmdport", QString("%1").arg(cmdport), 5));
-		mcpd8_section.AddItem(CConfigItem("dataip", dataip, 6));
-		mcpd8_section.AddItem(CConfigItem("dataport", QString("%1").arg(dataport), 7));
+		if (!cmdip.isEmpty() && cmdip != "0.0.0.0")
+		{
+			mcpd8_section.AddItem(CConfigItem("cmdip", cmdip, 4));
+			mcpd8_section.AddItem(CConfigItem("cmdport", QString("%1").arg(cmdport), 5));
+		}
+		if (!dataip.isEmpty() && dataip != "0.0.0.0")
+		{
+			mcpd8_section.AddItem(CConfigItem("dataip", dataip, 6));
+			if (dataport != cmdport)
+				mcpd8_section.AddItem(CConfigItem("dataport", QString("%1").arg(dataport), 7));
+		}
 		mcpd8_section.AddItem(CConfigItem("master", value->isMaster() ? "true" : "false", 8));
 		mcpd8_section.AddItem(CConfigItem("terminate", value->isTerminated() ? "true" : "false", 9));
 
@@ -682,7 +689,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 		}
 
 		QString IP = loadSetup_helper(pSection, QString("%1%2").arg(szPrefix).arg(bQSettingsSpecial ? "ip" : "ipAddress"), "192.168.168.121");
-		quint16 port = loadSetup_helper(pSection, szPrefix + "port", "0").toUInt();
+		quint16 port = loadSetup_helper(pSection, szPrefix + "port", "54321").toUInt();
 		QString cmdIP = loadSetup_helper(pSection, szPrefix + "cmdip", "0.0.0.0");
 		quint16 cmdPort = loadSetup_helper(pSection, szPrefix + "cmdport", "0").toUInt();
 		QString dataIP = loadSetup_helper(pSection, szPrefix + "dataip", "0.0.0.0");
@@ -711,6 +718,8 @@ bool Mesydaq2::loadSetup(const QString &name)
 				cmdIP = "0.0.0.0";
 				cmdPort = 0;
 			}
+			if (port == cmdPort)
+				cmdPort = 0;
 		} while (0);
 		do
 		{
@@ -720,6 +729,8 @@ bool Mesydaq2::loadSetup(const QString &name)
 				dataIP = "0.0.0.0";
 				dataPort = 0;
 			}
+			if (port == dataPort)
+				dataPort = 0;
 		} while (0);
 
 		addMCPD(iMCPDId, IP, port > 0 ? port : cmdPort, cmdIP);
@@ -780,7 +791,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 				setThreshold(iMCPDId, j, threshold);
 			}
 		}
-		setProtocol(iMCPDId,QString("0.0.0.0"),dataIP,dataPort,cmdIP,cmdPort);
+		setProtocol(iMCPDId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
 	}
 
 // scan connected MCPDs
