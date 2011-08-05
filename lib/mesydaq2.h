@@ -243,6 +243,7 @@ public slots:
 	void setThreshold(quint16 mod, quint8 addr, quint16 thresh);
 
     	void acqListfile(bool yesno);
+	bool acqListfile() const { return m_acquireListfile; }
 
 	void start(void);
 

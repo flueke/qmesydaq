@@ -73,7 +73,8 @@ public:
 	bool	isMaster(quint8 cNum);
 	void	clearCounter(quint8 cNum);
 
-	void 	readListfile(QString readfilename);
+	bool	acqListfile() const;
+	void	readListfile(QString readfilename);
 
 	quint64	getROICounts(void);
 

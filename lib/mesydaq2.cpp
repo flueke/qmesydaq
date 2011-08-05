@@ -465,7 +465,7 @@ bool Mesydaq2::saveSetup(const QString &name)
 	saveSetup_helper(settings,"MESYDAQ",-10,"histogramPath",m_histPath);
 	saveSetup_helper(settings,"MESYDAQ",-10,"listfilePath",m_listPath);
 	saveSetup_helper(settings,"MESYDAQ",-10,"debugLevel",tr("%1").arg(DEBUGLEVEL));
-	saveSetup_helper(settings,"MESYDAQ",-10,"listmode",m_acquireListfile?"1":"0");
+	saveSetup_helper(settings,"MESYDAQ",-10,"listmode",m_acquireListfile?"true":"false");
 	settings[settings.FindSectionIndex("MESYDAQ")].AddComment(tr("QMesyDAQ configuration file, created %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
 
 	i = 0;
@@ -485,8 +485,8 @@ bool Mesydaq2::saveSetup(const QString &name)
 	  mcpd8_section.AddItem(CConfigItem("cmdip",cmdip,4));
 	  mcpd8_section.AddItem(CConfigItem("dataip",dataip,6));
 	  mcpd8_section.AddItem(CConfigItem("dataport",tr("%1").arg(dataport),7));
-	  mcpd8_section.AddItem(CConfigItem("master",value->isMaster()?"1":"0",8));
-	  mcpd8_section.AddItem(CConfigItem("terminate",value->isMaster()?"1":value->isTerminated()?"1":"0",9));
+	  mcpd8_section.AddItem(CConfigItem("master",value->isMaster()?"true":"false",8));
+	  mcpd8_section.AddItem(CConfigItem("terminate",value->isMaster()?"true":value->isTerminated()?"true":"false",9));
 
 	  for (j=0; j<4; ++j)
 	  {
@@ -496,6 +496,7 @@ bool Mesydaq2::saveSetup(const QString &name)
 	  for (j=0; j<8; ++j)
 	  {
 	    quint16 cells[2];
+	    value->getCounterCell(j,&cells[0]);
 	    CConfigItem item(tr("counterCell%1").arg(j),"",100+j);
 	    item.SetValueCount(2);
 	    item.SetLongValue(cells[0],CConfigItem::dec,0);
@@ -510,8 +511,10 @@ bool Mesydaq2::saveSetup(const QString &name)
 	      for (k=0; k<8; ++k)
 		mpsd_section.AddItem(CConfigItem(tr("gain%1").arg(k),tr("%1").arg(value->getGainPoti(j,k)),10+k));
 	      mpsd_section.AddItem(CConfigItem("threshold",tr("%1").arg(value->getThreshold(j)),20));
+	      settings.AddSection(mpsd_section);
 	    }
 	  }
+	  settings.AddSection(mcpd8_section);
 	  ++i;
 	}
 	settings.SaveFile();
@@ -594,7 +597,13 @@ bool Mesydaq2::loadSetup(const QString &name)
   m_histPath=loadSetup_helper(pSection,"histogramPath","/home");
   m_listPath=loadSetup_helper(pSection,"listfilePath","/home");
   DEBUGLEVEL=loadSetup_helper(pSection,"debugLevel",tr("%1").arg(NOTICE)).toInt();
-  m_acquireListfile=(loadSetup_helper(pSection,"listmode","1").toInt()!=0);
+  do
+  {
+    QString sz=loadSetup_helper(pSection,"listmode","1");
+    bool bOK=false;
+    m_acquireListfile=(sz.toInt(&bOK)!=0);
+    if (!bOK) m_acquireListfile=!sz.contains("false",Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
+  } while (0);
 
   for (i=0; i<settings.GetSectionCount(); ++i)
   {
@@ -670,10 +679,10 @@ bool Mesydaq2::loadSetup(const QString &name)
       QString sz=loadSetup_helper(pSection,szPrefix+"master","1");
       bool bOK=false;
       master=(sz.toInt(&bOK)!=0);
-      if (!bOK) master=!sz.contains("false",Qt::CaseInsensitive);
+      if (!bOK) master=!sz.contains("false",Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
       sz=loadSetup_helper(pSection,szPrefix+"terminate","1");
       terminate=(sz.toInt(&bOK)!=0);
-      if (!bOK) terminate=!sz.contains("false",Qt::CaseInsensitive);
+      if (!bOK) terminate=!sz.contains("false",Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
     } while (0);
 
     do

@@ -809,6 +809,11 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 		protocol(tr("buffer type : %1").arg(pd.bufferType), ERROR);
 }
 
+bool Measurement::acqListfile() const
+{
+  return m_mesydaq ? m_mesydaq->acqListfile() : true;
+}
+
 /*!
     \fn Measurement::readListfile(QString readfilename)
 

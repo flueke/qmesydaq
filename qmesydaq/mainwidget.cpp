@@ -931,11 +931,7 @@ void MainWidget::saveSetupSlot()
 {
     QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
     if (!name.isEmpty())
-    {
         m_theApp->saveSetup(name);
-    	QSettings setup(name, QSettings::IniFormat);
-	setup.setValue("MESYDAQ/listmode", acquireFile->isChecked());
-    }
 }
 
 /*!
@@ -951,8 +947,7 @@ void MainWidget::restoreSetupSlot()
         m_theApp->loadSetup(name);
         configfilename->setText(m_theApp->getConfigfilename());
         init();
-    	QSettings setup(m_theApp->getConfigfilename(), QSettings::IniFormat);
-        acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
+	acquireFile->setCheckable(m_meas->acqListfile());
     }
 }
 

@@ -380,20 +380,36 @@ void CConfigItem::SetValue(const QString& Value)
 CConfigItem::STATUSINFO CConfigItem::SetStringValue(const QString& Value, int Index)
 {
   int iCount=m_aszValues.count();
+  bool bAppend=false;
   if (((Index>=-1) && (Index<iCount)) || (Index==0))
   {
     if (Index==-1) Index=iCount;
     if (m_aszValues.count()<Index)
+    {
+      bAppend=true;
       m_aszValues.reserve(Index+1);
+    }
 #ifndef CONFIG_USE_C_SYNTAX
     QString szTemp(Value);
     for (int iPos=0; iPos<szTemp.count(); iPos++)
       if ((szTemp[iPos]>=0) && (szTemp[iPos]<32))
 	szTemp[iPos]=QChar('_');
-    m_aszValues[Index]=szTemp;
+    if (bAppend)
+    {
+      while (m_aszValues.count()<Index) m_aszValues.append(QString(""));
+      m_aszValues.append(szTemp);
+    }
+    else
+      m_aszValues[Index]=szTemp;
     return szTemp.isEmpty()?EMPTYVALUE:SUCCESS;
 #else
-    m_aszValues[Index]=Value;
+    if (bAppend)
+    {
+      while (m_aszValues.count()<Index) m_aszValues.append(QString(""));
+      m_aszValues.append(Value);
+    }
+    else
+      m_aszValues[Index]=Value;
     return Value.isEmpty()?EMPTYVALUE:SUCCESS;
 #endif
   }
@@ -752,11 +768,11 @@ CConfigSection& CConfigSection::operator=(const CConfigSection &src)
     delete m_aItems[iPos];
   m_aItems.clear();
   m_aItems.reserve(src.m_aItems.count());
-  for (iPos=0; iPos<m_aItems.count(); iPos++)
+  for (iPos=0; iPos<src.m_aItems.count(); iPos++)
   {
     CConfigItem *pItem=new CConfigItem(this);
     *pItem=*(src.m_aItems[iPos]);
-    m_aItems[iPos]=pItem;
+    m_aItems.append(pItem);
   }
 
   return *this;

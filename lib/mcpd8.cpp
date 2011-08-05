@@ -43,7 +43,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	, m_id(id)
 	, m_ownIpAddress(ip)
 	, m_cmdPort(port)	// original 7000
-	, m_dataPort(7000)
+	, m_dataPort(port)	// original 7000
 	, m_master(true)
 	, m_term(true)
 	, m_stream(false)
