@@ -27,7 +27,7 @@
     <property name="title">
      <string>&amp;Files</string>
     </property>
-    <addaction name="action_NewSetup"/>
+    <addaction name="actionNewSetup"/>
     <addaction name="separator"/>
     <addaction name="action_Save_Config_File"/>
     <addaction name="action_Load_Config_File"/>
@@ -54,8 +54,15 @@
     <property name="title">
      <string>&amp;Configuration</string>
     </property>
+    <widget class="QMenu" name="menuMCPD">
+     <property name="title">
+      <string>MCPD</string>
+     </property>
+     <addaction name="actionSetupMCPD"/>
+     <addaction name="actionAddMCPD"/>
+    </widget>
     <addaction name="actionGeneral"/>
-    <addaction name="actionMCPD"/>
+    <addaction name="menuMCPD"/>
     <addaction name="actionModule"/>
    </widget>
    <addaction name="menu_Files"/>
@@ -123,7 +130,7 @@
     <string>&amp;General</string>
    </property>
   </action>
-  <action name="action_NewSetup">
+  <action name="actionNewSetup">
    <property name="text">
     <string>&amp;New Setup</string>
    </property>
@@ -133,9 +140,14 @@
     <string>Module</string>
    </property>
   </action>
-  <action name="actionMCPD">
+  <action name="actionSetupMCPD">
    <property name="text">
-    <string>MCPD</string>
+    <string>Setup</string>
+   </property>
+  </action>
+  <action name="actionAddMCPD">
+   <property name="text">
+    <string>Add</string>
    </property>
   </action>
  </widget>

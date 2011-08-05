@@ -213,7 +213,7 @@ Listfile</string>
     </item>
    </layout>
   </widget>
-  <widget class="QTabWidget" name="tabWidget5_2">
+  <widget class="QTabWidget" name="displayTabWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -551,7 +551,7 @@ Listfile</string>
     </layout>
    </widget>
   </widget>
-  <widget class="QTabWidget" name="tabWidget2">
+  <widget class="QTabWidget" name="statusTabWidget">
    <property name="geometry">
     <rect>
      <x>220</x>
@@ -2073,7 +2073,7 @@ Listfile</string>
    </hints>
   </connection>
   <connection>
-   <sender>tabWidget2</sender>
+   <sender>statusTabWidget</sender>
    <signal>selected(QString)</signal>
    <receiver>Mesydaq2MainWidget</receiver>
    <slot>displayMcpdSlot()</slot>

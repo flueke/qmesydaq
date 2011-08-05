@@ -58,6 +58,7 @@
 #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
 #include "generalsetup.h"
+#include "modulewizard.h"
 
 #include "mapcorrect.h"
 #include "inifile.h"
@@ -324,6 +325,11 @@ void MainWidget::init()
     dispMcpd->setMCPDList(mcpdList);
     devid_2->setMCPDList(mcpdList);
     paramId->setMCPDList(mcpdList);
+    startStopButton->setDisabled(mcpdList.empty());
+    acquireFile->setDisabled(mcpdList.empty());
+    allPulsersoffButton->setDisabled(mcpdList.empty());
+    displayTabWidget->setDisabled(mcpdList.empty());
+    statusTabWidget->setDisabled(mcpdList.empty());
 }
 
 /*!
@@ -727,9 +733,25 @@ void MainWidget::scanPeriSlot(bool real)
 */
 void MainWidget::saveSetupSlot()
 {
-    QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
+    QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
+    {
+	qDebug() << name;
         m_theApp->saveSetup(name);
+	qDebug() << m_theApp->getConfigfilename();
+    }
+}
+
+/*!
+    \fn void MainWidget::newSetupSlot()
+
+    callback for a new setup (empty)
+*/
+void MainWidget::newSetupSlot()
+{
+    m_theApp->loadSetup(QString());
+    configfilename->setText(m_theApp->getConfigfilename());
+    init();
 }
 
 /*!
@@ -739,7 +761,7 @@ void MainWidget::saveSetupSlot()
 */
 void MainWidget::restoreSetupSlot()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), "mesydaq config files (*.mcfg);;all files (*.*)");
+    QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
     {
         m_theApp->loadSetup(name);
@@ -1398,6 +1420,21 @@ void MainWidget::setupMCPD(void)
     MCPDSetup d(m_theApp);
     if (d.exec() == QDialog::Accepted)
     {
+    }
+}
+
+/*!
+    \fn void MainWidget::addMCPD()
+*/
+void MainWidget::addMCPD(void)
+{
+    ModuleWizard d("192.168.168.121", quint16(0), this); // m_theApp);
+    if (d.exec() == QDialog::Accepted)
+    {
+	qDebug() << d.ip();
+	qDebug() << d.id();
+        m_theApp->addMCPD(d.id(), d.ip());
+	init();
     }
 }
 

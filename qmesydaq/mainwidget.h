@@ -76,6 +76,8 @@ public slots:
 
 	void	setupMCPD();
 
+	void 	addMCPD();
+
 protected:
         void    customEvent(QEvent *);
 
@@ -116,6 +118,8 @@ private slots:
 	void mpsdCheck(int);
 
 	void scanPeriSlot(bool = true);
+
+	void newSetupSlot(void);
 
 // setup related methods
 	void restoreSetupSlot();

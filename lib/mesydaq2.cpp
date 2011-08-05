@@ -527,6 +527,7 @@ bool Mesydaq2::saveSetup(const QString &name)
 				settings.AddSection(mpsd_section);
 			}
 		}
+		settings.AddSection(mcpd8_section);
 		++i;
 	}
 	settings.SaveFile();
