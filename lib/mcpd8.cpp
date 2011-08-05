@@ -769,7 +769,7 @@ bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quin
 	finishCmdBuffer(14);
 	if (sendCommand())
 	{
-		sleep(3);
+		sleep(1);
 		if (ownip > 0x00FFFFFF)
 		{
 			m_ownIpAddress = addr;
@@ -1404,6 +1404,8 @@ bool MCPD8::setMasterClock(quint64 val)
  */
 bool MCPD8::setTimingSetup(bool master, bool term)
 {
+	if (master)
+		term = true;
 	initCmdBuffer(SETTIMING);
 	m_cmdBuf.data[0] = master;
 	m_cmdBuf.data[1] = term;

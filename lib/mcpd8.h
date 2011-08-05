@@ -73,7 +73,7 @@ public:
 	bool isMaster(void) {return m_master;}
 
 	//! \return whether this MCPD is terminated on the synchronization bus or not
-	bool isTerminated(void) {return m_term;}
+	bool isTerminated(void) {return isMaster() ? true : m_term;}
 
 	bool setMasterClock(quint64);
 
