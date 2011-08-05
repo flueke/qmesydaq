@@ -65,6 +65,9 @@
 #include "modulesetup.h"
 #include "mcpdsetup.h"
 
+#include "mapcorrect.h"
+#include "inifile.h"
+
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
 
