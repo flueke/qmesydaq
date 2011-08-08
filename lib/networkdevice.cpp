@@ -73,11 +73,12 @@ void NetworkDevice::destroy(NetworkDevice *nd)
 {
 	NetworkDevice *tmp;
 	m_mutex.lock();
-	for (int i = 0; i < m_networks.size(); ++i)
+	for (int i=m_networks.size()-1; i>=0; --i)
 	{
 		tmp = m_networks.at(i);
 		if (tmp->ip() == nd->ip() || tmp->port() == nd->port())
 		{
+			Q_ASSERT(m_inUse[i]>0);
 			m_inUse[i]--;
 			if (!m_inUse.at(i))
 			{

@@ -387,7 +387,9 @@ CConfigItem::STATUSINFO CConfigItem::SetStringValue(const QString& Value, int In
     if (m_aszValues.count()<Index)
     {
       bAppend=true;
+#if QT_VERSION >= 0x040700
       m_aszValues.reserve(Index+1);
+#endif
     }
 #ifndef CONFIG_USE_C_SYNTAX
     QString szTemp(Value);
@@ -651,7 +653,9 @@ QString CConfigItem::Dbl2Str(double fValue, int iExponent)
 void CConfigItem::SetValueCount(int Count)
 {
   if (Count<0) Count=0;
+#if QT_VERSION >= 0x040700
   m_aszValues.reserve(Count);
+#endif
   while (m_aszValues.count()<Count)
     m_aszValues.append(QString(""));
   while (m_aszValues.count()>Count)
@@ -767,7 +771,9 @@ CConfigSection& CConfigSection::operator=(const CConfigSection &src)
   for (iPos=0; iPos<m_aItems.count(); iPos++)
     delete m_aItems[iPos];
   m_aItems.clear();
+#if QT_VERSION >= 0x040700
   m_aItems.reserve(src.m_aItems.count());
+#endif
   for (iPos=0; iPos<src.m_aItems.count(); iPos++)
   {
     CConfigItem *pItem=new CConfigItem(this);

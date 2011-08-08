@@ -288,7 +288,7 @@ void CARESSLoop::runLoop()
     // IOR to stdout
     CORBA::Object_var ref = myCORBADevice_i->_this();
     CORBA::String_var ior = orb->object_to_string(ref);
-    qDebug("IDL object CORBADevice IOR = %s",ior.in());
+    qDebug("IDL object CORBADevice (version %s) IOR = %s",VERSION,ior.in());
 
     if (!bindObjectToName(orb,obj,iDummyArgc>1?args2[1]:m_sName.toLatin1().constData()))
       qDebug("warning: cannot bind to naming service");
