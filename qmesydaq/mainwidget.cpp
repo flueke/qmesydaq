@@ -142,6 +142,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispAllChannels, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(dispAllPos, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(dispAllAmpl, SIGNAL(toggled(bool)), this, SLOT(draw()));
+    connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
+    connect(scanPeri, SIGNAL(clicked(bool)), this, SLOT(scanPeriSlot(bool)));
+    connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
 
 //  connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 
@@ -260,10 +263,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_theApp->setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
     m_theApp->setListfilepath(getenv("HOME"));
     m_theApp->setHistfilepath(getenv("HOME"));
-
-    QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
-    acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
-    tPresetButton->setChecked(setup.value("MESYDAQ/Preset/time", true).toBool());
 }
 
 //! destructor
@@ -331,6 +330,7 @@ void MainWidget::init()
     allPulsersoffButton->setDisabled(mcpdList.empty());
     displayTabWidget->setDisabled(mcpdList.empty());
     statusGroupBox->setDisabled(mcpdList.empty());
+    displayMpsdSlot();
 }
 
 /*!
@@ -755,6 +755,32 @@ void MainWidget::newSetupSlot()
     init();
 }
 
+void MainWidget::loadConfiguration(const QString& sFilename)
+{
+  m_theApp->loadSetup(sFilename);
+  configfilename->setText(m_theApp->getConfigfilename());
+  init();
+  acquireFile->setCheckable(m_meas->acqListfile());
+
+  const CConfigFile& lastsetup=m_theApp->getLastConfiguration();
+  int i=lastsetup.FindSectionIndex("MESYDAQ");
+  if (i>=0)
+  {
+      const CConfigSection& section=lastsetup[i];
+      i=section.FindItemIndex("Preset\\time");
+      if (i<0) i=section.FindItemIndex("preset_time");
+      if (i>=0)
+      {
+	QString sz;
+	bool bOK=false;
+	section[i].GetStringValue(&sz);
+	i=sz.toInt(&bOK);
+	if (!bOK) i=sz.contains("false",Qt::CaseInsensitive) ? 0 : 1;
+	tPresetButton->setChecked(i!=0);
+      }
+  }
+}
+
 /*!
     \fn void MainWidget::restoreSetupSlot()
 
@@ -764,12 +790,7 @@ void MainWidget::restoreSetupSlot()
 {
     QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
-    {
-        m_theApp->loadSetup(name);
-        configfilename->setText(m_theApp->getConfigfilename());
-        init();
-	acquireFile->setCheckable(m_meas->acqListfile());
-    }
+      emit(loadConfiguration(name));
 }
 
 /*!
@@ -1809,6 +1830,24 @@ void MainWidget::customEvent(QEvent *e)
 					interface->postCommandToInterface(CommandEvent::C_SET_LISTHEADER);
 					break;
 				}
+			case CommandEvent::C_UPDATEMAINWIDGET:
+				if (args.count()>=3)
+				{
+					bool b;
+					int i;
+					QString s;
+
+					QVariant& v=args[0];
+					i=v.toInt(&b); if (!b || i<=0) s="unknown"; else s=v.toString();
+					caressWidth->setText(s);
+					v=args[1];
+					i=v.toInt(&b); if (!b || i<=0) s="unknown"; else s=v.toString();
+					caressHeight->setText(s);
+					v=args[2];
+					i=v.toInt(&b); if (!b || i<=0) s=(i==0) ? "scratch file" : "unknown"; else s=v.toString();
+					caressRun->setText(s);
+				}
+				break;
 			default:
 				break;
             	}

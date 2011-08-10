@@ -230,6 +230,16 @@ void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength
 	m_mutex.unlock();
 }
 
+void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iRunNo)
+{
+	postCommand(CommandEvent::C_UPDATEMAINWIDGET,QList<QVariant>() << iWidth << iHeight << iRunNo);
+}
+
+void QMesyDAQDetectorInterface::updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo)
+{
+	postCommand(CommandEvent::C_UPDATEMAINWIDGET,QList<QVariant>() << sWidth << sHeight << sRunNo);
+}
+
 void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 {
 	CommandEvent *event = dynamic_cast<CommandEvent*>(e);

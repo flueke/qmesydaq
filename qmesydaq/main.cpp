@@ -23,6 +23,7 @@
 #include <QSplashScreen>
 #include <QPlastiqueStyle>
 #include <QDebug>
+#include <QSettings>
 
 #if USE_TACO
 #	include "TACOLoop.h"
@@ -43,9 +44,10 @@ int main(int argc, char **argv)
         QStringList argList = app.arguments();
 
         LoopObject *loop = NULL;
+	int i;
 
 #if USE_TACO
-        for (int i = 0; i < argList.size(); ++i)
+	for (i = 0; i < argList.size(); ++i)
 	{
 		if (argList[i].startsWith("-n") && (++i < argList.size()))
 			setenv("NETHOST",  argList[i].toStdString().c_str(), 1); 
@@ -85,6 +87,28 @@ int main(int argc, char **argv)
 	}
 
         mainWin.show();
+
+	for (i=argList.count()-1; i>=0; --i)
+	{
+	  if (argList[i]=="-f" || argList[i]=="--file" || argList[i]=="--config")
+	  {
+	    // load this configuration file
+	    mainWin.doLoadConfiguration(argList[i+1]);
+	    break;
+	  }
+	  if (argList[i]=="-nf" || argList[i]=="--nofile" || argList[i]=="--noconfig")
+	  {
+	    // load no configuration
+	    i=0;
+	    break;
+	  }
+	}
+	if (i<0)
+	{
+	  // load last configuration file
+	  QSettings settings("MesyTec", "QMesyDAQ");
+	  mainWin.doLoadConfiguration(settings.value("lastconfigfile", "mesycfg.mcfg").toString());
+	}
 
         app.processEvents();
         splash.finish(&mainWin);

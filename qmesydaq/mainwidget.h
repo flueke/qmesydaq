@@ -21,9 +21,6 @@
 #define MAINWINDOW_H
 
 #include <QPrinter>
-
-#include <qwt_plot_printfilter.h>
-
 #include "ui_mesydaq2mainwidget.h"
 
 class QwtPlotCurve;
@@ -79,6 +76,9 @@ public slots:
 	void	setupMCPD();
 
 	void 	addMCPD();
+
+	//! load configuration file
+	void	loadConfiguration(const QString& sFilename);
 
 protected:
         void    customEvent(QEvent *);

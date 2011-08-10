@@ -62,6 +62,12 @@ public:
      */
 	virtual ~Mesydaq2MainWindow();
 
+	void	doLoadConfiguration(const QString &sFilename) { emit loadConfiguration(sFilename); }
+
+signals:
+	//! load configuration file
+	void	loadConfiguration(const QString& sFilename);
+
 private:
 	MainWidget 	*m_main;
 };

@@ -78,6 +78,9 @@ public:
         QString getHistogramFileName(void) const {return m_histFileName;}
         void setHistogramFileName(const QString name);
 
+	void updateMainWidget(int iWidth, int iHeight, int iRunNo);
+	void updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo);
+
 protected:
 	void customEvent(QEvent *);
 

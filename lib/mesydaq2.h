@@ -144,6 +144,7 @@ public:
 
 	bool loadSetup(const QString &name);
 	bool saveSetup(const QString &name);
+	const CConfigFile& getLastConfiguration() const { return m_lastConfiguration; }
 
 	bool checkMcpd(quint8 device);
 
@@ -327,6 +328,7 @@ private:
 	int 		m_checkTimer;
 
 	QByteArray 	m_datHeader;
+	CConfigFile     m_lastConfiguration;
 };
 
 

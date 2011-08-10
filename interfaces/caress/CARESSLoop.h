@@ -36,9 +36,13 @@ public:
 protected:
   void runLoop();
 
+private slots:
+  void shutdownLoop() { m_bDoLoop=false; }
+
 private:
+  bool        m_bDoLoop;
   QStringList m_asArguments;
-  QString m_sName;
+  QString     m_sName;
 };
 
 #endif // CARESSLOOP_H

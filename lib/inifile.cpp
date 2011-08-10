@@ -1004,6 +1004,15 @@ void CConfigFile::RemoveSection(int Index)
   }
 }
 
+// erzeuge leere Konfigurationsdatei
+void CConfigFile::EmptyFile(const QString& Filename)
+{
+  if (!Filename.isEmpty()) m_szFilename=Filename;
+  for (int iPos=0; iPos<m_aSections.count(); iPos++)
+    delete m_aSections[iPos];
+  m_aSections.clear();
+}
+
 // Speichern der Daten in eine Konfigurationsdatei
 void CConfigFile::SaveFile(QTextStream &ar)
 {
@@ -1115,7 +1124,10 @@ void CConfigFile::SaveFile(QTextStream &ar)
 bool CConfigFile::SaveFile(const QString& Filename)
 {
   QString szFilename(Filename);
-  if (szFilename.isEmpty()) szFilename=m_szFilename;
+  if (szFilename.isEmpty())
+    szFilename=m_szFilename;
+  else
+    m_szFilename=szFilename;
 
   QFile hFile(szFilename);
   if (!hFile.open(QIODevice::WriteOnly))

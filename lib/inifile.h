@@ -370,7 +370,8 @@ public:
   //////////////////////////////////////////////////////////////////////////////////
   // Laden und Speichern
   //////////////////////////////////////////////////////////////////////////////////
-
+  // erzeuge leere Konfigurationsdatei
+  void EmptyFile(const QString& Filename=QString());
   // Laden von Daten einer Konfigurationsdatei (interne Daten werden vorher gelöscht !!)
   bool LoadFile(const QString& Filename=QString(), LOADCOMMENTINFO LoadCommentInfo=ALL_COMMENTS);
   // Laden von Daten einer Konfigurationsdatei (interne Daten werden vorher gelöscht !!)

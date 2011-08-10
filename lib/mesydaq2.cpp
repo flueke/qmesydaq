@@ -59,6 +59,8 @@ Mesydaq2::Mesydaq2(QObject *parent)
 //! destructor
 Mesydaq2::~Mesydaq2()
 {
+	foreach (MCPD8* value, m_mcpd)
+		delete value;
 	m_mcpd.clear();
 	if (m_checkTimer)
 		killTimer(m_checkTimer);
@@ -445,10 +447,6 @@ void Mesydaq2::scanPeriph(quint16 id)
  */
 void Mesydaq2::initHardware(void)
 {
-	QSettings settings("MesyTec", "QMesyDAQ");
-
-	QString str = settings.value("lastconfigfile", "mesycfg.mcfg").toString();
-	loadSetup(str);
 }
 
 /*!
@@ -473,15 +471,15 @@ bool Mesydaq2::saveSetup(const QString &name)
 	if(m_configfile.fileName().indexOf(".mcfg") == -1)
 		m_configfile.setFile(m_configfile.absoluteFilePath().append(".mcfg"));
 
-	CConfigFile settings(m_configfile.absoluteFilePath());
-	saveSetup_helper(settings,"MESYDAQ", -10, "comment", "QMesyDAQ configuration file");
-	saveSetup_helper(settings,"MESYDAQ", -10, "date", QDateTime::currentDateTime().toString(Qt::ISODate));
-//	saveSetup_helper(settings,"MESYDAQ", -10, "configPath", m_configPath);
-	saveSetup_helper(settings,"MESYDAQ", -10, "histogramPath", m_histPath);
-	saveSetup_helper(settings,"MESYDAQ", -10, "listfilePath", m_listPath);
-	saveSetup_helper(settings,"MESYDAQ", -10, "debugLevel", QString("%1").arg(DEBUGLEVEL));
-	saveSetup_helper(settings,"MESYDAQ", -10, "listmode", m_acquireListfile ? "true" : "false");
-	settings[settings.FindSectionIndex("MESYDAQ")].AddComment(QString("QMesyDAQ configuration file, created %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
+	m_lastConfiguration.EmptyFile(m_configfile.absoluteFilePath());
+	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "comment", "QMesyDAQ configuration file");
+	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "date", QDateTime::currentDateTime().toString(Qt::ISODate));
+//	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "configPath", m_configPath);
+	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "histogramPath", m_histPath);
+	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "listfilePath", m_listPath);
+	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "debugLevel", QString("%1").arg(DEBUGLEVEL));
+	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "listmode", m_acquireListfile ? "true" : "false");
+	m_lastConfiguration[m_lastConfiguration.FindSectionIndex("MESYDAQ")].AddComment(QString("QMesyDAQ configuration file, created %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
 
 	int i = 0;
 	foreach(MCPD8 *value, m_mcpd) 
@@ -531,13 +529,13 @@ bool Mesydaq2::saveSetup(const QString &name)
 				for (int k = 0; k < 8; ++k)
 					mpsd_section.AddItem(CConfigItem(QString("gain%1").arg(k), QString("%1").arg(value->getGainPoti(j, k)), 10 + k));
 				mpsd_section.AddItem(CConfigItem("threshold", QString("%1").arg(value->getThreshold(j)), 20));
-				settings.AddSection(mpsd_section);
+				m_lastConfiguration.AddSection(mpsd_section);
 			}
 		}
-		settings.AddSection(mcpd8_section);
+		m_lastConfiguration.AddSection(mcpd8_section);
 		++i;
 	}
-	settings.SaveFile();
+	m_lastConfiguration.SaveFile();
 	storeLastFile();
 	return true;
 }
@@ -599,20 +597,20 @@ bool Mesydaq2::loadSetup(const QString &name)
 		return false;
 
 	CConfigSection *pSection=NULL;
-	int 		nMcpd(0);
+	int 		i, nMcpd(0);
 	QHash<int,int> 	hMCPDId2Pos, hMPSDId2Pos;
 	QList<int>     	hMCPDPos2Id, hMPSDPos2Id;
 	bool 		bQSettingsSpecial(false); // special INI format of QSettings class
 
+	foreach (MCPD8* value, m_mcpd)
+		delete value;
 	m_mcpd.clear();
 
 	protocol(tr("Reading configfile %1").arg(getConfigfilename()), NOTICE);
 
-	CConfigFile settings(getConfigfilename());
-	settings.LoadFile();
+	m_lastConfiguration.LoadFile(getConfigfilename());
 
-	pSection = &settings[settings.FindSectionIndex("MESYDAQ")];
-	int i = pSection->FindItemIndex("configPath");
+	pSection = &m_lastConfiguration[m_lastConfiguration.FindSectionIndex("MESYDAQ")];
 	QString	home(getenv("HOME"));
 //	m_configPath=loadSetup_helper(pSection,"configPath","/home");
 	m_histPath = loadSetup_helper(pSection, "histogramPath", home);
@@ -620,17 +618,30 @@ bool Mesydaq2::loadSetup(const QString &name)
 	DEBUGLEVEL = loadSetup_helper(pSection, "debugLevel", QString("%1").arg(NOTICE)).toInt();
 	do
 	{
-		QString sz = loadSetup_helper(pSection,"listmode", "1");
-    		bool bOK(false);
-		m_acquireListfile = (loadSetup_helper(pSection, "listmode", "1").toInt() != 0);
+		QString sz = loadSetup_helper(pSection,"debugLevel",QString("%1").arg(NOTICE));
+		bool bOK(false);
+		i=sz.toInt(&bOK);
+		if (bOK)
+		  DEBUGLEVEL=i;
+		else
+		{
+		  if (sz.contains("fatal",Qt::CaseInsensitive)) DEBUGLEVEL=FATAL;
+		  else if (sz.contains("error",Qt::CaseInsensitive)) DEBUGLEVEL=ERROR;
+		  else if (sz.contains("standard",Qt::CaseInsensitive) || sz.contains("warning",Qt::CaseInsensitive)) DEBUGLEVEL=WARNING;
+		  else if (sz.contains("notice",Qt::CaseInsensitive)) DEBUGLEVEL=NOTICE;
+		  else if (sz.contains("details",Qt::CaseInsensitive) || sz.contains("info",Qt::CaseInsensitive)) DEBUGLEVEL=INFO;
+		  else if (sz.contains("debug",Qt::CaseInsensitive) || sz.contains("debug",Qt::CaseInsensitive)) DEBUGLEVEL=DEBUG;
+		}
+		sz =loadSetup_helper(pSection,"listmode","1");
+		bOK=false;
 		m_acquireListfile = (sz.toInt(&bOK) != 0);
 		if (!bOK) 
 			m_acquireListfile = !sz.contains("false", Qt::CaseInsensitive) && !sz.contains("no", Qt::CaseInsensitive);
 	} while (0);
 
-	for (int i = 0; i < settings.GetSectionCount(); ++i)
+	for (i = 0; i < m_lastConfiguration.GetSectionCount(); ++i)
 	{
-		pSection = &settings[i];
+		pSection = &m_lastConfiguration[i];
 		if (pSection->GetName().startsWith("MCPD"))
 		{
 			int iId = loadSetup_helper(pSection, "id", "-1").toInt();
@@ -660,7 +671,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 	if (bQSettingsSpecial)
 	{
 		bQSettingsSpecial = false;
-		pSection = &settings[hMCPDId2Pos[hMCPDPos2Id[0]]];
+		pSection = &m_lastConfiguration[hMCPDId2Pos[hMCPDPos2Id[0]]];
 		i = pSection->FindItemIndex("number");
 		if (i >= 0)
 		{
@@ -672,7 +683,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 			}
 		}
   	}
-	for (int i = 0; i < nMcpd; ++i)
+	for (i = 0; i < nMcpd; ++i)
 	{
 		QString szPrefix;
 		int iMCPDId;
@@ -684,7 +695,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 		else
 		{
 			iMCPDId = hMCPDPos2Id[i];
-			pSection = &settings[hMCPDId2Pos[iMCPDId]];
+			pSection = &m_lastConfiguration[hMCPDId2Pos[iMCPDId]];
 			szPrefix.clear();
 		}
 
@@ -765,14 +776,14 @@ bool Mesydaq2::loadSetup(const QString &name)
 				int 	iMPSDId(i * 8 + j);
 				if (bQSettingsSpecial)
 				{
-					pMPSD = &settings[hMPSDId2Pos.begin().value()];
+					pMPSD = &m_lastConfiguration[hMPSDId2Pos.begin().value()];
 					for (int k = 0; k < 8; ++k)
 						gains[k] = loadSetup_helper(pMPSD, QString("%1\\gains\\%2\\gain").arg(iMPSDId).arg(k), "92").toUInt();
 					threshold = loadSetup_helper(pMPSD, QString("%1threshold").arg(iMPSDId), "22").toUInt();
 				}
 				else
 				{
-					pMPSD = &settings[hMPSDId2Pos[hMPSDId2Pos[iMPSDId]]];
+					pMPSD = &m_lastConfiguration[hMPSDId2Pos[hMPSDId2Pos[iMPSDId]]];
 					for (int k = 0; k < 8; ++k)
 						gains[k] = loadSetup_helper(pMPSD, QString("gain%1").arg(k), "92").toUInt();
 					threshold = loadSetup_helper(pMPSD, "threshold", "22").toUInt();
