@@ -47,7 +47,7 @@ NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 po
 	for (int i = 0; i < m_networks.size(); ++i)
 	{
 		tmp = m_networks.at(i);
-		if (tmp->ip() == source || tmp->port() == port)
+                if (tmp->ip() == source && tmp->port() == port)
 		{
 			m_inUse[i]++;
 			m_mutex.unlock();
@@ -76,7 +76,7 @@ void NetworkDevice::destroy(NetworkDevice *nd)
 	for (int i=m_networks.size()-1; i>=0; --i)
 	{
 		tmp = m_networks.at(i);
-		if (tmp->ip() == nd->ip() || tmp->port() == nd->port())
+                if (tmp->ip() == nd->ip() && tmp->port() == nd->port())
 		{
 			Q_ASSERT(m_inUse[i]>0);
 			m_inUse[i]--;

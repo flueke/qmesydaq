@@ -321,6 +321,10 @@ void MainWidget::about()
 */
 void MainWidget::init()
 {
+    delete m_meas;
+    m_meas = new Measurement(m_theApp,this);
+    m_width = m_theApp->bins() - 1;
+
     QList<int> mcpdList = m_theApp->mcpdId();
     dispMcpd->setMCPDList(mcpdList);
     devid_2->setMCPDList(mcpdList);
@@ -331,6 +335,13 @@ void MainWidget::init()
     displayTabWidget->setDisabled(mcpdList.empty());
     statusGroupBox->setDisabled(mcpdList.empty());
     displayMpsdSlot();
+    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+
+    connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
+    connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
+#if 0
+    connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
+#endif
 }
 
 /*!

@@ -90,7 +90,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 //! destructor
 Measurement::~Measurement()
 {
-	if (m_rateTimer)
+        if (m_rateTimer)
 		killTimer(m_rateTimer);
 	m_rateTimer = 0;
 	if (m_onlineTimer)

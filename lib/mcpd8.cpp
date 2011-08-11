@@ -60,7 +60,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	, m_version(0)
 {
 	stdInit();
-	m_network = NetworkDevice::create(this, sourceIP, port);
+        m_network = NetworkDevice::create(NULL, sourceIP, port);
 	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET &)), this, SLOT(analyzeBuffer(MDP_PACKET &)));
 
 	m_commTimer = new QTimer(this);
@@ -1044,7 +1044,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 {
 	if (recBuf.deviceId != m_id)
 	{
-		protocol(tr("deviceId : %1 <-> %2").arg(recBuf.deviceId).arg(m_id), ERROR);
+		protocol(tr("deviceId : %1 <-> %2").arg(recBuf.deviceId).arg(m_id), INFO);
 		return;
 	}
 
