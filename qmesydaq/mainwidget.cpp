@@ -321,8 +321,10 @@ void MainWidget::about()
 */
 void MainWidget::init()
 {
-    delete m_meas;
-    m_meas = new Measurement(m_theApp,this);
+    if (m_meas)
+        delete m_meas;
+    m_meas = NULL;
+    m_meas = new Measurement(m_theApp, this);
     m_width = m_theApp->bins() - 1;
 
     QList<int> mcpdList = m_theApp->mcpdId();
