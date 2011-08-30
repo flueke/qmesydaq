@@ -109,7 +109,7 @@ bool MCPD2::init(void)
 		{
 			switch (m_mpsd[c]->getMpsdId())
 			{
-				case MPSD8P:
+				case TYPE_MPSD8P:
 					cap = capabilities(c);
 					protocol(tr("module : %2 capabilities : %1").arg(cap).arg(c), NOTICE);
 					modus &= cap;
@@ -126,7 +126,7 @@ bool MCPD2::init(void)
 	for(quint8 c = 0; c < 8; c++)
 		if (m_mpsd.find(c) != m_mpsd.end())
 		{
-			if (m_mpsd[c]->getMpsdId() == MPSD8P)
+			if (m_mpsd[c]->getMpsdId() == TYPE_MPSD8P)
 				writePeriReg(c, 1, modus);
 			version(c);
 		}
@@ -264,7 +264,7 @@ quint16 MCPD2::capabilities(quint16 mod)
 }
 
 /*!
-   \fn MCPD2::version(void)
+   \fn float MCPD2::version(void)
    \return firmware version of the MCPD whereas the integral places represents the major number 
            and the decimal parts the minor number
  */
@@ -278,11 +278,12 @@ float MCPD2::version(void)
 }
 
 /*!
-   \fn MPCD8::version(quint16 mod)
+   \fn float MPCD2::version(quint16 mod)
 
    In the peripheral register 2 is the version of its firmware. The upper byte is the major 
    and the lower byte the minor number
 
+   \param mod
    \return firmware version of the MPSD whereas the integral places represents the major number 
            and the decimal parts the minor number
  */
@@ -601,7 +602,7 @@ bool MCPD2::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 	}
 	if(errorflag)
 	{
-		protocol(tr("mcpd %1: set counter cell %2: trigger # is %3, compare value %4.").arg(m_id).arg(source).arg(trigger).arg(compare), NOTICE);
+		protocol(tr("mcpd %1: set counter cell %2: trigger # is %3, compare value %4.").arg(m_id).arg(source).arg(trigger).arg(compare), INFO);
 	
 		initCmdBuffer(SETCELL);
 		m_cmdBuf.data[0] = source;
@@ -1031,12 +1032,12 @@ void MCPD2::analyzeBuffer(MDP_PACKET &recBuf)
 
 //		protocol(tr("MCPD2::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
 		
-		MPSD_8	*ptrMPSD;
+		MPSD8	*ptrMPSD;
 		quint16 chksum = recBuf.headerChksum;
 		recBuf.headerChksum = 0;
 #warning TODO	if (chksum != calcChksum(recBuf))
 #warning TODO		protocol(tr("cmd packet (cmd = %4, size = %3) is not valid (CHKSUM error) %1 != (expected)%2 ")
-#warning TODO			.arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength).arg(recBuf.cmd), ERROR);
+#warning TODO			.arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength).arg(recBuf.cmd), INFO);
 		switch(recBuf.cmd)
 		{
 			case RESET:
@@ -1165,9 +1166,9 @@ void MCPD2::analyzeBuffer(MDP_PACKET &recBuf)
 				break;
 			case READREGISTER:
 				for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)
-					protocol(tr("READREGISTER : %1 = %2").arg(i).arg(recBuf.data[i]));
+					protocol(tr("READREGISTER : %1 = %2").arg(i).arg(recBuf.data[i]), DEBUG);
 				m_reg = recBuf.data[0];	
-				protocol(tr("READREGISTER : %1 %2").arg(m_reg).arg(recBuf.bufferLength), WARNING);
+				protocol(tr("READREGISTER : %1 %2").arg(m_reg).arg(recBuf.bufferLength), INFO);
 				break;
 			case READFPGA:
 				protocol(tr("not handled command : READFPGA"), ERROR);
@@ -1184,16 +1185,9 @@ void MCPD2::analyzeBuffer(MDP_PACKET &recBuf)
 				for(quint8 c = 0; c < 8; c++)
 				{
 					protocol(tr("module ID : %1").arg(recBuf.data[c]));
-					if (recBuf.data[c])
+					if (m_mpsd.find(c) == m_mpsd.end())
 					{
-						if (m_mpsd.find(c) == m_mpsd.end())
-						{
-							if (recBuf.data[c] == MPSD8)
-								m_mpsd[c] = new MPSD_8(c, this);
-							else
-								m_mpsd[c] = new MPSD_8P(c, this);
-						}
-						m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
+						m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
 					}
 				}
 				protocol(tr("READID finished"), DEBUG);

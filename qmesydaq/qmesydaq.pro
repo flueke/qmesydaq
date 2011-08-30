@@ -57,8 +57,8 @@ HEADERS 	+= mainwidget.h \
 		modulemasterpage.h \
 		modulesetup.h
 
-FORMS 		+= mesydaq2mainwidget.ui \
-		mesydaq2mainwindow.ui \
+FORMS 		+= mainwidget.ui \
+		mainwindow.ui \
 		generalsetup.ui \
 		mcpdsetup.ui \
 		presetwidget.ui \
@@ -67,6 +67,7 @@ FORMS 		+= mesydaq2mainwidget.ui \
 		modulewizard.ui \
 		moduleidentificationpage.ui \
 		modulemasterpage.ui \
+		channelhistogramsetup.ui \
 		modulesetup.ui 
 
 SOURCES 	+= main.cpp \

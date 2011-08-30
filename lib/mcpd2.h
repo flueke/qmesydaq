@@ -28,7 +28,7 @@
 #include "mesydaqobject.h"
 
 class NetworkDevice;
-class MPSD_8;
+class MPSD8;
 class QTimer;
 
 /**
@@ -157,7 +157,7 @@ public:
 
 	float version(void); 
 
-	float version(quint16 mod);
+	float version(quint16);
 
 	//! \return number of modules found
 	quint8 numModules(void) {return m_mpsd.size();}
@@ -316,7 +316,7 @@ private:
 	quint32		m_cmdRxd;
 
 	//! the accessed MPSD8 ????
-	QMap<int, MPSD_8 *> m_mpsd;
+	QMap<int, MPSD8 *> m_mpsd;
 	
 	//! the header time stamp
 	quint64		m_headertime;

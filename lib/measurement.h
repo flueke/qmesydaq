@@ -22,6 +22,7 @@
 
 #include <QTextStream>
 #include <QRectF>
+#include <QHash>
 
 #include "mesydaqobject.h"
 #include "counter.h"
@@ -63,7 +64,7 @@ public:
 	quint8	isOk(void);
 	void	setOnline(bool truth);
 
-	ulong	getPreset(quint8 cNum);
+	quint64	getPreset(quint8 cNum);
 	void	setPreset(quint8 cNum, quint64 prval, bool mast);
 
 	void	setListmode(bool truth);
@@ -88,35 +89,42 @@ public:
 		\todo monitor mapping configuration
 		\return counter value for the monitor 1 
 	 */
-	quint64	mon1() {return m_counter[M1CT]->value();}
+	quint64	mon1() {return m_counter[MON1ID]->value();}
 
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon2() {return m_counter[M2CT]->value();}
+	quint64	mon2() {return m_counter[MON2ID]->value();}
 	
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon3() {return m_counter[M3CT]->value();}
+	quint64	mon3() {return m_counter[MON3ID]->value();}
 	
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon4() {return m_counter[M4CT]->value();}
+	quint64	mon4() {return m_counter[MON4ID]->value();}
 	
 	/** 
 		gets the value of the defined event counter
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	events() {return m_counter[EVCT]->value();}
+	quint64	events() {return m_counter[EVID]->value();}
+
+	/** 
+		gets the value of the timer
+		\todo counter mapping configuration
+		\return counter value for the event counter
+	 */
+	quint64	timer() {return m_counter[TIMERID]->value();}
 
 	/** 
 		gets the number of all events in the selected ROI
@@ -244,9 +252,7 @@ private:
 	quint64		m_headertime;
 
 	//! definitions of the counters
-	MesydaqCounter	*m_counter[8];
-
-	MesydaqTimer	*m_timer;
+	QHash<int, MesydaqCounter *>	m_counter; // [TIMERID + 1];
 
 	int		m_rateTimer;
 

@@ -46,7 +46,7 @@ void DoublePresetWidget::setLabel(const QString &text)
 }
 
 /*!
-    \fn quint64 DoublePresetWidget::presetValue(void)
+    \fn quint64 DoublePresetWidget::value(void)
 
     \return the current selected preset value
  */
@@ -56,7 +56,7 @@ double DoublePresetWidget::value(void)
 }
 
 /*!
-    \fn void DoublePresetWidget::setPresetValue(const quint64 val)
+    \fn void DoublePresetWidget::setValue(const double val)
 
     sets the preset value
 

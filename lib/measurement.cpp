@@ -27,6 +27,8 @@
 
 #include <QDebug>
 
+#include <cmath>
+
 #include "measurement.h"
 #include "mdefines.h"
 #include "histogram.h"
@@ -67,19 +69,19 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 {
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
-	for (quint8 i = 0; i < 8; ++i)
+	for (quint8 i = 0; i < TIMERID; ++i)
 	{
-		if (i == TCT)
-			m_counter[i] = new MesydaqTimer();
-		else
-			m_counter[i] = new MesydaqCounter();
+		m_counter[i] = new MesydaqCounter();
 		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
 	}
-	m_ampHist = new Histogram(0, mesy->bins());
-	m_posHist = new Histogram(0, mesy->bins());
-	m_timeSpectrum = new Spectrum(mesy->bins());
-	m_diffractogram = new Spectrum(0);
-	m_tubeSpectrum = new Spectrum(0);
+	m_counter[TIMERID] = new MesydaqTimer();
+	connect(m_counter[TIMERID], SIGNAL(stop()), this, SLOT(requestStop()));
+
+	m_ampHist = new Histogram(m_mesydaq->height(), m_mesydaq->width());
+	m_posHist = new Histogram(m_mesydaq->height(), m_mesydaq->width());
+	m_timeSpectrum = new Spectrum(m_mesydaq->width());
+	m_diffractogram = new Spectrum(m_mesydaq->height());
+	m_tubeSpectrum = new Spectrum(m_mesydaq->height());
 
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
 
@@ -93,28 +95,37 @@ Measurement::~Measurement()
         if (m_rateTimer)
 		killTimer(m_rateTimer);
 	m_rateTimer = 0;
+
 	if (m_onlineTimer)
 		killTimer(m_onlineTimer);
 	m_onlineTimer = 0;
+
 	if (m_posHistCorrected)
-	{
 		delete m_posHistCorrected;
-		m_posHistCorrected = NULL;
-	}
+	m_posHistCorrected = NULL;
+
 	if (m_posHistMapCorrection)
-	{
 		delete m_posHistMapCorrection;
-		m_posHistMapCorrection = NULL;
-	}
-	delete m_ampHist;
+	m_posHistMapCorrection = NULL;
+
+	if (m_ampHist)
+		delete m_ampHist;
 	m_ampHist = NULL;
-	delete m_posHist;
+
+	if (m_posHist)
+		delete m_posHist;
 	m_posHist = NULL;
-	delete m_timeSpectrum;
+
+	if (m_timeSpectrum)
+		delete m_timeSpectrum;
 	m_timeSpectrum = NULL;
-	delete m_diffractogram;
+
+	if (m_diffractogram)
+		delete m_diffractogram;
 	m_diffractogram = NULL;
-	delete m_tubeSpectrum;
+	
+	if (m_tubeSpectrum)
+		delete m_tubeSpectrum;
 	m_tubeSpectrum = NULL;
 }
 
@@ -140,6 +151,7 @@ void Measurement::timerEvent(QTimerEvent *event)
     \fn Measurement::setCurrentTime(quint64 msecs)
   
     sets the current time for the measurement
+    the timer will be updated during the events 
 
     \param msecs current time in ms
  */
@@ -148,9 +160,8 @@ void Measurement::setCurrentTime(quint64 msecs)
 	if(m_status == STARTED)
 	{
     		m_meastime_msec = msecs - m_starttime_msec;
-		for (quint8 i = 0; i < 8; ++i)
-			if (i != TCT)	// this will be updated during the events 
-				m_counter[i]->setTime(m_meastime_msec);
+		for (quint8 i = 0; i < TIMERID; ++i)
+			m_counter[i]->setTime(m_meastime_msec);
 	}
 }
 
@@ -171,19 +182,22 @@ quint64 Measurement::getMeastime(void)
  */
 void Measurement::start()
 {
-	for (quint8 c = 0; c < 8; ++c)
-		m_counter[c]->reset();	
+	foreach (MesydaqCounter *c, m_counter)
+		c->reset();	
 	m_packages = 0;
 	m_triggers = 0;
+	m_mesydaq->setRunId(m_mesydaq->runId() + 1);
 	m_mesydaq->start();
 	m_status = STARTED;
 	m_starttime_msec = m_mesydaq->time();
-	protocol(tr("event counter limit : %1").arg(m_counter[EVCT]->limit()), INFO);
-	for (quint8 c = 0; c < 8; ++c)
+	protocol(tr("event counter limit : %1").arg(m_counter[EVID]->limit()), INFO);
+	protocol(tr("timer limit : %1").arg(m_counter[TIMERID]->limit() / 1000), INFO);
+	foreach (MesydaqCounter *c, m_counter)
 	{
-		m_counter[c]->start(m_starttime_msec);
-		protocol(tr("counter %1 value : %2 limit : %3").arg(c).arg(m_counter[c]->value()).arg(m_counter[c]->limit()), INFO);
+		c->start(m_starttime_msec);
+		protocol(tr("counter %1 value : %2 limit : %3").arg(*c).arg(c->value()).arg(c->limit()), INFO);
 	}
+        setROI(QRectF(0,0, m_mesydaq->width(), m_mesydaq->height()));
 }
 
 /*!
@@ -213,9 +227,14 @@ void Measurement::stop()
 		if (m_status == STARTED)
 			m_mesydaq->stop(); 
 		quint64 time = m_mesydaq->time();
-		for (quint8 c = 0; c < 8; ++c)
-			m_counter[c]->stop(time);
+		foreach (MesydaqCounter *c, m_counter)
+			c->stop(time);
 		protocol(tr("packages : %1 triggers : %2").arg(m_packages).arg(m_triggers));
+		if (m_triggers)
+		{
+			for(int i = 0; m_counter.size(); ++i)
+				protocol(tr("Counter %1 gots %2 events").arg(i).arg(m_counter[i]->value()), NOTICE);
+		}
 	}
 	m_status = IDLE;
 } 
@@ -240,7 +259,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 {
 // set counter
 	protocol(tr("Measurement::setCounter(cNum = %1, val = %2)").arg(cNum).arg(val), NOTICE);
-	if(cNum < 8)
+	if(m_counter.contains(cNum))
 	{
 		if (val == 0)
 			m_counter[cNum]->reset();
@@ -263,8 +282,8 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
  */
 void Measurement::calcRates()
 {
-	for(quint8 c = 0; c < 8; c++)
-		m_counter[c]->calcRate();
+	foreach(MesydaqCounter *c, m_counter)
+		c->calcRate();
 }
 
 /*!
@@ -274,8 +293,8 @@ void Measurement::calcRates()
  */
 void Measurement::calcMeanRates()
 {
-	for(quint8 c = 0; c < 8; c++)
-		m_counter[c]->calcMeanRate();
+	foreach(MesydaqCounter *c, m_counter)
+		c->calcMeanRate();
 }
 
 /*!
@@ -288,10 +307,9 @@ void Measurement::calcMeanRates()
  */
 quint64 Measurement::getCounter(quint8 cNum)
 {
-	if(cNum < 8)
+	if(m_counter.contains(cNum))
 		return m_counter[cNum]->value();
-	else
-		return 0;
+	return 0;
 }
 
 /*!
@@ -304,10 +322,9 @@ quint64 Measurement::getCounter(quint8 cNum)
  */
 ulong Measurement::getRate(quint8 cNum)
 {
-	if(cNum < 8)
+	if(m_counter.contains(cNum))
 		return m_counter[cNum]->rate();
-	else
-		return 0;
+	return 0;
 }
 
 /*!
@@ -362,20 +379,16 @@ void Measurement::setOnline(bool truth)
  */
 void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 {
-	if(cNum < 8)
+	if(m_counter.contains(cNum))
 	{
 		protocol(tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? tr("master") : tr("slave")), NOTICE);	
 		if (mast)
 		{
     			// clear all other master flags
-    			for (quint8 c = 0; c < 8;c++)
-				m_counter[c]->setMaster(false);
-    			// set new master
-    			m_counter[cNum]->setMaster(true);
+			foreach(MesydaqCounter *c, m_counter)
+				c->setMaster(false);
     		}
-    		else
-    		// just clear master
-    			m_counter[cNum]->setMaster(false);
+    		m_counter[cNum]->setMaster(mast);
     		m_counter[cNum]->setLimit(prval);
 	}
 }
@@ -389,12 +402,11 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
     \param cNum number of the counter
     \return preset value
  */
-ulong Measurement::getPreset(quint8 cNum)
+quint64 Measurement::getPreset(quint8 cNum)
 {
-	if(cNum < 8)
+	if(m_counter.contains(cNum))
 		return m_counter[cNum]->limit();
-	else
-		return 0;
+	return 0;
 }
 
 /*!
@@ -444,7 +456,9 @@ bool Measurement::remoteStart(void)
  */
 bool Measurement::isMaster(quint8 cNum)
 {
-	return m_counter[cNum]->isMaster();
+	if (m_counter.contains(cNum))
+		return m_counter[cNum]->isMaster();
+	return false;
 }
 
 /*!
@@ -456,9 +470,8 @@ bool Measurement::isMaster(quint8 cNum)
  */
 void Measurement::clearCounter(quint8 cNum)
 {
-	if(cNum > 7)
-		return;
-	m_counter[cNum]->reset();
+	if(m_counter.contains(cNum))
+		m_counter[cNum]->reset();
 }
 
 /*!
@@ -697,7 +710,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 		QChar c('0');
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 		if (datalen == 0)
-			m_counter[TCT]->setTime(m_headertime / 10000);
+			m_counter[TIMERID]->setTime(m_headertime / 10000);
 		quint16 counter; 
 //
 // status IDLE is for replaying files
@@ -711,15 +724,13 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 // id stands for the trigId and modId depending on the package type
 			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
 // not neutron event (counter, chopper, ...)
-			m_counter[TCT]->setTime(tim / 10000);
+			m_counter[TIMERID]->setTime(tim / 10000);
 			if((pd.data[counter + 2] & 0x8000))
 			{
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
 				data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
 				time = (quint16)tim;
-#warning TODO remove mysterious mapping
-//! \todo remove mysterious mapping
 				switch(dataId)
 				{
 					case MON1ID :
@@ -729,8 +740,18 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 						++(*m_counter[dataId]);
 //						protocol(tr("counter %1 : (%3 - %4)%2").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers));
 						break;
+					case TTL1ID :
+					case TTL2ID :
+						++(*m_counter[dataId]);
+						protocol(tr("counter %1 : (%3 - %4)%2").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers), NOTICE);
+						break;
+					case ADC1ID :
+					case ADC2ID :
+						++(*m_counter[dataId]);
+						protocol(tr("counter %1 : (%3 - %4)%2").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers), NOTICE);
+						break;
 					default:
-						protocol(tr("counter %1 : %2").arg(dataId).arg(i));
+						protocol(tr("counter %1 : %2").arg(dataId).arg(i), ERROR);
 						break;
 				}
 			}
@@ -746,7 +767,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
-				if (m_mesydaq->getMpsdId(mod, id) == MPSD8OLD)
+				if (m_mesydaq->getMpsdId(mod, id) == TYPE_MPSD8OLD)
 				{
 					amp >>= 2;
 					pos >>= 2;
@@ -759,7 +780,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					protocol(tr("GHOST EVENT: SlotID %1 Mod %2 %3").arg(slotId).arg(id), WARNING);
 					continue;
 				}
-				++(*m_counter[EVCT]);
+				++(*m_counter[EVID]);
 				if (m_posHist)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
@@ -768,7 +789,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_diffractogram->incVal(chan);
 				if (m_posHistCorrected)
 					m_posHistCorrected->incVal(chan, amp);
-				if (m_mesydaq->getMpsdId(mod, id) == MSTD16)
+				if (m_mesydaq->getMpsdId(mod, id) == TYPE_MSTD16)
 				{
 //					protocol(tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id), INFO);
 					chan <<= 1;
@@ -782,6 +803,8 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_tubeSpectrum->incVal(chan);
 //					protocol(tr("Value of this channel : %1").arg(m_tubeSpectrum->value(chan)), INFO);
 				}
+				else if (m_tubeSpectrum)
+					m_tubeSpectrum->incVal(chan);
 			}
 		}
 		m_triggers += triggers;
@@ -884,9 +907,9 @@ void Measurement::readListfile(QString readfilename)
 		if (!blocks)
 		{
 			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
-			for (quint8 i = 0; i < 8; ++i)
-				m_counter[i]->reset();
-			m_counter[TCT]->start(tmp / 10000);
+			foreach(MesydaqCounter *c, m_counter)
+				c->reset();
+			m_counter[TIMERID]->start(tmp / 10000);
 		}
 // hand over data buffer for processing
 		analyzeBuffer(dataBuf);
@@ -992,20 +1015,21 @@ void Measurement::getTimeMean(float &mean, float &sigma)
  */
 void Measurement::setROI(QRectF r)
 {
-	m_roi = QRect(r.x(), r.y(), r.width(), r.height());
+	int x = round(r.x()),
+	    y = round(r.y()),
+	    w = round(r.width()),
+	    h = round(r.height());
+	protocol(tr("setROI : %1,%2 %3x%4").arg(x).arg(y).arg(w).arg(h), NOTICE);
+	m_roi = QRect(x, y, w, h);
 }
 
 quint64 Measurement::ampEventsInROI()
 {
 	quint64 tmp(0);
 
-	if (!m_roi.width() && !m_roi.height())
-		return events();
-
 	for (int i = m_roi.x(); i < m_roi.x() + m_roi.width(); ++i)
 		for (int j = m_roi.y(); j < m_roi.y() + m_roi.height(); ++j)
-			tmp += m_ampHist->value(j, i);
-
+			tmp += m_ampHist->value(i, j);
 	return tmp;
 }
 
@@ -1013,12 +1037,9 @@ quint64 Measurement::posEventsInROI()
 {
 	quint64 tmp(0);
 	
-	if (!m_roi.width() && !m_roi.height())
-		return events();
-
 	for (int i = m_roi.x(); i < m_roi.x() + m_roi.width(); ++i)
 		for (int j = m_roi.y(); j < m_roi.y() + m_roi.height(); ++j)
-			tmp += m_posHist->value(j, i);
+			tmp += m_posHist->value(i, j);
 	return tmp;
 }
 

@@ -19,7 +19,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #ifdef HAVE_CONFIG_H
 #	include "config.h"
 #endif
@@ -88,7 +87,7 @@ double QMesyDAQDetectorInterface::preSelection()
 	double r(0.0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_PRESELECTION);
-	r=m_preSelection;
+	r = m_preSelection;
 	m_mutex.unlock();
 	return r;
 }
@@ -111,8 +110,8 @@ void QMesyDAQDetectorInterface::readHistogramSize(quint16& width, quint16& heigh
 {
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_READ_HISTOGRAM_SIZE);
-	width=m_width;
-	height=m_height;
+	width = m_width;
+	height = m_height;
 	m_mutex.unlock();
 }
 
@@ -121,7 +120,7 @@ QList<quint64> QMesyDAQDetectorInterface::readHistogram()
 	QList<quint64> r;
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_READ_HISTOGRAM);
-	r=m_values;
+	r = m_values;
 	m_mutex.unlock();
 	return r;
 }
@@ -131,7 +130,7 @@ QList<quint64> QMesyDAQDetectorInterface::readDiffractogram()
 	QList<quint64> r;
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_READ_DIFFRACTOGRAM);
-	r=m_values;
+	r = m_values;
 	m_mutex.unlock();
 	return r;
 }
@@ -140,11 +139,11 @@ QList<quint64> QMesyDAQDetectorInterface::readSpectrogram(int iSpectrogram/*=-1*
 {
 	QList<quint64> r;
 	m_mutex.lock();
-	if (iSpectrogram>=0)
+	if (iSpectrogram >= 0)
 		postRequestCommand(CommandEvent::C_READ_SPECTROGRAM, QList<QVariant>() << iSpectrogram);
 	else
 		postRequestCommand(CommandEvent::C_READ_SPECTROGRAM);
-	r=m_values;
+	r = m_values;
 	m_mutex.unlock();
 	return r;
 }
@@ -154,56 +153,57 @@ int QMesyDAQDetectorInterface::status()
 	int r(0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_STATUS);
-	r=m_status;
+	r = m_status;
 	m_mutex.unlock();
 	return r;
 }
 
 const MapCorrection* QMesyDAQDetectorInterface::getMappingCorrection()
 {
-	MapCorrection* pResult=NULL;
+	MapCorrection* pResult(NULL);
 	m_mutex.lock();
-	m_pObject=NULL;
+	m_pObject = NULL;
 	postRequestCommand(CommandEvent::C_MAPCORRECTION);
-	pResult=dynamic_cast<MapCorrection*>(m_pObject);
+	pResult = dynamic_cast<MapCorrection*>(m_pObject);
 	m_mutex.unlock();
 	return pResult;
 }
 
 void QMesyDAQDetectorInterface::setMappingCorrection(const MapCorrection& map)
 {
-	if (!map.isValid()) return;
-	MapCorrection* pMap=NULL;
+	if (!map.isValid()) 
+		return;
+	MapCorrection *pMap(NULL);
 	m_mutex.lock();
-	m_pObject=NULL;
+	m_pObject = NULL;
 	postRequestCommand(CommandEvent::C_MAPCORRECTION);
-	pMap=dynamic_cast<MapCorrection*>(m_pObject);
+	pMap = dynamic_cast<MapCorrection*>(m_pObject);
 	if (map.isNoMap())
 	{
-		if (pMap!=NULL)
+		if (pMap != NULL)
 		{
 			delete pMap;
-			pMap=NULL;
+			pMap = NULL;
 			postCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
 		}
 	}
-	else if (pMap==NULL)
+	else if (pMap == NULL)
 	{
-		pMap=new MapCorrection(map);
+		pMap = new MapCorrection(map);
 		postCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
 	}
 	else
-		(*pMap)=map;
+		(*pMap) = map;
 	m_mutex.unlock();
 }
 
-const MappedHistogram* QMesyDAQDetectorInterface::getMappedHistogram()
+const MappedHistogram *QMesyDAQDetectorInterface::getMappedHistogram()
 {
-	MappedHistogram* pResult=NULL;
+	MappedHistogram *pResult(NULL);
 	m_mutex.lock();
-	m_pObject=NULL;
+	m_pObject = NULL;
 	postRequestCommand(CommandEvent::C_MAPPEDHISTOGRAM);
-	pResult=dynamic_cast<MappedHistogram*>(m_pObject);
+	pResult = dynamic_cast<MappedHistogram*>(m_pObject);
 	m_mutex.unlock();
 	return pResult;
 }
@@ -272,10 +272,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				{
 //! \todo hack to transfer a QList<quint64> to QtInterface without to copy it
 #warning TODO hack to transfer a QList<quint64> to QtInterface without to copy it
-					QList<quint64>* tmpData=(QList<quint64>*)args[0].toULongLong();
-					if (tmpData!=NULL)
+					QList<quint64>* tmpData = (QList<quint64>*)args[0].toULongLong();
+					if (tmpData != NULL)
 					{
-						m_values=*tmpData;
+						m_values = *tmpData;
 						delete tmpData;
 					}
 					else
@@ -285,13 +285,18 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				}
 				case CommandEvent::C_READ_HISTOGRAM_SIZE:
 				{
-					int i=0;
+					int i(0);
 					for (QList<QVariant>::const_iterator it = args.begin(); it != args.end(); ++it, ++i)
 					{
 						switch (i)
 						{
-							case 0: m_width=it->toUInt(); m_height=0; break;
-							case 1: m_height=it->toUInt(); break;
+							case 0: 
+								m_width = it->toUInt(); 
+								m_height = 0; 
+								break;
+							case 1: 
+								m_height = it->toUInt(); 
+								break;
 							default: break;
 						}
 					}

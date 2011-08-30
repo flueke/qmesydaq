@@ -26,26 +26,27 @@
 #include "mdefines.h"
 #include "mesydaq3.h"
 #include "networkdevice.h"
-
-Mdll::Mdll(mesydaq3 *app, QObject *parent)
-	: MesydaqObject(parent)
-{
-	theApp = (mesydaq3*)app;
-	initDefaults();
-}
-
-Mdll::~Mdll()
-{
-}
+#include "mcpd8.h"
 
 /*!
-    \fn Mdll::initDefaults(void)
+    constructor
+    \param app
+    \param parent
  */
-void Mdll::initDefaults(void)
+MDll::MDll(mesydaq3 *app, QObject *parent)
+	: MesydaqObject(parent)
+	, m_mcpd(NULL)
 {
+	theApp = (mesydaq3*)app;
+	// Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
+ 	// m_mcpd = new MCPD8(id, this, ip, port, sourceIP);
+ 	m_mcpd = new MCPDMDLL(0, this, "192.168.168.121", 54321, "0.0.0.0");
+
 	m_mdllSet.id = 0;
+
 	m_mdllSet.master = true;
 	m_mdllSet.terminate = true;
+
 	m_mdllSet.threshX = 20;
 	m_mdllSet.threshY = 20;
 	m_mdllSet.threshA = 20;
@@ -60,11 +61,12 @@ void Mdll::initDefaults(void)
 	m_mdllSet.histSize = 2;
 	m_mdllSet.histType = 0;
 	m_mdllSet.slscOff = 1;
+
+	m_mdllSet.eventCounter0 = 0;
+	m_mdllSet.eventCounter1 = 0;
 #endif
 	m_mdllSet.datareg = 0;
     
-	m_mdllSet.eventCounter0 = 0;
-	m_mdllSet.eventCounter1 = 0;
 	m_mdllSet.eventLimit0 = 0xFFFF;
 	m_mdllSet.eventLimit1 = 0xFFFF;
     
@@ -84,8 +86,10 @@ void Mdll::initDefaults(void)
 
 	m_mdllSet.counterCell[0][0] = 7;
 	m_mdllSet.counterCell[0][1] = 22;
+
 	m_mdllSet.counterCell[1][0] = 7;
 	m_mdllSet.counterCell[1][1] = 22;
+
 	m_mdllSet.counterCell[2][0] = 0;
 	m_mdllSet.counterCell[2][1] = 0;
 
@@ -100,435 +104,231 @@ void Mdll::initDefaults(void)
 	m_mdllSet.paramSource[3] = 7;
 }
 
-/*!
-    \fn void Mdll::getMdllSet(P_MDLL_SETTING)
- */
-void Mdll::getMdllSet(P_MDLL_SETTING pMdllSet)
+MDll::~MDll()
 {
-	memcpy(pMdllSet, &m_mdllSet, sizeof(MDLL_SETTING));
 }
 
 /*!
-    \fn Mdll::setAll(P_MDLL_SETTING)
+    \fn void MDll::getMdllSet(P_MDLL_SETTING pMDllSet)
+
+    \param pMDllSet
  */
-void Mdll::setAll(P_MDLL_SETTING pMdllSet)
+void MDll::getMdllSet(P_MDLL_SETTING pMDllSet)
 {
-	memcpy(&m_mdllSet, pMdllSet, sizeof(MDLL_SETTING));
-	setTiming();
-	setSpectrum();
-	setAcqset();
-	setDatareg();
-	setEnergy();
-	setThreshold();
-	setCountercells();
-	setParams();
-	setAuxtimers();
-//	setMode();
-//	setSlide();
-//	setHistogram();
-//	setSpectrum();
+	memcpy(pMDllSet, &m_mdllSet, sizeof(MDLL_SETTING));
+}
+
+/*!
+    \fn void MDll::setAll(P_MDLL_SETTING pMDllSet)
+
+    \param pMDllSet
+ */
+void MDll::setAll(P_MDLL_SETTING pMDllSet)
+{
+	memcpy(&m_mdllSet, pMDllSet, sizeof(MDLL_SETTING));
+	initMdll();
 }
 
 
 /*!
-    \fn void Mdll::setMdll(P_MDLL_SETTING pMdllSet, bool dontCheck)
+    \fn void MDll::setMdll(P_MDLL_SETTING pMDllSet, bool dontCheck)
+
+    \param pMDllSet
+    \param dontCheck
  */
-void Mdll::setMdll(P_MDLL_SETTING pMdllSet, bool dontCheck)
+void MDll::setMdll(P_MDLL_SETTING pMDllSet, bool dontCheck)
 {
 	qDebug("set MDLL");
 	bool change(false);
-	m_pCmdPacket->deviceId = 0;
+//	m_pCmdPacket->deviceId = 0;
 // check for different command blocks:
     
 // MDLL part
 // thresholds
-	if (m_mdllSet.threshX != pMdllSet->threshX)
+	if (m_mdllSet.threshX != pMDllSet->threshX)
     		change = true;
-	if (m_mdllSet.threshY != pMdllSet->threshY)
+	if (m_mdllSet.threshY != pMDllSet->threshY)
     		change = true;
-	if (m_mdllSet.threshA != pMdllSet->threshA)
+	if (m_mdllSet.threshA != pMDllSet->threshA)
 		change = true;
 // new settings?
 	if (change || dontCheck)
 	{
-    		m_mdllSet.threshX = pMdllSet->threshX;
-    		m_mdllSet.threshY = pMdllSet->threshY;
-    		m_mdllSet.threshA = pMdllSet->threshA;
-        	setThreshold();
+		m_mcpd->setThreshold(pMDllSet->threshX, pMDllSet->threshY, pMDllSet->threshA);
     	}
 // spectrum
-	if (m_mdllSet.shiftX != pMdllSet->shiftX)
+	if (m_mdllSet.shiftX != pMDllSet->shiftX)
 		change = true;
-	if (m_mdllSet.shiftY != pMdllSet->shiftY)
+	if (m_mdllSet.shiftY != pMDllSet->shiftY)
 		change = true;
-	if (m_mdllSet.scaleX != pMdllSet->scaleX)
+	if (m_mdllSet.scaleX != pMDllSet->scaleX)
 		change = true;
-	if (m_mdllSet.scaleY != pMdllSet->scaleY)
+	if (m_mdllSet.scaleY != pMDllSet->scaleY)
 		change = true;
 // testreg (= datareg)
-	if (m_mdllSet.datareg != pMdllSet->datareg)
+	if (m_mdllSet.datareg != pMDllSet->datareg)
 		change = true;
 // acq settings
-	if (m_mdllSet.eventLimit0 != pMdllSet->eventLimit0)
+	if (m_mdllSet.eventLimit0 != pMDllSet->eventLimit0)
 		change = true;
-	if (m_mdllSet.eventLimit1 != pMdllSet->eventLimit1)
+	if (m_mdllSet.eventLimit1 != pMDllSet->eventLimit1)
 		change = true;
-	if (m_mdllSet.tsumXlo != pMdllSet->tsumXlo)
+	if (m_mdllSet.tsumXlo != pMDllSet->tsumXlo)
 		change = true;
-	if (m_mdllSet.tsumXhi != pMdllSet->tsumXhi)
+	if (m_mdllSet.tsumXhi != pMDllSet->tsumXhi)
 		change = true;
-	if (m_mdllSet.tsumYlo != pMdllSet->tsumYlo)
+	if (m_mdllSet.tsumYlo != pMDllSet->tsumYlo)
 		change = true;
-	if (m_mdllSet.tsumYhi != pMdllSet->tsumYhi)
+	if (m_mdllSet.tsumYhi != pMDllSet->tsumYhi)
 		change = true;
 // energy window
-	if (m_mdllSet.energyLow != pMdllSet->energyLow)
+	if (m_mdllSet.energyLow != pMDllSet->energyLow)
 		change = true;
-	if (m_mdllSet.energyHi !=pMdllSet->energyHi)
+	if (m_mdllSet.energyHi !=pMDllSet->energyHi)
 		change = true;
 
 	if (change || dontCheck)
 	{
 		qDebug("change in MDLL part");
-		m_mdllSet.threshX = pMdllSet->threshX;
-		m_mdllSet.threshY = pMdllSet->threshY;
-		m_mdllSet.threshA = pMdllSet->threshA;
-		m_mdllSet.shiftX = pMdllSet->shiftX;
-		m_mdllSet.shiftY = pMdllSet->shiftY;
-		m_mdllSet.scaleX = pMdllSet->scaleX;
-		m_mdllSet.scaleY = pMdllSet->scaleY;
-		m_mdllSet.datareg = pMdllSet->datareg;
-		m_mdllSet.eventLimit0 = pMdllSet->eventLimit0;
-		m_mdllSet.eventLimit1 = pMdllSet->eventLimit1;
-		m_mdllSet.tsumXlo = pMdllSet->tsumXlo;
-		m_mdllSet.tsumXhi = pMdllSet->tsumXhi;
-		m_mdllSet.tsumYlo = pMdllSet->tsumYlo;
-		m_mdllSet.tsumYhi = pMdllSet->tsumYhi;
-		m_mdllSet.energyLow = pMdllSet->energyLow;
-		m_mdllSet.energyHi = pMdllSet->energyHi;
-
-		setEnergy();
-		setThreshold();
-		setSpectrum();
-		setDatareg();
-		setAcqset();
+		m_mcpd->setEnergy(pMDllSet->energyLow, pMDllSet->energyHi, pMDllSet->eScaleX, pMDllSet->eScaleY);
+		m_mcpd->setThreshold(pMDllSet->threshX, pMDllSet->threshY, pMDllSet->threshA);
+		m_mcpd->setSpectrum(pMDllSet->shiftX, pMDllSet->shiftY, pMDllSet->scaleX, pMDllSet->scaleY);
+		m_mcpd->setDataReg(pMDllSet->datareg);
+		m_mcpd->setAcqset(pMDllSet->eventLimit0 | (pMDllSet->eventLimit1 << 16), 
+			pMDllSet->tsumXlo | (pMDllSet->tsumXhi << 16),
+			pMDllSet->tsumYlo | (pMDllSet->tsumYhi << 16));
 	}
 #if 0
 // mode
-	if (m_mdllSet.mode != pMdllSet->mode)
+	if (m_mdllSet.mode != pMDllSet->mode)
 	{
-    		m_mdllSet.mode = pMdllSet->mode;
-		setMode();
+		m_mcpd->setMode(pMDllSet->mode);
 	}
 
 // histogram
 	change = true;
-	if (m_mdllSet.previewHistsize != pMdllSet->previewHistsize)
+	if (m_mdllSet.previewHistsize != pMDllSet->previewHistsize)
 		change = true;
-	if (m_mdllSet.previewHistrate != pMdllSet->previewHistrate)
+	if (m_mdllSet.previewHistrate != pMDllSet->previewHistrate)
     		change = true;
-	if (m_mdllSet.histSize != pMdllSet->histSize)
+	if (m_mdllSet.histSize != pMDllSet->histSize)
 		change = true;
-	if (m_mdllSet.histType != pMdllSet->histType)
+	if (m_mdllSet.histType != pMDllSet->histType)
 		change = true;
 // new settings?
 	if(change)
 	{
-		m_mdllSet.previewHistsize = pMdllSet->previewHistsize;
-		m_mdllSet.previewHistrate = pMdllSet->previewHistrate;
-		m_mdllSet.histSize = pMdllSet->histSize;
-		m_mdllSet.histType = pMdllSet->histType;
-		setHistogram();
+		m_mcpd->setHistogram(pMDllSet->previewHistsize, pMDllSet->previewHistrate, pMDllSet->histSize, pMDllSet->histType);
 	}
 
 // sliding scale
-	if (m_mdllSet.slscOff != pMdllSet->slscOff)
+	if (m_mdllSet.slscOff != pMDllSet->slscOff)
 	{
-		m_mdllSet.slscOff = pMdllSet->slscOff;
-		setSlide();
+		m_mcpd->setSlide(pMDllSet->slscOff);
 	}
 #endif
 
 // pulser settings
 	change = false;
-	if (m_mdllSet.pulserOn != pMdllSet->pulserOn)
+	if (m_mdllSet.pulserOn != pMDllSet->pulserOn)
     		change = true;
-	if (m_mdllSet.pulserAmpl != pMdllSet->pulserAmpl)
+	if (m_mdllSet.pulserAmpl != pMDllSet->pulserAmpl)
 		change = true;
-	if (m_mdllSet.pulserPos != pMdllSet->pulserPos)
+	if (m_mdllSet.pulserPos != pMDllSet->pulserPos)
 		change = true;
 	if (change)
 	{
 		qDebug("change in Pulser part");
-		m_mdllSet.pulserOn = pMdllSet->pulserOn;
-		m_mdllSet.pulserAmpl = pMdllSet->pulserAmpl;
-		m_mdllSet.pulserPos = pMdllSet->pulserPos;
-		m_pCmdPacket->cmd = SETDLLPULSER;
-		m_pCmdPacket->data[0] = m_mdllSet.pulserOn;
-		m_pCmdPacket->data[1] = m_mdllSet.pulserAmpl;
-		m_pCmdPacket->data[2] = m_mdllSet.pulserPos;
-		theApp->sendBuffer(m_pCmdPacket->deviceId, 3);
+		m_mdllSet.pulserOn = pMDllSet->pulserOn;
+		m_mdllSet.pulserAmpl = pMDllSet->pulserAmpl;
+		m_mdllSet.pulserPos = pMDllSet->pulserPos;
+		m_mcpd->setPulser(m_mdllSet.pulserOn, m_mdllSet.pulserAmpl, m_mdllSet.pulserPos); 
+//		theApp->sendBuffer(m_pCmdPacket->deviceId, 3);
 	}
 	    
 // counter settings
 	change = false;
 	qDebug("counter 2: %u %u, new setting: %u %u", m_mdllSet.counterCell[2][0], m_mdllSet.counterCell[2][1],
-							pMdllSet->counterCell[2][0], pMdllSet->counterCell[2][1]);
-	if (m_mdllSet.counterCell[0][0] != pMdllSet->counterCell[0][0])
+							pMDllSet->counterCell[2][0], pMDllSet->counterCell[2][1]);
+	if (m_mdllSet.counterCell[0][0] != pMDllSet->counterCell[0][0])
 		change = true;
-	if (m_mdllSet.counterCell[1][0] != pMdllSet->counterCell[1][0])
+	if (m_mdllSet.counterCell[1][0] != pMDllSet->counterCell[1][0])
 		change = true;
-	if (m_mdllSet.counterCell[2][0] != pMdllSet->counterCell[2][0])
+	if (m_mdllSet.counterCell[2][0] != pMDllSet->counterCell[2][0])
 		change = true;
-	if (m_mdllSet.counterCell[0][1] != pMdllSet->counterCell[0][1])
+	if (m_mdllSet.counterCell[0][1] != pMDllSet->counterCell[0][1])
 		change = true;
-	if (m_mdllSet.counterCell[1][1] != pMdllSet->counterCell[1][1])
+	if (m_mdllSet.counterCell[1][1] != pMDllSet->counterCell[1][1])
 		change = true;
-	if(m_mdllSet.counterCell[2][1] != pMdllSet->counterCell[2][1])
+	if(m_mdllSet.counterCell[2][1] != pMDllSet->counterCell[2][1])
 		change = true;
 	if (change || dontCheck)
 	{
-		m_mdllSet.counterCell[0][0] = pMdllSet->counterCell[0][0];
-		m_mdllSet.counterCell[1][0] = pMdllSet->counterCell[1][0];
-		m_mdllSet.counterCell[2][0] = pMdllSet->counterCell[2][0];
-		m_mdllSet.counterCell[0][1] = pMdllSet->counterCell[0][1];
-		m_mdllSet.counterCell[1][1] = pMdllSet->counterCell[1][1];
-		m_mdllSet.counterCell[2][1] = pMdllSet->counterCell[2][1];
-		setCountercells();
+        	for(quint16 i = 0; i < 3; i++)
+			m_mcpd->setCounterCell(i, pMDllSet->counterCell[i][0], pMDllSet->counterCell[i][1]);
 	}
 // auxtimer settings
-	if (m_mdllSet.auxTimer[0] != pMdllSet->auxTimer[0])
+	if (m_mdllSet.auxTimer[0] != pMDllSet->auxTimer[0])
 		change = true;
-	if (m_mdllSet.auxTimer[1] != pMdllSet->auxTimer[1])
+	if (m_mdllSet.auxTimer[1] != pMDllSet->auxTimer[1])
 		change = true;
-	if (m_mdllSet.auxTimer[2] != pMdllSet->auxTimer[2])
+	if (m_mdllSet.auxTimer[2] != pMDllSet->auxTimer[2])
 		change = true;
-	if (m_mdllSet.auxTimer[3] != pMdllSet->auxTimer[3])
+	if (m_mdllSet.auxTimer[3] != pMDllSet->auxTimer[3])
 		change = true;
 	if (change || dontCheck)
 	{
-		m_mdllSet.auxTimer[0] = pMdllSet->auxTimer[0];
-		m_mdllSet.auxTimer[1] = pMdllSet->auxTimer[1];
-		m_mdllSet.auxTimer[2] = pMdllSet->auxTimer[2];
-		m_mdllSet.auxTimer[3] = pMdllSet->auxTimer[3];
-		setAuxtimers();
+        	for(quint16 i = 0; i < 4; i++)
+			m_mcpd->setAuxTimer(i, pMDllSet->auxTimer[i]);
 	}
 // parameter settings
-	if (m_mdllSet.paramSource[0] != pMdllSet->paramSource[0])
+	if (m_mdllSet.paramSource[0] != pMDllSet->paramSource[0])
 		change = true;
-	if (m_mdllSet.paramSource[1] != pMdllSet->paramSource[1])
+	if (m_mdllSet.paramSource[1] != pMDllSet->paramSource[1])
 		change = true;
-	if (m_mdllSet.paramSource[2] != pMdllSet->paramSource[2])
+	if (m_mdllSet.paramSource[2] != pMDllSet->paramSource[2])
 		change = true;
-	if (m_mdllSet.paramSource[3] != pMdllSet->paramSource[3])
+	if (m_mdllSet.paramSource[3] != pMDllSet->paramSource[3])
 		change = true;
 	if (change || dontCheck)
 	{
-		m_mdllSet.paramSource[0] = pMdllSet->paramSource[0];
-		m_mdllSet.paramSource[1] = pMdllSet->paramSource[1];
-		m_mdllSet.paramSource[2] = pMdllSet->paramSource[2];
-		m_mdllSet.paramSource[3] = pMdllSet->paramSource[3];
-		setParams();
+        	for(quint16 i = 0; i < 4; i++)
+			m_mcpd->setParamSource(i, pMDllSet->paramSource[i]);
 	}
 }
 
 /*!
-    \fn void Mdll::setPacket(PMDP_PACKET packet)
+    \fn void MDll::initMdll(void)
+
+    initialize settings
  */
-void Mdll::setPacket(PMDP_PACKET packet)
+void MDll::initMdll(void)
 {
-	m_pCmdPacket = packet;
+	m_mcpd->setTimingSetup(m_mdllSet.master, m_mdllSet.terminate);
+	m_mcpd->setSpectrum(m_mdllSet.shiftX, m_mdllSet.shiftY, m_mdllSet.scaleX, m_mdllSet.scaleY);
+        for(quint16 i = 0; i < 3; i++)
+		m_mcpd->setCounterCell(i, m_mdllSet.counterCell[i][0], m_mdllSet.counterCell[i][1]);
+        for(quint16 i = 0; i < 4; i++)
+		m_mcpd->setAuxTimer(i, m_mdllSet.auxTimer[i]);
+	m_mcpd->setAcqset(m_mdllSet.eventLimit0 | (m_mdllSet.eventLimit1 << 16), 
+			m_mdllSet.tsumXlo | (m_mdllSet.tsumXhi << 16),
+			m_mdllSet.tsumYlo | (m_mdllSet.tsumYhi << 16));
+	m_mcpd->setDataReg(m_mdllSet.datareg);
+	m_mcpd->setEnergy(m_mdllSet.energyLow, m_mdllSet.energyHi, m_mdllSet.eScaleX, m_mdllSet.eScaleY);
+	m_mcpd->setThreshold(m_mdllSet.threshX, m_mdllSet.threshY, m_mdllSet.threshA);
+        for(quint16 i = 0; i < 4; i++)
+		m_mcpd->setParamSource(i, m_mdllSet.paramSource[i]);
+	m_mcpd->setHistogram(m_mdllSet.previewHistsize, m_mdllSet.previewHistrate, m_mdllSet.histSize, m_mdllSet.histType);
+	m_mcpd->setMode(m_mdllSet.mode);
+	m_mcpd->setSlide(m_mdllSet.slscOff);
 }
 
 /*!
-    \fn Mdll::setThreshold(void);
+    \fn void MDll::serialize(QFile * fi)
+
+    \param fi
  */
-void Mdll::setThreshold(void)
-{
-	m_pCmdPacket->cmd = SETDLLTHRESHS;
-	m_pCmdPacket->data[0] = m_mdllSet.threshX;
-	m_pCmdPacket->data[1] = m_mdllSet.threshY;
-	m_pCmdPacket->data[2] = m_mdllSet.threshA;
-        theApp->sendBuffer(0, 3);
-}
-
-
-/*!
-    \fn Mdll::setSpectrum()
- */
-void Mdll::setSpectrum()
-{
-	m_pCmdPacket->cmd = SETDLLSPECTRUM;
-	m_pCmdPacket->data[0] = m_mdllSet.shiftX;
-	m_pCmdPacket->data[1] = m_mdllSet.shiftY;
-	m_pCmdPacket->data[2] = m_mdllSet.scaleX;
-	m_pCmdPacket->data[3] = m_mdllSet.scaleY;
-        theApp->sendBuffer(0, 4);
-}
-
-
-/*!
-    \fn Mdll::setHistogram(void)
- */
-void Mdll::setHistogram(void)
-{
-#if 0
-	m_pCmdPacket->cmd = SETDLLHIST;
-	m_pCmdPacket->data[0] = m_mdllSet.previewHistsize;
-	m_pCmdPacket->data[1] = m_mdllSet.previewHistrate;
-	m_pCmdPacket->data[2] = m_mdllSet.histSize;
-	m_pCmdPacket->data[3] = m_mdllSet.histType;
-	theApp->sendBuffer(4);
-#endif
-}
-
-
-/*!
-    \fn Mdll::setMode(void)
- */
-void Mdll::setMode(void)
-{
-#if 0
-	m_pCmdPacket->cmd = SETDLLMODE;
-	m_pCmdPacket->data[0] = m_mdllSet.mode;
-	theApp->sendBuffer(1);
-#endif
-}
-
-
-/*!
-    \fn Mdll::setSlide(void)
- */
-void Mdll::setSlide(void)
-{
-#if 0	
-	m_pCmdPacket->cmd = SETDLLSLSC;
-	m_pCmdPacket->data[0] = m_mdllSet.slscOff;
-	theApp->sendBuffer(1);
-#endif
-}
-
-
-/*!
-    \fn Mdll::setDatareg(void)
- */
-void Mdll::setDatareg(void)
-{
-	m_pCmdPacket->cmd = SETDLLTESTREG;
-	m_pCmdPacket->data[0] = m_mdllSet.datareg;
-        theApp->sendBuffer(0, 1);
-}
-
-
-/*!
-    \fn Mdll::setAcqset(void)
- */
-void Mdll::setAcqset(void)
-{
-	m_pCmdPacket->cmd = SETDLLACQSET;
-	m_pCmdPacket->data[0] = m_mdllSet.eventLimit0;
-	m_pCmdPacket->data[1] = m_mdllSet.eventLimit1;
-	m_pCmdPacket->data[2] = m_mdllSet.tsumXlo;
-	m_pCmdPacket->data[3] = m_mdllSet.tsumXhi;
-	m_pCmdPacket->data[4] = m_mdllSet.tsumYlo;
-	m_pCmdPacket->data[5] = m_mdllSet.tsumYhi;
-        theApp->sendBuffer(0, 6);
-}
-
-
-/*!
-    \fn Mdll::setEnergy(void)
- */
-void Mdll::setEnergy(void)
-{
-	m_pCmdPacket->cmd = SETDLLENERGY;
-	m_pCmdPacket->data[0] = m_mdllSet.energyLow;
-	m_pCmdPacket->data[1] = m_mdllSet.energyHi;
-	m_pCmdPacket->data[3] = m_mdllSet.eScaleX;
-	m_pCmdPacket->data[4] = m_mdllSet.eScaleY;
-        theApp->sendBuffer(0, 4);
-}
-
-/*!
-    \fn Mdll::setCountercells(void)
- */
-void Mdll::setCountercells(void)
-{
-        m_pCmdPacket->cmd = SETCELL;
-        for(quint8 i = 0; i < 3; i++)
-	{
-		m_pCmdPacket->data[0] = i;
-		m_pCmdPacket->data[1] = m_mdllSet.counterCell[i][0];
-		m_pCmdPacket->data[2] = m_mdllSet.counterCell[i][1];
-		theApp->sendBuffer(0, 3);
-        }
-}
-
-/*!
-    \fn Mdll::setAuxtimers(void)
- */
-void Mdll::setAuxtimers(void)
-{
-        m_pCmdPacket->cmd = SETAUXTIMER;
-        for(quint8 i = 0; i < 4; i++)
-	{
-		m_pCmdPacket->data[0] = i;
-		m_pCmdPacket->data[1] = m_mdllSet.auxTimer[i];
-		theApp->sendBuffer(0, 2);
-        }
-}
-
-/*!
-    \fn Mdll::setParams(void)
- */
-void Mdll::setParams(void)
-{
-        m_pCmdPacket->cmd = SETPARAM;
-        for(quint8 i = 0; i < 4; i++)
-	{
-		m_pCmdPacket->data[0] = i;
-		m_pCmdPacket->data[1] = m_mdllSet.paramSource[i];
-		theApp->sendBuffer(0, 2);
-        }
-}
-
-
-/*!
-    \fn Mdll::setTiming(void)
- */
-void Mdll::setTiming(void)
-{
-	m_pCmdPacket->cmd = SETTIMING;
-        m_pCmdPacket->data[0] = m_mdllSet.master ? 1 : 0;
-	m_pCmdPacket->data[1] = m_mdllSet.terminate ? 1 : 0;
-	theApp->sendBuffer(0, 2);
-}
-
-
-/*!
-    \fn Mdll::initMdll(void)
- */
-void Mdll::initMdll(void)
-{
-	setTiming();
-	setSpectrum();
-	setCountercells();
-	setAuxtimers();
-	setAcqset();
-	setDatareg();
-	setEnergy();
-	setThreshold();
-	setParams();
-//	setHistogram();
-//	setMode();
-//	setSlide();
-//	setSpectrum();
-}
-
-/*!
-    \fn mdll::serialize(QFile * fi)
- */
-void Mdll::serialize(QFile * fi)
+void MDll::serialize(QFile *fi)
 {
         quint8 c;
         QTextStream t( fi );        // use a text stream

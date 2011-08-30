@@ -25,6 +25,7 @@
 #include "mpsd8.h"
 #include "mcpd8.h"
 #include "mstd16.h"
+#include "mdll.h"
 #include "mdefines.h"
 
 /**
@@ -111,7 +112,7 @@ bool MCPD8::init(void)
 		{
 			switch (m_mpsd[c]->getMpsdId())
 			{
-				case MPSD8P:
+				case TYPE_MPSD8P:
 					cap = capabilities(c);
 					protocol(tr("module : %2 capabilities : %1").arg(cap).arg(c), NOTICE);
 					modus &= cap;
@@ -128,7 +129,7 @@ bool MCPD8::init(void)
 	for(quint8 c = 0; c < 8; c++)
 		if (m_mpsd.find(c) != m_mpsd.end())
 		{
-			if (m_mpsd[c]->getMpsdId() == MPSD8P)
+			if (m_mpsd[c]->getMpsdId() == TYPE_MPSD8P)
 				writePeriReg(c, 1, modus);
 			version(c);
 		}
@@ -329,7 +330,7 @@ float MCPD8::version(quint16 mod)
  */
 bool MCPD8::readId(void)
 {
-	m_mpsd.clear();
+//	m_mpsd.clear();
 	initCmdBuffer(READID);
 	m_cmdBuf.data[0] = 2;
 	finishCmdBuffer(1); 
@@ -575,7 +576,7 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
  */
 bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 {
-	protocol(tr("MCPD8::setAuxTimer(%1, %2)").arg(tim).arg(val));
+	protocol(tr("MCPD8::setAuxTimer(%1, %2)").arg(tim).arg(val), INFO);
 	if(tim > 3)
 		tim = 3;
 	initCmdBuffer(SETAUXTIMER);
@@ -668,6 +669,7 @@ void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
  */
 bool MCPD8::setParamSource(quint16 param, quint16 source)
 {
+	protocol(tr("set parameter source %1 to %2").arg(param).arg(source), NOTICE);
 	if(param > 3 || source > 8)
 		return false;
 	m_paramSource[param] = source;
@@ -692,6 +694,17 @@ quint16 MCPD8::getParamSource(quint16 param)
 	return param > 3 ? 0 : m_paramSource[param];
 }
 
+/*!
+    \fn bool MCPD8::getParameter(void)
+    
+    \return true if operation was succesful or not
+ */
+bool MCPD8::getParameter(void)
+{
+	initCmdBuffer(GETPARAM);
+	finishCmdBuffer(0);
+	return sendCommand();
+}
 
 /*!
     \fn bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
@@ -859,16 +872,16 @@ bool MCPD8::sendSerialString(QString /* str*/)
  */
 bool MCPD8::setRunId(quint16 runid)
 {
+	m_runId = runid;
 	if(m_master)
 	{
-    		m_runId = runid;
 		initCmdBuffer(SETRUNID);
-		m_cmdBuf.data[0] = m_runId;
+		m_cmdBuf.data[0] = runid;
 		finishCmdBuffer(1);
-    		protocol(tr("mcpd %1: set run ID to %2").arg(m_id).arg(m_runId), 1);
+    		protocol(tr("mcpd %1: set run ID to %2").arg(m_id).arg(runid), NOTICE);
 		return sendCommand();
   	}
-	protocol(tr("Error: trying to set run ID on mcpd %1 - not master!").arg(m_id), 1);
+	protocol(tr("Error: trying to set run ID on mcpd %1 - not master!").arg(m_id), ERROR);
 	return false;
 }
 
@@ -884,6 +897,7 @@ bool MCPD8::setRunId(quint16 runid)
  */
 bool MCPD8::setParameter(quint16 param, quint64 val)
 {
+        protocol(tr("Set parameter %1 to %2").arg(param).arg(val), NOTICE);
 	if(param > 3)
 		return false;
 	m_parameter[param] = val;
@@ -964,7 +978,7 @@ bool MCPD8::setStream(quint16 strm)
 	initCmdBuffer(QUIET);	
 	m_cmdBuf.data[0] = strm;
 	finishCmdBuffer(1);
-	protocol(tr("Set stream %1").arg(strm), 2);
+	protocol(tr("Set stream %1").arg(strm), NOTICE);
 	return sendCommand();
 #endif
 	return true;
@@ -983,6 +997,14 @@ bool MCPD8::serialize(QDataStream /* ds */)
 #endif
 
 // general buffer preparations:
+
+/*!
+    \fn void MCPD8::initCmdBuffer(quint16 cmd)
+
+    initializes the command buffer structure with the command cmd
+    
+    \param cmd command
+ */
 void MCPD8::initCmdBuffer(quint16 cmd)
 {
 	m_cmdBuf.bufferType = BUFTYPE;
@@ -992,6 +1014,16 @@ void MCPD8::initCmdBuffer(quint16 cmd)
 	m_cmdBuf.deviceId = m_id;
 }
 
+/*!
+    \fn void MCPD8::finishCmdBuffer(quint16 buflen)
+
+    finishes the command buffer:
+      - sets the buffer number
+      - sets the buffer length
+      - adds the checksum
+ 
+    \param buflen size of the parameter buffer
+ */
 void MCPD8::finishCmdBuffer(quint16 buflen)
 {
 	m_cmdBuf.bufferNumber =	m_txCmdBufNum++;
@@ -1001,6 +1033,13 @@ void MCPD8::finishCmdBuffer(quint16 buflen)
 	m_cmdBuf.headerChksum = calcChksum(m_cmdBuf);
 }
 
+/*!
+    \fn int MCPD8::sendCommand(void)
+
+    sends the command buffer to the MCPD
+ 
+    \return 
+ */
 int MCPD8::sendCommand(void)
 {
 	if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
@@ -1023,6 +1062,11 @@ int MCPD8::sendCommand(void)
 
 /*!
     \fn MCPD8::calcChksum(MDP_PACKET &buffer)
+
+    calculates the checksum of the buffer
+
+    \param buffer 
+    \return calculated checksum
  */
 quint16 MCPD8::calcChksum(MDP_PACKET &buffer)
 {
@@ -1067,12 +1111,12 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 
 //		protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
 		
-		MPSD_8	*ptrMPSD;
+		MPSD8	*ptrMPSD;
 		quint16 chksum = recBuf.headerChksum;
 		recBuf.headerChksum = 0;
 		if (chksum != calcChksum(recBuf))
 			protocol(tr("cmd packet (cmd = %4, size = %3) is not valid (CHKSUM error) %1 != (expected)%2 ")
-					.arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength).arg(recBuf.cmd), ERROR);
+					.arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength).arg(recBuf.cmd), INFO);
 		switch(recBuf.cmd)
 		{
 			case RESET:
@@ -1108,6 +1152,9 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 			case SETCLOCK:
 				protocol(tr("not handled command : SETCLOCK"), ERROR);
 				break;
+			case SETRUNID: 
+				protocol(tr("not handled command : SETRUNID"), ERROR);
+				break;
 			case SETCELL:
 				if (recBuf.cmd & 0x80)
 					protocol(tr("SETCELL : failed"), ERROR);
@@ -1129,6 +1176,16 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				break;
 			case GETPARAM:
 				protocol(tr("not handled command : GETPARAM"), ERROR);
+				{
+					quint64 val = recBuf.data[9] + (quint64(recBuf.data[10]) << 16) + (quint64(recBuf.data[11]) << 32);
+					setParameter(0, val);
+					val = recBuf.data[12] + (quint64(recBuf.data[13]) << 16) + (quint64(recBuf.data[14]) << 32);
+					setParameter(1, val);
+					val = recBuf.data[15] + (quint64(recBuf.data[16]) << 16) + (quint64(recBuf.data[17]) << 32);
+					setParameter(2, val);
+					val = recBuf.data[18] + (quint64(recBuf.data[19]) << 16) + (quint64(recBuf.data[20]) << 32);
+					setParameter(3, val);
+				}
 				break;
 			case SETGAIN: // extract the set gain values: 
 				if(recBuf.bufferLength == 21) // set common gain
@@ -1201,9 +1258,9 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 				break;
 			case READREGISTER:
 				for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)
-					protocol(tr("READREGISTER : %1 = %2").arg(i).arg(recBuf.data[i]));
+					protocol(tr("READREGISTER : %1 = %2").arg(i).arg(recBuf.data[i]), DEBUG);
 				m_reg = recBuf.data[0];	
-				protocol(tr("READREGISTER : %1 %2").arg(m_reg).arg(recBuf.bufferLength), WARNING);
+				protocol(tr("READREGISTER : %1 %2").arg(m_reg).arg(recBuf.bufferLength), INFO);
 				break;
 			case READFPGA:
 				protocol(tr("not handled command : READFPGA"), ERROR);
@@ -1218,34 +1275,16 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 #warning TODO if the configuration has changed
 //! \todo if the configuration has changed
 				for(quint8 c = 0; c < 8; c++)
-					if (recBuf.data[c])
+				{
+					QMap<int, MPSD8 *>::iterator it = m_mpsd.find(c);
+					if (it == m_mpsd.end())
 					{
-						if (m_mpsd.find(c) == m_mpsd.end())
-						{
-							switch (recBuf.data[c])
-							{
-								case MPSD8P :
-									m_mpsd[c] = new MPSD_8P(c, this);
-									break;
-								case MPSD8OLD:
-									m_mpsd[c] = new MPSD_8OLD(c, this);
-									break;
-								case MPSD8SADC:
-									m_mpsd[c] = new MPSD_8SADC(c, this);
-									break;
-								case MPSD8 :
-									m_mpsd[c] = new MPSD_8(c, this);
-									break;
-								case MSTD16 :
-									m_mpsd[c] = new MSTD_16(c, this);
-									break;
-								default :
-									continue;
-									break;
-							}
-						}
-						m_mpsd[c]->setMpsdId(c, recBuf.data[c]);
+						m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
 					}
+					else if ((*it)->type() != recBuf.data[c])
+					{
+					}
+				}
 				protocol(tr("READID finished"), DEBUG);
 				break;
 			case DATAREQUEST:
@@ -1573,18 +1612,217 @@ void MCPD8::initMpsd(quint8 id)
 }
 
 /*!
-    \fn QString MPCD8::getMpsdType(quint8 id)
-
-    \param id id number of the MPSD
-
+    \fn QString MPCD8::getMpsdType(quint8 addr)
+ 
+    \param addr id number of the MPSD
     \return the type of the MPSD
  */
-QString MCPD8::getMpsdType(quint8 id)
+QString MCPD8::getMpsdType(quint8 addr)
 {
-	if (m_mpsd.find(id) != m_mpsd.end())
+	if (m_mpsd.find(addr) != m_mpsd.end())
 	{
-		return m_mpsd[id]->getType();
+		return m_mpsd[addr]->getType();
 	}
 	return "-";
 }
 	
+
+/*!
+    \fn void MCPD8::setHistogram(bool hist)
+
+    \param hist
+ */
+void MCPD8::setHistogram(bool hist)
+{
+	foreach(MPSD8 *it, m_mpsd)
+		it->setHistogram(hist);
+}
+
+/*!
+    \fn void MCPD8::setHistogram(quint16 id, bool hist)
+
+    \param id 
+    \param hist
+ */
+
+void MCPD8::setHistogram(quint16 id, bool hist)
+{
+	if (m_mpsd.contains(id))
+		m_mpsd[id]->setHistogram(hist);
+}
+
+/*!
+    \fn void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
+
+    \param id 
+    \param chan
+    \param hist
+ */
+void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
+{
+	if (m_mpsd.contains(id))
+		m_mpsd[id]->setHistogram(chan, hist);
+	if (!hist)
+		setActive(false);
+}
+
+/*!
+    \fn void MCPD8::setActive(bool act)
+
+    \param act
+ */
+void MCPD8::setActive(bool act)
+{
+	foreach(MPSD8 *it, m_mpsd)
+		it->setActive(act);
+}
+
+/*!
+    \fn void MCPD8::setActive(quint16 id, bool act)
+
+    \param id 
+    \param act
+ */
+void MCPD8::setActive(quint16 id, bool act)
+{
+	if (m_mpsd.contains(id))
+		m_mpsd[id]->setActive(act);
+}
+
+/*!
+    \fn void MCPD8::setActive(quint16 id, quint16 chan, bool act)
+
+    \param id 
+    \param chan
+    \param act
+ */
+void MCPD8::setActive(quint16 id, quint16 chan, bool act)
+{
+	if (m_mpsd.contains(id))
+		m_mpsd[id]->setActive(chan, act);
+}
+
+/*!
+    \fn bool MCPD8::active(void)
+
+    \return true if one of the connected modules is active
+ */
+bool MCPD8::active(void)
+{
+	bool result(false);
+	foreach(MPSD8 *it, m_mpsd)
+		result |= it->active();
+	return result;
+}
+
+/*!
+    \fn bool MCPD8::histogram(void)
+
+    \return true if one of the connected modules contributes to the histogram
+ */
+bool MCPD8::histogram(void)
+{
+	bool result(false);
+	foreach(MPSD8 *it, m_mpsd)
+		result |= it->histogram();
+	return result;
+}
+
+/*!
+    \fn bool MCPD8::active(quint16 id)
+ 
+    \param id
+    \return whether the MPSD id is used or not
+ */
+bool MCPD8::active(quint16 id)
+{
+	if (m_mpsd.contains(id))
+		return m_mpsd[id]->active();
+	return false;
+}
+
+/*!
+    \fn bool MCPD8::active(quint16 id, quint16 chan)
+ 
+    \param id
+    \param chan
+    \return whether the channel chan of the MPSD id is used or not
+ */
+bool MCPD8::active(quint16 id, quint16 chan)
+{
+	if (m_mpsd.contains(id))
+		return m_mpsd[id]->active(chan);
+	return false;
+}
+
+/*!
+    \fn bool MCPD8::histogram(quint16 id)
+ 
+    \param id
+    \return whether the MPSD id should be integrated in histogram or not
+ */
+bool MCPD8::histogram(quint16 id)
+{
+	if (m_mpsd.contains(id))
+		return m_mpsd[id]->histogram();
+	return false;
+}
+
+/*!
+    \fn bool MCPD8::histogram(quint16 id, quint16 chan)
+ 
+    \param id
+    \param chan
+    \return whether the channel chan MPSD id should be integrated in histogram or not
+ */
+bool MCPD8::histogram(quint16 id, quint16 chan)
+{
+	if (m_mpsd.contains(id))
+		return m_mpsd[id]->histogram(chan);
+	return false;
+}
+
+/*!
+    \fn QList<quint16> MPSD8::getHistogramList(void)
+    
+    \return the list of channels used in histograms
+ */
+QList<quint16> MCPD8::getHistogramList(void)
+{
+	QList<quint16> result;
+	foreach(MPSD8 *it, m_mpsd)
+	{
+		QList<quint16> tmpHistList = it->getHistogramList();
+		foreach(quint16 hit, tmpHistList)
+			result.append(hit + it->busNumber() * 8);
+	}
+	qStableSort(result);
+	return result;
+}
+
+/*!
+    \fn QList<quint16> MPSD8::getActiveList(void)
+
+    provides list of active modules
+
+    \return the list of channels which are active
+ */
+QList<quint16> MCPD8::getActiveList(void)
+{
+	QList<quint16> result;
+#if 0
+	for (int i = 0; i < 8; ++i)
+		if (m_active[i])
+			result << i;
+#endif
+	return result;
+}
+
+quint8 MCPD8::numModules(void)
+{
+	quint8 n(0);
+	foreach(MPSD8 *it, m_mpsd)	
+		if (it->getMpsdId())
+			n++;
+	return n;
+}

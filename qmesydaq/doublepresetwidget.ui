@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>239</width>
-    <height>41</height>
+    <width>236</width>
+    <height>23</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
@@ -55,7 +58,7 @@
       <double>999999999.000000000000000</double>
      </property>
      <property name="singleStep">
-      <number>10</number>
+      <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
@@ -79,30 +82,34 @@
   <connection>
    <sender>presetButton</sender>
    <signal>clicked(bool)</signal>
-   <receiver>presetValue</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>46</x>
-     <y>23</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>83</x>
-     <y>28</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>presetButton</sender>
-   <signal>clicked(bool)</signal>
    <receiver>DoublePresetWidget</receiver>
    <slot>presetCheckClicked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>resetButton</sender>
    <signal>clicked()</signal>
    <receiver>DoublePresetWidget</receiver>
    <slot>resetButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
  </connections>
  <slots>

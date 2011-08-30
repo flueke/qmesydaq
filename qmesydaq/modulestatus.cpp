@@ -42,18 +42,22 @@ void ModuleStatus::setLabel(const QString &label)
 }
 
 /*!
-    \fn void ModuleStatus::update(const QString &, const double, const bool)
+    \fn void ModuleStatus::update(const QString &, const double, const bool, const bool)
 
     \param type
     \param version
     \param online
+    \param histogram
  */
-void ModuleStatus::update(const QString &type, const float version, const bool online)
+void ModuleStatus::update(const QString &type, const float version, const bool online, const bool histogram, const bool active)
 {
-    m_online = online;
     moduleType->setText(type);
     moduleVersion->setText(QString("%1").arg(version));
-    moduleStatus->setText(m_online ? tr("online") : tr(""));
+    moduleStatus->setText(online ? tr("online") : tr(""));
+    checkHistogramBox->setChecked(histogram);
+    checkActiveBox->setVisible(online);
+    checkActiveBox->setChecked(online & active);
+    m_online = online;
 }
 
 /*!
@@ -77,4 +81,24 @@ void ModuleStatus::setId(const quint8 id)
 {
     m_id = id;
     setLabel(tr("%1:").arg(m_id + 1));
+}
+
+/*!
+    \fn void ModuleStatus::histogramSlot(bool val)
+
+    \param val
+ */
+void ModuleStatus::histogramSlot(bool val)
+{
+    emit histogram(m_id, val);
+}
+
+/*!
+    \fn void ModuleStatus::activeSlot(bool val)
+
+    \param val
+ */
+void ModuleStatus::activeSlot(bool val)
+{
+    emit active(m_id, val);
 }

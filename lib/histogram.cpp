@@ -176,21 +176,44 @@ float Spectrum::mean(float &s)
 }
 
 /*!
-    \fn Histogram::Histogram(quint16 channels, quint16 bins)
+    \fn void Spectrum::setWidth(quint16 w);
+
+    sets the width of a spectrum
+
+    \param w width
+ */
+void Spectrum::setWidth(quint16 w)
+{
+	if (w == width())
+		return;
+	else if (w > width())
+	{
+		m_data.resize(w);
+	}
+	else
+	{
+		m_data.resize(w);
+		m_data.squeeze();
+	}
+}
+
+/*!
+    \fn Histogram::Histogram(quint16 h, quint16 w)
     
     constructor
 
     \param channels number of channels (i.e. number of tubes)
     \param bins number of bins (inside a tube)
  */
-Histogram::Histogram(quint16 , quint16 bins)
+Histogram::Histogram(quint16 h, quint16 w)
 	: MesydaqObject()
 	, m_totalCounts(0)
-	, m_twidth(1)
 	, m_maximumPos(0)
 {
 	m_data.clear();
-	m_sumSpectrum.resize(bins);
+	setHeight(h);
+	setWidth(w);
+	m_sumSpectrum.resize(w);
 	clear();
 }
 
@@ -354,10 +377,9 @@ void Histogram::clear(void)
 {
 	foreach (Spectrum *value, m_data)
 		value->clear();
-	m_data.clear();
+//	m_data.clear();
 	m_sumSpectrum.clear();
 	m_totalCounts = 0;
-	m_twidth = 1;
 	m_dataKeys = m_data.keys();
 }
 
@@ -437,7 +459,7 @@ void Histogram::getMean(float &m, float &s)
 }
 
 /*!
-    \fn	Histogram::height() 
+    \fn	quint16 Histogram::height() 
 
     \return number of tubes
 */
@@ -447,15 +469,38 @@ quint16	Histogram::height()
 }
 
 /*!
+    \fn void Histogram::setHeight(quint16 h)
+
+    \param h
+ */
+void Histogram::setHeight(quint16 h)
+{
+	if (h == height())
+		return;
+	else if (h > height())
+	{
+		for (int i = height(); i < h; ++i)
+			m_data.insert(i, new Spectrum(m_sumSpectrum.width()));
+	}
+	else 
+	{
+		for (int i = height(); i >= h; --i)
+			m_data.remove(i);
+	}
+}
+
+/*!
     \fn void Histogram::setWidth(quint8 width)
 
     sets the width of each cell
 
     \param width 
  */
-void Histogram::setWidth(quint8 width)
+void Histogram::setWidth(quint16 width)
 {
-	m_twidth = width; 
+	foreach(Spectrum *s, m_data)
+		s->setWidth(width);
+	m_sumSpectrum.setWidth(width);
 }
 
 /*!
@@ -507,5 +552,28 @@ bool Histogram::writeHistogram(QFile *f, const QString title)
 // "position data: 1 row title (8 x 8 detectors), position data in columns";
 // "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns";
 	return true;
+}
+
+/*!
+    \fn QString Histogram::format(void)
+
+    \return formatted histogram as string
+ */
+QString Histogram::format(void)
+{
+	QString t("");
+
+        for (int i = 0; i < m_data.size(); ++i)
+                t += QString("%1\t").arg(i);
+        t += "\r\n";
+        for (int i = 0; i < m_sumSpectrum.width(); i++)
+        {
+                t += QString("%1\t").arg(i);
+                for (int j = 0; j < m_data.size(); j++)
+                        t += QString("%1\t").arg(value(j, i));
+                t += "\r\n";
+        }
+        t += "\r\n";
+        return t;
 }
 

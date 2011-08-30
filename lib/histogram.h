@@ -71,8 +71,10 @@ public:
 	 */
 	quint64 value(quint16 index) {return index < m_data.size() ? m_data[index] : 0;}
 
-	//! \return the lenght of the spectrum
+	//! \return the length of the spectrum
 	quint16	width() {return m_data.size();}
+
+	void setWidth(quint16);
 
 	/**
 	 * sets the size of the spectrum to the desired size, if the size
@@ -108,6 +110,7 @@ private:
 
 /**
  * \short represents a histogram
+ *
  * This histogram object will automatically increase its size, if
  * the incVal method gives values which are not exist.
  *
@@ -116,7 +119,7 @@ private:
  */
 class Histogram : public MesydaqObject
 {
-Q_OBJECT
+	Q_OBJECT
 public:
 	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS);
 
@@ -152,7 +155,7 @@ public:
 
 	void getMean(quint16 chan, float &mean, float &sigma);
 
-	void setWidth(quint8 width);
+	QString format(void);
 
 	bool writeHistogram(QFile *f, const QString comment = "");
 
@@ -160,7 +163,11 @@ public:
 
 	quint16	height(); 
 
+	void setHeight(quint16 h);
+
 	quint16 width();
+
+	void setWidth(quint16);
 
 private:
 	void calcMaximumPosition(quint16 chan);
@@ -169,8 +176,6 @@ private:
 
 private:
 	quint64 			m_totalCounts;
-
-	quint8 				m_twidth;
 
 	QHash<quint16, Spectrum*>	m_data;
 

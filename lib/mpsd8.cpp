@@ -20,6 +20,7 @@
 #include "mcpd8.h"
 #include "mpsd8.h"
 #include "mdefines.h"
+#include <QDebug>
 
 /*!
     constructor
@@ -27,9 +28,9 @@
     \param id module number
     \param parent Qt parent object
  */
-MPSD_8::MPSD_8(quint8 id, QObject *parent)
+MPSD8::MPSD8(quint8 id, QObject *parent)
 	: MesydaqObject(parent)
-	, m_mpsdId(id)
+	, m_mpsdId(TYPE_MPSD8)
 	, m_comgain(true)
 #if 0
 	, m_g1(0.0)
@@ -39,8 +40,13 @@ MPSD_8::MPSD_8(quint8 id, QObject *parent)
 	, m_p1(0.0)
 	, m_p2(1.0)
 #endif
-	, m_busNum(0)
+	, m_busNum(id)
 {
+	for(int i = 0; i < 8; ++i)
+	{
+		m_active[i] = true;
+		m_histogram[i] = true;
+	}
 	m_mcpdId = reinterpret_cast<MCPD8 *>(parent)->getId();
 	for(quint8 c = 0; c < 9; c++)
 	{
@@ -60,39 +66,21 @@ MPSD_8::MPSD_8(quint8 id, QObject *parent)
 		m_pulser[c] = false;
 		m_ampMode[c] = false;
 	}
-	
+   	protocol(tr("identified MPSD id on MCPD %1, bus %2: %3").arg(m_mcpdId).arg(m_busNum).arg(id), NOTICE);
 }
 
 //! desctructor
-MPSD_8::~MPSD_8()
+MPSD8::~MPSD8()
 {
 }
 
-bool MPSD_8::online(void)
+bool MPSD8::online(void)
 {
 	return true;
 }
 
 /*!
-    \fn MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
-
-    sets the ID of the MPSD
-
-    \param bus number of the bus
-    \param id ID number
-    \param listIds log the action or not
- */
-void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
-{
-   	m_mpsdId = id;
-   	m_busNum = bus;
-   	
-   	if(listIds)
-   		protocol(tr("identified MPSD id on MCPD %1, bus %2: %3").arg(m_mcpdId).arg(bus).arg(id), NOTICE);
-}
-
-/*!
-    \fn MPSD_8::setGain(quint8 channel, float gainv, bool preset)
+    \fn MPSD8::setGain(quint8 channel, float gainv, bool preset)
 
     sets the gain values for a single channel or all (if channel > 7)
 
@@ -102,7 +90,7 @@ void MPSD_8::setMpsdId(quint8 bus, quint8 id, bool listIds)
     \see getGainpoti
     \see getGainval
  */
-void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
+void MPSD8::setGain(quint8 channel, float gainv, bool preset)
 {
 	quint8 val = calcGainpoti(gainv);
     
@@ -124,7 +112,7 @@ void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
 }
 
 /*!
-    \overload MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
+    \overload MPSD8::setGain(quint8 channel, quint8 gain, bool preset)
 
     sets the gain values for a single channel or all (if channel > 7)
 
@@ -134,7 +122,7 @@ void MPSD_8::setGain(quint8 channel, float gainv, bool preset)
     \see getGainpoti
     \see getGainval
  */
-void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
+void MPSD8::setGain(quint8 channel, quint8 gain, bool preset)
 {
 	float gv = calcGainval(gain);
 	m_comgain = (channel > 7);
@@ -155,7 +143,7 @@ void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setThreshold(quint8 threshold, bool preset)
+    \fn MPSD8::setThreshold(quint8 threshold, bool preset)
 
     set the threshold value for the MPSD
 
@@ -165,7 +153,7 @@ void MPSD_8::setGain(quint8 channel, quint8 gain, bool preset)
     \see getThreshold
     \see getThrespoti
  */
-void MPSD_8::setThreshold(quint8 threshold, bool preset)
+void MPSD8::setThreshold(quint8 threshold, bool preset)
 {
 	m_threshPoti[preset] = calcThreshpoti(threshold);
 	m_threshVal[preset] = threshold;
@@ -176,7 +164,7 @@ void MPSD_8::setThreshold(quint8 threshold, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setThreshpoti(quint8 thresh, bool preset)
+    \fn MPSD8::setThreshpoti(quint8 thresh, bool preset)
 
     set the threshold poti value for the MPSD
 
@@ -186,7 +174,7 @@ void MPSD_8::setThreshold(quint8 threshold, bool preset)
     \see getThreshold
     \see getThrespoti
  */
-void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
+void MPSD8::setThreshpoti(quint8 thresh, bool preset)
 {
 	m_threshPoti[preset] = thresh;
 	m_threshVal[preset] = calcThreshval(thresh);
@@ -197,7 +185,7 @@ void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
 }
 
 /*!
-    \fn MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
+    \fn MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 
     set the pulser with poti value for amplitude
 
@@ -208,9 +196,9 @@ void MPSD_8::setThreshpoti(quint8 thresh, bool preset)
     \param preset ????
     \see setPulser
  */
-void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
+void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 {
-	protocol(tr("MPSD_8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5)").arg(chan).arg(pos).arg(poti).arg(on).arg(preset), NOTICE);
+	protocol(tr("MPSD8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5)").arg(chan).arg(pos).arg(poti).arg(on).arg(preset), NOTICE);
 	if(pos > 2)
 		m_pulsPos[preset] = 2;
 	else
@@ -230,7 +218,7 @@ void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool
 }
 
 /*!
-    \fn MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
+    \fn MPSD8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
 
     set the pulser with amplitude value
 
@@ -241,7 +229,7 @@ void MPSD_8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool
     \param preset ????
     \see setPulser
  */
-void MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
+void MPSD8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
 {
 	if(pos > 2)
 		m_pulsPos[preset] = 2;
@@ -262,14 +250,14 @@ void MPSD_8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool pres
 }
 
 /*!
-    \fn MPSD_8::calcGainpoti(float fval)
+    \fn MPSD8::calcGainpoti(float fval)
 
     calculates the poti value of the gain for a user value
 
     \param fval user value
     \return poti value
  */
-quint8 MPSD_8::calcGainpoti(float fval)
+quint8 MPSD8::calcGainpoti(float fval)
 {
 	quint8 ug = (quint8) fval;
 //	protocol(tr("m_gainVal: %1, m_gainPoti: %2").arg(fval).arg(ug));		
@@ -278,13 +266,13 @@ quint8 MPSD_8::calcGainpoti(float fval)
 
 
 /*!
-    \fn MPSD_8::calcThreshpoti(quint8 tval)
+    \fn MPSD8::calcThreshpoti(quint8 tval)
     calculates the poti value for the threshold for a user value
 
     \param tval user value
     \return poti value
  */
-quint8 MPSD_8::calcThreshpoti(quint8 tval)
+quint8 MPSD8::calcThreshpoti(quint8 tval)
 {
 	quint8 ut = tval;
 //	protocol(tr("threshold: %1, threshpoti: %2").arg(tval).arg(ut));	
@@ -293,14 +281,14 @@ quint8 MPSD_8::calcThreshpoti(quint8 tval)
 
 
 /*!
-    \fn MPSD_8::calcGainval(quint8 ga)
+    \fn MPSD8::calcGainval(quint8 ga)
 
     calculates the user value for a gain poti value
 
     \param ga poti gain value
     \return user gain value
  */
-float MPSD_8::calcGainval(quint8 ga)
+float MPSD8::calcGainval(quint8 ga)
 {
 	float fgain = float(ga);
 //	protocol(tr("m_gainPoti: %1, m_gainVal: %2").arg(ga).arg(fgain));	
@@ -309,14 +297,14 @@ float MPSD_8::calcGainval(quint8 ga)
 
 
 /*!
-    \fn MPSD_8::calcThreshval(quint8 thr)
+    \fn MPSD8::calcThreshval(quint8 thr)
 
     calculates the user value for the threshold poti value
 
     \param thr threshold poti value
     \return user threshold value
  */
-quint8 MPSD_8::calcThreshval(quint8 thr)
+quint8 MPSD8::calcThreshval(quint8 thr)
 {
 	quint8 t = thr;
 //	protocol(tr("threshpoti: %1, threshval: %2").arg(t).arg(thr));	
@@ -324,7 +312,7 @@ quint8 MPSD_8::calcThreshval(quint8 thr)
 }
 
 /*!
-    \fn MPSD_8::calcPulsPoti(quint8 val, float gv)
+    \fn MPSD8::calcPulsPoti(quint8 val, float gv)
 
     calculates the pulser poti value ????
 
@@ -332,7 +320,7 @@ quint8 MPSD_8::calcThreshval(quint8 thr)
     \param gv gain value ??? 
     \return pulser poti value
  */
-quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
+quint8 MPSD8::calcPulsPoti(quint8 val, float /* gv */)
 {
 	quint8 pa = val;
 //	protocol(tr("pulsval: %1, pulspoti: %2").arg(val).arg(pa));
@@ -340,7 +328,7 @@ quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
 }
 
 /*!
-    \fn MPSD_8::calcPulsAmp(quint8 val, float gv)
+    \fn MPSD8::calcPulsAmp(quint8 val, float gv)
 
     calculates the amplitude value for ????
 
@@ -348,14 +336,14 @@ quint8 MPSD_8::calcPulsPoti(quint8 val, float /* gv */)
     \param gv gain value ???
     \return amplitude value
  */
-quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
+quint8 MPSD8::calcPulsAmp(quint8 val, float gv)
 {
-	protocol(tr("MPSD_8::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv), NOTICE);
+	protocol(tr("MPSD8::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv), NOTICE);
 	return val;
 }
 
 /*!
-    \fn MPSD_8::setInternalreg(quint8 reg, quint16 val, bool preset)
+    \fn MPSD8::setInternalreg(quint8 reg, quint16 val, bool preset)
 
     set the value of the internal registers 
 
@@ -364,10 +352,137 @@ quint8 MPSD_8::calcPulsAmp(quint8 val, float gv)
     \param preset ????
     \see getInternalreg
  */
-void MPSD_8::setInternalreg(quint8 reg, quint16 val, bool preset)
+void MPSD8::setInternalreg(quint8 reg, quint16 val, bool preset)
 {
 	m_internalReg[reg][preset] = val;
    	
    	protocol(tr("register %1%2, %3, %4, to %5").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(reg).arg(m_internalReg[reg][preset]), NOTICE);
 }
 
+/*!
+    \fn void MPSD8::setActive(bool act) 
+ 
+    \param act
+ */
+void MPSD8::setActive(bool act) 
+{
+	for (int i = 0; i < 8; ++i)
+		setActive(i, act); 
+}
+
+/*!
+    \fn void MPSD8::setActive(quint16 id, bool act)
+
+    \param id
+    \param act
+ */
+void MPSD8::setActive(quint16 chan, bool act)
+{
+	if (chan < 8)
+		m_active[chan] = act;
+}
+
+/*!
+    \fn void MPSD8::setHistogram(quint16 id, bool act)
+
+    \param id
+    \param act
+ */
+void MPSD8::setHistogram(quint16 chan, bool hist)
+{
+	if (chan < 8)
+		m_histogram[chan] = hist;
+	if (!hist)
+		setActive(chan, false);
+}
+
+/*!
+    \fn void MPSD8::setHistogram(bool hist) 
+ 
+    \param hist
+ */
+void MPSD8::setHistogram(bool hist) 
+{
+	for (int i = 0; i < 8; ++i)
+		setHistogram(i, hist); 
+}
+
+/*!
+    \fn bool MPSD8::active()
+
+    \return
+ */
+bool MPSD8::active()
+{
+	bool result(false);
+	for (quint16 i = 0; i < 8; ++i)
+		result |= m_active[i];
+	return result;
+}
+
+/*!
+    \fn bool MPSD8::histogram()
+
+    \return
+ */
+bool MPSD8::histogram()
+{
+	bool result(false);
+	for (quint16 i = 0; i < 8; ++i)
+		result |= histogram(i);
+	return result;
+}
+
+/*!
+    \fn bool MPSD8::active(quint16 chan)
+
+    \param chan
+    \return
+ */
+bool MPSD8::active(quint16 chan)
+{
+	if (chan > 7)
+		return false;
+	return m_active[chan];
+}
+
+/*!
+    \fn bool MPSD8::histogram(quint16 chan)
+
+    \param chan
+    \return
+ */
+bool MPSD8::histogram(quint16 chan)
+{
+	if (chan > 7)
+		return false;
+	return m_histogram[chan];
+}
+
+/*!
+    \fn QList<quint16> MPSD8::getHistogramList(void)
+    
+    \return the list of channels used in histograms
+ */
+QList<quint16> MPSD8::getHistogramList(void)
+{
+	QList<quint16> result;
+	for (int i = 0; i < 8; ++i)
+		if (m_histogram[i])
+			result << i;
+	return result;
+}
+
+/*!
+    \fn QList<quint16> MPSD8::getActiveList(void)
+
+    \return the list of channels which are active
+ */
+QList<quint16> MPSD8::getActiveList(void)
+{
+	QList<quint16> result;
+	for (int i = 0; i < 8; ++i)
+		if (m_active[i])
+			result << i;
+	return result;
+}

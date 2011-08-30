@@ -25,20 +25,42 @@
 #include "mdefines.h"
 
 /**
- * \class MPSD_8
+ * \class MPSD8
  * \short representation of MPSD-8 peripheral module 
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MPSD_8 : public MesydaqObject
+class MPSD8 : public MesydaqObject
 {
-Q_OBJECT
+	Q_OBJECT
+	Q_PROPERTY(quint8 m_busNum READ busNumber)
+
 public:
-	MPSD_8(quint8, QObject * = 0);
+	MPSD8(quint8, QObject * = 0);
 
-	~MPSD_8();
+	~MPSD8();
 
-	void	setMpsdId(quint8, quint8, bool = true);
+	static MPSD8 *create(int, int, QObject * = 0);
+
+	virtual bool	active(void); 
+
+	virtual bool	active(quint16);
+
+	virtual void	setActive(bool act); 
+
+	virtual void	setActive(quint16, bool);
+
+	bool	histogram(void); 
+
+	bool	histogram(quint16);
+
+	void	setHistogram(bool hist); 
+
+	void	setHistogram(quint16, bool);
+
+	QList<quint16> getHistogramList(void);
+
+	QList<quint16> getActiveList(void);
 
 	//! \return the ID of the MPSD
 	quint8 	getMpsdId(void) {return m_mpsdId;}
@@ -46,12 +68,15 @@ public:
 	//! \return the type of the MPSD as string
 	virtual QString getType(void) {return tr("MPSD-8");}
 
+	//! \return the type of the MPSD as number
+	virtual int type(void) {return TYPE_MPSD8;}
+
 	//! \return is the module online or not
-	bool online(void);
+	virtual bool online(void);
 
 // Pulser related methods
-	void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
-	void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
+	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
+	virtual void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 	
 	/**
 	 * get the pulser position
@@ -105,7 +130,8 @@ public:
 	bool	isPulserOn() {return m_pulser[0];}
 
 // Threshold related methods
-	void	setThreshold(quint8 threshold, bool preset = false);
+	virtual void	setThreshold(quint8 threshold, bool preset = false);
+	virtual void 	setThreshpoti(quint8 thresh, bool preset = false);
 
 	/**
  	 * gets the threshold
@@ -118,7 +144,6 @@ public:
 	 */
 	quint8	getThreshold(bool preset = false) {return m_threshVal[preset];}
 
-	void 	setThreshpoti(quint8 thresh, bool preset = false);
 	/**
  	 * gets the threshold poti value
 	 *
@@ -131,8 +156,8 @@ public:
 	quint8	getThreshpoti(bool preset = false) {return m_threshPoti[preset];}
 
 // Gain related methods
-	virtual void	setGain(quint8 channel, float gainv, bool preset = 0);
-	virtual void	setGain(quint8 channel, quint8 gain, bool preset = 0);
+	virtual void	setGain(quint8 channel, float gainv, bool preset = false);
+	virtual void	setGain(quint8 channel, quint8 gain, bool preset = false);
 
 	/**
 	 * get the poti value for the gain
@@ -141,7 +166,7 @@ public:
 	 * \see setGain
 	 * \see getGainval
 	 */
-	quint8	getGainpoti(quint8 chan, bool preset = 0) {return m_gainPoti[chan][preset];}
+	quint8	getGainpoti(quint8 chan, bool preset = false) {return m_gainPoti[chan][preset];}
 
 	/**
 	 * get the user value for the gain
@@ -150,7 +175,7 @@ public:
 	 * \see setGain
 	 * \see getGainpoti
 	 */
-	float	getGainval(quint8 chan, bool preset = 0) 
+	float	getGainval(quint8 chan, bool preset = false) 
 	{
 		protocol(tr("gain val %1 %2").arg(chan).arg(m_gainVal[chan][preset]), DEBUG);
 		return m_gainVal[chan][preset];
@@ -167,7 +192,7 @@ public:
 	 * \param preset ????
 	 * \see getMode
 	 */
-	void	setMode(bool amplitude, bool preset = 0) {m_ampMode[preset] = amplitude;}
+	void	setMode(bool amplitude, bool preset = false) {m_ampMode[preset] = amplitude;}
 
 	/**
 	 * gets the mode amplitude/position
@@ -176,10 +201,10 @@ public:
 	 * \return amplitude true = amplitude, false = position
 	 * \see setMode
 	 */
-	bool	getMode(bool preset = 0) {return m_ampMode[preset];}
+	bool	getMode(bool preset = false) {return m_ampMode[preset];}
 
 // Internal registers related methods
-	void	setInternalreg(quint8 reg, quint16 val, bool preset = 0);
+	virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
 
 	/**
 	 * get the value of the internal registers 
@@ -189,12 +214,15 @@ public:
 	 * \return value of the register
 	 * \see setInternalreg
 	 */
-	quint16	getInternalreg(quint8 reg, bool preset = 0) {return m_internalReg[reg][preset];}
+	quint16	getInternalreg(quint8 reg, bool preset = false) {return m_internalReg[reg][preset];}
 	
 	virtual quint8	calcGainpoti(float fval);
 
         //! returns the number of bins per module
 	virtual quint16 bins() {return 960;}
+
+	//! returns the number of the bus 
+	quint8 busNumber(void) {return m_busNum;} 
 
 protected:
 	virtual float	calcGainval(quint8 ga);
@@ -208,10 +236,10 @@ private:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
 	
+protected:
 	//! MPSD-8 id
 	quint8 		m_mpsdId;
 
-protected:
 	//! Gain poti values 
 	quint8 		m_gainPoti[9][2];
 	
@@ -253,30 +281,87 @@ protected:
 
 private:
 	quint16 	m_internalReg[3][2];
+
+	bool		m_active[8];
+
+	bool		m_histogram[8];
 };
 
 /**
- * \class MPSD_8OLD
+ * \class NoModule
+ * \short representation of not extisting module
+ * 
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class NoModule : public MPSD8
+{
+	Q_OBJECT
+public:
+	/*! 
+	   constructor
+
+	   /param id
+	   /param parent
+	 */
+	NoModule(quint8 id, QObject *parent = 0) 
+		: MPSD8(id, parent) 
+	{
+		m_mpsdId = 0;
+		setHistogram(false);
+	}
+
+	void	setActive(bool) {MPSD8::setActive(false);}
+
+	void	setActive(quint16 chan, bool) {MPSD8::setActive(chan, false);}
+
+	//! \return the type of the MPSD as string
+	virtual QString getType(void) {return tr("-");}
+
+	//! \return the type of the MPSD as number
+	virtual int type(void) {return 0;}
+
+	//! \return is the module online or not
+	virtual bool online(void) {return false;}
+
+//	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
+//	virtual void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
+
+//	virtual void	setThreshold(quint8 threshold, bool preset = false);
+//	virtual void 	setThreshpoti(quint8 thresh, bool preset = false);
+
+//	virtual void	setGain(quint8 channel, float gainv, bool preset = false);
+//	virtual void	setGain(quint8 channel, quint8 gain, bool preset = false);
+
+//	virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
+};
+ 
+
+/**
+ * \class MPSD8old
  * \short representation of old MPSD-8 peripheral module 
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MPSD_8OLD : public MPSD_8
+class MPSD8old : public MPSD8
 {
+	Q_OBJECT
 public:
-	MPSD_8OLD(quint8 id, QObject *parent = 0);
+	MPSD8old(quint8 id, QObject *parent = 0);
 
         //! returns the number of bins per module
 	quint16 bins() {return 255;}
 
-	void 	setGain(quint8 channel, float gainv, bool preset = 0);
-	void	setThreshold(quint8 threshold, bool preset = 0);
+	void 	setGain(quint8 channel, float gainv, bool preset = false);
+	void	setThreshold(quint8 threshold, bool preset = false);
 
 	quint8	calcGainpoti(float fval);
 	quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
 	//! \return the type of the MPSD as string
 	QString getType(void) {return tr("MPSD-8 (old)");}
+
+	//! \return the type of the MPSD as number
+	virtual int type(void) {return TYPE_MPSD8OLD;}
 
 protected:
 	float	calcGainval(quint8 ga);
@@ -294,24 +379,25 @@ private:
 };
 
 /**
- * \class MPSD_8P
+ * \class MPSD8plus
  * \short representation of MPSD-8+ peripheral module 
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MPSD_8P : public MPSD_8
+class MPSD8plus : public MPSD8
 {
-Q_OBJECT
+	Q_OBJECT
 public:
-	MPSD_8P(quint8 id, QObject *parent = 0);
-
-	~MPSD_8P() {}
+	MPSD8plus(quint8 id, QObject *parent = 0);
 
 	//! \return the type of the MPSD as string
 	QString getType(void) {return tr("MPSD-8+");}
 
-	void 	setGain(quint8 channel, float gainv, bool preset = 0);
-	void	setThreshold(quint8 threshold, bool preset = 0);
+	//! \return the type of the MPSD as number
+	virtual int type(void) {return TYPE_MPSD8P;}
+
+	void 	setGain(quint8 channel, float gainv, bool preset = false);
+	void	setThreshold(quint8 threshold, bool preset = false);
 
 	quint8	calcGainpoti(float fval);
 	quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
@@ -332,19 +418,22 @@ private:
 };
 
 /** 
- * \class MPSD_8SADC
+ * \class MPSD8SingleADC
  * \short representation of the MPSD-8 pheripheral module with a single ADC like at DNS
  *
  * \author Jens Krueger <jens.krueger@frm2.tum.de>
  */ 
-class MPSD_8SADC : public MPSD_8
+class MPSD8SingleADC : public MPSD8
 {
-Q_OBJECT
+	Q_OBJECT
 public:
-	MPSD_8SADC(quint8 id, QObject *parent = 0);
+	MPSD8SingleADC(quint8 id, QObject *parent = 0);
 
 	//! \return the type of the MPSD as string
 	QString getType(void) {return tr("MPSD-8 (single ADC)");}
+
+	//! \return the type of the MPSD as number
+	virtual int type(void) {return TYPE_MPSD8SADC;}
 };
 
 #endif

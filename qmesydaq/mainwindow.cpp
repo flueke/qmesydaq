@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <QSettings>
+
 #include "MultipleLoopApplication.h"
 
 #include "mainwindow.h"
@@ -30,8 +32,8 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 {
 	setupUi(this);
 
-	Mesydaq2 *mesy = new Mesydaq2(this);
-	m_main = new MainWidget(mesy, this);
+	m_mesy = new Mesydaq2(this);
+	m_main = new MainWidget(m_mesy, this);
 	setCentralWidget(m_main);
 
         MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
@@ -54,9 +56,27 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
-	m_main->resize(1280, 980);
+	restoreSettings();
 }
 
 Mesydaq2MainWindow::~Mesydaq2MainWindow()
 {
+	saveSettings();
+}
+
+void Mesydaq2MainWindow::restoreSettings()
+{
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	QPoint pos = settings.value("pos", QPoint(200, 0)).toPoint();
+	QSize size = settings.value("size", QSize(1280, 980)).toSize();
+	m_main->resize(size);
+	move(pos);
+}
+
+void Mesydaq2MainWindow::saveSettings()
+{
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	settings.setValue("pos", pos());
+	settings.setValue("size", m_main->size());
+	settings.setValue("config/lastrunid", m_mesy->runId());
 }

@@ -118,12 +118,12 @@ typedef struct _MDLL_SETTINGS
 	quint8 scaleX;
 	quint8 scaleY;
     
-//	quint8 mode;
-//	quint8 previewHistsize;
-//	quint16  previewHistrate;
-//	quint8 histSize;
-//	quint8 histType;
-//	quint8 slscOff;
+	quint8 mode;
+	quint8 previewHistsize;
+	quint16  previewHistrate;
+	quint8 histSize;
+	quint8 histType;
+	quint8 slscOff;
 	quint8 datareg;
     
 	quint16 eventCounter0;

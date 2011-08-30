@@ -27,6 +27,9 @@
 
 #include <iostream>
 
+/*!
+    constructor
+ */
 MultipleLoopApplication::MultipleLoopApplication(int &argc, char**argv, LoopObject *loop)
 	: QApplication(argc, argv)
 	, m_loop(loop)

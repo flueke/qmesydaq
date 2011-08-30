@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AdditionalEventConfigSetup</class>
+ <widget class="QWidget" name="AdditionalEventConfigSetup">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>443</width>
+    <height>23</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Additional event counter configuration</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="checkBox">
+     <property name="text">
+      <string>Monitor/Chopper 1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="cellTrigger">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>Select trigger for cell</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>Aux Timer 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Aux Timer 2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Aux Timer 3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Aux Timer 4</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Digital Input 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Digital Input 2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Compare Register</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="cellCompare">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <item>
+      <property name="text">
+       <string>Bit 0</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 4</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 5</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 6</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 7</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 8</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 9</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 10</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 11</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 12</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 13</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 14</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 15</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 16</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 17</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 18</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bit 19</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Counter Overflow</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Rising Edge</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="sendCellButton">
+     <property name="toolTip">
+      <string>send cell data</string>
+     </property>
+     <property name="text">
+      <string>Set</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cellTrigger</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>10</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cellCompare</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>10</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

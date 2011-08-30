@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 	if (i<0)
 	{
 	  // load last configuration file
-	  QSettings settings("MesyTec", "QMesyDAQ");
+	  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
 	  mainWin.doLoadConfiguration(settings.value("lastconfigfile", "mesycfg.mcfg").toString());
 	}
 

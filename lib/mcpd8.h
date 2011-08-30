@@ -28,7 +28,7 @@
 #include "mesydaqobject.h"
 
 class NetworkDevice;
-class MPSD_8;
+class MPSD8;
 class QTimer;
 
 /**
@@ -38,11 +38,42 @@ class QTimer;
 */
 class MCPD8 : public MesydaqObject
 {
-Q_OBJECT
+	Q_OBJECT
+
 public:
 	MCPD8(quint8, QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
 
 	~MCPD8();
+
+        //! \return whether the whole MCPD should integrated into the histogram
+	bool histogram(void); 
+
+	void setHistogram(bool hist);
+
+	void setHistogram(quint16 id, bool hist);
+
+	void setHistogram(quint16 id, quint16 chan, bool hist);
+
+	bool histogram(quint16 id);
+
+	bool histogram(quint16 id, quint16 chan);
+
+        //! \return whether the whole MCPD is in use or not
+	bool active(void); 
+
+	bool active(quint16 id);
+
+	bool active(quint16 id, quint16 chan);
+
+	void setActive(bool act);
+
+	void setActive(quint16 id, bool act);
+
+	void setActive(quint16 id, quint16 chan, bool act);
+
+	QList<quint16> getHistogramList(void);
+
+	QList<quint16> getActiveList(void);
 
 // commands of the MPCD-8
 // commands: DAQ commands
@@ -103,6 +134,8 @@ public:
 
 	quint64 getParameter(quint16 param);
 
+	bool getParameter(void);
+
 // commands: MPSD-8 settings
 	bool setGain(quint16 addr, quint8 channel, quint8 gain);
 
@@ -137,7 +170,7 @@ public:
 
 	quint8 getMpsdId(quint8 addr);
 
-	QString getMpsdType(quint8 addr);
+	QString getMpsdType(quint8);
 
 	bool online(quint8 addr);
 
@@ -165,7 +198,7 @@ public:
 	float version(quint16 mod);
 
 	//! \return number of modules found
-	quint8 numModules(void) {return m_mpsd.size();}
+	quint8 numModules(void); // {return m_mpsd.size();}
 
 	bool init(void);
 
@@ -214,6 +247,20 @@ public:
 
 	quint16 bins();
 
+        /**
+         * gets the list of available MPSD's connected with the MCPD
+         *
+         * \return list of id numbers
+         */
+	QList<int> mpsdId()
+	{
+    		QList<int> modList;
+    		for (int i = 0; i < 8; ++i)
+        		if (getMpsdId(i))
+            			modList << i;
+		return modList;
+	}	
+
 public slots:
 	void analyzeBuffer(MDP_PACKET &pd);
 
@@ -238,14 +285,26 @@ signals:
 	 */
 	void analyzeDataBuffer(DATA_PACKET &pd);
 
-private:
-	void communicate(bool yesno) {m_commActive = yesno;}
-
+protected:
 	void initCmdBuffer(quint16);
 
 	void finishCmdBuffer(quint16 buflen);
 
 	int sendCommand(void);
+	
+        /*!
+            fills the buffer on index with the value
+           
+            \param index
+            \param value
+         */
+	void setBuffer(quint8 index, quint16 value)
+	{
+		m_cmdBuf.data[index] = value;
+	}
+
+private:
+	void communicate(bool yesno) {m_commActive = yesno;}
 
 	quint16 calcChksum(MDP_PACKET &buffer);
 
@@ -323,7 +382,7 @@ private:
 	quint32		m_cmdRxd;
 
 	//! the accessed MPSD8 ????
-	QMap<int, MPSD_8 *> m_mpsd;
+	QMap<int, MPSD8 *> m_mpsd;
 	
 	//! the header time stamp
 	quint64		m_headertime;
@@ -340,6 +399,72 @@ private:
 	//! last peripheral register value
 	quint16		m_periReg;
 };
+
+/**
+ * \short representation of MDLL central module
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+*/
+class MCPDMDLL : public MCPD8
+{
+	Q_OBJECT
+public:
+        /*!
+            constructor
+ 
+            \param id
+	    \param parent
+            \param ip
+            \param port
+            \param sourceIP
+         */
+	MCPDMDLL(quint8 id, QObject *parent = 0, QString ip = "192.168.168.121", quint16 port = 54321, QString sourceIP = "0.0.0.0")
+		: MCPD8(id, parent, ip, port, sourceIP)
+	{
+	}
+
+	bool setSpectrum(quint8, quint8, quint8, quint8);
+
+	bool setHistogram(quint8, quint16, quint8, quint8);
+
+	bool setMode(quint8);
+
+	bool setSlide(quint8);
+
+    	bool setThreshold(quint8, quint8, quint8);
+
+	bool setEnergy(quint8, quint8, quint8, quint8);
+
+    	bool setDataReg(quint8);
+
+    	bool setAcqset(quint32, quint32, quint32);
+
+	bool setPulser(quint8, quint8, quint8);
+
+private:
+    	quint8 	m_threshX;
+
+	quint8 	m_threshY;
+
+	quint8 	m_threshAmp;
+
+	quint8 	m_shiftX;
+
+	quint8 	m_shiftY;
+
+	quint8 	m_scaleX;
+
+	quint8 	m_scaleY;
+
+	quint8 	m_previewHistSize;
+
+	quint16 m_previewHistRate;
+
+	quint8 	m_histSize;
+
+	quint8 	m_histType;
+};
+
 
 #endif
 

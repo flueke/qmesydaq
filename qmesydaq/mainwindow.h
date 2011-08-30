@@ -30,7 +30,7 @@
 #include <QLabel>
 #include <QApplication>
 
-#include "ui_mesydaq2mainwindow.h"
+#include "ui_mainwindow.h"
 
 #include "structures.h"
 
@@ -41,6 +41,7 @@ class MPSD_8;
 class Measurement;
 class CorbaThread;
 class ControlInterface;
+class Mesydaq2;
 
 /**
  * \short Application Main Window
@@ -62,6 +63,7 @@ public:
      */
 	virtual ~Mesydaq2MainWindow();
 
+        //! wrapper method to emit signal to load a configuration file
 	void	doLoadConfiguration(const QString &sFilename) { emit loadConfiguration(sFilename); }
 
 signals:
@@ -69,7 +71,14 @@ signals:
 	void	loadConfiguration(const QString& sFilename);
 
 private:
+	void restoreSettings(void);
+
+	void saveSettings(void);
+
+private:
 	MainWidget 	*m_main;
+
+	Mesydaq2	*m_mesy;
 };
 
 #endif // _MAINWINDOW_H

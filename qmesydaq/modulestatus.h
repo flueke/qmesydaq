@@ -38,7 +38,7 @@ class ModuleStatus : public QWidget, public Ui_ModuleStatus
 public:
 	ModuleStatus(QWidget * = 0);
 
-	void update(const QString &, const float, const bool);
+	void update(const QString &, const float, const bool, const bool = true, const bool = true);
 	
 	void setId(const quint8);
 
@@ -46,13 +46,25 @@ signals:
 	//! is emitted if a double clicked was made on this widget
 	void clicked(quint8);
 
+	//! is emitted if the histogram check box changes
+	void histogram(quint8, bool);
+
+	//! is emitted if the active check box changes
+	void active(quint8, bool);
+
 protected:
 	void mouseDoubleClickEvent(QMouseEvent *);
 
 	void setLabel(const QString &);
 
+private slots:
+	void histogramSlot(bool);
+
+	void activeSlot(bool);
+
 private:
 	quint8	m_id;
+
 	bool	m_online;
 };
 #endif

@@ -61,6 +61,8 @@ private slots:
 
 	void displayAuxTimerSlot(int = -1);
 
+	void cellTriggerChangedSlot(int);
+
 private:
 	Mesydaq2 *m_theApp;
 

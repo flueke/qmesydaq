@@ -46,6 +46,7 @@ class MappedHistogram;
 class MapCorrection : public MesydaqObject
 {
   Q_OBJECT
+  Q_ENUMS(Orientation)
 public:
   //! orientation of histogram
   // OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]

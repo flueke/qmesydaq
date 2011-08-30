@@ -47,11 +47,20 @@ public:
 	//! \return the path for the histogram data file
 	QString histFilePath(void) {return histfilepath->text();}
 
+	quint16 lastRunId(void)  {return runId->value();}
+
+	void setLastRunId(const quint16 val) {runId->setValue(val);}
+
 private slots:
 	void selectConfigpathSlot();
 
 	void selectHistpathSlot();
 
 	void selectListpathSlot();
+
+	void setRunIdSlot();
+
+private:
+	Mesydaq2 	*m_mesy;
 };
 #endif

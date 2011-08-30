@@ -30,12 +30,14 @@
     \param parent
  */
 GeneralSetup::GeneralSetup(Mesydaq2 *mesy, QWidget *parent)
-	 : QDialog(parent)
+	: QDialog(parent)
+	, m_mesy(mesy)
 {
     setupUi(this);
-    configfilepath->setText(mesy->getConfigfilepath());
-    histfilepath->setText(mesy->getHistfilepath());
-    listfilepath->setText(mesy->getListfilepath());
+    configfilepath->setText(m_mesy->getConfigfilepath());
+    histfilepath->setText(m_mesy->getHistfilepath());
+    listfilepath->setText(m_mesy->getListfilepath());
+    runId->setValue(m_mesy->runId());
 }
 
 /*!
@@ -74,3 +76,12 @@ void GeneralSetup::selectHistpathSlot()
         histfilepath->setText(name);
 }
 
+/*! 
+    \fn void GeneralSetup::setRunIdSlot()
+
+    callback to set the run ID on the module
+ */
+void GeneralSetup::setRunIdSlot()
+{
+	m_mesy->setRunId(runId->value());
+}

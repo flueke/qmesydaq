@@ -49,8 +49,10 @@ public:
 	double value(void);
 
 signals:
+        //! this signal is emitted if the reset button is clicked
 	void resetClicked();
 
+	//! this signal will be emmitted in case of checked preset
 	void presetClicked(bool);
 
 

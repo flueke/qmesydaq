@@ -17,20 +17,38 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
+#include "mpsd8.h"
 #include "mstd16.h"
+#include "mdll.h"
 
 /*!
-    \fn MSTD16::MSTD16(quint8 id, QObject *parent)
+    \fn MPSD8 *MPSD8::create(int bus, int typ, QObject *parent)
 
-    constructor
+    factory to create a module
 
-    \param id ID of the module
-    \param parent Qt parent object
-*/
-MSTD16::MSTD16(quint8 id, QObject *parent)
-	: MPSD8(id, parent)
-// set calibration factors for gain, threshold and pulser calculation
+    \param bus
+    \param typ
+    \param parent
+  
+    \return pointer to new created module
+ */   
+MPSD8 *MPSD8::create(int bus, int typ, QObject *parent)
 {
-	m_mpsdId = TYPE_MSTD16;
+	switch (typ)
+	{
+		case TYPE_MPSD8P :
+			return new MPSD8plus(bus, parent);
+		case TYPE_MPSD8OLD:
+			return new MPSD8old(bus, parent);
+		case TYPE_MPSD8SADC:
+			return new MPSD8SingleADC(bus, parent);
+		case TYPE_MPSD8 :
+			return new MPSD8(bus, parent);
+		case TYPE_MSTD16 :
+			return new MSTD16(bus, parent);
+		case TYPE_MDLL :
+			return new MDLL(bus, parent);
+		default :
+			return new NoModule(bus, parent);
+	}
 }

@@ -92,13 +92,13 @@
       <item row="0" column="0">
        <widget class="QSpinBox" name="runId">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>RUN ID will be transmitted in every data buffer header</string>
         </property>
         <property name="maximum">
-         <number>65536</number>
+         <number>65535</number>
         </property>
        </widget>
       </item>
@@ -121,7 +121,7 @@
       <item row="0" column="2">
        <widget class="QPushButton" name="runIdButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text">
          <string>set Run ID</string>
@@ -152,8 +152,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>409</x>
-     <y>273</y>
+     <x>418</x>
+     <y>236</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -168,8 +168,8 @@
    <slot>selectListpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>762</x>
-     <y>73</y>
+     <x>511</x>
+     <y>55</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -184,8 +184,8 @@
    <slot>selectHistpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>762</x>
-     <y>134</y>
+     <x>511</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -200,8 +200,8 @@
    <slot>selectConfigpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>762</x>
-     <y>195</y>
+     <x>511</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -216,8 +216,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>409</x>
-     <y>273</y>
+     <x>418</x>
+     <y>236</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -226,18 +226,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>runIdAuto</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>runId</receiver>
-   <slot>setDisabled(bool)</slot>
+   <sender>runIdButton</sender>
+   <signal>clicked()</signal>
+   <receiver>GeneralSetup</receiver>
+   <slot>setRunIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>586</x>
-     <y>660</y>
+     <x>382</x>
+     <y>177</y>
     </hint>
     <hint type="destinationlabel">
-     <x>327</x>
-     <y>660</y>
+     <x>3</x>
+     <y>130</y>
     </hint>
    </hints>
   </connection>
@@ -246,5 +246,6 @@
   <slot>selectListpathSlot()</slot>
   <slot>selectConfigpathSlot()</slot>
   <slot>selectHistpathSlot()</slot>
+  <slot>setRunIdSlot()</slot>
  </slots>
 </ui>

@@ -176,6 +176,7 @@
 #define ADC1ID			6
 #define ADC2ID			7
 #define EVID			8
+#define TIMERID			9
 
 // pulser positions
 #define LEFT			0
@@ -191,12 +192,12 @@
 #define DEBUG			5
 
 // Module ID's
-#define	MPSD8OLD		1
-#define MPSD8SADC		102	// 10bit, single ADC, DNS
-#define	MPSD8			103
-#define	MSTD16			104
-#define	MPSD8P			105	
-#define MDLL			106
+#define	TYPE_MPSD8OLD		1
+#define TYPE_MPSD8SADC		102	// 10bit, single ADC, DNS
+#define	TYPE_MPSD8		103
+#define	TYPE_MSTD16		104
+#define	TYPE_MPSD8P		105	
+#define TYPE_MDLL		106
 
 // TX modes
 #define	P			1

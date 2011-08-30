@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
-    <height>321</height>
+    <width>779</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,166 +109,6 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="QGroupBox" name="groupBox9">
-         <property name="toolTip">
-          <string/>
-         </property>
-         <property name="title">
-          <string>Counter/ ADC-Cell</string>
-         </property>
-         <layout class="QGridLayout" name="_5">
-          <item row="0" column="1">
-           <widget class="QLabel" name="textLabel1_7_3">
-            <property name="text">
-             <string>Trigger</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="textLabel1_7_2">
-            <property name="text">
-             <string>Compare</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" colspan="2">
-           <widget class="QPushButton" name="sendCellButton">
-            <property name="toolTip">
-             <string>send cell data</string>
-            </property>
-            <property name="text">
-             <string>Send</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="textLabel1_7">
-            <property name="text">
-             <string>Cell</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="3">
-           <layout class="QHBoxLayout" name="_6">
-            <item>
-             <widget class="QComboBox" name="cellSource">
-              <property name="toolTip">
-               <string>Select counter / ADC cell</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>mon/chop1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>mon/chop2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>mon/chop3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>mon/chop4</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>digInput1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>digInput2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ADC1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>ADC2</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="cellTrigger">
-              <property name="toolTip">
-               <string>Select trigger for cell</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>no Trig</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>auxTimer1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>auxTimer2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>auxTimer3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>auxTimer4</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>digInput1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>digInput2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>compareReg</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="cellCompare">
-              <property name="toolTip">
-               <string>Define compare source for cell</string>
-              </property>
-              <property name="maximum">
-               <number>22</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="0" column="3">
         <widget class="QGroupBox" name="mcpdModeGroup">
          <property name="title">
@@ -298,9 +138,9 @@
           <string/>
          </property>
          <property name="title">
-          <string>Aux Timer</string>
+          <string>Auxiliary Timer</string>
          </property>
-         <layout class="QGridLayout" name="_4">
+         <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0">
            <widget class="QLabel" name="textLabel1_7_4">
             <property name="text">
@@ -312,16 +152,6 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="textLabel1_7_3_2">
-            <property name="text">
-             <string>Compare</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
            <widget class="QSpinBox" name="timer">
             <property name="toolTip">
              <string>select timer number</string>
@@ -331,20 +161,39 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="compareAux">
-            <property name="toolTip">
-             <string>define compare value</string>
+          <item row="0" column="3">
+           <widget class="QSpinBox" name="compareAux">
+            <property name="accelerated">
+             <bool>true</bool>
+            </property>
+            <property name="suffix">
+             <string> x 10 us</string>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="1" column="2" colspan="2">
            <widget class="QPushButton" name="sendAux">
             <property name="toolTip">
              <string>send timer setting</string>
             </property>
             <property name="text">
-             <string>Send</string>
+             <string>Set</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="textLabel1_7_5">
+            <property name="text">
+             <string>Cycle</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -357,82 +206,20 @@
           <string/>
          </property>
          <property name="title">
-          <string>Parameter Source</string>
+          <string>Free counter configuration</string>
          </property>
-         <layout class="QGridLayout" name="_2">
-          <item row="0" column="1">
-           <widget class="QLabel" name="textLabel1_7_4_2_2">
-            <property name="text">
-             <string>Source</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
+         <layout class="QGridLayout" name="gridLayout_5">
           <item row="0" column="0">
            <widget class="QLabel" name="textLabel1_7_4_2">
             <property name="text">
-             <string>Param.</string>
+             <string>Counter</string>
             </property>
             <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="paramSource">
-            <property name="toolTip">
-             <string>select parameter source</string>
-            </property>
-            <item>
-             <property name="text">
-              <string>mon/chop1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>mon/chop2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>mon/chop3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>mon/chop4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>digInput1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>digInput2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ADC1,2, DigIn1,2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>event counter</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>master clock</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="0">
+          <item row="0" column="1">
            <widget class="QSpinBox" name="param">
             <property name="toolTip">
              <string>select parameter number</string>
@@ -442,13 +229,347 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="0" column="2">
+           <widget class="QLabel" name="textLabel1_7_4_3">
+            <property name="text">
+             <string>Source</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QComboBox" name="paramSource">
+            <property name="toolTip">
+             <string>select parameter source</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Monitor/Chopper 1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Monitor/Chopper 2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Monitor/Chopper 3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Monitor/Chopper 4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TTL input 1</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TTL input 2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Analog/Digital Inputs</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Event Counter</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Master Clock</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="3">
            <widget class="QPushButton" name="sendParam">
             <property name="toolTip">
              <string>send parameter settings for selected parameter</string>
             </property>
             <property name="text">
-             <string>Send</string>
+             <string>Set</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
+        <widget class="QGroupBox" name="groupBox9">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="title">
+          <string>Additional event counter configuration</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QLabel" name="textLabel1_7">
+            <property name="text">
+             <string>Source</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="textLabel1_7_3">
+            <property name="text">
+             <string>Trigger</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="textLabel1_7_2">
+            <property name="text">
+             <string>Trigger event</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="3">
+           <layout class="QHBoxLayout" name="_6">
+            <item>
+             <widget class="QComboBox" name="cellSource">
+              <property name="toolTip">
+               <string>Select counter / ADC cell</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Monitor/Chopper 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Monitor/Chopper 2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Monitor/Chopper 3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Monitor/Chopper 4</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Digital Input 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Digital Input 2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Analog Input 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Analog Input 2</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cellTrigger">
+              <property name="toolTip">
+               <string>Select trigger for cell</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>No Trigger</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aux Timer 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aux Timer 2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aux Timer 3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aux Timer 4</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Digital Input 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Digital Input 2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Compare Register</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cellCompare">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Bit 0</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 1</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 2</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 4</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 5</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 6</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 7</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 8</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 9</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 10</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 11</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 12</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 13</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 14</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 15</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 16</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 17</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 18</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 19</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Bit 20</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Counter Overflow</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Rising Edge</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="sendCellButton">
+            <property name="toolTip">
+             <string>send cell data</string>
+            </property>
+            <property name="text">
+             <string>Set</string>
             </property>
            </widget>
           </item>
@@ -675,12 +796,12 @@ parameters</string>
    <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>783</y>
+     <x>164</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel">
-     <x>345</x>
-     <y>813</y>
+     <x>164</x>
+     <y>248</y>
     </hint>
    </hints>
   </connection>
@@ -691,12 +812,12 @@ parameters</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>783</y>
+     <x>164</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel">
-     <x>345</x>
-     <y>855</y>
+     <x>164</x>
+     <y>285</y>
     </hint>
    </hints>
   </connection>
@@ -707,12 +828,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>783</y>
+     <x>164</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel">
-     <x>345</x>
-     <y>813</y>
+     <x>164</x>
+     <y>248</y>
     </hint>
    </hints>
   </connection>
@@ -723,8 +844,8 @@ parameters</string>
    <slot>setTimingSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>783</y>
+     <x>164</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -739,8 +860,8 @@ parameters</string>
    <slot>resetTimerSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>855</y>
+     <x>164</x>
+     <y>285</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -755,24 +876,8 @@ parameters</string>
    <slot>sendAuxSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>548</x>
-     <y>857</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sendCellButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MCPDSetup</receiver>
-   <slot>sendCellSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>611</x>
-     <y>718</y>
+     <x>412</x>
+     <y>277</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -787,8 +892,8 @@ parameters</string>
    <slot>sendParamSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>829</x>
-     <y>857</y>
+     <x>747</x>
+     <y>278</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -803,8 +908,8 @@ parameters</string>
    <slot>setMcpdIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>460</x>
-     <y>683</y>
+     <x>44</x>
+     <y>209</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -819,8 +924,8 @@ parameters</string>
    <slot>setIpUdpSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>593</x>
-     <y>774</y>
+     <x>140</x>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -835,8 +940,8 @@ parameters</string>
    <slot>setTimingSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>813</y>
+     <x>164</x>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -851,8 +956,8 @@ parameters</string>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>306</x>
-     <y>298</y>
+     <x>315</x>
+     <y>350</y>
     </hint>
     <hint type="destinationlabel">
      <x>306</x>
@@ -867,8 +972,8 @@ parameters</string>
    <slot>displayParameterSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>773</x>
-     <y>823</y>
+     <x>552</x>
+     <y>232</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -883,8 +988,8 @@ parameters</string>
    <slot>displayCounterCellSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>442</x>
-     <y>681</y>
+     <x>321</x>
+     <y>118</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -899,8 +1004,8 @@ parameters</string>
    <slot>displayMCPDSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>355</x>
-     <y>654</y>
+     <x>174</x>
+     <y>111</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -915,8 +1020,8 @@ parameters</string>
    <slot>displayAuxTimerSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>436</x>
-     <y>823</y>
+     <x>276</x>
+     <y>232</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -931,8 +1036,24 @@ parameters</string>
    <slot>displayMCPDSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>449</x>
-     <y>571</y>
+     <x>458</x>
+     <y>313</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sendCellButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MCPDSetup</receiver>
+   <slot>sendCellSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>579</x>
+     <y>154</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>

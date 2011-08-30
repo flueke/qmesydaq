@@ -22,19 +22,35 @@
 
 #include "LoopObject.h"
 
+/*!
+    constructor
+ */
 LoopObject::LoopObject()
 {
 }
 
+/*!
+    \fn void LoopObject::run()
+
+    running thread
+ */
 void LoopObject::run()
 {
 	this->runLoop();
 }
 
+/*!
+    \fn void LoopObject::runLoop()
+ */
 void LoopObject::runLoop()
 {
 }
 
+/*!
+    \fn void LoopObject::pSleep(long ms)
+
+    \param ms
+ */
 void LoopObject::pSleep(long ms)
 {
 	this->msleep(ms);

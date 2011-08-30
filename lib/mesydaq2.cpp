@@ -41,6 +41,7 @@
 Mesydaq2::Mesydaq2(QObject *parent)
 	: MesydaqObject(parent) 
 	, m_daq(IDLE)
+	, m_runID(0)
 	, m_acquireListfile(false)
 	, m_listfilename("")
 	, m_histfilename("")
@@ -48,11 +49,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_histPath("/home")
 	, m_configPath("/home")
 	, m_timingwidth(1)
-	, m_checkTimer(0)
 {
-	initTimers();
-	initDevices();
-	initHardware();
 	protocol(tr("running on Qt %1").arg(qVersion()), NOTICE);
 }
 
@@ -62,9 +59,6 @@ Mesydaq2::~Mesydaq2()
 	foreach (MCPD8* value, m_mcpd)
 		delete value;
 	m_mcpd.clear();
-	if (m_checkTimer)
-		killTimer(m_checkTimer);
-	m_checkTimer = NULL;
 }
 
 //! \return number of received data packages for the whole setup
@@ -107,18 +101,12 @@ quint64 Mesydaq2::time(void)
 	quint64 ret(0);
 	if (!m_mcpd.empty())
 	{
-#warning TODO what if the number of MCPD is > 1
-//! \todo what if the number of MCPD is > 1
-#if 1
 		foreach (MCPD8	*value, m_mcpd)
 			if (value->isMaster())
 			{
 				ret = value->time();
 				break;
 			}
-#else
-		ret = (*m_mcpd.begin())->time();
-#endif
 	}
 	return ret;
 }
@@ -241,18 +229,6 @@ void Mesydaq2::stoppedDaq(void)
 }
 
 /*!
-    \fn Mesydaq2::initDevices(void)
- */
-void Mesydaq2::initDevices(void)
-{
-#if 0
-	QString ip[] = {"192.168.168.121", "192.168.169.121", };	
-	quint16 port[] = {54321, 54321, };
-	QString sourceIP[] = {"192.168.168.1", "192.168.169.1", };
-#endif
-}
-
-/*!
     \fn Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
 
     'adds' another MCPD to this class
@@ -270,16 +246,6 @@ void Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
 	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(m_mcpd[id], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 	connect(m_mcpd[id], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
-}
-
-/*!
-    \fn Mesydaq2::initTimers(void)
-
-    initialize the check timer 
- */
-void Mesydaq2::initTimers(void)
-{
-	m_checkTimer = startTimer(50);	// every 50 ms check the MCPD
 }
 
 /*!
@@ -364,19 +330,36 @@ void Mesydaq2::writeClosingSignature(void)
 }
 
 /*!
-    \fn Mesydaq2::bins()
+    \fn Mesydaq2::width()
 
     the maximum number of bins over all modules
 
     \return number of bins
  */
-quint16 Mesydaq2::bins()
+quint16 Mesydaq2::width()
 {
 	quint16 bins(0);
 	foreach(MCPD8 *value, m_mcpd) 
 		if (value->bins() > bins)
 			bins = value->bins();
 	return bins;
+}
+
+quint16 Mesydaq2::height()
+{
+	QList<quint16> modList;
+	quint16 n(0);
+	foreach (MCPD8 *value, m_mcpd)
+	{
+		QList<quint16> tmpList = value->getHistogramList();
+		foreach(quint16 h, tmpList)
+			modList.append(value->getId() * 64 + h);
+	}
+	qSort(modList);
+	if (!modList.isEmpty())
+		n = modList.last() + 1;
+	protocol(tr("Histogram height : %1").arg(n), INFO);
+	return n;
 }
 
 /*!
@@ -439,17 +422,6 @@ void Mesydaq2::scanPeriph(quint16 id)
 }
 
 /*!
-    \fn Mesydaq2::initHardware(void)
-
-    loads the default configuration file (better last config file)
-
-    \todo it seems that this method is not necessary anymore
- */
-void Mesydaq2::initHardware(void)
-{
-}
-
-/*!
     \fn Mesydaq2::saveSetup(const QString &name)
 
     Stores the setup in a file. This function stores INI files in format of
@@ -506,6 +478,8 @@ bool Mesydaq2::saveSetup(const QString &name)
 		}
 		mcpd8_section.AddItem(CConfigItem("master", value->isMaster() ? "true" : "false", 8));
 		mcpd8_section.AddItem(CConfigItem("terminate", value->isTerminated() ? "true" : "false", 9));
+//		mcpd8_section.AddItem(CConfigItem("active", value->active() ? "true" : "false", 10));
+//		mcpd8_section.AddItem(CConfigItem("histogram", value->histogram() ? "true" : "false", 11));
 
 		for (int j =0; j < 4; ++j)
 		{
@@ -522,12 +496,16 @@ bool Mesydaq2::saveSetup(const QString &name)
 			item.SetLongValue(cells[1], CConfigItem::dec, 1);
 			mcpd8_section.AddItem(item);
 		
-			if (value->getMpsdId(j))
+//			if (value->getMpsdId(j))
 			{
 				CConfigSection mpsd_section("MODULE", 8 * (i + 1) + j);
 				mpsd_section.AddItem(CConfigItem("id", QString("%1").arg( i * 8 + j), 0));
 				for (int k = 0; k < 8; ++k)
+				{
 					mpsd_section.AddItem(CConfigItem(QString("gain%1").arg(k), QString("%1").arg(value->getGainPoti(j, k)), 10 + k));
+					mpsd_section.AddItem(CConfigItem(QString("active%1").arg(k), value->active(j, k) ? "true" : "false", 30 + k));
+					mpsd_section.AddItem(CConfigItem(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false", 40 + k));
+				}
 				mpsd_section.AddItem(CConfigItem("threshold", QString("%1").arg(value->getThreshold(j)), 20));
 				m_lastConfiguration.AddSection(mpsd_section);
 			}
@@ -632,11 +610,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 		  else if (sz.contains("details",Qt::CaseInsensitive) || sz.contains("info",Qt::CaseInsensitive)) DEBUGLEVEL=INFO;
 		  else if (sz.contains("debug",Qt::CaseInsensitive) || sz.contains("debug",Qt::CaseInsensitive)) DEBUGLEVEL=DEBUG;
 		}
-		sz =loadSetup_helper(pSection,"listmode","1");
-		bOK=false;
-		m_acquireListfile = (sz.toInt(&bOK) != 0);
-		if (!bOK) 
-			m_acquireListfile = !sz.contains("false", Qt::CaseInsensitive) && !sz.contains("no", Qt::CaseInsensitive);
+		m_acquireListfile = loadSetupBoolean(pSection, "listmode", true);
 	} while (0);
 
 	for (i = 0; i < m_lastConfiguration.GetSectionCount(); ++i)
@@ -700,26 +674,11 @@ bool Mesydaq2::loadSetup(const QString &name)
 		}
 
 		QString IP = loadSetup_helper(pSection, QString("%1%2").arg(szPrefix).arg(bQSettingsSpecial ? "ip" : "ipAddress"), "192.168.168.121");
-		quint16 port = loadSetup_helper(pSection, szPrefix + "port", "54321").toUInt();
-		QString cmdIP = loadSetup_helper(pSection, szPrefix + "cmdip", "0.0.0.0");
-		quint16 cmdPort = loadSetup_helper(pSection, szPrefix + "cmdport", "0").toUInt();
-		QString dataIP = loadSetup_helper(pSection, szPrefix + "dataip", "0.0.0.0");
-		quint16 dataPort = loadSetup_helper(pSection, szPrefix + "dataport", "0").toUInt();
-		bool    master(true);
-		bool    terminate(true);
-
-		do
-		{
-			QString sz = loadSetup_helper(pSection, szPrefix + "master", "1");
-			bool bOK(false);
-			master = (sz.toInt(&bOK) != 0);
-			if (!bOK) 
-				master = !sz.contains("false", Qt::CaseInsensitive)  && !sz.contains("no", Qt::CaseInsensitive);
-			sz = loadSetup_helper(pSection, szPrefix + "terminate", "1");
-			terminate = (sz.toInt(&bOK) != 0);
-			if (!bOK) 
-				terminate = !sz.contains("false", Qt::CaseInsensitive) && !sz.contains("no",Qt::CaseInsensitive);
-		} while (0);
+		quint16 port = loadSetup_helper(pSection, QString("%1port").arg(szPrefix), "54321").toUInt();
+		QString cmdIP = loadSetup_helper(pSection, QString("%1cmdip").arg(szPrefix), "0.0.0.0");
+		quint16 cmdPort = loadSetup_helper(pSection, QString("%1cmdport").arg(szPrefix), "0").toUInt();
+		QString dataIP = loadSetup_helper(pSection, QString("%1dataip").arg(szPrefix), "0.0.0.0");
+		quint16 dataPort = loadSetup_helper(pSection, QString("%1datatport").arg(szPrefix), "0").toUInt();
 
 		do
 		{
@@ -745,6 +704,9 @@ bool Mesydaq2::loadSetup(const QString &name)
 		} while (0);
 
 		addMCPD(iMCPDId, IP, port > 0 ? port : cmdPort, cmdIP);
+		
+//		m_mcpd[iMCPDId]->setActive(loadSetupBoolean(pSection, szPrefix + "active", true));
+//		m_mcpd[iMCPDId]->setHistogram(loadSetupBoolean(pSection, szPrefix + "histogram", true));
 		for (int j = 0; j < 4; ++j)
 		{
 			setAuxTimer(iMCPDId, j, loadSetup_helper(pSection, QString("%1auxtimer%2").arg(szPrefix).arg(j), "0").toUInt());
@@ -764,7 +726,9 @@ bool Mesydaq2::loadSetup(const QString &name)
       			}
 			setCounterCell(iMCPDId, j, cells[0], cells[1]);
 		}
-		setTimingSetup(iMCPDId, master, terminate);
+		
+		setTimingSetup(iMCPDId, loadSetupBoolean(pSection, szPrefix + "master", true), loadSetupBoolean(pSection, szPrefix + "terminate", true));
+		
 		for (int j = 0; j < 8; ++j)
 		{
 			if (getMpsdId(iMCPDId, j))
@@ -774,6 +738,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 					threshold;
 				bool 	comgain(true);
 				int 	iMPSDId(i * 8 + j);
+
 				if (bQSettingsSpecial)
 				{
 					pMPSD = &m_lastConfiguration[hMPSDId2Pos.begin().value()];
@@ -783,9 +748,13 @@ bool Mesydaq2::loadSetup(const QString &name)
 				}
 				else
 				{
-					pMPSD = &m_lastConfiguration[hMPSDId2Pos[hMPSDId2Pos[iMPSDId]]];
+					pMPSD = &m_lastConfiguration[hMPSDId2Pos[iMPSDId]];
 					for (int k = 0; k < 8; ++k)
+					{
 						gains[k] = loadSetup_helper(pMPSD, QString("gain%1").arg(k), "92").toUInt();
+						m_mcpd[iMCPDId]->setActive(j, k, loadSetupBoolean(pMPSD, QString("active%1").arg(k), true));
+						m_mcpd[iMCPDId]->setHistogram(j, k, loadSetupBoolean(pMPSD, QString("histogram%1").arg(k), true));
+					}
 					threshold = loadSetup_helper(pMPSD, "threshold", "22").toUInt();
 				}
 				for (int k = 0; k < 8; ++k)
@@ -810,14 +779,14 @@ bool Mesydaq2::loadSetup(const QString &name)
 	foreach(MCPD8 *value, m_mcpd)
 		p += value->numModules();
 
-	protocol(tr("%1 mcpd-8 and %2 mpsd-8 found").arg(nMcpd).arg(p),NOTICE);
+	protocol(tr("%1 MCPD-8 and %2 Modules found").arg(nMcpd).arg(p),NOTICE);
 	storeLastFile();
 	return true;
 }
 
 
 /*!
- * \fn Mesydaq2::loadSetup_helper(CConfigSection* pSection, const QString& szItem, const QString& szDefault)
+ * \fn QString Mesydaq2::loadSetup_helper(CConfigSection* pSection, const QString& szItem, const QString& szDefault)
  *
  * \brief read a single item from a section of a INI file in memory
  * \param pSection section of the INI file in memory
@@ -826,13 +795,34 @@ bool Mesydaq2::loadSetup(const QString &name)
  */
 QString Mesydaq2::loadSetup_helper(CConfigSection* pSection, const QString& szItem, const QString& szDefault)
 {
-  int i=pSection->FindItemIndex(szItem);
-  QString szResult;
-  if (i<0)
-    return szDefault;
-  if (!pSection->GetItem(i).GetValue(szResult))
-    return szDefault;
-  return szResult;
+	int i = pSection->FindItemIndex(szItem);
+	QString szResult;
+	if (i < 0)
+		return szDefault;
+	if (!pSection->GetItem(i).GetValue(szResult))
+		return szDefault;
+	return szResult;
+}
+
+/*! 
+ * \fn bool Mesydaq2::loadSetupBoolean(CConfigSection* pSection, const QString& szItem, const bool)
+ *
+ * \brief read a boolean item from a setction of an INI file in memory
+ * 
+ * \param pSection section of the INI file in memory
+ * \param szDefault default value, if items does not exist
+ * \return boolean value of the item or the default (if not found)
+ */
+bool Mesydaq2::loadSetupBoolean(CConfigSection* pSection, const QString& szItem, const bool bDefault)
+{
+	bool result(bDefault);
+
+	QString sz = loadSetup_helper(pSection, szItem, bDefault ? "1" : "0");
+	bool bOK(false);
+	result = (sz.toInt(&bOK) != 0);
+	if (!bOK) 
+		result = !sz.contains("false", Qt::CaseInsensitive)  && !sz.contains("no", Qt::CaseInsensitive);
+	return result;
 }
 
 /*!
@@ -1480,19 +1470,21 @@ quint8 Mesydaq2::getThreshold(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::setRunId(quint16 id, quint16 runid)
+    \fn Mesydaq2::setRunId(quint16 runid)
 
     sets the run ID of the measurement
 
-    \param id number of the MCPD
     \param runid the new run ID
     \return true if operation was succesful or not
     \see getRunId
  */
-void Mesydaq2::setRunId(quint16 id, quint16 runid)
+void Mesydaq2::setRunId(quint16 runid)
 {
-	if (m_mcpd.contains(id))
-		m_mcpd[id]->setRunId(runid); 
+	foreach (MCPD8* value, m_mcpd)
+		if (value->isMaster())
+			value->setRunId(runid); 
+	m_runID = runid;
+	protocol(tr("Mesydaq2::setRunId(%1)").arg(m_runID), NOTICE);
 }
 
 void Mesydaq2::setHistfilename(QString name) 
@@ -1514,7 +1506,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), DEBUG);
 	if (m_daq == RUNNING)
 	{
-		quint16 mod = pd.deviceId;	
+		quint16 mod = pd.deviceId;
+		m_runID = pd.runID;
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 		quint16 counter = 0;
 		for(quint32 i = 0; i < datalen; ++i, counter += 3)
@@ -1523,7 +1516,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			{
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
 				quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
-				if (getMpsdId(mod, slotId) == MPSD8 && getMode(mod, id)) // amplitude mode
+				if (getMpsdId(mod, slotId) == TYPE_MPSD8 && getMode(mod, id)) // amplitude mode
 				{
 					// put the amplitude to the new format position
 					quint16 amp = (pd.data[counter + 1] >> 3) & 0x3FF;
@@ -1593,4 +1586,86 @@ QString Mesydaq2::getConfigfilename(void)
 		return m_configfile.absoluteFilePath();
 	else
 		return QString("");
+}
+
+/*!
+    \fn bool Mesydaq2::active(quint16 mid, quint16 id, quint16 chan)
+    
+    \param mid MCPD id
+    \param id MPSD id
+    \param chan channel id
+    \return true or false
+ */
+bool Mesydaq2::active(quint16 mid, quint16 id, quint16 chan)
+{
+	if (m_mcpd.contains(mid))
+		return m_mcpd[mid]->active(id, chan);
+	return false;
+}
+
+/*!
+    \fn bool Mesydaq2::active(quint16 mid, quint16 id)
+    
+    \param mid MCPD id
+    \param id MPSD id
+    \return true or false
+ */
+bool Mesydaq2::active(quint16 mid, quint16 id)
+{
+	if (m_mcpd.contains(mid))
+		return m_mcpd[mid]->active(id);
+	return false;
+}
+
+/*!
+    \fn bool Mesydaq2::histogram(quint16, quint16, quint16 chan)
+    \param mid MCPD id
+    \param id MPSD id
+    \param chan channel id
+    \return true or false
+ */
+bool Mesydaq2::histogram(quint16 mid, quint16 id, quint16 chan)
+{
+	if (m_mcpd.contains(mid))
+		return m_mcpd[mid]->histogram(id, chan);
+	return false;
+}
+
+/*!
+    \fn bool Mesydaq2::histogram(quint16, quint16)
+    \param mid MCPD mid
+    \param id MPSD id
+    \return true or false
+ */
+bool Mesydaq2::histogram(quint16 mid, quint16 id)
+{
+	if (m_mcpd.contains(mid))
+		return m_mcpd[mid]->histogram(id);
+	return false;
+}
+
+/*!
+    \fn void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, bool set)
+
+    \param mcpd
+    \param mpsd
+    \param set
+ */
+void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, bool set)
+{
+	if (m_mcpd.contains(mcpd))
+		m_mcpd[mcpd]->setActive(mpsd, set);
+}
+
+/*!
+    \fn void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool set)
+
+    \param mcpd
+    \param mpsd
+    \param set
+ */
+void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool set)
+{
+	if (m_mcpd.contains(mcpd))
+		m_mcpd[mcpd]->setHistogram(mpsd, set);
 }

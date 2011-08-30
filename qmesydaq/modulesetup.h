@@ -41,6 +41,7 @@ public:
 public:
 	void setModule(int);
 
+public slots:
 	void setMCPD(int);
 
 private slots:

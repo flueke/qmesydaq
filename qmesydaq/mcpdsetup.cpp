@@ -35,6 +35,8 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 	, m_theApp(mesy)
 {
     setupUi(this);
+    cellCompare->setDisabled(true);
+    connect(cellTrigger, SIGNAL(currentIndexChanged(int)), this, SLOT(cellTriggerChangedSlot(int)));
 //    listfilepath->setText(mesy->getListfilepath());
 
     dataIPAddress->setText("192.168.168.005");
@@ -51,7 +53,7 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 void MCPDSetup::sendCellSlot()
 {
     quint16 id = mcpdId->value();
-    m_theApp->setCounterCell(id, cellSource->currentIndex(), cellTrigger->currentIndex(), cellCompare->value());
+    m_theApp->setCounterCell(id, cellSource->currentIndex(), cellTrigger->currentIndex(), cellCompare->currentIndex());
 }
 
 /*!
@@ -123,7 +125,7 @@ void MCPDSetup::setIpUdpSlot()
 }
 
 /*!
-    \fn void MCPDSetup::displaySlot(int)
+    \fn void MCPDSetup::displaySlot(int id)
 
     \param id
  */
@@ -161,7 +163,7 @@ void MCPDSetup::displayCounterCellSlot(int id)
 // get cell parameters
     m_theApp->getCounterCell(mcpdId->value(), id, values);
     cellTrigger->setCurrentIndex(values[0]);
-    cellCompare->setValue(values[1]);
+    cellCompare->setCurrentIndex(values[1]);
 }
 
 /*!    
@@ -187,8 +189,18 @@ void MCPDSetup::displayAuxTimerSlot(int id)
     if (id < 0)
         id = timer->value();
 // get timer settings
-    compareAux->setText(tr("%1").arg(m_theApp->getAuxTimer(mcpdId->value(), id), 0, 16));
+    compareAux->setValue(m_theApp->getAuxTimer(mcpdId->value(), id));
 
 // get stream setting
 //  statusStream->setChecked(m_theApp->myMcpd[id]->getStream());
+}
+
+/*!
+    \fn void MCPDSetup::cellTriggerChangedSlot(int index)
+
+    callback for the cell trigger change
+ */
+void MCPDSetup::cellTriggerChangedSlot(int index)
+{
+	cellCompare->setEnabled(index);
 }

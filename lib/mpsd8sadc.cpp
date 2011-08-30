@@ -21,13 +21,14 @@
 #include "mpsd8.h"
 
 /*!
-    \fn MPSD_8SADC::MPSD_8SADC(quint8 id, QObject *parent)
+    \fn MPSD8SingleADC::MPSD8SingleADC(quint8 id, QObject *parent)
     constructor
 
     \param id ID of the module
     \param parent Qt parent object
  */
-MPSD_8SADC::MPSD_8SADC(quint8 id, QObject *parent)
-	: MPSD_8(id, parent)
+MPSD8SingleADC::MPSD8SingleADC(quint8 id, QObject *parent)
+	: MPSD8(id, parent)
 {
+	m_mpsdId = TYPE_MPSD8SADC;
 }

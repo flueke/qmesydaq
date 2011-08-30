@@ -21,7 +21,7 @@
 #define MAINWINDOW_H
 
 #include <QPrinter>
-#include "ui_mesydaq2mainwidget.h"
+#include "ui_mainwidget.h"
 
 class QwtPlotCurve;
 class QwtPlotZoomer;
@@ -114,8 +114,6 @@ private:
 
 	void 	updateDisplay(void);
 
-	void 	processDispData();
-
 	void 	drawOpData();
 
 	void 	updatePresets(void);
@@ -135,8 +133,6 @@ private slots:
 
 	void setStreamSlot();
 
-	void setRunIdSlot();
-
 	void displayMcpdSlot(int = -1);
 
 	void allPulserOff();
@@ -151,8 +147,6 @@ private slots:
 	void restoreSetupSlot();
 
 	void saveSetupSlot();
-
-	void saveConfigSlot();
 
 // list mode files related methods
 	void replayListfileSlot();
@@ -180,6 +174,10 @@ private slots:
 	void setDiffractogramMode(bool);
 
 	void closeEvent(QCloseEvent *);
+
+	void moduleHistogramSlot(quint8, bool);
+
+	void moduleActiveSlot(quint8, bool);
 
 private:
 	void 	dispFiledata(void);

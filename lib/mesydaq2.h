@@ -35,9 +35,9 @@
 #include "structures.h"
 #include "inifile.h"
 
+#include "mcpd8.h"
 
-class MCPD8;
-class MPSD_8;
+class MPSD8;
 
 /**
  * \short Mesydaq DAQ object (without any graphical frontend)
@@ -47,7 +47,11 @@ class MPSD_8;
  */
 class Mesydaq2 : public MesydaqObject 
 {
-    Q_OBJECT
+	Q_OBJECT
+
+        //! stores the currently loaded configfile name
+	Q_PROPERTY(QString  m_configfile READ getConfigfilename WRITE setConfigfilename)
+
 public:
     /**
      * Default Constructor
@@ -59,10 +63,26 @@ public:
      */
 	virtual ~Mesydaq2();
 
+	void setActive(quint16, quint16, bool);
+	
+	bool active(quint16, quint16, quint16);
+
+	bool active(quint16, quint16);
+
+	void setHistogram(quint16, quint16, bool);
+
+	bool histogram(quint16, quint16, quint16);
+
+	bool histogram(quint16, quint16);
+
 	void scanPeriph(quint16 id);
+
 	void initMcpd(quint8 id);
+
 	void setTimingwidth(quint8 width);
+
 	void writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val);
+
 	quint16 readPeriReg(quint16 id, quint16 mod, quint16 reg);
 
 // list mode oriented methods
@@ -143,7 +163,10 @@ public:
 	QString getConfigfilepath(void) {return m_configPath;}
 
 	bool loadSetup(const QString &name);
+
 	bool saveSetup(const QString &name);
+
+        //! returns the current configuration file name
 	const CConfigFile& getLastConfiguration() const { return m_lastConfiguration; }
 
 	bool checkMcpd(quint8 device);
@@ -188,7 +211,10 @@ public:
 
 	quint64 getParameter(quint16 mod, quint16 param);
 
-	void setRunId(quint16 mod, quint16 runid);
+	void setRunId(quint16 runid);
+
+	//! \return the current run ID number
+	quint16 runId() {return m_runID;}
 
 	quint64 receivedData(); 
 
@@ -205,7 +231,7 @@ public:
 	//! \return number of MCPD's
 	quint16 numMCPD(void) {return m_mcpd.size();}
 
-	//! \return list containing the found MPSD's
+	//! \return list containing the found MCPD's
 	QList<int> mcpdId(void) 
 	{
 		QList<int> st = m_mcpd.keys();
@@ -213,11 +239,27 @@ public:
 		return st;
 	}
 
+        /**
+         * gets the list of available MPSD's connected with the MCPD
+         *
+         * \param id id of the 
+         * \return list of id numbers
+         */
+	QList<int> mpsdId(const int id)
+	{
+    		QList<int> modList;
+		if (m_mcpd.contains(id))
+        		modList = m_mcpd[id]->mpsdId();
+		return modList;
+	}	
+
 	bool isMaster(quint16 mod);
 
 	bool isTerminated(quint16 mod);
 
-	quint16 bins();
+	quint16 width(void);
+
+	quint16 height(void);
 
 public slots:
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
@@ -290,16 +332,11 @@ protected:
 private:
 	void clear();
 	
-	void initHardware(void);
-
-	void initDevices(void);
-
-	void initTimers(void);
-
 	void storeLastFile(void);
 
-	static void saveSetup_helper(CConfigFile& file, const QString& szSection, int iPriority, const QString& szItem, QString szValue);
-	static QString loadSetup_helper(CConfigSection* pSection, const QString& szItem, const QString& szDefault);
+	static void 	saveSetup_helper(CConfigFile& file, const QString& szSection, int iPriority, const QString& szItem, QString szValue);
+	static QString 	loadSetup_helper(CConfigSection* pSection, const QString& szItem, const QString& szDefault);
+	static bool 	loadSetupBoolean(CConfigSection* pSection, const QString& szItem, const bool bDefault);
 
 	QHash<int, MCPD8 *>	m_mcpd;
 
@@ -311,10 +348,13 @@ private:
 
 private:
 	quint8  	m_daq;
+
+	quint16		m_runID;
     
 	bool 		m_acquireListfile;
 	QString 	m_listfilename;
 	QString 	m_histfilename;
+
 	QFileInfo 	m_configfile;
 
 	QFile 		m_datfile;
@@ -325,7 +365,7 @@ private:
 	QString 	m_configPath;
 
 	quint8  	m_timingwidth;
-	int 		m_checkTimer;
+//	int 		m_checkTimer;
 
 	QByteArray 	m_datHeader;
 	CConfigFile     m_lastConfiguration;

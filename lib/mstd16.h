@@ -29,16 +29,17 @@
  *
  * \author Jens Krüger <jens.krueger@frm2.tum.de>
  */
-class MSTD_16 : public MPSD_8
+class MSTD16 : public MPSD8
 {
 Q_OBJECT
 public:
-	MSTD_16(quint8 id, QObject *parent = 0);
-
-	~MSTD_16() {}
+	MSTD16(quint8 id, QObject *parent = 0);
 
 	//! \return the type of the MPSD as string
 	QString getType(void) {return tr("MSTD-16");}
+
+	//! \return the type of the MPSD as number
+	virtual int type(void) {return TYPE_MSTD16;}
 protected:
 
 };

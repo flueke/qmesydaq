@@ -35,7 +35,36 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	, m_theApp(mesy)
 {
     setupUi(this);
+
     devid->setMCPDList(m_theApp->mcpdId());
+    module->setModuleList(m_theApp->mpsdId(devid->value()));
+
+    checkChannel1Use->setChecked(m_theApp->active(devid->value(), module->value(), 0));
+    checkChannel1Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 0));
+
+    checkChannel2Use->setChecked(m_theApp->active(devid->value(), module->value(), 1));
+    checkChannel2Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 1));
+
+    checkChannel3Use->setChecked(m_theApp->active(devid->value(), module->value(), 2));
+    checkChannel3Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 2));
+
+    checkChannel4Use->setChecked(m_theApp->active(devid->value(), module->value(), 3));
+    checkChannel4Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 3));
+
+    checkChannel5Use->setChecked(m_theApp->active(devid->value(), module->value(), 4));
+    checkChannel5Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 4));
+
+    checkChannel6Use->setChecked(m_theApp->active(devid->value(), module->value(), 5));
+    checkChannel6Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 5));
+
+    checkChannel7Use->setChecked(m_theApp->active(devid->value(), module->value(), 6));
+    checkChannel7Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 6));
+
+    checkChannel8Use->setChecked(m_theApp->active(devid->value(), module->value(), 7));
+    checkChannel8Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 7));
+
+    channelLabel->setHidden(comgain->isChecked());
+    channel->setHidden(comgain->isChecked());
 }
 
 /*!
@@ -161,6 +190,34 @@ void ModuleSetup::setModule(int id)
 void ModuleSetup::setMCPD(int id)
 {
     devid->setValue(id);
+//  devid->setMCPDList(m_theApp->mcpdId());
+    id = devid->value();
+    module->setModuleList(m_theApp->mpsdId(id));
+    int mid = module->value();
+
+    checkChannel1Use->setChecked(m_theApp->active(id, mid, 0));
+    checkChannel1Histogram->setChecked(m_theApp->histogram(id, mid, 0));
+
+    checkChannel2Use->setChecked(m_theApp->active(id, mid, 1));
+    checkChannel2Histogram->setChecked(m_theApp->histogram(id, mid, 1));
+
+    checkChannel3Use->setChecked(m_theApp->active(id, mid, 2));
+    checkChannel3Histogram->setChecked(m_theApp->histogram(id, mid, 2));
+
+    checkChannel4Use->setChecked(m_theApp->active(id, mid, 3));
+    checkChannel4Histogram->setChecked(m_theApp->histogram(id, mid, 3));
+
+    checkChannel5Use->setChecked(m_theApp->active(id, mid, 4));
+    checkChannel5Histogram->setChecked(m_theApp->histogram(id, mid, 4));
+
+    checkChannel6Use->setChecked(m_theApp->active(id, mid, 5));
+    checkChannel6Histogram->setChecked(m_theApp->histogram(id, mid, 5));
+
+    checkChannel7Use->setChecked(m_theApp->active(id, mid, 6));
+    checkChannel7Histogram->setChecked(m_theApp->histogram(id, mid, 6));
+
+    checkChannel8Use->setChecked(m_theApp->active(id, mid, 7));
+    checkChannel8Histogram->setChecked(m_theApp->histogram(id, mid, 7));
 }
 
 /*!

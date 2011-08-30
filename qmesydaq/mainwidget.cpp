@@ -81,7 +81,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     : QWidget(parent)
     , Ui_Mesydaq2MainWidget()
     , m_theApp(mesy)
-    , m_width(mesy->bins() - 1)
+    , m_width(mesy->width())
     , m_dispThresh(false)
     , m_dispLoThresh(0)
     , m_dispHiThresh(0)
@@ -94,7 +94,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_zoomer(NULL)
     , m_controlInt(NULL)
 {
-    m_meas = new Measurement(mesy, this);
     setupUi(this);
     statusTab->setCurrentIndex(0);
 
@@ -108,23 +107,42 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     moduleStatus7->setId(7);
 
     connect(moduleStatus0, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus1, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus2, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus3, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus4, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus5, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus6, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus7, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus0, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus0, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
 
-    init();
+    connect(moduleStatus1, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus1, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus1, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+
+    connect(moduleStatus2, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus2, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus2, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+
+    connect(moduleStatus3, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus3, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus3, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+
+    connect(moduleStatus4, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus4, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus4, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+
+    connect(moduleStatus5, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus5, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus5, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+
+    connect(moduleStatus6, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus6, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus6, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+
+    connect(moduleStatus7, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
+    connect(moduleStatus7, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
+    connect(moduleStatus7, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
 
     versionLabel->setText("QMesyDAQ " + QString(VERSION) + "\n" __DATE__);
 
     connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
     connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
     connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
-    connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
-    connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
     connect(this, SIGNAL(redraw()), this, SLOT(draw()));
 #if 0
     connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
@@ -143,7 +161,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispAllPos, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(dispAllAmpl, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
-    connect(scanPeri, SIGNAL(clicked(bool)), this, SLOT(scanPeriSlot(bool)));
     connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
 
 //  connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
@@ -163,7 +180,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->setAxisTitle(QwtPlot::yRight, tr("intensity"));
     m_dataFrame->enableAxis(QwtPlot::yRight, false);
 //  m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
-    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+//  m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
     m_dataFrame->setAutoReplot(false);
 
     m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, m_dataFrame->canvas());
@@ -252,14 +269,25 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     // display refresh timer
     //	m_dispTimer = startTimer(1000);
 
-    QSettings settings("MesyTec", "QMesyDAQ");
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
     m_theApp->setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
     m_theApp->setListfilepath(getenv("HOME"));
     m_theApp->setHistfilepath(getenv("HOME"));
+    m_theApp->setRunId(settings.value("config/lastrunid", "0").toUInt());
 
     QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
     acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
     timerPreset->setChecked(setup.value("MESYDAQ/Preset/time", true).toBool());
+
+    timerPreset->setLabel(tr("Timer"));
+    eventsPreset->setLabel(tr("Events"));
+    
+    monitor1Preset->setLabel(tr("Monitor 1"));
+    monitor2Preset->setLabel(tr("Monitor 2"));
+    monitor3Preset->setLabel(tr("Monitor 3"));
+    monitor4Preset->setLabel(tr("Monitor 4"));
+
+    init();
 }
 
 //! destructor
@@ -319,10 +347,14 @@ void MainWidget::about()
 void MainWidget::init()
 {
     if (m_meas)
+    {
+        disconnect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
+        disconnect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
         delete m_meas;
+    }
     m_meas = NULL;
     m_meas = new Measurement(m_theApp, this);
-    m_width = m_theApp->bins() - 1;
+    m_width = m_theApp->width();
 
     QList<int> mcpdList = m_theApp->mcpdId();
     dispMcpd->setMCPDList(mcpdList);
@@ -341,6 +373,7 @@ void MainWidget::init()
 #if 0
     connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 #endif
+    emit redraw();
 }
 
 /*!
@@ -385,7 +418,7 @@ void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
 */
 void MainWidget::zoomed(const QwtDoubleRect &rect)
 {
-    if(rect == m_zoomer->zoomBase())
+    if (rect == m_zoomer->zoomBase())
     {
         if (!dispHistogram->isChecked())
         {
@@ -394,11 +427,15 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         }
         else
         {
-            m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_theApp->height());
             m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_width);
         }
-        emit redraw();
+        m_meas->setROI(QRectF(0,0, m_theApp->width(), m_theApp->height()));
     }
+    else
+        m_meas->setROI(rect);
+    if (!m_dispTimer)
+	emit redraw();
 }
 
 /*!
@@ -415,14 +452,14 @@ void MainWidget::startStopSlot(bool checked)
         m_theApp->setTimingwidth(timingBox->value());
 
         // get latest preset entry
-        if(m_meas->isMaster(TCT))
-            m_meas->setPreset(TCT, quint64(timerPreset->value() * 1000), true);
-        if(m_meas->isMaster(EVCT))
-            m_meas->setPreset(EVCT, eventsPreset->value(), true);
-        if(m_meas->isMaster(M1CT))
-            m_meas->setPreset(M1CT, monitor1Preset->value(), true);
-        if(m_meas->isMaster(M2CT))
-            m_meas->setPreset(M2CT, monitor2Preset->value(), true);
+        if(m_meas->isMaster(TIMERID))
+            m_meas->setPreset(TIMERID, quint64(timerPreset->value() * 1000), true);
+        if(m_meas->isMaster(EVID))
+            m_meas->setPreset(EVID, eventsPreset->value(), true);
+        if(m_meas->isMaster(MON1ID))
+            m_meas->setPreset(MON1ID, monitor1Preset->value(), true);
+        if(m_meas->isMaster(MON2ID))
+            m_meas->setPreset(MON2ID, monitor2Preset->value(), true);
 
         startStopButton->setText("Stop");
         // set device id to 0 -> will be filled by mesydaq for master
@@ -443,12 +480,12 @@ void MainWidget::startStopSlot(bool checked)
 
 /*!
     \fn void MainWidget::setStreamSlot()
-
+    \todo implementation is missing
 */
 void MainWidget::setStreamSlot()
 {
-#warning TODO  MainWidget::setStreamSlot()
-#if 0	
+#warning TODO implementation is missing 
+#if 0
     unsigned short id = (unsigned short) deviceId->value();
     m_cmdBuffer[0] = mcpdId->value();
     m_cmdBuffer[1] = QUIET;
@@ -538,17 +575,19 @@ void MainWidget::updateDisplay(void)
     m_meas->calcMeanRates();
     
     // measurement values counters and rates
-    tSecsText->setText(tr("%1").arg(m_meas->getCounter(TCT) / 1000.));
-    totalCounts->setText(tr("%1").arg(m_meas->getCounter(EVCT)));
-    eventRate->setText(tr("%1").arg(m_meas->getRate(EVCT)));
-    monitor1->setText(tr("%1").arg(m_meas->getCounter(M1CT)));
-    monRate1->setText(tr("%1").arg(m_meas->getRate(M1CT)));
-    monitor2->setText(tr("%1").arg(m_meas->getCounter(M2CT)));
-    monRate2->setText(tr("%1").arg(m_meas->getRate(M2CT)));
-    monitor3->setText(tr("%1").arg(m_meas->getCounter(M3CT)));
-    monRate3->setText(tr("%1").arg(m_meas->getRate(M3CT)));
-    monitor4->setText(tr("%1").arg(m_meas->getCounter(M4CT)));
-    monRate4->setText(tr("%1").arg(m_meas->getRate(M4CT)));
+    tSecsText->setText(tr("%1").arg(m_meas->timer() / 1000.));
+    totalCounts->setText(tr("%1").arg(m_meas->events()));
+    eventRate->setText(tr("%1").arg(m_meas->getRate(EVID)));
+    monitor1->setText(tr("%1").arg(m_meas->mon1()));
+    monRate1->setText(tr("%1").arg(m_meas->getRate(MON1ID)));
+    monitor2->setText(tr("%1").arg(m_meas->mon2()));
+    monRate2->setText(tr("%1").arg(m_meas->getRate(MON2ID)));
+    monitor3->setText(tr("%1").arg(m_meas->mon3()));
+    monRate3->setText(tr("%1").arg(m_meas->getRate(MON3ID)));
+    monitor4->setText(tr("%1").arg(m_meas->mon4()));
+    monRate4->setText(tr("%1").arg(m_meas->getRate(MON4ID)));
+
+    lcdRunID->display(m_theApp->runId());
 }
 
 /*!
@@ -563,14 +602,11 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
     quint64 val;
     ulong /*nsec,*/ sec, min, hr;
     // calculate raw seconds
+    val = round(timeval / 1000.0);
+//  nsec = timeval - (1000 * val);
     if(nano)
     {
-        val = timeval / 10000000;
-//      nsec = timeval - (10000000 * val);
-    }
-    else
-    {
-        val = timeval / 1000;
+        val = round(val / 10000.0);
 //      nsec = timeval - (1000 * val);
     }
     //	qDebug("%lu %lu %lu", timeval, val, nsec);
@@ -597,12 +633,12 @@ void MainWidget::clearAllSlot()
     m_meas->setROI(QwtDoubleRect(0,0,0,0));
     m_theApp->setHistfilename("");
     m_zoomer->setZoomBase();
-    m_meas->clearCounter(TCT);
-    m_meas->clearCounter(EVCT);
-    m_meas->clearCounter(M1CT);
-    m_meas->clearCounter(M2CT);
-    m_meas->clearCounter(M3CT);
-    m_meas->clearCounter(M4CT);
+    m_meas->clearCounter(TIMERID);
+    m_meas->clearCounter(EVID);
+    m_meas->clearCounter(MON1ID);
+    m_meas->clearCounter(MON2ID);
+    m_meas->clearCounter(MON3ID);
+    m_meas->clearCounter(MON4ID);
     emit redraw();
 }
 
@@ -661,21 +697,6 @@ void MainWidget::replayListfileSlot()
 }
 
 /*!
-     \fn void MainWidget::setRunIdSlot()
-
-*/
-void MainWidget::setRunIdSlot()
-{
-#warning TODO
-#if 0
-    quint16 runid = (quint16) devid->value();
-#warning TODO 0 !!!!
-    m_theApp->setRunId(0, runid);
-    m_theApp->protocol(tr("Set run ID to %1").arg(runid), NOTICE);
-#endif
-}
-
-/*!
     \fn void MainWidget::displayMcpdSlot(int)
 
     \param id
@@ -686,10 +707,7 @@ void MainWidget::displayMcpdSlot(int id)
         return;
     if (!m_theApp->numMCPD())
         return;
-    QList<int> modList;
-    for (int i = 0; i < 8; ++i)
-        if (m_theApp->getMpsdId(id, i))
-            modList << i;
+    QList<int> modList = m_theApp->mpsdId(id);
     dispMpsd->setModuleList(modList);
 }
 
@@ -706,14 +724,14 @@ void MainWidget::displayMpsdSlot(int)
     firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod)));
     
 // Status display:
-    moduleStatus0->update(m_theApp->getMpsdType(mod, 0), m_theApp->getMpsdVersion(mod, 0), m_theApp->online(mod, 0));
-    moduleStatus1->update(m_theApp->getMpsdType(mod, 1), m_theApp->getMpsdVersion(mod, 1), m_theApp->online(mod, 1));
-    moduleStatus2->update(m_theApp->getMpsdType(mod, 2), m_theApp->getMpsdVersion(mod, 2), m_theApp->online(mod, 2));
-    moduleStatus3->update(m_theApp->getMpsdType(mod, 3), m_theApp->getMpsdVersion(mod, 3), m_theApp->online(mod, 3));
-    moduleStatus4->update(m_theApp->getMpsdType(mod, 4), m_theApp->getMpsdVersion(mod, 4), m_theApp->online(mod, 4));
-    moduleStatus5->update(m_theApp->getMpsdType(mod, 5), m_theApp->getMpsdVersion(mod, 5), m_theApp->online(mod, 5));
-    moduleStatus6->update(m_theApp->getMpsdType(mod, 6), m_theApp->getMpsdVersion(mod, 6), m_theApp->online(mod, 6));
-    moduleStatus7->update(m_theApp->getMpsdType(mod, 7), m_theApp->getMpsdVersion(mod, 7), m_theApp->online(mod, 7));
+    moduleStatus0->update(m_theApp->getMpsdType(mod, 0), m_theApp->getMpsdVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));
+    moduleStatus1->update(m_theApp->getMpsdType(mod, 1), m_theApp->getMpsdVersion(mod, 1), m_theApp->online(mod, 1), m_theApp->histogram(mod, 1), m_theApp->active(mod, 1));
+    moduleStatus2->update(m_theApp->getMpsdType(mod, 2), m_theApp->getMpsdVersion(mod, 2), m_theApp->online(mod, 2), m_theApp->histogram(mod, 2), m_theApp->active(mod, 2));
+    moduleStatus3->update(m_theApp->getMpsdType(mod, 3), m_theApp->getMpsdVersion(mod, 3), m_theApp->online(mod, 3), m_theApp->histogram(mod, 3), m_theApp->active(mod, 3));
+    moduleStatus4->update(m_theApp->getMpsdType(mod, 4), m_theApp->getMpsdVersion(mod, 4), m_theApp->online(mod, 4), m_theApp->histogram(mod, 4), m_theApp->active(mod, 4));
+    moduleStatus5->update(m_theApp->getMpsdType(mod, 5), m_theApp->getMpsdVersion(mod, 5), m_theApp->online(mod, 5), m_theApp->histogram(mod, 5), m_theApp->active(mod, 5));
+    moduleStatus6->update(m_theApp->getMpsdType(mod, 6), m_theApp->getMpsdVersion(mod, 6), m_theApp->online(mod, 6), m_theApp->histogram(mod, 6), m_theApp->active(mod, 6));
+    moduleStatus7->update(m_theApp->getMpsdType(mod, 7), m_theApp->getMpsdVersion(mod, 7), m_theApp->online(mod, 7), m_theApp->histogram(mod, 7), m_theApp->active(mod, 7));
 }
 
 /*!
@@ -734,7 +752,7 @@ void MainWidget::scanPeriSlot(bool real)
     dispMpsd->setModuleList(modList);
     displayMpsdSlot(modList.size() ? modList.at(0) : -1);
 
-    m_width = m_theApp->bins() - 1;
+    m_width = m_theApp->width() - 1;
 }
 
 /*!
@@ -747,9 +765,7 @@ void MainWidget::saveSetupSlot()
     QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
     {
-	qDebug() << name;
         m_theApp->saveSetup(name);
-	qDebug() << m_theApp->getConfigfilename();
     }
 }
 
@@ -803,14 +819,6 @@ void MainWidget::restoreSetupSlot()
     QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
       emit(loadConfiguration(name));
-}
-
-/*!
-    \fn void MainWidget::processDispData()
-    \todo implement me
- */
-void MainWidget::processDispData()
-{
 }
 
 /*!
@@ -949,7 +957,7 @@ void MainWidget::ePresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     eventsPreset->setChecked(pr);
-    m_meas->setPreset(EVCT, eventsPreset->value(), pr);
+    m_meas->setPreset(EVID, eventsPreset->value(), pr);
 }
 
 /*!
@@ -961,7 +969,6 @@ void MainWidget::ePresetSlot(bool pr)
  */
 void MainWidget::tPresetSlot(bool pr)
 {
-    qDebug() << pr;
     if(pr)
     {
         eventsPreset->setChecked(false);
@@ -970,8 +977,8 @@ void MainWidget::tPresetSlot(bool pr)
         monitor3Preset->setChecked(false);
         monitor4Preset->setChecked(false);
     }
-    timerPreset->setEnabled(pr);
-    m_meas->setPreset(TCT, quint64(timerPreset->value() * 1000), pr);
+    timerPreset->setChecked(pr);
+    m_meas->setPreset(TIMERID, quint64(timerPreset->value() * 1000), pr);
 }
 
 /*!
@@ -992,7 +999,7 @@ void MainWidget::m1PresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     monitor1Preset->setChecked(pr);
-    m_meas->setPreset(M1CT, monitor1Preset->value(), pr);
+    m_meas->setPreset(MON1ID, monitor1Preset->value(), pr);
 }
 
 /*!
@@ -1013,7 +1020,7 @@ void MainWidget::m2PresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     monitor2Preset->setChecked(pr);
-    m_meas->setPreset(M2CT, monitor2Preset->value(), pr);
+    m_meas->setPreset(MON2ID, monitor2Preset->value(), pr);
 }
 
 /*!
@@ -1034,7 +1041,7 @@ void MainWidget::m3PresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     monitor3Preset->setChecked(pr);
-    m_meas->setPreset(M3CT, monitor3Preset->value(), pr);
+    m_meas->setPreset(MON3ID, monitor3Preset->value(), pr);
 }
 
 /*!
@@ -1055,7 +1062,7 @@ void MainWidget::m4PresetSlot(bool pr)
         monitor3Preset->setChecked(false);
     }
     monitor4Preset->setChecked(pr);
-    m_meas->setPreset(M4CT, monitor4Preset->value(), pr);
+    m_meas->setPreset(MON4ID, monitor4Preset->value(), pr);
 }
 
 /*!
@@ -1066,20 +1073,20 @@ void MainWidget::m4PresetSlot(bool pr)
 void MainWidget::updatePresets(void)
 {
     // presets
-    timerPreset->setValue(m_meas->getPreset(TCT));
-    eventsPreset->setValue(m_meas->getPreset(EVCT));
-    monitor1Preset->setValue(m_meas->getPreset(M1CT));
-    monitor2Preset->setValue(m_meas->getPreset(M2CT));
-    monitor3Preset->setValue(m_meas->getPreset(M3CT));
-    monitor4Preset->setValue(m_meas->getPreset(M4CT));
+    timerPreset->setValue(m_meas->getPreset(TIMERID));
+    eventsPreset->setValue(m_meas->getPreset(EVID));
+    monitor1Preset->setValue(m_meas->getPreset(MON1ID));
+    monitor2Preset->setValue(m_meas->getPreset(MON2ID));
+    monitor3Preset->setValue(m_meas->getPreset(MON3ID));
+    monitor4Preset->setValue(m_meas->getPreset(MON4ID));
     
     // check for master preset counter
-    timerPreset->setChecked(m_meas->isMaster(TCT));
-    eventsPreset->setChecked(m_meas->isMaster(EVCT));
-    monitor1Preset->setChecked(m_meas->isMaster(M1CT));
-    monitor2Preset->setChecked(m_meas->isMaster(M2CT));
-    monitor1Preset->setChecked(m_meas->isMaster(M3CT));
-    monitor2Preset->setChecked(m_meas->isMaster(M4CT));
+    timerPreset->setChecked(m_meas->isMaster(TIMERID));
+    eventsPreset->setChecked(m_meas->isMaster(EVID));
+    monitor1Preset->setChecked(m_meas->isMaster(MON1ID));
+    monitor2Preset->setChecked(m_meas->isMaster(MON2ID));
+    monitor1Preset->setChecked(m_meas->isMaster(MON3ID));
+    monitor2Preset->setChecked(m_meas->isMaster(MON4ID));
 }
 
 /*!
@@ -1089,7 +1096,7 @@ void MainWidget::updatePresets(void)
  */
 void MainWidget::tResetSlot()
 {
-    m_meas->clearCounter(TCT);
+    m_meas->clearCounter(TIMERID);
     updateDisplay();
 }
 
@@ -1100,7 +1107,7 @@ void MainWidget::tResetSlot()
  */
 void MainWidget::eResetSlot()
 {
-    m_meas->clearCounter(EVCT);
+    m_meas->clearCounter(EVID);
     updateDisplay();
 }
 
@@ -1111,7 +1118,7 @@ void MainWidget::eResetSlot()
  */
 void MainWidget::m1ResetSlot()
 {
-    m_meas->clearCounter(M1CT);
+    m_meas->clearCounter(MON1ID);
     updateDisplay();
 }
 
@@ -1122,7 +1129,7 @@ void MainWidget::m1ResetSlot()
  */
 void MainWidget::m2ResetSlot()
 {
-    m_meas->clearCounter(M2CT);
+    m_meas->clearCounter(MON2ID);
     updateDisplay();
 }
 
@@ -1133,7 +1140,7 @@ void MainWidget::m2ResetSlot()
  */
 void MainWidget::m3ResetSlot()
 {
-    m_meas->clearCounter(M3CT);
+    m_meas->clearCounter(MON3ID);
     updateDisplay();
 }
 
@@ -1144,18 +1151,8 @@ void MainWidget::m3ResetSlot()
  */
 void MainWidget::m4ResetSlot()
 {
-    m_meas->clearCounter(M4CT);
+    m_meas->clearCounter(MON4ID);
     updateDisplay();
-}
-
-/*!
-    \fn void MainWidget::saveConfigSlot(void)
-
-    callback to save configuration
-    \todo implement me
- */
-void MainWidget::saveConfigSlot(void)
-{
 }
 
 /*!
@@ -1196,13 +1193,14 @@ void MainWidget::setHistogramMode(bool histo)
         m_picker->setTrackerPen(QColor(Qt::white));
         m_zoomer->setRubberBandPen(QColor(Qt::white));
         m_zoomer->setTrackerPen(QColor(Qt::white));
+
         QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
-        right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
+        	right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
         m_meas->setROI(QwtDoubleRect(right, left));
         m_histogram->attach(m_dataFrame);
+        m_zoomer->zoom(0);
+        emit redraw();
     }
-    m_zoomer->zoom(0);
-    emit redraw();
 }
 
 /*!
@@ -1230,14 +1228,14 @@ void MainWidget::setSpectraMode(bool spectra)
         m_zoomer->setTrackerPen(QColor(Qt::black));
         for (int i = 0; i < 8; ++i)
             m_curve[i]->attach(m_dataFrame);
-    }
-    m_zoomer->zoom(0);
-    /*
+        m_zoomer->zoom(0);
+#if 0
 	if (!m_lastZoom.isEmpty())
 		m_zoomer->zoom(m_lastZoom);
 	m_lastZoom = tmpRect;
-*/
-    emit redraw();
+#endif
+        emit redraw();
+    }
 }
 
 /*!
@@ -1265,9 +1263,9 @@ void MainWidget::setDiffractogramMode(bool diff)
         m_zoomer->setRubberBandPen(QColor(Qt::black));
         m_zoomer->setTrackerPen(QColor(Qt::black));
         m_diffractogram->attach(m_dataFrame);
+        m_zoomer->zoom(0);
+        emit redraw();
     }
-    m_zoomer->zoom(0);
-    emit redraw();
 }
 
 /*!
@@ -1440,8 +1438,6 @@ void MainWidget::addMCPD(void)
     ModuleWizard d("192.168.168.121", quint16(0), this); // m_theApp);
     if (d.exec() == QDialog::Accepted)
     {
-	qDebug() << d.ip();
-	qDebug() << d.id();
         m_theApp->addMCPD(d.id(), d.ip());
 	init();
 	m_theApp->setTimingSetup(d.id(), d.master(), d.terminate());
@@ -1458,7 +1454,7 @@ void MainWidget::addMCPD(void)
 void MainWidget::setupModule(quint8 id)
 {
     ModuleSetup d(m_theApp, this);
-    d.setModule(devid_2->value());
+    d.setMCPD(devid_2->value());
     d.setModule(id);
     d.exec();
 }
@@ -1487,14 +1483,16 @@ void MainWidget::setupGeneral()
     GeneralSetup d(m_theApp);
     if (d.exec() == QDialog::Accepted)
     {
-    	QSettings settings("MesyTec", "QMesyDAQ");
+    	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
 	settings.setValue("config/configfilepath", d.configFilePath());
+	settings.setValue("config/lastrunid", d.lastRunId());
 //	settings.setValue("config/listfilepath", d.listFilePath());
 //	settings.setValue("config/histfilepath", d.histFilePath());
 
         m_theApp->setListfilepath(d.listFilePath());
         m_theApp->setHistfilepath(d.histFilePath());
         m_theApp->setConfigfilepath(d.configFilePath());
+        m_theApp->setRunId(d.lastRunId());
     }
 }
 
@@ -1552,7 +1550,6 @@ void MainWidget::quitContinue(void)
 */
 void MainWidget::closeEvent(QCloseEvent *)
 {
-	qDebug() << "MainWidget::closeEvent";
 }
 
 /*!
@@ -1750,12 +1747,24 @@ void MainWidget::customEvent(QEvent *e)
                         int id(args[0].toInt());
                         switch (id)
                         {
-                            case M1CT: value=monitor1->text().toDouble(); break;
-                            case M2CT: value=monitor2->text().toDouble(); break;
-                            case M3CT: value=monitor3->text().toDouble(); break;
-                            case M4CT: value=monitor4->text().toDouble(); break;
-                            case EVCT: value=totalCounts->text().toDouble(); break;
-                            case TCT:  value=tSecsText->text().toDouble(); break;
+                            case M1CT: 
+				value = m_meas->mon1();
+				break;
+                            case M2CT: 
+				value = m_meas->mon2(); 
+				break;
+                            case M3CT: 
+				value = m_meas->mon3(); 
+				break;
+                            case M4CT: 
+				value = m_meas->mon4(); 
+				break;
+                            case EVCT: 
+				value = m_meas->events(); 
+				break;
+                            case TCT:  
+				value = m_meas->timer();
+				break;
                         }
                         interface->postCommandToInterface(CommandEvent::C_READ_COUNTER,QList<QVariant>() << value);
                     }
@@ -1763,44 +1772,56 @@ void MainWidget::customEvent(QEvent *e)
                 case CommandEvent::C_SELECT_COUNTER:
                     switch (args[0].toInt())
                     {
-                        case M1CT: monitor1Preset->setChecked(true); break;
-                        case M2CT: monitor2Preset->setChecked(true); break;
-                        case M3CT: monitor3Preset->setChecked(true); break;
-                        case M4CT: monitor4Preset->setChecked(true); break;
-                        case EVCT: eventsPreset->setChecked(true);  break;
-                        case TCT:  timerPreset->setChecked(true);  break;
+                        case M1CT: 
+				monitor1Preset->setChecked(true); 
+				break;
+                        case M2CT: 
+				monitor2Preset->setChecked(true); 
+				break;
+                        case M3CT: 
+				monitor3Preset->setChecked(true); 
+				break;
+                        case M4CT: 
+				monitor4Preset->setChecked(true); 
+				break;
+                        case EVCT: 
+				eventsPreset->setChecked(true);  
+				break;
+                        case TCT:  
+				timerPreset->setChecked(true);  
+				break;
                     }
                     break;
                 case CommandEvent::C_SET_PRESELECTION:
                     if (timerPreset->isChecked())
                     {
                         timerPreset->setValue(args[0].toDouble());
-                        m_meas->setPreset(TCT, quint64(timerPreset->value() * 1000), true);
+                        m_meas->setPreset(TIMERID, quint64(timerPreset->value() * 1000), true);
                     }
                     else if (eventsPreset->isChecked())
                     {
                         eventsPreset->setValue(args[0].toInt());
-                        m_meas->setPreset(EVCT, eventsPreset->value(), true);
+                        m_meas->setPreset(EVID, eventsPreset->value(), true);
                     }
                     else if (monitor1Preset->isChecked())
                     {
                         monitor1Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(M1CT, monitor1Preset->value(), true);
+                        m_meas->setPreset(MON1ID, monitor1Preset->value(), true);
                     }
                     else if (monitor2Preset->isChecked())
                     {
                         monitor2Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(M2CT, monitor2Preset->value(), true);
+                        m_meas->setPreset(MON2ID, monitor2Preset->value(), true);
                     }
                     else if (monitor3Preset->isChecked())
                     {
                         monitor3Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(M3CT, monitor3Preset->value(), true);
+                        m_meas->setPreset(MON3ID, monitor3Preset->value(), true);
                     }
                     else if (monitor4Preset->isChecked())
                     {
                         monitor4Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(M4CT, monitor4Preset->value(), true);
+                        m_meas->setPreset(MON4ID, monitor4Preset->value(), true);
                     }
                     break;
                 case CommandEvent::C_SET_LISTMODE:
@@ -1815,7 +1836,7 @@ void MainWidget::customEvent(QEvent *e)
 		    }
 		    break;
 		case CommandEvent::C_UPDATEMAINWIDGET:
-		    if (args.count()>=3)
+		    if (args.count() >= 3)
 		    {
                         bool b;
                         int i;
@@ -1849,4 +1870,15 @@ void MainWidget::customEvent(QEvent *e)
             }
         }
     }
+}
+
+void MainWidget::moduleHistogramSlot(quint8 id, bool set)
+{
+//	qDebug() << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
+	m_theApp->setHistogram(devid_2->value(), id, set);
+}
+
+void MainWidget::moduleActiveSlot(quint8 id, bool set)
+{
+	m_theApp->setActive(devid_2->value(), id, set);
 }

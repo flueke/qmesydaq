@@ -48,7 +48,7 @@ void PresetWidget::setLabel(const QString &text)
 }
 
 /*!
-    \fn quint64 PresetWidget::presetValue(void)
+    \fn quint64 PresetWidget::value(void)
 
     \return the current selected preset value
  */
@@ -58,7 +58,7 @@ quint64 PresetWidget::value(void)
 }
 
 /*!
-    \fn void PresetWidget::setPresetValue(const quint64 val)
+    \fn void PresetWidget::setValue(const quint64 val)
 
     sets the preset value
 

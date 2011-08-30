@@ -22,15 +22,15 @@
 #include "mdefines.h"
 
 /*!
-    \fn MPSD_8P::MPSD_8P(quint8 id, QObject *parent)
+    \fn MPSD8plus::MPSD8plus(quint8 id, QObject *parent)
 
     constructor
 
     \param id ID of the module
     \param parent Qt parent object
 */
-MPSD_8P::MPSD_8P(quint8 id, QObject *parent)
-	: MPSD_8(id, parent)
+MPSD8plus::MPSD8plus(quint8 id, QObject *parent)
+	: MPSD8(id, parent)
 // set calibration factors for gain, threshold and pulser calculation
 	, m_g1(0.5)
 	, m_g2(184.783)
@@ -39,6 +39,7 @@ MPSD_8P::MPSD_8P(quint8 id, QObject *parent)
 	, m_p1(4.167)
 	, m_p2(1.2083)
 {
+	m_mpsdId = TYPE_MPSD8P;
 	for(quint8 c = 0; c < 9; c++)
 	{
 		m_gainPoti[c][0] = 92;
@@ -57,9 +58,9 @@ MPSD_8P::MPSD_8P(quint8 id, QObject *parent)
 }
 
 /*!
-    \fn MPSD_8P::setGain(quint8 channel, float gain, bool preset)
+    \fn MPSD8plus::setGain(quint8 channel, float gain, bool preset)
  */
-void MPSD_8P::setGain(quint8 channel, float gainv, bool preset)
+void MPSD8plus::setGain(quint8 channel, float gainv, bool preset)
 {
 // boundary check
 	if(gainv > 1.88)
@@ -67,17 +68,17 @@ void MPSD_8P::setGain(quint8 channel, float gainv, bool preset)
 	if(gainv < 0.5)
 		gainv = 0.5;
 
-	MPSD_8::setGain(channel, gainv, preset);
+	MPSD8::setGain(channel, gainv, preset);
 }
 
 /*!
-    \fn quint8 MPSD_8P::calcGainpoti(float fval)
+    \fn quint8 MPSD8plus::calcGainpoti(float fval)
 
     \param fval floating point value
  
     \return an integer value to be set in the MPSD registers
  */
-quint8 MPSD_8P::calcGainpoti(float fval)
+quint8 MPSD8plus::calcGainpoti(float fval)
 {
         float fg = (fval - m_g1) * m_g2;
         quint8 ug = quint8(fg);
@@ -87,21 +88,21 @@ quint8 MPSD_8P::calcGainpoti(float fval)
 }
 
 /*!
-    \fn MPSD_8P::setThreshold(quint8 threshold, bool preset)
+    \fn MPSD8plus::setThreshold(quint8 threshold, bool preset)
 */
-void MPSD_8P::setThreshold(quint8 threshold, bool preset)
+void MPSD8plus::setThreshold(quint8 threshold, bool preset)
 {
 // boundary check
 	if(threshold > 100)
     		threshold = 100;
 
-	MPSD_8::setThreshold(threshold, preset);
+	MPSD8::setThreshold(threshold, preset);
 }
 
 /*!
-    \fn MPSD_8P::calcThreshpoti(quint8 tval)
+    \fn MPSD8plus::calcThreshpoti(quint8 tval)
  */
-quint8 MPSD_8P::calcThreshpoti(quint8 tval)
+quint8 MPSD8plus::calcThreshpoti(quint8 tval)
 {
 	float ft = (tval - m_t1) / m_t2;
 	quint8 ut = quint8(ft);
@@ -112,9 +113,9 @@ quint8 MPSD_8P::calcThreshpoti(quint8 tval)
 
 
 /*!
-    \fn MPSD_8P::calcGainval(quint8 ga)
+    \fn MPSD8plus::calcGainval(quint8 ga)
  */
-float MPSD_8P::calcGainval(quint8 ga)
+float MPSD8plus::calcGainval(quint8 ga)
 {
 	float fgain = m_g1 + (float)ga/m_g2;
 	// round to two decimals:
@@ -128,9 +129,9 @@ float MPSD_8P::calcGainval(quint8 ga)
 }
 
 /*!
-    \fn MPSD_8P::calcThreshval(quint8 thr)
+    \fn MPSD8plus::calcThreshval(quint8 thr)
  */
-quint8 MPSD_8P::calcThreshval(quint8 thr)
+quint8 MPSD8plus::calcThreshval(quint8 thr)
 {
 	float ft = m_t1+(float)thr*m_t2;
 	quint8 t = quint8(ft);
@@ -142,9 +143,9 @@ quint8 MPSD_8P::calcThreshval(quint8 thr)
 }
 
 /*!
-    \fn MPSD_8P::calcPulsPoti(quint8 val, float)
+    \fn MPSD8plus::calcPulsPoti(quint8 val, float)
  */
-quint8 MPSD_8P::calcPulsPoti(quint8 val, float gv)
+quint8 MPSD8plus::calcPulsPoti(quint8 val, float gv)
 {
 	float pamp = (val / gv - m_p1) / m_p2;
 	quint8 pa = quint8(pamp);
@@ -155,11 +156,11 @@ quint8 MPSD_8P::calcPulsPoti(quint8 val, float gv)
 }
 
 /*!
-    \fn quint8 MPSD_8P::calcPulsAmp(quint8 val, float gv)
+    \fn quint8 MPSD8plus::calcPulsAmp(quint8 val, float gv)
  */
-quint8 MPSD_8P::calcPulsAmp(quint8 val, float gv)
+quint8 MPSD8plus::calcPulsAmp(quint8 val, float gv)
 {
-	protocol(tr("MPSD_8P::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv));
+	protocol(tr("MPSD8plus::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv));
 	protocol(tr("m_p1: %1, m_p2: %2").arg(m_p1).arg(m_p2));
 	float pa = (m_p1 + (val * m_p2)) * gv;
 	quint8 pamp = (quint8) pa;
