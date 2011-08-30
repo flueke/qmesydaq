@@ -767,28 +767,30 @@ void MainWidget::newSetupSlot()
 
 void MainWidget::loadConfiguration(const QString& sFilename)
 {
-  m_theApp->loadSetup(sFilename);
-  configfilename->setText(m_theApp->getConfigfilename());
-  init();
-  acquireFile->setCheckable(m_meas->acqListfile());
+    m_theApp->loadSetup(sFilename);
+    configfilename->setText(m_theApp->getConfigfilename());
+    init();
+    acquireFile->setCheckable(m_meas->acqListfile());
 
-  const CConfigFile& lastsetup=m_theApp->getLastConfiguration();
-  int i=lastsetup.FindSectionIndex("MESYDAQ");
-  if (i>=0)
-  {
-      const CConfigSection& section=lastsetup[i];
-      i=section.FindItemIndex("Preset\\time");
-      if (i<0) i=section.FindItemIndex("preset_time");
-      if (i>=0)
-      {
-	QString sz;
-	bool bOK=false;
-	section[i].GetStringValue(&sz);
-	i=sz.toInt(&bOK);
-	if (!bOK) i=sz.contains("false",Qt::CaseInsensitive) ? 0 : 1;
-	tPresetButton->setChecked(i!=0);
-      }
-  }
+    const CConfigFile &lastsetup = m_theApp->getLastConfiguration();
+    int i = lastsetup.FindSectionIndex("MESYDAQ");
+    if (i >= 0)
+    {
+        const CConfigSection &section = lastsetup[i];
+        i = section.FindItemIndex("Preset\\time");
+        if (i < 0) 
+            i = section.FindItemIndex("preset_time");
+        if (i >= 0)
+        {
+            QString sz;
+            bool bOK(false);
+            section[i].GetStringValue(&sz);
+            i = sz.toInt(&bOK);
+            if (!bOK) 
+            i = sz.contains("false",Qt::CaseInsensitive) ? 0 : 1;
+            timerPreset->setChecked(i != 0);
+        }
+    }
 }
 
 /*!
