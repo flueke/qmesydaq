@@ -42,12 +42,13 @@ void ModuleStatus::setLabel(const QString &label)
 }
 
 /*!
-    \fn void ModuleStatus::update(const QString &, const double, const bool, const bool)
+    \fn void ModuleStatus::update(const QString &type, const float version, const bool online, const bool histogram, const bool active)
 
     \param type
     \param version
     \param online
     \param histogram
+    \param active
  */
 void ModuleStatus::update(const QString &type, const float version, const bool online, const bool histogram, const bool active)
 {

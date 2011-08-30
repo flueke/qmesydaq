@@ -743,7 +743,7 @@ Listfile</string>
        </rect>
       </property>
       <property name="text">
-       <string>&amp;rescan</string>
+       <string>&amp;Rescan</string>
       </property>
      </widget>
      <widget class="QWidget" name="layoutWidget">

@@ -162,6 +162,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispAllAmpl, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
     connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
+    connect(statusTab, SIGNAL(currentChanged(int)), this, SLOT(statusTabChanged(int)));
 
 //  connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 
@@ -229,7 +230,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_curve[7]->setPen(QPen(Qt::white));
 
     m_diffractogram = new QwtPlotCurve("");
-    //	m_diffractogram->setStyle(QwtPlotCurve::Steps);
+//    m_diffractogram->setStyle(QwtPlotCurve::Steps);
 #if QT_VERSION >= 0x040000
     m_diffractogram->setRenderHint(QwtPlotItem::RenderAntialiased);
 #endif
@@ -433,9 +434,30 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         m_meas->setROI(QRectF(0,0, m_theApp->width(), m_theApp->height()));
     }
     else
-        m_meas->setROI(rect);
+    {
+	qreal 	x, 
+	    	y,
+	    	w, 
+	    	h;
+	rect.getRect(&x, &y, &w, &h);
+        m_meas->setROI(QRectF(x, y, h, w));
+    }
     if (!m_dispTimer)
 	emit redraw();
+}
+
+/*!
+    \fn void MainWidget::statusTabChanged(int )
+
+    callback for changing the tab in the status tab widget
+
+ */
+void MainWidget::statusTabChanged(int )
+{
+	if (statusTab->currentWidget() == statusModuleTab)
+	{
+		scanPeri->animateClick();
+	}
 }
 
 /*!
@@ -1193,10 +1215,12 @@ void MainWidget::setHistogramMode(bool histo)
         m_picker->setTrackerPen(QColor(Qt::white));
         m_zoomer->setRubberBandPen(QColor(Qt::white));
         m_zoomer->setTrackerPen(QColor(Qt::white));
-
+#if 0
         QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
         	right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
+        qDebug() << "setHistogramMode" << right << left;
         m_meas->setROI(QwtDoubleRect(right, left));
+#endif
         m_histogram->attach(m_dataFrame);
         m_zoomer->zoom(0);
         emit redraw();
@@ -1277,7 +1301,7 @@ void MainWidget::draw(void)
 {
     if (dispHistogram->isChecked())
     {
-        quint64 counts;
+        quint64 counts(0);
         if(dispAllPos->isChecked())
         {
             m_histData->setData(m_meas->posHist());

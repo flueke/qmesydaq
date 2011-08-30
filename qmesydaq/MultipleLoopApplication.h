@@ -38,9 +38,17 @@ class QtInterface;
 class MultipleLoopApplication : public QApplication
 {
 	Q_OBJECT
+
+	//! store the Qt interface
+	Q_PROPERTY(QtInterface *m_interface READ getQtInterface WRITE setQtInterface)
+
+        //! store the loop object
+	Q_PROPERTY(LoopObject *m_loop READ getLoopObject WRITE setLoopObject)
+
 public:
 	MultipleLoopApplication(int &argc, char **argv, LoopObject *loop = 0);
 
+	//! \return pointer to itself
 	MultipleLoopApplication *instance() {return this;}
 
 	void setLoopEventReceiver(QObject *receiver);

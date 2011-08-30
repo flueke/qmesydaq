@@ -38,17 +38,36 @@ MultipleLoopApplication::MultipleLoopApplication(int &argc, char**argv, LoopObje
 	setAttribute(Qt::AA_ImmediateWidgetCreation);
 }
 
+/*!
+    \fn void MultipleLoopApplication::setLoopEventReceiver(QObject *receiver)
+
+    sets the receiver for all events in the loop
+
+    \param receiver
+ */
 void MultipleLoopApplication::setLoopEventReceiver(QObject *receiver)
 {
 	if (m_interface)
 		m_interface->setReceiver(receiver);
 }
 
+/*!
+    \fn QObject *MultipleLoopApplication::getLoopEventReceiver()
+
+    \return the receiver object of the event loop
+ */
 QObject *MultipleLoopApplication::getLoopEventReceiver()
 {
 	return m_interface ? m_interface->getReceiver() : NULL;
 }
 
+/*!
+    \fn void MultipleLoopApplication::setLoopObject(LoopObject *loop)
+
+    sets the thread object to handle all incoming events
+    
+    \param loop 
+ */
 void MultipleLoopApplication::setLoopObject(LoopObject *loop)
 {
 	if (m_loop)
@@ -56,11 +75,23 @@ void MultipleLoopApplication::setLoopObject(LoopObject *loop)
 	m_loop = loop;
 }
 
+/*!
+    \fn LoopObject *MultipleLoopApplication::getLoopObject()
+
+    \return the thread object to handle all incoming events
+ */
 LoopObject *MultipleLoopApplication::getLoopObject()
 {
 	return m_loop;
 }
 
+/*!
+    \fn int MultipleLoopApplication::exec()
+
+    starts the external event handling thread
+
+    \return the resul of thread execution
+ */
 int MultipleLoopApplication::exec()
 {
 	if (m_loop)
@@ -71,11 +102,23 @@ int MultipleLoopApplication::exec()
 	return iResult;
 }
 
+/*!
+    \fn void MultipleLoopApplication::setQtInterface(QtInterface *interface)
+
+    sets the Qt interface of the external event handler
+
+    \param interface
+ */
 void MultipleLoopApplication::setQtInterface(QtInterface *interface)
 {
 	m_interface = interface;
 }
 
+/*!
+    \fn QtInterface *MultipleLoopApplication::getQtInterface()
+
+    \return the Qt interface of the external event handler
+ */
 QtInterface *MultipleLoopApplication::getQtInterface()
 {
 	return m_interface;

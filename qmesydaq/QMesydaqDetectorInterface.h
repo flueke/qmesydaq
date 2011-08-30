@@ -42,11 +42,23 @@ class MappedHistogram;
 class QMesyDAQDetectorInterface : public QtInterface
 {
 	Q_OBJECT
-	Q_PROPERTY(QString listFileName READ getListFileName WRITE setListFileName)
-	Q_PROPERTY(QString histFileName READ getHistogramFileName WRITE setHistogramFileName)
+	
+	//! the name of the list mode data file
+	Q_PROPERTY(QString m_listFileName READ getListFileName WRITE setListFileName)
+
+        //! the name of the histogram data file
+	Q_PROPERTY(QString m_histFileName READ getHistogramFileName WRITE setHistogramFileName)
+
+	//! is the event loop running
+	Q_PROPERTY(bool m_bDoLoop READ doLoop)
+
+	//! the preselection value
+	Q_PROPERTY(double m_preSelection READ preSelection WRITE setPreSelection)
+
 public:
         QMesyDAQDetectorInterface(QObject *receiver = 0, QObject *parent = 0);
 
+	//! \return whether looping
 	bool doLoop() const { return m_bDoLoop; }
 
 	void start();
@@ -69,12 +81,15 @@ public:
 	const MappedHistogram* getMappedHistogram();
 
 	void setListMode(bool bEnable);
+
+	//! \return name of the list mode data file
         QString getListFileName(void) const {return m_listFileName;} 
         void setListFileName(const QString name);
 
 	//! \brief store header for list mode file
 	void setListFileHeader(const void* pData, int iLength);
 
+	//! \return name of the histogram data file
         QString getHistogramFileName(void) const {return m_histFileName;}
         void setHistogramFileName(const QString name);
 
@@ -84,10 +99,11 @@ public:
 protected:
 	void customEvent(QEvent *);
 
-protected:
+private:
 	mutable QMutex		m_mutex;
 
 	bool                    m_bDoLoop;
+
 	double 			m_preSelection;
 	double 			m_counter;
 

@@ -197,6 +197,16 @@ void Spectrum::setWidth(quint16 w)
 	}
 }
 
+quint64 Spectrum::value(quint16 index)
+{
+	if (index < m_data.size())
+	{
+		return m_data[index];
+	}
+//	qDebug() << "index outside" << index << m_data.size();
+	return 0;
+}
+ 
 /*!
     \fn Histogram::Histogram(quint16 h, quint16 w)
     
@@ -252,6 +262,7 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
 		quint16 i = m_dataKeys[chan];
 		return m_data[i]->value(bin);
 	}
+//	qDebug() << "channel outside" << chan << m_dataKeys.size();
 	return 0;
 }
 
@@ -394,6 +405,27 @@ quint64 Histogram::getTotalCounts(void)
 }
 
 /*!
+    \fn quint64 Histogram::getCounts(QRect &region)
+
+    \param region region of interest
+    \return the number of events in the region
+ */
+quint64 Histogram::getCounts(QRect &region)
+{
+	quint64 tmp(0);
+	int h = region.y() + region.width();
+	int w = region.x() + region.height();
+
+	for (int y = region.y(); y < h; ++y)
+		for (int x = region.x(); x < w; ++x)
+		{
+			int v = value(x, y);
+			tmp += v;
+		}
+	return tmp;
+}
+
+/*!
     \fn Histogram::spectrum(quint16 channel)
 
     \param channel number of the tube
@@ -479,8 +511,9 @@ void Histogram::setHeight(quint16 h)
 		return;
 	else if (h > height())
 	{
+		int w = width();
 		for (int i = height(); i < h; ++i)
-			m_data.insert(i, new Spectrum(m_sumSpectrum.width()));
+			m_data.insert(i, new Spectrum(w));
 	}
 	else 
 	{
@@ -518,43 +551,6 @@ quint16 Histogram::width(void)
 }
 
 /*!
-    \fn Histogram::writeHistogram(QFile *f, const QString title)
-
-    writes the histogram to the opened file with a comment.
-
-    \param f file pointer to the opened file
-    \param title title for the histogram
-    \return true in case of success else false
- */
-bool Histogram::writeHistogram(QFile *f, const QString title)
-{
-	QTextStream t( f );        // use a text stream
-	QString s;
-	// Title
-	t << title << '\r' << '\n'; 
-	int width = m_data.size();
-	for(int i = 0; i < width; i++)		// why 64 ??? 
-		t << '\t' << i; 
-	t << '\r' << '\n';
-	t.flush();
-	int size = m_sumSpectrum.width();
-	for(int i = 0; i < size; ++i)
-	{
-		t << i;
-		for(int j = 0; j < width; j++)	
-			t << '\t' << value(j, i);
-		t << '\r' << '\n';
-		t.flush();
-	}
-	t << '\r' << '\n';
-	t.flush();
-
-// "position data: 1 row title (8 x 8 detectors), position data in columns";
-// "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns";
-	return true;
-}
-
-/*!
     \fn QString Histogram::format(void)
 
     \return formatted histogram as string
@@ -563,14 +559,16 @@ QString Histogram::format(void)
 {
 	QString t("");
 
-        for (int i = 0; i < m_data.size(); ++i)
-                t += QString("%1\t").arg(i);
+        for (int i = 0; i < height(); ++i)
+                t += QString("\t%1").arg(i);
         t += "\r\n";
-        for (int i = 0; i < m_sumSpectrum.width(); i++)
+        for (int i = 0; i < width(); i++)
         {
-                t += QString("%1\t").arg(i);
-                for (int j = 0; j < m_data.size(); j++)
-                        t += QString("%1\t").arg(value(j, i));
+                t += QString("%1").arg(i);
+                for (int j = 0; j < height(); j++)
+		{
+                        t += QString("\t%1").arg(value(j, i));
+		}
                 t += "\r\n";
         }
         t += "\r\n";

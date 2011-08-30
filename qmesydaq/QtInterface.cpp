@@ -26,6 +26,12 @@
 #include"LoopObject.h"
 #include <QDateTime>
 
+/*!
+    constructor
+
+    \param receiver
+    \param parent
+ */
 QtInterface::QtInterface(QObject *receiver, QObject *parent)
     : QObject(parent)
     , m_receiver(receiver)
@@ -33,22 +39,43 @@ QtInterface::QtInterface(QObject *receiver, QObject *parent)
 {
 }
 
+/*!
+    \fn void QtInterface::setReceiver(QObject *receiver)
+
+    \param receiver
+ */
 void QtInterface::setReceiver(QObject *receiver)
 {
     this->m_receiver = receiver;
 }
 
+/*!
+    \fn QObject *QtInterface::getReceiver()
+
+    \return the receiver object
+ */
 QObject *QtInterface::getReceiver()
 {
     return this->m_receiver;
 }
 
+/*!
+    \fn void QtInterface::postEvent(QEvent *event)
+
+    \param event
+ */
 void QtInterface::postEvent(QEvent *event)
 {
     if (this->m_receiver)
         QApplication::postEvent(this->m_receiver, event);
 }
 
+/*!
+    \fn void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
+
+    \param cmd
+    \param args
+ */
 void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
 {
     CommandEvent *newEvent;
@@ -59,6 +86,11 @@ void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
     postEvent(newEvent);
 }
 
+/*!
+    \fn void QtInterface::waitForEvent()
+
+    handles a sleep to wait for an event as a response to a sent action 
+  */
 void QtInterface::waitForEvent()
 {
 	LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
@@ -74,15 +106,22 @@ void QtInterface::waitForEvent()
 			loop->pSleep(1);
 		else
 		{
-			int tDiff=tStart.msecsTo(QTime::currentTime());
-			if (tDiff<0) tDiff+=86400000;
-			if (tDiff>5000)
+			int tDiff = tStart.msecsTo(QTime::currentTime());
+			if (tDiff < 0) 
+				tDiff += 86400000;
+			if (tDiff > 5000)
 				break;
 			usleep(1000);
 		}
 	}
 }
 
+/*!
+    \fn void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
+
+    \param cmd
+    \param args
+ */
 void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
 {
         m_eventReceived = false;
@@ -90,6 +129,12 @@ void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> 
 	waitForEvent();
 }
 
+/*!
+    \fn void QtInterface::postCommandToInterface(CommandEvent::Command cmd, QList<QVariant> args)
+
+    \param cmd
+    \param args
+ */
 void QtInterface::postCommandToInterface(CommandEvent::Command cmd, QList<QVariant> args)
 {
     CommandEvent *newEvent;

@@ -27,6 +27,7 @@
 #include <QVector>
 #include <QList>
 #include <QHash>
+#include <QRect>
 
 class QFile;
 
@@ -59,6 +60,8 @@ public:
 	//! \return sum of counts in the spectrum
 	quint64 getTotalCounts() {return m_totalCounts;}
 
+	quint64 getCounts();
+
 	float mean(float &s);
 
 //	quint64 operator[](quint16 index) {return m_data[index];}
@@ -69,7 +72,7 @@ public:
 	 * \param index position inside the spectrum for the required counts
 	 * \return the number of neutrons
 	 */
-	quint64 value(quint16 index) {return index < m_data.size() ? m_data[index] : 0;}
+	quint64 value(quint16 index);
 
 	//! \return the length of the spectrum
 	quint16	width() {return m_data.size();}
@@ -85,6 +88,8 @@ public:
 	 * \param  bins new size of the spectrum
 	 */
 	void resize(quint16 bins) {m_data.resize(bins);}
+
+	QString format(void);
 
 private:
 	void calcFloatingMean(quint16 bin);
@@ -137,6 +142,8 @@ public:
 
 	quint64 getTotalCounts(void);
 
+	quint64 getCounts(QRect &r);
+
 	Spectrum *spectrum(quint16 channel);
 
 	//! \return the sum spectrum
@@ -157,8 +164,6 @@ public:
 
 	QString format(void);
 
-	bool writeHistogram(QFile *f, const QString comment = "");
-
 	quint64 value(quint16 x, quint16 y);
 
 	quint16	height(); 
@@ -176,6 +181,8 @@ private:
 
 private:
 	quint64 			m_totalCounts;
+
+	QHash<QPoint, int>		m_data1;
 
 	QHash<quint16, Spectrum*>	m_data;
 

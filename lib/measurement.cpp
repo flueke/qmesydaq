@@ -337,21 +337,15 @@ ulong Measurement::getRate(quint8 cNum)
  */
 quint8 Measurement::isOk(void)
 {
+	quint8 ret(2);
 	if (m_online)
 	{
 		if (m_working)
-		{
-//    			qDebug("online&working");
-    			return 0;
-		}
+    			ret = 0;
     		else 
-		{
-//    			qDebug("online not working");
-    			return 1;
-    		}
+    			ret = 1;
    	}
-//	qDebug("not online, not working");
-    	return 2;
+    	return ret;
 }
 
 /*!
@@ -608,9 +602,15 @@ void Measurement::writeHistograms(const QString &name)
 		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
 		t.flush();
 		if (m_posHist)
-    			m_posHist->writeHistogram(&f, "position data: 1 row title (8 x 8 detectors), position data in columns");
+		{
+			t << "position data: 1 row title (8 x 8 detectors), position data in columns" << '\r' << '\n';
+    			t << m_posHist->format() << '\r' << '\n';
+		}
 		if (m_ampHist)
-			m_ampHist->writeHistogram(&f, "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns");
+		{
+			t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns" << '\r' << '\n';
+    			t << m_ampHist->format() << '\r' << '\n';
+		}
 		f.close();
 	}
 }
@@ -1025,21 +1025,13 @@ void Measurement::setROI(QRectF r)
 
 quint64 Measurement::ampEventsInROI()
 {
-	quint64 tmp(0);
-
-	for (int i = m_roi.x(); i < m_roi.x() + m_roi.width(); ++i)
-		for (int j = m_roi.y(); j < m_roi.y() + m_roi.height(); ++j)
-			tmp += m_ampHist->value(i, j);
+	quint64 tmp = m_ampHist->getCounts(m_roi);
 	return tmp;
 }
 
 quint64 Measurement::posEventsInROI()
 {
-	quint64 tmp(0);
-	
-	for (int i = m_roi.x(); i < m_roi.x() + m_roi.width(); ++i)
-		for (int j = m_roi.y(); j < m_roi.y() + m_roi.height(); ++j)
-			tmp += m_posHist->value(i, j);
+	quint64 tmp = m_posHist->getCounts(m_roi);
 	return tmp;
 }
 

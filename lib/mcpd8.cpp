@@ -897,7 +897,7 @@ bool MCPD8::setRunId(quint16 runid)
  */
 bool MCPD8::setParameter(quint16 param, quint64 val)
 {
-        protocol(tr("Set parameter %1 to %2").arg(param).arg(val), NOTICE);
+        protocol(tr("Set parameter %1 to %2").arg(param).arg(val), DEBUG);
 	if(param > 3)
 		return false;
 	m_parameter[param] = val;

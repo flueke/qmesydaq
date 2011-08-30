@@ -41,6 +41,8 @@ void LoopObject::run()
 
 /*!
     \fn void LoopObject::runLoop()
+
+    does all in the thread
  */
 void LoopObject::runLoop()
 {

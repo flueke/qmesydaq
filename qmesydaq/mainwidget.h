@@ -179,6 +179,8 @@ private slots:
 
 	void moduleActiveSlot(quint8, bool);
 
+	void statusTabChanged(int);
+
 private:
 	void 	dispFiledata(void);
 

@@ -49,8 +49,10 @@ public:
 	quint64 value(void);
 
 signals:
+	//! this signal will be emitted if the reset button is pressed
 	void resetClicked();
 
+	//! this signal will be emitted if the check button for the master is changed
 	void presetClicked(bool);
 
 

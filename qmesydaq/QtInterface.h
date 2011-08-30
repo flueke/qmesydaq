@@ -36,6 +36,10 @@
 class QtInterface : public QObject
 {
 	Q_OBJECT
+
+	//! the receiver object
+	Q_PROPERTY(QObject *m_receiver READ getReceiver WRITE setReceiver)
+
 public:
 	QtInterface(QObject *receiver = 0, QObject *parent = 0);
 

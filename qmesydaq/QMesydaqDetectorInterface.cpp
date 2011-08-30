@@ -32,6 +32,12 @@
 #include <iostream>
 #include <QThread>
 
+/*!
+    constructor
+
+    \param receiver
+    \param parent
+ */
 QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject *parent)
     	: QtInterface(receiver, parent)
 	, m_bDoLoop(true)
@@ -42,26 +48,45 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
 {
 }
 
+/*!
+    emits the start to the interface
+ */
 void QMesyDAQDetectorInterface::start()
 {
         postCommand(CommandEvent::C_START);
 }
 
+/*!
+    emits the stop to the interface
+ */
 void QMesyDAQDetectorInterface::stop()
 {
         postCommand(CommandEvent::C_STOP);
 }
 
+/*!
+    emits the clear to the interface
+ */
 void QMesyDAQDetectorInterface::clear()
 {
         postCommand(CommandEvent::C_CLEAR);
 }
 
+/*!
+    emits the resume to the interface
+ */
 void QMesyDAQDetectorInterface::resume()
 {
         postCommand(CommandEvent::C_RESUME);
 }
 
+/*!
+    initiate a read of the counter and return it
+
+    \param id counter number
+
+    \return counter value
+ */
 double QMesyDAQDetectorInterface::readCounter(int id)
 {
 	double r(0.0);
@@ -72,16 +97,29 @@ double QMesyDAQDetectorInterface::readCounter(int id)
 	return r;
 }
 
+/*!
+    selects a counter for setting of preselection
+
+    \param id counter number
+ */
 void QMesyDAQDetectorInterface::selectCounter(int id)
 {
-	postCommand(CommandEvent::C_SELECT_COUNTER,QList<QVariant>() << id);
+	postCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id);
 }
 
+/*!
+    sets the preselection of the selected counter
+
+    \param value preselection
+ */
 void QMesyDAQDetectorInterface::setPreSelection(double value)
 {
         postCommand(CommandEvent::C_SET_PRESELECTION,QList<QVariant>() << value);
 }
 
+/*!
+    \return the preselection value of the preset counter
+ */
 double QMesyDAQDetectorInterface::preSelection()
 {
 	double r(0.0);
@@ -92,6 +130,9 @@ double QMesyDAQDetectorInterface::preSelection()
 	return r;
 }
 
+/*!
+    \return the 'diffractogram'
+ */
 QList<quint32> QMesyDAQDetectorInterface::read()
 {
 	QList<quint32> rtn;
@@ -106,7 +147,13 @@ QList<quint32> QMesyDAQDetectorInterface::read()
 	return rtn;
 }
 
-void QMesyDAQDetectorInterface::readHistogramSize(quint16& width, quint16& height)
+/*!
+     return the size of the histogram 
+
+     \param width
+     \param height
+ */
+void QMesyDAQDetectorInterface::readHistogramSize(quint16 &width, quint16 &height)
 {
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_READ_HISTOGRAM_SIZE);
@@ -115,6 +162,9 @@ void QMesyDAQDetectorInterface::readHistogramSize(quint16& width, quint16& heigh
 	m_mutex.unlock();
 }
 
+/*!
+    \return the histogram
+ */
 QList<quint64> QMesyDAQDetectorInterface::readHistogram()
 {
 	QList<quint64> r;
@@ -125,6 +175,9 @@ QList<quint64> QMesyDAQDetectorInterface::readHistogram()
 	return r;
 }
 
+/*!
+    \return the 'diffractogram' as 64bit values
+ */
 QList<quint64> QMesyDAQDetectorInterface::readDiffractogram()
 {
 	QList<quint64> r;
@@ -135,6 +188,10 @@ QList<quint64> QMesyDAQDetectorInterface::readDiffractogram()
 	return r;
 }
 
+/*!
+    \param iSpectrogram number of tube
+    \return a spectrogram of a tube
+ */
 QList<quint64> QMesyDAQDetectorInterface::readSpectrogram(int iSpectrogram/*=-1*/)
 {
 	QList<quint64> r;
@@ -148,6 +205,9 @@ QList<quint64> QMesyDAQDetectorInterface::readSpectrogram(int iSpectrogram/*=-1*
 	return r;
 }
 
+/*!
+    \return the current status of the detector
+ */
 int QMesyDAQDetectorInterface::status()
 {
 	int r(0);
@@ -158,6 +218,9 @@ int QMesyDAQDetectorInterface::status()
 	return r;
 }
 
+/*!
+    \return the correction map
+ */
 const MapCorrection* QMesyDAQDetectorInterface::getMappingCorrection()
 {
 	MapCorrection* pResult(NULL);
@@ -169,6 +232,10 @@ const MapCorrection* QMesyDAQDetectorInterface::getMappingCorrection()
 	return pResult;
 }
 
+/*!
+    sets the correction map
+    \param map
+ */
 void QMesyDAQDetectorInterface::setMappingCorrection(const MapCorrection& map)
 {
 	if (!map.isValid()) 
@@ -197,6 +264,9 @@ void QMesyDAQDetectorInterface::setMappingCorrection(const MapCorrection& map)
 	m_mutex.unlock();
 }
 
+/*!
+    \return the histogram multiplied by the correction factors
+ */
 const MappedHistogram *QMesyDAQDetectorInterface::getMappedHistogram()
 {
 	MappedHistogram *pResult(NULL);
@@ -208,16 +278,25 @@ const MappedHistogram *QMesyDAQDetectorInterface::getMappedHistogram()
 	return pResult;
 }
 
+/*!
+    \param name
+ */
 void QMesyDAQDetectorInterface::setHistogramFileName(const QString name)
 {
 	m_histFileName = name;
 }
 
+/*!
+    \param name
+ */
 void QMesyDAQDetectorInterface::setListFileName(const QString name)
 {
 	m_listFileName = name;
 }
 
+/*!
+    \param bEnable
+ */
 void QMesyDAQDetectorInterface::setListMode(bool bEnable)
 {
 	postCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable);
@@ -230,14 +309,26 @@ void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength
 	m_mutex.unlock();
 }
 
+/*!
+
+    \param iWidth
+    \param iHeight
+    \param iRunNo
+ */
 void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iRunNo)
 {
-	postCommand(CommandEvent::C_UPDATEMAINWIDGET,QList<QVariant>() << iWidth << iHeight << iRunNo);
+	postCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << iWidth << iHeight << iRunNo);
 }
 
+/*!
+
+    \param sWidth
+    \param sHeight
+    \param sRunNo
+ */
 void QMesyDAQDetectorInterface::updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo)
 {
-	postCommand(CommandEvent::C_UPDATEMAINWIDGET,QList<QVariant>() << sWidth << sHeight << sRunNo);
+	postCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << sWidth << sHeight << sRunNo);
 }
 
 void QMesyDAQDetectorInterface::customEvent(QEvent *e)
