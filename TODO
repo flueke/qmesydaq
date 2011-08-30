@@ -5,4 +5,10 @@ list mode data files:
 		whether the data are position or amplitude !!!!!
 	- 
 
+JK : 08/30/2011
+	Resize histogram if the setup of the modules has changed
+		- scanPeriSlot ???
+
+JK : 08/30/2011
+	Histogram mapping to the tubes 
 
