@@ -48,6 +48,7 @@ HEADERS 	+= mainwidget.h \
 		MultipleLoopApplication.h \
 		ipaddresswidget.h \
 		presetwidget.h \
+		doublepresetwidget.h \
 		generalsetup.h \
 		mcpdsetup.h \
 		modulestatus.h \
@@ -61,6 +62,7 @@ FORMS 		+= mesydaq2mainwidget.ui \
 		generalsetup.ui \
 		mcpdsetup.ui \
 		presetwidget.ui \
+		doublepresetwidget.ui \
 		modulestatus.ui \
 		modulewizard.ui \
 		moduleidentificationpage.ui \
@@ -79,6 +81,7 @@ SOURCES 	+= main.cpp \
 		MultipleLoopApplication.cpp \
 		ipaddresswidget.cpp \
 		presetwidget.cpp \
+		doublepresetwidget.cpp \
 		generalsetup.cpp \
 		mcpdsetup.cpp \
 		modulesetup.cpp \
