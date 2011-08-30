@@ -34,6 +34,7 @@
 #include <QList>
 #include <QRect>
 #include <QVector>
+#include <QPoint>
 #include "histogram.h"
 
 class MappedHistogram;
@@ -45,8 +46,11 @@ class MappedHistogram;
  */
 class MapCorrection : public MesydaqObject
 {
-  Q_OBJECT
-  Q_ENUMS(Orientation)
+    Q_OBJECT
+    Q_ENUMS(Orientation)
+
+    Q_PROPERTY(bool m_bNoMapping READ isNoMap)
+
 public:
   //! orientation of histogram
   // OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
@@ -58,57 +62,139 @@ public:
   // OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
   // OrientationRightRev: channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
   // this is used at class MappedHistogram, but stored here for convenience
-  enum Orientation { OrientationUp=0, OrientationDown, OrientationLeft, OrientationRight,
-		     OrientationUpRev, OrientationDownRev, OrientationLeftRev, OrientationRightRev };
+    enum Orientation { OrientationUp = 0, 
+		       OrientationDown, 
+                       OrientationLeft, 
+		       OrientationRight,
+		       OrientationUpRev, 
+		       OrientationDownRev, 
+		       OrientationLeftRev, 
+		       OrientationRightRevi,
+			 };
 
-  //! select which pixel should be hold a correction factor: source or mapped pixel
-  enum CorrectionType { CorrectSourcePixel=0, CorrectMappedPixel };
+    //! select which pixel should be hold a correction factor: source or mapped pixel
+    enum CorrectionType { CorrectSourcePixel = 0, 
+			  CorrectMappedPixel, };
 
-  struct point // 4 bytes per pixel
-  {
-    quint16 x;
-    quint16 y;
-  };
+    //! default constructor
+    MapCorrection() 
+	: m_bNoMapping(false)
+	, m_iOrientation(MapCorrection::OrientationUp)
+	, m_iCorrection(MapCorrection::CorrectSourcePixel) 
+    {
+    }
 
-  MapCorrection() : m_bNoMapping(false), m_iOrientation(MapCorrection::OrientationUp), m_iCorrection(MapCorrection::CorrectSourcePixel) {}
-  MapCorrection(const MapCorrection& src);
-  MapCorrection& operator=(const MapCorrection& src);
-  MapCorrection(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-    { initialize(size.width(),size.height(),iOrientation,iCorrection); }
-  ~MapCorrection() {}
+    MapCorrection(const MapCorrection& src);
 
-  bool isNoMap() const { return m_bNoMapping; }
-  bool isValid() const;
+    MapCorrection& operator=(const MapCorrection& src);
 
-  void setNoMap();
-  void initialize(int iWidth, int iHeight, enum Orientation iOrientation, enum CorrectionType iCorrection);
-  inline void initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-    { initialize(size.width(),size.height(),iOrientation,iCorrection); }
-  void setMappedRect(const QRect& mapRect);
+    /*! 
+        constructor
 
-  bool map(const QPoint& src, const QPoint& dst, float dblCorrection);
-  bool map(const QRect& src, const QPoint& dst, float dblCorrection);
+        \param size
+        \param iOrientation
+        \param iCorrection
+     */
+    MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+    { 
+         initialize(size.width(), size.height(), iOrientation, iCorrection); 
+    }
 
-  const QRect& getMapRect() const { return m_mapRect; }
-  bool getMap(const QPoint& src, QPoint& dst, float& dblCorrection) const;
-  inline bool getMap(int iSrcX, int iSrcY, int& iDstX, int& iDstY, float& dblCorrection) const
-    { QPoint s(iSrcX,iSrcY),d; bool r=getMap(s,d,dblCorrection); iDstX=d.x(); iDstY=d.y(); return r; }
+    //! destructor
+    ~MapCorrection() 
+    {
+    }
 
-  void mirrorVertical();
-  void mirrorHorizontal();
-  void rotateLeft();
-  void rotateRight();
+    //! \return whether no mapping 
+    bool isNoMap() const { return m_bNoMapping; }
 
-  static MapCorrection noMap() { MapCorrection r; r.m_bNoMapping=true; return r; }
+    bool isValid() const;
 
-protected:
-  bool                m_bNoMapping;
-  enum Orientation    m_iOrientation;
-  enum CorrectionType m_iCorrection;
-  QRect               m_rect;
-  QRect               m_mapRect;
-  QVector<point>      m_aptMap;
-  QVector<float>      m_afCorrection;
+    void setNoMap();
+
+    void initialize(int iWidth, int iHeight, enum Orientation iOrientation, enum CorrectionType iCorrection);
+
+    /*! 
+        initialize mapping
+
+        \param size
+        \param iOrientation
+        \param iCorrection
+     */
+    void initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+    { 
+	initialize(size.width(),size.height(),iOrientation,iCorrection); 
+    }
+
+    void setMappedRect(const QRect& mapRect);
+
+    bool map(const QPoint& src, const QPoint& dst, float dblCorrection);
+
+    bool map(const QRect& src, const QPoint& dst, float dblCorrection);
+
+    //! \return the correction map 
+    const QRect& getMapRect() const { return m_mapRect; }
+    
+    bool getMap(const QPoint& src, QPoint& dst, float& dblCorrection) const;
+
+    /*! 
+        read mapping
+
+        \param iSrcX
+        \param iSrcY
+        \param iDstX
+        \param iDstY
+        \param dblCorrection
+
+        \return true if mapping was successful
+    */
+    bool getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const
+    { 
+	QPoint 	s(iSrcX, iSrcY),
+		d; 
+        bool r = getMap(s,d,dblCorrection); 
+        iDstX = d.x(); 
+        iDstY = d.y(); 
+        return r; 
+    }
+
+    void mirrorVertical();
+
+    void mirrorHorizontal();
+
+    void rotateLeft();
+
+    void rotateRight();
+
+    //! \return an empty mapping
+    static MapCorrection noMap() 
+    { 
+	MapCorrection r; 
+	r.m_bNoMapping = true; 
+	return r; 
+    }
+
+private:
+    //! do not apply mapping
+    bool                m_bNoMapping;
+
+    //! orientation
+    enum Orientation    m_iOrientation;
+
+    //! correction type
+    enum CorrectionType m_iCorrection;
+
+    //! size of the original array ???
+    QRect               m_rect;
+
+    //! size of the destination array ???
+    QRect               m_mapRect;
+
+    //! mapping 
+    QVector<QPoint>     m_aptMap;
+
+    //! intensity correction 
+    QVector<float>      m_afCorrection;
 };
 
 /**
@@ -118,53 +204,63 @@ protected:
  */
 class MappedHistogram : public MesydaqObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  MappedHistogram(MapCorrection* pCorrection, Histogram* pHistogram = NULL);
-  MappedHistogram(const MappedHistogram& src);
-  MappedHistogram& operator=(const MappedHistogram& src);
-  ~MappedHistogram() {}
+    MappedHistogram(MapCorrection* pCorrection, Histogram* pHistogram = NULL);
+    MappedHistogram(const MappedHistogram& src);
+    MappedHistogram& operator=(const MappedHistogram& src);
 
-  void setMapCorrection(MapCorrection* pMapCorrection, Histogram* pSrc = NULL);
-  void setHistogram(Histogram* pSrc) { setMapCorrection(NULL,pSrc); }
+    //! destructor
+    ~MappedHistogram() {}
 
-  //! \return sum of all events
-  quint64 getTotalCounts(void) { return m_ullTotalCounts; }
-  quint64 getCorrectedTotalCounts(void);
+    void setMapCorrection(MapCorrection* pMapCorrection, Histogram* pSrc = NULL);
 
-  //! \return the maximum value of this histogram
-  quint64 max() { return m_iMaxPos>=0 && m_iMaxPos<m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : 0ULL; }
+    /*!
+        sets the histogram
 
-  //! \return the number of the first tube containing the maximum value
-  int maxpos() { return m_iMaxPos; }
+        \param pSrc
+     */
+    void setHistogram(Histogram *pSrc) 
+    { 
+        setMapCorrection(NULL, pSrc); 
+    }
 
-  //! \return the counts at a specific position
-  quint64 value(quint16 x, quint16 y);
-  double floatValue(quint16 x, quint16 y);
+    //! \return sum of all events
+    quint64 getTotalCounts(void) { return m_ullTotalCounts; }
+    quint64 getCorrectedTotalCounts(void);
 
-  //! \return the height of this histogram
-  quint16 height() { return m_iHeight; }
+    //! \return the maximum value of this histogram
+    quint64 max() { return m_iMaxPos>=0 && m_iMaxPos<m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : NULL; }
 
-  //! \return the width of this histogram
-  quint16 width() { return m_iWidth; }
+    //! \return the number of the first tube containing the maximum value
+    int maxpos() { return m_iMaxPos; }
 
-  //! \param chan hardware input channel
-  //! \param bin  position at specified channel
-  //! \brief store an event at position
-  bool incVal(quint16 chan, quint16 bin);
+    quint64 value(quint16 x, quint16 y);
+    double floatValue(quint16 x, quint16 y);
 
-  //! \brief clear this histogram
-  void clear(void);
+    //! \return the height of this histogram
+    quint16 height() { return m_iHeight; }
 
-protected:
-  quint16         m_iWidth;
-  quint16         m_iHeight;
-  MapCorrection*  m_pMapCorrection;
+    //! \return the width of this histogram
+    quint16 width() { return m_iWidth; }
 
-  QVector<double> m_adblData;
-  quint64         m_ullTotalCounts;
-  double          m_dblTotalCounts;
-  int             m_iMaxPos;
+    //! \param chan hardware input channel
+    //! \param bin  position at specified channel
+    //! \brief store an event at position
+    bool incVal(quint16 chan, quint16 bin);
+
+    //! \brief clear this histogram
+    void clear(void);
+
+private:
+    quint16         m_iWidth;
+    quint16         m_iHeight;
+    MapCorrection*  m_pMapCorrection;
+
+    QVector<double> m_adblData;
+    quint64         m_ullTotalCounts;
+    double          m_dblTotalCounts;
+    int             m_iMaxPos;
 /*
 protected:
   void maporientation(int iSrcX, int iSrcY, int& iDstX, int& iDstY);

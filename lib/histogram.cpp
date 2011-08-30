@@ -212,8 +212,8 @@ quint64 Spectrum::value(quint16 index)
     
     constructor
 
-    \param channels number of channels (i.e. number of tubes)
-    \param bins number of bins (inside a tube)
+    \param h number of channels (i.e. number of tubes)
+    \param w number of bins (inside a tube)
  */
 Histogram::Histogram(quint16 h, quint16 w)
 	: MesydaqObject()

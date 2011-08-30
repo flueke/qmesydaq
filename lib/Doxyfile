@@ -655,7 +655,7 @@ EXCLUDE_SYMLINKS       = NO
 # for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = moc_*.cpp \
-			mapcorrect.* inifile.* \
+			inifile.* \
 			structures.h \
 			channel.h \
 			mesydaq3.h 
