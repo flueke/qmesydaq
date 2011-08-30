@@ -43,62 +43,62 @@ Mdll::~Mdll()
  */
 void Mdll::initDefaults(void)
 {
-    m_mdllSet.id = 0;
-    m_mdllSet.master = true;
-    m_mdllSet.terminate = true;
-    m_mdllSet.threshX = 20;
-    m_mdllSet.threshY = 20;
-    m_mdllSet.threshA = 20;
-    m_mdllSet.shiftX = 100;
-    m_mdllSet.shiftY = 100;
-    m_mdllSet.scaleX = 40;
-    m_mdllSet.scaleY = 40;
-/*
-    m_mdllSet.mode = 0;
-    m_mdllSet.previewHistsize = 0;
-    m_mdllSet.previewHistrate = 0xFFF;
-    m_mdllSet.histSize = 2;
-    m_mdllSet.histType = 0;
-    m_mdllSet.slscOff = 1;
-*/    m_mdllSet.datareg = 0;
+	m_mdllSet.id = 0;
+	m_mdllSet.master = true;
+	m_mdllSet.terminate = true;
+	m_mdllSet.threshX = 20;
+	m_mdllSet.threshY = 20;
+	m_mdllSet.threshA = 20;
+	m_mdllSet.shiftX = 100;
+	m_mdllSet.shiftY = 100;
+	m_mdllSet.scaleX = 40;
+	m_mdllSet.scaleY = 40;
+#if 0
+	m_mdllSet.mode = 0;
+	m_mdllSet.previewHistsize = 0;
+	m_mdllSet.previewHistrate = 0xFFF;
+	m_mdllSet.histSize = 2;
+	m_mdllSet.histType = 0;
+	m_mdllSet.slscOff = 1;
+#endif
+	m_mdllSet.datareg = 0;
     
-    m_mdllSet.eventCounter0 = 0;
-    m_mdllSet.eventCounter1 = 0;
-    m_mdllSet.eventLimit0 = 0xFFFF;
-    m_mdllSet.eventLimit1 = 0xFFFF;
+	m_mdllSet.eventCounter0 = 0;
+	m_mdllSet.eventCounter1 = 0;
+	m_mdllSet.eventLimit0 = 0xFFFF;
+	m_mdllSet.eventLimit1 = 0xFFFF;
     
-    m_mdllSet.tsumXlo = 100;
-    m_mdllSet.tsumXhi = 1000;
-    m_mdllSet.tsumYlo = 100;
-    m_mdllSet.tsumYhi = 1000;
+	m_mdllSet.tsumXlo = 100;
+	m_mdllSet.tsumXhi = 1000;
+	m_mdllSet.tsumYlo = 100;
+	m_mdllSet.tsumYhi = 1000;
     
-    m_mdllSet.pulserOn = 0;
-    m_mdllSet.pulserAmpl = 3;
-    m_mdllSet.pulserPos = 1;
+	m_mdllSet.pulserOn = 0;
+	m_mdllSet.pulserAmpl = 3;
+	m_mdllSet.pulserPos = 1;
     
-    m_mdllSet.energyLow = 20;
-    m_mdllSet.energyHi = 240;
-    m_mdllSet.eScaleX = 1;
-    m_mdllSet.eScaleY = 1;
+	m_mdllSet.energyLow = 20;
+	m_mdllSet.energyHi = 240;
+	m_mdllSet.eScaleX = 1;
+	m_mdllSet.eScaleY = 1;
 
-    m_mdllSet.counterCell[0][0] = 7;
-    m_mdllSet.counterCell[0][1] = 22;
-    m_mdllSet.counterCell[1][0] = 7;
-    m_mdllSet.counterCell[1][1] = 22;
-    m_mdllSet.counterCell[2][0] = 0;
-    m_mdllSet.counterCell[2][1] = 0;
+	m_mdllSet.counterCell[0][0] = 7;
+	m_mdllSet.counterCell[0][1] = 22;
+	m_mdllSet.counterCell[1][0] = 7;
+	m_mdllSet.counterCell[1][1] = 22;
+	m_mdllSet.counterCell[2][0] = 0;
+	m_mdllSet.counterCell[2][1] = 0;
 
-    m_mdllSet.auxTimer[0] = 0;
-    m_mdllSet.auxTimer[1] = 0;
-    m_mdllSet.auxTimer[2] = 0;
-    m_mdllSet.auxTimer[3] = 0;
+	m_mdllSet.auxTimer[0] = 0;
+	m_mdllSet.auxTimer[1] = 0;
+	m_mdllSet.auxTimer[2] = 0;
+	m_mdllSet.auxTimer[3] = 0;
 
-    m_mdllSet.paramSource[0] = 0;
-    m_mdllSet.paramSource[1] = 1;
-    m_mdllSet.paramSource[2] = 2;
-    m_mdllSet.paramSource[3] = 7;
+	m_mdllSet.paramSource[0] = 0;
+	m_mdllSet.paramSource[1] = 1;
+	m_mdllSet.paramSource[2] = 2;
+	m_mdllSet.paramSource[3] = 7;
 }
-
 
 /*!
     \fn void Mdll::getMdllSet(P_MDLL_SETTING)
@@ -372,13 +372,15 @@ void Mdll::setSpectrum()
  */
 void Mdll::setHistogram(void)
 {
-/*	m_pCmdPacket->cmd = SETDLLHIST;
+#if 0
+	m_pCmdPacket->cmd = SETDLLHIST;
 	m_pCmdPacket->data[0] = m_mdllSet.previewHistsize;
 	m_pCmdPacket->data[1] = m_mdllSet.previewHistrate;
 	m_pCmdPacket->data[2] = m_mdllSet.histSize;
 	m_pCmdPacket->data[3] = m_mdllSet.histType;
 	theApp->sendBuffer(4);
-*/}
+#endif
+}
 
 
 /*!
@@ -386,10 +388,12 @@ void Mdll::setHistogram(void)
  */
 void Mdll::setMode(void)
 {
-/*	m_pCmdPacket->cmd = SETDLLMODE;
+#if 0
+	m_pCmdPacket->cmd = SETDLLMODE;
 	m_pCmdPacket->data[0] = m_mdllSet.mode;
 	theApp->sendBuffer(1);
-*/}
+#endif
+}
 
 
 /*!
@@ -397,10 +401,12 @@ void Mdll::setMode(void)
  */
 void Mdll::setSlide(void)
 {
-/*	m_pCmdPacket->cmd = SETDLLSLSC;
+#if 0	
+	m_pCmdPacket->cmd = SETDLLSLSC;
 	m_pCmdPacket->data[0] = m_mdllSet.slscOff;
 	theApp->sendBuffer(1);
-*/}
+#endif
+}
 
 
 /*!
@@ -448,13 +454,13 @@ void Mdll::setEnergy(void)
  */
 void Mdll::setCountercells(void)
 {
-        quint8 i;
         m_pCmdPacket->cmd = SETCELL;
-        for(i=0;i<3;i++){
-            m_pCmdPacket->data[0] = i;
-            m_pCmdPacket->data[1] = m_mdllSet.counterCell[i][0];
-            m_pCmdPacket->data[2] = m_mdllSet.counterCell[i][1];
-            theApp->sendBuffer(0, 3);
+        for(quint8 i = 0; i < 3; i++)
+	{
+		m_pCmdPacket->data[0] = i;
+		m_pCmdPacket->data[1] = m_mdllSet.counterCell[i][0];
+		m_pCmdPacket->data[2] = m_mdllSet.counterCell[i][1];
+		theApp->sendBuffer(0, 3);
         }
 }
 
@@ -463,12 +469,12 @@ void Mdll::setCountercells(void)
  */
 void Mdll::setAuxtimers(void)
 {
-        quint8 i;
         m_pCmdPacket->cmd = SETAUXTIMER;
-        for(i=0;i<4;i++){
-            m_pCmdPacket->data[0] = i;
-            m_pCmdPacket->data[1] = m_mdllSet.auxTimer[i];
-            theApp->sendBuffer(0, 2);
+        for(quint8 i = 0; i < 4; i++)
+	{
+		m_pCmdPacket->data[0] = i;
+		m_pCmdPacket->data[1] = m_mdllSet.auxTimer[i];
+		theApp->sendBuffer(0, 2);
         }
 }
 
@@ -477,12 +483,12 @@ void Mdll::setAuxtimers(void)
  */
 void Mdll::setParams(void)
 {
-        quint8 i;
         m_pCmdPacket->cmd = SETPARAM;
-        for(i=0;i<4;i++){
-            m_pCmdPacket->data[0] = i;
-            m_pCmdPacket->data[1] = m_mdllSet.paramSource[i];
-            theApp->sendBuffer(0, 2);
+        for(quint8 i = 0; i < 4; i++)
+	{
+		m_pCmdPacket->data[0] = i;
+		m_pCmdPacket->data[1] = m_mdllSet.paramSource[i];
+		theApp->sendBuffer(0, 2);
         }
 }
 
@@ -492,16 +498,10 @@ void Mdll::setParams(void)
  */
 void Mdll::setTiming(void)
 {
-    m_pCmdPacket->cmd = SETTIMING;
-    if(m_mdllSet.master)
-        m_pCmdPacket->data[0] = 1;
-    else
-        m_pCmdPacket->data[0] = 0;
-    if(m_mdllSet.terminate)
-        m_pCmdPacket->data[1] = 1;
-    else
-        m_pCmdPacket->data[1] = 0;
-    theApp->sendBuffer(0, 2);
+	m_pCmdPacket->cmd = SETTIMING;
+        m_pCmdPacket->data[0] = m_mdllSet.master ? 1 : 0;
+	m_pCmdPacket->data[1] = m_mdllSet.terminate ? 1 : 0;
+	theApp->sendBuffer(0, 2);
 }
 
 
@@ -510,19 +510,19 @@ void Mdll::setTiming(void)
  */
 void Mdll::initMdll(void)
 {
-    setTiming();
-    setSpectrum();
-    setCountercells();
-    setAuxtimers();
-    setAcqset();
-    setDatareg();
-    setEnergy();
-    setThreshold();
-    setParams();
-//    setHistogram();
-//    setMode();
-//    setSlide();
-//    setSpectrum();
+	setTiming();
+	setSpectrum();
+	setCountercells();
+	setAuxtimers();
+	setAcqset();
+	setDatareg();
+	setEnergy();
+	setThreshold();
+	setParams();
+//	setHistogram();
+//	setMode();
+//	setSlide();
+//	setSpectrum();
 }
 
 /*!
