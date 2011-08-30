@@ -1,13 +1,15 @@
-VERSION 	= 1.0.0
+VERSION 	= 0.0.1
 
 include( ../../qmesydaqconfig.pri )
 
 TEMPLATE 	= lib
-TARGET 		= tacoInterface
+TARGET 		= tcpInterface
 DEPENDPATH 	+= . .. ../.. ../../qmesydaq ../../lib
 INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
 
 LIBS		+= -L../../lib $${TACOLIBS}
+
+QT		+= network
 
 contains(CONFIG, bit64) {
 target.path	= /usr/local/lib64
@@ -17,13 +19,10 @@ target.path	= /usr/local/lib
 }
 
 # Input
-HEADERS 	+= MesyDAQDetectorDetector.h \
-		MesyDAQServer.h \
-		TACOLoop.h 
+HEADERS 	+= remoteserver.h \
+		TCPLoop.h 
 
-SOURCES 	+= MesyDAQDetectorDetector.cpp \
-           	MesyDAQDetectorDetectorImpl.cpp \
-		startup.cpp \
-		TACOLoop.cpp
+SOURCES 	+= remoteserver.cpp \
+		TCPLoop.cpp
 		
 

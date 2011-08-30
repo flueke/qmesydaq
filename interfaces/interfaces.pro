@@ -36,3 +36,7 @@ SUBDIRS		+= taco
 contains(INTERFACE, CARESS) {
 SUBDIRS		+= caress 
 }
+
+contains(INTERFACE, TCP) {
+SUBDIRS		+= tcp
+}
