@@ -30,12 +30,13 @@ INSTALLS	= target
 # emtpy
 # TACO		work as TACO server
 # CARESS	work as CARESS server
+# TCP		work as TCP server
 #
 INTERFACE	= TACO
 
-interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS")
+interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP")
 count(interfaces, 2) {
-	error(you may either use TACO or CARESS or nothing as remote interface)
+	error(you may either use TACO, TCP, _or_ CARESS or nothing as remote interface)
 }
 
 target.path	= /usr/local
