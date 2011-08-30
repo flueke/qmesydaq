@@ -178,7 +178,7 @@ public:
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
 
-	void	calcRates();
+	void calcRates();
 
 private slots:
 	void requestStop(void);

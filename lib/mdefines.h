@@ -94,19 +94,68 @@
 #define READPERIREG 		52
 #define WRITEPERIREG 		53
 
+//
+// official commands only for MDLL
+//
+#define SETDLLTHRESHS		60
+#define SETDLLSPECTRUM		61
+#define SETDLLMODE		62
+#define SETDLLHIST		63
+#define SETDLLSLSC		64
+#define	SETDLLPULSER		65
+#define SETDLLTESTREG		66
+#define SETDLLACQSET		67
+#define	SETDLLENERGY		68
+
 // histogram sizes
 // 128 channels + 1 sum per MCPD
 // 64 channels + 1 sum per MCPD for position
 // 64 channels + 1 sum per MCPD for energy
+// 1024 channels for MDLL
 #define CHANNELS 		130
 #define LINBINS 		1024
 #define TIMEBINS 		1024
+
+#define MEANMAX			250
 
 // daq status values
 #define IDLE 			0
 #define RUNNING 		1
 #define STARTED 		2
 #define STOPPED 		3
+
+//
+// base registers of MDLL settings
+//
+#define	MDLLBASEREG		128
+#define MDLLTHRESHX		0
+#define MDLLTHRESHY		1
+#define MDLLTHRESHA		2
+
+#define MDLLSHIFTX		4
+#define MDLLSHIFTY		5
+
+#define MDLLSCALEX		6
+
+#define MDLLMODE		8
+#define MDLLPRESIZE		9
+#define MDLLPRERATE		10
+#define MDLLHISTSIZE		11
+#define MDLLHISTTYPE		12
+#define MDLLSLC			13
+
+#define MDLLTESTREG		15
+#define MDLLEVCT0		16
+#define MDLLEVCT1		17
+#define MDLLEVLIM0		18
+#define MDLLEVLIM1		19
+#define MDLLTSUMXLO		20
+#define MDLLTSUMXHI		21
+#define MDLLTSUMLO		22
+#define MDLLTSUMHI		23
+#define MDLLPULSON		24
+#define MDLLPULSAMP		25
+#define MDLLPULSPOS		26
 
 // CARESS counter mapping
 #define M1CT			0
@@ -147,6 +196,7 @@
 #define	MPSD8			103
 #define	MSTD16			104
 #define	MPSD8P			105	
+#define MDLL			106
 
 // TX modes
 #define	P			1

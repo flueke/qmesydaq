@@ -103,6 +103,75 @@ typedef struct NeutronEvent
 	quint32	timestamp	: 19;
 } NEUTRON;
 
+//! structure for MDLL settings
+typedef struct _MDLL_SETTINGS 
+{
+	quint8 id;
+	bool master;
+	bool terminate;
+
+	quint8 threshX;
+	quint8 threshY;
+	quint8 threshA;
+	quint8 shiftX;
+	quint8 shiftY;
+	quint8 scaleX;
+	quint8 scaleY;
+    
+//	quint8 mode;
+//	quint8 previewHistsize;
+//	quint16  previewHistrate;
+//	quint8 histSize;
+//	quint8 histType;
+//	quint8 slscOff;
+	quint8 datareg;
+    
+	quint16 eventCounter0;
+	quint16 eventCounter1;
+	quint16 eventLimit0;
+	quint16 eventLimit1;
+    
+	quint16 tsumXlo;
+	quint16 tsumXhi;
+	quint16 tsumYlo;
+	quint16 tsumYhi;
+    
+	quint8 pulserOn;
+	quint8 pulserAmpl;
+	quint8 pulserPos;
+    	
+	quint8 energyLow;
+	quint8 energyHi;
+	quint8 eScaleX;
+	quint8 eScaleY;
+
+	quint8 counterCell[3][2];
+	quint16 auxTimer[4];
+	quint8 paramSource[4];
+} *P_MDLL_SETTING, MDLL_SETTING;
+
+//! structure for networksettings of MDLL
+typedef struct _MDLL_ADDRESS_SET 
+{
+	quint8 ip0;
+	quint8 ip1;
+	quint8 ip2;
+	quint8 ip3;
+    
+	quint8 dip0;
+	quint8 dip1;
+	quint8 dip2;
+	quint8 dip3;
+    
+	quint8 cudp;
+	quint8 dudp;
+    
+	quint8 cip0;
+	quint8 cip1;
+	quint8 cip2;
+	quint8 cip3;
+} *P_MDLL_ADRESS_SET, MDLL_ADDRESS_SET;
+
 #define BUFTYPE		0x8000
 #define CMDBUFLEN	1
 #define CMDHEADLEN	10

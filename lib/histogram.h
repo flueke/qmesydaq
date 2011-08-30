@@ -32,6 +32,7 @@ class QFile;
 
 /**
  * \short represents a single spectrum 
+ *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
 class Spectrum : public MesydaqObject
@@ -120,7 +121,7 @@ public:
 	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS);
 
 	~Histogram();
-    
+
 	bool incVal(quint16 chan, quint16 bin);
 
 	bool setValue(quint16 chan, quint16 bin, quint64 val);
