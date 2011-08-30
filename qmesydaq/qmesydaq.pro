@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.0.8
+VERSION		= 0.1.0
 
 include(../qmesydaqconfig.pri)
 
@@ -47,6 +47,7 @@ HEADERS 	+= mainwidget.h \
 		QtInterface.h \
 		MultipleLoopApplication.h \
 		ipaddresswidget.h \
+		presetwidget.h \
 		generalsetup.h \
 		mcpdsetup.h \
 		modulestatus.h \
@@ -59,6 +60,7 @@ FORMS 		+= mesydaq2mainwidget.ui \
 		mesydaq2mainwindow.ui \
 		generalsetup.ui \
 		mcpdsetup.ui \
+		presetwidget.ui \
 		modulestatus.ui \
 		modulewizard.ui \
 		moduleidentificationpage.ui \
@@ -76,6 +78,7 @@ SOURCES 	+= main.cpp \
 		QtInterface.cpp \
 		MultipleLoopApplication.cpp \
 		ipaddresswidget.cpp \
+		presetwidget.cpp \
 		generalsetup.cpp \
 		mcpdsetup.cpp \
 		modulesetup.cpp \

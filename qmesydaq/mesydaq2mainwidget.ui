@@ -1721,6 +1721,11 @@ Listfile</string>
    <extends>QWidget</extends>
    <header>modulestatus.h</header>
   </customwidget>
+  <customwidget>
+   <class>PresetWidget</class>
+   <extends>QWidget</extends>
+   <header>presetwidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
