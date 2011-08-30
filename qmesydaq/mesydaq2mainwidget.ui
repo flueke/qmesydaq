@@ -789,317 +789,44 @@ Listfile</string>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="textLabel1_2_3_2_3_2">
-            <property name="text">
+           <widget class="DoublePresetWidget" name="timerPreset">
+            <property name="label" stdset="1">
              <string>Timer [s]:</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="tPresetButton">
-            <property name="toolTip">
-             <string>activate preset for timer</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QDoubleSpinBox" name="tPreset">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>preset value for timer</string>
-            </property>
-            <property name="accelerated">
-             <bool>true</bool>
-            </property>
-            <property name="decimals">
-             <number>3</number>
-            </property>
-            <property name="maximum">
-             <double>999999999.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="4">
-           <widget class="QPushButton" name="tResetButton">
-            <property name="toolTip">
-             <string>reset timer</string>
-            </property>
-            <property name="text">
-             <string>&amp;Reset</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
             </property>
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="textLabel1">
-            <property name="text">
+           <widget class="PresetWidget" name="eventsPreset" native="true">
+            <property name="label" stdset="1">
              <string>Events</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="ePresetButton">
-            <property name="toolTip">
-             <string>activate preset for event counter</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QSpinBox" name="ePreset">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>preset value for event counter</string>
-            </property>
-            <property name="maximum">
-             <number>2000000000</number>
-            </property>
-            <property name="singleStep">
-             <number>10000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="4">
-           <widget class="QPushButton" name="eResetButton">
-            <property name="toolTip">
-             <string>reset event counter</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
             </property>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="textLabel1_11">
-            <property name="text">
+           <widget class="PresetWidget" name="monitor1Preset" native="true">
+            <property name="label" stdset="1">
              <string>Monitor 1</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="m1PresetButton">
-            <property name="toolTip">
-             <string>activate preset for monitor 1</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QSpinBox" name="m1Preset">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>preset value for monitor 1</string>
-            </property>
-            <property name="maximum">
-             <number>2000000000</number>
-            </property>
-            <property name="singleStep">
-             <number>1000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="4">
-           <widget class="QPushButton" name="m1ResetButton">
-            <property name="toolTip">
-             <string>reset monitor 1</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
             </property>
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="textLabel1_11_2">
-            <property name="text">
+           <widget class="PresetWidget" name="monitor2Preset" native="true">
+            <property name="label" stdset="1">
              <string>Monitor 2</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QCheckBox" name="m2PresetButton">
-            <property name="toolTip">
-             <string>activate preset for monitor 2</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QSpinBox" name="m2Preset">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>preset value for monitor 2</string>
-            </property>
-            <property name="maximum">
-             <number>2000000000</number>
-            </property>
-            <property name="singleStep">
-             <number>1000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="4">
-           <widget class="QPushButton" name="m2ResetButton">
-            <property name="toolTip">
-             <string>reset monitor 2</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
             </property>
            </widget>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="textLabel1_11_3">
-            <property name="text">
+           <widget class="PresetWidget" name="monitor3Preset" native="true">
+            <property name="label" stdset="1">
              <string>Monitor 3</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QCheckBox" name="m3PresetButton">
-            <property name="toolTip">
-             <string>activate preset for monitor 2</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="3">
-           <widget class="QSpinBox" name="m3Preset">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>preset value for monitor 2</string>
-            </property>
-            <property name="maximum">
-             <number>2000000000</number>
-            </property>
-            <property name="singleStep">
-             <number>1000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="4">
-           <widget class="QPushButton" name="m3ResetButton">
-            <property name="toolTip">
-             <string>reset monitor 2</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
             </property>
            </widget>
           </item>
           <item row="7" column="0">
-           <widget class="QLabel" name="textLabel1_11_4">
-            <property name="text">
-             <string>Monitor4</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QCheckBox" name="m4PresetButton">
-            <property name="toolTip">
-             <string>activate preset for monitor 2</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="3">
-           <widget class="QSpinBox" name="m4Preset">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>preset value for monitor 2</string>
-            </property>
-            <property name="maximum">
-             <number>2000000000</number>
-            </property>
-            <property name="singleStep">
-             <number>1000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="4">
-           <widget class="QPushButton" name="m4ResetButton">
-            <property name="toolTip">
-             <string>reset monitor 2</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
+           <widget class="PresetWidget" name="monitor4Preset" native="true">
+            <property name="label" stdset="1">
+             <string>Monitor 4</string>
             </property>
            </widget>
           </item>
@@ -1725,6 +1452,19 @@ Listfile</string>
    <class>PresetWidget</class>
    <extends>QWidget</extends>
    <header>presetwidget.h</header>
+   <slots>
+    <signal>presetClicked(bool)</signal>
+    <signal>resetClicked()</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>DoublePresetWidget</class>
+   <extends>QWidget</extends>
+   <header>doublepresetwidget.h</header>
+   <slots>
+    <signal>presetClicked(bool)</signal>
+    <signal>resetClicked()</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -1736,7 +1476,7 @@ Listfile</string>
    <slot>applyThreshSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>42</x>
+     <x>44</x>
      <y>586</y>
     </hint>
     <hint type="destinationlabel">
@@ -1976,7 +1716,7 @@ Listfile</string>
    <slot>applyThreshSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>42</x>
+     <x>44</x>
      <y>569</y>
     </hint>
     <hint type="destinationlabel">
@@ -1992,11 +1732,11 @@ Listfile</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>42</x>
+     <x>44</x>
      <y>569</y>
     </hint>
     <hint type="destinationlabel">
-     <x>63</x>
+     <x>65</x>
      <y>579</y>
     </hint>
    </hints>
@@ -2008,11 +1748,11 @@ Listfile</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>42</x>
+     <x>44</x>
      <y>569</y>
     </hint>
     <hint type="destinationlabel">
-     <x>63</x>
+     <x>65</x>
      <y>574</y>
     </hint>
    </hints>
@@ -2177,8 +1917,99 @@ Listfile</string>
     </hint>
    </hints>
   </connection>
+
+  <connection>
+   <sender>timerPreset</sender>
+   <signal>presetClicked(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>tPresetSlot(bool)</slot>
+  </connection>
+  <connection>
+   <sender>timerPreset</sender>
+   <signal>resetClicked()</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>tResetSlot()</slot>
+  </connection>
+
+  <connection>
+   <sender>eventsPreset</sender>
+   <signal>presetClicked(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>ePresetSlot(bool)</slot>
+  </connection>
+  <connection>
+   <sender>eventsPreset</sender>
+   <signal>resetClicked()</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>eResetSlot()</slot>
+  </connection>
+
+  <connection>
+   <sender>monitor1Preset</sender>
+   <signal>presetClicked(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m1PresetSlot(bool)</slot>
+  </connection>
+  <connection>
+   <sender>monitor1Preset</sender>
+   <signal>resetClicked()</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m1ResetSlot()</slot>
+  </connection>
+
+  <connection>
+   <sender>monitor2Preset</sender>
+   <signal>presetClicked(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m2PresetSlot(bool)</slot>
+  </connection>
+  <connection>
+   <sender>monitor2Preset</sender>
+   <signal>resetClicked()</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m2ResetSlot()</slot>
+  </connection>
+
+  <connection>
+   <sender>monitor3Preset</sender>
+   <signal>presetClicked(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m3PresetSlot(bool)</slot>
+  </connection>
+  <connection>
+   <sender>monitor3Preset</sender>
+   <signal>resetClicked()</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m3ResetSlot()</slot>
+  </connection>
+
+  <connection>
+   <sender>monitor4Preset</sender>
+   <signal>presetClicked(bool)</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m4PresetSlot(bool)</slot>
+  </connection>
+  <connection>
+   <sender>monitor4Preset</sender>
+   <signal>resetClicked()</signal>
+   <receiver>Mesydaq2MainWidget</receiver>
+   <slot>m4ResetSlot()</slot>
+  </connection>
+
  </connections>
  <slots>
   <slot>scanPeriSlot()</slot>
+  <slot>tPresetSlot(bool)</slot>
+  <slot>tResetSlot()</slot>
+  <slot>ePresetSlot(bool)</slot>
+  <slot>eResetSlot()</slot>
+  <slot>m1PresetSlot(bool)</slot>
+  <slot>m1ResetSlot()</slot>
+  <slot>m2PresetSlot(bool)</slot>
+  <slot>m2ResetSlot()</slot>
+  <slot>m3PresetSlot(bool)</slot>
+  <slot>m3ResetSlot()</slot>
+  <slot>m4PresetSlot(bool)</slot>
+  <slot>m4ResetSlot()</slot>
  </slots>
 </ui>

@@ -78,7 +78,31 @@ public slots:
 	void 	addMCPD();
 
 	//! load configuration file
-	void	loadConfiguration(const QString& sFilename);
+	void loadConfiguration(const QString &sFilename);
+
+	void tPresetSlot(bool pr);
+
+	void tResetSlot();
+
+	void ePresetSlot(bool pr);
+
+	void eResetSlot();
+
+	void m1PresetSlot(bool pr);
+
+	void m1ResetSlot();
+
+	void m2PresetSlot(bool pr);
+
+	void m2ResetSlot();
+
+	void m3PresetSlot(bool pr);
+
+	void m3ResetSlot();
+
+	void m4PresetSlot(bool pr);
+
+	void m4ResetSlot();
 
 protected:
         void    customEvent(QEvent *);
@@ -142,30 +166,6 @@ private slots:
 	void writeHistSlot();
 
 	void loadHistSlot();
-
-	void tPresetSlot(bool pr);
-
-	void tResetSlot();
-
-	void ePresetSlot(bool pr);
-
-	void eResetSlot();
-
-	void m1PresetSlot(bool pr);
-
-	void m1ResetSlot();
-
-	void m2PresetSlot(bool pr);
-
-	void m2ResetSlot();
-
-	void m3PresetSlot(bool pr);
-
-	void m3ResetSlot();
-
-	void m4PresetSlot(bool pr);
-
-	void m4ResetSlot();
 
 	void draw(void);
 
