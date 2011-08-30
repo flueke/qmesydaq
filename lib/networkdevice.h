@@ -76,21 +76,21 @@ private:
 	void destroySocket(void);
 
 private:
-	static QMutex		m_mutex;
+	static QMutex			m_mutex;
 
-	static QList<NetworkDevice*> m_networks;
+	static QList<NetworkDevice*>	m_networks;
 
-	static QList<int>	m_inUse;
+	static QList<int>		m_inUse;
 
-	quint16			m_port;
+	quint16				m_port;
 
-	QString			m_source;
+	QString				m_source;
 
-	QUdpSocket 		*m_sock;
+	QUdpSocket 			*m_sock;
 
-	QSocketNotifier 	*m_notifyNet;
+	QSocketNotifier 		*m_notifyNet;
 
-	MDP_PACKET		m_recBuf;
+	MDP_PACKET			m_recBuf;
 };
 
 #endif
