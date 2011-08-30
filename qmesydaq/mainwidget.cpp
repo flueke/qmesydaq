@@ -160,7 +160,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispAllChannels, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(dispAllPos, SIGNAL(toggled(bool)), this, SLOT(draw()));
     connect(dispAllAmpl, SIGNAL(toggled(bool)), this, SLOT(draw()));
-    connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(displayMpsdSlot(int)));
+    connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(scanPeriSlot()));
     connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
     connect(statusTab, SIGNAL(currentChanged(int)), this, SLOT(statusTabChanged(int)));
 
@@ -767,10 +767,7 @@ void MainWidget::scanPeriSlot(bool real)
     if (real)
         m_theApp->scanPeriph(id);
 
-    QList<int> modList;
-    for (int i = 0; i < 8; ++i)
-        if (m_theApp->getMpsdId(id, i))
-            modList << i;
+    QList<int> modList = m_theApp->mpsdId(id);
     dispMpsd->setModuleList(modList);
     displayMpsdSlot(modList.size() ? modList.at(0) : -1);
 

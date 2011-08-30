@@ -1283,6 +1283,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 					}
 					else if ((*it)->type() != recBuf.data[c])
 					{
+//						delete m_mpsd[c];
+						m_mpsd.remove(c);
+						if (recBuf.data[c] != 0)
+							m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
 					}
 				}
 				protocol(tr("READID finished"), DEBUG);

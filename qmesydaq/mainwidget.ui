@@ -1015,12 +1015,12 @@ Listfile</string>
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>27</y>
-      <width>139</width>
+      <width>140</width>
       <height>351</height>
      </rect>
     </property>
