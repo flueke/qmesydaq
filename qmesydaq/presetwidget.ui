@@ -43,7 +43,7 @@
       <bool>false</bool>
      </property>
      <property name="toolTip">
-      <string>preset value for monitor 2</string>
+      <string>preset value for </string>
      </property>
      <property name="maximum">
       <number>2000000000</number>
@@ -56,7 +56,7 @@
    <item row="0" column="3">
     <widget class="QPushButton" name="resetButton">
      <property name="toolTip">
-      <string>reset monitor 2</string>
+      <string>reset </string>
      </property>
      <property name="text">
       <string>Reset</string>
@@ -86,5 +86,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>presetButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>PresetWidget</receiver>
+   <slot>presetCheckClicked(bool)</slot>
+  </connection>
+  <connection>
+   <sender>resetButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PresetWidget</receiver>
+   <slot>resetButtonClicked()</slot>
+  </connection>
  </connections>
+ <slots>
+  <signal>resetButtonClicked()</signal>
+  <signal>presetCheckClicked(bool)</signal>
+ </slots>
 </ui>

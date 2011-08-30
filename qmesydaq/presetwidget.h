@@ -38,13 +38,25 @@ class PresetWidget : public QWidget, public Ui_PresetWidget
 public:
 	PresetWidget(QWidget * = 0);
 
-	virtual ~PresetWidget() {}
-
 	void setLabel(const QString &);
 
-	quint64 presetValue(void);
+	bool isChecked(void);
 
-public slots:
-	void setPresetValue(const quint64 = 0);
+	void setChecked(const bool);
+
+	void setValue(const quint64 = 0);
+
+	quint64 value(void);
+
+signals:
+	void resetClicked();
+
+	void presetClicked(bool);
+
+
+private slots:
+	void presetCheckClicked(bool);
+
+	void resetButtonClicked(void);
 };
 #endif

@@ -29,8 +29,9 @@ PresetWidget::PresetWidget(QWidget *parent)
 {
     setupUi(this);
     setLabel("");
-    setPresetValue();
-    connect(resetButton, SIGNAL(clicked()), this, SLOT(setPresetValue(quint64)));
+    setValue(0);
+//  connect(resetButton, SIGNAL(clicked()), this, SLOT(resetButtonClicked()));
+//  connect(presetButton, SIGNAL(clicked(bool)), this, SLOT(presetCheckClicked(bool)));
 }
 
 /*!
@@ -41,6 +42,9 @@ PresetWidget::PresetWidget(QWidget *parent)
 void PresetWidget::setLabel(const QString &text)
 {
     label->setText(text);
+    presetButton->setToolTip(tr("activate preset for '%1'").arg(text));
+    preset->setToolTip(tr("preset value for '%1'").arg(text));
+    resetButton->setToolTip(tr("reset the preset for '%1'").arg(text));
 }
 
 /*!
@@ -48,9 +52,9 @@ void PresetWidget::setLabel(const QString &text)
 
     \return the current selected preset value
  */
-quint64 PresetWidget::presetValue(void)
+quint64 PresetWidget::value(void)
 {
-	return preset->value();
+    return preset->value();
 }
 
 /*!
@@ -60,6 +64,59 @@ quint64 PresetWidget::presetValue(void)
 
     \param val new value of the preset
  */
-void PresetWidget::setPresetValue(const quint64 val)
+void PresetWidget::setValue(const quint64 val)
 {
+    preset->setValue(val);
 }
+
+/*!
+    \fn void PresetWidget::setChecked(const bool val)
+
+    callback 
+
+    \param val
+ */
+void PresetWidget::setChecked(const bool val)
+{
+    presetButton->setChecked(val);
+    preset->setEnabled(val);
+//    preset->setHidden(!val);
+//    resetButton->setHidden(!val);
+}
+
+/*!
+    \fn bool PresetWidget::isChecked(void)
+
+    \return whether the checkbox is checked
+ */
+bool PresetWidget::isChecked(void)
+{
+    return presetButton->isChecked();
+}
+
+/*!
+    \fn void PresetWidget::presetCheckClicked(bool val)
+
+    callback for clicking the preset checkbox
+
+    \param val
+ */
+void PresetWidget::presetCheckClicked(bool val)
+{
+	setChecked(val);
+	emit presetClicked(val);
+}
+
+/*!
+    \fn void PresetWidget::resetButtonClicked(bool val)
+
+    callback for clicking the preset checkbox
+
+    \param val
+ */
+void PresetWidget::resetButtonClicked()
+{
+	setValue(0);
+	emit resetClicked();
+}
+
