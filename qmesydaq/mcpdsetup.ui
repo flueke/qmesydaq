@@ -864,7 +864,7 @@ parameters</string>
    <sender>param</sender>
    <signal>valueChanged(int)</signal>
    <receiver>MCPDSetup</receiver>
-   <slot>displaySlot(int)</slot>
+   <slot>displayParameterSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>773</x>
@@ -880,7 +880,7 @@ parameters</string>
    <sender>cellSource</sender>
    <signal>activated(int)</signal>
    <receiver>MCPDSetup</receiver>
-   <slot>displaySlot(int)</slot>
+   <slot>displayCounterCellSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>442</x>
@@ -896,7 +896,7 @@ parameters</string>
    <sender>mcpdId</sender>
    <signal>valueChanged(int)</signal>
    <receiver>MCPDSetup</receiver>
-   <slot>displaySlot(int)</slot>
+   <slot>displayMCPDSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>355</x>
@@ -912,7 +912,7 @@ parameters</string>
    <sender>timer</sender>
    <signal>valueChanged(int)</signal>
    <receiver>MCPDSetup</receiver>
-   <slot>displaySlot(int)</slot>
+   <slot>displayAuxTimerSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>436</x>
@@ -928,7 +928,7 @@ parameters</string>
    <sender>tabWidget</sender>
    <signal>selected(QString)</signal>
    <receiver>MCPDSetup</receiver>
-   <slot>displaySlot()</slot>
+   <slot>displayMCPDSlot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>449</x>
@@ -949,6 +949,10 @@ parameters</string>
   <slot>sendParamSlot()</slot>
   <slot>setMcpdIdSlot()</slot>
   <slot>setIpUdpSlot()</slot>
-  <slot>displaySlot(int)</slot>
+  <slot>displayMCPDSlot(int)</slot>
+  <slot>displayParameterSlot(int)</slot>
+  <slot>displayAuxTimerSlot(int)</slot>
+  <slot>displayCounterCellSlot(int)</slot>
+  <slot></slot>
  </slots>
 </ui>

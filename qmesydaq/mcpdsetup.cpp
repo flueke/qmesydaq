@@ -127,7 +127,7 @@ void MCPDSetup::setIpUdpSlot()
 
     \param id
  */
-void MCPDSetup::displaySlot(int id)
+void MCPDSetup::displayMCPDSlot(int id)
 {
 // retrieve displayed ID
     if (!m_theApp->numMCPD())
@@ -141,19 +141,53 @@ void MCPDSetup::displaySlot(int id)
     if (!master->isChecked())
         terminate->setChecked(term);
 
+    displayCounterCellSlot(-1);
+    displayParameterSlot(-1);
+    displayAuxTimerSlot(-1);
+}
+
+/*!
+    \fn void MCPDSetup::displayCounterCellSlot(int id)
+
+    \parma id
+ */
+void MCPDSetup::displayCounterCellSlot(int id)
+{
 // now get and display parameters:
     quint16 values[4];
-    
+   
+    if (id < 0)
+        id = cellSource->currentIndex();
 // get cell parameters
-    m_theApp->getCounterCell(id, cellSource->currentIndex(), values);
+    m_theApp->getCounterCell(mcpdId->value(), id, values);
     cellTrigger->setCurrentIndex(values[0]);
     cellCompare->setValue(values[1]);
-    
-// get parameter settings
-    paramSource->setCurrentIndex(m_theApp->getParamSource(id, param->value()));
+}
 
+/*!    
+    \fn void MCPDSetup::displayParameterSlot(int id)
+
+    \param id
+ */
+void MCPDSetup::displayParameterSlot(int id)
+{
+    if (id < 0)
+        id = param->value();
+// get parameter settings
+    paramSource->setCurrentIndex(m_theApp->getParamSource(mcpdId->value(), id));
+}
+
+/*!
+    \fn void MCPDSetup::displayAuxTimerSlot(int id)
+    
+    \param id
+ */
+void MCPDSetup::displayAuxTimerSlot(int id)
+{
+    if (id < 0)
+        id = timer->value();
 // get timer settings
-    compareAux->setText(tr("%1").arg(m_theApp->getAuxTimer(id, timer->value()), 0, 16));
+    compareAux->setText(tr("%1").arg(m_theApp->getAuxTimer(mcpdId->value(), id), 0, 16));
 
 // get stream setting
 //  statusStream->setChecked(m_theApp->myMcpd[id]->getStream());
