@@ -27,8 +27,6 @@ QMutex			NetworkDevice::m_mutex(QMutex::Recursive);
 QList<NetworkDevice*> 	NetworkDevice::m_networks;
 QList<int>		NetworkDevice::m_inUse;
 
-// NetworkDevice	*NetworkDevice::m_instance = NULL;
-
 /*!
     \fn NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
 
@@ -109,6 +107,9 @@ NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
 	createSocket();
 }
 
+/*!
+    destructor
+ */
 NetworkDevice::~NetworkDevice()
 {
 	destroySocket();
