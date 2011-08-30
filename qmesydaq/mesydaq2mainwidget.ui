@@ -719,7 +719,7 @@ Listfile</string>
         </property>
         <widget class="QWidget" name="statusMeasTab">
          <attribute name="title">
-          <string>Meas. data</string>
+          <string>Measurement</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0" colspan="2">
