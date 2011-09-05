@@ -62,7 +62,7 @@
 /*! 
     copy constructor
 
-    \param src
+    \param src source mapping
  */
 MapCorrection::MapCorrection(const MapCorrection& src)
     : MesydaqObject()
@@ -74,7 +74,11 @@ MapCorrection::MapCorrection(const MapCorrection& src)
 {
 }
 
-//! copy operator=
+/*!
+    copy operator=
+
+    \param src source mapping
+ */
 MapCorrection& MapCorrection::operator=(const MapCorrection& src)
 {
     m_bNoMapping = src.m_bNoMapping;
@@ -113,7 +117,7 @@ bool MapCorrection::isValid() const
 }
 
 /*!
-    clear mapping ???
+    clear mapping
  */ 
 void MapCorrection::setNoMap()
 {
@@ -129,10 +133,10 @@ void MapCorrection::setNoMap()
 /*! 
     initialize mapping
 
-    \param iSrcWidth
-    \param iSrcHeight
-    \param iOrientation
-    \param iCorrection
+    \param iSrcWidth    maximum width of source positions
+    \param iSrcHeight   maximum height of source positions
+    \param iOrientation orientation of source data to mapped data
+    \param iCorrection  where should the correction factors be applied
  */
 void MapCorrection::initialize(int iSrcWidth, int iSrcHeight, MapCorrection::Orientation iOrientation, MapCorrection::CorrectionType iCorrection)
 {
@@ -178,7 +182,7 @@ void MapCorrection::initialize(int iSrcWidth, int iSrcHeight, MapCorrection::Ori
 /*! 
     set region of mapped data
 
-    \param mapRect
+    \param mapRect rectangle of mapped data
  */
 void MapCorrection::setMappedRect(const QRect &mapRect)
 {
@@ -215,7 +219,7 @@ bool MapCorrection::map(const QPoint &src, const QPoint &dst, float fCorrection)
     p->setY(dst.y());
     if (m_iCorrection == MapCorrection::CorrectMappedPixel)
     {
-        iPos = dst.y() * m_mapRect.width() + dst.y();
+	iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
         if (iPos < 0 || iPos >= m_afCorrection.count())
             return false;
     }
@@ -252,8 +256,8 @@ bool MapCorrection::map(const QRect& src, const QPoint& dst, float fCorrection)
     }
     if (m_iCorrection == MapCorrection::CorrectMappedPixel)
     {
-        int iPos = dst.y() * m_mapRect.width() + dst.y();
-        if (iPos < 0 || iPos >= m_afCorrection.count())
+	int iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
+	if (iPos < 0 || iPos >= m_afCorrection.count())
             return false;
         m_afCorrection[iPos] = fCorrection;
     }
@@ -287,7 +291,7 @@ bool MapCorrection::getMap(const QPoint &src, QPoint &dst, float &fCorrection) c
         return false;
     if (m_iCorrection==MapCorrection::CorrectMappedPixel)
     {
-        iPos = dst.y() * m_mapRect.width() + dst.x();
+	iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
         if (iPos < 0 || iPos >= m_afCorrection.count())
             return false;
     }
@@ -295,14 +299,16 @@ bool MapCorrection::getMap(const QPoint &src, QPoint &dst, float &fCorrection) c
     return true;
 }
 
-//! vertical mirror mapping data
+/*!
+    vertical mirror mapping data
+ */
 void MapCorrection::mirrorVertical()
 {
     if (m_bNoMapping) 
         return;
     int iWidth = m_rect.width();
     int iHeight = m_rect.height() - 1;
-    int iMaxHeight = iHeight / 2;
+    int iMaxHeight = (iHeight + 1) / 2;
 
     for (int y = 0; y < iMaxHeight; ++y)
     {
@@ -323,15 +329,17 @@ void MapCorrection::mirrorVertical()
     }
 }
 
-//! horizontal mirror mapping data
+/*!
+    horizontal mirror mapping data
+ */
 void MapCorrection::mirrorHorizontal()
 {
     if (m_bNoMapping) 
         return;
 
-    int iWidth = m_rect.width();
-    int iHeight = m_rect.height() - 1;
-    int iMaxWidth = iWidth / 2;
+    int iWidth = m_rect.width() - 1;
+    int iHeight = m_rect.height();
+    int iMaxWidth = (iWidth + 1) / 2;
 
     for (int y = 0; y < iHeight; ++y)
     {
@@ -351,7 +359,21 @@ void MapCorrection::mirrorHorizontal()
     }
 }
 
-//! rotate mapping data counter clockwise
+/*!
+    rotate mapping data counter clockwise
+ \verbatim
+ example (3*4 block):				| x  y	      x  y
+					      --+------      ------
+    6 |			6 |		      A | 1  2	      4  2
+    5 | J-K-L		5 |		      B | 2  2	      4  3
+    4 | G-H-I     ===>	4 | L-I-F-C	      C | 3  2	===>  4  4
+    3 | D-E-F     ===>	3 | K-H-E-B	      D | 1  3	===>  3  2
+    2 | A-B-C     ===>	2 | J-G-D-A	      ...
+    1 |			1 |		      J | 1  5	===>  1  2
+      +----------	  +----------	      K | 2  5	      1  3
+    0   1 2 3 4 5      0    1 2 3 4 5	      L | 3  5	      1  4
+ \endverbatim
+*/
 void MapCorrection::rotateLeft()
 {
     if (m_bNoMapping) 
@@ -360,8 +382,8 @@ void MapCorrection::rotateLeft()
     int iSrcW = m_rect.width();
     int iSrcH = m_rect.height();
 
+    int iMapT = m_mapRect.top();
     int iMapL = m_mapRect.left();
-    int iMapR = m_mapRect.right();
     int iMapW = m_mapRect.width();
     int iMapH = m_mapRect.height();
 
@@ -377,10 +399,10 @@ void MapCorrection::rotateLeft()
         {
             QPoint *p = &m_aptMap[iYPos + x];
             QPoint dst;
-            dst.setX(p->y());
-            dst.setY(iMapL + iMapR - p->x());
+	    dst.setX(iMapL + iMapH-1 + iMapT - p->y());
+	    dst.setY(iMapT + p->x() - iMapL);
             if (bRotateCorrection)
-	        afCorrection[dst.y() * iMapW +dst.x()] = m_afCorrection[p->y() * iMapW + p->x()];
+		afCorrection[(dst.y() - iMapT) * iMapH + (dst.x() - iMapL)] = m_afCorrection[p->y() * iMapW + p->x()];
             *p = dst;
         }
     }
@@ -390,7 +412,22 @@ void MapCorrection::rotateLeft()
         m_afCorrection=afCorrection;
 }
 
-//! rotate mapping data clockwise
+/*!
+    rotate mapping data clockwise
+
+ \verbatim
+ example (3*4 block):				| x  y	      x  y
+					      --+------      ------
+    6 |			6 |		      A | 1  2	      1  4
+    5 | J-K-L		5 |		      B | 2  2	      1  3
+    4 | G-H-I     ===>	4 | A-D-G-J	      C | 3  2	===>  1  2
+    3 | D-E-F     ===>	3 | B-E-H-K	      D | 1  3	===>  2  4
+    2 | A-B-C     ===>	2 | C-F-I-L	      ...
+    1 |			1 |		      J | 1  5	===>  4  4
+      +----------	  +----------	      K | 2  5        4  3
+    0   1 2 3 4 5      0    1 2 3 4 5	      L | 3  5        4  2
+ \endverbatim
+*/
 void MapCorrection::rotateRight()
 {
     if (m_bNoMapping) 
@@ -400,7 +437,7 @@ void MapCorrection::rotateRight()
     int iSrcH = m_rect.height();
 
     int iMapT = m_mapRect.top();
-    int iMapB = m_mapRect.bottom();
+    int iMapL = m_mapRect.left();
     int iMapW = m_mapRect.width();
     int iMapH = m_mapRect.height();
 
@@ -416,11 +453,11 @@ void MapCorrection::rotateRight()
         {
             QPoint *p = &m_aptMap[iYPos + x];
             QPoint dst;
-            dst.setX(iMapT + iMapB - p->y());
-            dst.setY(p->x());
+	    dst.setX(iMapL + p->y() - iMapT);
+	    dst.setY(iMapT + iMapW-1 + iMapL - p->x());
             if (bRotateCorrection)
-	        afCorrection[dst.y() * iMapW + dst.x()] = m_afCorrection[p->y() * iMapW + p->x()];
-            *p = dst;
+		afCorrection[(dst.y() - iMapT) * iMapH + (dst.x() - iMapL)] = m_afCorrection[p->y() * iMapW + p->x()];
+	    *p = dst;
     }
     }
     m_mapRect.setWidth(iMapH);
@@ -430,13 +467,12 @@ void MapCorrection::rotateRight()
 }
 
 /*!
-    constructor
+    constructor: store mapping and possible create histogram (generate a new mapped copy of the source)
 
-    \param pCorrection
-    \param pHistogram  
-
+    \param pMapCorrection pointer to to new mapping data (this class stores the reference only)
+    \param pHistogram     pointer to existing source histogram or NULL
  */
-MappedHistogram::MappedHistogram(MapCorrection *pCorrection, Histogram *pHistogram /*= NULL*/)
+MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram /*= NULL*/)
     : m_iWidth(0)
     , m_iHeight(0)
     , m_pMapCorrection(NULL)
@@ -444,7 +480,7 @@ MappedHistogram::MappedHistogram(MapCorrection *pCorrection, Histogram *pHistogr
     , m_dblTotalCounts(0.0)
     , m_iMaxPos(-1)
 {
-    setMapCorrection(pCorrection, pHistogram);
+    setMapCorrection(pMapCorrection, pHistogram);
 }
 
 /*!
@@ -492,10 +528,10 @@ MappedHistogram& MappedHistogram::operator=(const MappedHistogram &src)
 // OrientationRightRev: channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
 
 /*!
-    set the correction map
+    set new histogram and possible new mapping (generate a new mapped copy of the source)
 
-    \param pMapCorrection
-    \param pSrc
+    \param pMapCorrection pointer to to new mapping data (this class stores the reference only)
+    \param pSrc           pointer to existing source histogram or NULL
  */
 void MappedHistogram::setMapCorrection(MapCorrection *pMapCorrection, Histogram *pSrc /*= NULL*/)
 {
@@ -542,9 +578,6 @@ void MappedHistogram::setMapCorrection(MapCorrection *pMapCorrection, Histogram 
     }
 }
 
-/*!
-    \return total number of counts after correction
- */
 quint64 MappedHistogram::getCorrectedTotalCounts(void)
 {
     quint64 r = (quint64)(m_dblTotalCounts + 0.5);
@@ -554,6 +587,8 @@ quint64 MappedHistogram::getCorrectedTotalCounts(void)
 }
 
 /*!
+    return the mapped value as 64 bit integer at a specific position
+
     \param x
     \param y
 
@@ -573,6 +608,8 @@ quint64 MappedHistogram::value(quint16 x, quint16 y)
 }
 
 /*!
+    return the mapped value as double value at a specific position
+
     \param x
     \param y
 

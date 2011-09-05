@@ -27,6 +27,10 @@
 
 class QtInterface;
 
+/*!
+  \brief CARESS interface loop object
+  \author Lutz Rossa <rossa@helmholtz-berlin.de>
+ */
 class CARESSLoop : public LoopObject
 {
   Q_OBJECT
@@ -40,9 +44,9 @@ private slots:
   void shutdownLoop() { m_bDoLoop=false; }
 
 private:
-  bool        m_bDoLoop;
-  QStringList m_asArguments;
-  QString     m_sName;
+  bool        m_bDoLoop;     //!< flag to detect exit of QMesyDAQ
+  QStringList m_asArguments; //!< command line arguments of QMesyDAQ
+  QString     m_sName;       //!< name of this thread
 };
 
 #endif // CARESSLOOP_H

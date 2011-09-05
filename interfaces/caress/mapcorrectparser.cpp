@@ -28,22 +28,6 @@
 // revision $$Rev$$
 ////////////////////////////////////////////////////////////////////////////
 
-// corr=id skip_first_values first_bin coded_length_array
-// corre=id correction skip_first_values first_bin coded_length_array
-// coded_length_array: every character [0-9A-Za-z] is a length (0...61) without
-//                     separating blanks maps to how number of destination channels
-// (0..9,A..Z,a..z are for bin width values 0..9,10..35,36..61)
-//
-// We could describe bins by
-// skip_first_values number_of_first_bin lenght_bin0 length_bin1 ...
-// like
-// corr=13 5 10 2 2 3 2
-// expanded to a mapping vector for tube 13
-// raw channel                   10
-//  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14
-// mapped to
-// -1 -1 -1 -1 -1 10 10 11 11 12 12 12 13 13 -1 -1 -1 ...
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <QRegExp>
@@ -78,6 +62,11 @@
 
 #define ARRAY_SIZE(x) ((int)(sizeof(x)/sizeof((x)[0])))
 
+/*!
+  \brief intermediate storage of mapping of source data for later use of MapCorrection
+  \class mapstorage
+  \author Lutz Rossa <rossa@helmholtz-berlin.de>
+ */
 class mapstorage {
 public:
   mapstorage() : m_iTube(-1), m_fCorrection(1.0), m_iSkipFirst(0), m_iFirstBin(0) {}
@@ -94,12 +83,31 @@ public:
   QByteArray m_abyMapData;
 };
 
+/*!
+  \brief parse a mapping from CARESS
+  \param[in] pMapping   textual mapping line from CARESS
+  \param[in] iLength    length of textual mapping line
+  \param[in] iSrcWidth  width of source histogram
+  \param[in] iSrcHeight height of source histogram
+  \param[in] iDstSidth  width of mapped histogram
+  \param[in] iDstHeight height of mapped histogram
+  \return new MapCorrection which may be used with QMesyDAQ
+ */
 MapCorrection parseCaressMapCorrection(const char* pMapping, int iLength, int iSrcWidth, int iSrcHeight, int iDstWidth, int iDstHeight)
 {
   QString mapping=QString::fromLatin1(pMapping,iLength);
   return parseCaressMapCorrection(mapping,iSrcWidth,iSrcHeight,iDstWidth,iDstHeight);
 }
 
+/*!
+  \brief parse a mapping from CARESS
+  \param[in] mapping    textual mapping line from CARESS
+  \param[in] iSrcWidth  width of source histogram
+  \param[in] iSrcHeight height of source histogram
+  \param[in] iDstSidth  width of mapped histogram
+  \param[in] iDstHeight height of mapped histogram
+  \return new MapCorrection which may be used with QMesyDAQ
+ */
 MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, int iSrcHeight, int iDstWidth, int iDstHeight)
 {
   MapCorrection result;
@@ -165,7 +173,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       }
       bCorrE=false;
     }
-    else if (!item.compare("corre",Qt::CaseInsensitive))
+    else if (!item.compare("core",Qt::CaseInsensitive))
     {
       if (tmp.count()<5)
       {
@@ -174,7 +182,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       }
       bCorrE=true;
     }
-    else if (!item.compare("corrz",Qt::CaseInsensitive))
+    else if (!item.compare("corz",Qt::CaseInsensitive))
     {
       // zlib compressed + base64/mime coded
       QByteArray abyIn=QByteArray::fromBase64(tmp.last().toLatin1());
@@ -243,7 +251,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     }
 
     // corr=id skip_first_values first_bin coded_length_array
-    // corre=id correction skip_first_values first_bin coded_length_array
+    // core=id correction skip_first_values first_bin coded_length_array
     // coded_length_array: every character [0-9A-Za-z] is a length (0...61) without
     //                     separating blanks maps to how number of destination channels
     // (0..9,A..Z,a..z are for bin width values 0..9,10..35,36..61)
@@ -258,7 +266,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     // mapped to
     // -1 -1 -1 -1 -1 10 10 11 11 12 12 12 13 13 -1 -1 -1 ...
     //
-    // additional line like "corre" named "corrz": the "coded_length_array" is
+    // additional line like "corr/core" named "corz": the "coded_length_array" is
     // libz-compressed + base64(mime)-coded data
 
     mapstorage s;

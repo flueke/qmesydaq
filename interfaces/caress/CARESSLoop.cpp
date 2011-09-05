@@ -111,57 +111,55 @@
 
 #define ARRAY_SIZE(x) ((int)(sizeof(x)/sizeof((x)[0])))
 
+//! \brief default time factor (divider) for timer device (CARESS uses an integer data type for this)
 const double DEFAULTTIMEFACTOR = 100.0; // default CARESS factor for timer (Hertz)
 
-// CARESS status values
+//! \brief CARESS status values
 enum {
   // status after init
-  OFF_LINE      = 0,
-  ON_LINE       = 1,
-  MANUAL_MODE   = 2, /* motor is in manual module */
-  NOT_DEFINED   = 3, /* module was not defined */
-  LIMIT_CONTACT = 4, /* motor is at a limit contact */
+  OFF_LINE      = 0, /*!< device is offline */
+  ON_LINE       = 1, /*!< device is online */
+  MANUAL_MODE   = 2, /*!< motor is in manual module */
+  NOT_DEFINED   = 3, /*!< module was not defined */
+  LIMIT_CONTACT = 4, /*!< motor is at a limit contact */
 
   // normal status for other functions
-  NOT_ACTIVE    = 1,
-  ACTIVE        = 2, /* module is moving */
-  DONE          = 3, /* module reached target or aborted move */
-  LOADED        = 4, /* counter was loaded with new data */
-  ACTIVE1       = 5, /* like ACTIVE - but be used as special status */
-  COMBO_ACTIVE  = 6, /* multiplexer is active */
-  MODULE_ERROR  = 7, /* module error text available */
-  MODULE_RESET  = 8  /* fatal error, module has to be reset */
+  NOT_ACTIVE    = 1, /*!< device is unused */
+  ACTIVE        = 2, /*!< module is moving */
+  DONE          = 3, /*!< module reached target or aborted move and is now idle */
+  LOADED        = 4, /*!< counter was loaded with new data */
+  ACTIVE1       = 5, /*!< like ACTIVE - but be used as special status */
+  COMBO_ACTIVE  = 6, /*!< multiplexer is active */
+  MODULE_ERROR  = 7, /*!< module error text available */
+  MODULE_RESET  = 8  /*!< fatal error, module has to be reset */
 };
 
-// mapping of QMesyDAQ devices into CARESS CORBA device arrays
+//! \brief mapping of QMesyDAQ devices into CARESS CORBA device arrays
 enum {
-  QMESYDAQ_MON1 = 0,
-  QMESYDAQ_MON2,
-  QMESYDAQ_MON3,
-  QMESYDAQ_MON4,
-  QMESYDAQ_EVENT,
-  QMESYDAQ_TIMER,
-  QMESYDAQ_HISTOGRAM,
-  QMESYDAQ_DIFFRACTOGRAM,
-  QMESYDAQ_SPECTROGRAM,
-//QMESYDAQ_ADC1,
-//QMESYDAQ_ADC2,
-//QMESYDAQ_TTL1,
-//QMESYDAQ_TTL2,
+  QMESYDAQ_MON1 = 0,      //!< monitor counter 1
+  QMESYDAQ_MON2,          //!< monitor counter 2
+  QMESYDAQ_MON3,          //!< monitor counter 3
+  QMESYDAQ_MON4,          //!< monitor counter 4
+  QMESYDAQ_EVENT,         //!< event counter
+  QMESYDAQ_TIMER,         //!< timer
+  QMESYDAQ_HISTOGRAM,     //!< mapped histogram
+  QMESYDAQ_DIFFRACTOGRAM, //!< diffractogram
+  QMESYDAQ_SPECTROGRAM,   //!< spectogram of one detector channel
+//QMESYDAQ_ADC1,          //!< analog input 1
+//QMESYDAQ_ADC2,          //!< analog input 2
+//QMESYDAQ_TTL1,          //!< digital input 1
+//QMESYDAQ_TTL2,          //!< digital input 2
   QMESYDAQ_MAXDEVICES
 };
 static const char* g_asDevices[]={"monitor_1","monitor_2","monitor_3","monitor_4","event_counter","timer","histogram","diffractogram"};
 
-/***************************************************************************
- * CORBA server implementing the "CARESS CORBA device"
- * (IDL interface CARESS::CORBADevice)
- ***************************************************************************/
+/*!
+  \brief CORBA server implementing the "CARESS CORBA device"
+	 (IDL interface CARESS::CORBADevice)
+  \class CORBADevice_i
+ */
 class CORBADevice_i: public POA_CARESS::CORBADevice, public PortableServer::RefCountServantBase
 {
-private:
-  // Make sure all instances are built on the heap by making the
-  // destructor non-public
-  //virtual ~CORBADevice_i();
 public:
   // standard constructor
   CORBADevice_i(MultipleLoopApplication* pApp);
@@ -193,29 +191,37 @@ private:
   QMutex  m_mutex;
 
 protected:
-  long    m_lHistogramX, m_lHistogramY;
-  long    m_lDiffractogramWidth;
-  long    m_lSpectrogramChannel, m_lSpectrogramWidth;
-  long    m_lRunNo;
-  long    m_lStepNo;
-  long    m_lMesrCount;
-  bool    m_bListmode;
-  QString m_sListfile;
-  double  m_dblTimerScale;
+  long    m_lHistogramX;         //!< width of histogram
+  long    m_lHistogramY;         //!< height of histogram
+  long    m_lDiffractogramWidth; //!< width of diffractogram
+  long    m_lSpectrogramChannel; //!< selected spectrogram channel
+  long    m_lSpectrogramWidth;   //!< width of spectrogram
+  long    m_lRunNo;              //!< current/last CARESS run number
+  long    m_lStepNo;             //!< current/last CARESS measurment step
+  long    m_lMesrCount;          //!< current/last CARESS resolution step (not used)
+  bool    m_bListmode;           //!< true, if QMesyDAQ should acquire a list file
+  QString m_sListfile;           //!< list file name
+  double  m_dblTimerScale;       //!< override for DEFAULTTIMEFACTOR
 
-  long    m_lId[QMESYDAQ_MAXDEVICES];
-  bool    m_b64Bit[QMESYDAQ_MAXDEVICES];
-  int     m_iMaster;
+  long    m_lId[QMESYDAQ_MAXDEVICES];    //!< CARESS ids of internal devices
+  bool    m_b64Bit[QMESYDAQ_MAXDEVICES]; //!< 64-bit mode for internal devices
+  int     m_iMaster;                     //!< which internal device is the master counter
 
-  char    m_szErrorMessage[64];
-  QList<quint64> m_aullDetectorData;
-  int            m_iDetectorWidth;
+  char    m_szErrorMessage[64];          //!< last error message text
+  QList<quint64> m_aullDetectorData;     //!< last histogram/diffractogram/spectrogram
+  int            m_iDetectorWidth;       //!< last width of histogram/diffractogram/spectrogram
 };
 
 /***************************************************************************
  * CARESSLoop is the connection between QMesyDAQ and CORBA server
  ***************************************************************************/
 static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr objref, const char* szName);
+
+/*!
+  \brief constructor
+  \param[in] argList   command line arguments of QMesyDAQ
+  \param[in] interface QtInterface for data exchange between QMesyDAQ and CARESS interface
+ */
 CARESSLoop::CARESSLoop(QStringList argList, QtInterface *interface)
   : m_bDoLoop(true), m_asArguments(argList), m_sName("qmesydaq")
 {
@@ -225,7 +231,7 @@ CARESSLoop::CARESSLoop(QStringList argList, QtInterface *interface)
 // testing
 }
 
-// this class is derived from QThread and if this function returns, the thread exits
+//! \brief CARESSLoop is derived from QThread and if this function returns, the thread exits
 void CARESSLoop::runLoop()
 {
   MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
@@ -332,6 +338,13 @@ void CARESSLoop::runLoop()
   }
 }
 
+/*!
+  \brief store object reference with a name into CORBA name service
+  \param[in] orb     use this CORBA ORB
+  \param[in] objref  CORBA object reference
+  \param[in] szName  name for name service
+  \return 1 = successful, 0 = error
+ */
 static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr objref, const char* szName)
 {
   CosNaming::NamingContext_var rootContext;
@@ -407,6 +420,11 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
 /***************************************************************************
  * implementation of the CARESS CORBA server
  ***************************************************************************/
+
+/*!
+  \brief constructor
+  \param[in] pApp reference to QMesyDAQ application
+ */
 CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
   m_theApp(pApp), m_lHistogramX(0), m_lHistogramY(0), m_lDiffractogramWidth(0),
   m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
@@ -418,13 +436,22 @@ CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
   memset(&m_szErrorMessage[0],0,sizeof(m_szErrorMessage));
 }
 
+//! \brief destructor
 CORBADevice_i::~CORBADevice_i()
 {
 }
 
-/***************************************************************************
- * initialisation of device (old interface, see also "init_module_ex")
- ***************************************************************************/
+/*!
+  \brief initialisation of device (old interface, see also "init_module_ex")
+  \param[in]  kind           kind of initialisation
+  \param[in]  id             CARESS id
+  \param[in]  config_line    text line from "hardware_modules.dat" file
+			     see head of source file about content of this line
+  \param[out] module_status  device status
+  \note this function calls \c init_module_ex only. Although this may enable
+	exceptions, this implementation uses exceptions for \c get_attribute and
+	\c set_attribute only.
+ */
 CARESS::ReturnType CORBADevice_i::init_module(CORBA::Long kind,
                                       CORBA::Long id,
                                       const char* config_line,
@@ -434,10 +461,19 @@ CARESS::ReturnType CORBADevice_i::init_module(CORBA::Long kind,
   return init_module_ex(kind,id,NULL,config_line,module_status,desc.out());
 }
 
-/***************************************************************************
- * initialisation of device
- * (see head of this document about "config_line"
- ***************************************************************************/
+/*!
+  \brief initialisation of device (old interface, see also "init_module_ex")
+  \param[in]  kind           kind of initialisation
+  \param[in]  id             CARESS id
+  \param[in]  name           CARESS name of this device
+  \param[in]  config_line    text line from "hardware_modules.dat" file
+			     see head of source file about content of this line
+  \param[out] module_status  device status
+  \param[out] description    error description or empty string
+  \return CARESS::OK = successful \n CARESS::NOT_OK = error
+  \note Although this function may enable exceptions, this implementation
+	uses exceptions for \c get_attribute and \c set_attribute only.
+ */
 CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
                                       CORBA::Long id,
                                       const char* name,
@@ -665,9 +701,11 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
   }
 }
 
-/***************************************************************************
- * cleanup device
- ***************************************************************************/
+/*!
+  \brief cleanup device
+  \param[in]  kind  ignore this parameter
+  \param[in]  id    CARESS id
+ */
 CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
                                          CORBA::Long id)
 {
@@ -710,9 +748,14 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
   return CARESS::OK;
 }
 
-/***************************************************************************
- * start measurment
- ***************************************************************************/
+/*!
+  \brief start new measurment (-step)
+  \param[in]  kind           kind of start to distinguish between new step or measurment
+  \param[in]  id             CARESS id
+  \param[in]  run_no         CARESS run number
+  \param[in]  mesr_count     CARESS resolution step (not used)
+  \param[out] module_status  current device status
+ */
 CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
                                        CORBA::Long id,
                                        CORBA::Long run_no,
@@ -801,6 +844,12 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
   }
 }
 
+/*!
+  \brief stop measurment
+  \param[in]  kind           kind of stop to distinguish between pause or measurment end
+  \param[in]  id             CARESS id
+  \param[out] module_status  current device status
+ */
 /***************************************************************************
  * stop measurment
  ***************************************************************************/
@@ -865,9 +914,16 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
   }
 }
 
-/***************************************************************************
- * new setpoint for motors, power supplies, etc. (no counters)
- ***************************************************************************/
+/*!
+  \brief drive device / new set point
+  \param[in]     kind                kind of drive
+  \param[in]     id                  CARESS id
+  \param[in]     data                new set point
+  \param[in,out] calculated_timeout  add device timeout
+  \param[out]    delay               delay device and try again
+  \param[out]    module_status       current device status
+  \note this function call is ignored
+ */
 CARESS::ReturnType CORBADevice_i::drive_module(CORBA::Long kind,
                                        CORBA::Long id,
                                        const CARESS::Value& data,
@@ -888,9 +944,13 @@ CARESS::ReturnType CORBADevice_i::drive_module(CORBA::Long kind,
   return CARESS::NOT_OK;
 }
 
-/***************************************************************************
- * handle counters: clear, new count target, master/slave, etc.
- ***************************************************************************/
+/*!
+  \brief handle counters: clear, new count target, master/slave, etc.
+  \param[in]     kind                kind of load
+  \param[in]     id                  CARESS id
+  \param[in]     data                new counter value/target
+  \param[out]    module_status       current device status
+ */
 CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
                                       CORBA::Long id,
                                       const CARESS::Value& data,
@@ -1025,9 +1085,22 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
   }
 }
 
-/***************************************************************************
- * load additional information from CARESS
- ***************************************************************************/
+/*!
+  \brief load additional information from CARESS
+
+      this function is used for loading
+      \li additional configuration (<tt>kind==0</tt>)
+      \li additional CARESS commands (<tt>kind==5</tt>)
+      \li content of other CARESS commands at start (<tt>kind==7</tt>)
+      \li position other CARESS devices at start (<tt>kind==2</tt>)
+      \li header and mapping for list mode file (<tt>kind==18</tt>)
+  \param[in]     kind                kind of load block
+  \param[in]     id                  CARESS id
+  \param[in]     start_channel       target start channel (starts with 1, not really used)
+  \param[in]     end_channel         target end channel (starts with 1)
+  \param[out]    module_status       current device status
+  \param[in]     data                load data
+ */
 CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
                                            CORBA::Long id,
                                            CORBA::Long start_channel,
@@ -1302,9 +1375,13 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
   return CARESS::NOT_OK;
 }
 
-/***************************************************************************
- * read device value and status (histogram: read sum only)
- ***************************************************************************/
+/*!
+  \brief read device value and status (histogram: read sum only)
+  \param[in]     kind                kind of load block
+  \param[in]     id                  CARESS id
+  \param[out]    module_status       current device status
+  \param[out]    data                current value
+ */
 CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
                                       CORBA::Long id,
                                       CORBA::Long& module_status,
@@ -1373,6 +1450,14 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
   return result;
 }
 
+/*!
+  \brief prepare histogram readout or read special device data
+  \param[in]     kind                kind of read block
+  \param[in]     id                  CARESS id
+  \param[in,out] start_channel       start channel (starts with 1)
+  \param[in,out] end_channel         end channel (starts with 1)
+  \param[in,out] type                current device status
+ */
 /***************************************************************************
  * prepare histogram readout or read special device data
  ***************************************************************************/
@@ -1495,6 +1580,15 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
  ***************************************************************************/
 static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
 				    QList<quint64>& dst, quint32 dstwidth);
+/*!
+  \brief histogram readout or read special device data
+  \param[in]   kind                kind of read block
+  \param[in]   id                  CARESS id
+  \param[in]   start_channel       start channel (starts with 1)
+  \param[in]   end_channel         end channel (starts with 1)
+  \param[out]  module_status       current device status
+  \param[out]  data                array of values in selected range
+ */
 CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
                                            CORBA::Long id,
                                            CORBA::Long start_channel,
@@ -1700,8 +1794,16 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
   return result;
 }
 
-// grow, copy or shrink a single line of a histogram/diffractogram/spectrogram
-// and merge it with a previous line
+/*!
+  \brief helper function to merge detector data
+
+  grow, copy or shrink a single line of a histogram/diffractogram/spectrogram
+  and merge it with a previous line
+  \param[in]     src       source histogram line
+  \param[in]     srcwidth  source histogram width
+  \param[in,out] dst       mapped histogram line
+  \param[in]     dstwidth  mapped histogram width
+ */
 static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
 				    QList<quint64>& dst, quint32 dstwidth)
 {
@@ -1752,9 +1854,7 @@ static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
   }
 }
 
-/***************************************************************************
- * device property: devices should be readable
- ***************************************************************************/
+//! \brief device property: devices should be readable
 CORBA::Boolean CORBADevice_i::is_readable_module(CORBA::Long id)
 {
   QMutexLocker lock(&m_mutex);
@@ -1770,9 +1870,7 @@ CORBA::Boolean CORBADevice_i::is_readable_module(CORBA::Long id)
   return 0;
 }
 
-/***************************************************************************
- * device property: this device is cannot be driven
- ***************************************************************************/
+//! \brief device property: this device is cannot be driven
 CORBA::Boolean CORBADevice_i::is_drivable_module(CORBA::Long id)
 {
   QMutexLocker lock(&m_mutex);
@@ -1788,9 +1886,7 @@ CORBA::Boolean CORBADevice_i::is_drivable_module(CORBA::Long id)
   return 0;
 }
 
-/***************************************************************************
- * device property: this device is counting
- ***************************************************************************/
+//! \brief device property: this device is counting
 CORBA::Boolean CORBADevice_i::is_counting_module(CORBA::Long id)
 {
   QMutexLocker lock(&m_mutex);
@@ -1806,9 +1902,7 @@ CORBA::Boolean CORBADevice_i::is_counting_module(CORBA::Long id)
   return 0;
 }
 
-/***************************************************************************
- * device property: this device is returns no digital I/O
- ***************************************************************************/
+//! \brief device property: this device is returns no digital I/O
 CORBA::Boolean CORBADevice_i::is_status_module(CORBA::Long id)
 {
   QMutexLocker lock(&m_mutex);
@@ -1824,9 +1918,7 @@ CORBA::Boolean CORBADevice_i::is_status_module(CORBA::Long id)
   return 0;
 }
 
-/***************************************************************************
- * device property: this device needs no reference (incremental encoder do)
- ***************************************************************************/
+//! \brief device property: this device needs no reference (incremental encoder do)
 CORBA::Boolean CORBADevice_i::needs_reference_module(CORBA::Long id)
 {
   QMutexLocker lock(&m_mutex);
@@ -1842,9 +1934,16 @@ CORBA::Boolean CORBADevice_i::needs_reference_module(CORBA::Long id)
   return 0;
 }
 
-/***************************************************************************
- * read extended device property
- ***************************************************************************/
+/*!
+  \brief read extended device property
+
+  supported attributes are
+  \li detector_channels: return size (width and possibly height) of device
+  \li error_description: last detailed textual error message
+  \param[in] id   CARESS id
+  \param[in] name name of attribute
+  \return data or exception CARESS::ErrorDescription("not implemented")
+ */
 CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
 {
   QMutexLocker lock(&m_mutex);
@@ -1915,6 +2014,15 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
   throw CARESS::ErrorDescription("not implemented");
 }
 
+/*!
+  \brief write extended device property
+
+  None of the attributes are writable. This functions generate an exception in any case.
+  \param[in] id   CARESS id
+  \param[in] name name of attribute
+  \param[in] data new data for attribute
+  \return exception CARESS::ErrorDescription("not implemented")
+ */
 /***************************************************************************
  * write extended device property
  ***************************************************************************/

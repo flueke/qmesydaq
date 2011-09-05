@@ -69,12 +69,11 @@ public:
 		       OrientationUpRev, 
 		       OrientationDownRev, 
 		       OrientationLeftRev, 
-		       OrientationRightRevi,
-			 };
+		       OrientationRightRev };
 
     //! select which pixel should be hold a correction factor: source or mapped pixel
     enum CorrectionType { CorrectSourcePixel = 0, 
-			  CorrectMappedPixel, };
+			  CorrectMappedPixel };
 
     //! default constructor
     MapCorrection() 
@@ -184,13 +183,13 @@ private:
     //! correction type
     enum CorrectionType m_iCorrection;
 
-    //! size of the original array ???
+    //! size of the original array
     QRect               m_rect;
 
-    //! size of the destination array ???
+    //! size and position of the mapped array
     QRect               m_mapRect;
 
-    //! mapping 
+    //! mapping information
     QVector<QPoint>     m_aptMap;
 
     //! intensity correction 
@@ -206,36 +205,46 @@ class MappedHistogram : public MesydaqObject
 {
     Q_OBJECT
 public:
-    MappedHistogram(MapCorrection* pCorrection, Histogram* pHistogram = NULL);
+    MappedHistogram(MapCorrection* pMapCorrection, Histogram* pHistogram = NULL);
     MappedHistogram(const MappedHistogram& src);
     MappedHistogram& operator=(const MappedHistogram& src);
 
     //! destructor
     ~MappedHistogram() {}
 
+    /*!
+	set new histogram and possible new mapping (generate a new mapped copy of the source)
+
+	\param pMapCorrection pointer to to new mapping data (this class stores the reference only)
+	\param pSrc           pointer to existing source histogram or NULL
+     */
     void setMapCorrection(MapCorrection* pMapCorrection, Histogram* pSrc = NULL);
 
     /*!
-        sets the histogram
+	sets the histogram (generate a mapped copy of the source)
 
-        \param pSrc
+	\param pSrc pointer to existing source histogram
      */
     void setHistogram(Histogram *pSrc) 
     { 
         setMapCorrection(NULL, pSrc); 
     }
 
-    //! \return sum of all events
+    //! \return sum of all events as uncorrected value
     quint64 getTotalCounts(void) { return m_ullTotalCounts; }
+
+    //! \return sum of all events after correction
     quint64 getCorrectedTotalCounts(void);
 
     //! \return the maximum value of this histogram
-    quint64 max() { return m_iMaxPos>=0 && m_iMaxPos<m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : NULL; }
+    quint64 max() { return m_iMaxPos>=0 && m_iMaxPos<m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : 0; }
 
     //! \return the number of the first tube containing the maximum value
     int maxpos() { return m_iMaxPos; }
 
     quint64 value(quint16 x, quint16 y);
+
+    //! \return the mapped value as double
     double floatValue(quint16 x, quint16 y);
 
     //! \return the height of this histogram
@@ -253,19 +262,34 @@ public:
     void clear(void);
 
 private:
+    //! width of mapped histogram
     quint16         m_iWidth;
+
+    //! height of mapped histogram
     quint16         m_iHeight;
+
+    //! pointer to mapping information
     MapCorrection*  m_pMapCorrection;
 
+    //! mapped histogram data
     QVector<double> m_adblData;
+
+    //! uncorrected event counter
     quint64         m_ullTotalCounts;
+
+    //! corrected event counter
     double          m_dblTotalCounts;
+
+    //! array position of maximum value
     int             m_iMaxPos;
-/*
-protected:
-  void maporientation(int iSrcX, int iSrcY, int& iDstX, int& iDstY);
-  QPoint maporientation(const QPoint& src);
-*/
+
+#if 0
+    //! remap point using stored orientation
+    void maporientation(int iSrcX, int iSrcY, int& iDstX, int& iDstY);
+
+    //! remap point using stored orientation
+    QPoint maporientation(const QPoint& src);
+#endif
 };
 
 #endif /* __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__ */

@@ -738,10 +738,12 @@ void MainWidget::displayMcpdSlot(int id)
 
     \param id
  */
-void MainWidget::displayMpsdSlot(int)
+void MainWidget::displayMpsdSlot(int iModule)
 {
 // retrieve displayed ID
-    quint8 mod = devid_2->value();
+    quint8 mod = iModule;
+    if (iModule<0)
+      mod = devid_2->value();
 // firmware version
     firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod)));
     
