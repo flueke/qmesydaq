@@ -172,11 +172,11 @@ typedef struct _MDLL_ADDRESS_SET
 	quint8 cip3;
 } *P_MDLL_ADRESS_SET, MDLL_ADDRESS_SET;
 
-#define BUFTYPE		0x8000
-#define DATATYPE	0x8000
-#define CMDBUFLEN	1
-#define CMDHEADLEN	10
-#define STDBUFLEN	1
+#define CMDBUFTYPE		0x8000
+#define TRIGGEREVENTTYPE	0x8000
+#define CMDBUFLEN		1
+#define CMDHEADLEN		10
+#define STDBUFLEN		1
 
 #endif
 

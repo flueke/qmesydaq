@@ -1007,7 +1007,7 @@ bool MCPD8::serialize(QDataStream /* ds */)
  */
 void MCPD8::initCmdBuffer(quint16 cmd)
 {
-	m_cmdBuf.bufferType = BUFTYPE;
+	m_cmdBuf.bufferType = CMDBUFTYPE;
 	m_cmdBuf.headerLength = CMDHEADLEN;
 	m_cmdBuf.cmd = cmd;
 	m_cmdBuf.bufferNumber = m_txCmdBufNum;
@@ -1097,7 +1097,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 		protocol(tr("%1(%2)%6 : Lost %3 Buffers: current: %4, last: %5").arg(m_network->ip()).arg(m_network->port()).arg(diff).arg(recBuf.bufferNumber).arg(m_lastBufnum).arg(m_id), ERROR);
 	m_lastBufnum = recBuf.bufferNumber;
 
-	if(recBuf.bufferType & BUFTYPE)
+	if(recBuf.bufferType & CMDBUFTYPE)
 	{
 		communicate(false);
 		m_commTimer->stop();

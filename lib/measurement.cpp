@@ -695,13 +695,13 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 {
 	quint16 time;
 	ulong 	data;
-	quint32 i, j;
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
 	quint64 tim;
 	quint16 mod = pd.deviceId;	
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
+	m_counter[TIMERID]->setTime(m_headertime / 10000);
 
 	m_packages++;
 	if(pd.bufferType < 0x0002) 
@@ -709,13 +709,10 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 // extract parameter values:
 		QChar c('0');
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
-		if (datalen == 0)
-			m_counter[TIMERID]->setTime(m_headertime / 10000);
-		quint16 counter; 
 //
 // status IDLE is for replaying files
 // 
-		for(counter = 0, i = 0; i < datalen && (m_status == STARTED || m_status == IDLE); ++i, counter += 3)
+		for(quint32 counter = 0, i = 0; i < datalen && (m_status == STARTED || m_status == IDLE); ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
@@ -725,7 +722,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
 // not neutron event (counter, chopper, ...)
 			m_counter[TIMERID]->setTime(tim / 10000);
-			if((pd.data[counter + 2] & DATATYPE))
+			if((pd.data[counter + 2] & TRIGGEREVENTTYPE))
 			{
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
@@ -808,10 +805,10 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			}
 		}
 		m_triggers += triggers;
-		for(i = 0; i < 4; i++)
+		for(int i = 0; i < 4; i++)
 		{
 			quint64 var = 0;
-			for(j = 0; j < 3; j++)
+			for(int j = 0; j < 3; j++)
 			{
 				var <<= 16;
 				var |= pd.param[i][2 - j];

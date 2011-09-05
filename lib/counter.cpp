@@ -49,7 +49,10 @@ void MesydaqCounter::operator++(void)
 	if (!m_limit || m_value < m_limit)
 		++m_value;
 	if (isStopped())
+	{
+		protocol(tr("counter stop"), INFO);
 		emit stop();
+	}
 }
 
 void MesydaqCounter::set(quint64 val)
