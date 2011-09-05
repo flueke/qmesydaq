@@ -232,7 +232,7 @@ void Measurement::stop()
 		protocol(tr("packages : %1 triggers : %2").arg(m_packages).arg(m_triggers));
 		if (m_triggers)
 		{
-			for(int i = 0; m_counter.size(); ++i)
+			for(int i = 0; i < m_counter.size(); ++i)
 				protocol(tr("Counter %1 gots %2 events").arg(i).arg(m_counter[i]->value()), NOTICE);
 		}
 	}
