@@ -482,7 +482,10 @@ void MainWidget::startStopSlot(bool checked)
             m_meas->setPreset(MON1ID, monitor1Preset->value(), true);
         if(m_meas->isMaster(MON2ID))
             m_meas->setPreset(MON2ID, monitor2Preset->value(), true);
-
+        if(m_meas->isMaster(MON3ID))
+            m_meas->setPreset(MON3ID, monitor3Preset->value(), true);
+        if(m_meas->isMaster(MON4ID))
+            m_meas->setPreset(MON4ID, monitor4Preset->value(), true);
         startStopButton->setText("Stop");
         // set device id to 0 -> will be filled by mesydaq for master
         m_meas->start();
