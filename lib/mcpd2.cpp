@@ -1018,7 +1018,7 @@ void MCPD2::analyzeBuffer(MDP_PACKET &recBuf)
 		protocol(tr("%1(%2)%6 : Lost %3 Buffers: current: %4, last: %5").arg(m_network->ip()).arg(m_network->port()).arg(diff).arg(recBuf.bufferNumber).arg(m_lastBufnum).arg(m_id), ERROR);
 	m_lastBufnum = recBuf.bufferNumber;
 
-	if(recBuf.bufferType & 0x8000)
+	if(recBuf.bufferType & BUFTYPE)
 	{
 		communicate(false);
 		m_commTimer->stop();

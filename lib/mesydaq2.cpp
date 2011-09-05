@@ -1510,9 +1510,10 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		m_runID = pd.runID;
  		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 		quint16 counter = 0;
+		protocol(tr("data len : %1").arg(datalen / 3), ERROR);	
 		for(quint32 i = 0; i < datalen; ++i, counter += 3)
 		{
-			if((pd.data[counter + 2] & 0x8000))
+			if(!(pd.data[counter + 2] & DATATYPE))
 			{
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
 				quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
@@ -1526,6 +1527,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 					pd.data[counter + 1] |= ((amp & 0x7) << 13);
 				}
 			}
+			else
+				protocol(tr("TRIGGER"), ERROR);
 		}
 		if(m_acquireListfile)
 		{

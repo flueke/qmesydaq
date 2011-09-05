@@ -725,7 +725,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
 // not neutron event (counter, chopper, ...)
 			m_counter[TIMERID]->setTime(tim / 10000);
-			if((pd.data[counter + 2] & 0x8000))
+			if((pd.data[counter + 2] & DATATYPE))
 			{
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
