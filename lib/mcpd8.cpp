@@ -582,13 +582,9 @@ bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 	initCmdBuffer(SETAUXTIMER);
 	m_cmdBuf.data[0] = tim;
 	m_cmdBuf.data[1] = val;
+	m_auxTimer[tim] = val;
 	finishCmdBuffer(2);
-	if(sendCommand())
-	{
-		m_auxTimer[tim] = val;
-		return true;
-	}
-	return false;
+	return sendCommand();
 }
 
 /*!
@@ -955,7 +951,7 @@ void MCPD8::stdInit(void)
 	{
 		m_auxTimer[c] = 0;
 		m_paramSource[c] = c;
-		m_parameter[c] = c;
+		m_parameter[c] = 0;
 	} 
 }
 
@@ -1162,10 +1158,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 					protocol(tr(": SETCELL"), INFO);
 				break;
 			case SETAUXTIMER:
-				if (recBuf.data[2] != m_auxTimer[recBuf.data[1]])
+				if (recBuf.data[1] != m_auxTimer[recBuf.data[0]])
 				{
 					protocol(tr("Error setting auxiliary timer, tim %1, is: %2, should be %3").
-						arg(recBuf.data[1]).arg(recBuf.data[2]).arg(m_auxTimer[recBuf.data[1]]), ERROR);
+						arg(recBuf.data[0]).arg(recBuf.data[1]).arg(m_auxTimer[recBuf.data[0]]), ERROR);
 				}
 				break;
 			case SETPARAM:

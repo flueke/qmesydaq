@@ -1123,6 +1123,7 @@ void Mesydaq2::setParamSource(quint16 id, quint16 param, quint16 source)
  */
 void Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 {
+        protocol(tr("set aux timer : ID = %1, timer = %2, interval = %3").arg(id).arg(tim).arg(val), NOTICE);
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setAuxTimer(tim, val);
 }

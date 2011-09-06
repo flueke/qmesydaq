@@ -156,8 +156,11 @@
             <property name="toolTip">
              <string>select timer number</string>
             </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
             <property name="maximum">
-             <number>3</number>
+             <number>4</number>
             </property>
            </widget>
           </item>

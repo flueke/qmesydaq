@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QFileDialog>
+#include <QDebug>
 
 #include "mdefines.h"
 #include "mcpdsetup.h"
@@ -72,10 +73,11 @@ void MCPDSetup::sendParamSlot()
 */
 void MCPDSetup::sendAuxSlot()
 {
-    m_theApp->protocol("set aux timer", NOTICE);
     bool ok;
-    quint16 compare = (quint16)compareAux->text().toInt(&ok, 0);
-    m_theApp->setAuxTimer(mcpdId->value(), timer->value(), compare);
+    QString tmp = compareAux->text();
+    tmp.replace(" x 10 us", "");
+    quint16 compare = (quint16)tmp.toUInt(&ok, 10);
+    m_theApp->setAuxTimer(mcpdId->value(), timer->value() - 1, compare);
 }
 
 /*!

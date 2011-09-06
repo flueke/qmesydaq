@@ -735,17 +735,17 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					case MON3ID :
 					case MON4ID :
 						++(*m_counter[dataId]);
-//						protocol(tr("counter %1 : (%3 - %4)%2").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers));
+//						protocol(tr("counter %1 : (%3 - %4)%2 : %4").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), DEBUG);
 						break;
 					case TTL1ID :
 					case TTL2ID :
 						++(*m_counter[dataId]);
-						protocol(tr("counter %1 : (%3 - %4)%2").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers), NOTICE);
+						protocol(tr("counter %1 : (%3 - %4)%2 : %4").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
 						break;
 					case ADC1ID :
 					case ADC2ID :
 						++(*m_counter[dataId]);
-						protocol(tr("counter %1 : (%3 - %4)%2").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers), NOTICE);
+						protocol(tr("counter %1 : (%3 - %4)%2 : %4").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
 						break;
 					default:
 						protocol(tr("counter %1 : %2").arg(dataId).arg(i), ERROR);
@@ -805,6 +805,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 			}
 		}
 		m_triggers += triggers;
+#if 0
 		for(int i = 0; i < 4; i++)
 		{
 			quint64 var = 0;
@@ -824,6 +825,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 				}
 			}
 		}		
+#endif
 	}
 	else
 		protocol(tr("buffer type : %1").arg(pd.bufferType), ERROR);
