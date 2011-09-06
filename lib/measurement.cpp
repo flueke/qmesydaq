@@ -828,7 +828,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 #endif
 	}
 	else
-		protocol(tr("buffer type : %1").arg(pd.bufferType), ERROR);
+		protocol(tr("buffer type : %1").arg(pd.bufferType), INFO);
 }
 
 bool Measurement::acqListfile() const
