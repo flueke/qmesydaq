@@ -45,6 +45,7 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 
     QList<int> mcpdList = m_theApp->mcpdId();
     mcpdId->setMCPDList(mcpdList);
+    displayAuxTimerSlot(1);
 }
 
 /*!
@@ -191,7 +192,7 @@ void MCPDSetup::displayAuxTimerSlot(int id)
     if (id < 0)
         id = timer->value();
 // get timer settings
-    compareAux->setValue(m_theApp->getAuxTimer(mcpdId->value(), id));
+    compareAux->setValue(m_theApp->getAuxTimer(mcpdId->value(), id - 1));
 
 // get stream setting
 //  statusStream->setChecked(m_theApp->myMcpd[id]->getStream());
