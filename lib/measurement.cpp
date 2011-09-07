@@ -735,17 +735,19 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					case MON3ID :
 					case MON4ID :
 						++(*m_counter[dataId]);
-//						protocol(tr("counter %1 : (%3 - %4)%2 : %4").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), DEBUG);
+//						protocol(tr("counter %1 : (%3 - %4)%2 : %5").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), DEBUG);
 						break;
 					case TTL1ID :
 					case TTL2ID :
 						++(*m_counter[dataId]);
-						protocol(tr("counter %1 : (%3 - %4)%2 : %4").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
+						protocol(tr("counter %1 : (%3 - %4)%2 : %5")
+							.arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
 						break;
 					case ADC1ID :
 					case ADC2ID :
 						++(*m_counter[dataId]);
-						protocol(tr("counter %1 : (%3 - %4)%2 : %4").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
+						protocol(tr("counter %1 : (%3 - %4)%2 : %5")
+							.arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
 						break;
 					default:
 						protocol(tr("counter %1 : %2").arg(dataId).arg(i), ERROR);
