@@ -368,6 +368,9 @@ Listfile</string>
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="wrapping">
+          <bool>true</bool>
+         </property>
          <property name="maximum">
           <number>7</number>
          </property>
@@ -401,9 +404,12 @@ Listfile</string>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="dispChan">
+        <widget class="ChannelSpinBox" name="dispChan">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="wrapping">
+          <bool>true</bool>
          </property>
          <property name="maximum">
           <number>7</number>
@@ -1483,6 +1489,11 @@ Listfile</string>
    <class>ModuleSpinBox</class>
    <extends>QSpinBox</extends>
    <header>ModuleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ChannelSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>ChannelSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>MCPDSpinBox</class>

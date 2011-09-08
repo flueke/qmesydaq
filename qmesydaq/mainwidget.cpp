@@ -164,6 +164,10 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
     connect(statusTab, SIGNAL(currentChanged(int)), this, SLOT(statusTabChanged(int)));
 
+    connect(dispChan, SIGNAL(changeModule(int)), dispMpsd, SLOT(steps(int)));
+    connect(dispMpsd, SIGNAL(changeModule(int)), dispMcpd, SLOT(steps(int)));
+    connect(paramId, SIGNAL(valueChanged(int)), this, SLOT(draw()));
+
 //  connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 
     clearMcpd->setHidden(true);
@@ -371,6 +375,8 @@ void MainWidget::init()
 
     connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
     connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
+    connect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
+    displayMcpdSlot(dispMcpd->value());
 #if 0
     connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 #endif
@@ -634,16 +640,16 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
         val = round(val / 10000.0);
 //      nsec = timeval - (1000 * val);
     }
-    //	qDebug("%lu %lu %lu", timeval, val, nsec);
-    // hours = val / 3600 (s/h)
+//  qDebug("%lu %lu %lu", timeval, val, nsec);
+// hours = val / 3600 (s/h)
     hr = val / 3600;
-    // remaining seconds:
+// remaining seconds:
     val -= hr * 3600;
-    // minutes:
+// minutes:
     min = val / 60;
-    // remaining seconds:
+// remaining seconds:
     sec = val - (min * 60);
-    //	qDebug("%lu %lu %lu %lu %lu", nsecs, hr, min, sec, nsec);
+//  qDebug("%lu %lu %lu %lu %lu", nsecs, hr, min, sec, nsec);
     str.sprintf("%02lu:%02lu:%02lu", hr, min, sec);
     return str;
 }
@@ -774,7 +780,7 @@ void MainWidget::scanPeriSlot(bool real)
 
     QList<int> modList = m_theApp->mpsdId(id);
     dispMpsd->setModuleList(modList);
-    displayMpsdSlot(modList.size() ? modList.at(0) : -1);
+    displayMpsdSlot(id);
 
     m_width = m_theApp->width() - 1;
 }
@@ -1220,7 +1226,6 @@ void MainWidget::setHistogramMode(bool histo)
 #if 0
         QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
         	right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
-        qDebug() << "setHistogramMode" << right << left;
         m_meas->setROI(QwtDoubleRect(right, left));
 #endif
         m_histogram->attach(m_dataFrame);
@@ -1908,3 +1913,4 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
 	m_theApp->setActive(devid_2->value(), id, set);
 }
+

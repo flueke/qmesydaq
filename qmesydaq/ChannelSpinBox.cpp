@@ -17,42 +17,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "ModuleSpinBox.h"
+#include "ChannelSpinBox.h"
 
 /*!
-    \fn ModuleSpinBox::ModuleSpinBox(QList<int> modules, QWidget *parent)
+    \fn ChannelSpinBox::ChannelSpinBox(QList<int> modules, QWidget *parent)
 
     constructor
 
     \param parent Qt parents widget
  */
-ModuleSpinBox::ModuleSpinBox(QWidget *parent)
+ChannelSpinBox::ChannelSpinBox(QWidget *parent)
 	: QSpinBox(parent)
 {
 	setRange(0, 7);
-	setWrapping(false);
+	setSingleStep(1);
 }
 
 /*!
-    \fn ModuleSpinBox::setModuleList(QList<int> modules)
-
-    sets a new list of allowed module numbers
-
-    \param modules list with allowed module numbers from 0 .. 7
- */
-void ModuleSpinBox::setModuleList(QList<int> modules)
-{
-	m_modList = modules; 
-	if (!m_modList.empty())
-	{
-		setValue(m_modList.at(0));
-		qSort(m_modList);
-		setRange(m_modList.first(), m_modList.last());
-	}
-}
-
-/*!
-    \overload ModuleSpinBox::stepBy(int steps)
+    \overload ChannelSpinBox::stepBy(int steps)
 
     Virtual function that is called whenever the user triggers a step. The steps parameter 
     indicates how many steps were taken, e.g. Pressing Qt::Key_Down will trigger a call to 
@@ -62,26 +44,16 @@ void ModuleSpinBox::setModuleList(QList<int> modules)
 
     \param steps number of steps to go up or down
  */
-void ModuleSpinBox::stepBy(int steps)
+void ChannelSpinBox::stepBy(int steps)
 {
-	if (m_modList.isEmpty())
-		return;
 	int pos = value() + steps;
-	if (m_modList.contains(pos))
-	{
-		setValue(pos);
-	}
-	else if (steps > 0)
+	if (steps > 0)
 	{
 		if (pos > maximum())
 		{
 			setValue(minimum());
-			emit changeModule(steps);
-		}
-		else
-		{
-			QList<int>::const_iterator it = qUpperBound(m_modList, pos);
-			setValue(*it);
+			emit changeModule(1);
+			return;
 		}
 	}
 	else
@@ -89,26 +61,10 @@ void ModuleSpinBox::stepBy(int steps)
 		if (pos < minimum())
 		{
 			setValue(maximum());
-			emit changeModule(steps);
-		}
-		else
-		{
-			QList<int>::const_iterator it = qLowerBound(m_modList, pos);
-			setValue(*it);
+			emit changeModule(-1);
+			return;
 		}
 	}
-}
-
-/*!
-    \overload QValidator::State ModuleSpinBox::validate(QString &input, int &pos) const
-
-    This virtual function is called by the ModuleSpinBox to determine whether input is valid. 
-
-    \param input string to validate
-    \param pos indicates the position in the string. 
-*/
-QValidator::State ModuleSpinBox::validate(QString &input, int &) const
-{
-	return m_modList.contains(input.toInt()) ? QValidator::Acceptable : QValidator::Invalid;
+	setValue(pos);
 }
 

@@ -17,43 +17,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __MODULE_SPIN_BOX_H
-#define __MODULE_SPIN_BOX_H
+#ifndef __CHANNEL_SPIN_BOX_H
+#define __CHANNEL_SPIN_BOX_H
 
 #include <QSpinBox>
 #include <QList>
 #include <QValidator>
 
 /**
- * \short Spinbox to select one of the connected MPSD modules 
+ * \short Spinbox to select one of the channels over all modules 
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  * \version 0.1
  */
-class ModuleSpinBox : public QSpinBox
+class ChannelSpinBox : public QSpinBox
 {
 Q_OBJECT
 public:
-	ModuleSpinBox(QWidget *parent = 0);
-
-	void setModuleList(QList<int> modules);
+	ChannelSpinBox(QWidget *parent = 0);
 
 	virtual void stepBy(int steps);
 
-public slots:
-	void steps(int steps)
-	{
-		stepBy(steps);
-	}
-
 signals:
 	void changeModule(int);
-
-protected:
-	virtual QValidator::State validate(QString & input, int &pos) const;
-
-private:
-	QList<int>	m_modList;
-
 };
 
 #endif

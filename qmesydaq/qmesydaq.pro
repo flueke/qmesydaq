@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.1.7
+VERSION		= 0.2.0
 
 include(../qmesydaqconfig.pri)
 
@@ -41,6 +41,7 @@ HEADERS 	+= mainwidget.h \
 		mesydaqdata.h \
 		ModuleSpinBox.h \
 		MCPDSpinBox.h \
+		ChannelSpinBox.h \
 		LoopObject.h \
 		QMesydaqDetectorInterface.h \
 		CommandEvent.h \
@@ -75,6 +76,7 @@ SOURCES 	+= main.cpp \
 		mesydaqdata.cpp \
 		ModuleSpinBox.cpp \
 		MCPDSpinBox.cpp \
+		ChannelSpinBox.cpp \
 		LoopObject.cpp \
 		QMesydaqDetectorInterface.cpp \
 		CommandEvent.cpp \

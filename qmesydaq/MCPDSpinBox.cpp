@@ -30,8 +30,8 @@
 MCPDSpinBox::MCPDSpinBox(QWidget *parent)
 	: QSpinBox(parent)
 {
-	setMinimum(0);
-	setMaximum(255);
+	setRange(0, 255);
+	setWrapping(false);
 }
 
 /*!
@@ -46,8 +46,8 @@ void MCPDSpinBox::setMCPDList(QList<int> modules)
 	m_mcpdList = modules; 
 	if (!m_mcpdList.empty())
 	{
-		setMinimum(m_mcpdList.at(0));
-		setMaximum(m_mcpdList.at(m_mcpdList.size() - 1));
+		qSort(m_mcpdList);
+		setRange(m_mcpdList.first(), m_mcpdList.last());
 		setValue(m_mcpdList.at(0));
 	}
 }
@@ -65,40 +65,40 @@ void MCPDSpinBox::setMCPDList(QList<int> modules)
  */
 void MCPDSpinBox::stepBy(int steps)
 {
+	if (m_mcpdList.isEmpty())
+		return;
 	int pos = value() + steps;
 	if (m_mcpdList.contains(pos))
+	{
 		setValue(pos);
+	}
 	else if (steps > 0)
 	{
-		for (; pos <= maximum(); ++pos)
-			if (m_mcpdList.contains(pos))
-			{
-				setValue(pos);
-				return;
-			}
-		if (wrapping())
-			for (pos = minimum(); pos < value(); ++pos)
-				if (m_mcpdList.contains(pos))
-				{
-					setValue(pos);
-					return;
-				}
+		if (pos > maximum())
+		{
+			if (wrapping())
+				setValue(minimum());
+//			emit changeModule(steps);
+		}
+		else
+		{
+			QList<int>::const_iterator it = qUpperBound(m_mcpdList, pos);
+			setValue(*it);
+		}
 	}
 	else
 	{
-		for (; pos >= minimum(); --pos)
-			if (m_mcpdList.contains(pos))
-			{
-				setValue(pos);
-				return;
-			}
-		if (wrapping())
-			for (pos = maximum(); pos > value(); --pos)
-				if (m_mcpdList.contains(pos))
-				{
-					setValue(pos);
-					return;
-				}
+		if (pos < minimum())
+		{
+			if (wrapping())
+				setValue(maximum());
+//			emit changeModule(steps);
+		}
+		else
+		{
+			QList<int>::const_iterator it = qLowerBound(m_mcpdList, pos);
+			setValue(*it);
+		}
 	}
 }
 

@@ -75,10 +75,9 @@ void MCPDSetup::sendParamSlot()
 void MCPDSetup::sendAuxSlot()
 {
     bool ok;
-    QString tmp = compareAux->text();
-    tmp.replace(" x 10 us", "");
-    quint16 compare = (quint16)tmp.toUInt(&ok, 10);
-    m_theApp->setAuxTimer(mcpdId->value(), timer->value() - 1, compare);
+    quint16 compare = compareAux->cleanText().toUInt(&ok, 10);
+    if (ok)
+        m_theApp->setAuxTimer(mcpdId->value(), timer->value() - 1, compare);
 }
 
 /*!

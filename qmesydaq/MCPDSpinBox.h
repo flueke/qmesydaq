@@ -39,6 +39,12 @@ public:
 
 	virtual void stepBy(int steps);
 
+public slots:
+	void steps(int steps)
+	{
+		stepBy(steps);
+	}
+
 protected:
 	virtual QValidator::State validate(QString & input, int &pos) const;
 
