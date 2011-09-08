@@ -550,7 +550,7 @@ void Mesydaq2::saveSetup_helper(CConfigFile& file, const QString& szSection, int
 
 void Mesydaq2::storeLastFile(void)
 {
-	QSettings settings("MesyTec", "QMesyDAQ");
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
 	settings.setValue("lastconfigfile", getConfigfilename());
 	settings.sync();
 }
