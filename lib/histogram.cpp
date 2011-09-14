@@ -207,13 +207,15 @@ void Spectrum::setWidth(quint16 w)
 	}
 }
 
+quint16	Spectrum::width() 
+{
+	return m_data.size();
+}
+
 quint64 Spectrum::value(quint16 index)
 {
 	if (index < m_data.size())
-	{
 		return m_data[index];
-	}
-//	qDebug() << "index outside" << index << m_data.size();
 	return 0;
 }
  
@@ -270,12 +272,17 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
 		quint16 i = m_dataKeys[chan];
 		return m_data[i]->value(bin);
 	}
-//	qDebug() << "channel outside" << chan << m_dataKeys.size();
 	return 0;
 }
 
 bool Histogram::checkChannel(quint16 chan)
 {
+	if (chan < height())
+		return true;
+	if (autoResize())
+		setHeight(chan + 1);
+	return true;
+#if 0
 	if (!m_data.contains(chan) && autoResize())
 	{
 		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
@@ -286,6 +293,16 @@ bool Histogram::checkChannel(quint16 chan)
 	}
 	m_maximumPos = m_dataKeys.last();
 	return m_data.contains(chan);
+#endif
+}
+
+bool Histogram::checkBin(quint16 bin)
+{
+	if (bin < width())
+		return true;
+	if (autoResize())
+		setWidth(bin + 1);
+	return true;
 }
 
 void Histogram::calcMaximumPosition(quint16 chan)
@@ -306,14 +323,16 @@ void Histogram::calcMaximumPosition(quint16 chan)
  */
 bool Histogram::incVal(quint16 chan, quint16 bin)
 {
-	checkChannel(chan);
+	if (!checkChannel(chan))
+		return false;
+	if (!checkBin(bin))
+		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
 	m_data[chan]->incVal(bin);
 	calcMaximumPosition(chan);
 // sum spectrum of all channels
 	m_sumSpectrum.incVal(bin);
-
 	return true;
 }
 
@@ -331,6 +350,8 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
 bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
 {
 	if (!checkChannel(chan))
+		return false;
+	if (!checkBin(bin))
 		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
@@ -356,6 +377,8 @@ bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
 bool Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
 {
 	if (!checkChannel(chan))
+		return false;
+	if (!checkBin(bin))
 		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
@@ -507,7 +530,7 @@ void Histogram::getMean(float &m, float &s)
 */
 quint16	Histogram::height() 
 {
-	return m_data.size();
+	return m_dataKeys.size();
 }
 
 /*!
@@ -530,6 +553,9 @@ void Histogram::setHeight(quint16 h)
 		for (int i = height(); i >= h; --i)
 			m_data.remove(i);
 	}
+	m_dataKeys = m_data.keys();
+	qSort(m_dataKeys);
+	m_maximumPos = m_data.size() ? m_dataKeys.last() : 0;
 }
 
 /*!
@@ -583,6 +609,8 @@ void Histogram::setAutoResize(bool resize)
 
 /*!
     \fn QString Histogram::format(void)
+
+    The histogram will be formatted
 
     \return formatted histogram as string
  */

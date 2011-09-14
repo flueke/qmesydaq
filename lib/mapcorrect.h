@@ -53,15 +53,17 @@ class MapCorrection : public MesydaqObject
 
 public:
   //! orientation of histogram
-  // OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
-  // OrientationUpRev:    channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
-  // OrientationDown:     channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
-  // OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
-  // OrientationLeft:     channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
-  // OrientationLeftRev:  channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
-  // OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
-  // OrientationRightRev: channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
-  // this is used at class MappedHistogram, but stored here for convenience
+  //!
+  //! this is used at class MappedHistogram, but stored here for convenience 
+  //!
+  //! - OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+  //! - OrientationUpRev:    channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
+  //! - OrientationDown:     channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
+  //! - OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+  //! - OrientationLeft:     channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
+  //! - OrientationLeftRev:  channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
+  //! - OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
+  //! - OrientationRightRev: channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
     enum Orientation { OrientationUp = 0, 
 		       OrientationDown, 
                        OrientationLeft, 

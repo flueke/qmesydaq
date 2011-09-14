@@ -330,7 +330,7 @@ void Mesydaq2::writeClosingSignature(void)
 }
 
 /*!
-    \fn Mesydaq2::width()
+    \fn quint16 Mesydaq2::width()
 
     the maximum number of bins over all modules
 
@@ -345,6 +345,13 @@ quint16 Mesydaq2::width()
 	return bins;
 }
 
+/*!
+    \fn quint16 Mesydaq2::height()
+
+    the maximum number of channel over all modules
+
+    \return maximum number of channel
+ */
 quint16 Mesydaq2::height()
 {
 	QList<quint16> modList;

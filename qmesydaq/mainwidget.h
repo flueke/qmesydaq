@@ -197,8 +197,6 @@ private:
 	
 	ulong 			*m_pDispBuffer;
 
-	quint16 		m_width;
-
 // using thresholds for display
 	//! using thresholds ?
 	bool			m_dispThresh;

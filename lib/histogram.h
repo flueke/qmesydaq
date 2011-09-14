@@ -40,6 +40,8 @@ class Spectrum : public MesydaqObject
 {
 	Q_OBJECT
 
+	//! defines whether the spectrum should be automatically resized or not
+        //! if the data points not included in the spectrum
 	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
 
 public:
@@ -64,8 +66,6 @@ public:
 	//! \return sum of counts in the spectrum
 	quint64 getTotalCounts() {return m_totalCounts;}
 
-	quint64 getCounts();
-
 	float mean(float &s);
 
 //	quint64 operator[](quint16 index) {return m_data[index];}
@@ -79,7 +79,7 @@ public:
 	quint64 value(quint16 index);
 
 	//! \return the length of the spectrum
-	quint16	width() {return m_data.size();}
+	quint16	width();
 
 	void setWidth(quint16);
 
@@ -100,7 +100,7 @@ public:
 
 	/**
              sets the autoresizing capability of the spectrum
-             \parm resize
+             \param resize
          */
         void setAutoResize(bool resize) {m_autoResize = resize;}
 
@@ -141,6 +141,8 @@ class Histogram : public MesydaqObject
 {
 	Q_OBJECT
 
+	//! defines whether the histogram should be automatically resized or not
+        //! if the data points not included in the histogram
 	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
 public:
 	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS);
@@ -198,14 +200,16 @@ public:
 
 	/**
              sets the autoresizing capability of the spectrum
-             \parm resize
+             \param resize
          */
-        void setAutoResize(bool resize); //  {m_autoResize = resize;}
+        void setAutoResize(bool resize); 
 
 private:
 	void calcMaximumPosition(quint16 chan);
 
 	bool checkChannel(quint16 chan);
+
+	bool checkBin(quint16 bin);
 
 private:
 	quint64 			m_totalCounts;

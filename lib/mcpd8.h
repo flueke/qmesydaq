@@ -170,7 +170,7 @@ public:
 
 	quint8 getMpsdId(quint8 addr);
 
-	QString getMpsdType(quint8);
+	QString getMpsdType(quint8 addr);
 
 	bool online(quint8 addr);
 

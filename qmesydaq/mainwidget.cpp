@@ -81,7 +81,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     : QWidget(parent)
     , Ui_Mesydaq2MainWidget()
     , m_theApp(mesy)
-    , m_width(mesy->width())
     , m_dispThresh(false)
     , m_dispLoThresh(0)
     , m_dispHiThresh(0)
@@ -185,7 +184,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->setAxisTitle(QwtPlot::yRight, tr("intensity"));
     m_dataFrame->enableAxis(QwtPlot::yRight, false);
 //  m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
-//  m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
     m_dataFrame->setAutoReplot(false);
 
     m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, m_dataFrame->canvas());
@@ -359,7 +357,6 @@ void MainWidget::init()
     }
     m_meas = NULL;
     m_meas = new Measurement(m_theApp, this);
-    m_width = m_theApp->width();
 
     QList<int> mcpdList = m_theApp->mcpdId();
     dispMcpd->setMCPDList(mcpdList);
@@ -371,7 +368,7 @@ void MainWidget::init()
     displayTabWidget->setDisabled(mcpdList.empty());
     statusGroupBox->setDisabled(mcpdList.empty());
     displayMpsdSlot();
-    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
 
     connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
     connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
@@ -430,14 +427,14 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         if (!dispHistogram->isChecked())
         {
             m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
         }
         else
         {
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_theApp->height());
-            m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_width);
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->height());
+            m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->width());
         }
-        m_meas->setROI(QRectF(0,0, m_theApp->width(), m_theApp->height()));
+        m_meas->setROI(QRectF(0,0, m_meas->width(), m_meas->height()));
     }
     else
     {
@@ -543,15 +540,15 @@ void MainWidget::setStreamSlot()
 */
 QString MainWidget::selectListfile(void)
 {
-	QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_theApp->getListfilepath(),
+    QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_theApp->getListfilepath(),
                                                 "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
-	if(!name.isEmpty())
-	{
-		int i = name.indexOf(".mdat");
-		if(i == -1)
-			name.append(".mdat");
-	}
-	return name;
+    if(!name.isEmpty())
+    {
+        int i = name.indexOf(".mdat");
+        if (i == -1)
+            name.append(".mdat");
+    }
+    return name;
 }
 
 /*!
@@ -561,29 +558,29 @@ QString MainWidget::selectListfile(void)
 */
 void MainWidget::checkListfilename(bool checked)
 {
-	if (checked)
-	{
-		MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-		QMesyDAQDetectorInterface *interface;
-		QString name(QString::null); 
-		if(app)
-		{
-			interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
-			if (interface)
-            			name = interface->getListFileName();
-		}
+    if (checked)
+    {
+        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+        QMesyDAQDetectorInterface *interface;
+        QString name(QString::null); 
+        if(app)
+        {
+            interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
+            if (interface)
+                name = interface->getListFileName();
+        }
 
 	
-		if (name.isEmpty())
-			name = selectListfile();
-		else
-			name = m_theApp->getListfilepath() + "/" + name;
-		if(!name.isEmpty())
-			m_theApp->setListfilename(name);
-		else
-			acquireFile->setChecked(false);
-		dispFiledata();
-	}
+        if (name.isEmpty())
+            name = selectListfile();
+        else
+            name = m_theApp->getListfilepath() + "/" + name;
+        if(!name.isEmpty())
+            m_theApp->setListfilename(name);
+        else
+            acquireFile->setChecked(false);
+        emit redraw();
+    }
 }	
 
 /*!
@@ -618,7 +615,8 @@ void MainWidget::updateDisplay(void)
     monitor4->setText(tr("%1").arg(m_meas->mon4()));
     monRate4->setText(tr("%1").arg(m_meas->getRate(MON4ID)));
 
-    lcdRunID->display(m_theApp->runId());
+    lcdRunID->display(m_meas->runId());
+    dispFiledata();
 }
 
 /*!
@@ -781,8 +779,6 @@ void MainWidget::scanPeriSlot(bool real)
     QList<int> modList = m_theApp->mpsdId(id);
     dispMpsd->setModuleList(modList);
     displayMpsdSlot(id);
-
-    m_width = m_theApp->width() - 1;
 }
 
 /*!
@@ -1218,7 +1214,7 @@ void MainWidget::setHistogramMode(bool histo)
             m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
         m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("channels"));
-        m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_width);
+        m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->width());
         m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
         m_picker->setTrackerPen(QColor(Qt::white));
         m_zoomer->setRubberBandPen(QColor(Qt::white));
@@ -1246,13 +1242,11 @@ void MainWidget::setSpectraMode(bool spectra)
         m_histogram->detach();
         m_diffractogram->detach();
         m_dataFrame->enableAxis(QwtPlot::yRight, false);
-        if (log->isChecked())
-            m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
-        else
-            m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+        
+        m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
         m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channels"));
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-        m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_width);
+        m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
         m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
         m_picker->setTrackerPen(QColor(Qt::black));
         m_zoomer->setRubberBandPen(QColor(Qt::black));
@@ -1282,10 +1276,8 @@ void MainWidget::setDiffractogramMode(bool diff)
             m_curve[i]->detach();
         m_histogram->detach();
         m_dataFrame->enableAxis(QwtPlot::yRight, false);
-        if (log->isChecked())
-            m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
-        else
-            m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+        
+        m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
         m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
         m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
@@ -1329,7 +1321,10 @@ void MainWidget::draw(void)
         m_histogram->setData(*m_histData);
 
         if (!m_zoomer->zoomRectIndex())
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
+	{
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->height());
+            m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->width());
+	}
         m_dataFrame->replot();
     }
     else if (dispDiffractogram->isChecked())
@@ -1337,7 +1332,7 @@ void MainWidget::draw(void)
         m_data->setData(m_meas->diffractogram());
         m_diffractogram->setData(*m_data);
         if (!m_zoomer->zoomRectIndex())
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->height());
         m_dataFrame->replot();
     }
     else
@@ -1397,6 +1392,8 @@ void MainWidget::draw(void)
             m_dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
         else if (!m_zoomer->zoomRectIndex())
             m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+        if (!m_zoomer->zoomRectIndex())
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
         m_dataFrame->replot();
     }
     drawOpData();
@@ -1662,8 +1659,8 @@ void MainWidget::customEvent(QEvent *e)
                 {
                     QList<QVariant> retVal;
                     Histogram *tmpHistogram= m_meas->posHist();
-                    retVal << tmpHistogram->height(); // width  (should be equal to number of MPSD inputs)
-                    retVal << (m_width+1);            // height (should be 960)
+                    retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
+                    retVal << (m_meas->width() + 1);    // height (should be 960)
                     interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM_SIZE, retVal);
                 }
                 break;

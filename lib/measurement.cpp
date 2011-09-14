@@ -66,6 +66,8 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_onlineTimer(0)
 	, m_packages(0)
 	, m_triggers(0)
+	, m_runID(0)
+	, m_mode(DataAcquisition)
 {
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
@@ -77,16 +79,113 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	m_counter[TIMERID] = new MesydaqTimer();
 	connect(m_counter[TIMERID], SIGNAL(stop()), this, SLOT(requestStop()));
 
-	m_ampHist = new Histogram(m_mesydaq->height(), m_mesydaq->width());
-	m_posHist = new Histogram(m_mesydaq->height(), m_mesydaq->width());
-	m_timeSpectrum = new Spectrum(m_mesydaq->width());
-	m_diffractogram = new Spectrum(m_mesydaq->height());
-	m_tubeSpectrum = new Spectrum(m_mesydaq->height());
+	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
 
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
 
 	m_rateTimer = startTimer(8);	// every 8 ms calculate the rates
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
+}
+
+quint16 Measurement::height()
+{
+	if (m_mode == ReplayListFile)
+		return qMax(m_ampHist->height(), m_posHist->height());
+	return m_height;
+}
+
+quint16 Measurement::width()
+{
+	if (m_mode == ReplayListFile)
+		return qMax(m_ampHist->width(), m_posHist->width());
+	return m_width;
+}
+
+/*!
+    \fn void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
+
+
+    \param w - new width of the histogram
+    \param h - new height of the histogram
+    \param clr - clear existing histogram data
+    \param resize - automatic resize definition
+ */
+void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
+{
+	m_height = h;
+	m_width = w;
+
+	if (!m_ampHist)
+		m_ampHist = new Histogram(w, h);
+	else
+	{
+		if (clr)
+			m_ampHist->clear();
+		m_ampHist->setAutoResize(resize);
+		m_ampHist->resize(w, h);
+	}
+
+	if (!m_posHist)
+		m_posHist = new Histogram(w, h);
+	else
+	{
+		if (clr)
+			m_posHist->clear();
+		m_posHist->setAutoResize(resize);
+		m_posHist->resize(w, h);
+	}
+	if (!m_timeSpectrum)
+		m_timeSpectrum = new Spectrum(h);
+	else
+	{
+		if (clr)
+			m_timeSpectrum->clear();
+		m_timeSpectrum->setAutoResize(resize);
+		m_timeSpectrum->resize(h);
+	}
+	
+	if (!m_diffractogram)
+		m_diffractogram = new Spectrum(w);
+	else
+	{
+		if (clr)
+			m_diffractogram->clear();
+		m_diffractogram->setAutoResize(resize);
+		m_diffractogram->resize(w);
+	}
+
+	if (!m_tubeSpectrum)
+		m_tubeSpectrum = new Spectrum(w);
+	else
+	{
+		if (clr)
+			m_tubeSpectrum->clear();
+		m_tubeSpectrum->setAutoResize(resize);
+		m_tubeSpectrum->resize(w);
+	}
+}
+
+void Measurement::destroyHistogram(void)
+{
+	if (m_ampHist)
+		delete m_ampHist;
+	m_ampHist = NULL;
+
+	if (m_posHist)
+		delete m_posHist;
+	m_posHist = NULL;
+
+	if (m_timeSpectrum)
+		delete m_timeSpectrum;
+	m_timeSpectrum = NULL;
+
+	if (m_diffractogram)
+		delete m_diffractogram;
+	m_diffractogram = NULL;
+	
+	if (m_tubeSpectrum)
+		delete m_tubeSpectrum;
+	m_tubeSpectrum = NULL;
 }
 
 //! destructor
@@ -108,25 +207,7 @@ Measurement::~Measurement()
 		delete m_posHistMapCorrection;
 	m_posHistMapCorrection = NULL;
 
-	if (m_ampHist)
-		delete m_ampHist;
-	m_ampHist = NULL;
-
-	if (m_posHist)
-		delete m_posHist;
-	m_posHist = NULL;
-
-	if (m_timeSpectrum)
-		delete m_timeSpectrum;
-	m_timeSpectrum = NULL;
-
-	if (m_diffractogram)
-		delete m_diffractogram;
-	m_diffractogram = NULL;
-	
-	if (m_tubeSpectrum)
-		delete m_tubeSpectrum;
-	m_tubeSpectrum = NULL;
+	destroyHistogram();
 }
 
 /*!
@@ -182,6 +263,8 @@ quint64 Measurement::getMeastime(void)
  */
 void Measurement::start()
 {
+	m_mode = DataAcquisition;
+	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
 	foreach (MesydaqCounter *c, m_counter)
 		c->reset();	
 	m_packages = 0;
@@ -630,21 +713,21 @@ void Measurement::readHistograms(const QString &name)
 	QFile f;
 	f.setFileName(name);
 	if (f.open(QIODevice::ReadOnly)) 
-	{    // file opened successfully
-		QTextStream t( &f );        // use a text stream
-		QString tmp = t.readLine();
-		// Title
-		QStringList list = tmp.split(QRegExp("\\s+"));
+	{    
+		m_mode = HistogramLoad;
+// use a text stream
+		QTextStream t(&f);
+// Title
+		QStringList list = t.readLine().split(QRegExp("\\s+"));
 		if (list.size() >= 3 && list[0] == "mesydaq" && list[1] == "Histogram" && list[2] == "File")
 		{
 			m_mesydaq->setHistfilename(name);
-			m_posHist->clear();
-			m_ampHist->clear();
+			clearAllHist();
+			resizeHistogram(0, 0);
 
 			while(!t.atEnd())
 			{
-				tmp = t.readLine();
-				list = tmp.split(QRegExp("\\s+"));
+				list = t.readLine().split(QRegExp("\\s+"));
 				if (list.size() >= 2 && list[1].startsWith("data"))
 				{
 					if (list[0] == "position")
@@ -653,6 +736,7 @@ void Measurement::readHistograms(const QString &name)
 						fillHistogram(t, m_ampHist);
 				}
 			}	
+			resizeHistogram(m_posHist->width() ? m_posHist->width() : m_ampHist->width(), m_posHist->width() ?  m_posHist->height() : m_ampHist->height(), false);
 		}
 		f.close();
 	}
@@ -671,9 +755,16 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 	QStringList list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
 	int tubes = list.size();
 
+	QStringList lines;
+
 	while(!(tmp = t.readLine()).isEmpty())
+		lines << tmp;
+	
+	hist->resize(lines.size(), tubes);
+
+	for (int j = 0; j < lines.size(); ++j)
 	{
-		list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+		list = lines[j].split(QRegExp("\\s+"), QString::SkipEmptyParts);
 		if (list.size() == (tubes + 1))
 		{
 //			add values to histogram
@@ -702,6 +793,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 	m_counter[TIMERID]->setTime(m_headertime / 10000);
+	m_runID = pd.runID;
 
 	m_packages++;
 	if(pd.bufferType < 0x0002) 
@@ -784,8 +876,10 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
 					m_ampHist->incVal(chan, amp);
+#if 0
 				if (m_diffractogram)
 					m_diffractogram->incVal(chan);
+#endif
 				if (m_posHistCorrected)
 					m_posHistCorrected->incVal(chan, amp);
 				if (m_mesydaq->getMpsdId(mod, id) == TYPE_MSTD16)
@@ -797,8 +891,6 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 //					if (pos >= 480)
 //						++chan;
 					protocol(tr("Put this event into channel : %1").arg(chan), INFO);
-					if (m_tubeSpectrum->width() <= chan)
-						m_tubeSpectrum->resize(chan + 1);
 					m_tubeSpectrum->incVal(chan);
 //					protocol(tr("Value of this channel : %1").arg(m_tubeSpectrum->value(chan)), INFO);
 				}
@@ -835,7 +927,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 
 bool Measurement::acqListfile() const
 {
-  return m_mesydaq ? m_mesydaq->acqListfile() : true;
+	return m_mesydaq ? m_mesydaq->acqListfile() : true;
 }
 
 /*!
@@ -859,6 +951,8 @@ void Measurement::readListfile(QString readfilename)
 	datStream.setDevice(&datfile);
 	textStream.setDevice(&datfile);
 
+	m_mode = ReplayListFile;
+
 	quint32 blocks(0),
 		bcount(0);
 
@@ -872,7 +966,9 @@ void Measurement::readListfile(QString readfilename)
 
 	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
 	protocol(tr("readListfile : %1").arg(ok), NOTICE);
-	clearAllHist();
+
+	resizeHistogram(0 /* 1024 */, 0 /* 128 */, true, true);
+
 	QChar c('0');
 	if (m_status == STARTED)
 	{
@@ -1038,8 +1134,11 @@ quint64 Measurement::posEventsInROI()
 
 Spectrum *Measurement::diffractogram()
 {
+#warning TODO tube spectrum !!!
+#if 0
 	if (m_tubeSpectrum->width() > 0)
 		return m_tubeSpectrum;
+#endif
 	m_diffractogram->resize(m_posHist->height());
 	for (int i = 0; i < m_diffractogram->width(); ++i)
 	{
@@ -1052,6 +1151,6 @@ Spectrum *Measurement::diffractogram()
 
 void Measurement::setListFileHeader(const QByteArray& header)
 {
-  if (m_mesydaq)
-    m_mesydaq->setListFileHeader(header);
+	if (m_mesydaq)
+		m_mesydaq->setListFileHeader(header);
 }

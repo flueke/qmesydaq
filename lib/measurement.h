@@ -43,10 +43,34 @@ class Mesydaq2;
 class Measurement : public MesydaqObject
 {
 	Q_OBJECT
+	Q_ENUMS(Mode)
+
+	//! stores the current mode of the measurement
+	Q_PROPERTY(Mode m_mode READ mode)
+
+public:
+	//! Defines the current mode values of a measurement 
+        //! - DataAcquistion - data will be taken from the hardware
+        //! - ReplayListFile - data will be taken from a list mode file
+        //! - HistogramLoad - data will be taken from a histogram file
+	enum Mode {
+		DataAcquisition = 0,
+		ReplayListFile,
+		HistogramLoad,
+	};
+
 public:
 	Measurement(Mesydaq2 *mesy, QObject *parent = 0);
 
 	~Measurement();
+
+	void resizeHistogram(quint16 w, quint16 h, bool = true, bool = false);
+
+	//! \return the width of the histogram
+	quint16 width(void);
+
+	//! \return the height of the histogram
+	quint16 height(void);
 
 	quint64	getMeastime(void);
 
@@ -183,6 +207,12 @@ public:
 	//! \brief store header for list mode file
 	void setListFileHeader(const QByteArray& header);
 
+	//! \return the current run ID
+	quint16 runId(void) { return m_runID; }
+
+	//! returns the current operation mode
+	Mode mode(void) {return m_mode;}
+
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
 
@@ -206,6 +236,8 @@ protected:
 
 private:
 	void fillHistogram(QTextStream &t, Histogram *hist);
+
+	void destroyHistogram(void);
 
 private:
 	static const quint16  	sep0 = 0x0000;
@@ -263,6 +295,14 @@ private:
 	quint32		m_packages;
 
 	quint64		m_triggers;
+
+	quint16		m_runID;
+
+	quint16		m_width;
+
+	quint16		m_height;
+
+	Mode		m_mode;
 };
 
 #endif
