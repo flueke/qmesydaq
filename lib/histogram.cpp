@@ -40,6 +40,7 @@ Spectrum::Spectrum(quint16 bins)
 	, m_meanCount(0)
 	, m_totalCounts(0)
 	, m_meanPos(0)
+	, m_autoResize(false)
 {
 	m_data.resize(bins);
 	m_floatingMean.resize(256);
@@ -61,7 +62,10 @@ Spectrum::~Spectrum()
  */
 bool Spectrum::incVal(quint16 bin)
 {
-	if (bin < m_data.size())
+	int size = m_data.size();
+	if (bin >= size && autoResize())
+		resize(bin + 1);
+	if (bin < size)
 	{
 		m_data[bin]++;
 		m_totalCounts++;
@@ -99,6 +103,9 @@ void Spectrum::calcFloatingMean(quint16 bin)
  */
 bool Spectrum::setValue(quint16 bin, quint64 val)
 {
+	int size = m_data.size();
+	if (bin >= size && autoResize())
+		resize(bin + 1);
 	if (bin < m_data.size())
 	{
 		m_totalCounts -= m_data[bin];
@@ -122,7 +129,10 @@ bool Spectrum::setValue(quint16 bin, quint64 val)
  */
 bool Spectrum::addValue(quint16 bin, quint64 val)
 {
-	if (bin < m_data.size())
+	int size = m_data.size();
+	if (bin >= size && autoResize())
+		resize(bin + 1);
+	if (bin < size)
 	{
 		m_data[bin] += val;
 		m_totalCounts += val;
@@ -215,15 +225,13 @@ quint64 Spectrum::value(quint16 index)
     \param h number of channels (i.e. number of tubes)
     \param w number of bins (inside a tube)
  */
-Histogram::Histogram(quint16 h, quint16 w)
+Histogram::Histogram(quint16 w, quint16 h)
 	: MesydaqObject()
 	, m_totalCounts(0)
 	, m_maximumPos(0)
 {
 	m_data.clear();
-	setHeight(h);
-	setWidth(w);
-	m_sumSpectrum.resize(w);
+	resize(w, h);
 	clear();
 }
 
@@ -266,9 +274,9 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
 	return 0;
 }
 
-void Histogram::checkChannel(quint16 chan)
+bool Histogram::checkChannel(quint16 chan)
 {
-	if (!m_data.contains(chan))
+	if (!m_data.contains(chan) && autoResize())
 	{
 		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
 			if (!m_data.contains(i))
@@ -276,8 +284,8 @@ void Histogram::checkChannel(quint16 chan)
 		m_dataKeys = m_data.keys();
 		qSort(m_dataKeys);
 	}
-	if (!m_data.contains(m_maximumPos))
-		m_maximumPos = chan;
+	m_maximumPos = m_dataKeys.last();
+	return m_data.contains(chan);
 }
 
 void Histogram::calcMaximumPosition(quint16 chan)
@@ -322,7 +330,8 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
  */
 bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
 {
-	checkChannel(chan);
+	if (!checkChannel(chan))
+		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
 	m_data[chan]->setValue(bin, val);
@@ -346,7 +355,8 @@ bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
  */
 bool Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
 {
-	checkChannel(chan);
+	if (!checkChannel(chan))
+		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
 	
@@ -527,13 +537,13 @@ void Histogram::setHeight(quint16 h)
 
     sets the width of each cell
 
-    \param width 
+    \param w
  */
-void Histogram::setWidth(quint16 width)
+void Histogram::setWidth(quint16 w)
 {
 	foreach(Spectrum *s, m_data)
-		s->setWidth(width);
-	m_sumSpectrum.setWidth(width);
+		s->setWidth(w);
+	m_sumSpectrum.setWidth(w);
 }
 
 /*!
@@ -548,6 +558,27 @@ quint16 Histogram::width(void)
 		if (value->width() > bins)
 			bins = value->width();
 	return bins;
+}
+
+/*!
+    \fn void Histogram::resize(quint16 w, quint16 h)
+
+    sets the size of histogram
+
+    \param w width of histogram
+    \param h height of histogram
+ */
+void Histogram::resize(quint16 w, quint16 h) 
+{
+	setHeight(h);
+	setWidth(w); 
+}
+
+void Histogram::setAutoResize(bool resize) 
+{
+	m_autoResize = resize;
+	foreach(Spectrum *s, m_data)
+		s->setAutoResize(resize);
 }
 
 /*!

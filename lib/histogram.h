@@ -38,6 +38,10 @@ class QFile;
  */
 class Spectrum : public MesydaqObject
 {
+	Q_OBJECT
+
+	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
+
 public:
 	Spectrum(quint16 bins = LINBINS);
 
@@ -91,6 +95,15 @@ public:
 
 	QString format(void);
 
+	//! \return auto resizing of the spectrum
+	bool autoResize(void) {return m_autoResize;}
+
+	/**
+             sets the autoresizing capability of the spectrum
+             \parm resize
+         */
+        void setAutoResize(bool resize) {m_autoResize = resize;}
+
 private:
 	void calcFloatingMean(quint16 bin);
 
@@ -110,6 +123,8 @@ private:
 
 	//! last events
 	QVector<quint16>	m_floatingMean; 
+
+	bool			m_autoResize;
 };
 
 
@@ -125,6 +140,8 @@ private:
 class Histogram : public MesydaqObject
 {
 	Q_OBJECT
+
+	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
 public:
 	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS);
 
@@ -174,10 +191,21 @@ public:
 
 	void setWidth(quint16);
 
+	void resize(quint16 w, quint16 h);
+
+	//! \return auto resizing of the spectrum
+	bool autoResize(void) {return m_autoResize;}
+
+	/**
+             sets the autoresizing capability of the spectrum
+             \parm resize
+         */
+        void setAutoResize(bool resize); //  {m_autoResize = resize;}
+
 private:
 	void calcMaximumPosition(quint16 chan);
 
-	void checkChannel(quint16 chan);
+	bool checkChannel(quint16 chan);
 
 private:
 	quint64 			m_totalCounts;
@@ -191,6 +219,8 @@ private:
 	Spectrum			m_sumSpectrum;
 
 	quint16				m_maximumPos;
+
+	bool				m_autoResize;
 };
 
 #endif
