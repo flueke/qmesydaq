@@ -21,7 +21,7 @@
 #include <QFileDialog>
 
 #include "generalsetup.h"
-#include "mesydaq2.h"
+#include "measurement.h"
 
 /*!
     constructor
@@ -29,15 +29,15 @@
     \param mesy
     \param parent
  */
-GeneralSetup::GeneralSetup(Mesydaq2 *mesy, QWidget *parent)
+GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
 	: QDialog(parent)
-	, m_mesy(mesy)
+	, m_meas(meas)
 {
     setupUi(this);
-    configfilepath->setText(m_mesy->getConfigfilepath());
-    histfilepath->setText(m_mesy->getHistfilepath());
-    listfilepath->setText(m_mesy->getListfilepath());
-    runId->setValue(m_mesy->runId());
+    configfilepath->setText(m_meas->getConfigfilepath());
+    histfilepath->setText(m_meas->getHistfilepath());
+    listfilepath->setText(m_meas->getListfilepath());
+    runId->setValue(m_meas->runId());
 }
 
 /*!
@@ -83,5 +83,5 @@ void GeneralSetup::selectHistpathSlot()
  */
 void GeneralSetup::setRunIdSlot()
 {
-	m_mesy->setRunId(runId->value());
+	m_meas->setRunId(runId->value());
 }

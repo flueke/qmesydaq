@@ -44,10 +44,6 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_runID(0)
 	, m_acquireListfile(false)
 	, m_listfilename("")
-	, m_histfilename("")
-	, m_listPath("/home")
-	, m_histPath("/home")
-	, m_configPath("/home")
 	, m_timingwidth(1)
 {
 	protocol(tr("running on Qt %1").arg(qVersion()), NOTICE);
@@ -441,26 +437,10 @@ void Mesydaq2::scanPeriph(quint16 id)
     \param name file name
     \return true if successfully saved otherwise false
  */
-bool Mesydaq2::saveSetup(const QString &name)
+bool Mesydaq2::saveSetup(QSettings &settings)
 {
-	if(name.isEmpty())
-		m_configfile.setFile("mesycfg.mcfg");
-	m_configfile.setFile(name);
-  
-	if(m_configfile.fileName().indexOf(".mcfg") == -1)
-		m_configfile.setFile(m_configfile.absoluteFilePath().append(".mcfg"));
-
-	QSettings settings(m_configfile.absoluteFilePath(), QSettings::IniFormat);
-
 	settings.beginGroup("MESYDAQ");
-	settings.setValue("comment", "QMesyDAQ configuration file");
-	settings.setValue("date", QDateTime::currentDateTime().toString(Qt::ISODate));
-//	saveSetup_helper(m_lastConfiguration,"MESYDAQ", -10, "configPath", m_configPath);
-	settings.setValue("histogramPath", m_histPath);
-	settings.setValue("listfilePath", m_listPath);
-	settings.setValue("debugLevel", QString("%1").arg(DEBUGLEVEL));
 	settings.setValue("listmode", m_acquireListfile ? "true" : "false");
-//	m_lastConfiguration[m_lastConfiguration.FindSectionIndex("MESYDAQ")].AddComment(QString("QMesyDAQ configuration file, created %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate)));
 	settings.endGroup();
 	
 	int i = 0;
@@ -525,16 +505,7 @@ bool Mesydaq2::saveSetup(const QString &name)
 		}
 		++i;
 	}
-	settings.sync();
-	storeLastFile();
 	return true;
-}
-
-void Mesydaq2::storeLastFile(void)
-{
-        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
-	settings.setValue("lastconfigfile", getConfigfilename());
-	settings.sync();
 }
 
 /*!
@@ -550,12 +521,8 @@ void Mesydaq2::storeLastFile(void)
     \param name file name
     \return true if successfully loaded otherwise false
  */
-bool Mesydaq2::loadSetup(const QString &name)
+bool Mesydaq2::loadSetup(QSettings &settings)
 {
-	setConfigfilename(name);
-	if (getConfigfilename().isEmpty())
-		return false;
-
 	int 		nMcpd(0);
 	bool 		bOK(false);
 
@@ -563,34 +530,7 @@ bool Mesydaq2::loadSetup(const QString &name)
 		delete value;
 	m_mcpd.clear();
 
-	protocol(tr("Reading configfile %1").arg(getConfigfilename()), NOTICE);
-
-	QSettings settings(getConfigfilename(), QSettings::IniFormat);
-
 	settings.beginGroup("MESYDAQ");
-	QString	home(getenv("HOME"));
-//	m_configPath = settings.value("configPath","/home");
-	m_histPath = settings.value("histogramPath", home).toString();
-	m_listPath = settings.value("listfilePath", home).toString();
-	QString sz = settings.value("debugLevel", QString("%1").arg(NOTICE)).toString();
-	int n = sz.toInt(&bOK);
-	if (bOK)
-		DEBUGLEVEL = n;
-	else
-	{
-		if (sz.contains("fatal", Qt::CaseInsensitive)) 
-			DEBUGLEVEL = FATAL;
-		else if (sz.contains("error", Qt::CaseInsensitive)) 
-			DEBUGLEVEL = ERROR;
-		else if (sz.contains("standard", Qt::CaseInsensitive) || sz.contains("warning", Qt::CaseInsensitive) || sz.contains("default", Qt::CaseInsensitive))
-			DEBUGLEVEL = WARNING;
-		else if (sz.contains("notice", Qt::CaseInsensitive)) 
-			DEBUGLEVEL = NOTICE;
-		else if (sz.contains("details", Qt::CaseInsensitive) || sz.contains("info", Qt::CaseInsensitive)) 
-			DEBUGLEVEL = INFO;
-		else if (sz.contains("debug", Qt::CaseInsensitive) || sz.contains("debug", Qt::CaseInsensitive)) 
-			DEBUGLEVEL = DEBUG;
-	}
 	m_acquireListfile = settings.value("listmode", "true").toBool();
 	settings.endGroup();
 
@@ -713,7 +653,6 @@ bool Mesydaq2::loadSetup(const QString &name)
 		p += value->numModules();
 
 	protocol(tr("%1 MCPD-8 and %2 Modules found").arg(nMcpd).arg(p),NOTICE);
-	storeLastFile();
 	return true;
 }
 
@@ -1380,13 +1319,6 @@ void Mesydaq2::setRunId(quint16 runid)
 	protocol(tr("Mesydaq2::setRunId(%1)").arg(m_runID), NOTICE);
 }
 
-void Mesydaq2::setHistfilename(QString name) 
-{
-	m_histfilename = name;
-	if(m_histfilename.indexOf(".mtxt") == -1)
-		m_histfilename.append(".mtxt");
-}
-     
 /*!
     \fn Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 
@@ -1462,22 +1394,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			emit analyzeDataBuffer(pd);
 		}
 	}
-}
-
-void Mesydaq2::setConfigfilename(const QString &name)
-{
-	if (name.isEmpty())
-		m_configfile.setFile("mesycfg.mcfg");
-	else
-		m_configfile.setFile(name);
-}
-
-QString Mesydaq2::getConfigfilename(void) 
-{
-	if (m_configfile.exists())
-		return m_configfile.absoluteFilePath();
-	else
-		return QString("");
 }
 
 /*!

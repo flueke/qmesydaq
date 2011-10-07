@@ -23,11 +23,13 @@
 #include <QTextStream>
 #include <QRectF>
 #include <QHash>
+#include <QFileInfo>
 
 #include "mesydaqobject.h"
 #include "counter.h"
 #include "structures.h"
 #include "mdefines.h"
+#include "mesydaq2.h"
 
 class Histogram;
 class Spectrum;
@@ -50,6 +52,11 @@ class Measurement : public MesydaqObject
 
 	Q_PROPERTY(QString m_histfilename READ getHistfilename WRITE setHistfilename)
 	Q_PROPERTY(QString m_histPath READ getHistfilepath WRITE setHistfilepath)
+	Q_PROPERTY(QString m_listPath READ getListfilepath WRITE setListfilepath)
+	Q_PROPERTY(QString m_configPath READ getConfigfilepath WRITE setConfigfilepath)
+
+        //! stores the currently loaded configfile name
+	Q_PROPERTY(QString  m_configfile READ getConfigfilename WRITE setConfigfilename)
 
 public:
 	//! Defines the current mode values of a measurement 
@@ -210,23 +217,23 @@ public:
 	//! \brief store header for list mode file
 	void setListFileHeader(const QByteArray& header);
 
+// run ID oriented methods
 	//! \return the current run ID
 	quint16 runId(void) { return m_runID; }
+
+	/*!
+            sets the runid for the measurement
+            \param runid
+	 */
+	void setRunId(quint16 runid)
+	{
+		m_mesydaq->setRunId(runid);
+	}
 
 	//! returns the current operation mode
 	Mode mode(void) {return m_mode;}
 
 // histogram file oriented methods
-	/**
-	 * sets the file name of a histogram data file
-	 *
-	 * \param name name of the next histogram data file
-	 */
-	void setHistfilename(QString name);
-
-	//! \return name of the current histogram data file
-	QString getHistfilename(void) {return m_histfilename;}
-
 	/**
 	 * sets the path for the histogram data files
 	 *
@@ -236,6 +243,53 @@ public:
 
 	//! \return path to store all histogram data files
 	QString getHistfilepath(void) {return m_histPath;}
+
+	/**
+	 * sets the file name of a histogram data file
+         *
+         * \param name name of the next histogram data file
+         */
+	void setHistfilename(QString name);
+
+	//! \return name of the current histogram data file
+	QString getHistfilename(void) {return m_histfilename;}
+
+// list mode oriented methods
+	/**
+	 * sets the path for the list mode data files
+	 *
+	 * \param path to the list mode data files
+	 */
+	void setListfilepath(QString path) {m_listPath = path;}
+
+	//! \return path to store all list mode data files
+	QString getListfilepath() {return m_listPath;}
+
+// configuration file oriented methods
+	/**
+	 * sets the path for the config files
+	 *
+	 * \param path to the config files
+	 */
+	void setConfigfilepath(QString path) {m_configPath = path;}
+
+	//! \return path to store all config files
+	QString getConfigfilepath(void) {return m_configPath;}
+
+	/**
+	 * sets the config file name
+	 *
+	 * \param name config file name
+	 */
+	void setConfigfilename(const QString &name);
+
+	//! \return last loaded config file name
+	QString getConfigfilename(void);
+
+	bool loadSetup(const QString &name);
+
+	bool saveSetup(const QString &name);
+
 
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
@@ -262,6 +316,8 @@ private:
 	void fillHistogram(QTextStream &t, Histogram *hist);
 
 	void destroyHistogram(void);
+
+	void storeLastFile(void);
 
 private:
 	static const quint16  	sep0 = 0x0000;
@@ -331,6 +387,13 @@ private:
 	QString 	m_histfilename;
 
 	QString 	m_histPath;
+
+	QString 	m_listPath;
+
+	QString 	m_configPath;
+
+	QFileInfo 	m_configfile;
+
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include <QCoreApplication>
 #include <QRegExp>
 #include <QStringList>
+#include <QSettings>
 
 #include <QDebug>
 
@@ -69,8 +70,14 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_runID(0)
 	, m_mode(DataAcquisition)
 	, m_histfilename("")
-	, m_histPath("/home")
+	, m_histPath(getenv("HOME"))
+	, m_listPath(getenv("HOME"))
 {
+    	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+    	setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
+
+	setRunId(settings.value("config/lastrunid", "0").toUInt());
+
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	for (quint8 i = 0; i < TIMERID; ++i)
@@ -1164,3 +1171,120 @@ void Measurement::setHistfilename(QString name)
 		m_histfilename.append(".mtxt");
 }
      
+void Measurement::setConfigfilename(const QString &name)
+{
+	if (name.isEmpty())
+		m_configfile.setFile("mesycfg.mcfg");
+	else
+		m_configfile.setFile(name);
+}
+
+QString Measurement::getConfigfilename(void) 
+{
+	if (m_configfile.exists())
+		return m_configfile.absoluteFilePath();
+	else
+		return QString("");
+}
+
+/*!
+    \fn bool Measurement::loadSetup(const QString &name)
+
+    Loads the setup from a file. This function should be able to load
+    "MesyDAQ" files and also "QMesyDAQ" files (using QSettings class which is
+    not easy human readable).
+
+    \note MesyDAQ INI file format is not used correctly, because the section
+	  names are not unique: imagine you don't have a single MCPD-8 + MPSD-8 ...
+
+    \param name file name
+    \return true if successfully loaded otherwise false
+ */
+bool Measurement::loadSetup(const QString &name)
+{
+	setConfigfilename(name);
+	if (getConfigfilename().isEmpty())
+		return false;
+
+	bool 		bOK(false);
+
+	protocol(tr("Reading configfile %1").arg(getConfigfilename()), NOTICE);
+
+	QSettings settings(getConfigfilename(), QSettings::IniFormat);
+
+	settings.beginGroup("MESYDAQ");
+	QString	home(getenv("HOME"));
+	m_histPath = settings.value("histogramPath", home).toString();
+	m_listPath = settings.value("listfilePath", home).toString();
+	QString sz = settings.value("debugLevel", QString("%1").arg(NOTICE)).toString();
+	int n = sz.toInt(&bOK);
+	if (bOK)
+		DEBUGLEVEL = n;
+	else
+	{
+		if (sz.contains("fatal", Qt::CaseInsensitive)) 
+			DEBUGLEVEL = FATAL;
+		else if (sz.contains("error", Qt::CaseInsensitive)) 
+			DEBUGLEVEL = ERROR;
+		else if (sz.contains("standard", Qt::CaseInsensitive) || sz.contains("warning", Qt::CaseInsensitive) || sz.contains("default", Qt::CaseInsensitive))
+			DEBUGLEVEL = WARNING;
+		else if (sz.contains("notice", Qt::CaseInsensitive)) 
+			DEBUGLEVEL = NOTICE;
+		else if (sz.contains("details", Qt::CaseInsensitive) || sz.contains("info", Qt::CaseInsensitive)) 
+			DEBUGLEVEL = INFO;
+		else if (sz.contains("debug", Qt::CaseInsensitive) || sz.contains("debug", Qt::CaseInsensitive)) 
+			DEBUGLEVEL = DEBUG;
+	}
+//	m_acquireListfile = settings.value("listmode", "true").toBool();
+	settings.endGroup();
+
+	m_mesydaq->loadSetup(settings);
+	storeLastFile();
+	return true;
+}
+
+/*!
+    \fn bool Measurement::saveSetup(const QString &name)
+
+    Stores the setup in a file. This function stores INI files in format of
+    "MesyDAQ" instead of "QMesyDAQ" using QSettings class (which is not easy
+    human readable).
+
+    Note: MesyDAQ INI file format is not used correctly, because the section
+	  names are not unique: imagine you don't have a single MCPD-8 + MPSD-8 ...
+
+    \param name file name
+    \return true if successfully saved otherwise false
+ */
+bool Measurement::saveSetup(const QString &name)
+{
+	if(name.isEmpty())
+		m_configfile.setFile("mesycfg.mcfg");
+	m_configfile.setFile(name);
+  
+	if(m_configfile.fileName().indexOf(".mcfg") == -1)
+		m_configfile.setFile(m_configfile.absoluteFilePath().append(".mcfg"));
+
+	QSettings settings(m_configfile.absoluteFilePath(), QSettings::IniFormat);
+
+	settings.beginGroup("MESYDAQ");
+	settings.setValue("comment", "QMesyDAQ configuration file");
+	settings.setValue("date", QDateTime::currentDateTime().toString(Qt::ISODate));
+	settings.setValue("histogramPath", m_histPath);
+	settings.setValue("listfilePath", m_listPath);
+	settings.setValue("debugLevel", QString("%1").arg(DEBUGLEVEL));
+	settings.endGroup();
+
+	m_mesydaq->saveSetup(settings);
+	settings.sync();
+	storeLastFile();
+	return true;
+}
+
+void Measurement::storeLastFile(void)
+{
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	settings.setValue("lastconfigfile", getConfigfilename());
+	settings.sync();
+}
+

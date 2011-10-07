@@ -23,7 +23,7 @@
 #include <QDialog>
 #include "ui_generalsetup.h"
 
-class Mesydaq2;
+class Measurement;
 
 /*!
     \class GeneralSetup
@@ -36,7 +36,7 @@ class GeneralSetup : public QDialog, public Ui_GeneralSetup
 {
 	Q_OBJECT
 public:
-	GeneralSetup(Mesydaq2 *, QWidget * = 0);
+	GeneralSetup(Measurement *, QWidget * = 0);
 
 	//! \return the path for the configuration files
 	QString configFilePath(void) {return configfilepath->text();}
@@ -66,6 +66,6 @@ private slots:
 	void setRunIdSlot();
 
 private:
-	Mesydaq2 	*m_mesy;
+	Measurement 	*m_meas;
 };
 #endif
