@@ -61,13 +61,9 @@
 #include "modulewizard.h"
 
 #include "mapcorrect.h"
-#include "inifile.h"
 
 #include "modulesetup.h"
 #include "mcpdsetup.h"
-
-#include "mapcorrect.h"
-#include "inifile.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -814,25 +810,15 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     init();
     acquireFile->setCheckable(m_meas->acqListfile());
 
-    const CConfigFile &lastsetup = m_theApp->getLastConfiguration();
-    int i = lastsetup.FindSectionIndex("MESYDAQ");
+    QSettings settings(m_theApp->getConfigfilename());
+    settings.beginGroup("MESYDAQ");
+
+    int i = settings.value("Preset/time", "-1").toInt();
+    if (i < 0) 
+        i = settings.value("preset_time", "-1").toInt();
     if (i >= 0)
-    {
-        const CConfigSection &section = lastsetup[i];
-        i = section.FindItemIndex("Preset\\time");
-        if (i < 0) 
-            i = section.FindItemIndex("preset_time");
-        if (i >= 0)
-        {
-            QString sz;
-            bool bOK(false);
-            section[i].GetStringValue(&sz);
-            i = sz.toInt(&bOK);
-            if (!bOK) 
-            i = sz.contains("false",Qt::CaseInsensitive) ? 0 : 1;
-            timerPreset->setChecked(i != 0);
-        }
-    }
+        timerPreset->setChecked(i != 0);
+    settings.endGroup();
 }
 
 /*!

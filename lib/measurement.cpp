@@ -68,6 +68,8 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_triggers(0)
 	, m_runID(0)
 	, m_mode(DataAcquisition)
+	, m_histfilename("")
+	, m_histPath("/home")
 {
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
@@ -721,7 +723,7 @@ void Measurement::readHistograms(const QString &name)
 		QStringList list = t.readLine().split(QRegExp("\\s+"));
 		if (list.size() >= 3 && list[0] == "mesydaq" && list[1] == "Histogram" && list[2] == "File")
 		{
-			m_mesydaq->setHistfilename(name);
+			setHistfilename(name);
 			clearAllHist();
 			resizeHistogram(0, 0);
 
@@ -1154,3 +1156,11 @@ void Measurement::setListFileHeader(const QByteArray& header)
 	if (m_mesydaq)
 		m_mesydaq->setListFileHeader(header);
 }
+
+void Measurement::setHistfilename(QString name) 
+{
+	m_histfilename = name;
+	if(m_histfilename.indexOf(".mtxt") == -1)
+		m_histfilename.append(".mtxt");
+}
+     

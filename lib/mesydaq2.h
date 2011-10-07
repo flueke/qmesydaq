@@ -33,7 +33,6 @@
 
 #include "mesydaqobject.h"
 #include "structures.h"
-#include "inifile.h"
 
 #include "mcpd8.h"
 
@@ -167,7 +166,7 @@ public:
 	bool saveSetup(const QString &name);
 
         //! returns the current configuration file name
-	const CConfigFile& getLastConfiguration() const { return m_lastConfiguration; }
+//	const CConfigFile& getLastConfiguration() const { return m_lastConfiguration; }
 
 	bool checkMcpd(quint8 device);
 
@@ -334,10 +333,6 @@ private:
 	
 	void storeLastFile(void);
 
-	static void 	saveSetup_helper(CConfigFile& file, const QString& szSection, int iPriority, const QString& szItem, QString szValue);
-	static QString 	loadSetup_helper(CConfigSection* pSection, const QString& szItem, const QString& szDefault);
-	static bool 	loadSetupBoolean(CConfigSection* pSection, const QString& szItem, const bool bDefault);
-
 	QHash<int, MCPD8 *>	m_mcpd;
 
 private:
@@ -368,7 +363,6 @@ private:
 //	int 		m_checkTimer;
 
 	QByteArray 	m_datHeader;
-	CConfigFile     m_lastConfiguration;
 };
 
 

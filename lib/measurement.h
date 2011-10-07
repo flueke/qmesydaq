@@ -48,6 +48,9 @@ class Measurement : public MesydaqObject
 	//! stores the current mode of the measurement
 	Q_PROPERTY(Mode m_mode READ mode)
 
+	Q_PROPERTY(QString m_histfilename READ getHistfilename WRITE setHistfilename)
+	Q_PROPERTY(QString m_histPath READ getHistfilepath WRITE setHistfilepath)
+
 public:
 	//! Defines the current mode values of a measurement 
         //! - DataAcquistion - data will be taken from the hardware
@@ -213,6 +216,27 @@ public:
 	//! returns the current operation mode
 	Mode mode(void) {return m_mode;}
 
+// histogram file oriented methods
+	/**
+	 * sets the file name of a histogram data file
+	 *
+	 * \param name name of the next histogram data file
+	 */
+	void setHistfilename(QString name);
+
+	//! \return name of the current histogram data file
+	QString getHistfilename(void) {return m_histfilename;}
+
+	/**
+	 * sets the path for the histogram data files
+	 *
+	 * \param path to the histogram data files
+	 */
+	void setHistfilepath(QString path) {m_histPath = path;}
+
+	//! \return path to store all histogram data files
+	QString getHistfilepath(void) {return m_histPath;}
+
 public slots:
 	void analyzeBuffer(DATA_PACKET &pd);
 
@@ -303,6 +327,10 @@ private:
 	quint16		m_height;
 
 	Mode		m_mode;
+
+	QString 	m_histfilename;
+
+	QString 	m_histPath;
 };
 
 #endif
