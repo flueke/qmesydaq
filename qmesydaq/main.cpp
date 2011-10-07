@@ -88,26 +88,26 @@ int main(int argc, char **argv)
 
         mainWin.show();
 
-	for (i=argList.count()-1; i>=0; --i)
+	for (i = argList.count() - 1; i >= 0; --i)
 	{
-	  if (argList[i]=="-f" || argList[i]=="--file" || argList[i]=="--config")
-	  {
-	    // load this configuration file
-	    mainWin.doLoadConfiguration(argList[i+1]);
-	    break;
-	  }
-	  if (argList[i]=="-nf" || argList[i]=="--nofile" || argList[i]=="--noconfig")
-	  {
-	    // load no configuration
-	    i=0;
-	    break;
-	  }
+	  	if (argList[i] == "-f" || argList[i] == "--file" || argList[i] == "--config")
+	  	{
+			// load this configuration file
+	    		mainWin.doLoadConfiguration(argList[i + 1]);
+	    		break;
+	  	}
+	  	if (argList[i] == "-nf" || argList[i] == "--nofile" || argList[i] == "--noconfig")
+	  	{
+			// load no configuration
+	    		i = 0;
+	    		break;
+	  	}
 	}
-	if (i<0)
+	if (i < 0)
 	{
-	  // load last configuration file
-	  QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
-	  mainWin.doLoadConfiguration(settings.value("lastconfigfile", "mesycfg.mcfg").toString());
+		// load last configuration file
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+		mainWin.doLoadConfiguration(settings.value("lastconfigfile", "mesycfg.mcfg").toString());
 	}
 
         app.processEvents();
