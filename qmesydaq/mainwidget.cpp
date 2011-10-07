@@ -268,15 +268,15 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     // display refresh timer
     //	m_dispTimer = startTimer(1000);
 
+#if 0
+    init();
+
     QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
-    m_theApp->setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
-    m_theApp->setListfilepath(getenv("HOME"));
-    m_theApp->setHistfilepath(getenv("HOME"));
-    m_theApp->setRunId(settings.value("config/lastrunid", "0").toUInt());
 
     QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
     acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
     timerPreset->setChecked(setup.value("MESYDAQ/Preset/time", true).toBool());
+#endif
 
     timerPreset->setLabel(tr("Timer"));
     eventsPreset->setLabel(tr("Events"));
@@ -286,7 +286,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     monitor3Preset->setLabel(tr("Monitor 3"));
     monitor4Preset->setLabel(tr("Monitor 4"));
 
-    init();
 }
 
 //! destructor
@@ -349,20 +348,21 @@ void MainWidget::init()
     {
         disconnect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
         disconnect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
+    	disconnect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
         delete m_meas;
     }
     m_meas = NULL;
     m_meas = new Measurement(m_theApp, this);
 
-    QList<int> mcpdList = m_theApp->mcpdId();
+    QList<int> mcpdList;
     dispMcpd->setMCPDList(mcpdList);
     devid_2->setMCPDList(mcpdList);
     paramId->setMCPDList(mcpdList);
-    startStopButton->setDisabled(mcpdList.empty());
-    acquireFile->setDisabled(mcpdList.empty());
-    allPulsersoffButton->setDisabled(mcpdList.empty());
-    displayTabWidget->setDisabled(mcpdList.empty());
-    statusGroupBox->setDisabled(mcpdList.empty());
+    startStopButton->setDisabled(true);
+    acquireFile->setDisabled(true);
+    allPulsersoffButton->setDisabled(true);
+    displayTabWidget->setDisabled(true);
+    statusGroupBox->setDisabled(true);
     displayMpsdSlot();
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
 
@@ -536,7 +536,7 @@ void MainWidget::setStreamSlot()
 */
 QString MainWidget::selectListfile(void)
 {
-    QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_theApp->getListfilepath(),
+    QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_meas->getListfilepath(),
                                                 "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
     if(!name.isEmpty())
     {
@@ -570,7 +570,7 @@ void MainWidget::checkListfilename(bool checked)
         if (name.isEmpty())
             name = selectListfile();
         else
-            name = m_theApp->getListfilepath() + "/" + name;
+            name = m_meas->getListfilepath() + "/" + name;
         if(!name.isEmpty())
             m_theApp->setListfilename(name);
         else
@@ -656,7 +656,7 @@ void MainWidget::clearAllSlot()
 {
     m_meas->clearAllHist();
     m_meas->setROI(QwtDoubleRect(0,0,0,0));
-    m_theApp->setHistfilename("");
+    m_meas->setHistfilename("");
     m_zoomer->setZoomBase();
     m_meas->clearCounter(TIMERID);
     m_meas->clearCounter(EVID);
@@ -710,7 +710,7 @@ void MainWidget::clearChanSlot()
 */
 void MainWidget::replayListfileSlot()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Load..."), m_theApp->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
+    QString name = QFileDialog::getOpenFileName(this, tr("Load..."), m_meas->getListfilepath(), "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
     if(!name.isEmpty())
     {
         startStopButton->setDisabled(true);
@@ -784,10 +784,10 @@ void MainWidget::scanPeriSlot(bool real)
 */
 void MainWidget::saveSetupSlot()
 {
-    QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_theApp->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
+    QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_meas->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
     {
-        m_theApp->saveSetup(name);
+        m_meas->saveSetup(name);
     }
 }
 
@@ -798,27 +798,32 @@ void MainWidget::saveSetupSlot()
 */
 void MainWidget::newSetupSlot()
 {
-    m_theApp->loadSetup(QString());
-    configfilename->setText(m_theApp->getConfigfilename());
-    init();
+    loadConfiguration(QString());
 }
 
 void MainWidget::loadConfiguration(const QString& sFilename)
 {
-    m_theApp->loadSetup(sFilename);
-    configfilename->setText(m_theApp->getConfigfilename());
     init();
+    m_meas->loadSetup(sFilename);
+    configfilename->setText(m_meas->getConfigfilename());
     acquireFile->setCheckable(m_meas->acqListfile());
 
-    QSettings settings(m_theApp->getConfigfilename());
+    QSettings settings(m_meas->getConfigfilename());
     settings.beginGroup("MESYDAQ");
-
-    int i = settings.value("Preset/time", "-1").toInt();
-    if (i < 0) 
-        i = settings.value("preset_time", "-1").toInt();
-    if (i >= 0)
-        timerPreset->setChecked(i != 0);
+    acquireFile->setChecked(settings.value("MESYDAQ/listmode", true).toBool());
+    timerPreset->setChecked(settings.value("MESYDAQ/Preset/time", true).toBool());
     settings.endGroup();
+
+    QList<int> mcpdList = m_theApp->mcpdId();
+    dispMcpd->setMCPDList(mcpdList);
+    devid_2->setMCPDList(mcpdList);
+    paramId->setMCPDList(mcpdList);
+    startStopButton->setDisabled(mcpdList.empty());
+    acquireFile->setDisabled(mcpdList.empty());
+    allPulsersoffButton->setDisabled(mcpdList.empty());
+    displayTabWidget->setDisabled(mcpdList.empty());
+    statusGroupBox->setDisabled(mcpdList.empty());
+    emit redraw();
 }
 
 /*!
@@ -828,7 +833,7 @@ void MainWidget::loadConfiguration(const QString& sFilename)
 */
 void MainWidget::restoreSetupSlot()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_theApp->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
+    QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_meas->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
       emit(loadConfiguration(name));
 }
@@ -911,11 +916,11 @@ void MainWidget::drawOpData()
  */
 void MainWidget::dispFiledata(void)
 {
-    configfilename->setText(m_theApp->getConfigfilename());
-    if(m_theApp->getHistfilename().isEmpty())
+    configfilename->setText(m_meas ? m_meas->getConfigfilename() : "-");
+    if(!m_meas || m_meas->getHistfilename().isEmpty())
         histfilename->setText("-");
     else
-        histfilename->setText(m_theApp->getHistfilename());
+        histfilename->setText(m_meas->getHistfilename());
 }
 
 /*!
@@ -925,7 +930,7 @@ void MainWidget::dispFiledata(void)
 */
 void MainWidget::writeHistSlot()
 {
-    QString name = QFileDialog::getSaveFileName(this, tr("Write Histogram..."), m_theApp->getHistfilepath(),
+    QString name = QFileDialog::getSaveFileName(this, tr("Write Histogram..."), m_meas->getHistfilepath(),
                                                 "mesydaq histogram files (*.mtxt);;all files (*.*)");
     if(!name.isEmpty())
     {
@@ -943,7 +948,7 @@ void MainWidget::writeHistSlot()
 */
 void MainWidget::loadHistSlot()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Load Histogram..."), m_theApp->getHistfilepath(), "mesydaq histogram files (*.mtxt);;all files (*.*)");
+    QString name = QFileDialog::getOpenFileName(this, tr("Load Histogram..."), m_meas->getHistfilepath(), "mesydaq histogram files (*.mtxt);;all files (*.*)");
     if(!name.isEmpty())
     {
         m_meas->readHistograms(name);
@@ -1494,7 +1499,7 @@ void MainWidget::setupModule(void)
  */
 void MainWidget::setupGeneral()
 {
-    GeneralSetup d(m_theApp);
+    GeneralSetup d(m_meas);
     if (d.exec() == QDialog::Accepted)
     {
     	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
@@ -1503,10 +1508,10 @@ void MainWidget::setupGeneral()
 //	settings.setValue("config/listfilepath", d.listFilePath());
 //	settings.setValue("config/histfilepath", d.histFilePath());
 
-        m_theApp->setListfilepath(d.listFilePath());
-        m_theApp->setHistfilepath(d.histFilePath());
-        m_theApp->setConfigfilepath(d.configFilePath());
-        m_theApp->setRunId(d.lastRunId());
+        m_meas->setListfilepath(d.listFilePath());
+        m_meas->setHistfilepath(d.histFilePath());
+        m_meas->setConfigfilepath(d.configFilePath());
+        m_meas->setRunId(d.lastRunId());
     }
 }
 
