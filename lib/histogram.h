@@ -135,7 +135,7 @@ private:
  * the incVal method gives values which are not exist.
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
- * \author Jens Kr&uuml;ger <jens.kruege@frm2.tum.de>
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
 class Histogram : public MesydaqObject
 {

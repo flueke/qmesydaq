@@ -890,7 +890,7 @@ void Measurement::analyzeBuffer(DATA_PACKET &pd)
 					m_diffractogram->incVal(chan);
 #endif
 				if (m_posHistCorrected)
-					m_posHistCorrected->incVal(chan, amp);
+					m_posHistCorrected->incVal(chan, pos);
 				if (m_mesydaq->getMpsdId(mod, id) == TYPE_MSTD16)
 				{
 //					protocol(tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id), INFO);

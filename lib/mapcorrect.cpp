@@ -113,7 +113,7 @@ bool MapCorrection::isValid() const
         default: 
              return false;
     }
-    return  (iCount == m_afCorrection.count()); 
+    return (iCount == m_afCorrection.count());
 }
 
 /*!
@@ -289,7 +289,7 @@ bool MapCorrection::getMap(const QPoint &src, QPoint &dst, float &fCorrection) c
     dst.setY(p->y());
     if (!m_mapRect.contains(dst))
         return false;
-    if (m_iCorrection==MapCorrection::CorrectMappedPixel)
+    if (m_iCorrection == MapCorrection::CorrectMappedPixel)
     {
 	iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
         if (iPos < 0 || iPos >= m_afCorrection.count())
@@ -306,6 +306,7 @@ void MapCorrection::mirrorVertical()
 {
     if (m_bNoMapping) 
         return;
+
     int iWidth = m_rect.width();
     int iHeight = m_rect.height() - 1;
     int iMaxHeight = (iHeight + 1) / 2;

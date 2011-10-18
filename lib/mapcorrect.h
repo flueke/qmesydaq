@@ -52,30 +52,26 @@ class MapCorrection : public MesydaqObject
     Q_PROPERTY(bool m_bNoMapping READ isNoMap)
 
 public:
-  //! orientation of histogram
-  //!
-  //! this is used at class MappedHistogram, but stored here for convenience 
-  //!
-  //! - OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
-  //! - OrientationUpRev:    channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
-  //! - OrientationDown:     channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
-  //! - OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
-  //! - OrientationLeft:     channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
-  //! - OrientationLeftRev:  channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
-  //! - OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
-  //! - OrientationRightRev: channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
-    enum Orientation { OrientationUp = 0, 
-		       OrientationDown, 
-                       OrientationLeft, 
-		       OrientationRight,
-		       OrientationUpRev, 
-		       OrientationDownRev, 
-		       OrientationLeftRev, 
-		       OrientationRightRev };
+    //! orientation of histogram
+    //!
+    //! used at class MappedHistogram, but stored here for convenience)
+    //!
+    enum Orientation {
+      OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+      OrientationDown,    //!< channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
+      OrientationLeft,    //!< channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
+      OrientationRight,   //!< channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
+      OrientationUpRev,   //!< channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
+      OrientationDownRev, //!< channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+      OrientationLeftRev, //!< channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
+      OrientationRightRev //!< channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
+    };
 
     //! select which pixel should be hold a correction factor: source or mapped pixel
-    enum CorrectionType { CorrectSourcePixel = 0, 
-			  CorrectMappedPixel };
+    enum CorrectionType {
+      CorrectSourcePixel = 0, //!< use correction factor before position mapping
+      CorrectMappedPixel      //!< use correction factor after position mapping
+    };
 
     //! default constructor
     MapCorrection() 
@@ -177,25 +173,25 @@ public:
 
 private:
     //! do not apply mapping
-    bool                m_bNoMapping;
+    bool m_bNoMapping;
 
     //! orientation
-    enum Orientation    m_iOrientation;
+    enum Orientation m_iOrientation;
 
     //! correction type
     enum CorrectionType m_iCorrection;
 
     //! size of the original array
-    QRect               m_rect;
+    QRect m_rect;
 
     //! size and position of the mapped array
-    QRect               m_mapRect;
+    QRect m_mapRect;
 
     //! mapping information
-    QVector<QPoint>     m_aptMap;
+    QVector<QPoint> m_aptMap;
 
     //! intensity correction 
-    QVector<float>      m_afCorrection;
+    QVector<float> m_afCorrection;
 };
 
 /**
@@ -265,25 +261,25 @@ public:
 
 private:
     //! width of mapped histogram
-    quint16         m_iWidth;
+    quint16 m_iWidth;
 
     //! height of mapped histogram
-    quint16         m_iHeight;
+    quint16 m_iHeight;
 
     //! pointer to mapping information
-    MapCorrection*  m_pMapCorrection;
+    MapCorrection* m_pMapCorrection;
 
     //! mapped histogram data
     QVector<double> m_adblData;
 
     //! uncorrected event counter
-    quint64         m_ullTotalCounts;
+    quint64 m_ullTotalCounts;
 
     //! corrected event counter
-    double          m_dblTotalCounts;
+    double m_dblTotalCounts;
 
     //! array position of maximum value
-    int             m_iMaxPos;
+    int m_iMaxPos;
 
 #if 0
     //! remap point using stored orientation

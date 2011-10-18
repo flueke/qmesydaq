@@ -195,9 +195,9 @@ void Mesydaq2::startedDaq(void)
 		m_datfile.setFileName(m_listfilename);
 		m_datfile.open(QIODevice::WriteOnly);
 		m_datStream.setDevice(&m_datfile);
-		writeListfileHeader();
-		writeHeaderSeparator();
 	}
+	writeListfileHeader();
+	writeHeaderSeparator();
 	m_daq = RUNNING;
 	emit statusChanged("RUNNING");
 	protocol("daq started", DEBUG);
@@ -214,11 +214,9 @@ void Mesydaq2::startedDaq(void)
  */
 void Mesydaq2::stoppedDaq(void)
 {
+	writeClosingSignature();
 	if(m_acquireListfile && m_datfile.isOpen())
-	{
-		writeClosingSignature();
 		m_datfile.close();
-	}
 	m_daq = IDLE;
 	emit statusChanged("IDLE");
 	protocol("daq stopped", DEBUG);
@@ -260,25 +258,31 @@ void Mesydaq2::writeListfileHeader(void)
 		QTextStream txtStr(&m_datfile);
 		txtStr << QString("mesytec psd listmode data\n");
 		txtStr << QString("header length: %1 lines \n").arg(2);
+
+		m_datSender.WriteData(QByteArray("DATA\n"));
 	}
 	else
 	{
-		QByteArray header(m_datHeader);
+		QByteArray header1;
+		QByteArray header2(m_datHeader);
 		QByteArray lengthinfo;
 
-		if (!header.endsWith('\n')) 
-			header.append('\n');
-		header.append("# offset (bytes) where binary tof data begins\n Data = ");
-		int iLen = header.count();
+		if (!header2.endsWith('\n'))
+			header2.append('\n');
+		header1.append("DATA = ");
+		int iLen = header1.count() + header2.count();
 		for (;;)
 		{
 			lengthinfo = QString("%1\n").arg(iLen).toLatin1();
-			if ((header.count() + lengthinfo.count()) >= iLen) 
+			if ((header1.count() + header2.count() + lengthinfo.count()) >= iLen)
 				break;
 			++iLen;
 		}
-		header.append(lengthinfo);
-		m_datfile.write(header);
+		header1.append(lengthinfo);
+		header1.append(header2);
+		if (m_datfile.isOpen())
+			m_datfile.write(header1);
+		m_datSender.WriteData(header1);
 	}
 }
 
@@ -294,7 +298,10 @@ void Mesydaq2::writeListfileHeader(void)
  */
 void Mesydaq2::writeHeaderSeparator(void)
 {
-	m_datStream << sep0 << sep5 << sepA << sepF;
+	const unsigned short awBuffer[]={sep0,sep5,sepA,sepF};
+	if (m_datfile.isOpen())
+		m_datStream << sep0 << sep5 << sepA << sepF;
+	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
 }
 
 
@@ -309,7 +316,10 @@ void Mesydaq2::writeHeaderSeparator(void)
  */
 void Mesydaq2::writeBlockSeparator(void)
 {
-	m_datStream << sep0 << sepF << sep5 << sepA;
+	const unsigned short awBuffer[]={sep0,sepF,sep5,sepA};
+	if (m_datfile.isOpen())
+		m_datStream << sep0 << sepF << sep5 << sepA;
+	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
 }
 
 
@@ -322,7 +332,10 @@ void Mesydaq2::writeBlockSeparator(void)
  */
 void Mesydaq2::writeClosingSignature(void)
 {
-	m_datStream << sepF << sepA << sep5 << sep0;
+	const unsigned short awBuffer[]={sepF,sepA,sep5,sep0};
+	if (m_datfile.isOpen())
+		m_datStream << sepF << sepA << sep5 << sep0;
+	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
 }
 
 /*!
@@ -441,6 +454,9 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 {
 	settings.beginGroup("MESYDAQ");
 	settings.setValue("listmode", m_acquireListfile ? "true" : "false");
+	settings.setValue("repeatersource",m_datSender.GetSource().toString());
+	settings.setValue("repeatertarget",m_datSender.GetTarget().toString());
+	settings.setValue("repeaterport",m_datSender.GetPort());
 	settings.endGroup();
 	
 	int i = 0;
@@ -532,6 +548,9 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 	settings.beginGroup("MESYDAQ");
 	m_acquireListfile = settings.value("listmode", "true").toBool();
+	m_datSender.SetSource(settings.value("repeatersource", "").toString());
+	m_datSender.SetTarget(settings.value("repeatertarget", "").toString(),
+			      settings.value("repeaterport",m_datSender.DEFAULTPORT).toUInt());
 	settings.endGroup();
 
 	QStringList mcpdList = settings.childGroups().filter("MCPD");
@@ -1374,9 +1393,10 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			m_datStream << pd.bufferNumber;
 			for(quint16 i = 4; i < pd.bufferLength; i++)
 				m_datStream << pD[i];
-			writeBlockSeparator();
-//			qDebug("------------------");
 		}
+		m_datSender.WriteData(&pd,pd.bufferLength);
+		writeBlockSeparator();
+//		qDebug("------------------");
 		protocol(tr("buffer : length : %1 type : %2").arg(pd.bufferLength).arg(pd.bufferType), DEBUG);
 		if(pd.bufferType < 0x0002) 
 		{

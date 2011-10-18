@@ -35,7 +35,6 @@
  */
 Spectrum::Spectrum(quint16 bins)
 	: MesydaqObject()
-	, m_data(NULL)
 	, m_maximumPos(0)
 	, m_meanCount(0)
 	, m_totalCounts(0)

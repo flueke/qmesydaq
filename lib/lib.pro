@@ -10,15 +10,15 @@ TEMPLATE 	= lib
 TARGET 		= mesydaq
 DEPENDPATH 	+= .
 INCLUDEPATH 	+= .
-LIBS        	-= -lmesydaq
+LIBS		-= -lmesydaq
 
 INSTALLS	= target
 
 contains(CONFIG, bit64) {
-	target.path    = /usr/local/lib64
+	target.path	= /usr/local/lib64
 }
 else {
-	target.path    = /usr/local/lib
+	target.path	= /usr/local/lib
 }
 
 CONFIG		+= debug
@@ -27,35 +27,37 @@ QT 		+= core network
 
 # Input
 HEADERS 	+= counter.h \
-        	   histogram.h \
+		   datarepeater.h \
+		   histogram.h \
 		   mapcorrect.h \
-        	   mcpd8.h \
-        	   mdefines.h \
-        	   measurement.h \
-        	   mesydaq2.h \
-        	   mesydaqobject.h \
-        	   mpsd8.h \
+		   mcpd8.h \
+		   mdefines.h \
+		   measurement.h \
+		   mesydaq2.h \
+		   mesydaq3.h \
+		   mesydaqobject.h \
+		   mpsd8.h \
 		   mstd16.h \
 		   mcpd2.h \
 		   mdll.h \
-        	   networkdevice.h \
-        	   structures.h
+		   networkdevice.h \
+		   structures.h
 
 SOURCES 	+= counter.cpp \
-        	   histogram.cpp \
+		   datarepeater.cpp \
+		   histogram.cpp \
 		   mapcorrect.cpp \
-        	   mcpd8.cpp \
+		   mcpd8.cpp \
 		   mcpd2.cpp \
-        	   mcpdmdll.cpp \
-        	   measurement.cpp \
-        	   mesydaq2.cpp \
-        	   mesydaqobject.cpp \
-        	   mpsd8.cpp \
-        	   mpsd8p.cpp \
+		   mcpdmdll.cpp \
+		   measurement.cpp \
+		   mesydaq2.cpp \
+		   mesydaqobject.cpp \
+		   mpsd8.cpp \
+		   mpsd8p.cpp \
 		   mpsd8old.cpp \
 		   mpsd8sadc.cpp \
 		   mstd16.cpp \
 		   mdll.cpp \
 		   mpsdfactory.cpp \
-        	   networkdevice.cpp
-
+		   networkdevice.cpp

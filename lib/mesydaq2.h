@@ -33,6 +33,7 @@
 
 #include "mesydaqobject.h"
 #include "structures.h"
+#include "datarepeater.h"
 
 #include "mcpd8.h"
 
@@ -286,15 +287,16 @@ private:
 	static const quint16  	sepF = 0xFFFF;
 
 private:
-	quint8  	m_daq;
+	quint8		m_daq;
 
 	quint16		m_runID;
     
-	bool 		m_acquireListfile;
-	QString 	m_listfilename;
+	bool		m_acquireListfile;
+	QString		m_listfilename;
 
-	QFile 		m_datfile;
-	QDataStream 	m_datStream;
+	QFile		m_datfile;
+	QDataStream	m_datStream;
+	DataRepeater	m_datSender;
 
 	quint8  	m_timingwidth;
 //	int 		m_checkTimer;
