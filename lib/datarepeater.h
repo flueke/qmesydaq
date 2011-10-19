@@ -54,8 +54,11 @@ public:
   explicit DataRepeater(QObject *parent, const QHostAddress &source, const QHostAddress &target = QHostAddress::LocalHost, quint16 port = DEFAULTPORT);
   explicit DataRepeater(QObject *parent, const QHostAddress &target = QHostAddress::LocalHost, quint16 port = DEFAULTPORT);
   explicit DataRepeater(const QHostAddress &source, const QHostAddress &target = QHostAddress::LocalHost, quint16 port = DEFAULTPORT);
-  explicit DataRepeater(const QHostAddress &target = QHostAddress::LocalHost, quint16 port = DEFAULTPORT);
+  explicit DataRepeater(const QHostAddress &target = QHostAddress::Null, quint16 port = DEFAULTPORT);
   virtual ~DataRepeater();
+
+  //! read, if class is enabled or not
+  bool GetEnabled() const { return m_pSocket!=NULL; }
 
   //! read source host address
   QHostAddress GetSource() const { return m_Source; }
@@ -64,7 +67,10 @@ public:
   QHostAddress GetTarget() const { return m_Target; }
 
   //! read target UDP port
-  quint16      GetPort()   const { return m_wPort; }
+  quint16 GetPort() const { return m_wPort; }
+
+  //! enable or disable this class
+  void SetEnabled(bool bEnable);
 
   //! set new source address (bind to interface): allowed is "Any", "LocalHost", IP address
   void SetSource(const QHostAddress &source = QHostAddress::Any);

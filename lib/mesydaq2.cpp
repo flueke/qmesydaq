@@ -457,6 +457,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 	settings.setValue("repeatersource",m_datSender.GetSource().toString());
 	settings.setValue("repeatertarget",m_datSender.GetTarget().toString());
 	settings.setValue("repeaterport",m_datSender.GetPort());
+	settings.setValue("repeaterenable",m_datSender.GetEnabled() ? "true" : "false");
 	settings.endGroup();
 	
 	int i = 0;
@@ -551,6 +552,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	m_datSender.SetSource(settings.value("repeatersource", "").toString());
 	m_datSender.SetTarget(settings.value("repeatertarget", "").toString(),
 			      settings.value("repeaterport",m_datSender.DEFAULTPORT).toUInt());
+	m_datSender.SetEnabled(settings.value("repeaterenable", "false").toBool());
 	settings.endGroup();
 
 	QStringList mcpdList = settings.childGroups().filter("MCPD");

@@ -80,7 +80,10 @@ DataRepeater::DataRepeater(const QHostAddress &source, const QHostAddress &targe
 DataRepeater::DataRepeater(const QHostAddress &target, quint16 port) :
   QObject(), m_pSocket(NULL), m_Source(QHostAddress::Any), m_Target(target), m_wPort(port), m_iMaxDatagramSize(MAXDATAGRAMSIZE), m_iTimerId(0)
 {
-  InitSocket();
+  if (target.isNull())
+    m_Target=QHostAddress::LocalHost;
+  else
+    InitSocket();
 }
 
 //! destructor
@@ -92,14 +95,13 @@ DataRepeater::~DataRepeater()
 //! initialize this class, create+bind an UDP socket
 void DataRepeater::InitSocket()
 {
-  m_Mutex.lock();
+  QMutexLocker lock(&m_Mutex);
   m_abyTodo.clear();
   if (m_iTimerId!=0)
   {
     killTimer(m_iTimerId);
     m_iTimerId=0;
   }
-  m_Mutex.unlock();
   if (m_pSocket!=NULL)
   {
     m_pSocket->disconnect(this);
@@ -107,7 +109,8 @@ void DataRepeater::InitSocket()
   }
   if (m_wPort<2) m_wPort=DEFAULTPORT;
   m_pSocket=new QUdpSocket;
-  if (m_pSocket==NULL) return;
+  if (m_pSocket==NULL)
+    return;
 
 #ifdef USE_CONNECTED_UDP
   m_pSocket->connectToHost(m_Target,m_wPort,QUdpSocket::WriteOnly);
@@ -119,6 +122,23 @@ void DataRepeater::InitSocket()
 
   delete m_pSocket;
   m_pSocket=NULL;
+}
+
+/*!
+  \brief enable or disable this class
+  \param bEnable flag to enable this class
+*/
+void DataRepeater::SetEnabled(bool bEnable)
+{
+  if (bEnable && m_pSocket==NULL)
+    InitSocket();
+  else if (!bEnable && m_pSocket!=NULL)
+  {
+    m_Mutex.lock();
+    delete m_pSocket;
+    m_pSocket=NULL;
+    m_Mutex.unlock();
+  }
 }
 
 /*!
@@ -162,7 +182,18 @@ void DataRepeater::SetSource(const QString &source)
 void DataRepeater::SetTarget(const QHostAddress &target, quint16 port)
 {
   if (target.isNull())
+  {
+    m_Mutex.lock();
     m_Target=QHostAddress::LocalHost;
+    if (m_pSocket!=NULL)
+    {
+      delete m_pSocket;
+      m_pSocket=NULL;
+    }
+    m_wPort=port;
+    m_Mutex.unlock();
+    return;
+  }
   else
     m_Target=target;
   if (m_wPort!=port)
