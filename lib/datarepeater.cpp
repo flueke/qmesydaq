@@ -259,10 +259,11 @@ void DataRepeater::timerEvent(QTimerEvent *event)
 {
   if (event==NULL) return;
   int id=event->timerId();
-  if (id!=0 && id==m_iTimerId && m_abyTodo.count()>0)
+  if (id!=0 && id==m_iTimerId)
   {
     m_Mutex.lock();
-    SendDatagram(true);
+    if (m_abyTodo.count()>0)
+      SendDatagram(true);
     killTimer(id);
     m_iTimerId=0;
     m_Mutex.unlock();
@@ -278,6 +279,12 @@ void DataRepeater::timerEvent(QTimerEvent *event)
 void DataRepeater::SendDatagram(bool bForce)
 {
   int iLength=m_abyTodo.count();
+  if (m_pSocket==NULL)
+  {
+    if (iLength>0)
+      m_abyTodo.clear();
+    return;
+  }
   while (iLength>0)
   {
     int len=iLength;

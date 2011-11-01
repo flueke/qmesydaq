@@ -20,8 +20,10 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
+#include <QMetaType>
+
 //! command packet structure
-typedef struct _MDP_PACKET
+struct MDP_PACKET
 {
 	//! length of the buffer
 	quint16 bufferLength;
@@ -43,10 +45,11 @@ typedef struct _MDP_PACKET
 	quint16 headerChksum;
 	//! the data, length of the data = length of the buffer - length of the header
 	quint16 data[750];
-} MDP_PACKET, *PMDP_PACKET;
+};
+Q_DECLARE_METATYPE(MDP_PACKET)
 
 //! data packet structure
-typedef struct _DATA_PACKET
+struct DATA_PACKET
 {
 	//! length of the buffer
 	quint16 bufferLength;
@@ -69,7 +72,8 @@ typedef struct _DATA_PACKET
 	quint16 param[4][3];
 	//! the events, length of the data = length of the buffer - length of the header
 	quint16 data[750];
-} DATA_PACKET, *PDATA_PACKET;
+};
+Q_DECLARE_METATYPE(DATA_PACKET)
 
 //! trigger event structure
 typedef struct TriggerEvent

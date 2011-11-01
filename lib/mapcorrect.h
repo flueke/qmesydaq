@@ -75,9 +75,10 @@ public:
 
     //! default constructor
     MapCorrection() 
-	: m_bNoMapping(false)
-	, m_iOrientation(MapCorrection::OrientationUp)
-	, m_iCorrection(MapCorrection::CorrectSourcePixel) 
+      : MesydaqObject()
+      , m_bNoMapping(false)
+      , m_iOrientation(MapCorrection::OrientationUp)
+      , m_iCorrection(MapCorrection::CorrectSourcePixel)
     {
     }
 
@@ -93,6 +94,7 @@ public:
         \param iCorrection
      */
     MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+      : MesydaqObject()
     { 
          initialize(size.width(), size.height(), iOrientation, iCorrection); 
     }

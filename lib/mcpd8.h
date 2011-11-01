@@ -262,7 +262,8 @@ public:
 	}	
 
 public slots:
-	void analyzeBuffer(MDP_PACKET &pd);
+	//! analyse network packet
+	void analyzeBuffer(MDP_PACKET pd);
 
 private slots:
 	//! callback for the communication timer to detect a timeout
@@ -283,7 +284,7 @@ signals:
 	 *
 	 * \param pd data packet
 	 */
-	void analyzeDataBuffer(DATA_PACKET &pd);
+	void analyzeDataBuffer(DATA_PACKET pd);
 
 protected:
 	void initCmdBuffer(quint16);
@@ -306,7 +307,7 @@ protected:
 private:
 	void communicate(bool yesno) {m_commActive = yesno;}
 
-	quint16 calcChksum(MDP_PACKET &buffer);
+	quint16 calcChksum(const MDP_PACKET &buffer);
 
 	int sendCommand(quint16 *buffer);
 
@@ -465,6 +466,4 @@ private:
 	quint8 	m_histType;
 };
 
-
 #endif
-

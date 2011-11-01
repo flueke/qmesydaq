@@ -32,7 +32,7 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 {
 	setupUi(this);
 
-	m_mesy = new Mesydaq2(this);
+	m_mesy = new Mesydaq2(NULL);
 	m_main = new MainWidget(m_mesy, this);
 	setCentralWidget(m_main);
 
@@ -40,12 +40,12 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
         if(app)
             app->setLoopEventReceiver(m_main);
 
-        connect(action_Load_Config_File, SIGNAL(triggered()), m_main, SLOT(restoreSetupSlot()));
-        connect(action_Save_Config_File, SIGNAL(triggered()), m_main, SLOT(saveSetupSlot()));
-        connect(action_Replay_List_File, SIGNAL(triggered()), m_main, SLOT(replayListfileSlot()));
-        connect(actionSave_Histogram_File, SIGNAL(triggered()), m_main, SLOT(writeHistSlot()));
-        connect(actionLoad_Histogram_File, SIGNAL(triggered()), m_main, SLOT(loadHistSlot()));
-        connect(actionPrint, SIGNAL(triggered()), m_main, SLOT(printPlot()));
+	connect(action_Load_Config_File, SIGNAL(triggered()), m_main, SLOT(restoreSetupSlot()));
+	connect(action_Save_Config_File, SIGNAL(triggered()), m_main, SLOT(saveSetupSlot()));
+	connect(action_Replay_List_File, SIGNAL(triggered()), m_main, SLOT(replayListfileSlot()));
+	connect(actionSave_Histogram_File, SIGNAL(triggered()), m_main, SLOT(writeHistSlot()));
+	connect(actionLoad_Histogram_File, SIGNAL(triggered()), m_main, SLOT(loadHistSlot()));
+	connect(actionPrint, SIGNAL(triggered()), m_main, SLOT(printPlot()));
 	connect(actionExport_PDF, SIGNAL(triggered()), m_main, SLOT(exportPDF()));
 	connect(actionExport_SVG, SIGNAL(triggered()), m_main, SLOT(exportSVG()));
 	connect(actionGeneral, SIGNAL(triggered()), m_main, SLOT(setupGeneral()));
@@ -62,6 +62,7 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 Mesydaq2MainWindow::~Mesydaq2MainWindow()
 {
 	saveSettings();
+	delete m_mesy;
 }
 
 void Mesydaq2MainWindow::restoreSettings()

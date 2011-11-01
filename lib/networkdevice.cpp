@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include <QSocketNotifier>
 #include <QUdpSocket>
+#include <QThread>
+#include <QMetaType>
 
 #include "networkdevice.h"
 #include "mdefines.h"
@@ -99,12 +101,23 @@ void NetworkDevice::destroy(NetworkDevice *nd)
  */
 NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
 	: MesydaqObject(parent)
+	, m_pThread(NULL)
+	, m_bFlag(false)
 	, m_port(port)
 	, m_source(source)
 	, m_sock(NULL)
 	, m_notifyNet(NULL)
 {
-	createSocket();
+  Q_ASSERT(parent==NULL);
+  if (QMetaType::type("MDP_PACKET")==0)
+    qRegisterMetaType<MDP_PACKET>();
+  m_pThread=new QThread;
+  moveToThread(m_pThread);
+  connect(m_pThread,SIGNAL(started()),this,SLOT(createSocket()),Qt::DirectConnection);
+  connect(m_pThread,SIGNAL(finished()),this,SLOT(destroySocket()),Qt::DirectConnection);
+  m_pThread->start(QThread::HighestPriority);
+  while (!m_bFlag)
+    usleep(10000);
 }
 
 /*!
@@ -112,7 +125,9 @@ NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
  */
 NetworkDevice::~NetworkDevice()
 {
-	destroySocket();
+  m_pThread->quit();
+  m_pThread->wait();
+  delete m_pThread;
 }
 
 /*!
@@ -131,6 +146,7 @@ void NetworkDevice::destroySocket()
 	m_notifyNet = NULL;
 	delete m_sock;
 	m_sock = NULL;
+	m_bFlag=false;
 }
 
 
@@ -165,9 +181,11 @@ int NetworkDevice::createSocket(void)
 			m_notifyNet->setEnabled(false);
 			connect (m_notifyNet, SIGNAL (activated(int)), this, SLOT (readSocketData()));
 			m_notifyNet->setEnabled(true);
+			m_bFlag=true;
 			return m_sock->socketDescriptor();
 		}
 	}
+	m_bFlag=true;
 	return -1;
 }
 
@@ -228,4 +246,3 @@ void NetworkDevice::readSocketData(void)
 		}
 	}
 }
-

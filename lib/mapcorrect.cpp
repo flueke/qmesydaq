@@ -474,7 +474,8 @@ void MapCorrection::rotateRight()
     \param pHistogram     pointer to existing source histogram or NULL
  */
 MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram /*= NULL*/)
-    : m_iWidth(0)
+    : MesydaqObject()
+    , m_iWidth(0)
     , m_iHeight(0)
     , m_pMapCorrection(NULL)
     , m_ullTotalCounts(0ULL)

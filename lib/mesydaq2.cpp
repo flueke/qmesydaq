@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QHash>
 #include <QHostAddress>
+#include <QThread>
 
 #include "mdefines.h"
 #include "mesydaq2.h"
@@ -39,18 +40,33 @@
     \param parent Qt parent object
 */
 Mesydaq2::Mesydaq2(QObject *parent)
-	: MesydaqObject(parent) 
+	: MesydaqObject(parent)
+	, m_pThread(NULL)
 	, m_daq(IDLE)
 	, m_runID(0)
 	, m_acquireListfile(false)
 	, m_listfilename("")
 	, m_timingwidth(1)
 {
+	Q_ASSERT(parent==NULL);
 	protocol(tr("running on Qt %1").arg(qVersion()), NOTICE);
+	if (QMetaType::type("DATA_PACKET")==0)
+		qRegisterMetaType<DATA_PACKET>();
+	m_pThread=new QThread;
+	moveToThread(m_pThread);
+	connect(m_pThread,SIGNAL(finished()),this,SLOT(threadExit()),Qt::DirectConnection);
+	m_pThread->start(QThread::HighestPriority);
 }
 
 //! destructor
 Mesydaq2::~Mesydaq2()
+{
+	m_pThread->quit();
+	m_pThread->wait();
+	delete m_pThread;
+}
+
+void Mesydaq2::threadExit()
 {
 	foreach (MCPD8* value, m_mcpd)
 		delete value;
@@ -237,7 +253,7 @@ void Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
 	if (m_mcpd.contains(id))
 		return;
 	m_mcpd[id] = new MCPD8(id, this, ip, port, sourceIP);
-	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
+	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET)), this, SLOT(analyzeBuffer(DATA_PACKET)));
 	connect(m_mcpd[id], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 	connect(m_mcpd[id], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 }
@@ -592,8 +608,11 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		if (port == dataPort)
 			dataPort = 0;
 
-		addMCPD(iId, IP, port > 0 ? port : cmdPort, cmdIP);
-		setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
+//		addMCPD(iId, IP, port > 0 ? port : cmdPort, cmdIP);
+		QMetaObject::invokeMethod(this, "addMCPD", Qt::BlockingQueuedConnection,
+					  Q_ARG(quint16, iId), Q_ARG(QString, IP),
+					  Q_ARG(quint16, port > 0 ? port : cmdPort), Q_ARG(QString, cmdIP));
+//		setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
 
 		for (int j = 0; j < 4; ++j)
 		{
@@ -1341,20 +1360,20 @@ void Mesydaq2::setRunId(quint16 runid)
 }
 
 /*!
-    \fn Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
+    \fn Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 
     callback to analyze input data packet
 
     \param pd data packet
  */
-void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
+void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 {
 	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), DEBUG);
 	if (m_daq == RUNNING)
 	{
 		quint16 mod = pd.deviceId;
 		m_runID = pd.runID;
- 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 		for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
 		{
 			if(!(pd.data[counter + 2] & TRIGGEREVENTTYPE))
@@ -1366,7 +1385,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 					// put the amplitude to the new format position
 					quint16 amp = (pd.data[counter + 1] >> 3) & 0x3FF;
 					pd.data[counter + 2] &= 0xFF80;	// clear amp and pos field
-					pd.data[counter + 1] &= 0x0007;	
+					pd.data[counter + 1] &= 0x0007;
 					pd.data[counter + 2] |= (amp >> 3);
 					pd.data[counter + 1] |= ((amp & 0x7) << 13);
 				}
@@ -1400,7 +1419,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		writeBlockSeparator();
 //		qDebug("------------------");
 		protocol(tr("buffer : length : %1 type : %2").arg(pd.bufferLength).arg(pd.bufferType), DEBUG);
-		if(pd.bufferType < 0x0002) 
+		if(pd.bufferType < 0x0002)
 		{
 // extract parameter values:
 			for(quint8 i = 0; i < 4; i++)

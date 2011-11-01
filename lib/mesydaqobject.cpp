@@ -22,8 +22,11 @@
 #include "mesydaqobject.h"
 
 #include <QDateTime>
+#include <QThread>
 
 int DEBUGLEVEL = NOTICE;
+
+QMutex MesydaqObject::m_Mutex;
 
 MesydaqObject::MesydaqObject(QObject *parent)
 	: QObject(parent)
@@ -54,12 +57,12 @@ void MesydaqObject::protocol(QString str, quint8 level)
 {
 	if(level <= DEBUGLEVEL)
 	{
-		QDateTime datetime;
-		QString datestring = datetime.currentDateTime().toString("yyyy/dd/MM hh:mm:ss.zzz");
+		m_Mutex.lock();
+		QString datestring = QDateTime::currentDateTime().toString("yyyy/dd/MM hh:mm:ss.zzz");
+		m_Mutex.unlock();
+
 		str.prepend(" - ");
 		str.prepend(datestring);
 		qDebug("[%d] %s", level, str.toStdString().c_str());
 	}
 }
-
-

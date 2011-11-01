@@ -68,9 +68,9 @@ public slots:
 
 signals:
 	//! This signal is emitted if a complete data or command packet has read.
-	void bufferReceived(MDP_PACKET &);
+	void bufferReceived(MDP_PACKET);
 
-private:
+private slots:
 	int createSocket(void);
 
 	void destroySocket(void);
@@ -81,6 +81,10 @@ private:
 	static QList<NetworkDevice*>	m_networks;
 
 	static QList<int>		m_inUse;
+
+	QThread*                        m_pThread;
+
+	bool                            m_bFlag;
 
 	quint16				m_port;
 

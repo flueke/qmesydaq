@@ -310,9 +310,9 @@ void MainWidget::about()
 		   + tr("<p>Authors</p><ul>")
                    + tr("<li>Copyright (C) 2008 <a href=\"mailto:g.montermann@mesytec.com\">Gregor Montermann</a</li>")
                    + tr("<li>Copyright (C) 2009-2011 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
+		   + tr("<li>Copyright (C) 2011 <a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a></li>")
 		   + tr("</ul><p>Contributors</p><ul>")
 		   + tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
-                   + tr("<li><a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a> CARESS remote control</li>")
                    + tr("<li><a href=\"mailto:m.drochner@fz-juelich.de\">Matthias Drochner</a> Bug reports</li>")
                    + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>")
 #if USE_TACO || USE_CARESS
@@ -1457,7 +1457,8 @@ void MainWidget::addMCPD(void)
     ModuleWizard d("192.168.168.121", quint16(0), this); // m_theApp);
     if (d.exec() == QDialog::Accepted)
     {
-        m_theApp->addMCPD(d.id(), d.ip());
+//	m_theApp->addMCPD(d.id(), d.ip());
+	QMetaObject::invokeMethod(m_theApp, "addMCPD", Qt::BlockingQueuedConnection, Q_ARG(quint16, d.id()), Q_ARG(QString, d.ip()));
 	init();
 	m_theApp->setTimingSetup(d.id(), d.master(), d.terminate());
     }
@@ -1901,4 +1902,3 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
 	m_theApp->setActive(devid_2->value(), id, set);
 }
-

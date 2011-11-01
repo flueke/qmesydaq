@@ -23,6 +23,7 @@
 #define _MESYDAQ_OBJECT_H_
 
 #include <QObject>
+#include <QMutex>
 
 /**
  * \short Mesydaq object
@@ -46,8 +47,9 @@ public:
 	virtual ~MesydaqObject();
 
 	static void protocol(QString str, quint8 level = 1);
+
+private:
+	static QMutex m_Mutex;
 };
-
-
 
 #endif // _MESYDAQ_OBJECT_H_

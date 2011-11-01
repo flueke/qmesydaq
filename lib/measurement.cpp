@@ -78,7 +78,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 
 	setRunId(settings.value("config/lastrunid", "0").toUInt());
 
-	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
+	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET)), this, SLOT(analyzeBuffer(DATA_PACKET)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	for (quint8 i = 0; i < TIMERID; ++i)
 	{
@@ -785,31 +785,31 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 }
 
 /*!
-    \fn Measurement::analyzeBuffer(DATA_PACKET &pd)
+    \fn Measurement::analyzeBuffer(DATA_PACKET pd)
 
     analyze the data packet and put all events into the right counters and/or histogram
 
     \param pd data packet
  */
-void Measurement::analyzeBuffer(DATA_PACKET &pd)
+void Measurement::analyzeBuffer(DATA_PACKET pd)
 {
 	quint16 time;
 	ulong 	data;
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
 	quint64 tim;
-	quint16 mod = pd.deviceId;	
+	quint16 mod = pd.deviceId;
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 	m_counter[TIMERID]->setTime(m_headertime / 10000);
 	m_runID = pd.runID;
 
 	m_packages++;
-	if(pd.bufferType < 0x0002) 
+	if(pd.bufferType < 0x0002)
 	{
 // extract parameter values:
 		QChar c('0');
- 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 //
 // status IDLE is for replaying files
 // 
@@ -1017,6 +1017,7 @@ void Measurement::readListfile(QString readfilename)
 				c->reset();
 			m_counter[TIMERID]->start(tmp / 10000);
 		}
+
 // hand over data buffer for processing
 		analyzeBuffer(dataBuf);
 // increment local counters
@@ -1287,4 +1288,3 @@ void Measurement::storeLastFile(void)
 	settings.setValue("lastconfigfile", getConfigfilename());
 	settings.sync();
 }
-

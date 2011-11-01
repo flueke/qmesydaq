@@ -172,8 +172,6 @@ public:
 
 	float getFirmware(quint16 mod);
 
-	void addMCPD(quint16 id, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
-
 	//! \return number of MCPD's
 	quint16 numMCPD(void) {return m_mcpd.size();}
 
@@ -208,6 +206,11 @@ public:
 	quint16 height(void);
 
 public slots:
+	//! analysis thread end
+	void threadExit(void);
+
+	void addMCPD(quint16 id, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
 
 	void setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP = QString("0.0.0.0"), quint16 dataPort = 0, const QString &cmdIP = QString("0.0.0.0"), quint16 cmdPort = 0);
@@ -255,7 +258,7 @@ public slots:
 
 	void allPulserOff();
 
-	virtual void analyzeBuffer(DATA_PACKET &pd);
+	virtual void analyzeBuffer(DATA_PACKET pd);
 
 signals:
 	/**
@@ -270,7 +273,7 @@ signals:
 	 *
 	 * \param pd data packet
 	 */
-	void analyzeDataBuffer(DATA_PACKET &pd);
+	void analyzeDataBuffer(DATA_PACKET pd);
 
 protected:
 	void timerEvent(QTimerEvent *event);
@@ -287,6 +290,8 @@ private:
 	static const quint16  	sepF = 0xFFFF;
 
 private:
+	QThread*	m_pThread;
+
 	quint8		m_daq;
 
 	quint16		m_runID;

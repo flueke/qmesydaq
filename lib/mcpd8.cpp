@@ -61,8 +61,8 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	, m_version(0)
 {
 	stdInit();
-        m_network = NetworkDevice::create(NULL, sourceIP, port);
-	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET &)), this, SLOT(analyzeBuffer(MDP_PACKET &)));
+	m_network = NetworkDevice::create(NULL, sourceIP, port);
+	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET)), this, SLOT(analyzeBuffer(MDP_PACKET)));
 
 	m_commTimer = new QTimer(this);
 	connect(m_commTimer, SIGNAL(timeout()), this, SLOT(commTimeout()));
@@ -1057,30 +1057,30 @@ int MCPD8::sendCommand(void)
 }
 
 /*!
-    \fn MCPD8::calcChksum(MDP_PACKET &buffer)
+    \fn MCPD8::calcChksum(const MDP_PACKET &buffer)
 
     calculates the checksum of the buffer
 
     \param buffer 
     \return calculated checksum
  */
-quint16 MCPD8::calcChksum(MDP_PACKET &buffer)
+quint16 MCPD8::calcChksum(const MDP_PACKET &buffer)
 {
-	quint16 chksum = 0;
-	quint16 *p = reinterpret_cast<quint16 *>(&buffer);
+	quint16 chksum = buffer.headerChksum;
+	const quint16 *p = reinterpret_cast<const quint16 *>(&buffer);
 	for (quint32 i = 0; i < buffer.bufferLength; i++)
 		chksum ^= p[i];
 	return chksum;
 }
 
 /*!
-    \fn MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
+    \fn MCPD8::analyzeBuffer(MDP_PACKET recBuf)
 	
     analyze the data package coming from the MCPD-8
 
     \param recBuf data package
  */
-void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
+void MCPD8::analyzeBuffer(MDP_PACKET recBuf)
 {
 	if (recBuf.deviceId != m_id)
 	{
@@ -1105,11 +1105,10 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 		m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
 		m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
 
-//		protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET &recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
+//		protocol(tr("MCPD8::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
 		
 		MPSD8	*ptrMPSD;
 		quint16 chksum = recBuf.headerChksum;
-		recBuf.headerChksum = 0;
 		if (chksum != calcChksum(recBuf))
 			protocol(tr("cmd packet (cmd = %4, size = %3) is not valid (CHKSUM error) %1 != (expected)%2 ")
 					.arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength).arg(recBuf.cmd), INFO);
@@ -1323,7 +1322,7 @@ void MCPD8::analyzeBuffer(MDP_PACKET &recBuf)
 	{
 		++m_dataRxd;
 //		protocol(tr("ID %1 : emit analyzeBuffer(recBuf)").arg(m_id), DEBUG);
-		emit analyzeDataBuffer((DATA_PACKET &)recBuf); 
+		emit analyzeDataBuffer(*((DATA_PACKET*)(&recBuf)));
 	}
 }
 
