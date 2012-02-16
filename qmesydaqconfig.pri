@@ -32,8 +32,7 @@ INSTALLS	= target
 # CARESS	work as CARESS server
 # TCP		work as TCP server
 #
-#INTERFACE	=
-INTERFACE	= CARESS
+INTERFACE	= TACO
 
 interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP")
 count(interfaces, 2) {
@@ -50,11 +49,9 @@ CONFIG		+= debug
 # QMAKE_CXXFLAGS	+= -fstack-check
 # QMAKE_LFLAGS	+= --stack=0x1000000
 
-#QWT_ROOT 	= /usr/local/qwt5
-QWT_ROOT 	= /usr
+QWT_ROOT 	= /usr/local/qwt5
 
-#QWTLIB		= qwt
-QWTLIB 		= qwt-qt4
+QWTLIB		= qwt
 
 contains(CONFIG, bit64) {
 	DEFINES	+= HAVE_BIT64
@@ -65,14 +62,12 @@ else {
 }
 
 # additional debug messages for QMesyDAQDetectorInterface and CARESS interface
-DEFINES         += DEBUGBUILD
+#DEFINES         += DEBUGBUILD
 
 QWTLIBS		+= -l$${QWTLIB}
 
-#INCLUDEPATH 	+= $${QWT_ROOT}/include
-#DEPENDPATH  	+= $${QWT_ROOT}/include
-INCLUDEPATH 	+= $${QWT_ROOT}/include/qwt-qt4
-DEPENDPATH  	+= $${QWT_ROOT}/include/qwt-qt4
+INCLUDEPATH 	+= $${QWT_ROOT}/include
+DEPENDPATH  	+= $${QWT_ROOT}/include
 LIBS        	+= $${QWTLIBS} -L../lib -lmesydaq
 
 contains(INTERFACE, TACO) {
