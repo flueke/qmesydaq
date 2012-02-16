@@ -159,7 +159,7 @@ void NetworkDevice::destroySocket()
  */
 int NetworkDevice::createSocket(void)
 {
-	MSG_NOTICE << m_source << '(' << m_port << ") : init socket: address";
+	MSG_NOTICE << m_source.toLocal8Bit().constData() << '(' << m_port << ") : init socket: address";
 	
 // create server address
 	QHostAddress servaddr(m_source); // QHostAddress::Any);

@@ -134,7 +134,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     versionLabel->setText("QMesyDAQ " + QString(VERSION) + "\n" __DATE__);
 
-    connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
+		connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
     connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
     connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
     connect(this, SIGNAL(redraw()), this, SLOT(draw()));
@@ -162,7 +162,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispMpsd, SIGNAL(changeModule(int)), dispMcpd, SLOT(steps(int)));
     connect(paramId, SIGNAL(valueChanged(int)), this, SLOT(draw()));
 
-//  connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
+//	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 
     clearMcpd->setHidden(true);
     clearMpsd->setHidden(true);
@@ -804,7 +804,7 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     init();
     m_meas->loadSetup(sFilename);
     configfilename->setText(m_meas->getConfigfilename());
-    acquireFile->setCheckable(m_meas->acqListfile());
+		acquireFile->setChecked(m_meas->acqListfile());
 
     QSettings settings(m_meas->getConfigfilename());
     settings.beginGroup("MESYDAQ");
