@@ -34,11 +34,6 @@ INSTALLS	= target
 #
 INTERFACE	= TACO
 
-interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP")
-count(interfaces, 2) {
-	error(you may either use TACO, TCP, _or_ CARESS or nothing as remote interface)
-}
-
 target.path	= /usr/local
 
 #
@@ -50,8 +45,15 @@ CONFIG		+= debug
 # QMAKE_LFLAGS	+= --stack=0x1000000
 
 QWT_ROOT 	= /usr/local/qwt5
-
 QWTLIB		= qwt
+
+# additional debug messages for QMesyDAQDetectorInterface and CARESS interface
+#DEFINES         += DEBUGBUILD
+
+QMESYDAQCONFIG = qmesydaqconfig_$$system(hostname -s).pri
+exists($${QMESYDAQCONFIG}) {
+  include($${QMESYDAQCONFIG})
+}
 
 contains(CONFIG, bit64) {
 	DEFINES	+= HAVE_BIT64
@@ -60,9 +62,6 @@ contains(CONFIG, bit64) {
 else {
 	QWTLIBS	= -L$${QWT_ROOT}/lib
 }
-
-# additional debug messages for QMesyDAQDetectorInterface and CARESS interface
-#DEFINES         += DEBUGBUILD
 
 QWTLIBS		+= -l$${QWTLIB}
 
@@ -101,4 +100,9 @@ contains(INTERFACE, CARESS) {
 #	CARESSLIBS	+= -L$${OMNIORB_ROOT}/lib
 	CARESSLIBS	= -lomniDynamic4 -lomniORB4 -lomnithread -lz
 	message(build the CARESS remote interface)
+}
+
+interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP")
+count(interfaces, 2) {
+	error(you may either use TACO, TCP, _or_ CARESS or nothing as remote interface)
 }
