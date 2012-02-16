@@ -52,7 +52,7 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <layout class="QGridLayout" name="gridLayout_27">
+   <layout class="QGridLayout" name="gridLayout_1">
     <item row="0" column="0">
      <widget class="QwtPlot" name="m_dataFrame">
       <property name="minimumSize">
@@ -229,7 +229,7 @@ Listfile</string>
     <attribute name="title">
      <string>Display</string>
     </attribute>
-    <layout class="QGridLayout" name="gridLayout_25">
+    <layout class="QGridLayout" name="gridLayout_2">
      <item row="1" column="0">
       <widget class="QGroupBox" name="logGroup">
        <property name="enabled">
@@ -238,7 +238,7 @@ Listfile</string>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout" name="gridLayout_20">
+       <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
          <widget class="QRadioButton" name="lin">
           <property name="text">
@@ -264,7 +264,7 @@ Listfile</string>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout" name="gridLayout_21">
+       <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
          <widget class="QRadioButton" name="dispAllPos">
           <property name="text">
@@ -456,7 +456,7 @@ Listfile</string>
        <property name="title">
         <string/>
        </property>
-       <layout class="QGridLayout" name="gridLayout_22">
+       <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
          <widget class="QRadioButton" name="dispSpectra">
           <property name="text">
@@ -499,7 +499,7 @@ Listfile</string>
     <attribute name="title">
      <string>Thresholds</string>
     </attribute>
-    <layout class="QGridLayout">
+    <layout class="QGridLayout" name="gridLayout_6">
      <item row="1" column="1">
       <widget class="QLineEdit" name="loLim">
        <property name="enabled">
@@ -585,7 +585,7 @@ Listfile</string>
      <attribute name="title">
       <string>Measurement</string>
      </attribute>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayout_7">
       <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="textLabel1_2_3_2_3">
         <property name="text">
@@ -627,7 +627,7 @@ Listfile</string>
         <property name="title">
          <string>Timing Delta Histogram</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_2">
+        <layout class="QGridLayout" name="gridLayout_8">
          <item row="0" column="0">
           <widget class="QLabel" name="textLabel1_8">
            <property name="text">
@@ -712,7 +712,7 @@ Listfile</string>
       <property name="title">
        <string>Module status</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_15">
+      <layout class="QGridLayout" name="gridLayout_9">
        <item row="0" column="0">
         <widget class="ModuleStatus" name="moduleStatus0" native="true"/>
        </item>
@@ -752,7 +752,7 @@ Listfile</string>
        <string>&amp;Rescan</string>
       </property>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget_1">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -803,7 +803,7 @@ Listfile</string>
      <attribute name="title">
       <string>Statistics</string>
      </attribute>
-     <layout class="QGridLayout">
+     <layout class="QGridLayout" name="gridLayout_10">
       <item row="1" column="0">
        <widget class="QLabel" name="textLabel1_2_3">
         <property name="text">
@@ -879,13 +879,13 @@ Listfile</string>
      <attribute name="title">
       <string>Files</string>
      </attribute>
-     <layout class="QGridLayout" name="gridLayout_5">
+     <layout class="QGridLayout" name="gridLayout_11">
       <item row="0" column="0">
        <widget class="QGroupBox" name="groupBox79_2">
         <property name="title">
          <string>Setup</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_6">
+        <layout class="QGridLayout" name="gridLayout_12">
          <item row="2" column="0" colspan="2">
           <widget class="QLabel" name="configfilename">
            <property name="text">
@@ -914,7 +914,7 @@ Listfile</string>
         <property name="title">
          <string>Histograms</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_16">
+        <layout class="QGridLayout" name="gridLayout_13">
          <item row="1" column="0">
           <widget class="QLabel" name="histfilename">
            <property name="text">
@@ -957,7 +957,7 @@ Listfile</string>
      <attribute name="title">
       <string>Caress</string>
      </attribute>
-     <layout class="QGridLayout">
+     <layout class="QGridLayout" name="gridLayout_14">
       <item row="0" column="0">
        <widget class="QLabel" name="textLabel1_12">
         <property name="text">
@@ -1021,7 +1021,7 @@ Listfile</string>
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidget_2">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -1059,7 +1059,7 @@ Listfile</string>
        <property name="title">
         <string>Run ID</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
+       <layout class="QGridLayout" name="gridLayout_15">
         <item row="0" column="0">
          <widget class="QLCDNumber" name="lcdRunID">
           <property name="smallDecimalPoint">
@@ -1084,7 +1084,7 @@ Listfile</string>
        <property name="title">
         <string>Parameters</string>
        </property>
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="gridLayout_16">
         <item row="1" column="0">
          <widget class="QLabel" name="textLabel1_3">
           <property name="text">
@@ -1226,7 +1226,7 @@ Listfile</string>
    <property name="title">
     <string>Status</string>
    </property>
-   <layout class="QGridLayout" name="gridLayout4">
+   <layout class="QGridLayout" name="gridLayout_17">
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">

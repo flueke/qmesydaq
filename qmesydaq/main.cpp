@@ -24,6 +24,7 @@
 #include <QPlastiqueStyle>
 #include <QDebug>
 #include <QSettings>
+#include "logging.h"
 
 #if USE_TACO
 #	include "TACOLoop.h"
@@ -32,6 +33,19 @@
 #	include "CARESSLoop.h"
 #endif
 
+const char* g_szShortUsage =
+#if USE_TACO
+	"[-n=<nethost>] "
+#endif
+	"[-f|--file|--config|-nf|--nofile|--noconfig]";
+const char* g_szLongUsage =
+#if USE_TACO
+	"  -n=<nethost> set environment variable NETHOST\n"
+#endif
+	"  -f=<file>\n  --file=<file>\n  --config=<file>\n" \
+	"               load configuration from file\n" \
+	"  -nf\n  --nofile\r\n  --noconfig   do not load last configuration automatically";
+
 #include "LoopObject.h"
 #include "QMesydaqDetectorInterface.h"
 #include "MultipleLoopApplication.h"
@@ -39,24 +53,53 @@
 
 int main(int argc, char **argv)
 {
-    	MultipleLoopApplication app(argc, argv);
+	MultipleLoopApplication app(argc, argv);
+	QStringList argList = app.arguments();
+	LoopObject *loop = NULL;
+	QString szLoadConfiguration=QString::null;
 
-        QStringList argList = app.arguments();
-
-        LoopObject *loop = NULL;
-	int i;
+	startLogging(g_szShortUsage,g_szLongUsage);
+	for (int i=0; i<argList.size(); ++i)
+	{
+		QString szArgument=argList[i], szParameter;
+		bool bSeparatedParameter=false;
+		if (szArgument.indexOf('=')>=0)
+		{
+			int iPos=szArgument.indexOf('=');
+			szParameter=szArgument.mid(iPos);
+			szArgument.remove(iPos,szArgument.size()-iPos);
+		}
+		else
+		{
+			szParameter=argList[i];
+			bSeparatedParameter=true;
+		}
 
 #if USE_TACO
-	for (i = 0; i < argList.size(); ++i)
-	{
-		if (argList[i].startsWith("-n") && (++i < argList.size()))
-			setenv("NETHOST",  argList[i].toStdString().c_str(), 1); 
+		if (szArgument=="-n")
+			setenv("NETHOST",szParameter.toStdString().c_str(),1);
+		else
+#endif
+		if (szArgument == "-f" || szArgument == "--file" || szArgument == "--config")
+		{
+			// load this configuration file
+			if (!szLoadConfiguration.isEmpty())
+				szLoadConfiguration=szParameter;
+			if (bSeparatedParameter) ++i;
+		}
+		else if (szArgument == "-nf" || szArgument == "--nofile" || szArgument == "--noconfig")
+		{
+			// load no configuration
+			szLoadConfiguration="";
+		}
 	}
-        if (!getenv("NETHOST"))
+
+#if USE_TACO
+	if (!getenv("NETHOST"))
 	{
-		qDebug() << "Environment variable \"NETHOST\" is not set";
-		qDebug() << "You may set it explicitly in the command shell";
-		qDebug() << "or by using command line option -n 'nethost.domain'";
+		MSG_DEBUG << "Environment variable \"NETHOST\" is not set";
+		MSG_DEBUG << "You may set it explicitly in the command shell";
+		MSG_DEBUG << "or by using command line option -n 'nethost.domain'";
 	}
 	else 
 		loop = new TACOLoop;
@@ -64,54 +107,43 @@ int main(int argc, char **argv)
 #if USE_CARESS
 	loop = new CARESSLoop(argList);
 #endif
-        app.setStyle(new QPlastiqueStyle());
 
-        QPixmap pixmap(":/images/mesytec.jpg");
+	app.setStyle(new QPlastiqueStyle());
 
-        QSplashScreen splash(pixmap);
-        splash.show();
-        app.processEvents();
+	QPixmap pixmap(":/images/mesytec.jpg");
 
-        app.setOrganizationName("MesyTec");
-        app.setOrganizationDomain("mesytec.com");
-        app.setApplicationName("Mesydaq2");
+	QSplashScreen splash(pixmap);
+	splash.show();
+	app.processEvents();
 
-        Mesydaq2MainWindow mainWin;
+	app.setOrganizationName("MesyTec");
+	app.setOrganizationDomain("mesytec.com");
+	app.setApplicationName("Mesydaq2");
+
+	Mesydaq2MainWindow mainWin;
 
 	if (loop)
 	{
-        	app.setLoopObject(loop);
-        	app.setQtInterface(new QMesyDAQDetectorInterface);
-        	app.setLoopEventReceiver(mainWin.centralWidget());
+		app.setLoopObject(loop);
+		app.setQtInterface(new QMesyDAQDetectorInterface);
+		app.setLoopEventReceiver(mainWin.centralWidget());
 		QObject::connect(loop, SIGNAL(terminated()), mainWin.centralWidget(), SLOT(quitContinue()));
 	}
+	mainWin.show();
 
-        mainWin.show();
-
-	for (i = argList.count() - 1; i >= 0; --i)
+	if (szLoadConfiguration.isNull())
 	{
-	  	if (argList[i] == "-f" || argList[i] == "--file" || argList[i] == "--config")
-	  	{
-			// load this configuration file
-	    		mainWin.doLoadConfiguration(argList[i + 1]);
-	    		break;
-	  	}
-	  	if (argList[i] == "-nf" || argList[i] == "--nofile" || argList[i] == "--noconfig")
-	  	{
-			// load no configuration
-	    		i = 0;
-	    		break;
-	  	}
-	}
-	if (i < 0)
-	{
-		// load last configuration file
+		// get last configuration file name
 		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
-		mainWin.doLoadConfiguration(settings.value("lastconfigfile", "mesycfg.mcfg").toString());
+		szLoadConfiguration=settings.value("lastconfigfile", "mesycfg.mcfg").toString();
 	}
 
-        app.processEvents();
-        splash.finish(&mainWin);
+	// load configuration
+	if (!szLoadConfiguration.isEmpty())
+		mainWin.doLoadConfiguration(szLoadConfiguration);
+
+	app.processEvents();
+	splash.finish(&mainWin);
 
 	return app.exec();
 }

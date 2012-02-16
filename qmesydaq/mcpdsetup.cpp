@@ -24,6 +24,7 @@
 #include "mdefines.h"
 #include "mcpdsetup.h"
 #include "mesydaq2.h"
+#include "logging.h"
 
 /*!
     constructor
@@ -87,7 +88,7 @@ void MCPDSetup::sendAuxSlot()
 void MCPDSetup::resetTimerSlot()
 {
     quint16 id = mcpdId->value();
-    m_theApp->protocol("reset timer", NOTICE);
+		MSG_NOTICE << "reset timer";
     m_theApp->setMasterClock(id, 0LL);
 }
 
@@ -99,7 +100,7 @@ void MCPDSetup::setTimingSlot()
 {
     quint16 id = mcpdId->value();
     resetTimer->setEnabled(master->isChecked());
-    m_theApp->protocol("set timing", NOTICE);
+		MSG_NOTICE << "set timing";
     m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked());
 }
 

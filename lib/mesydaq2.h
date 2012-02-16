@@ -31,7 +31,6 @@
 #include <QHash>
 #include <QSettings>
 
-#include "mesydaqobject.h"
 #include "structures.h"
 #include "datarepeater.h"
 
@@ -45,7 +44,7 @@ class MPSD8;
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  * \version 0.9
  */
-class Mesydaq2 : public MesydaqObject 
+class Mesydaq2 : public QObject
 {
 	Q_OBJECT
 

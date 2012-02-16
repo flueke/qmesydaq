@@ -24,6 +24,7 @@
 
 #include "networkdevice.h"
 #include "mdefines.h"
+#include "logging.h"
 
 QMutex			NetworkDevice::m_mutex(QMutex::Recursive);
 QList<NetworkDevice*> 	NetworkDevice::m_networks;
@@ -100,7 +101,7 @@ void NetworkDevice::destroy(NetworkDevice *nd)
  * \param port port number of the communication source
  */
 NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
-	: MesydaqObject(parent)
+	: QObject(parent)
 	, m_pThread(NULL)
 	, m_bFlag(false)
 	, m_port(port)
@@ -158,7 +159,7 @@ void NetworkDevice::destroySocket()
  */
 int NetworkDevice::createSocket(void)
 {
-	protocol(tr("%1(%2) : init socket: address").arg(m_source).arg(m_port), NOTICE);
+	MSG_NOTICE << m_source << '(' << m_port << ") : init socket: address";
 	
 // create server address
 	QHostAddress servaddr(m_source); // QHostAddress::Any);
@@ -200,9 +201,9 @@ int NetworkDevice::createSocket(void)
 bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
 {
 	QHostAddress ha(target);
-	protocol(tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(m_port).arg(buf.bufferLength * 2), INFO);
+	MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << m_port << ") : send buffer " << buf.bufferLength * 2 << " bytes";
 	qint64 i = m_sock->writeDatagram((const char *)&buf, 100, ha, m_port);
-	protocol(tr("%1 sent bytes").arg(i), DEBUG);
+	MSG_DEBUG << i << " sent bytes";
 	return (i != -1); 
 }
 
@@ -217,10 +218,10 @@ bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
 bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET2 &buf)
 {
 	QHostAddress ha(target);
-	protocol(tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(m_port).arg(buf.headerlength), INFO);
+	MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << m_port << ") : send buffer " << buf.headerlength << " bytes";
 	qint64 i = m_sock->writeDatagram((const char *)&buf, 200, ha, m_port);
-	protocol(tr("%1 sent bytes").arg(i), DEBUG);
-	return (i != -1); 
+	MSG_DEBUG << i << " sent bytes";
+	return (i != -1);
 }
 
 /*!
@@ -231,16 +232,16 @@ void NetworkDevice::readSocketData(void)
 // read socket data into receive buffer and notify
 	if (m_sock->hasPendingDatagrams())
 	{
-		protocol(tr("%1(%2) : NetworkDevice::readSocketData()").arg(ip()).arg(port()), DEBUG);
+		MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : NetworkDevice::readSocketData()";
 		qint64 maxsize = m_sock->pendingDatagramSize();
 		memset(&m_recBuf, 0, sizeof(m_recBuf));
 		qint64 len = m_sock->readDatagram((char *)&m_recBuf, maxsize);
 		if (len != -1)
 		{
-			protocol(tr("%1(%2) : ID = %5 read datagram : %3 from %4 bytes").arg(ip()).arg(port()).arg(len).arg(maxsize).arg(m_recBuf.deviceId), DEBUG);
-			protocol(tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(m_recBuf.bufferNumber).arg(m_recBuf.cmd).arg(m_recBuf.deviceStatus), DEBUG);
+			MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : ID = " << m_recBuf.deviceId << " read datagram : " << len << " from " << maxsize << " bytes";
+			MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read nr : " << m_recBuf.bufferNumber << " cmd : " << m_recBuf.cmd << " status " << m_recBuf.deviceStatus;
 			quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
-			protocol(tr("%1(%2) : read time : %3").arg(ip()).arg(port()).arg(tim), DEBUG);
+			MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read time : " << tim;
 
 			emit bufferReceived(m_recBuf);
 		}

@@ -33,32 +33,10 @@
 #include <QRegExp>
 #include <QDateTime>
 #include <QStringList>
+#include <QDebug>
 #include <zlib.h>
 #include "mapcorrectparser.h"
-
-#ifdef DEBUGBUILD
-#define DBG0(fmt) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qDebug("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__); } while (0)
-#define DBG(fmt,args...) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qDebug("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__,args); } while (0)
-#define CRITICAL0(fmt) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qCritical("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__); } while (0)
-#define CRITICAL(fmt,args...) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qCritical("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__,args); } while (0)
-#else
-#define DBG0(fmt)             do {} while (0)
-#define DBG(fmt,args...)      do {} while (0)
-#define CRITICAL0(fmt)        do {} while (0)
-#define CRITICAL(fmt,args...) do {} while (0)
-#endif
+#include "logging.h"
 
 #define ARRAY_SIZE(x) ((int)(sizeof(x)/sizeof((x)[0])))
 
@@ -153,7 +131,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     item.remove(QRegExp("[ \t]+$"));
     if (item.isEmpty())
     {
-      DBG("mapping and correction: ignoring invalid line %d",iLine);
+			MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
       continue;
     }
     ++p;
@@ -168,7 +146,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     {
       if (tmp.count()<4)
       {
-	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
 	continue;
       }
       bCorrE=false;
@@ -177,7 +155,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     {
       if (tmp.count()<5)
       {
-	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
 	continue;
       }
       bCorrE=true;
@@ -192,7 +170,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
 
       if (abyIn.isEmpty())
       {
-	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
 	continue;
       }
 
@@ -206,7 +184,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       if (i!=Z_OK)
       {
 	inflateEnd(&strm);
-	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
 	continue;
       }
 
@@ -237,7 +215,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       inflateEnd(&strm);
       if (i!=Z_OK || abyOut.isEmpty())
       {
-	DBG("mapping and correction: ignoring invalid line %d",iLine);
+	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
 	continue;
       }
 
@@ -246,8 +224,8 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     }
     else
     {
-      DBG("mapping and correction: ignoring invalid line %d",iLine);
-      continue;
+			MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+			continue;
     }
 
     // corr=id skip_first_values first_bin coded_length_array
@@ -304,12 +282,12 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
 
     if (iDstHeight<s.m_iTube)
     {
-      DBG("mapping: increasing height from %d to %d",iDstHeight,s.m_iTube);
+			MSG_DEBUG << "mapping: increasing height from " << iDstHeight << " to " << s.m_iTube;
       iDstHeight=s.m_iTube;
     }
     if (iDstWidth<iTubeChannels)
     {
-      DBG("mapping: increasing width from %d to %d",iDstWidth,iTubeChannels);
+			MSG_DEBUG << "mapping: increasing width from " << iDstWidth << " to " << iTubeChannels;
       iDstWidth=iTubeChannels;
     }
 
@@ -320,7 +298,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       iPos=(iMin+iMax)/2;
       if (aMappings[iPos].m_iTube==s.m_iTube)
       {
-	DBG("overwriting mapping for tube %d",s.m_iTube);
+	MSG_DEBUG << "overwriting mapping for tube " << s.m_iTube;
 	aMappings[iPos]=s;
 	bInsert=false;
 	break;
@@ -335,7 +313,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
   }
   if (iSrcWidth>iDstWidth || iSrcHeight>iDstHeight)
   {
-    CRITICAL("mapped size is greater than source:  source=%d*%d  mapped=%d*%d",iSrcWidth,iSrcHeight,iDstWidth,iDstHeight);
+		MSG_ERROR << "mapped size is greater than source:  source=" << iSrcWidth << '*' << iSrcHeight << "  mapped=" << iDstWidth << '*' << iDstHeight;
     Q_ASSERT(iSrcWidth<=iDstWidth && iSrcHeight<=iDstHeight);
     return result;
   }

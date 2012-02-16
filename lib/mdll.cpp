@@ -27,6 +27,7 @@
 #include "mesydaq3.h"
 #include "networkdevice.h"
 #include "mcpd8.h"
+#include "logging.h"
 
 /*!
     constructor
@@ -34,7 +35,7 @@
     \param parent
  */
 MDll::MDll(mesydaq3 *app, QObject *parent)
-	: MesydaqObject(parent)
+	: QObject(parent)
 	, m_mcpd(NULL)
 {
 	theApp = (mesydaq3*)app;
@@ -138,7 +139,7 @@ void MDll::setAll(P_MDLL_SETTING pMDllSet)
  */
 void MDll::setMdll(P_MDLL_SETTING pMDllSet, bool dontCheck)
 {
-	qDebug("set MDLL");
+	MSG_DEBUG << "set MDLL";
 	bool change(false);
 //	m_pCmdPacket->deviceId = 0;
 // check for different command blocks:
@@ -189,7 +190,7 @@ void MDll::setMdll(P_MDLL_SETTING pMDllSet, bool dontCheck)
 
 	if (change || dontCheck)
 	{
-		qDebug("change in MDLL part");
+		MSG_DEBUG << "change in MDLL part";
 		m_mcpd->setEnergy(pMDllSet->energyLow, pMDllSet->energyHi, pMDllSet->eScaleX, pMDllSet->eScaleY);
 		m_mcpd->setThreshold(pMDllSet->threshX, pMDllSet->threshY, pMDllSet->threshA);
 		m_mcpd->setSpectrum(pMDllSet->shiftX, pMDllSet->shiftY, pMDllSet->scaleX, pMDllSet->scaleY);
@@ -238,7 +239,7 @@ void MDll::setMdll(P_MDLL_SETTING pMDllSet, bool dontCheck)
 		change = true;
 	if (change)
 	{
-		qDebug("change in Pulser part");
+		MSG_DEBUG << "change in Pulser part";
 		m_mdllSet.pulserOn = pMDllSet->pulserOn;
 		m_mdllSet.pulserAmpl = pMDllSet->pulserAmpl;
 		m_mdllSet.pulserPos = pMDllSet->pulserPos;
@@ -248,8 +249,8 @@ void MDll::setMdll(P_MDLL_SETTING pMDllSet, bool dontCheck)
 	    
 // counter settings
 	change = false;
-	qDebug("counter 2: %u %u, new setting: %u %u", m_mdllSet.counterCell[2][0], m_mdllSet.counterCell[2][1],
-							pMDllSet->counterCell[2][0], pMDllSet->counterCell[2][1]);
+	MSG_DEBUG << "counter 2: " << m_mdllSet.counterCell[2][0] << ' ' << m_mdllSet.counterCell[2][1] << ", new setting: "
+						<< pMDllSet->counterCell[2][0] << ' ' << pMDllSet->counterCell[2][1];
 	if (m_mdllSet.counterCell[0][0] != pMDllSet->counterCell[0][0])
 		change = true;
 	if (m_mdllSet.counterCell[1][0] != pMDllSet->counterCell[1][0])

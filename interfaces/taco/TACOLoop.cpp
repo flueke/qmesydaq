@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include "TACOLoop.h"
+#include "logging.h"
 
 #include <iostream>
 #include <QApplication>
@@ -49,5 +50,5 @@ void TACOLoop::runLoop()
 
 	DevLong status = nethost_alloc(&error);
 	status = device_server(const_cast<char *>(m_server.toStdString().c_str()), const_cast<char *>(m_personal.toStdString().c_str()), 0, 1, 0, 0, 1, &devList);
-	qDebug() << QObject::tr("device_server does not run");
+	MSG_DEBUG << "device_server does not run";
 }

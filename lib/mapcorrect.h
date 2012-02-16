@@ -44,7 +44,7 @@ class MappedHistogram;
  *
  * \author Lutz Rossa <rossa@helmholtz-berlin.de>
  */
-class MapCorrection : public MesydaqObject
+class MapCorrection : public QObject
 {
     Q_OBJECT
     Q_ENUMS(Orientation)
@@ -75,7 +75,7 @@ public:
 
     //! default constructor
     MapCorrection() 
-      : MesydaqObject()
+			: QObject()
       , m_bNoMapping(false)
       , m_iOrientation(MapCorrection::OrientationUp)
       , m_iCorrection(MapCorrection::CorrectSourcePixel)
@@ -94,7 +94,7 @@ public:
         \param iCorrection
      */
     MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-      : MesydaqObject()
+			: QObject()
     { 
          initialize(size.width(), size.height(), iOrientation, iCorrection); 
     }
@@ -201,7 +201,7 @@ private:
  *
  * \author Lutz Rossa <rossa@helmholtz-berlin.de>
  */
-class MappedHistogram : public MesydaqObject
+class MappedHistogram : public QObject
 {
     Q_OBJECT
 public:

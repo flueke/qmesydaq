@@ -319,7 +319,7 @@ void DataRepeater::readyRead()
   {
     qint64 i=m_pSocket->bytesAvailable();
     if (i<1) break;
-    if (i>sizeof(buffer)) i=sizeof(buffer);
+    if (i>(qint64)sizeof(buffer)) i=(qint64)sizeof(buffer);
     m_pSocket->read(&buffer[0],i);
   }
 #else

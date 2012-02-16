@@ -20,6 +20,7 @@
 
 #include "mpsd8.h"
 #include "mdefines.h"
+#include "logging.h"
 
 /*!
     \fn MPSD8plus::MPSD8plus(quint8 id, QObject *parent)
@@ -138,7 +139,7 @@ quint8 MPSD8plus::calcThreshval(quint8 thr)
 	float diff = ft - t;
 	if(diff > 0.5)
 		t++;
-//	protocol(tr("threshpoti: %1, threshval: %2").arg(t).arg(thr));	
+//	MSG_ERROR << "threshpoti: "<< t << ", threshval: " << thr;
 	return t;
 }
 
@@ -151,7 +152,7 @@ quint8 MPSD8plus::calcPulsPoti(quint8 val, float gv)
 	quint8 pa = quint8(pamp);
 	if(pamp - pa > 0.5)
 		pa++;
-//	protocol(tr("pulsval: %1, pulspoti: %2").arg(val).arg(pa));
+//	MSG_ERROR << "pulsval: " << val << ", pulspoti: " << pa;
 	return pa;
 }
 
@@ -160,12 +161,12 @@ quint8 MPSD8plus::calcPulsPoti(quint8 val, float gv)
  */
 quint8 MPSD8plus::calcPulsAmp(quint8 val, float gv)
 {
-	protocol(tr("MPSD8plus::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv));
-	protocol(tr("m_p1: %1, m_p2: %2").arg(m_p1).arg(m_p2));
+	MSG_ERROR << "MPSD8plus::calcPulsAmp(val = " << val << ", gv = " << gv << ')';
+	MSG_ERROR << "m_p1: " << m_p1 << ", m_p2: " << m_p2;
 	float pa = (m_p1 + (val * m_p2)) * gv;
 	quint8 pamp = (quint8) pa;
 	if(pa - pamp > 0.5)
 		pamp++;
-	protocol(tr("pulspoti: %1, pulsamp: %2").arg(val).arg(pamp));
+	MSG_ERROR << "pulspoti: " << val << ", pulsamp: " << pamp;
 	return pamp;
 }

@@ -25,6 +25,7 @@
 #include "mpsd8.h"
 #include "mcpd2.h"
 #include "mdefines.h"
+#include "logging.h"
 
 /**
  * constructor
@@ -36,7 +37,7 @@
  * \param sourceIP IP address for incoming packets
  */
 MCPD2::MCPD2(quint8 id, QObject *parent, QString ip, quint16 port, QString sourceIP)
-	: MesydaqObject(parent)
+	: QObject(parent)
 	, m_network(NULL)
 	, m_txCmdBufNum(0)
 	, m_id(id)
@@ -100,7 +101,7 @@ bool MCPD2::init(void)
 
 	quint16 cap = capabilities();
 
-	protocol(tr("capabilities : %1").arg(cap), NOTICE);
+	MSG_NOTICE << "capabilities : " << cap;
 
 	if (m_version < 8.18)
 		modus = TP;
@@ -112,9 +113,9 @@ bool MCPD2::init(void)
 			{
 				case TYPE_MPSD8P:
 					cap = capabilities(c);
-					protocol(tr("module : %2 capabilities : %1").arg(cap).arg(c), NOTICE);
+					MSG_NOTICE << "module : " << c << " capabilities : " << cap;
 					modus &= cap;
-					protocol(tr("modus : %1").arg(modus), NOTICE);
+					MSG_NOTICE << "modus : " << modus;
 					break;
 				default:
 					modus = P;
@@ -225,7 +226,7 @@ quint8 MCPD2::getMpsdId(quint8 addr)
  */
 bool MCPD2::setId(quint8 mcpdid)
 {
-    	protocol(tr("Set id for mcpd-8 #%1 to %2.").arg(m_id).arg(mcpdid), NOTICE);
+			MSG_NOTICE << "Set id for mcpd-8 #" << m_id << " to " << mcpdid << '.';
 	initCmdBuffer(SETID);
 	m_cmdBuf.data[0] = mcpdid;
 	finishCmdBuffer(1);
@@ -298,7 +299,7 @@ float MCPD2::version(quint16 mod)
 		tmpFloat /= 100.;
 		tmpFloat += (tmp >> 8);
 	}
-	protocol(tr("MPSD (ID  %1): Version number : %2").arg(mod).arg(tmpFloat), INFO);
+	MSG_INFO << "MPSD (ID " << mod << "): Version number : " << tmpFloat;
 	return tmpFloat;
 }
 
@@ -342,7 +343,7 @@ bool MCPD2::setGain(quint16 addr, quint8 chan, quint8 gainval)
 	m_cmdBuf.data[0] = addr;
 	m_cmdBuf.data[1] = chan;
 	m_cmdBuf.data[2] = gainval;
-	protocol(tr("set gain to potival: %1").arg(m_cmdBuf.data[2]), INFO);
+	MSG_INFO << "set gain to potival: " << m_cmdBuf.data[2];
 	finishCmdBuffer(3);
 	return sendCommand();
 }
@@ -518,7 +519,8 @@ bool MCPD2::getMode(quint16 addr)
  */
 bool MCPD2::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool onoff)
 {
-	protocol(tr("MCPD2::setPulser(addr = %1, chan = %2, pos = %3, amp = %4, onoff = %5)").arg(addr).arg(chan).arg(pos).arg(amp).arg(onoff), INFO);
+	MSG_INFO << "MCPD2::setPulser(addr = " << addr << ", chan = " << chan << ", pos = " << pos
+					 << ", amp = " << amp << ", onoff = " << onoff << ')';
 	if (m_mpsd.find(addr) == m_mpsd.end())
 		return false;
 	if (addr > 7)
@@ -558,7 +560,7 @@ bool MCPD2::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
  */
 bool MCPD2::setAuxTimer(quint16 tim, quint16 val)
 {
-	protocol(tr("MCPD2::setAuxTimer(%1, %2)").arg(tim).arg(val));
+	MSG_ERROR << "MCPD2::setAuxTimer(" << tim << ", " << val << ')';
 	if(tim > 3)
 		tim = 3;
 	initCmdBuffer(SETAUXTIMER);
@@ -588,22 +590,22 @@ bool MCPD2::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 	bool errorflag = true;
 	if(source > 7)
 	{
-		protocol(tr("Error: mcpd %1: trying to set counter cell #%2. Range exceeded! Max. cell# is 7").arg(m_id).arg(source), ERROR);
+		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell #" << source << ". Range exceeded! Max. cell# is 7";
 		errorflag = false;
 	}
 	if(trigger > 7)
 	{
-		protocol(tr("Error: mcpd %1: trying to set counter cell trigger # to %2. Range exceeded! Max. trigger# is 7").arg(m_id).arg(trigger), ERROR);
+		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell trigger # to " << trigger << ". Range exceeded! Max. trigger# is 7";
 		errorflag = false;
 	}
 	if(compare > 22)
 	{
-		protocol(tr("Error: mcpd %1: trying to set counter cell compare value to %2. Range exceeded! Max. value is 22").arg(m_id).arg(compare), ERROR);
+		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell compare value to " << compare << ". Range exceeded! Max. value is 22";
 		errorflag = false;
 	}
 	if(errorflag)
 	{
-		protocol(tr("mcpd %1: set counter cell %2: trigger # is %3, compare value %4.").arg(m_id).arg(source).arg(trigger).arg(compare), INFO);
+		MSG_INFO << "mcpd " << m_id << ": set counter cell " << source << ": trigger # is " << trigger << ", compare value " << compare << '.';
 	
 		initCmdBuffer(SETCELL);
 		m_cmdBuf.data[0] = source;
@@ -722,7 +724,7 @@ bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quin
 	if (ip > 0x00FFFFFF) 
 	{
 		m_dataIpAddress = datasink;
-		protocol(tr("mcpd #%1: data ip address set to %2").arg(m_id).arg(m_dataIpAddress), NOTICE);
+		MSG_NOTICE << "mcpd #" << m_id << ": data ip address set to " << m_dataIpAddress;
 	}
 
 // UDP port of command receiver
@@ -730,7 +732,7 @@ bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quin
 	if (cmdport > 0)
 	{
 		m_cmdPort = cmdport;
-		protocol(tr("mcpd #%1: cmd port set to %2").arg(m_id).arg(m_cmdPort), NOTICE);
+		MSG_NOTICE << "mcpd #" << m_id << ": cmd port set to " << m_cmdPort;
 	}
 
 // UDP port of data receiver
@@ -738,7 +740,7 @@ bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quin
 	if (dataport > 0)
 	{
 		m_dataPort = dataport;
-		protocol(tr("mcpd #%1: data port set to %2").arg(m_id).arg(m_dataPort), NOTICE);
+		MSG_NOTICE << "mcpd #" << m_id << ": data port set to " << m_dataPort;
 	}
 
 // IP address of command receiver
@@ -751,7 +753,7 @@ bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quin
 	if (ip > 0x00FFFFFF) 
 	{
 		m_cmdIpAddress = cmdsink;
-		protocol(tr("mcpd #%1: cmd ip address set to %2").arg(m_id).arg(m_cmdIpAddress), NOTICE);
+		MSG_NOTICE << "mcpd #" << m_id << ": cmd ip address set to " << m_cmdIpAddress;
 	}
 	finishCmdBuffer(14);
 	if (sendCommand())
@@ -759,7 +761,7 @@ bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quin
 		if (ip > 0x00FFFFFF) 
 		{
 			m_ownIpAddress = addr;
-			protocol(tr("mcpd #%1: ip address set to %2").arg(m_id).arg(m_ownIpAddress), NOTICE);
+			MSG_NOTICE << "mcpd #" << m_id << ": ip address set to " << m_ownIpAddress;
 		}
 		return true;
 	}
@@ -833,10 +835,10 @@ bool MCPD2::setRunId(quint16 runid)
 		initCmdBuffer(SETRUNID);
 		m_cmdBuf.data[0] = m_runId;
 		finishCmdBuffer(1);
-    		protocol(tr("mcpd %1: set run ID to %2").arg(m_id).arg(m_runId), 1);
+		MSG_ERROR << "mcpd " << m_id << ": set run ID to " << m_runId;
 		return sendCommand();
   	}
-	protocol(tr("Error: trying to set run ID on mcpd %1 - not master!").arg(m_id), 1);
+	MSG_ERROR << "Error: trying to set run ID on mcpd " << m_id << " - not master!";
 	return false;
 }
 
@@ -932,7 +934,7 @@ bool MCPD2::setStream(quint16 strm)
 	initCmdBuffer(QUIET);	
 	m_cmdBuf.data[0] = strm;
 	finishCmdBuffer(1);
-	protocol(tr("Set stream %1").arg(strm), 2);
+	MSG_WARNING << "Set stream " << strm;
 	return sendCommand();
 #endif
 	return true;
@@ -972,13 +974,12 @@ int MCPD2::sendCommand(bool wait)
 {
 	if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
 	{
-#warning TODO	QString pstring = tr("%4(%5) : %1. sent cmd: %2 to id: %3").arg(m_cmdBuf.bufferNumber).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId).arg(m_network->ip()).arg(m_network->port());
-#warning TODO	protocol(pstring, DEBUG);
+#warning TODO	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() ") : " << m_cmdBuf.bufferNumber << ". sent cmd: " << m_cmdBuf.cmd << " to id: " << m_cmdBuf.deviceId;
 		communicate(wait);
 		if (wait)
 		{
 			m_commTimer->start(500);
-			protocol(tr("%1(%2) : timer started").arg(m_network->ip()).arg(m_network->port()), DEBUG);
+			MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer started";
 // wait for answer
 			while(isBusy())
 				qApp->processEvents();
@@ -1015,32 +1016,33 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 
 	quint16 diff = recBuf.bufferNumber - m_lastBufnum;
 	if(diff > 1 && recBuf.bufferNumber > 0 && m_lastBufnum != 255)
-		protocol(tr("%1(%2)%6 : Lost %3 Buffers: current: %4, last: %5").arg(m_network->ip()).arg(m_network->port()).arg(diff).arg(recBuf.bufferNumber).arg(m_lastBufnum).arg(m_id), ERROR);
+		MSG_ERROR << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ')' << m_id << " : Lost " << diff << " Buffers: current: "
+							<< recBuf.bufferNumber << ", last " << m_lastBufnum;
 	m_lastBufnum = recBuf.bufferNumber;
 
 	if(recBuf.bufferType & CMDBUFTYPE)
 	{
 		communicate(false);
 		m_commTimer->stop();
-//		protocol(tr("%1(%2) : timer stopped").arg(m_network->ip()).arg(m_network->port()), DEBUG);
+//	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer stopped";
 	
 		++m_cmdRxd;
-//		protocol(tr("%1(%2) : id %3").arg(m_network->ip()).arg(m_network->port()).arg(recBuf.deviceId), DEBUG);
+//	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : id " << recBuf.deviceId;
 
 		m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
 		m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
 
-//		protocol(tr("MCPD2::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd), DEBUG);
+//	MSG_DEBUG << tr("MCPD2::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd);
 		
 		MPSD8	*ptrMPSD;
 		quint16 chksum = recBuf.headerChksum;
 #warning TODO	if (chksum != calcChksum(recBuf))
-#warning TODO		protocol(tr("cmd packet (cmd = %4, size = %3) is not valid (CHKSUM error) %1 != (expected)%2 ")
-#warning TODO			.arg(chksum).arg(calcChksum(recBuf)).arg(recBuf.bufferLength).arg(recBuf.cmd), INFO);
+#warning TODO		MSG_INFO << "cmd packet (cmd = " << recBuf.cmd << ", size = " << recBuf.bufferLength
+#warning TODO			<< ") is not valid (CHKSUM error) " << chksum << " != (expected)" << calcChksum(recBuf);
 		switch(recBuf.cmd)
 		{
 			case RESET:
-				protocol(tr("not handled command : RESET"), ERROR);
+				MSG_ERROR << "not handled command : RESET";
 				break;
 			case START:
 				m_daq = true;
@@ -1056,43 +1058,43 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 				break;
 			case SETID:
 				if (recBuf.cmd & 0x80)
-					protocol(tr("SETID : failed"), ERROR);
+					MSG_ERROR << "SETID : failed";
 				else
-					protocol(tr("SETID = %1").arg(recBuf.data[0]), NOTICE);
+					MSG_NOTICE << "SETID = " << recBuf.data[0];
 				break;
 			case SETPROTOCOL:
 				// extract ip and eth addresses in case of "this pc"
 				break;
 			case SETTIMING:
 				if (recBuf.cmd & 0x80)
-					protocol(tr("SETTIMING : failed"), ERROR);
+					MSG_ERROR << "SETTIMING : failed";
 				else
-					protocol(tr("SETTIMING : master %1 terminate %2").arg(recBuf.data[0]).arg(recBuf.data[1]), INFO);
+					MSG_INFO << "SETTIMING : master " << recBuf.data[0] << " terminate " << recBuf.data[1];
 				break;
 			case SETCLOCK:
-				protocol(tr("not handled command : SETCLOCK"), ERROR);
+				MSG_ERROR << "not handled command : SETCLOCK";
 				break;
 			case SETCELL:
 				if (recBuf.cmd & 0x80)
-					protocol(tr("SETCELL : failed"), ERROR);
+					MSG_ERROR << "SETCELL : failed";
 				else
-					protocol(tr(": SETCELL"), INFO);
+					MSG_INFO << ": SETCELL";
 				break;
 			case SETAUXTIMER:
 				if (recBuf.data[2] != m_auxTimer[recBuf.data[1]])
 				{
-					protocol(tr("Error setting auxiliary timer, tim %1, is: %2, should be %3").
-						arg(recBuf.data[1]).arg(recBuf.data[2]).arg(m_auxTimer[recBuf.data[1]]), ERROR);
+					MSG_ERROR << "Error setting auxiliary timer, tim " << recBuf.data[1] << ", is: "
+										<< recBuf.data[2] << ", should be " << m_auxTimer[recBuf.data[1]];
 				}
 				break;
 			case SETPARAM:
 				if (recBuf.cmd & 0x80)
-					protocol(tr("SETPARAM : failed"), ERROR);
+					MSG_ERROR << "SETPARAM : failed";
 				else
-					protocol(tr("SETPARAM"), INFO);
+					MSG_INFO << "SETPARAM";
 				break;
 			case GETPARAM:
-				protocol(tr("not handled command : GETPARAM"), ERROR);
+				MSG_ERROR << "not handled command : GETPARAM";
 				break;
 			case SETGAIN: // extract the set gain values: 
 				if(recBuf.bufferLength == 21) // set common gain
@@ -1102,8 +1104,8 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 						ptrMPSD = m_mpsd[recBuf.data[0]];
 						if(recBuf.data[2 + c] != ptrMPSD->getGainpoti(c, 1))
 						{
-							protocol(tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-								arg(8 * recBuf.deviceId + recBuf.data[0]).arg(c).arg(recBuf.data[2+c]).arg(ptrMPSD->getGainpoti(c, 1)), ERROR);
+							MSG_ERROR << "Error setting gain, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", chan "
+												<< c << " is: " << recBuf.data[2+c] << ", should be: " << ptrMPSD->getGainpoti(c, 1);
 							// set back to received value
 							ptrMPSD->setGain(8, (quint8)recBuf.data[c + 2], 0);
 						}
@@ -1115,8 +1117,8 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 					ptrMPSD = m_mpsd[recBuf.data[0]];
 					if(recBuf.data[2] != ptrMPSD->getGainpoti(recBuf.data[1], 1))
 					{
-						protocol(tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-							arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[1]).arg(recBuf.data[2]).arg(ptrMPSD->getGainpoti(recBuf.data[1], 1)), ERROR);
+						MSG_ERROR << "Error setting gain, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", chan "
+											<< recBuf.data[1] << " is: " << recBuf.data[2] << ", should be: " << ptrMPSD->getGainpoti(recBuf.data[1], 1);
 						// set back to received value
 					}
 					ptrMPSD->setGain(recBuf.data[1], (quint8)recBuf.data[2], 0);
@@ -1126,8 +1128,8 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 				ptrMPSD = m_mpsd[recBuf.data[0]];
 				if (recBuf.data[1] != ptrMPSD->getThreshold(1))
 				{
-					protocol(tr("Error setting threshold, mod %1, is: %2, should be: %3").
-						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[1]).arg(ptrMPSD->getThreshold(1)), ERROR);
+					MSG_ERROR << "Error setting threshold, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", is: "
+										<< recBuf.data[1] << ", should be: " << ptrMPSD->getThreshold(1);
 				}
 				ptrMPSD->setThreshold(recBuf.data[1], 0);
 				break;
@@ -1135,8 +1137,8 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 				ptrMPSD = m_mpsd[recBuf.data[0]];
 				if(recBuf.data[3] != ptrMPSD->getPulsPoti(1))
 				{
-					protocol(tr("Error setting pulspoti, mod %1, is: %2, should be: %3").
-						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[3]).arg(ptrMPSD->getPulsPoti(1)), ERROR);
+					MSG_ERROR << "Error setting pulspoti, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", is: "
+										<< recBuf.data[3] << ", should be: " << ptrMPSD->getPulsPoti(1);
 				}
 				ptrMPSD->setPulserPoti(recBuf.data[1], recBuf.data[2], recBuf.data[3], recBuf.data[4], 0);
 				break;
@@ -1144,89 +1146,89 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 				m_mpsd[recBuf.data[0]]->setMode(recBuf.data[1] == 1, 0);
 				break;
 			case SETDAC:
-				protocol(tr("not handled command : SETDAC"), ERROR);
+				MSG_ERROR << "not handled command : SETDAC";
 				break;
 			case SENDSERIAL:
-				protocol(tr("not handled command : SENDSERIAL"), ERROR);
+				MSG_ERROR << "not handled command : SENDSERIAL";
 				break;
 			case READSERIAL:
-				protocol(tr("not handled command : READSERIAL"), ERROR);
+				MSG_ERROR << "not handled command : READSERIAL";
 				break;
 			case SCANPERI:
-				protocol(tr("not handled command : SCANPERI"), ERROR);
+				MSG_ERROR << "not handled command : SCANPERI";
 				break;
 			case WRITEFPGA:
 				if (recBuf.cmd & 0x80)
-					protocol(tr("WRITEFPGA : failed"), ERROR);
+					MSG_ERROR << "WRITEFPGA : failed";
 				break;
 			case WRITEREGISTER:
 				if (recBuf.cmd & 0x80)
-					protocol(tr("WRITEREGISTER failed"), ERROR);
+					MSG_ERROR << "WRITEREGISTER failed";
 				break;
 			case READREGISTER:
 				for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)
-					protocol(tr("READREGISTER : %1 = %2").arg(i).arg(recBuf.data[i]), DEBUG);
+					MSG_DEBUG << "READREGISTER : " << i << " = " << recBuf.data[i];
 				m_reg = recBuf.data[0];	
-				protocol(tr("READREGISTER : %1 %2").arg(m_reg).arg(recBuf.bufferLength), INFO);
+				MSG_INFO << "READREGISTER : " << m_reg << ' ' << recBuf.bufferLength;
 				break;
 			case READFPGA:
-				protocol(tr("not handled command : READFPGA"), ERROR);
+				MSG_ERROR << "not handled command : READFPGA";
 				break;
 			case SETPOTI:
-				protocol(tr("not handled command : SETPOTI"), ERROR);
+				MSG_ERROR << "not handled command : SETPOTI";
 				break;
 			case GETPOTI:
-				protocol(tr("not handled command : GETPOTI"), ERROR);
+				MSG_ERROR << "not handled command : GETPOTI";
 				break;
 			case READID: // extract the retrieved MPSD-8 IDs:
 #warning TODO if the configuration has changed
 //! \todo if the configuration has changed
 				for(quint8 c = 0; c < 8; c++)
 				{
-					protocol(tr("module ID : %1").arg(recBuf.data[c]));
+					MSG_ERROR << "module ID : " << recBuf.data[c];
 					if (m_mpsd.find(c) == m_mpsd.end())
 					{
 						m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
 					}
 				}
-				protocol(tr("READID finished"), DEBUG);
+				MSG_DEBUG << "READID finished";
 				break;
 			case DATAREQUEST:
-				protocol(tr("not handled command : DATAREQUEST"), ERROR);
+				MSG_ERROR << "not handled command : DATAREQUEST";
 				break;
 			case QUIET:
-				protocol(tr("not handled command : QUIET"), ERROR);
+				MSG_ERROR << "not handled command : QUIET";
 				break;
 			case GETVER:
 				m_version = recBuf.data[1];
 				while (m_version > 1)
 					m_version /= 10.;
 				m_version += recBuf.data[0];
-				protocol(tr("Modul (ID  %1): Version number : %2").arg(m_id).arg(m_version), DEBUG);
+				MSG_DEBUG << "Modul (ID  " << m_id << "): Version number : " << m_version;
 				break;
 			case READPERIREG:
 				ptrMPSD = m_mpsd[recBuf.data[0]];
 				m_periReg = recBuf.data[2];
-				protocol(tr("READPERIREG %3 : %1 = %2").arg(recBuf.data[1]).arg(m_periReg).arg(recBuf.data[0]), DEBUG);
+				MSG_DEBUG << "READPERIREG " << recBuf.data[0] << " : " << recBuf.data[1] << " = " << m_periReg;
 				break;
 			case WRITEPERIREG:
 				ptrMPSD = m_mpsd[recBuf.data[0]];
 				if(recBuf.data[2] != ptrMPSD->getInternalreg(recBuf.data[1], 1))
 				{
-					protocol(tr("Error setting internal mpsd-register, mod %1, is: %2, should be: %3").
-						arg(8 * recBuf.deviceId + recBuf.data[0]).arg(recBuf.data[3]).arg(ptrMPSD->getPulsPoti(1)), ERROR);
+					MSG_ERROR << "Error setting internal mpsd-register, mod " << (8 * recBuf.deviceId + recBuf.data[0])
+										<< ", is: " << recBuf.data[3] << ", should be: " << ptrMPSD->getPulsPoti(1);
 				}
 				ptrMPSD->setInternalreg(recBuf.data[1], recBuf.data[2], 0);			
 				break;
 			default:
-				protocol(tr("not handled command : %1").arg(recBuf.cmd), ERROR);
+				MSG_ERROR << "not handled command : " << recBuf.cmd;
 				break;
 		}
 	}
 	else
 	{
 		++m_dataRxd;
-//		protocol(tr("ID %1 : emit analyzeBuffer(recBuf)").arg(m_id), DEBUG);
+//		MSG_DEBUG << "ID " << m_id << " : emit analyzeBuffer(recBuf)";
 		emit analyzeDataBuffer(*((DATA_PACKET*)(&recBuf)));
 	}
 }
@@ -1237,7 +1239,7 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 void MCPD2::commTimeout()
 {
 	communicate(false);
-	protocol(tr("timeout while waiting for cmd %1 answer from ID: %2").arg(m_cmdBuf.cmd).arg(m_id), ERROR);
+	MSG_ERROR << "timeout while waiting for cmd " << m_cmdBuf.cmd << " answer from ID: " << m_id;
 }
 
 /*!

@@ -31,6 +31,7 @@
 #include "mdefines.h"
 #include "mesydaq2.h"
 #include "mcpd8.h"
+#include "logging.h"
 
 /*!
     \fn Mesydaq2::Mesydaq2(QObject *parent)
@@ -40,7 +41,7 @@
     \param parent Qt parent object
 */
 Mesydaq2::Mesydaq2(QObject *parent)
-	: MesydaqObject(parent)
+	: QObject(parent)
 	, m_pThread(NULL)
 	, m_daq(IDLE)
 	, m_runID(0)
@@ -49,7 +50,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_timingwidth(1)
 {
 	Q_ASSERT(parent==NULL);
-	protocol(tr("running on Qt %1").arg(qVersion()), NOTICE);
+	MSG_NOTICE << "running on Qt %1" << qVersion();
 	if (QMetaType::type("DATA_PACKET")==0)
 		qRegisterMetaType<DATA_PACKET>();
 	m_pThread=new QThread;
@@ -192,7 +193,7 @@ float Mesydaq2::getFirmware(quint16 id)
 void Mesydaq2::acqListfile(bool yesno)
 {
 	m_acquireListfile = yesno;
-    	protocol(tr("Listfile recording %1").arg((yesno ? "on" : "off")), NOTICE);
+	MSG_NOTICE << "Listfile recording " << (const char*)(yesno ? "on" : "off");
 }
 
 /*!
@@ -216,7 +217,7 @@ void Mesydaq2::startedDaq(void)
 	writeHeaderSeparator();
 	m_daq = RUNNING;
 	emit statusChanged("RUNNING");
-	protocol("daq started", DEBUG);
+	MSG_DEBUG << "daq started";
 }
 
 /*!
@@ -235,7 +236,7 @@ void Mesydaq2::stoppedDaq(void)
 		m_datfile.close();
 	m_daq = IDLE;
 	emit statusChanged("IDLE");
-	protocol("daq stopped", DEBUG);
+	MSG_DEBUG << "daq stopped";
 }
 
 /*!
@@ -390,7 +391,7 @@ quint16 Mesydaq2::height()
 	qSort(modList);
 	if (!modList.isEmpty())
 		n = modList.last() + 1;
-	protocol(tr("Histogram height : %1").arg(n), INFO);
+	MSG_INFO << "Histogram height : " << n;
 	return n;
 }
 
@@ -578,7 +579,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			qCritical(tr("found no or invalid MCPD id").toStdString().c_str());
+			MSG_ERROR << tr("found no or invalid MCPD id").toStdString().c_str();
 			continue;
 		}
 		++nMcpd;
@@ -649,7 +650,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			qCritical(tr("found no or invalid Module id").toStdString().c_str());
+			MSG_ERROR << tr("found no or invalid Module id").toStdString().c_str();
 			continue;
 		}
 		int iMCPDId = iId / 8;
@@ -692,7 +693,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	foreach(MCPD8 *value, m_mcpd)
 		p += value->numModules();
 
-	protocol(tr("%1 MCPD-8 and %2 Modules found").arg(nMcpd).arg(p),NOTICE);
+	MSG_NOTICE << nMcpd << " MCPD-8 and " << p << " Modules found";
 	return true;
 }
 
@@ -809,7 +810,7 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
  */
 void Mesydaq2::start(void)
 {
-   	protocol("remote start", NOTICE);
+		MSG_NOTICE << "remote start";
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->start();
@@ -826,7 +827,7 @@ void Mesydaq2::start(void)
  */
 void Mesydaq2::stop(void)
 {
-   	protocol("remote stop", NOTICE);
+		MSG_NOTICE << "remote stop";
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->stop();
@@ -843,7 +844,7 @@ void Mesydaq2::stop(void)
  */
 void Mesydaq2::cont(void)
 {
-	protocol("remote cont", NOTICE);
+	MSG_NOTICE << "remote cont";
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->cont();
@@ -994,7 +995,7 @@ void Mesydaq2::setParamSource(quint16 id, quint16 param, quint16 source)
  */
 void Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 {
-        protocol(tr("set aux timer : ID = %1, timer = %2, interval = %3").arg(id).arg(tim).arg(val), NOTICE);
+	MSG_NOTICE << "set aux timer : ID = " << id << ", timer = " << tim << ", interval = " << val;
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setAuxTimer(tim, val);
 }
@@ -1320,7 +1321,7 @@ float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getGainVal(addr, chan);
-	qDebug() << "getGain not found id " << id;
+	MSG_DEBUG << "getGain not found id " << id;
 	return 0;
 }
 
@@ -1356,7 +1357,7 @@ void Mesydaq2::setRunId(quint16 runid)
 		if (value->isMaster())
 			value->setRunId(runid); 
 	m_runID = runid;
-	protocol(tr("Mesydaq2::setRunId(%1)").arg(m_runID), NOTICE);
+	MSG_NOTICE << "Mesydaq2::setRunId(" << m_runID << ')';
 }
 
 /*!
@@ -1368,7 +1369,7 @@ void Mesydaq2::setRunId(quint16 runid)
  */
 void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 {
-	protocol(tr("Mesydaq2::analyzeBuffer(): %1").arg(m_daq), DEBUG);
+	MSG_DEBUG << "Mesydaq2::analyzeBuffer(): " << m_daq;
 	if (m_daq == RUNNING)
 	{
 		quint16 mod = pd.deviceId;
@@ -1396,7 +1397,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 			quint16 *pD = (quint16 *)&pd;
 			if (pd.bufferLength == 0)
 			{
-				protocol(tr("BUFFER with length 0"), ERROR);
+				MSG_ERROR << "BUFFER with length 0";
 				return;
 			}
 #if 0
@@ -1405,7 +1406,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 #endif
 			if (pd.bufferLength > sizeof(DATA_PACKET) / 2)
 			{
-				protocol(tr("BUFFER with length ").arg(pd.bufferLength), ERROR);
+				MSG_ERROR << "BUFFER with length " << pd.bufferLength;
 				return;
 			}
 			m_datStream << pd.bufferLength;
@@ -1417,8 +1418,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 		}
 		m_datSender.WriteData(&pd,pd.bufferLength);
 		writeBlockSeparator();
-//		qDebug("------------------");
-		protocol(tr("buffer : length : %1 type : %2").arg(pd.bufferLength).arg(pd.bufferType), DEBUG);
+//		MSG_DEBUG << "------------------";
+		MSG_DEBUG << "buffer : length : " << pd.bufferLength << " type : " << pd.bufferType;
 		if(pd.bufferType < 0x0002)
 		{
 // extract parameter values:

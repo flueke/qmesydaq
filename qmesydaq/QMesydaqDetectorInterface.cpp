@@ -361,8 +361,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					break;
 				case CommandEvent::C_READ_HISTOGRAM:
 				{
-//! \todo hack to transfer a QList<quint64> to QtInterface without to copy it
-#warning TODO hack to transfer a QList<quint64> to QtInterface without to copy it
+					// hack to transfer a QList<quint64> to QtInterface without to copy it
 					QList<quint64>* tmpData = (QList<quint64>*)args[0].toULongLong();
 					if (tmpData != NULL)
 					{

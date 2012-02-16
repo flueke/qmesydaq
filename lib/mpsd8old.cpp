@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "mpsd8.h"
+#include "logging.h"
 
 /*!
     constructor
@@ -118,7 +119,6 @@ quint8	MPSD8old::calcThreshval(quint8 thr)
 	float diff = ft - t;
 	if(diff > 0.5)
 		t++;
-//	protocol(tr("threshpoti: %1, threshval: %2").arg(t).arg(thr));	
+//	MSG_ERROR << "threshpoti: " << t << ", threshval: " << thr;
 	return t;
 }
-

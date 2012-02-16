@@ -27,9 +27,9 @@
 #include <QFile>
 
 #include "structures.h"
-#include "mesydaqobject.h"
 #include "mdefines.h"
 #include "mpsd8.h"
+#include "logging.h"
 
 class mesydaq3;
 class MCPDMDLL;
@@ -39,7 +39,7 @@ class MCPDMDLL;
 
     \author Gregor Montermann, mesytec GmbH  Co. KG <g.montermann@mesytec.com>
 */
-class MDll : public MesydaqObject
+class MDll : public QObject
 {
 Q_OBJECT
 public:
@@ -209,7 +209,7 @@ public:
 	 */
 //	float	getGainval(quint8 chan, bool preset = 0) 
 //	{
-//		protocol(tr("gain val %1 %2").arg(chan).arg(m_gainVal[chan][preset]), DEBUG);
+//		MSG_DEBUG << "gain val " << chan << ' ' << m_gainVal[chan][preset];
 //		return m_gainVal[chan][preset];
 //	}
 

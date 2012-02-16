@@ -20,8 +20,6 @@
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
 
-#include "mesydaqobject.h"
-
 #include "mdefines.h"
 
 #include <QVector>
@@ -36,7 +34,7 @@ class QFile;
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class Spectrum : public MesydaqObject
+class Spectrum : public QObject
 {
 	Q_OBJECT
 
@@ -137,7 +135,7 @@ private:
  * \author Gregor Montermann <g.montermann@mesytec.com>
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class Histogram : public MesydaqObject
+class Histogram : public QObject
 {
 	Q_OBJECT
 

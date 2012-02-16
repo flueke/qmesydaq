@@ -24,7 +24,6 @@
 #include <QList>
 #include <QMutex>
 
-#include "mesydaqobject.h"
 #include "structures.h"
 
 class QUdpSocket;
@@ -37,7 +36,7 @@ class QSocketNotifier;
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
 */
-class NetworkDevice : public MesydaqObject
+class NetworkDevice : public QObject
 {
 Q_OBJECT
 public:

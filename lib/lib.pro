@@ -29,30 +29,30 @@ QT 		+= core network
 HEADERS 	+= counter.h \
 		   datarepeater.h \
 		   histogram.h \
-		   mapcorrect.h \
+			 logging.h \
+			 mapcorrect.h \
 		   mcpd8.h \
 		   mdefines.h \
 		   measurement.h \
 		   mesydaq2.h \
 		   mesydaq3.h \
-		   mesydaqobject.h \
 		   mpsd8.h \
 		   mstd16.h \
 		   mcpd2.h \
 		   mdll.h \
 		   networkdevice.h \
-		   structures.h
+			 structures.h
 
 SOURCES 	+= counter.cpp \
 		   datarepeater.cpp \
 		   histogram.cpp \
-		   mapcorrect.cpp \
+			 logging.cpp \
+			 mapcorrect.cpp \
 		   mcpd8.cpp \
 		   mcpd2.cpp \
 		   mcpdmdll.cpp \
 		   measurement.cpp \
 		   mesydaq2.cpp \
-		   mesydaqobject.cpp \
 		   mpsd8.cpp \
 		   mpsd8p.cpp \
 		   mpsd8old.cpp \
@@ -60,4 +60,4 @@ SOURCES 	+= counter.cpp \
 		   mstd16.cpp \
 		   mdll.cpp \
 		   mpsdfactory.cpp \
-		   networkdevice.cpp
+			 networkdevice.cpp

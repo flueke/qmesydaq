@@ -19,10 +19,9 @@
  ***************************************************************************/
 #include <QTextStream>
 #include <QFile>
-
 #include <QDebug>
-
 #include "histogram.h"
+#include "logging.h"
 
 #include <cmath>
 
@@ -34,7 +33,7 @@
     \param bins number of points in the spectrum
  */
 Spectrum::Spectrum(quint16 bins)
-	: MesydaqObject()
+	: QObject()
 	, m_maximumPos(0)
 	, m_meanCount(0)
 	, m_totalCounts(0)
@@ -139,7 +138,7 @@ bool Spectrum::addValue(quint16 bin, quint64 val)
 		calcFloatingMean(bin);
 		return true;
 	}
-//	qDebug("bin(%d) > size(%d)", bin, m_data.size());
+//	MSG_DEBUG << "bin(" << bin << ") > size(" << m_data.size() << ')';
 	return false;
 }
 
@@ -227,7 +226,7 @@ quint64 Spectrum::value(quint16 index)
     \param w number of bins (inside a tube)
  */
 Histogram::Histogram(quint16 w, quint16 h)
-	: MesydaqObject()
+	: QObject()
 	, m_totalCounts(0)
 	, m_maximumPos(0)
 {

@@ -32,30 +32,6 @@
 #include <QStringList>
 #include "mapcorrect.h"
 
-#ifdef DEBUGBUILD
-#define DBG0(fmt) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qDebug("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__); } while (0)
-#define DBG(fmt,args...) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qDebug("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__,args); } while (0)
-#define CRITICAL0(fmt) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qCritical("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__); } while (0)
-#define CRITICAL(fmt,args...) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qCritical("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__,args); } while (0)
-#else
-#define DBG0(fmt)             do {} while (0)
-#define DBG(fmt,args...)      do {} while (0)
-#define CRITICAL0(fmt)        do {} while (0)
-#define CRITICAL(fmt,args...) do {} while (0)
-#endif
-
 /***************************************************************************
  * histogram mapping and correction data
  ***************************************************************************/
@@ -65,7 +41,7 @@
     \param src source mapping
  */
 MapCorrection::MapCorrection(const MapCorrection& src)
-    : MesydaqObject()
+		: QObject()
     , m_bNoMapping(src.m_bNoMapping)
     , m_iOrientation(src.m_iOrientation)
     , m_iCorrection(src.m_iCorrection)
@@ -474,7 +450,7 @@ void MapCorrection::rotateRight()
     \param pHistogram     pointer to existing source histogram or NULL
  */
 MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram /*= NULL*/)
-    : MesydaqObject()
+		: QObject()
     , m_iWidth(0)
     , m_iHeight(0)
     , m_pMapCorrection(NULL)
@@ -491,7 +467,7 @@ MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHist
     \param src
  */
 MappedHistogram::MappedHistogram(const MappedHistogram &src)
-    : MesydaqObject()
+		: QObject()
     , m_iWidth(src.m_iWidth)
     , m_iHeight(src.m_iHeight)
     , m_pMapCorrection(src.m_pMapCorrection)

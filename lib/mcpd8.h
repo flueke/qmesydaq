@@ -25,7 +25,6 @@
 #include <QMap>
 
 #include "structures.h"
-#include "mesydaqobject.h"
 
 class NetworkDevice;
 class MPSD8;
@@ -36,7 +35,7 @@ class QTimer;
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
 */
-class MCPD8 : public MesydaqObject
+class MCPD8 : public QObject
 {
 	Q_OBJECT
 

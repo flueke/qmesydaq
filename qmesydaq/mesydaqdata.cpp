@@ -25,8 +25,6 @@
 #include "mesydaqdata.h"
 #include "histogram.h"
 
-#include "mesydaqobject.h"
-
 /*!
     constructor
  */

@@ -27,6 +27,7 @@
 #include "mstd16.h"
 #include "mdll.h"
 #include "mdefines.h"
+#include "logging.h"
 
 /*!
     \fn bool MCPDMDLL::setThreshold(quint8 x, quint8 y, quint8 amp)
@@ -41,7 +42,7 @@
  */
 bool MCPDMDLL::setThreshold(quint8 x, quint8 y, quint8 amp)
 {
-    	protocol(tr("Set threshholds to x=%1, y=%2, and amp=%3.").arg(x).arg(y).arg(amp), NOTICE);
+	MSG_NOTICE << "Set threshholds to x=" << x << ", y=" << y << ", and amp=" << amp << '.';
 	initCmdBuffer(SETDLLTHRESHS);
 	setBuffer(0, x);
 	setBuffer(1, y);
@@ -71,7 +72,7 @@ bool MCPDMDLL::setThreshold(quint8 x, quint8 y, quint8 amp)
  */
 bool MCPDMDLL::setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 {
-    	protocol(tr("Set spectrum to shift(%1, %2) and scale(%3, %4).").arg(shiftX).arg(shiftY).arg(scaleX).arg(scaleY), NOTICE);
+	MSG_NOTICE << "Set spectrum to shift(" << shiftX << ", " << shiftY << ") and scale(" << scaleX << ", " << scaleY << ").";
 	initCmdBuffer(SETDLLSPECTRUM);
 	setBuffer(0, shiftX);
 	setBuffer(1, shiftY);
@@ -100,7 +101,8 @@ bool MCPDMDLL::setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 s
  */
 bool MCPDMDLL::setHistogram(quint8 previewSize, quint16 previewRate, quint8 size, quint8 type)
 {
-    	protocol(tr("Set histgram to preview size = %1, previewRate = %2, size = %3, and type = %4).").arg(previewSize).arg(previewRate).arg(size).arg(type), NOTICE);
+	MSG_NOTICE << "Set histgram to preview size = " << previewSize << ", previewRate = " << previewRate << ", size = "
+						 << size << ", and type = " << type << ").";
 	initCmdBuffer(SETDLLHIST);
         setBuffer(0, previewSize);
         setBuffer(1, previewRate);

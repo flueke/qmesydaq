@@ -21,6 +21,7 @@
 #include "mpsd8.h"
 #include "mdefines.h"
 #include <QDebug>
+#include "logging.h"
 
 /*!
     constructor
@@ -29,7 +30,7 @@
     \param parent Qt parent object
  */
 MPSD8::MPSD8(quint8 id, QObject *parent)
-	: MesydaqObject(parent)
+	: QObject(parent)
 	, m_mpsdId(TYPE_MPSD8)
 	, m_comgain(true)
 #if 0
@@ -66,7 +67,7 @@ MPSD8::MPSD8(quint8 id, QObject *parent)
 		m_pulser[c] = false;
 		m_ampMode[c] = false;
 	}
-   	protocol(tr("identified MPSD id on MCPD %1, bus %2: %3").arg(m_mcpdId).arg(m_busNum).arg(id), NOTICE);
+	MSG_NOTICE << "identified MPSD id on MCPD " << m_mcpdId << ", bus " << m_busNum << ": " << id;
 }
 
 //! desctructor
@@ -108,7 +109,8 @@ void MPSD8::setGain(quint8 channel, float gainv, bool preset)
 		m_gainPoti[channel][preset] = val;
 		m_gainVal[channel][preset] = gainv;
 	}
-   	protocol(tr("m_gainVal %1%2, %3,  %4 to %5 (%6)").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gainv,6, 'f', 2).arg(val), NOTICE);
+	MSG_NOTICE << "m_gainVal " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum
+						 << ",  " << channel << " to " << tr("%1").arg(gainv,6,'f',2) << " (" << val << ')';
 }
 
 /*!
@@ -139,7 +141,8 @@ void MPSD8::setGain(quint8 channel, quint8 gain, bool preset)
 		m_gainPoti[channel][preset] = gain;
 		m_gainVal[channel][preset] = gv;
 	}
-   	protocol(tr("gain %1%2,  %3, %4 to %5 (%6)").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gain).arg(gv, 6, 'f', 2), NOTICE);
+	MSG_NOTICE << "gain " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum
+						 << ",  " << channel << " to " << gain << " (" << tr("%1").arg(gv,6,'f',2) << ')';
 }
 
 /*!
@@ -157,10 +160,8 @@ void MPSD8::setThreshold(quint8 threshold, bool preset)
 {
 	m_threshPoti[preset] = calcThreshpoti(threshold);
 	m_threshVal[preset] = threshold;
-    
-	QString str;
-   	str.sprintf("threshold %s%d, %d to %d (%d)", (preset ? "preset " : ""), m_mcpdId, m_busNum, threshold, m_threshPoti[preset]);
-   	protocol(str, NOTICE);
+
+	MSG_NOTICE << "threshold " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum << " to " << threshold << " (" << m_threshPoti[preset] << ')';
 }
 
 /*!
@@ -179,9 +180,7 @@ void MPSD8::setThreshpoti(quint8 thresh, bool preset)
 	m_threshPoti[preset] = thresh;
 	m_threshVal[preset] = calcThreshval(thresh);
    	
-	QString str; 
-   	str.sprintf("threshpoti %s%d, %d to %d (%d)", (preset ? "preset " : ""), m_mcpdId, m_busNum, thresh, m_threshVal[preset]);
-   	protocol(str, NOTICE);
+	MSG_NOTICE << "threspoti " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum << " to " << thresh << " (" << m_threshVal[preset] << ')';
 }
 
 /*!
@@ -198,7 +197,8 @@ void MPSD8::setThreshpoti(quint8 thresh, bool preset)
  */
 void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 {
-	protocol(tr("MPSD8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5)").arg(chan).arg(pos).arg(poti).arg(on).arg(preset), NOTICE);
+	MSG_NOTICE << "MPSD8::setPulserPoti(chan = " << chan << ", pos = " << pos << ", poti = " << poti
+						 << ", on = " << on << ", preset = " << preset << ')';
 	if(pos > 2)
 		m_pulsPos[preset] = 2;
 	else
@@ -212,9 +212,9 @@ void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool 
 	m_pulsPoti[preset] = poti;
 	m_pulsAmp[preset] = calcPulsAmp(poti, m_gainVal[chan][0]);
 	m_pulser[preset] = on;
-   	
-   	protocol(tr("pulser %1%2, bus %3 to pos %4, poti %5 - ampl %6")
-			.arg(preset ? "preset ": "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(poti).arg(m_pulsAmp[preset], 6, 'f', 2), NOTICE);
+
+	MSG_NOTICE << "pulser " << (const char*)(preset?"preset ":"") << m_mcpdId << ", bus " << m_busNum
+						 << " to pos " << m_pulsPos[preset] << ", poti " << poti << " - ampl " << tr("%1").arg(m_pulsAmp[preset],6,'f',2);
 }
 
 /*!
@@ -245,8 +245,8 @@ void MPSD8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool prese
 	m_pulsAmp[preset] = amp;
 	m_pulser[preset] = on;
    	
-   	protocol(tr("pulser %1%2, bus %3 to pos %4, ampl %5 - poti %6")
-			.arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(amp).arg(m_pulsPoti[preset]), NOTICE);
+	MSG_NOTICE << "pulser " << (const char*)(preset?"preset ":"") << m_mcpdId << ", bus " << m_busNum
+						 << " to pos " << m_pulsPos[preset] << ", ampl " << amp << " - poti " << m_pulsPoti[preset];
 }
 
 /*!
@@ -260,7 +260,7 @@ void MPSD8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool prese
 quint8 MPSD8::calcGainpoti(float fval)
 {
 	quint8 ug = (quint8) fval;
-//	protocol(tr("m_gainVal: %1, m_gainPoti: %2").arg(fval).arg(ug));		
+//	MSG_ERROR << "m_gainVal: " << fval << ", m_gainPoti: " << ug;
 	return ug;
 }
 
@@ -275,7 +275,7 @@ quint8 MPSD8::calcGainpoti(float fval)
 quint8 MPSD8::calcThreshpoti(quint8 tval)
 {
 	quint8 ut = tval;
-//	protocol(tr("threshold: %1, threshpoti: %2").arg(tval).arg(ut));	
+//	MSG_ERROR << "threshold: " << tval << ", threshpoti: " << ut;
 	return ut;
 }
 
@@ -291,7 +291,7 @@ quint8 MPSD8::calcThreshpoti(quint8 tval)
 float MPSD8::calcGainval(quint8 ga)
 {
 	float fgain = float(ga);
-//	protocol(tr("m_gainPoti: %1, m_gainVal: %2").arg(ga).arg(fgain));	
+//	MSG_ERROR << "m_gainPoti: " << ga << ", m_gainVal: " << fgain;
 	return fgain;
 }
 
@@ -307,7 +307,7 @@ float MPSD8::calcGainval(quint8 ga)
 quint8 MPSD8::calcThreshval(quint8 thr)
 {
 	quint8 t = thr;
-//	protocol(tr("threshpoti: %1, threshval: %2").arg(t).arg(thr));	
+//	MSG_ERROR << "threshpoti: " << t << ", threshval: " << thr;
 	return t;
 }
 
@@ -323,7 +323,7 @@ quint8 MPSD8::calcThreshval(quint8 thr)
 quint8 MPSD8::calcPulsPoti(quint8 val, float /* gv */)
 {
 	quint8 pa = val;
-//	protocol(tr("pulsval: %1, pulspoti: %2").arg(val).arg(pa));
+//	MSG_ERROR << "pulsval: " << val << ", pulspoti: " << pa;
 	return pa;
 }
 
@@ -338,7 +338,7 @@ quint8 MPSD8::calcPulsPoti(quint8 val, float /* gv */)
  */
 quint8 MPSD8::calcPulsAmp(quint8 val, float gv)
 {
-	protocol(tr("MPSD8::calcPulsAmp(val = %1, gv = %2)").arg(val).arg(gv), NOTICE);
+	MSG_NOTICE << "MPSD8::calcPulsAmp(val = " << val << ", gv = " << gv << ')';
 	return val;
 }
 
@@ -356,7 +356,8 @@ void MPSD8::setInternalreg(quint8 reg, quint16 val, bool preset)
 {
 	m_internalReg[reg][preset] = val;
    	
-   	protocol(tr("register %1%2, %3, %4, to %5").arg(preset ? tr("preset ") : "").arg(m_mcpdId).arg(m_busNum).arg(reg).arg(m_internalReg[reg][preset]), NOTICE);
+	MSG_NOTICE << "register " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum
+						 << ", " << reg << ", to " << m_internalReg[reg][preset];
 }
 
 /*!

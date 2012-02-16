@@ -35,6 +35,7 @@
 #include "histogram.h"
 #include "mapcorrect.h"
 #include "mesydaq2.h"
+#include "logging.h"
 
 /*!
     \fn Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
@@ -45,7 +46,7 @@
     \param parent Qt parent object
 */
 Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
-	: MesydaqObject(parent)
+	: QObject(parent)
 	, m_mesydaq(mesy)
 	, m_posHist(NULL)
 	, m_ampHist(NULL)
@@ -282,14 +283,14 @@ void Measurement::start()
 	m_mesydaq->start();
 	m_status = STARTED;
 	m_starttime_msec = m_mesydaq->time();
-	protocol(tr("event counter limit : %1").arg(m_counter[EVID]->limit()), INFO);
-	protocol(tr("timer limit : %1").arg(m_counter[TIMERID]->limit() / 1000), INFO);
+	MSG_INFO << "event counter limit : " << m_counter[EVID]->limit();
+	MSG_INFO << "timer limit : " << m_counter[TIMERID]->limit() / 1000;
 	foreach (MesydaqCounter *c, m_counter)
 	{
 		c->start(m_starttime_msec);
-		protocol(tr("counter %1 value : %2 limit : %3").arg(*c).arg(c->value()).arg(c->limit()), INFO);
+		MSG_INFO<< "counter " << *c << " value : " << c->value() << " limit : " << c->limit();
 	}
-        setROI(QRectF(0,0, m_mesydaq->width(), m_mesydaq->height()));
+	setROI(QRectF(0,0, m_mesydaq->width(), m_mesydaq->height()));
 }
 
 /*!
@@ -303,7 +304,7 @@ void Measurement::requestStop()
 	{
 		m_status = STOPPED;
 		emit stopSignal(false);
-		protocol(tr("Max %1 was at pos %2").arg(m_posHist->max(0)).arg(m_posHist->maxpos(0)), NOTICE);
+		MSG_NOTICE << "Max " << m_posHist->max(0) << " was at pos " << m_posHist->maxpos(0);
 	}
 }
 
@@ -321,11 +322,11 @@ void Measurement::stop()
 		quint64 time = m_mesydaq->time();
 		foreach (MesydaqCounter *c, m_counter)
 			c->stop(time);
-		protocol(tr("packages : %1 triggers : %2").arg(m_packages).arg(m_triggers));
+		MSG_ERROR << "packages : " << m_packages << " triggers : " << m_triggers;
 		if (m_triggers)
 		{
 			for(int i = 0; i < m_counter.size(); ++i)
-				protocol(tr("Counter %1 gots %2 events").arg(i).arg(m_counter[i]->value()), NOTICE);
+				MSG_NOTICE << "Counter " << i << " gots " << m_counter[i]->value() << " events";
 		}
 	}
 	m_status = IDLE;
@@ -350,7 +351,7 @@ void Measurement::cont()
 void Measurement::setCounter(quint32 cNum, quint64 val)
 {
 // set counter
-	protocol(tr("Measurement::setCounter(cNum = %1, val = %2)").arg(cNum).arg(val), NOTICE);
+	MSG_NOTICE << "Measurement::setCounter(cNum = " << cNum << ", val = " << val << ')';
 	if(m_counter.contains(cNum))
 	{
 		if (val == 0)
@@ -360,7 +361,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 // is counter master and is limit reached?
 		if(m_counter[cNum]->isStopped() && m_status != STOPPED)
 		{
-			protocol(tr("stop on counter %1, value: %2, preset: %3").arg(cNum).arg(m_counter[cNum]->value()).arg(m_counter[cNum]->limit()), NOTICE);
+			MSG_NOTICE << "stop on counter " << cNum << ", value: " << m_counter[cNum]->value() << ", preset: " << m_counter[cNum]->limit();
 			m_status = STOPPED;
 			emit stopSignal();
 		}
@@ -450,7 +451,7 @@ quint8 Measurement::isOk(void)
 void Measurement::setOnline(bool truth)
 {
 	m_online = truth;
-	protocol(tr("MCPD %1").arg(m_online ? tr("online") : tr("offline")), NOTICE);	
+	MSG_NOTICE << "MCPD " << (const char*)(m_online ? "online" : "offline");
 }
 
 /*!
@@ -467,7 +468,7 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 {
 	if(m_counter.contains(cNum))
 	{
-		protocol(tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? tr("master") : tr("slave")), NOTICE);	
+		MSG_NOTICE << "setPreset counter: " << cNum << " to " << prval << ' ' << (const char*)(mast ? "master" : "slave");
 		if (mast)
 		{
     			// clear all other master flags
@@ -793,7 +794,6 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
  */
 void Measurement::analyzeBuffer(DATA_PACKET pd)
 {
-	quint16 time;
 	ulong 	data;
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
@@ -828,7 +828,6 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
 				data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
-				time = (quint16)tim;
 				switch(dataId)
 				{
 					case MON1ID :
@@ -836,22 +835,20 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 					case MON3ID :
 					case MON4ID :
 						++(*m_counter[dataId]);
-//						protocol(tr("counter %1 : (%3 - %4)%2 : %5").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), DEBUG);
+//						MSG_DEBUG << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
 						break;
 					case TTL1ID :
 					case TTL2ID :
 						++(*m_counter[dataId]);
-						protocol(tr("counter %1 : (%3 - %4)%2 : %5")
-							.arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
+						MSG_NOTICE << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
 						break;
 					case ADC1ID :
 					case ADC2ID :
 						++(*m_counter[dataId]);
-						protocol(tr("counter %1 : (%3 - %4)%2 : %5")
-							.arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), NOTICE);
+						MSG_NOTICE << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
 						break;
 					default:
-						protocol(tr("counter %1 : %2").arg(dataId).arg(i), ERROR);
+						MSG_ERROR << "counter " << dataId << " : " << i;
 						break;
 				}
 			}
@@ -877,7 +874,7 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 // BUG is reported
 				if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0)
 				{
-					protocol(tr("GHOST EVENT: SlotID %1 Mod %2 %3").arg(slotId).arg(id), WARNING);
+					MSG_WARNING << "GHOST EVENT: SlotID " << slotId << " Mod " << id;
 					continue;
 				}
 				++(*m_counter[EVID]);
@@ -893,15 +890,15 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 					m_posHistCorrected->incVal(chan, pos);
 				if (m_mesydaq->getMpsdId(mod, id) == TYPE_MSTD16)
 				{
-//					protocol(tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id), INFO);
+//					MSG_INFO << "MSTD-16 event : chan : " << chan << " : pos : " << pos << " : id : " << id;
 					chan <<= 1;
 					chan += (pos >> 9) & 0x1;
 					amp &= 0x1FF;
 //					if (pos >= 480)
 //						++chan;
-					protocol(tr("Put this event into channel : %1").arg(chan), INFO);
+					MSG_INFO << "Put this event into channel : " << chan;
 					m_tubeSpectrum->incVal(chan);
-//					protocol(tr("Value of this channel : %1").arg(m_tubeSpectrum->value(chan)), INFO);
+//					MSG_INFO << "Value of this channel : " << m_tubeSpectrum->value(chan);
 				}
 				else if (m_tubeSpectrum)
 					m_tubeSpectrum->incVal(chan);
@@ -923,7 +920,7 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 // only differences > 1 should be logged
 				if ((tmp > var && tmp > (var + 1))|| (tmp < var && (tmp + 1) < var))
 				{
-					protocol(tr("%4 counter %1 : is %3 <-> should be %2").arg(i).arg(m_counter[i]->value()).arg(var).arg(m_packages));
+					MSG_ERROR << m_packages << " counter " << i << " : is " << var << " <-> should be " << m_counter[i]->value();
 					setCounter(i, var);
 				}
 			}
@@ -931,7 +928,7 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 #endif
 	}
 	else
-		protocol(tr("buffer type : %1").arg(pd.bufferType), INFO);
+		MSG_INFO << "buffer type : " << pd.bufferType;
 }
 
 bool Measurement::acqListfile() const
@@ -974,7 +971,7 @@ void Measurement::readListfile(QString readfilename)
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
 
 	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
-	protocol(tr("readListfile : %1").arg(ok), NOTICE);
+	MSG_NOTICE << "readListfile : " << ok;
 
 	resizeHistogram(0 /* 1024 */, 0 /* 128 */, true, true);
 
@@ -991,7 +988,7 @@ void Measurement::readListfile(QString readfilename)
 // check for closing signature:
 		if((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0))
 		{
-			protocol(tr("EOF reached after %1 buffers").arg(blocks), NOTICE);
+			MSG_NOTICE << "EOF reached after " << blocks << " buffers";
 			break;
 		}
 
@@ -1002,9 +999,9 @@ void Measurement::readListfile(QString readfilename)
 		dataBuf.bufferNumber = sep4;
 		if(dataBuf.bufferLength > 729)
 		{
-			protocol(tr("erroneous length: %1 - aborting").arg(dataBuf.bufferLength), ERROR);
+			MSG_ERROR << "erroneous length: " << dataBuf.bufferLength << " - aborting";
 			datStream >> sep1 >> sep2 >> sep3 >> sep4;
-			protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), ERROR);
+			MSG_ERROR << tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
 			break;
 		}
 		quint16 *pD = (quint16 *)&dataBuf.bufferLength;
@@ -1025,16 +1022,16 @@ void Measurement::readListfile(QString readfilename)
 		bcount++;
 // check for next separator:
 //		qint64 p = textStream.device()->pos();
-//		protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), DEBUG);
+//		MSG_DEBUG << tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c);
 		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-//		protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), DEBUG);
+//		MSG_ERROR << tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
 		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
 		if (!ok)
 		{
-			protocol(tr("File structure error - read aborted after %1 buffers").arg(blocks), ERROR);
+			MSG_ERROR << "File structure error - read aborted after " << blocks << " buffers";
 			qint64 p = textStream.device()->pos();
-			protocol(tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c), ERROR);
-			protocol(tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c), ERROR);
+			MSG_ERROR << tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c);
+			MSG_ERROR << tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
 		}
 		if(!(bcount % 1000))
 		{
@@ -1126,7 +1123,7 @@ void Measurement::setROI(QRectF r)
 	    y = round(r.y()),
 	    w = round(r.width()),
 	    h = round(r.height());
-	protocol(tr("setROI : %1,%2 %3x%4").arg(x).arg(y).arg(w).arg(h), NOTICE);
+	MSG_NOTICE << "setROI : " << x << ',' << y << ',' << w << ',' << h;
 	m_roi = QRect(x, y, w, h);
 }
 
@@ -1209,7 +1206,7 @@ bool Measurement::loadSetup(const QString &name)
 
 	bool 		bOK(false);
 
-	protocol(tr("Reading configfile %1").arg(getConfigfilename()), NOTICE);
+	MSG_NOTICE << "Reading configfile " << getConfigfilename();
 
 	QSettings settings(getConfigfilename(), QSettings::IniFormat);
 

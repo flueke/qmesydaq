@@ -24,15 +24,13 @@
 #include <QTime>
 #include <QTimer>
 
-#include "mesydaqobject.h"
-
 #include "mdefines.h"
 
 /**
  * \short Software counter
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class MesydaqCounter : public MesydaqObject
+class MesydaqCounter : public QObject
 {
 Q_OBJECT
 

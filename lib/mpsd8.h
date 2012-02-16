@@ -21,8 +21,8 @@
 #define MPSD8_H
 
 #include <QString>
-#include "mesydaqobject.h"
 #include "mdefines.h"
+#include "logging.h"
 
 /**
  * \class MPSD8
@@ -30,7 +30,7 @@
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MPSD8 : public MesydaqObject
+class MPSD8 : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY(quint8 m_busNum READ busNumber)
@@ -177,7 +177,7 @@ public:
 	 */
 	float	getGainval(quint8 chan, bool preset = false) 
 	{
-		protocol(tr("gain val %1 %2").arg(chan).arg(m_gainVal[chan][preset]), DEBUG);
+		MSG_DEBUG << "gain val " << chan << ' ' << m_gainVal[chan][preset];
 		return m_gainVal[chan][preset];
 	}
 

@@ -18,9 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "counter.h"
+#include "logging.h"
 
 MesydaqCounter :: MesydaqCounter() 
-	: MesydaqObject()
+	: QObject()
 	, m_value(0)
 	, m_lastValue(0)
 	, m_limit(0)
@@ -50,14 +51,14 @@ void MesydaqCounter::operator++(void)
 		++m_value;
 	if (isStopped())
 	{
-		protocol(tr("counter stop"), INFO);
+		MSG_INFO << "counter stop";
 		emit stop();
 	}
 }
 
 void MesydaqCounter::set(quint64 val)
 {
-	protocol(tr("MesydaqCounter::set(%1)").arg(val), INFO);
+	MSG_INFO << "MesydaqCounter::set(" << val << ')';
 	m_value = m_offset + val - m_start;
 }
 
@@ -110,12 +111,12 @@ void MesydaqCounter::calcRate(void)
 			else
 			{
 				if (m_value)
-					protocol(tr("size : %3; m_value : %1, m_lastValue : %2").arg(m_value).arg(m_lastValue).arg(m_rate.size()));
+					MSG_ERROR << "size : " << m_rate.size() << "; m_value : " << m_value << ", m_lastValue : " << m_lastValue;
 				m_rate.enqueue(0);
 			}
 		}
 		else
-			protocol(tr("m_meastime_msec : %1,  m_ratetime_msec %2").arg(m_meastime_msec).arg(m_ratetime_msec));
+			MSG_ERROR << "m_meastime_msec : " << m_meastime_msec << ",  m_ratetime_msec " << m_ratetime_msec;
 		m_lastValue = m_value;
 	}
 	m_ratetime_msec = m_meastime_msec;
@@ -147,7 +148,7 @@ void MesydaqTimer::start(quint64 val)
 {
 	m_start = val;
 	m_value = 0;
-	protocol(tr("timer start1"), INFO);
+	MSG_INFO << "timer start1";
 }
 
 quint64 MesydaqTimer::value(void) 
@@ -161,7 +162,7 @@ void MesydaqTimer::setTime(quint64 val)
 		m_value = val - m_start;
 	if (isStopped())
 	{
-		protocol(tr("timer stop"), INFO);
+		MSG_INFO << "timer stop";
 		emit stop();
 	}
 }

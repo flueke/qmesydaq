@@ -59,11 +59,10 @@
 #include "QMesydaqDetectorInterface.h"
 #include "generalsetup.h"
 #include "modulewizard.h"
-
 #include "mapcorrect.h"
-
 #include "modulesetup.h"
 #include "mcpdsetup.h"
+#include "logging.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -517,8 +516,7 @@ void MainWidget::setStreamSlot()
         m_cmdBuffer[2] = 1;
     else
         m_cmdBuffer[2] = 0;
-    m_pstring.sprintf("Set stream %d", m_cmdBuffer[2]);
-    m_theApp->protocol(m_pstring, 2);
+		MSG_WARNING << "Set stream " << m_cmdBuffer[2];
     m_theApp->sendCommand(m_pBuffer);
 
     m_theApp->setStream(mcpdId->value(), statusStream->isChecked());
@@ -634,7 +632,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
         val = round(val / 10000.0);
 //      nsec = timeval - (1000 * val);
     }
-//  qDebug("%lu %lu %lu", timeval, val, nsec);
+//  MSG_DEBUG << timeval << ' ' << val << ' ' << nsec;
 // hours = val / 3600 (s/h)
     hr = val / 3600;
 // remaining seconds:
@@ -643,7 +641,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
     min = val / 60;
 // remaining seconds:
     sec = val - (min * 60);
-//  qDebug("%lu %lu %lu %lu %lu", nsecs, hr, min, sec, nsec);
+//  MSG_DEBUG << nsecs << ' ' << hr << ' ' << min << ' ' << sec << ' ' << nsec;
     str.sprintf("%02lu:%02lu:%02lu", hr, min, sec);
     return str;
 }
@@ -686,7 +684,7 @@ void MainWidget::clearMcpdSlot()
 void MainWidget::clearMpsdSlot()
 {
     quint32 start = dispMpsd->value() * 8 + dispMcpd->value() * 64;
-//  qDebug("clearMpsd: %d", start);
+//  MSG_DEBUG << "clearMpsd: " << start;
     for(quint32 i = start; i < start + 8; i++)
         m_meas->clearChanHist(i);
     emit redraw();
@@ -1179,8 +1177,8 @@ void MainWidget::m4ResetSlot()
 */
 void MainWidget::mpsdCheck(int mod)
 {
-    m_theApp->protocol(tr("MainWidget::mpsdCheck() : module %1").arg(mod), DEBUG);
-    displayMpsdSlot(mod);
+	MSG_DEBUG << "MainWidget::mpsdCheck() : module " << mod;
+	displayMpsdSlot(mod);
 }
 
 /*!
@@ -1671,8 +1669,7 @@ void MainWidget::customEvent(QEvent *e)
                     }
                     else
                         tmpData->append(m_meas->events());
-//! \todo hack to transfer a QList<quint64> to QtInterface without to copy it
-#warning TODO hack to transfer a QList<quint64> to QtInterface without to copy it
+										// hack to transfer a QList<quint64> to QtInterface without to copy it
                     retVal << ((quint64)tmpData);
                     interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM, retVal);
                 }
@@ -1894,7 +1891,7 @@ void MainWidget::customEvent(QEvent *e)
 
 void MainWidget::moduleHistogramSlot(quint8 id, bool set)
 {
-//	qDebug() << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
+//	MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
 	m_theApp->setHistogram(devid_2->value(), id, set);
 }
 

@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "remoteserver.h"
+#include "logging.h"
 
 /*!
     constructor 
@@ -147,13 +148,13 @@ void RemoteServer::parseInput(const QString &line)
 		tmp.remove(tmp.length() - 1, 1);
 	if (tmp.endsWith("\r"))
 		tmp.remove(tmp.length() - 1, 1);
-	qDebug("parseInput : %s", tmp.toStdString().c_str());
+	MSG_DEBUG << "parseInput : " << tmp.toLocal8Bit().constData();
 		
 	QStringList l = tmp.split(' ', QString::SkipEmptyParts);
 	if (l.length() > 1 && l.at(0) == "MESYDAQ")
 	{
 		QString cmd = l.at(1);
-		qDebug("command : %s", cmd.toStdString().c_str());
+		MSG_DEBUG << "command : " << cmd.toLocal8Bit().constData();
 
 		if (cmd == "START")
 		{
@@ -255,7 +256,7 @@ void RemoteServer::parseInput(const QString &line)
 		else
 		{
 			syntaxOk = false;
-			qDebug("unknown command : %s", cmd.toStdString().c_str());
+			MSG_DEBUG << "unknown command : %s" << cmd.toLocal8Bit().constData();
 		}
 	}
 	else

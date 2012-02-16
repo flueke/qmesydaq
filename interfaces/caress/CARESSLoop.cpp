@@ -56,6 +56,7 @@
 #include "CARESSLoop.h"
 #include "mapcorrect.h"
 #include "mapcorrectparser.h"
+#include "logging.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -84,30 +85,6 @@
 /***************************************************************************
  * defines and constants
  ***************************************************************************/
-
-#ifdef DEBUGBUILD
-#define DBG0(fmt) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qDebug("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__); } while (0)
-#define DBG(fmt,args...) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qDebug("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__,args); } while (0)
-#define CRITICAL0(fmt) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qCritical("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__); } while (0)
-#define CRITICAL(fmt,args...) do { char now_s[64]; QDateTime now_q(QDateTime::currentDateTime()); \
-  snprintf(now_s,ARRAY_SIZE(now_s),"%04d/%02d/%02d %02d:%02d:%02d.%03d",now_q.date().year(),now_q.date().month(), \
-	   now_q.date().day(),now_q.time().hour(),now_q.time().minute(),now_q.time().second(),now_q.time().msec()); \
-  now_s[ARRAY_SIZE(now_s)-1]='\0'; qCritical("[%s] %s(%d): " fmt,now_s,__FILE__,__LINE__,args); } while (0)
-#else
-#define DBG0(fmt)             do {} while (0)
-#define DBG(fmt,args...)      do {} while (0)
-#define CRITICAL0(fmt)        do {} while (0)
-#define CRITICAL(fmt,args...) do {} while (0)
-#endif
 
 #define ARRAY_SIZE(x) ((int)(sizeof(x)/sizeof((x)[0])))
 
@@ -237,7 +214,7 @@ void CARESSLoop::runLoop()
   MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
   if (!app)
   {
-    CRITICAL0("not a MultipleLoopApplication");
+		MSG_ERROR << "not a MultipleLoopApplication";
     return;
   }
 
@@ -263,7 +240,7 @@ void CARESSLoop::runLoop()
     delete[] args2;
     for (i=0; i<args1.count(); ++i)
       delete[] args1[i];
-    CRITICAL0("cannot copy argument list");
+		MSG_ERROR << "cannot copy argument list";
     return;
   }
 
@@ -294,10 +271,10 @@ void CARESSLoop::runLoop()
     // IOR to stdout
     CORBA::Object_var ref = myCORBADevice_i->_this();
     CORBA::String_var ior = orb->object_to_string(ref);
-    qDebug("IDL object CORBADevice (version %s) IOR = %s",VERSION,ior.in());
+		MSG_DEBUG << "IDL object CORBADevice (version " << (const char*)(VERSION) << " ) IOR = " << ior.in();
 
     if (!bindObjectToName(orb,obj,iDummyArgc>1?args2[1]:m_sName.toLatin1().constData()))
-      qDebug("warning: cannot bind to naming service");
+			MSG_WARNING << "warning: cannot bind to naming service";
 
     delete[] args2;
     for (i=0; i<args1.count(); ++i)
@@ -322,19 +299,19 @@ void CARESSLoop::runLoop()
   }
   catch (CORBA::SystemException&)
   {
-    CRITICAL0("Caught CORBA::SystemException.");
+		MSG_ERROR << "Caught CORBA::SystemException.";
   }
   catch (CORBA::Exception&)
   {
-    CRITICAL0("Caught CORBA::Exception.");
+		MSG_ERROR << "Caught CORBA::Exception.";
   }
   catch (omniORB::fatalException& fe)
   {
-    CRITICAL0("Caught omniORB::fatalException.");
+		MSG_ERROR << "Caught omniORB::fatalException.";
   }
   catch (...)
   {
-    CRITICAL0("Caught unknown exception.");
+		MSG_ERROR << "Caught unknown exception.";
   }
 }
 
@@ -359,20 +336,20 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
     rootContext = CosNaming::NamingContext::_narrow(obj);
     if (CORBA::is_nil(rootContext))
     {
-      CRITICAL0("Failed to narrow the root naming context.");
+			MSG_ERROR << "Failed to narrow the root naming context.";
       return 0;
     }
   }
   catch (CORBA::ORB::InvalidName&)
   {
     // This should not happen!
-    CRITICAL0("Service required is invalid [does not exist].");
+		MSG_ERROR << "Service required is invalid [does not exist].";
     return 0;
   }
   catch (...)
   {
     // This should not happen!
-    CRITICAL0("Caught unknown exception.");
+		MSG_ERROR << "Caught unknown exception.";
     return 0;
   }
 
@@ -400,18 +377,18 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
   }
   catch (CORBA::COMM_FAILURE&)
   {
-    CRITICAL0("Caught system exception COMM_FAILURE -- unable to contact the naming service.");
+		MSG_ERROR << "Caught system exception COMM_FAILURE -- unable to contact the naming service.";
     return 0;
   }
   catch (CORBA::SystemException&)
   {
-    CRITICAL0("Caught a CORBA::SystemException while using the naming service.");
+		MSG_ERROR << "Caught a CORBA::SystemException while using the naming service.";
     return 0;
   }
   catch (...)
   {
     // This should not happen!
-    CRITICAL0("Caught unknown exception.");
+		MSG_ERROR << "Caught unknown exception.";
     return 0;
   }
   return 1;
@@ -485,7 +462,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
   try
   {
     (void)name;
-    DBG("init(kind=%ld, id=%ld, name=%s, config_line=%s)",kind,id,name,config_line);
+		MSG_DEBUG << "init(kind=" << kind << ", id=" << id << ", name=" << name << ", config_line=" << config_line << ')';
     if ((kind!=0/*INIT*/ && kind!=8/*RESET*/) || id<1)
       throw ((const char*)"invalid init kind or id");
 
@@ -533,7 +510,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 	m_dblTimerScale=strtod(ptr2,&ptr3);
 	if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_dblTimerScale=DEFAULTTIMEFACTOR;
 	else if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
-	DBG("init(timer factor %g)",m_dblTimerScale);
+	MSG_DEBUG << "init(timer factor " << m_dblTimerScale << ')';
 	break;
       }
       case QMESYDAQ_HISTOGRAM:
@@ -588,7 +565,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 	}
 	if (pInterface!=NULL)
 	  pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
-	DBG0("init(histogram)");
+	MSG_DEBUG << "init(histogram)";
 	break;
       }
       case QMESYDAQ_DIFFRACTOGRAM:
@@ -620,7 +597,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 	}
 	if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
 	  pInterface->updateMainWidget(m_lDiffractogramWidth,0,-1);
-	DBG0("init(diffractogram)");
+	MSG_DEBUG << "init(diffractogram)";
 	break;
       }
       case QMESYDAQ_SPECTROGRAM:
@@ -663,14 +640,14 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 	}
 	if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1)
 	  pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-	DBG0("init(spectrogram)");
+	MSG_DEBUG << "init(spectrogram)";
 	break;
       }
       default:
 	if (iDevice<ARRAY_SIZE(g_asDevices))
-	  DBG("init(counter %s)",g_asDevices[iDevice]);
+		MSG_DEBUG << "init(counter " << g_asDevices[iDevice] << ')';
 	else
-	  DBG("init(counter %ld)",id);
+		MSG_DEBUG << "init(counter " << id << ')';
 	if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1 && m_lId[QMESYDAQ_DIFFRACTOGRAM]<1)
 	  pInterface->updateMainWidget(0,0,-1);
 	break;
@@ -685,7 +662,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
   }
   catch (const char* msg)
   {
-    CRITICAL("init - %s.",msg);
+		MSG_ERROR << "init - " << msg;
     description=CORBA::string_dup(msg);
     strncpy(m_szErrorMessage,description,sizeof(m_szErrorMessage));
     m_szErrorMessage[sizeof(m_szErrorMessage)-1]='\0';
@@ -693,7 +670,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
   }
   catch (...)
   {
-    CRITICAL0("init - Caught unknown exception.");
+		MSG_ERROR << "init - Caught unknown exception.";
     description=CORBA::string_dup("unknown exception");
     strncpy(m_szErrorMessage,description,sizeof(m_szErrorMessage));
     m_szErrorMessage[sizeof(m_szErrorMessage)-1]='\0';
@@ -722,7 +699,7 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
       break;
   m_lId[iDevice]=0;
   m_b64Bit[iDevice]=false;
-  DBG("release(kind=%ld, id=%ld)",kind,id);
+	MSG_DEBUG << "release(kind=" << kind << ", id=" << id << ')';
   m_szErrorMessage[0]='\0';
   if (pInterface!=NULL)
   {
@@ -763,7 +740,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
                                        CORBA::Long& module_status)
 {
   QMutexLocker lock(&m_mutex);
-  DBG("start(kind=%ld, id=%ld, run_no=%ld, mesr_count=%ld, module_status=ACTIVE)",kind,id,run_no,mesr_count);
+	MSG_DEBUG << "start(kind=" << kind << ", id=" << id << ", run_no=" << run_no << ", mesr_count=" << mesr_count << ", module_status=ACTIVE)";
   m_szErrorMessage[0]='\0';
   try
   {
@@ -773,7 +750,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("start - %s",m_szErrorMessage);
+			MSG_DEBUG << "start - " << (const char*)m_szErrorMessage;
       module_status=OFF_LINE;
       return CARESS::NOT_OK;
     }
@@ -830,16 +807,16 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 	}
       }
       if (iDevice<ARRAY_SIZE(g_asDevices))
-	DBG("start device %s",g_asDevices[iDevice]);
+	MSG_DEBUG << "start device " << g_asDevices[iDevice];
       else
-	DBG("start device %d",iDevice);
+	MSG_DEBUG << "start device " << iDevice;
     }
     module_status=ACTIVE;
     return CARESS::OK;
   }
   catch (...)
   {
-    CRITICAL0("start - Caught unknown exception.");
+		MSG_ERROR << "start - Caught unknown exception.";
     return CARESS::NOT_OK;
   }
 }
@@ -858,7 +835,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
                                       CORBA::Long& module_status)
 {
   QMutexLocker lock(&m_mutex);
-  DBG("stop(all=%s, kind=%ld, id=%ld)",((kind>>31)&1)?"yes":"no",(kind&0x7FFFFFFF),id);
+	MSG_DEBUG << "stop(all=" << (const char*)(((kind>>31)&1)?"yes":"no") << ", kind=" << (kind&0x7FFFFFFF) << ", id=" << id << ')';
   m_szErrorMessage[0]='\0';
   try
   {
@@ -868,7 +845,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("stop - %s",m_szErrorMessage);
+			MSG_DEBUG << "stop - " << (const char*)m_szErrorMessage;
       module_status=OFF_LINE;
       return CARESS::NOT_OK;
     }
@@ -899,9 +876,9 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 	  }
 	}
 	if (iDevice<ARRAY_SIZE(g_asDevices))
-	  DBG("stop device %s",g_asDevices[iDevice]);
+		MSG_DEBUG << "stop device " << g_asDevices[iDevice];
 	else
-	  DBG("stop device %d",iDevice);
+		MSG_DEBUG << "stop device " << iDevice;
       }
     }
     module_status=DONE;
@@ -909,7 +886,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
   }
   catch (...)
   {
-    CRITICAL0("stop - Caught unknown exception.");
+		MSG_ERROR << "stop - Caught unknown exception.";
     return CARESS::NOT_OK;
   }
 }
@@ -938,7 +915,7 @@ CARESS::ReturnType CORBADevice_i::drive_module(CORBA::Long kind,
   (void) calculated_timeout;
 
   strcpy(m_szErrorMessage,"drive is not implemented.");
-  CRITICAL0("drive - Not implemented.");
+	MSG_ERROR << "drive - Not implemented.";
   delay=0;
   module_status=OFF_LINE;
   return CARESS::NOT_OK;
@@ -957,7 +934,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
                                       CORBA::Long& module_status)
 {
   QMutexLocker lock(&m_mutex);
-  DBG("load(kind=%ld, id=%ld)",kind,id);
+	MSG_DEBUG << "load(kind=" << kind << ", id=" << id << ')';
   m_szErrorMessage[0]='\0';
   try
   {
@@ -967,7 +944,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("load - %s",m_szErrorMessage);
+			MSG_DEBUG << "load - " << (const char*)m_szErrorMessage;
       module_status=OFF_LINE;
       return CARESS::NOT_OK;
     }
@@ -979,7 +956,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
     if (iDevice<0)
     {
       strcpy(m_szErrorMessage,"invalid device");
-      DBG("load - %s",m_szErrorMessage);
+			MSG_DEBUG << "load - " << (const char*)m_szErrorMessage;
       module_status=OFF_LINE;
       return CARESS::NOT_OK;
     }
@@ -1042,13 +1019,13 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 	  pInterface->selectCounter(iTmpDev);
 	  pInterface->setPreSelection(dblTarget);
 	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    DBG("master device %s",g_asDevices[iDevice]);
+			MSG_DEBUG << "master device " << g_asDevices[iDevice];
 	  else
-	    DBG("master device %d",iDevice);
+			MSG_DEBUG << "master device " << iDevice;
 	}
 	else
 	{
-	  DBG("load - %s",m_szErrorMessage);
+		MSG_DEBUG << "load - " << (const char*)m_szErrorMessage;
 	  module_status=LOADED;
 	  return CARESS::NOT_OK;
 	}
@@ -1058,16 +1035,16 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 	if (m_iMaster==iDevice)
 	  m_iMaster=-1;
 	if (iDevice<ARRAY_SIZE(g_asDevices))
-	  DBG("slave device %s",g_asDevices[iDevice]);
+		MSG_DEBUG << "slave device " << g_asDevices[iDevice];
 	else
-	  DBG("slave device %d",iDevice);
+		MSG_DEBUG << "slave device " << iDevice;
 	break;
       case 16: // RESETMODULE
 	pInterface->clear();
 	if (iDevice<ARRAY_SIZE(g_asDevices))
-	  DBG("clear device %s",g_asDevices[iDevice]);
+		MSG_DEBUG << "clear device " << g_asDevices[iDevice];
 	else
-	  DBG("clear device %d",iDevice);
+		MSG_DEBUG << "clear device " << iDevice;
 	break;
       default: // ignore other load kinds
 	break;
@@ -1079,7 +1056,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
   catch (...)
   {
     strcpy(m_szErrorMessage,"catched unknown exception");
-    DBG("load - %s",m_szErrorMessage);
+		MSG_DEBUG << "load - " << (const char*)m_szErrorMessage;
     module_status=OFF_LINE;
     return CARESS::NOT_OK;
   }
@@ -1110,7 +1087,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 {
   QMutexLocker lock(&m_mutex);
   int iDevice;
-  DBG("loadblock(kind=%ld, id=%ld, start=%ld, end=%ld)",kind,id,start_channel,end_channel);
+	MSG_DEBUG << "loadblock(kind=" << kind << ", id=" << id << ", start=" << start_channel << ", end=" << end_channel << ')';
 
   for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
@@ -1119,7 +1096,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
   if (iDevice<0)
   {
     strcpy(m_szErrorMessage,"invalid device");
-    DBG("loadblock - %s",m_szErrorMessage);
+		MSG_DEBUG << "loadblock - " << (const char*)m_szErrorMessage;
     module_status=OFF_LINE;
     return CARESS::NOT_OK;
   }
@@ -1149,9 +1126,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 	{
 	  m_b64Bit[iDevice]=(lRevision>=1537);
 	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    DBG("use %d bit data for device %s",m_b64Bit[iDevice]?64:32,g_asDevices[iDevice]);
+			MSG_DEBUG << "use " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
 	  else
-	    DBG("use %d bit data for device %ld",m_b64Bit[iDevice]?64:32,id);
+			MSG_DEBUG << "use " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
 	}
       }
       else if (p1!=p2 && iNameLen>8 && strncasecmp(pStart,"mesydaq_",8)==0)
@@ -1174,9 +1151,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		   (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
 		   (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=true;
 	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    DBG("force %d bit data for device %s",m_b64Bit[iDevice]?64:32,g_asDevices[iDevice]);
+			MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
 	  else
-	    DBG("force %d bit data for device %ld",m_b64Bit[iDevice]?64:32,id);
+			MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
 	} else
 	// forced use of 64 bit return values
 	if ((iNameLen>=8 && strncasecmp(pStart,"return64",8)==0) ||
@@ -1192,9 +1169,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		   (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
 		   (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=false;
 	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    DBG("force %d bit data for device %s",m_b64Bit[iDevice]?64:32,g_asDevices[iDevice]);
+			MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
 	  else
-	    DBG("force %d bit data for device %ld",m_b64Bit[iDevice]?64:32,id);
+			MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
 	} else
 	// timer scaler/factor
 	if (iDevice==QMESYDAQ_TIMER &&
@@ -1203,7 +1180,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 	{
 	  m_dblTimerScale=QString::fromLatin1(p1,p2-p1).toDouble();
 	  if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
-	  DBG("load time scale/factor %g",m_dblTimerScale);
+		MSG_DEBUG << "load time scale/factor " << m_dblTimerScale;
 	} else
 	// list mode
 	if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
@@ -1219,7 +1196,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		   (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bListmode=false;
 	  if (pInterface)
 	    pInterface->setListMode(m_bListmode);
-	  DBG("device %s - listmode=%s",g_asDevices[iDevice],m_bListmode?"on":"off");
+		MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
 	} else
 	// list file
 	if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
@@ -1234,7 +1211,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 	    pInterface->setListFileName(m_sListfile);
 	    pInterface->setListMode(m_bListmode);
 	  }
-	  DBG("device %s - listfile=%s",g_asDevices[iDevice],m_sListfile.toLatin1().constData());
+		MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
 	}
       }
       pStart=p2+1;
@@ -1255,7 +1232,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("loadblock - %s",m_szErrorMessage);
+			MSG_DEBUG << "loadblock - " << (const char*)m_szErrorMessage;
       module_status=LOADED;
       return CARESS::NOT_OK;
     }
@@ -1292,9 +1269,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     {
       pStart=(const char*)(&ab[0]);
       if (iDevice<ARRAY_SIZE(g_asDevices))
-	DBG("loadblock(loadtext device %s) - unknown command '%.*s'",g_asDevices[iDevice],pEnd-pStart,pStart);
+				MSG_DEBUG << "loadblock(loadtext device " << g_asDevices[iDevice] << ") - unknown command '" << QByteArray::fromRawData(pStart,pEnd-pStart).constData() << '\'';
       else
-	DBG("loadblock(loadtext device %ld) - unknown command '%.*s'",id,pEnd-pStart,pStart);
+				MSG_DEBUG << "loadblock(loadtext device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,pEnd-pStart).constData() << '\'';
     }
 
 #warning "note: test for additional user commands from CARESS if meaningful"
@@ -1310,9 +1287,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     const char* pStart=(const char*)(&data.ab()[0]);
     CORBA::ULong uLen=data.ab().length();
     if (iDevice<ARRAY_SIZE(g_asDevices))
-      DBG("loadblock(startcommands device %s) - unknown command '%.*s'",g_asDevices[iDevice],(int)uLen,pStart);
+			MSG_DEBUG << "loadblock(startcommands device " << g_asDevices[iDevice] << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
     else
-      DBG("loadblock(startcommands device %ld) - unknown command '%.*s'",id,(int)uLen,pStart);
+			MSG_DEBUG << "loadblock(startcommands device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
 
 #warning "note: CARESS is able to load selected command structures before any measurment step"
     module_status=LOADED;
@@ -1326,10 +1303,10 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     // data is simple text with unix-end-of-line in variable data.ab()[]
     const char* pStart=(const char*)(&data.ab()[0]);
     CORBA::ULong uLen=data.ab().length();
-    if (iDevice<ARRAY_SIZE(g_asDevices))
-      DBG("loadblock(startvalues device %s) - unknown command '%.*s'",g_asDevices[iDevice],(int)uLen,pStart);
-    else
-      DBG("loadblock(startvalues device %ld) - unknown command '%.*s'",id,(int)uLen,pStart);
+		if (iDevice<ARRAY_SIZE(g_asDevices))
+			MSG_DEBUG << "loadblock(startvalues device " << g_asDevices[iDevice] << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
+		else
+			MSG_DEBUG << "loadblock(startvalues device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
 
 #warning "note: CARESS is able to load current positions of selected devices before any measurment step"
     module_status=LOADED;
@@ -1348,15 +1325,15 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("loadblock - %s",m_szErrorMessage);
+			MSG_DEBUG << "loadblock - " << (const char*)m_szErrorMessage;
       module_status=LOADED;
       return CARESS::NOT_OK;
     }
 
     if (iDevice<ARRAY_SIZE(g_asDevices))
-      DBG("loadblock(binary device %s) - %lu bytes of binary data",g_asDevices[iDevice],uLength);
+			MSG_DEBUG << "loadblock(binary device " << g_asDevices[iDevice] << ") - " << uLength << " bytes of binary data";
     else
-      DBG("loadblock(binary device %ld) - %lu bytes of binary data",id,uLength);
+			MSG_DEBUG << "loadblock(binary device " << id << ") - " << uLength << " bytes of binary data";
 
     pInterface->readHistogramSize(w,h);
     pInterface->setMappingCorrection(parseCaressMapCorrection((const char*) \
@@ -1368,9 +1345,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 
   strcpy(m_szErrorMessage,"loadblock: Not implemented kind.");
   if (iDevice<ARRAY_SIZE(g_asDevices))
-    DBG("loadblock(device %s) - %s",g_asDevices[iDevice],m_szErrorMessage);
+		MSG_DEBUG << "loadblock(device " << g_asDevices[iDevice] << ") - " << (const char*)m_szErrorMessage;
   else
-    DBG("loadblock(device %ld) - %s",id,m_szErrorMessage);
+		MSG_DEBUG << "loadblock(device " << id << ") - " << (const char*)m_szErrorMessage;
   module_status=LOADED;
   return CARESS::NOT_OK;
 }
@@ -1402,7 +1379,7 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("read - %s",m_szErrorMessage);
+			MSG_DEBUG << "read - " << (const char*)m_szErrorMessage;
       val->l(0);
       data=val._retn();
       module_status=OFF_LINE;
@@ -1416,8 +1393,8 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
     if (iDevice<0)
     {
       strcpy(m_szErrorMessage,"invalid device");
-      DBG("read - %s",m_szErrorMessage);
-      val->l(0);
+			MSG_DEBUG << "read - " << (const char*)m_szErrorMessage;
+			val->l(0);
       data=val._retn();
       module_status=OFF_LINE;
       return CARESS::NOT_OK;
@@ -1442,7 +1419,7 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
   }
   catch (...)
   {
-    CRITICAL0("read - catched unknown exception");
+		MSG_ERROR << "read - catched unknown exception";
     val->l(0);
     module_status=NOT_ACTIVE;
   }
@@ -1470,7 +1447,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
   QMutexLocker lock(&m_mutex);
   (void)kind;
 
-  //DBG("readblock_params(kind=%ld, id=%ld, start_channel=%ld, end_channel=%ld, type=long)",kind,id,start_channel,end_channel);
+	//MSG_DEBUG << "readblock_params(kind=" << kind << ", id=" << id << ", start_channel=" << start_channel << ", end_channel=" << end_channel << ", type=long)";
   m_szErrorMessage[0]='\0';
   try
   {
@@ -1483,7 +1460,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("readblock_params - %s",m_szErrorMessage);
+			MSG_DEBUG << "readblock_params - " << (const char*)m_szErrorMessage;
       return CARESS::NOT_OK;
     }
 
@@ -1494,8 +1471,8 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
     if (iDevice<0)
     {
       strcpy(m_szErrorMessage,"invalid device");
-      DBG("readblock_params - %s",m_szErrorMessage);
-      return CARESS::NOT_OK;
+			MSG_DEBUG << "readblock_params - " << (const char*)m_szErrorMessage;
+			return CARESS::NOT_OK;
     }
 
     switch (iDevice)
@@ -1516,7 +1493,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 	do
 	{
 	  bool bPrintAny=false;
-	  DBG("read histogram: width=%d count=%d",m_iDetectorWidth,m_aullDetectorData.count());
+		MSG_DEBUG << "read histogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
 	  int iDetectorHeight=m_aullDetectorData.count()/m_iDetectorWidth;
 	  for (int y=0; y<iDetectorHeight; ++y)
 	  {
@@ -1538,11 +1515,11 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 	    if (bPrint)
 	    {
 	      bPrintAny=true;
-	      DBG("%s",line.toLocal8Bit().constData());
+				MSG_DEBUG << line.toLocal8Bit().constData();
 	    }
 	  }
 	  if (!bPrintAny)
-	    DBG0("all values are zero");
+			MSG_DEBUG << "all values are zero";
 	} while (0);
 #endif
 	break;
@@ -1551,17 +1528,17 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 	Q_ASSERT(m_iDetectorWidth>0);
 	end_channel=m_iDetectorWidth=m_lDiffractogramWidth;
 	m_aullDetectorData=pInterface->readDiffractogram();
-	DBG("read diffractogram: width=%d count=%d",m_iDetectorWidth,m_aullDetectorData.count());
+	MSG_DEBUG << "read diffractogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
 	break;
       case QMESYDAQ_SPECTROGRAM:
 	Q_ASSERT(m_iDetectorWidth>0);
 	end_channel=m_iDetectorWidth=m_lSpectrogramWidth;
 	m_aullDetectorData=pInterface->readSpectrogram(m_lSpectrogramChannel);
-	DBG("read spectrogram: width=%d count=%d",m_iDetectorWidth,m_aullDetectorData.count());
+	MSG_DEBUG << "read spectrogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
 	break;
       default:
 	end_channel=1;
-	DBG0("read other");
+	MSG_DEBUG << "read other";
 	break;
     }
     type=m_b64Bit[iDevice] ? CARESS::TypeLong64 : CARESS::TypeLong;
@@ -1570,7 +1547,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
   catch (...)
   {
     strcpy(m_szErrorMessage,"catched unknown exception");
-    DBG("readblock_params - %s",m_szErrorMessage);
+		MSG_DEBUG << "readblock_params - " << (const char*)m_szErrorMessage;
     return CARESS::NOT_OK;
   }
 }
@@ -1611,7 +1588,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
     if (!pInterface)
     {
       strcpy(m_szErrorMessage,"control interface not initialized");
-      DBG("readblock - %s",m_szErrorMessage);
+			MSG_DEBUG << "readblock - " << (const char*)m_szErrorMessage;
       val->l(0);
       data=val._retn();
       return CARESS::NOT_OK;
@@ -1624,8 +1601,8 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
     if (iDevice<0)
     {
       strcpy(m_szErrorMessage,"invalid device");
-      DBG("readblock - %s",m_szErrorMessage);
-      val->l(0);
+			MSG_DEBUG << "readblock - " << (const char*)m_szErrorMessage;
+			val->l(0);
       data=val._retn();
       return CARESS::NOT_OK;
     }
@@ -1650,8 +1627,8 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 	if (lHistoX<1 || lHistoY<1)
 	{
 	  strcpy(m_szErrorMessage,"invalid histogram size");
-	  DBG("readblock - %s",m_szErrorMessage);
-	  val->l(0);
+		MSG_DEBUG << "readblock - " << (const char*)m_szErrorMessage;
+		val->l(0);
 	  data=val._retn();
 	  return CARESS::NOT_OK;
 	}
@@ -1710,7 +1687,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 	do
 	{
 	  bool bPrintAny=false;
-	  DBG("read histogram: width=%d height=%d",(int)lHistoX,(int)lHistoY);
+		MSG_DEBUG << "read histogram: width=" << lHistoX << " height=" << lHistoY;
 	  Q_ASSERT((lHistoX*lHistoY)==dsthistogram.count());
 	  for (int y=0; y<lHistoY; ++y)
 	  {
@@ -1732,11 +1709,11 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 	    if (bPrint)
 	    {
 	      bPrintAny=true;
-	      DBG("%s",line.toLocal8Bit().constData());
+				MSG_DEBUG << "%s",line.toLocal8Bit().constData();
 	    }
 	  }
 	  if (!bPrintAny)
-	    DBG0("all values are zero");
+			MSG_DEBUG << "all values are zero";
 	} while (0);
 #endif
 	y=end_channel-start_channel+1;
@@ -1785,12 +1762,12 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
   catch (...)
   {
     strcpy(m_szErrorMessage,"Caught unknown exception");
-    CRITICAL("stop - %s.",m_szErrorMessage);
+		MSG_ERROR << "stop - " << (const char*)m_szErrorMessage << '.';
     module_status=NOT_ACTIVE;
     val->l((long)0);
   }
   data=val._retn();
-//DBG("readblock_module(module_status=%ld)=%s",module_status,(result==CARESS::OK)?"OK":"NOT_OK");
+//MSG_DEBUG << "readblock_module(module_status=" << module_status << ")=" << (const char*)((result==CARESS::OK)?"OK":"NOT_OK");
   return result;
 }
 
@@ -1862,11 +1839,11 @@ CORBA::Boolean CORBADevice_i::is_readable_module(CORBA::Long id)
   {
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
     {
-      DBG0("is_readable_module=TRUE");
+			MSG_DEBUG << "is_readable_module=TRUE";
       return 1;
     }
   }
-  DBG0("is_readable_module - unknown device");
+	MSG_DEBUG << "is_readable_module - unknown device";
   return 0;
 }
 
@@ -1878,11 +1855,11 @@ CORBA::Boolean CORBADevice_i::is_drivable_module(CORBA::Long id)
   {
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
     {
-      DBG0("is_drivable_module=FALSE");
+			MSG_DEBUG << "is_drivable_module=FALSE";
       return 0;
     }
   }
-  DBG0("is_drivable_module - unknown device");
+	MSG_DEBUG << "is_drivable_module - unknown device";
   return 0;
 }
 
@@ -1894,11 +1871,11 @@ CORBA::Boolean CORBADevice_i::is_counting_module(CORBA::Long id)
   {
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
     {
-      DBG0("is_counting_module=TRUE");
+			MSG_DEBUG << "is_counting_module=TRUE";
       return 1;
     }
   }
-  DBG0("is_counting_module - unknown device");
+	MSG_DEBUG << "is_counting_module - unknown device";
   return 0;
 }
 
@@ -1910,11 +1887,11 @@ CORBA::Boolean CORBADevice_i::is_status_module(CORBA::Long id)
   {
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
     {
-      DBG0("is_status_module=FALSE");
+			MSG_DEBUG << "is_status_module=FALSE";
       return 0;
     }
   }
-  DBG0("is_status_module - unknown device");
+	MSG_DEBUG << "is_status_module - unknown device";
   return 0;
 }
 
@@ -1926,11 +1903,11 @@ CORBA::Boolean CORBADevice_i::needs_reference_module(CORBA::Long id)
   {
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
     {
-      DBG0("needs_reference_module=FALSE");
+			MSG_DEBUG << "needs_reference_module=FALSE";
       return 0;
     }
   }
-  DBG0("needs_reference_module - unknown device");
+	MSG_DEBUG << "needs_reference_module - unknown device";
   return 0;
 }
 
@@ -1949,7 +1926,7 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
   QMutexLocker lock(&m_mutex);
   int iDevice;
 
-  DBG("get_attribute(id=%ld, name=%s)",id,name);
+	MSG_DEBUG << "get_attribute(id=" << id << ", name=" << name << ')';
 
   for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
@@ -2031,6 +2008,6 @@ void CORBADevice_i::set_attribute(CORBA::Long id, const char* name, const CARESS
   (void)id;
   (void)name;
   (void)data;
-  CRITICAL("set_attribute(id=%ld, name=%s)",id,name);
-  throw CARESS::ErrorDescription("not implemented");
+	MSG_ERROR << "set_attribute(id=" << id << ", name=" << name << ')';
+	throw CARESS::ErrorDescription("not implemented");
 }

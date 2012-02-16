@@ -25,7 +25,6 @@
 #include <QHash>
 #include <QFileInfo>
 
-#include "mesydaqobject.h"
 #include "counter.h"
 #include "structures.h"
 #include "mdefines.h"
@@ -42,7 +41,7 @@ class Mesydaq2;
 
    \author Gregor Montermann <g.montermann@mesytec.com>
 */
-class Measurement : public MesydaqObject
+class Measurement : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS(Mode)
