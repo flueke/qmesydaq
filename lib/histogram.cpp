@@ -17,13 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <QTextStream>
-#include <QFile>
-#include <QDebug>
+
 #include "histogram.h"
 #include "logging.h"
-
+#ifdef _MSC_VER
+#	include "stdafx.h"
+#endif
 #include <cmath>
+
 
 /**
     \fn Spectrum::Spectrum(quint16 bins)
@@ -82,7 +83,11 @@ void Spectrum::calcMaximumPosition(quint16 bin)
 
 void Spectrum::calcFloatingMean(quint16 bin)
 {
-#warning TODO mean value determination
+#if defined(_MSC_VER)
+#	pragma message("TODO mean value determination")
+#else
+#	warning TODO mean value determination
+#endif
 //! \todo mean value determination
 	m_floatingMean[m_meanPos] = bin;
 	m_meanPos++;
@@ -405,7 +410,11 @@ void Histogram::clear(quint16 channel)
 	m_totalCounts -= m_data[channel]->getTotalCounts();
 	m_data[channel]->clear();
 
-#warning TODO remove the counts from the sum spectrum and total counts and adjust the new maximum
+#if defined(_MSC_VER)
+#	pragma message("TODO remove the counts from the sum spectrum and total counts and adjust the new maximum")
+#else
+#	warning TODO remove the counts from the sum spectrum and total counts and adjust the new maximum
+#endif
 //! \todo remove the counts from the sum spectrum and total counts and adjust the new maximum
 }
 

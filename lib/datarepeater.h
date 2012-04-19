@@ -31,14 +31,17 @@
 
 #include <QMutex>
 #include <QList>
-#include <QtNetwork/QUdpSocket>
+#include <QUdpSocket>
+
+
+#include "libqmesydaq_global.h"
 
 /**
  * \short this UDP socket sends the same data, which is written to a listmode file
  *
  * \author Lutz Rossa <rossa@helmholtz-berlin.de>
  */
-class DataRepeater : public QObject
+class LIBQMESYDAQ_EXPORT DataRepeater : public QObject
 {
   Q_OBJECT
 public:
@@ -85,10 +88,10 @@ public:
   void SetTarget(const QString &target, quint16 port = DEFAULTPORT);
 
   //! store or send data to target (short data: store only and start timer)
-  void WriteData(const QByteArray &data) { WriteData(data.data(),data.count()); }
+  void WriteData(const QByteArray &data, bool doSend = false) { WriteData(data.data(),data.count(),doSend); }
 
   //! store or send data to target (short data: store only and start timer)
-  void WriteData(const void* ptr, int length);
+  void WriteData(const void* ptr, int length, bool doSend = false);
 
 public slots:
   void readyRead();
@@ -118,6 +121,9 @@ protected:
 
   //! stored sending data
   QByteArray   m_abyTodo;
+
+  //  UDP Package Counter (to check if one package losed)
+  quint64 m_globalPackageCounter;
 
   void InitSocket();
   void SendDatagram(bool bForce);

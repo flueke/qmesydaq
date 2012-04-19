@@ -32,6 +32,8 @@
 
 #include <QDebug>
 
+#include "libqmesydaq_global.h"
+
 #define MSG_FATAL    qDebug().nospace() << '0' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
 #define MSG_ERROR    qDebug().nospace() << '1' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
 #define MSG_WARNING  qDebug().nospace() << '2' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
@@ -46,6 +48,6 @@
 extern int DEBUGLEVEL;
 
 // start logging (parse command line parameters from QCoreApplication)
-void startLogging(const char* szShortUsage, const char* szLongUsage);
+void LIBQMESYDAQ_EXPORT startLogging(const char* szShortUsage, const char* szLongUsage);
 
 #endif /* __LOGGING_H__6D7BA1B3_11A3_4533_B63D_C7416EEDF845__ */

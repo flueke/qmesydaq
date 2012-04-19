@@ -36,9 +36,10 @@ mdll.h:32: error: forward declaration of 'struct mesydaq3'
 
 #ifndef MESYDAQ3_H
 #define MESYDAQ3_H
+
 class NetworkDevice;
 
-class mesydaq3
+class LIBQMESYDAQ_EXPORT mesydaq3
 {
 public:
 	void sendBuffer(quint8 id, quint8 len){}

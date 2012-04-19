@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -22,10 +22,12 @@
 
 #include "mdefines.h"
 
+#include <QObject>
 #include <QVector>
-#include <QList>
 #include <QHash>
 #include <QRect>
+
+#include "libqmesydaq_global.h"
 
 class QFile;
 
@@ -34,7 +36,7 @@ class QFile;
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class Spectrum : public QObject
+class LIBQMESYDAQ_EXPORT Spectrum : public QObject
 {
 	Q_OBJECT
 
@@ -135,7 +137,7 @@ private:
  * \author Gregor Montermann <g.montermann@mesytec.com>
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class Histogram : public QObject
+class LIBQMESYDAQ_EXPORT Histogram : public QObject
 {
 	Q_OBJECT
 

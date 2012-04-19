@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,10 +20,11 @@
 #ifndef MCPD2_H
 #define MCPD2_H
 
+#include <QObject>
 #include <QString>
-#include <QDataStream>
 #include <QMap>
 
+#include "libqmesydaq_global.h"
 #include "structures.h"
 
 class NetworkDevice;
@@ -35,7 +36,7 @@ class QTimer;
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
 */
-class MCPD2 : public QObject
+class LIBQMESYDAQ_EXPORT MCPD2 : public QObject
 {
 Q_OBJECT
 public:

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,10 +20,10 @@
 #ifndef NETWORKDEVICE_H
 #define NETWORKDEVICE_H
 
-#include <QHostAddress>
-#include <QList>
+#include <QObject>
 #include <QMutex>
 
+#include "libqmesydaq_global.h"
 #include "structures.h"
 
 class QUdpSocket;
@@ -36,7 +36,7 @@ class QSocketNotifier;
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
 */
-class NetworkDevice : public QObject
+class LIBQMESYDAQ_EXPORT NetworkDevice : public QObject
 {
 Q_OBJECT
 public:

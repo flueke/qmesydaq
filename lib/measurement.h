@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,11 +20,11 @@
 #ifndef MEASUREMENT_H
 #define MEASUREMENT_H
 
-#include <QTextStream>
-#include <QRectF>
-#include <QHash>
+#include <QObject>
+#include <QRect>
 #include <QFileInfo>
 
+#include "libqmesydaq_global.h"
 #include "counter.h"
 #include "structures.h"
 #include "mdefines.h"
@@ -41,7 +41,7 @@ class Mesydaq2;
 
    \author Gregor Montermann <g.montermann@mesytec.com>
 */
-class Measurement : public QObject
+class LIBQMESYDAQ_EXPORT Measurement : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS(Mode)

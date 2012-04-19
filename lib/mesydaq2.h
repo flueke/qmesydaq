@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -22,15 +22,11 @@
 #ifndef _MESYDAQ2_H_
 #define _MESYDAQ2_H_
 
-#include <list>
-
-#include <QFile>
-#include <QDataStream>
-#include <QString>
-#include <QTimer>
-#include <QHash>
+#include <QObject>
 #include <QSettings>
+#include <QFile>
 
+#include "libqmesydaq_global.h"
 #include "structures.h"
 #include "datarepeater.h"
 
@@ -44,7 +40,7 @@ class MPSD8;
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  * \version 0.9
  */
-class Mesydaq2 : public QObject
+class LIBQMESYDAQ_EXPORT Mesydaq2 : public QObject
 {
 	Q_OBJECT
 

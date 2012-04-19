@@ -26,6 +26,9 @@
 #include "mcpd2.h"
 #include "mdefines.h"
 #include "logging.h"
+#if defined(_MSC_VER)
+	#include "stdafx.h"
+#endif
 
 /**
  * constructor
@@ -471,7 +474,11 @@ bool MCPD2::setMode(quint16 addr, bool mode)
 		return false;
 	if (addr > 8)
 		addr = 8;
-#warning TODO common mode handling
+#if defined(_MSC_VER)
+#	pragma message("TODO common mode handling")
+#else
+#	warning TODO common mode handling
+#endif
 //! \todo common mode handling
 	if (addr == 8)
 	{
@@ -531,7 +538,11 @@ bool MCPD2::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 		pos = 2;
 	if (chan == 8)
 	{
-#warning TODO common pulser handling
+#if defined(_MSC_VER)
+#	pragma message("TODO common pulser handling")
+#else
+#	warning TODO common pulser handling
+#endif
 //! \todo common pulser handling
 		for (int i = 0; i < 8; ++i)
 			m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
@@ -927,7 +938,11 @@ void MCPD2::stdInit(void)
 bool MCPD2::setStream(quint16 strm)
 {
 	m_stream = bool(strm);
-#warning TODO MCPD2::setStream(quint16 strm)
+#if defined(_MSC_VER)
+#	pragma message("TODO MCPD2::setStream(quint16 strm)")
+#else
+#	warning TODO MCPD2::setStream(quint16 strm)
+#endif
 //! \todo implement me
 #if 0
 	unsigned short id = (unsigned short) deviceId->value();	
@@ -955,7 +970,7 @@ bool MCPD2::serialize(QDataStream /* ds */)
 // general buffer preparations:
 void MCPD2::initCmdBuffer(quint8 cmd)
 {
-  	bzero(&m_cmdBuf, sizeof(m_cmdBuf));
+  	memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
 	m_cmdBuf.cmd = cmd;
 #if 0
 	m_cmdBuf.sender = 0;
@@ -974,7 +989,11 @@ int MCPD2::sendCommand(bool wait)
 {
 	if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
 	{
-#warning TODO	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() ") : " << m_cmdBuf.bufferNumber << ". sent cmd: " << m_cmdBuf.cmd << " to id: " << m_cmdBuf.deviceId;
+#if defined(_MSC_VER)
+#	pragma message("TODO	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() \") : \" << m_cmdBuf.bufferNumber << \". sent cmd: \" << m_cmdBuf.cmd << \" to id: \" << m_cmdBuf.deviceId;")
+#else
+#	warning TODO	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() ") : " << m_cmdBuf.bufferNumber << ". sent cmd: " << m_cmdBuf.cmd << " to id: " << m_cmdBuf.deviceId;
+#endif
 		communicate(wait);
 		if (wait)
 		{
@@ -1036,9 +1055,15 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 		
 		MPSD8	*ptrMPSD;
 		quint16 chksum = recBuf.headerChksum;
-#warning TODO	if (chksum != calcChksum(recBuf))
-#warning TODO		MSG_INFO << "cmd packet (cmd = " << recBuf.cmd << ", size = " << recBuf.bufferLength
-#warning TODO			<< ") is not valid (CHKSUM error) " << chksum << " != (expected)" << calcChksum(recBuf);
+#if defined(_MSC_VER)
+#	pragma message("if (chksum != calcChksum(recBuf))")
+#	pragma message("MSG_INFO << \"cmd packet (cmd = \" << recBuf.cmd << \", size = \" << recBuf.bufferLength")
+#	pragma message("<< \") is not valid (CHKSUM error) \" << chksum << \" != (expected)\" << calcChksum(recBuf);")
+#else
+#	warning TODO	if (chksum != calcChksum(recBuf))
+#	warning TODO		MSG_INFO << "cmd packet (cmd = " << recBuf.cmd << ", size = " << recBuf.bufferLength
+#	warning TODO			<< ") is not valid (CHKSUM error) " << chksum << " != (expected)" << calcChksum(recBuf);
+#endif
 		switch(recBuf.cmd)
 		{
 			case RESET:
@@ -1181,7 +1206,11 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 				MSG_ERROR << "not handled command : GETPOTI";
 				break;
 			case READID: // extract the retrieved MPSD-8 IDs:
-#warning TODO if the configuration has changed
+#if defined(_MSC_VER)
+#	pragma message("TODO if the configuration has changed")
+#else
+#	warning TODO if the configuration has changed
+#endif
 //! \todo if the configuration has changed
 				for(quint8 c = 0; c < 8; c++)
 				{
@@ -1466,7 +1495,12 @@ quint8	MCPD2::getPulsChan(quint8 addr, bool preset)
  */
 void MCPD2::initMpsd(quint8 id)
 {
-#warning TODO gain initialization
+#if defined(_MSC_VER)
+#	pragma message("TODO gain initialization")
+#else
+#	warning TODO gain initialization
+#endif
+
 //! \todo gain initialization
 #if 0
 	quint8 	start = 8,

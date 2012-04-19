@@ -17,17 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#include <QDateTime>
-#include <QSettings>
-#include <QTextStream>
-#include <QTimerEvent>
-#include <QStringList>
-#include <QDebug>
-#include <QHash>
-#include <QHostAddress>
 #include <QThread>
-
+#include <QStringList>
 #include "mdefines.h"
 #include "mesydaq2.h"
 #include "mcpd8.h"
@@ -318,7 +309,7 @@ void Mesydaq2::writeHeaderSeparator(void)
 	const unsigned short awBuffer[]={sep0,sep5,sepA,sepF};
 	if (m_datfile.isOpen())
 		m_datStream << sep0 << sep5 << sepA << sepF;
-	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
+	//m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
 }
 
 
@@ -352,7 +343,7 @@ void Mesydaq2::writeClosingSignature(void)
 	const unsigned short awBuffer[]={sepF,sepA,sep5,sep0};
 	if (m_datfile.isOpen())
 		m_datStream << sepF << sepA << sep5 << sep0;
-	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
+	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer), true);
 }
 
 /*!
@@ -704,8 +695,13 @@ bool Mesydaq2::loadSetup(QSettings &settings)
  */
 void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 {
-#warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
-#warning TODO 		cInt->caressTask();
+#if defined(_MSC_VER)
+#	pragma message("TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))")
+#	pragma message("cInt->caressTask();")
+#else
+#	warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
+#	warning TODO 		cInt->caressTask();
+#endif
 //! \todo CARESS binding and checks for the hardware
 #if 0
 	if (event->timerId() == m_checkTimer)	
@@ -757,7 +753,11 @@ void Mesydaq2::setTimingwidth(quint8 width)
 	m_timingwidth = width;
 	if(width > 48)
     		m_timingwidth = 48;
-#warning TODO
+#if defined (_MSC_VER)
+#	pragma message("ToDo")
+#else
+#	warning TODO
+#endif
 //! \todo set the timing width of the histogram
 #if 0
 	if (m_hist)
@@ -1416,7 +1416,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 			for(quint16 i = 4; i < pd.bufferLength; i++)
 				m_datStream << pD[i];
 		}
-		m_datSender.WriteData(&pd,pd.bufferLength);
+		m_datSender.WriteData(&pd,pd.bufferLength, true);
 		writeBlockSeparator();
 //		MSG_DEBUG << "------------------";
 		MSG_DEBUG << "buffer : length : " << pd.bufferLength << " type : " << pd.bufferType;

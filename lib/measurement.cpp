@@ -17,25 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <QString>
-#include <QFile>
 #include <QDateTime>
 #include <QTimerEvent>
 #include <QCoreApplication>
-#include <QRegExp>
 #include <QStringList>
-#include <QSettings>
-
-#include <QDebug>
-
-#include <cmath>
-
 #include "measurement.h"
 #include "mdefines.h"
 #include "histogram.h"
 #include "mapcorrect.h"
 #include "mesydaq2.h"
 #include "logging.h"
+#if defined(_MSC_VER)
+	#include "stdafx.h"
+#endif
+
+#include <cmath>
 
 /*!
     \fn Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
@@ -1141,7 +1137,11 @@ quint64 Measurement::posEventsInROI()
 
 Spectrum *Measurement::diffractogram()
 {
-#warning TODO tube spectrum !!!
+#if defined(_MSC_VER)
+#	pragma message("TODO tube spectrum !!!")
+#else
+#	warning TODO tube spectrum !!!
+#endif
 #if 0
 	if (m_tubeSpectrum->width() > 0)
 		return m_tubeSpectrum;

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *   Copyright (C) 2011 by Lutz Rossa <rossa@helmholtz-berlin.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -31,20 +31,18 @@
 #ifndef __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__
 #define __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__
 
-#include <QList>
-#include <QRect>
-#include <QVector>
-#include <QPoint>
+
+#include "libqmesydaq_global.h"
 #include "histogram.h"
 
-class MappedHistogram;
+class LIBQMESYDAQ_EXPORT MappedHistogram;
 
 /**
  * \short this object represents histogram mapping and correction data
  *
  * \author Lutz Rossa <rossa@helmholtz-berlin.de>
  */
-class MapCorrection : public QObject
+class LIBQMESYDAQ_EXPORT MapCorrection : public QObject
 {
     Q_OBJECT
     Q_ENUMS(Orientation)
@@ -201,7 +199,7 @@ private:
  *
  * \author Lutz Rossa <rossa@helmholtz-berlin.de>
  */
-class MappedHistogram : public QObject
+class LIBQMESYDAQ_EXPORT MappedHistogram : public QObject
 {
     Q_OBJECT
 public:

@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2009 by Gregor Montermann, mesytec GmbH & Co. KG        *
  *      g.montermann@mesytec.com                                           *
- *   Copyright (C) 2011 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2011 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,11 +21,9 @@
 #ifndef MDLL_H
 #define MDLL_H
 
-#include <QObject>
-
-#include <QString>
 #include <QFile>
 
+#include "libqmesydaq_global.h"
 #include "structures.h"
 #include "mdefines.h"
 #include "mpsd8.h"
@@ -39,7 +37,7 @@ class MCPDMDLL;
 
     \author Gregor Montermann, mesytec GmbH  Co. KG <g.montermann@mesytec.com>
 */
-class MDll : public QObject
+class LIBQMESYDAQ_EXPORT MDll : public QObject
 {
 Q_OBJECT
 public:
@@ -77,7 +75,7 @@ protected:
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MDLL : public MPSD8
+class LIBQMESYDAQ_EXPORT MDLL : public MPSD8
 {
 Q_OBJECT
 public:

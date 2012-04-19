@@ -338,7 +338,11 @@ void MDll::serialize(QFile *fi)
         t << '\r' << '\n';
         t << "id = " << 0;
         t << '\r' << '\n';
-#warning TODO
+#if defined(_MSC_VER)
+#	pragma message("ToDo")
+#else
+#	warning TODO
+#endif
 #if 0
         t << "ipAddress = " << theApp->netDev->getOwnAddress(0);
 #endif

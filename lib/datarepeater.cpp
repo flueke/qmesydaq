@@ -26,11 +26,12 @@
 // revision $$Rev$$
 ////////////////////////////////////////////////////////////////////////////
 
-#include "datarepeater.h"
-#include <QUdpSocket>
 #include <QHostInfo>
 #include <QNetworkInterface>
 #include <QTimerEvent>
+
+#include "datarepeater.h"
+#include "logging.h"
 
 //! if defined use a connected UDP socket, else send datagrams directly
 #define USE_CONNECTED_UDP
@@ -46,6 +47,8 @@ DataRepeater::DataRepeater(QObject *parent, const QHostAddress &source, const QH
   : QObject(parent), m_pSocket(NULL), m_Source(source), m_Target(target), m_wPort(port), m_iMaxDatagramSize(MAXDATAGRAMSIZE), m_iTimerId(0)
 {
   InitSocket();
+
+  this->m_globalPackageCounter = 0;
 }
 
 /*!
@@ -58,6 +61,8 @@ DataRepeater::DataRepeater(QObject *parent, const QHostAddress &target, quint16 
   : QObject(parent), m_pSocket(NULL), m_Source(QHostAddress::Any), m_Target(target), m_wPort(port), m_iMaxDatagramSize(MAXDATAGRAMSIZE), m_iTimerId(0)
 {
   InitSocket();
+
+  this->m_globalPackageCounter = 0;
 }
 
 /*!
@@ -70,6 +75,8 @@ DataRepeater::DataRepeater(const QHostAddress &source, const QHostAddress &targe
   QObject(), m_pSocket(NULL), m_Source(source), m_Target(target), m_wPort(port), m_iMaxDatagramSize(MAXDATAGRAMSIZE), m_iTimerId(0)
 {
   InitSocket();
+
+  this->m_globalPackageCounter = 0;
 }
 
 /*!
@@ -84,6 +91,8 @@ DataRepeater::DataRepeater(const QHostAddress &target, quint16 port) :
     m_Target=QHostAddress::LocalHost;
   else
     InitSocket();
+
+  this->m_globalPackageCounter = 0;
 }
 
 //! destructor
@@ -235,19 +244,15 @@ void DataRepeater::SetTarget(const QString &target, quint16 port)
   \param ptr     pointer to data
   \param length  data length in bytes
 */
-void DataRepeater::WriteData(const void* ptr, int length)
+void DataRepeater::WriteData(const void* ptr, int length, bool doSend /*= false*/)
 {
   const char* pData=(const char*)ptr;
   if (m_pSocket==NULL || pData==NULL || length<1) return;
   m_Mutex.lock();
   m_abyTodo.append((const char*)ptr,length);
-  if (m_iTimerId==0)
-  {
-    if (m_abyTodo.count()>=m_iMaxDatagramSize)
-      SendDatagram(false);
-    if (m_abyTodo.count()>0)
-      m_iTimerId=startTimer(DEFAULTINTERVAL);
-  }
+
+  if (doSend)
+	SendDatagram(false);
   m_Mutex.unlock();
 }
 
@@ -288,25 +293,33 @@ void DataRepeater::SendDatagram(bool bForce)
   while (iLength>0)
   {
     int len=iLength;
-    if (len>m_iMaxDatagramSize)
-      len=m_iMaxDatagramSize;
+	unsigned int uiMaxSendableDatagramSize = m_iMaxDatagramSize - sizeof(m_globalPackageCounter); //n Byte for the UDP Package Counter
+    if (len>(uiMaxSendableDatagramSize))
+	{
+		MSG_DEBUG << "UDP Server: Send more than one UDP package for one block!";
+        len=m_iMaxDatagramSize;
+	}
+	//Add UDP package number to datagram
+	m_abyTodo = m_abyTodo.insert(0, (char*)&m_globalPackageCounter, sizeof(m_globalPackageCounter));
+	m_globalPackageCounter++;
 #ifdef USE_CONNECTED_UDP
     if (m_pSocket->write(m_abyTodo.data(),len)<0)
 #else
     if (m_pSocket->writeDatagram(m_abyTodo.data(),len,m_Target,m_wPort)<0)
 #endif
     {
-      if (m_pSocket->error()==QAbstractSocket::DatagramTooLargeError && m_iMaxDatagramSize>=16)
-      {
-	m_iMaxDatagramSize>>=1;
-	continue;
-      }
-      break;
+		MSG_DEBUG << "UDP Server: Can't send the data";
+        if (m_pSocket->error()==QAbstractSocket::DatagramTooLargeError && m_iMaxDatagramSize>=16)
+        {
+			m_iMaxDatagramSize>>=1;
+			continue;
+		}
+		break;
     }
     m_abyTodo.remove(0,len);
-    iLength-=len;
-    if (!bForce && iLength<m_iMaxDatagramSize) break;
+    iLength-=uiMaxSendableDatagramSize;
   }
+  m_abyTodo.clear();
 }
 
 //! an UDP socket is able to receive data; discard it!

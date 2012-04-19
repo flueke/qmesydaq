@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,16 +20,15 @@
 #ifndef MSTD_16_H
 #define MSTD_16_H
 
-#include <QString>
-
+#include "libqmesydaq_global.h"
 #include "mpsd8.h"
 
 /**
  * \short representation of MSTD-16 peripheral module 
  *
- * \author Jens Krüger <jens.krueger@frm2.tum.de>
+ * \author Jens Krï¿½ger <jens.krueger@frm2.tum.de>
  */
-class MSTD16 : public MPSD8
+class LIBQMESYDAQ_EXPORT MSTD16 : public MPSD8
 {
 Q_OBJECT
 public:

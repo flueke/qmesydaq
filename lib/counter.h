@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,17 +20,17 @@
 #ifndef COUNTER_H
 #define COUNTER_H
 
+#include <QObject>
 #include <QQueue>
-#include <QTime>
-#include <QTimer>
 
+#include "libqmesydaq_global.h"
 #include "mdefines.h"
 
 /**
  * \short Software counter
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class MesydaqCounter : public QObject
+class LIBQMESYDAQ_EXPORT MesydaqCounter : public QObject
 {
 Q_OBJECT
 
@@ -166,7 +166,7 @@ private:
  * \short Software timer
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class MesydaqTimer : public MesydaqCounter
+class LIBQMESYDAQ_EXPORT MesydaqTimer : public MesydaqCounter
 {
 Q_OBJECT
 public:
