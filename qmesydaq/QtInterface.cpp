@@ -19,12 +19,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#include "QtInterface.h"
-
-#include "QApplication"
-#include"LoopObject.h"
+#include <QApplication>
 #include <QDateTime>
+#include "QtInterface.h"
+#include "LoopObject.h"
 
 /*!
     constructor
