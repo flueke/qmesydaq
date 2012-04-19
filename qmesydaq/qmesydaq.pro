@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.2.2
+VERSION		= 0.2.3
 
 include(../qmesydaqconfig.pri)
 
