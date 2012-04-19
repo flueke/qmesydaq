@@ -21,8 +21,6 @@
 #define __CHANNEL_SPIN_BOX_H
 
 #include <QSpinBox>
-#include <QList>
-#include <QValidator>
 
 /**
  * \short Spinbox to select one of the channels over all modules 
