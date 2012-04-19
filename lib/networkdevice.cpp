@@ -20,8 +20,6 @@
 #include <QSocketNotifier>
 #include <QUdpSocket>
 #include <QThread>
-#include <QMetaType>
-
 #include "networkdevice.h"
 #include "mdefines.h"
 #include "logging.h"
