@@ -33,7 +33,6 @@
 #include <QDateTime>
 #include <QFile>
 #include <QDebug>
-#include <stdio.h>
 #include <iostream>
 #include "logging.h"
 
