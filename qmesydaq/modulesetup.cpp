@@ -17,9 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#include <QFileDialog>
-
 #include "mdefines.h"
 #include "modulesetup.h"
 #include "mesydaq2.h"
@@ -138,7 +135,11 @@ void ModuleSetup::setThresholdSlot()
 */
 void ModuleSetup::readRegisterSlot()
 {
-#warning TODO display read values
+#if defined(_MSC_VER)
+#	pragma message("TODO display read values")
+#else
+#	warning TODO display read values
+#endif
     quint16 id = (quint16) devid->value();
     quint16 addr = module->value();
     quint16 reg = registerSelect->value();
