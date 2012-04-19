@@ -23,6 +23,9 @@
 #include <QDateTime>
 #include "QtInterface.h"
 #include "LoopObject.h"
+#if defined(_MSC_VER)
+	#include "stdafx.h"
+#endif
 
 /*!
     constructor
