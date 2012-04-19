@@ -22,13 +22,6 @@
 #define _MAINWINDOW_H_
 
 #include <QMainWindow>
-#include <QFile>
-#include <QDataStream>
-#include <QTextStream>
-#include <QString>
-#include <QTimer>
-#include <QLabel>
-#include <QApplication>
 
 #include "ui_mainwindow.h"
 
