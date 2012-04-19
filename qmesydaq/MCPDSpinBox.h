@@ -21,8 +21,6 @@
 #define __MCPD_SPIN_BOX_H
 
 #include <QSpinBox>
-#include <QList>
-#include <QValidator>
 
 /**
  * \short Spinbox to select one of the connected MPSD modules 
