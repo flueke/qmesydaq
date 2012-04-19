@@ -20,7 +20,6 @@
 #ifndef MCPD_SETUP_H
 #define MCPD_SETUP_H
 
-#include <QDialog>
 #include "ui_mcpdsetup.h"
 
 class Mesydaq2;
