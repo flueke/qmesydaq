@@ -24,13 +24,10 @@
 #endif
 
 #include "QMesydaqDetectorInterface.h"
-
 #include "CommandEvent.h"
 #include "LoopObject.h"
 #include "mapcorrect.h"
 
-#include <iostream>
-#include <QThread>
 
 /*!
     constructor

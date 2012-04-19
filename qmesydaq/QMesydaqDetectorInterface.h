@@ -24,7 +24,6 @@
 #define MESYDAQ_DETECTOR_INTERFACE_H
 
 #include <QMutex>
-
 #include "QtInterface.h"
 #include "CommandEvent.h"
 
