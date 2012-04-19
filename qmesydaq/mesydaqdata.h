@@ -21,8 +21,6 @@
 #ifndef MESYDAQ_DATA_H
 #define MESYDAQ_DATA_H
 
-#include <QVector>
-
 #include <qwt_data.h>
 #include <qwt_raster_data.h>
 #include <qwt_plot_spectrogram.h>
