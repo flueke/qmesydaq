@@ -20,7 +20,6 @@
 #include "mcpd8.h"
 #include "mpsd8.h"
 #include "mdefines.h"
-#include <QDebug>
 #include "logging.h"
 
 /*!
