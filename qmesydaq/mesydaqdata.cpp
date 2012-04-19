@@ -17,11 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#include <QDebug>
 #include <qwt_color_map.h>
 #include <qwt_scale_map.h>
-
 #include "mesydaqdata.h"
 #include "histogram.h"
 
