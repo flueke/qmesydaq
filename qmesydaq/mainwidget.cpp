@@ -17,37 +17,16 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <QPushButton>
-#include <QComboBox>
-#include <QSpinBox>
-#include <QLineEdit>
-#include <QCheckBox>
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QPainter>
-#include <QPen>
-#include <QRadioButton>
-#include <QHostAddress>
-#include <QTimer>
+#include <QPrinter>
 #include <QPrintDialog>
 #include <QSvgGenerator>
-#include <QCoreApplication>
-#include <QSettings>
-
-#include <QDebug>
-
 #include <qwt_plot_curve.h>
 #include <qwt_plot_zoomer.h>
-#include <qwt_plot_layout.h>
-#include <qwt_plot_spectrogram.h>
 #include <qwt_scale_widget.h>
 #include <qwt_color_map.h>
 #include <qwt_scale_engine.h>
-
-#include <cmath>
-#include <cstdlib>
-#include <iostream>
-
 #include "mainwidget.h"
 #include "mdefines.h"
 #include "measurement.h"
@@ -63,6 +42,9 @@
 #include "modulesetup.h"
 #include "mcpdsetup.h"
 #include "logging.h"
+#if defined(_MSC_VER)
+	#include "stdafx.h"
+#endif
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -132,9 +114,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(moduleStatus7, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
     connect(moduleStatus7, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
 
-    versionLabel->setText("QMesyDAQ " + QString(VERSION) + "\n" __DATE__);
+    versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
 
-		connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
+    connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
     connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
     connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
     connect(this, SIGNAL(redraw()), this, SLOT(draw()));
@@ -507,7 +489,11 @@ void MainWidget::startStopSlot(bool checked)
 */
 void MainWidget::setStreamSlot()
 {
-#warning TODO implementation is missing 
+#if defined(_MSC_VER)
+#	pragma message("TODO implementation is missing ")
+#else
+#	warning TODO implementation is missing 
+#endif
 #if 0
     unsigned short id = (unsigned short) deviceId->value();
     m_cmdBuffer[0] = mcpdId->value();

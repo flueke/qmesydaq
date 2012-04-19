@@ -20,7 +20,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QPrinter>
+#include <QWidget>
 #include "ui_mainwidget.h"
 
 class QwtPlotCurve;
