@@ -16,9 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #include "MCPDSpinBox.h"
-#include <QDebug>
 
 /*!
     \fn MCPDSpinBox::MCPDSpinBox(QList<int> modules, QWidget *parent)
