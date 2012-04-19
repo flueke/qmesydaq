@@ -17,10 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#include <QFileDialog>
-#include <QDebug>
-
 #include "mdefines.h"
 #include "mcpdsetup.h"
 #include "mesydaq2.h"
