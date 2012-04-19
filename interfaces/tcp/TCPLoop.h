@@ -22,7 +22,7 @@
 #ifndef TCPLOOP_H
 #define TCPLOOP_H
 
-#include "LoopObject.h"
+#include <LoopObject.h>
 
 class QtInterface;
 class RemoteServer;

@@ -26,9 +26,6 @@
 #include <QApplication>
 #include <QDebug>
 
-#include <API.h>
-#include <private/ApiP.h>
-
 #include "CommandEvent.h"
 
 TCPLoop::TCPLoop(QtInterface *interface)
