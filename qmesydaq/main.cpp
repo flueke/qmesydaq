@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,12 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#include <iostream>
-
 #include <QSplashScreen>
 #include <QPlastiqueStyle>
-#include <QDebug>
 #include <QSettings>
 #include "logging.h"
 
@@ -51,8 +47,27 @@ const char* g_szLongUsage =
 #include "MultipleLoopApplication.h"
 #include "mainwindow.h"
 
+#if defined(_MSC_VER)
+	#include <io.h>
+	#include <FCNTL.H>
+	#include <Windows.h>
+#endif
+
 int main(int argc, char **argv)
 {
+#if defined(_MSC_VER)
+	//Open the Console
+	int hCrt;
+	FILE *hf;
+
+	AllocConsole();
+
+	hCrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
+	hf = _fdopen( hCrt, "w" );
+	*stdout = *hf;
+	setvbuf(stdout, NULL, _IONBF, 0);
+#endif
+
 	MultipleLoopApplication app(argc, argv);
 	QStringList argList = app.arguments();
 	LoopObject *loop = NULL;
