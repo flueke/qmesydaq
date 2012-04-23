@@ -35,6 +35,7 @@ class Spectrum;
 class MapCorrection;
 class MappedHistogram;
 class Mesydaq2;
+class QTextStream;
 
 /**
  * \short representation of a measurement

@@ -62,6 +62,7 @@
 #include <QDebug>
 #include <QStringList>
 #include <QMutexLocker>
+#include <QTime>
 
 // omniORB needs to know the platform as define __??__
 #if defined(__amd64) || defined(__amd64__) || defined(amd64) || defined(__x86_64)

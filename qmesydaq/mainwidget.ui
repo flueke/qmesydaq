@@ -1451,8 +1451,6 @@ Listfile</string>
     </layout>
    </item>
   </layout>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>horizontalLayoutWidget_2</zorder>
   <zorder>displayTabWidget</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

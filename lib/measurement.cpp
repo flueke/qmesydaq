@@ -21,6 +21,7 @@
 #include <QTimerEvent>
 #include <QCoreApplication>
 #include <QStringList>
+#include <QUdpSocket>
 #include "measurement.h"
 #include "mdefines.h"
 #include "histogram.h"

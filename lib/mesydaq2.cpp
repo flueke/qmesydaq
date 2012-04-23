@@ -21,6 +21,7 @@
 #include <QStringList>
 #include "mdefines.h"
 #include "mesydaq2.h"
+#include "datarepeater.h"
 #include "mcpd8.h"
 #include "logging.h"
 
@@ -48,6 +49,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	moveToThread(m_pThread);
 	connect(m_pThread,SIGNAL(finished()),this,SLOT(threadExit()),Qt::DirectConnection);
 	m_pThread->start(QThread::HighestPriority);
+	m_pDatSender = new DataRepeater;
 }
 
 //! destructor
@@ -56,6 +58,7 @@ Mesydaq2::~Mesydaq2()
 	m_pThread->quit();
 	m_pThread->wait();
 	delete m_pThread;
+	delete m_pDatSender;
 }
 
 void Mesydaq2::threadExit()
@@ -267,7 +270,7 @@ void Mesydaq2::writeListfileHeader(void)
 		txtStr << QString("mesytec psd listmode data\n");
 		txtStr << QString("header length: %1 lines \n").arg(2);
 
-		m_datSender.WriteData(QByteArray("DATA\n"));
+		m_pDatSender->WriteData(QByteArray("DATA\n"));
 	}
 	else
 	{
@@ -290,7 +293,7 @@ void Mesydaq2::writeListfileHeader(void)
 		header1.append(header2);
 		if (m_datfile.isOpen())
 			m_datfile.write(header1);
-		m_datSender.WriteData(header1);
+		m_pDatSender->WriteData(header1);
 	}
 }
 
@@ -309,7 +312,7 @@ void Mesydaq2::writeHeaderSeparator(void)
 	const unsigned short awBuffer[]={sep0,sep5,sepA,sepF};
 	if (m_datfile.isOpen())
 		m_datStream << sep0 << sep5 << sepA << sepF;
-	//m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
+	//m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer));
 }
 
 
@@ -327,7 +330,7 @@ void Mesydaq2::writeBlockSeparator(void)
 	const unsigned short awBuffer[]={sep0,sepF,sep5,sepA};
 	if (m_datfile.isOpen())
 		m_datStream << sep0 << sepF << sep5 << sepA;
-	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer));
+	m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer));
 }
 
 
@@ -343,7 +346,7 @@ void Mesydaq2::writeClosingSignature(void)
 	const unsigned short awBuffer[]={sepF,sepA,sep5,sep0};
 	if (m_datfile.isOpen())
 		m_datStream << sepF << sepA << sep5 << sep0;
-	m_datSender.WriteData(&awBuffer[0],sizeof(awBuffer), true);
+	m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer), true);
 }
 
 /*!
@@ -462,10 +465,10 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 {
 	settings.beginGroup("MESYDAQ");
 	settings.setValue("listmode", m_acquireListfile ? "true" : "false");
-	settings.setValue("repeatersource",m_datSender.GetSource().toString());
-	settings.setValue("repeatertarget",m_datSender.GetTarget().toString());
-	settings.setValue("repeaterport",m_datSender.GetPort());
-	settings.setValue("repeaterenable",m_datSender.GetEnabled() ? "true" : "false");
+	settings.setValue("repeatersource",m_pDatSender->GetSource().toString());
+	settings.setValue("repeatertarget",m_pDatSender->GetTarget().toString());
+	settings.setValue("repeaterport",m_pDatSender->GetPort());
+	settings.setValue("repeaterenable",m_pDatSender->GetEnabled() ? "true" : "false");
 	settings.endGroup();
 	
 	int i = 0;
@@ -557,10 +560,10 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 	settings.beginGroup("MESYDAQ");
 	m_acquireListfile = settings.value("listmode", "true").toBool();
-	m_datSender.SetSource(settings.value("repeatersource", "").toString());
-	m_datSender.SetTarget(settings.value("repeatertarget", "").toString(),
-			      settings.value("repeaterport",m_datSender.DEFAULTPORT).toUInt());
-	m_datSender.SetEnabled(settings.value("repeaterenable", "false").toBool());
+	m_pDatSender->SetSource(settings.value("repeatersource", "").toString());
+	m_pDatSender->SetTarget(settings.value("repeatertarget", "").toString(),
+			      settings.value("repeaterport",m_pDatSender->DEFAULTPORT).toUInt());
+	m_pDatSender->SetEnabled(settings.value("repeaterenable", "false").toBool());
 	settings.endGroup();
 
 	QStringList mcpdList = settings.childGroups().filter("MCPD");
@@ -1416,7 +1419,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 			for(quint16 i = 4; i < pd.bufferLength; i++)
 				m_datStream << pD[i];
 		}
-		m_datSender.WriteData(&pd,pd.bufferLength, true);
+		m_pDatSender->WriteData(&pd,pd.bufferLength, true);
 		writeBlockSeparator();
 //		MSG_DEBUG << "------------------";
 		MSG_DEBUG << "buffer : length : " << pd.bufferLength << " type : " << pd.bufferType;

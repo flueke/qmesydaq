@@ -28,11 +28,11 @@
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
-#include "datarepeater.h"
 
 #include "mcpd8.h"
 
 class MPSD8;
+class DataRepeater;
 
 /**
  * \short Mesydaq DAQ object (without any graphical frontend)
@@ -296,7 +296,7 @@ private:
 
 	QFile		m_datfile;
 	QDataStream	m_datStream;
-	DataRepeater	m_datSender;
+	DataRepeater*	m_pDatSender;
 
 	quint8  	m_timingwidth;
 //	int 		m_checkTimer;
