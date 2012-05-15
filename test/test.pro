@@ -4,5 +4,5 @@
 
 TEMPLATE 	= subdirs
 TARGET 		= 
-SUBDIRS	 	+= listfile dummy
+SUBDIRS	 	+= listfile dummy mapping
 
