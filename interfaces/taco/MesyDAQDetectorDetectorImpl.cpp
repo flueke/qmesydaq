@@ -103,6 +103,7 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 	static std::vector<DevULong> tmp;
 	logStream->infoStream() << "MesyDAQ::Detector::Detector::read()" << log4cpp::eol;
 
+	tmp.clear();
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 	QList<quint32> tmpList = m_interface->read();
