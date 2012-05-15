@@ -517,7 +517,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		{
 //			if (value->getMpsdId(j))
 			{
-				QString moduleName = QString("MODULE-%1").arg(8 * (i + 1) + j);
+				QString moduleName = QString("MODULE-%1").arg(8 * i + j);
 				
 				settings.beginGroup(moduleName);
 				settings.setValue("id", i * 8 + j);
