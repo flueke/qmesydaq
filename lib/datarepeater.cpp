@@ -300,7 +300,7 @@ void DataRepeater::SendDatagram(bool bForce)
         len=m_iMaxDatagramSize;
 	}
 	//Add UDP package number to datagram
-	m_abyTodo = m_abyTodo.insert(0, (char*)&m_globalPackageCounter, sizeof(m_globalPackageCounter));
+	m_abyTodo = m_abyTodo.insert(0, QByteArray((const char*)&m_globalPackageCounter, sizeof(m_globalPackageCounter)));
 	m_globalPackageCounter++;
 #ifdef USE_CONNECTED_UDP
     if (m_pSocket->write(m_abyTodo.data(),len)<0)
