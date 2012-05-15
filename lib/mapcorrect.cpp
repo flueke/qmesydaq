@@ -39,7 +39,7 @@
     \param src source mapping
  */
 MapCorrection::MapCorrection(const MapCorrection& src)
-		: QObject()
+    : QObject()
     , m_bNoMapping(src.m_bNoMapping)
     , m_iOrientation(src.m_iOrientation)
     , m_iCorrection(src.m_iCorrection)
@@ -335,7 +335,7 @@ void MapCorrection::mirrorHorizontal()
 }
 
 /*!
-    rotate mapping data counter clockwise
+ rotate mapping data counter clockwise
  \verbatim
  example (3*4 block):				| x  y	      x  y
 					      --+------      ------
@@ -448,7 +448,7 @@ void MapCorrection::rotateRight()
     \param pHistogram     pointer to existing source histogram or NULL
  */
 MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram /*= NULL*/)
-		: QObject()
+    : QObject()
     , m_iWidth(0)
     , m_iHeight(0)
     , m_pMapCorrection(NULL)
@@ -465,7 +465,7 @@ MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHist
     \param src
  */
 MappedHistogram::MappedHistogram(const MappedHistogram &src)
-		: QObject()
+    : QObject()
     , m_iWidth(src.m_iWidth)
     , m_iHeight(src.m_iHeight)
     , m_pMapCorrection(src.m_pMapCorrection)

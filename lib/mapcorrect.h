@@ -73,7 +73,7 @@ public:
 
     //! default constructor
     MapCorrection() 
-			: QObject()
+      : QObject()
       , m_bNoMapping(false)
       , m_iOrientation(MapCorrection::OrientationUp)
       , m_iCorrection(MapCorrection::CorrectSourcePixel)
@@ -92,9 +92,9 @@ public:
         \param iCorrection
      */
     MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-			: QObject()
+        : QObject()
     { 
-         initialize(size.width(), size.height(), iOrientation, iCorrection); 
+        initialize(size.width(), size.height(), iOrientation, iCorrection); 
     }
 
     //! destructor
