@@ -82,7 +82,7 @@ MapCorrection parseCaressMapCorrection(const char* pMapping, int iLength, int iS
   \param[in] mapping    textual mapping line from CARESS
   \param[in] iSrcWidth  width of source histogram
   \param[in] iSrcHeight height of source histogram
-  \param[in] iDstSidth  width of mapped histogram
+  \param[in] iDstWidth  width of mapped histogram
   \param[in] iDstHeight height of mapped histogram
   \return new MapCorrection which may be used with QMesyDAQ
  */
