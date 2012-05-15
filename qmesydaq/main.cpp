@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 		if (szArgument.indexOf('=')>=0)
 		{
 			int iPos=szArgument.indexOf('=');
-			szParameter=szArgument.mid(iPos);
+			szParameter=szArgument.mid(iPos + 1);
 			szArgument.remove(iPos,szArgument.size()-iPos);
 		}
 		else
