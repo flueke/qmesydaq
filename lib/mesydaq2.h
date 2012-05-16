@@ -128,6 +128,20 @@ public:
 
 	quint8 getMpsdId(quint16 mod, quint8 addr);
 
+	quint8 getMdllId(quint16 mod);
+
+	quint8 getMdllDataset(quint16 id);
+
+	quint16 getMdllTimingWindow(quint16 id, quint8 val);
+
+	quint8 getMdllEnergyWindow(quint16 id, quint8 val);
+
+	quint8 getMdllSpectrum(quint16 id, quint8 val);
+
+	quint8 getMdllThresholds(quint16 id, quint8 val);
+
+	quint8 getMdllPulser(quint16 id, quint8 val);
+
 	QString getMpsdType(quint16 mod, quint8 addr);
 
 	float getMpsdVersion(quint16 mod, quint8 addr);
@@ -234,7 +248,19 @@ public slots:
 
 	void setThreshold(quint16 mod, quint8 addr, quint16 thresh);
 
-    	void acqListfile(bool yesno);
+	void setMdllThresholds(quint16 mod, quint8 threshX, quint8 threshY, quint8 threshA);
+
+	void setMdllSpectrum(quint16 mod, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY);
+
+	void setMdllPulser(quint16 mod, quint8 on, quint8 amp, quint8 pos);
+
+	void setMdllDataset(quint16 mod, quint8 set);
+
+	void setMdllTimingWindow(quint16 mod, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi);
+
+	void setMdllEnergyWindow(quint16 mod, quint8 elo, quint8 ehi);
+
+	void acqListfile(bool yesno);
 
 	//! \return stream the data into a separate file too
 	bool acqListfile() const { return m_acquireListfile; }

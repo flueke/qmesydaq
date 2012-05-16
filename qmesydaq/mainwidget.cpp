@@ -40,6 +40,7 @@
 #include "modulewizard.h"
 #include "mapcorrect.h"
 #include "modulesetup.h"
+#include "mdllsetup.h"
 #include "mcpdsetup.h"
 #include "logging.h"
 #if defined(_MSC_VER)
@@ -1471,6 +1472,31 @@ void MainWidget::setupModule(quint8 id)
 void MainWidget::setupModule(void)
 {
     ModuleSetup d(m_theApp, this);
+    d.exec();
+}
+
+/*!
+    \fn void MainWidget::setupMdll(quint8)
+
+    opens the dialog to handle the a distinct MDLL module setup
+
+    \param id module id of the currently select MCPD
+ */
+void MainWidget::setupMdll(quint8 id)
+{
+    MdllSetup d(m_theApp, this);
+//  d.setMCPD(devid_2->value());
+    d.exec();
+}
+
+/*!
+    \fn void MainWidget::setupMdll()
+
+    opens the dialog to handle the MPSD Module setup
+*/
+void MainWidget::setupMdll(void)
+{
+    MdllSetup d(m_theApp, this);
     d.exec();
 }
 

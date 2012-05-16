@@ -40,7 +40,7 @@
 bool MCPDMDLL::setThreshold(quint8 x, quint8 y, quint8 amp)
 {
 	MSG_NOTICE << "Set threshholds to x=" << x << ", y=" << y << ", and amp=" << amp << '.';
-	initCmdBuffer(SETDLLTHRESHS);
+	initCmdBuffer(SETMDLLTHRESHS);
 	setBuffer(0, x);
 	setBuffer(1, y);
 	setBuffer(2, amp);
@@ -70,7 +70,7 @@ bool MCPDMDLL::setThreshold(quint8 x, quint8 y, quint8 amp)
 bool MCPDMDLL::setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 {
 	MSG_NOTICE << "Set spectrum to shift(" << shiftX << ", " << shiftY << ") and scale(" << scaleX << ", " << scaleY << ").";
-	initCmdBuffer(SETDLLSPECTRUM);
+	initCmdBuffer(SETMDLLSPECTRUM);
 	setBuffer(0, shiftX);
 	setBuffer(1, shiftY);
 	setBuffer(2, scaleX);
@@ -100,7 +100,7 @@ bool MCPDMDLL::setHistogram(quint8 previewSize, quint16 previewRate, quint8 size
 {
 	MSG_NOTICE << "Set histgram to preview size = " << previewSize << ", previewRate = " << previewRate << ", size = "
 						 << size << ", and type = " << type << ").";
-	initCmdBuffer(SETDLLHIST);
+	initCmdBuffer(SETMDLLHIST);
         setBuffer(0, previewSize);
         setBuffer(1, previewRate);
         setBuffer(2, size);
@@ -130,7 +130,7 @@ bool MCPDMDLL::setHistogram(quint8 previewSize, quint16 previewRate, quint8 size
 */
 bool MCPDMDLL::setMode(quint8 mode)
 {
-	initCmdBuffer(SETDLLMODE);
+	initCmdBuffer(SETMDLLMODE);
 	setBuffer(0, mode);
 	finishCmdBuffer(1);
 #if 0

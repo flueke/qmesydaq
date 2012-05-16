@@ -32,7 +32,7 @@ INSTALLS	= target
 # CARESS	work as CARESS server
 # TCP		work as TCP server
 #
-INTERFACE	= TACO
+INTERFACE	=
 
 target.path	= /usr/local
 
@@ -44,8 +44,8 @@ CONFIG		+= debug
 # QMAKE_CXXFLAGS	+= -fstack-check
 # QMAKE_LFLAGS	+= --stack=0x1000000
 
-QWT_ROOT 	= /usr/local/qwt5
-QWTLIB		= qwt
+QWT_ROOT 	= /usr/local/qwt-5.2.1
+QWTLIB		= qwt-qt4
 
 # additional debug messages for QMesyDAQDetectorInterface and CARESS interface
 #DEFINES         += DEBUGBUILD
@@ -65,13 +65,13 @@ else {
 
 QWTLIBS		+= -l$${QWTLIB}
 
-INCLUDEPATH 	+= $${QWT_ROOT}/include
-DEPENDPATH  	+= $${QWT_ROOT}/include
+INCLUDEPATH 	+= /usr/include/qwt-qt4
+DEPENDPATH  	+= /usr/include/qwt-qt4
 LIBS        	+= $${QWTLIBS} -L../lib -lmesydaq
 
 contains(INTERFACE, TACO) {
 	DEFINES		+= HAVE_CONFIG_H 
-	DEFINES		+= USE_TACO=1
+        DEFINES		+= USE_TACO=1
 	TACO_ROOT	= /opt/taco
 
 	contains(CONFIG, bit64) {

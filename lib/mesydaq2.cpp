@@ -1,5 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2008, 2012                                              *
+ *                      by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -356,7 +357,7 @@ void Mesydaq2::writeClosingSignature(void)
 
     \return number of bins
  */
-quint16 Mesydaq2::width()
+quint16 Mesydaq2::width(void)
 {
 	quint16 bins(0);
 	foreach(MCPD8 *value, m_mcpd) 
@@ -372,7 +373,7 @@ quint16 Mesydaq2::width()
 
     \return maximum number of channel
  */
-quint16 Mesydaq2::height()
+quint16 Mesydaq2::height(void)
 {
 	QList<quint16> modList;
 	quint16 n(0);
@@ -513,6 +514,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		}
 		settings.endGroup();
 
+		// MPSD part
 		for (int j = 0; j < 8; ++j)
 		{
 //			if (value->getMpsdId(j))
@@ -531,6 +533,33 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 				settings.endGroup();
 			}
 		}
+
+		// MDLL part
+		settings.beginGroup("MDLL");
+		settings.setValue("id", 0);
+
+		settings.setValue("threshX", value->getMdllThreshold(0));
+		settings.setValue("threshY", value->getMdllThreshold(1));
+		settings.setValue("threshA", value->getMdllThreshold(2));
+
+
+		settings.setValue("shiftX", value->getMdllSpectrum(0));
+		settings.setValue("shiftY", value->getMdllSpectrum(1));
+		settings.setValue("scaleX", value->getMdllSpectrum(2));
+		settings.setValue("scaleY", value->getMdllSpectrum(3));
+
+		settings.setValue("tWinXLo", value->getMdllTimingWindow(0));
+		settings.setValue("tWinXHi", value->getMdllTimingWindow(1));
+		settings.setValue("tWinYLo", value->getMdllTimingWindow(2));
+		settings.setValue("tWinYHi", value->getMdllTimingWindow(3));
+
+		settings.setValue("eWinLo", value->getMdllEnergyWindow(0));
+		settings.setValue("eWinHi", value->getMdllEnergyWindow(1));
+
+		settings.setValue("dataSet", value->getMdllDataset());
+
+		settings.endGroup();
+
 		++i;
 	}
 	return true;
@@ -614,7 +643,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			setAuxTimer(iId, j, settings.value(QString("auxtimer%1").arg(j), "0").toUInt());
 			setParamSource(iId, j, settings.value(QString("paramsource%1").arg(j), QString("%1").arg(j)).toUInt());
 		}
-		
+
 //		m_mcpd[iId]->setActive(loadSetupBoolean(pSection, szPrefix + "active", true));
 //		m_mcpd[iId]->setHistogram(loadSetupBoolean(pSection, szPrefix + "histogram", true));
 
@@ -678,6 +707,59 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 				for (int k = 0; k < 8; ++k)
 					setGain(iMCPDId, j, k, gains[k]);
 			setThreshold(iMCPDId, j, threshold);
+		}
+		settings.endGroup();
+	}
+
+	moduleList = settings.childGroups().filter("MDLL");
+	for (int i = 0; i < moduleList.size(); ++i)
+	{
+		settings.beginGroup(moduleList[i]);
+
+		int iId = settings.value("id", "-1").toInt();
+		if (iId < 0)
+		{
+		MSG_ERROR << tr("found no or invalid Module id").toStdString().c_str();
+		continue;
+		}
+
+		int iMCPDId = iId / 8;
+
+		int j = iId % 8;
+
+		if (getMdllId(iMCPDId))
+		{
+			quint8 	thresh[3], 
+				shift[2], 
+				scale[2], 
+				dataset, 
+				ewindow[2];
+			quint16 twindow[4];
+
+			thresh[0] = settings.value(QString("threshX"), "20").toUInt();
+			thresh[1] = settings.value(QString("threshY"), "20").toUInt();
+			thresh[2] = settings.value(QString("threshA"), "20").toUInt();
+			setMdllThresholds(iMCPDId, thresh[0], thresh[1], thresh[2]);
+
+			shift[0] = settings.value(QString("shiftX"), "100").toUInt();
+			shift[1] = settings.value(QString("shiftY"), "100").toUInt();
+			scale[0] = settings.value(QString("scaleX"), "48").toUInt();
+			scale[1] = settings.value(QString("scaleY"), "48").toUInt();
+			setMdllSpectrum(iMCPDId, shift[0], shift[1], scale[0], scale[1]);
+
+			twindow[0] = settings.value(QString("tWinXLo"), "100").toUInt();
+			twindow[1] = settings.value(QString("tWinXHi"), "1000").toUInt();
+			twindow[2] = settings.value(QString("tWinYLo"), "100").toUInt();
+			twindow[3] = settings.value(QString("tWinYHi"), "1000").toUInt();
+			setMdllTimingWindow(iMCPDId, twindow[0], twindow[1], twindow[2], twindow[3]);
+
+			ewindow[0] = settings.value(QString("eWinLo"), "20").toUInt();
+			ewindow[1] = settings.value(QString("eWinHi"), "240").toUInt();
+			setMdllEnergyWindow(iMCPDId, ewindow[0], ewindow[1]);
+
+			dataset = settings.value(QString("dataset"), "0").toUInt();
+			setMdllDataset(iMCPDId, dataset);
+
 		}
 		settings.endGroup();
 	}
@@ -1115,6 +1197,46 @@ void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 		m_mcpd[id]->setThreshold(addr, thresh);
 }
 
+void Mesydaq2::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, quint8 threshA)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMdllThresholds(threshX, threshY, threshA);
+}
+
+
+void Mesydaq2::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMdllSpectrum(shiftX, shiftY, scaleX, scaleY);
+}
+
+void Mesydaq2::setMdllPulser(quint16 id, quint8 on, quint8 amp, quint8 pos)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMdllPulser(on, amp, pos);
+}
+
+void Mesydaq2::setMdllDataset(quint16 id, quint8 set)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMdllDataset(set);
+}
+
+void Mesydaq2::setMdllTimingWindow(quint16 id, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMdllTimingWindow(xlo, xhi, ylo, yhi);
+}
+
+void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
+{
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setMdllEnergyWindow(elo, ehi);
+}
+
+
+
+
 /*!
     \fn quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 
@@ -1130,6 +1252,106 @@ quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMpsdId(addr);
 	return 0;
+}
+
+/*!
+    \fn quint8 Mesydaq2::getMdllId(quint16 id, quint8 addr)
+
+    get the detected ID of the MDLL. If MDLL not exists it will return 0.
+
+    \param id number of the MCPD
+    \param addr module number
+    \return module ID (type)
+    \see readId
+ */
+quint8 Mesydaq2::getMdllId(quint16 id)
+{
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMdllId();
+	return 0;
+}
+
+/*!
+    \fn quint8 Mesydaq2::getMdllDataset(quint16 id)
+
+    get dataset setting of the MDLL. E, X, Y / E, tX, tY
+
+    \param id number of the MCPD
+    \return dataset
+ */
+quint8 Mesydaq2::getMdllDataset(quint16 id)
+{
+	return m_mcpd[id]->getMdllDataset();
+}
+
+/*!
+    \fn quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
+
+    get one of four timing window borders of the MDLL.
+
+    \param id number of the MCPD
+    \param requested value: txlo, txhi, tylo, tyhi (0...3)
+    \return border value
+ */
+quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
+{
+	return m_mcpd[id]->getMdllTimingWindow(val);
+}
+
+/*!
+    \fn quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
+
+    get one of two energy window borders of the MDLL.
+
+    \param id number of the MCPD
+    \param requested value: elo, ehi (0/1)
+    \return border value
+ */
+quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
+{
+	return m_mcpd[id]->getMdllEnergyWindow(val);
+}
+
+/*!
+    \fn quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
+
+    get one of four spectrum parameters of the MDLL.
+
+    \param id number of the MCPD
+    \param requested value: shiftX, shiftY, scaleX, scaleY (0...3)
+    \return spectrum value
+ */
+quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
+{
+	return m_mcpd[id]->getMdllSpectrum(val);
+}
+
+/*!
+    \fn quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
+
+    get one of three CFD thresholds of the MDLL.
+
+    \param id number of the MCPD
+    \param requested value: threshX, threshY, threshA (0...2)
+    \return threshold value
+ */
+quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
+{
+	return m_mcpd[id]->getMdllThreshold(val);
+}
+
+/*!
+    \fn quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
+
+    get one of three pulser parameters of the MDLL.
+
+    \param id number of the MCPD
+    \param requested value: On, Amplitude, Position (0...2)
+    \return pulser parameter
+ */
+quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
+{
+	return m_mcpd[id]->getMdllPulser(val);
 }
 
 /*!
@@ -1372,7 +1594,6 @@ void Mesydaq2::setRunId(quint16 runid)
  */
 void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 {
-	MSG_DEBUG << "Mesydaq2::analyzeBuffer(): " << m_daq;
 	if (m_daq == RUNNING)
 	{
 		quint16 mod = pd.deviceId;
@@ -1423,7 +1644,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 		writeBlockSeparator();
 //		MSG_DEBUG << "------------------";
 		MSG_DEBUG << "buffer : length : " << pd.bufferLength << " type : " << pd.bufferType;
-		if(pd.bufferType < 0x0002)
+		if(pd.bufferType < 0x0003)
 		{
 // extract parameter values:
 			for(quint8 i = 0; i < 4; i++)

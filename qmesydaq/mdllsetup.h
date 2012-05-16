@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009-2011 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,38 +17,43 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "mpsd8.h"
-#include "mstd16.h"
-#include "mdll.h"
+#ifndef MDLL_SETUP_H
+#define MDLL_SETUP_H
+
+#include <QDialog>
+#include "ui_mdllsetup.h"
+
+class Mesydaq2;
 
 /*!
-    \fn MPSD8 *MPSD8::create(int bus, int typ, QObject *parent)
+    \class MdllSetup
 
-    factory to create a module
+    \short This class handles the setup dialog for setting up the MPSD modules
 
-    \param bus
-    \param typ
-    \param parent
-  
-    \return pointer to new created module
- */   
-MPSD8 *MPSD8::create(int bus, int typ, QObject *parent)
+    \author Gregor Montermann <g.montermann@mesytec.com>
+ */
+class MdllSetup : public QDialog, public Ui_MdllSetup
 {
-	switch (typ)
-	{
-		case TYPE_MPSD8P :
-			return new MPSD8plus(bus, parent);
-		case TYPE_MPSD8OLD:
-			return new MPSD8old(bus, parent);
-		case TYPE_MPSD8SADC:
-			return new MPSD8SingleADC(bus, parent);
-		case TYPE_MPSD8 :
-			return new MPSD8(bus, parent);
-		case TYPE_MSTD16 :
-			return new MSTD16(bus, parent);
-//		case TYPE_MDLL :
-//			return new MDLL(bus, parent);
-		default :
-			return new NoModule(bus, parent);
-	}
-}
+	Q_OBJECT
+public:
+    MdllSetup(Mesydaq2 *, QWidget * = 0);
+
+public slots:
+	void setMCPD(int);
+
+private slots:
+	void setPulserSlot();
+
+	void displaySlot(int = -1);
+
+    void setTimingSlot();
+    void setThresholdsSlot();
+    void setEnergySlot();
+    void setSpectrumSlot();
+    void setDatasetSlot();
+
+private:
+	Mesydaq2	*m_theApp;
+
+};
+#endif

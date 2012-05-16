@@ -1,0 +1,1005 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MdllSetup</class>
+ <widget class="QDialog" name="MdllSetup">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>700</width>
+    <height>335</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Mdll setup</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_7">
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="textLabel1_4_2">
+       <property name="text">
+        <string>MCPD ID</string>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MCPDSpinBox" name="devid">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="maximum">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Data</string>
+      </attribute>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>10</y>
+         <width>141</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>select transmitted data</string>
+       </property>
+       <property name="title">
+        <string>Dataset</string>
+       </property>
+       <widget class="QRadioButton" name="posButton">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>111</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Energy, X and Y coordinate</string>
+        </property>
+        <property name="text">
+         <string>E, X, Y (default)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="timingButton">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>60</y>
+          <width>93</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>E, and timing sums for X and Y</string>
+        </property>
+        <property name="text">
+         <string>E, tX, tY</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="setDataset">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>140</y>
+          <width>90</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set Dataset</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>10</y>
+         <width>151</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>software &quot;window discriminator&quot; for timing sums</string>
+       </property>
+       <property name="title">
+        <string>Timing Window</string>
+       </property>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>51</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>tsum X</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>51</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>tsum Y</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="txlo">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 100, max 1000</string>
+        </property>
+        <property name="minimum">
+         <number>100</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="txhi">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>50</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 100, max 1000</string>
+        </property>
+        <property name="minimum">
+         <number>100</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="tylo">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>100</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 100, max 1000</string>
+        </property>
+        <property name="minimum">
+         <number>100</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="tyhi">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>100</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 100, max 1000</string>
+        </property>
+        <property name="minimum">
+         <number>100</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="setTimingWindow">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>140</y>
+          <width>90</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set timing</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>10</y>
+         <width>131</width>
+         <height>201</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>software &quot;window discriminator&quot; for energy</string>
+       </property>
+       <property name="title">
+        <string>Energy Window</string>
+       </property>
+       <widget class="QSpinBox" name="elo">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>50</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>101</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Lower Threshold</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="ehi">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>100</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>240</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>101</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Upper Threshold</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="setEnergyWindow">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>140</y>
+          <width>90</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set  E Window</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Hardware</string>
+      </attribute>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>131</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>Offset on timing delay, shifts spectrum
+Range of timing delay, scales spectrum</string>
+       </property>
+       <property name="title">
+        <string>Delay</string>
+       </property>
+       <widget class="QSpinBox" name="shiftX">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>40</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255, arb. units</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>X</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="shiftY">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>70</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255, arb. units</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label9">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>70</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="setDelay">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>170</y>
+          <width>90</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set Delay</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>41</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Offset</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="scaleX">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>110</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255, arb. units</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>48</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>110</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>X</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label8">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>140</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="scaleY">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>140</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255, arb. units</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>48</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>90</y>
+          <width>41</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Range</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>20</y>
+         <width>131</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>set Thresholds for X, Y and Anode CFDs</string>
+       </property>
+       <property name="title">
+        <string>CFD Thresholds</string>
+       </property>
+       <widget class="QSpinBox" name="threshX">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>40</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255, arb. units</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>X</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="threshY">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>70</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255, arb. units</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="shiftY_3">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>70</y>
+          <width>21</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="setCfd">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>170</y>
+          <width>90</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set CFDs</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="threshA">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>100</y>
+          <width>52</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>min 0, max 255, arb. units</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>100</y>
+          <width>41</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Anode</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Test Pulser</string>
+      </attribute>
+      <widget class="QCheckBox" name="pulserBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>71</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Pulser</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_6">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>10</y>
+         <width>201</width>
+         <height>221</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Pulser Settings</string>
+       </property>
+       <widget class="QPushButton" name="setPulser">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>180</y>
+          <width>90</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set Pulser</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>61</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Amplitude</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>80</y>
+          <width>61</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Position</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="pulsamp">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>50</y>
+          <width>101</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>25%</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>50%</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>75%</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>100%</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QComboBox" name="pulspos">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>80</y>
+          <width>101</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>upper right</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>middle</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>bottom left</string>
+         </property>
+        </item>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MCPDSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>MCPDSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>clicked(QAbstractButton*)</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>313</x>
+     <y>330</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>193</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulserBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBox_6</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>32</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>93</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>setTimingWindow</sender>
+   <signal>clicked()</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>setTimingSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>258</x>
+     <y>222</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>266</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>setEnergyWindow</sender>
+   <signal>clicked()</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>setEnergySlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>417</x>
+     <y>217</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>430</x>
+     <y>336</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>setCfd</sender>
+   <signal>clicked()</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>setThresholdsSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>347</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>setDelay</sender>
+   <signal>clicked()</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>setSpectrumSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>266</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>69</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>setDataset</sender>
+   <signal>clicked()</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>setDatasetSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>98</x>
+     <y>217</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>90</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pulserBox</sender>
+   <signal>clicked()</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>54</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>10</x>
+     <y>362</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>setPulser</sender>
+   <signal>clicked()</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>setPulserSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>252</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>189</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>devid</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MdllSetup</receiver>
+   <slot>displaySlot(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>450</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>displaySlot(int)</slot>
+  <slot>setMCPD(int)</slot>
+  <slot>setThresholdsSlot()</slot>
+  <slot>setTimingSlot()</slot>
+  <slot>setEnergySlot()</slot>
+  <slot>setSpectrumSlot()</slot>
+  <slot>setDatasetSlot()</slot>
+  <slot>setPulserSlot()</slot>
+ </slots>
+</ui>

@@ -60,7 +60,7 @@ struct DATA_PACKET
 	//! number of the packet 
 	quint16 bufferNumber;
 	//! the command number
-	//! the run ID 
+	//! the run ID
 	quint16 runID; // cmd;
 	//! the device state
 	quint8  deviceStatus;
@@ -111,8 +111,8 @@ typedef struct NeutronEvent
 typedef struct _MDLL_SETTINGS 
 {
 	quint8 id;
-	bool master;
-	bool terminate;
+//	bool master;
+//	bool terminate;
 
 	quint8 threshX;
 	quint8 threshY;
@@ -121,7 +121,8 @@ typedef struct _MDLL_SETTINGS
 	quint8 shiftY;
 	quint8 scaleX;
 	quint8 scaleY;
-    
+
+#if 0
 	quint8 mode;
 	quint8 previewHistsize;
 	quint16  previewHistrate;
@@ -134,7 +135,8 @@ typedef struct _MDLL_SETTINGS
 	quint16 eventCounter1;
 	quint16 eventLimit0;
 	quint16 eventLimit1;
-    
+#endif
+
 	quint16 tsumXlo;
 	quint16 tsumXhi;
 	quint16 tsumYlo;
@@ -146,8 +148,11 @@ typedef struct _MDLL_SETTINGS
     	
 	quint8 energyLow;
 	quint8 energyHi;
+
+#if 0
 	quint8 eScaleX;
 	quint8 eScaleY;
+#endif
 
 	quint8 counterCell[3][2];
 	quint16 auxTimer[4];
@@ -155,7 +160,7 @@ typedef struct _MDLL_SETTINGS
 } *P_MDLL_SETTING, MDLL_SETTING;
 
 //! structure for networksettings of MDLL
-typedef struct _MDLL_ADDRESS_SET 
+typedef struct _MDLL_ADDRESS_SET
 {
 	quint8 ip0;
 	quint8 ip1;

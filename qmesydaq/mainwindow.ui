@@ -64,6 +64,7 @@
     <addaction name="actionGeneral"/>
     <addaction name="menuMCPD"/>
     <addaction name="actionModule"/>
+    <addaction name="actionMdll"/>
    </widget>
    <addaction name="menu_Files"/>
    <addaction name="menu_Configuration"/>
@@ -160,6 +161,11 @@
   <action name="actionAddMCPD">
    <property name="text">
     <string>Add</string>
+   </property>
+  </action>
+  <action name="actionMdll">
+   <property name="text">
+    <string>MDLL</string>
    </property>
   </action>
  </widget>

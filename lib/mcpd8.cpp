@@ -74,6 +74,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
 
 	m_mpsd.clear();
+	m_mdll.clear();
 
 //	setId(m_id);
 	version();
@@ -101,8 +102,11 @@ MCPD8::~MCPD8()
  */
 bool MCPD8::init(void)
 {
-	int modus = TPA;
+    // only for MPSDs!
+	if(m_mdll.find(0) != m_mdll.end())
+        	return true;
 
+	int modus = TPA;
 	quint16 cap = capabilities();
 
 	MSG_NOTICE << "capabilities : " << cap;
@@ -117,9 +121,10 @@ bool MCPD8::init(void)
 			{
 				case TYPE_MPSD8P:
 					cap = capabilities(c);
-					MSG_NOTICE << "module : " << c << " capabilities : " << cap;
+					MSG_FATAL << "module : " << c << " capabilities : " << cap;
 					modus &= cap;
-					MSG_NOTICE << "modus : " << modus;
+//					MSG_NOTICE << "modus : " << modus;
+					MSG_FATAL << "modus : " << modus;
 					break;
 				default:
 					modus = P;
@@ -213,6 +218,23 @@ quint8 MCPD8::getMpsdId(quint8 addr)
 {
 	if (m_mpsd.contains(addr))
 		return m_mpsd[addr]->getMpsdId();
+	else
+		return 0;
+}
+
+/*!
+    \fn MCPD8::getMdllId(quint8 addr)
+
+    get the detected ID of the MDLL. If MDLL not exists it will return 0.
+
+    \param addr module number
+    \return module ID (type)
+    \see readId
+ */
+quint8 MCPD8::getMdllId()
+{
+	if (m_mdll.contains(0))
+        	return m_mdll[0]->getMdllId();
 	else
 		return 0;
 }
@@ -363,7 +385,7 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 	m_cmdBuf.data[0] = addr;
 	m_cmdBuf.data[1] = chan;
 	m_cmdBuf.data[2] = gainval;
-	MSG_INFO << "set gain to potival: " << m_cmdBuf.data[2];
+	MSG_FATAL << "set gain to potival: " << m_cmdBuf.data[2];
 	finishCmdBuffer(3);
 	return sendCommand();
 }
@@ -460,6 +482,90 @@ bool MCPD8::setThreshold(quint16 addr, quint8 thresh)
 }
 
 /*!
+    \fn bool MCPD8::setMdllThresholds(quint8 threshX, quint8 threshY, quint8 threshA)
+
+    set the threshold value as poti value
+
+    \param threshX threshold for the X CFD
+    \param threshY threshold for the Y CFD
+    \param threshA threshold for the A CFD
+    \return true if operation was succesful or not
+    \see getThresh
+ */
+bool MCPD8::setMdllThresholds(quint8 threshX, quint8 threshY, quint8 threshA)
+{
+	m_mdll[0]->setThresholds(threshX, threshY, threshA, 1);
+	initCmdBuffer(SETMDLLTHRESHS);
+	m_cmdBuf.data[0] = threshX;
+	m_cmdBuf.data[1] = threshY;
+	m_cmdBuf.data[2] = threshA;
+	finishCmdBuffer(3);
+	return sendCommand();
+}
+
+bool MCPD8::setMdllSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
+{
+	m_mdll[0]->setSpectrum(shiftX, shiftY, scaleX, scaleY, 1);
+	initCmdBuffer(SETMDLLSPECTRUM);
+	m_cmdBuf.data[0] = shiftX;
+	m_cmdBuf.data[1] = shiftY;
+	m_cmdBuf.data[2] = scaleX;
+	m_cmdBuf.data[3] = scaleY;
+	finishCmdBuffer(4);
+	return sendCommand();
+}
+
+bool MCPD8::setMdllDataset(quint8 set)
+{
+	m_mdll[0]->setDataset(set, true);
+	initCmdBuffer(SETMDLLDATASET);
+	m_cmdBuf.data[0] = set;
+	finishCmdBuffer(1);
+	return sendCommand();
+}
+
+
+bool MCPD8::setMdllTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
+{    
+	m_mdll[0]->setTimingWindow(xlo, xhi, ylo, yhi, 1);
+	initCmdBuffer(SETMDLLACQSET);
+	m_cmdBuf.data[0] = 0;
+	m_cmdBuf.data[1] = 0;
+	m_cmdBuf.data[2] = xlo;
+	m_cmdBuf.data[3] = xhi;
+	m_cmdBuf.data[4] = ylo;
+	m_cmdBuf.data[5] = yhi;
+	finishCmdBuffer(6);
+	return sendCommand();
+ }
+
+
+bool MCPD8::setMdllEnergyWindow(quint8 elo, quint8 ehi)
+{    
+	m_mdll[0]->setEnergyWindow(elo, ehi, 1);
+	initCmdBuffer(SETMDLLEWINDOW);
+	m_cmdBuf.data[0] = elo;
+	m_cmdBuf.data[1] = ehi;
+	m_cmdBuf.data[2] = 0;
+	m_cmdBuf.data[3] = 0;
+	finishCmdBuffer(4);
+	return sendCommand();
+ }
+
+bool MCPD8::setMdllPulser(quint8 on, quint8 amp, quint8 pos)
+{
+	m_mdll[0]->setPulser(pos, amp, on, 1);
+	initCmdBuffer(SETMDLLPULSER);
+	m_cmdBuf.data[0] = on;
+	m_cmdBuf.data[1] = amp;
+	m_cmdBuf.data[2] = pos;
+	finishCmdBuffer(3);
+	return sendCommand();
+}
+
+
+
+/*!
     \fn quint8 MCPD8::getThreshold(quint16 addr)
 
     get the threshold value as poti value
@@ -472,6 +578,64 @@ quint8 MCPD8::getThreshold(quint16 addr)
 {
 	if (m_mpsd.find(addr) != m_mpsd.end())
 		return m_mpsd[addr]->getThreshold(0);
+	return 0;
+}
+
+quint8 MCPD8::getMdllThreshold(quint8 val)
+{
+	if (m_mdll.find(0) != m_mdll.end())
+		return m_mdll[0]->getThreshold(val);
+	return 0;
+}
+
+quint8 MCPD8::getMdllSpectrum(quint8 val)
+{
+	if (m_mdll.find(0) != m_mdll.end())
+		return m_mdll[0]->getSpectrum(val);
+	return 0;
+}
+
+quint16 MCPD8::getMdllTimingWindow(quint8 val)
+{
+	if (m_mdll.find(0) != m_mdll.end())
+        	return m_mdll[0]->getTimingWindow(val);
+	return 0;
+}
+
+quint8 MCPD8::getMdllEnergyWindow(quint8 val)
+{
+	if (m_mdll.find(0) != m_mdll.end())
+        	return m_mdll[0]->getEnergyWindow(val);
+	return 0;
+}
+
+quint8 MCPD8::getMdllDataset(void)
+{
+	if (m_mdll.find(0) != m_mdll.end())
+        	return m_mdll[0]->getDataset();
+	return 0;
+}
+
+quint8 MCPD8::getMdllPulser(quint8 val)
+{
+	if (m_mdll.find(0) != m_mdll.end())
+	{
+		switch(val)
+		{
+			case 0:
+				if(m_mdll[0]->isPulserOn())
+					return 1;
+				else
+					return 0;
+				break;
+			case 1:
+				return m_mdll[0]->getPulsAmp();
+				break;
+			case 2:
+				return m_mdll[0]->getPulsPos();
+				break;
+		}
+	}
 	return 0;
 }
 
@@ -1056,7 +1220,7 @@ int MCPD8::sendCommand(void)
 {
 	if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
 	{
-		MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : " << m_cmdBuf.bufferNumber << ". sent cmd: "
+		MSG_FATAL << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : " << m_cmdBuf.bufferNumber << ". sent cmd: "
 							<< m_cmdBuf.cmd << " to id: " << m_cmdBuf.deviceId;
 // block other commands due to the writing on flash to avoid crashes on MCPD-8
 		if (m_cmdBuf.cmd == SETPROTOCOL)
@@ -1096,11 +1260,11 @@ quint16 MCPD8::calcChksum(const MDP_PACKET &buffer)
 
     \param recBuf data package
  */
-void MCPD8::analyzeBuffer(MDP_PACKET recBuf)
+void MCPD8::    analyzeBuffer(MDP_PACKET recBuf)
 {
 	if (recBuf.deviceId != m_id)
 	{
-		MSG_INFO << "deviceId : " << recBuf.deviceId << " <-> " << m_id;
+		MSG_FATAL << "deviceId : " << recBuf.deviceId << " <-> " << m_id;
 		return;
 	}
 
@@ -1125,6 +1289,8 @@ void MCPD8::analyzeBuffer(MDP_PACKET recBuf)
 //		MSG_DEBUG << tr("MCPD8::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd);
 		
 		MPSD8	*ptrMPSD;
+		MDLL    *ptrMDLL;
+
 		quint16 chksum = recBuf.headerChksum;
 		if (chksum != calcChksum(recBuf))
 			MSG_INFO << "cmd packet (cmd = " << recBuf.cmd << ", size = " << recBuf.bufferLength
@@ -1290,19 +1456,39 @@ void MCPD8::analyzeBuffer(MDP_PACKET recBuf)
 #	warning TODO if the configuration has changed
 #endif
 //! \todo if the configuration has changed
-				for(quint8 c = 0; c < 8; c++)
+				if(recBuf.data[0] == TYPE_MDLL)
 				{
-					QMap<int, MPSD8 *>::iterator it = m_mpsd.find(c);
-					if (it == m_mpsd.end())
+					QMap<int, MDLL *>::iterator it = m_mdll.find(0);
+					if (it == m_mdll.end())
 					{
-						m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
+						MSG_DEBUG << "new MDLL detected";
+						m_mdll[0] = MDLL::create(0, recBuf.data[0], this);
 					}
-					else if ((*it)->type() != recBuf.data[c])
+					else if ((*it)->type() != recBuf.data[0])
 					{
+						MSG_FATAL << "renewing MDLL";
 //						delete m_mpsd[c];
-						m_mpsd.remove(c);
-						if (recBuf.data[c] != 0)
+						m_mdll.remove(0);
+						if (recBuf.data[0] != 0)
+							m_mdll[0] = MDLL::create(0, recBuf.data[0], this);
+					}
+				}
+				else
+				{
+					for(quint8 c = 0; c < 8; c++)
+					{
+						QMap<int, MPSD8 *>::iterator it = m_mpsd.find(c);
+						if (it == m_mpsd.end())
+						{
 							m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
+						}
+						else if ((*it)->type() != recBuf.data[c])
+						{
+//							delete m_mpsd[c];
+							m_mpsd.remove(c);
+							if (recBuf.data[c] != 0)
+								m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
+						}
 					}
 				}
 				MSG_DEBUG << "READID finished";
@@ -1333,6 +1519,153 @@ void MCPD8::analyzeBuffer(MDP_PACKET recBuf)
 										<< ", is: " << recBuf.data[3] << ", should be: " << ptrMPSD->getPulsPoti(1);
 				}
 				ptrMPSD->setInternalreg(recBuf.data[1], recBuf.data[2], 0);			
+				break;
+// MDLL commands:
+			case SETMDLLTHRESHS:
+                		ptrMDLL = m_mdll[0];
+                		MSG_DEBUG << "MDLL command : SETMDLLTHRESHS";
+				{
+					quint8 thresh[3];
+					for(quint8 c = 0; c < 3; c++)
+					{
+						if (recBuf.data[c] != ptrMDLL->getThreshold(c))
+						{
+							MSG_ERROR << "Error setting threshold" << c << ", mod "
+                                            			<< (8 * recBuf.deviceId) << ", is: "
+                                            			<< recBuf.data[c] << ", should be: " << ptrMDLL->getThreshold(c);
+							// leave old threshold setting
+							thresh[c] = ptrMDLL->getThreshold(c);
+						}
+						else
+							thresh[c] = recBuf.data[c];
+					}
+					ptrMDLL->setThresholds(thresh[0], thresh[1], thresh[2], false);
+				}
+				break;
+			case SETMDLLSPECTRUM:
+				MSG_DEBUG << "MDLL command : SETMDLLSPECTRUM";
+				ptrMDLL = m_mdll[0];
+				{
+					quint8 spect[4];
+					for(quint8 c = 0; c < 4; c++)
+					{
+						if (recBuf.data[c] != ptrMDLL->getSpectrum(c))
+						{
+							MSG_ERROR << "Error setting spectrum" << c << ", mod "
+								<< (8 * recBuf.deviceId) << ", is: "
+								<< recBuf.data[c] << ", should be: " << ptrMDLL->getSpectrum(c);
+							// leave old spectrum setting
+							spect[c] = ptrMDLL->getSpectrum(c);
+						}
+						else
+							spect[c] = recBuf.data[c];
+					}
+					ptrMDLL->setSpectrum(spect[0], spect[1], spect[2], spect[3], false);
+				}
+				break;
+			case SETMDLLPULSER:
+				MSG_DEBUG << "MDLL command : SETMDLLPULSER";
+				ptrMDLL = m_mdll[0];
+				{
+					quint8 puls[3];
+
+					quint8 val = ptrMDLL->isPulserOn(true);
+					if(recBuf.data[0] != val)
+					{
+						MSG_ERROR << "Error switching pulser" << ", mod "
+							<< (8 * recBuf.deviceId) << ", is: "
+						<< recBuf.data[0] << ", should be: " << val;
+						// leave old threshold setting
+						puls[0] = ptrMDLL->isPulserOn(false);
+					}
+					else
+					puls[0] = recBuf.data[0];
+
+					if (recBuf.data[1] != ptrMDLL->getPulsAmp(true))
+					{
+						MSG_ERROR << "Error switching pulser" << ", mod "
+							<< (8 * recBuf.deviceId) << ", is: "
+							<< recBuf.data[1] << ", should be: " << ptrMDLL->getPulsAmp(true);
+						// leave old threshold setting
+						puls[1] = ptrMDLL->getPulsAmp(false);
+					}
+					else
+						puls[1] = recBuf.data[1];
+
+					if (recBuf.data[2] != ptrMDLL->getPulsPos(true))
+					{
+						MSG_ERROR << "Error switching pulser" << ", mod "
+							<< (8 * recBuf.deviceId) << ", is: "
+							<< recBuf.data[1] << ", should be: " << ptrMDLL->getPulsPos(true);
+						// leave old threshold setting
+						puls[2] = ptrMDLL->getPulsPos(false);
+					}
+					else
+						puls[2] = recBuf.data[2];
+					ptrMDLL->setPulser(puls[2], puls[1], puls[0], false);
+				}
+				break;
+
+			case SETMDLLDATASET:
+				MSG_DEBUG << "MDLL command : SETMDLLDATASET";
+				ptrMDLL = m_mdll[0];
+				{
+					quint8 set;
+					if (recBuf.data[0] != ptrMDLL->getDataset())
+					{
+						MSG_ERROR << "Error setting dataset" << ", mod "
+							<< (8 * recBuf.deviceId) << ", is: "
+							<< recBuf.data[0] << ", should be: " << ptrMDLL->getDataset();
+						// leave old threshold setting
+						set = ptrMDLL->getDataset();
+					}
+					else
+						set = recBuf.data[0];
+					ptrMDLL->setDataset(set, false);
+				}
+				break;
+
+			case SETMDLLACQSET:
+				MSG_DEBUG << "MDLL command : SETMDLLACQSET";
+				ptrMDLL = m_mdll[0];
+				{
+					quint16 tsum[4];
+					for(quint8 c = 0; c < 4; c++)
+					{
+						if (recBuf.data[c+2] != ptrMDLL->getTimingWindow(c))
+						{
+							MSG_ERROR << "Error setting timing window" << c << ", mod "
+								<< (8 * recBuf.deviceId) << ", is: "
+								<< recBuf.data[c+2] << ", should be: " << ptrMDLL->getTimingWindow(c);
+							// leave old threshold setting
+							tsum[c] = ptrMDLL->getTimingWindow(c);
+						}
+						else
+							tsum[c] = recBuf.data[c+2];
+					}
+					ptrMDLL->setTimingWindow(tsum[0], tsum[1], tsum[2], tsum[3], false);
+				}
+				break;
+			case SETMDLLEWINDOW:
+				MSG_DEBUG << "MDLL command : SETMDLLEWINDOW";
+				ptrMDLL = m_mdll[0];
+				{
+					quint8 e[2];
+					for(quint8 c = 0; c < 2; c++)
+					{
+						if (recBuf.data[c] != ptrMDLL->getEnergyWindow(c))
+						{
+							MSG_ERROR << "Error setting energy window" << c << ", mod "
+								<< (8 * recBuf.deviceId) << ", is: "
+								<< recBuf.data[c] << ", should be: " << ptrMDLL->getEnergyWindow(c);
+							// leave old threshold setting
+							e[c] = ptrMDLL->getEnergyWindow(c);
+						}
+						else
+							e[c] = recBuf.data[c];
+					}
+					ptrMDLL->setEnergyWindow(e[0], e[1], false);
+				}
 				break;
 			default:
 				MSG_ERROR << "not handled command : " << recBuf.cmd;
@@ -1507,6 +1840,11 @@ bool MCPD8::isPulserOn(quint8 addr)
 quint16 MCPD8::bins()
 {
 	quint16 bins(0);
+
+// mdll has fixed bins
+	if(m_mdll.contains(0))
+        	return 960;
+
 	for (quint8 i = 0; i < 8; ++i)
 		if (m_mpsd.find(i) != m_mpsd.end() && getMpsdId(i))
 			if (m_mpsd[i]->bins() > bins)
@@ -1814,6 +2152,15 @@ bool MCPD8::histogram(quint16 id, quint16 chan)
 QList<quint16> MCPD8::getHistogramList(void)
 {
 	QList<quint16> result;
+
+// MDLL has fixed channels
+	if(m_mdll.contains(0))
+	{
+		for(quint16 i = 0; i<960; i++)
+			result << i;
+		return result;
+	}
+
 	foreach(MPSD8 *it, m_mpsd)
 	{
 		QList<quint16> tmpHistList = it->getHistogramList();

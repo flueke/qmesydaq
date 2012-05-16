@@ -97,15 +97,15 @@
 //
 // official commands only for MDLL
 //
-#define SETDLLTHRESHS		60
-#define SETDLLSPECTRUM		61
-#define SETDLLMODE		62
-#define SETDLLHIST		63
-#define SETDLLSLSC		64
-#define	SETDLLPULSER		65
-#define SETDLLTESTREG		66
-#define SETDLLACQSET		67
-#define	SETDLLENERGY		68
+#define SETMDLLTHRESHS		60
+#define SETMDLLSPECTRUM		61
+//#define SETMDLLMODE		62
+//#define SETMDLLHIST		63
+//#define SETMDLLSLSC		64
+#define	SETMDLLPULSER		65
+#define SETMDLLDATASET		66
+#define SETMDLLACQSET		67
+#define	SETMDLLEWINDOW		68
 
 // histogram sizes
 // 128 channels + 1 sum per MCPD
@@ -197,7 +197,7 @@
 #define	TYPE_MPSD8		103
 #define	TYPE_MSTD16		104
 #define	TYPE_MPSD8P		105	
-#define TYPE_MDLL		106
+#define TYPE_MDLL		35
 
 // TX modes
 #define	P			1

@@ -56,7 +56,8 @@ HEADERS 	+= mainwidget.h \
 		modulewizard.h \
 		moduleidentificationpage.h \
 		modulemasterpage.h \
-		modulesetup.h
+                modulesetup.h \
+                mdllsetup.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -69,7 +70,8 @@ FORMS 		+= mainwidget.ui \
 		moduleidentificationpage.ui \
 		modulemasterpage.ui \
 		channelhistogramsetup.ui \
-		modulesetup.ui 
+                modulesetup.ui \
+                mdllsetup.ui
 
 SOURCES 	+= main.cpp \
 		mainwindow.cpp \
@@ -88,6 +90,7 @@ SOURCES 	+= main.cpp \
 		generalsetup.cpp \
 		mcpdsetup.cpp \
 		modulesetup.cpp \
+                mdllsetup.cpp \
 		modulestatus.cpp \
 		modulewizard.cpp \
 		moduleidentificationpage.cpp \

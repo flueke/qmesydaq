@@ -1,7 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2009 by Gregor Montermann, mesytec GmbH & Co. KG        *
- *      g.montermann@mesytec.com                                           *
- *   Copyright (C) 2011 by Jens Krï¿½ger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,293 +20,179 @@
 #ifndef MDLL_H
 #define MDLL_H
 
-#include <QFile>
-
-#include "libqmesydaq_global.h"
-#include "structures.h"
+#include <QString>
 #include "mdefines.h"
-#include "mpsd8.h"
 #include "logging.h"
-
-class mesydaq3;
-class MCPDMDLL;
-
-/*!
-    \short Base class for MDLL
-
-    \author Gregor Montermann, mesytec GmbH  Co. KG <g.montermann@mesytec.com>
-*/
-class LIBQMESYDAQ_EXPORT MDll : public QObject
-{
-Q_OBJECT
-public:
-    MDll(mesydaq3 *, QObject *parent = 0);
-    ~MDll();
-
-    void initMdll(void);
-
-    void setMdll(P_MDLL_SETTING pMdllSet, bool check);
-    void getMdllSet(P_MDLL_SETTING pMdllSet);
-
-    void serialize(QFile * fi);
-    void setAll(P_MDLL_SETTING pMdllSet);
-
-protected:
-    //! Module
-    MCPDMDLL		*m_mcpd;
-
-    //! settings
-    MDLL_SETTING 	m_mdllSet;
-
-    //! the application
-    mesydaq3* 		theApp;
-
-    //! module master ?
-    bool		master;
-
-    //! module terminated?
-    bool		terminate;
-};
+#include "mpsd8.h"
 
 /**
  * \class MDLL
- * \short representation of MPSD-MDLL peripheral module 
+ * \short representation of MDLL module
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class LIBQMESYDAQ_EXPORT MDLL : public MPSD8
+class MDLL : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
+    Q_PROPERTY(quint8 m_busNum READ busNumber)
+
 public:
-        /*!
-            constructor
-            
-            \param id
-            \param parent
-         */
-	MDLL(quint8 id, QObject *parent = 0)
-		: MPSD8(id, parent)
-	{
-		m_mpsdId = TYPE_MDLL;
-	}
+    MDLL(quint8, QObject * = 0);
 
-	~MDLL(){}
+    ~MDLL();
 
-//	void	setMpsdId(quint8, quint8, bool = true);
+    static MDLL *create(int, int, QObject * = 0);
 
-	//! \return the ID of the MPSD
-//	quint8 	getMpsdId(void) {return m_mpsdId;}
+    bool	active(void);
 
-	//! \return the type of the MPSD as string
-	virtual QString getType(void) {return tr("MDLL");}
+    bool	active(quint16);
 
-	//! \return the type of the MPSD as number
-	virtual int type(void) {return TYPE_MDLL;}
+    void	setActive(bool act);
 
-// Pulser related methods
-//	void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
-//	void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
-	
-	/**
-	 * get the pulser position
-	 *
-         * \return pulser position (left, right, middle)
-	 * \see getPulsAmp
-	 * \see getPulsChan
-	 * \see getPulsPoti
-	 * \see setPulser
-	 * \see setPulserPoti
-	 */
-//	quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
-	
-	/**
-	 * get the pulser amplitude
-	 *
-         * \return pulser amplitude
-	 * \see getPulsPos
-	 * \see getPulsChan
-	 * \see getPulsPoti
-	 * \see setPulser
-	 * \see setPulserPoti
-	 */
-//	quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
-	
-	/**
-	 * get the pulser channel
-	 *
-         * \return pulser channel 
-	 * \see getPulsPos
-	 * \see getPulsAmp
-	 * \see getPulsPoti
-	 * \see setPulser
-	 * \see setPulserPoti
-	 */
-//	quint8	getPulsChan(bool preset = false) {return m_pulsChan[preset];}
-	
-	/**
-	 * get the pulser poti
-	 *
-         * \return pulser poti 
-	 * \see getPulsPos
-	 * \see getPulsAmp
-	 * \see getPulsChan
-	 * \see setPulser
-	 * \see setPulserPoti
-	 */
-//	quint8	getPulsPoti(bool preset = false) {return m_pulsPoti[preset];}
+    void	setActive(quint16, bool);
 
-	//! \return is the pulser on
-//	bool	isPulserOn() {return m_pulser[0];}
+    bool	histogram(void);
 
-// Threshold related methods
-//	void	setThreshold(quint8 threshold, bool preset = false);
+    bool	histogram(quint16);
 
-	/**
- 	 * gets the threshold
-	 *
-	 * \param preset ????
-	 * \return threshold value
-	 * \see setThreshold
-	 * \see setThreshpoti
-	 * \see getThreshpoti
-	 */
-//	quint8	getThreshold(bool preset = false) {return m_threshVal[preset];}
+    void	setHistogram(bool hist);
 
-//	void 	setThreshpoti(quint8 thresh, bool preset = false);
-	/**
- 	 * gets the threshold poti value
-	 *
-	 * \param preset ????
-	 * \return threshold poti value
-	 * \see setThreshold
-	 * \see setThreshpoti
-	 * \see getThreshold
-	 */
-//	quint8	getThreshpoti(bool preset = false) {return m_threshPoti[preset];}
+    void	setHistogram(quint16, bool);
 
-// Gain related methods
-//	virtual void	setGain(quint8 channel, float gainv, bool preset = 0);
-//	virtual void	setGain(quint8 channel, quint8 gain, bool preset = 0);
+    QList<quint16> getHistogramList(void);
 
-	/**
-	 * get the poti value for the gain
-	 *
-	 * \return gain poti value
-	 * \see setGain
-	 * \see getGainval
-	 */
-//	quint8	getGainpoti(quint8 chan, bool preset = 0) {return m_gainPoti[chan][preset];}
+    QList<quint16> getActiveList(void);
 
-	/**
-	 * get the user value for the gain
-	 *
-	 * \return gain user value
-	 * \see setGain
-	 * \see getGainpoti
-	 */
-//	float	getGainval(quint8 chan, bool preset = 0) 
-//	{
-//		MSG_DEBUG << "gain val " << chan << ' ' << m_gainVal[chan][preset];
-//		return m_gainVal[chan][preset];
-//	}
+    //! \return the ID of the MDLL
+    quint8 	getMdllId(void) {return m_mdllId;}
 
-	//! \return use the same gain for all channels ?
-//	bool	comGain() {return m_comgain;}
+    //! \return the type of the MDLL as string
+    QString getType(void) {return tr("MDLL");}
+
+    //! \return the type of the MPSD as number
+    int type(void) {return TYPE_MDLL;}
+
+    //! \return is the module online or not
+    bool online(void);
+
+    quint8 getSpectrum(quint8 val);
+    quint8 getThreshold(quint8 val) {return m_thresh[val][1];}
+    quint16 getTimingWindow(quint8 val) {return m_timingWindow[val][1];}
+    quint8 getEnergyWindow(quint8 val) {return m_energyWindow[val][1];}
+    quint8 getDataset(void) {return m_dataset[1];};
+
+
+
+    // Pulser related methods
+    void	setPulser(quint8 pos = 2, quint8 ampl = 3, quint8 on = 0, bool preset = false);
+
+    quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
+
+    quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
+
+    //! \return is the pulser on
+    bool isPulserOn(bool preset = false) {return m_pulser[preset];};
+
+    void setThresholds(quint8 thresh_x, quint8 thresh_y, quint8 thresh_a, bool preset = false);
+
+    void setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY, bool preset);
+
+    void setDataset(quint8 set, bool preset = false);
+
+    void setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset);
+
+    void setEnergyWindow(quint8 elo, quint8 ehi, bool preset);
+
+    void initMdll(void);
+
 
 // Mode related methods
-	/**
-	 * sets the mode amplitude/position
-	 *
-	 * \param amplitude true = amplitude, false = position
-	 * \param preset ????
-	 * \see getMode
-	 */
-//	void	setMode(bool amplitude, bool preset = 0) {m_ampMode[preset] = amplitude;}
+    /**
+     * sets the mode E_x_y / E_tx_ty
+     *
+     * \param timing true = E_tx_ty, false = E_x_y
+     * \param preset ????
+     * \see getMode
+     */
+    void	setMode(bool timing, bool preset = false) {m_timingMode[preset] = timing;}
 
-	/**
-	 * gets the mode amplitude/position
-	 *
-	 * \param preset ????
-	 * \return amplitude true = amplitude, false = position
-	 * \see setMode
-	 */
-//	bool	getMode(bool preset = 0) {return m_ampMode[preset];}
+    /**
+     * gets the mode E_x_y / E_tx_ty
+     *
+     * \param preset ????
+     * \return timing true = E_tx_ty, false = E_x_y
+     * \see setMode
+     */
+    bool	getMode(bool preset = false) {return m_timingMode[preset];}
 
+#if 0
 // Internal registers related methods
-//	void	setInternalreg(quint8 reg, quint16 val, bool preset = 0);
+    virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
 
-	/**
-	 * get the value of the internal registers 
-	 *
-	 * \param reg register number
-	 * \param preset ????
-	 * \return value of the register
-	 * \see setInternalreg
-	 */
-//	quint16	getInternalreg(quint8 reg, bool preset = 0) {return m_internalReg[reg][preset];}
-	
-//	virtual quint8	calcGainpoti(float fval);
+    /**
+     * get the value of the internal registers
+     *
+     * \param reg register number
+     * \param preset ????
+     * \return value of the register
+     * \see setInternalreg
+     */
+    quint16	getInternalreg(quint8 reg, bool preset = false) {return m_internalReg[reg][preset];}
+#endif
 
-        //! returns the number of bins per module
-//	virtual quint16 bins() {return 960;}
+    virtual quint16 bins() {return 960;}
+
+    //! returns the number of the bus
+    quint8 busNumber(void) {return m_busNum;}
 
 protected:
-//	virtual float	calcGainval(quint8 ga);
-//	virtual quint8	calcPulsPoti(quint8 val, float gv);
-//	virtual quint8	calcPulsAmp(quint8 val, float gv);
-//	virtual quint8	calcThreshval(quint8 thr);
+    quint8	calcThreshval(quint8 thr);
 public:
-//	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
+    quint8	calcThreshpoti(quint8 tval);
 
 private:
-	//! MCPD-8 id
-//	quint8 		m_mcpdId;
-	
-	//! MPSD-8 id
-//	quint8 		m_mpsdId;
+    //! MCPD-8 id
+    quint8 		m_mcpdId;
 
 protected:
-	//! Gain poti values 
-//	quint8 		m_gainPoti[9][2];
-	
-	//! Gain values
-//	float 		m_gainVal[9][2];
+    //! MDLL id
+    quint8 		m_mdllId;
 
-	//! Common gain
-//	bool 		m_comgain;
+    //! timing mode
+    bool		m_timingMode[2];
 
-protected:
-	//! Threshold poti values
-//	quint8 		m_threshPoti[2];
+    //! the bus number ????
+    quint8		m_busNum;
 
-	//! Treshold values
-//	quint8 		m_threshVal[2];
+    bool		m_active;
 
-	//! Pulser poti values
-//	quint8 		m_pulsPoti[2];
+    bool		m_histogram;
 
-	//! Pulser amplitude
-//	float		m_pulsAmp[2];
 
-private:
-	//! Pulser position
-//	quint8 		m_pulsPos[2];
+    //! MDLL specific parameters:
 
-	//! Pulser channel
-//	quint8 		m_pulsChan[2];
+    //! thresholds for x, y and anode CFD
+    quint8 		m_thresh[3][2];
 
-	//! Pulser 
-//	quint8 		m_pulser[2];
+    //! delay offsets for x and y
+    quint8      m_shift[2][2];
+    //! delay range (scaling) for x and y
+    quint8      m_scale[2][2];
 
-	//! amplitude mode
-//	bool		m_ampMode[2]; 
+    //! software windows for timing sum [xlo, xhi], [ylo, yhi]
+    quint16     m_timingWindow[4][2];
+    //! software window for energy
+    quint8      m_energyWindow[2][2];
 
-protected:
-	//! the bus number ????
-//	quint8		m_busNum;
+    //! data set to be transmitted: 0={X, Y, E}, 1={tsumX, tsumY, E}
+    quint8      m_dataset[2];
 
-private:
-//	quint16 	m_internalReg[3][2];
+    //! Pulser amplitude
+    quint8		m_pulsAmp[2];
+    //! Pulser position
+    quint8 		m_pulsPos[2];
+    //! Pulser
+    quint8 		m_pulser[2];
 };
 
 #endif

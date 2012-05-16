@@ -28,6 +28,7 @@
 
 class NetworkDevice;
 class MPSD8;
+class MDLL;
 class QTimer;
 
 /**
@@ -146,6 +147,31 @@ public:
 
 	bool setThreshold(quint16 addr, quint8 thresh);
 
+	bool setMdllThresholds(quint8 threshX, quint8 threshY, quint8 threshA);
+
+	bool setMdllSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY);
+
+	bool setMdllDataset(quint8 set);
+
+	bool setMdllTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi);
+
+	bool setMdllEnergyWindow(quint8 elo, quint8 ehi);
+
+	bool setMdllPulser(quint8 on, quint8 amp, quint8 pos);
+
+	quint8 getMdllThreshold(quint8 val);
+
+	quint8 getMdllSpectrum(quint8 val);
+
+	quint8 getMdllDataset(void);
+
+	quint16 getMdllTimingWindow(quint8 val);
+
+	quint8 getMdllEnergyWindow(quint8 val);
+
+	quint8 getMdllPulser(quint8 val);
+
+
 	//! \todo implementation
 	quint8 getThresholdPoti(quint16 addr);
 
@@ -168,6 +194,8 @@ public:
 	bool getMode(quint16 addr);
 
 	quint8 getMpsdId(quint8 addr);
+
+	quint8 getMdllId(void);
 
 	QString getMpsdType(quint8 addr);
 
@@ -384,6 +412,9 @@ private:
 	//! the accessed MPSD8 ????
 	QMap<int, MPSD8 *> m_mpsd;
 	
+	//! possibly connected MDLL
+	QMap<int, MDLL *> m_mdll;
+
 	//! the header time stamp
 	quint64		m_headertime;
 
@@ -398,71 +429,6 @@ private:
 
 	//! last peripheral register value
 	quint16		m_periReg;
-};
-
-/**
- * \short representation of MDLL central module
- *
- * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
-*/
-class LIBQMESYDAQ_EXPORT MCPDMDLL : public MCPD8
-{
-	Q_OBJECT
-public:
-        /*!
-            constructor
- 
-            \param id
-	    \param parent
-            \param ip
-            \param port
-            \param sourceIP
-         */
-	MCPDMDLL(quint8 id, QObject *parent = 0, QString ip = "192.168.168.121", quint16 port = 54321, QString sourceIP = "0.0.0.0")
-		: MCPD8(id, parent, ip, port, sourceIP)
-	{
-	}
-
-	bool setSpectrum(quint8, quint8, quint8, quint8);
-
-	bool setHistogram(quint8, quint16, quint8, quint8);
-
-	bool setMode(quint8);
-
-	bool setSlide(quint8);
-
-    	bool setThreshold(quint8, quint8, quint8);
-
-	bool setEnergy(quint8, quint8, quint8, quint8);
-
-    	bool setDataReg(quint8);
-
-    	bool setAcqset(quint32, quint32, quint32);
-
-	bool setPulser(quint8, quint8, quint8);
-
-private:
-    	quint8 	m_threshX;
-
-	quint8 	m_threshY;
-
-	quint8 	m_threshAmp;
-
-	quint8 	m_shiftX;
-
-	quint8 	m_shiftY;
-
-	quint8 	m_scaleX;
-
-	quint8 	m_scaleY;
-
-	quint8 	m_previewHistSize;
-
-	quint16 m_previewHistRate;
-
-	quint8 	m_histSize;
-
-	quint8 	m_histType;
 };
 
 #endif

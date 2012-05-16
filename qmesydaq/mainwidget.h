@@ -73,6 +73,10 @@ public slots:
 
 	void 	setupModule(quint8 id);
 
+	void 	setupMdll();
+
+	void 	setupMdll(quint8 id);
+
 	void	setupMCPD();
 
 	void 	addMCPD();

@@ -66,7 +66,7 @@ MPSD8::MPSD8(quint8 id, QObject *parent)
 		m_pulser[c] = false;
 		m_ampMode[c] = false;
 	}
-	MSG_NOTICE << "identified MPSD id on MCPD " << m_mcpdId << ", bus " << m_busNum << ": " << id;
+	MSG_DEBUG << "identified MPSD id on MCPD " << m_mcpdId << ", bus " << m_busNum << ": " << id;
 }
 
 //! desctructor

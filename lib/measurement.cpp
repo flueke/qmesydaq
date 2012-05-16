@@ -802,7 +802,7 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 	m_runID = pd.runID;
 
 	m_packages++;
-	if(pd.bufferType < 0x0002)
+	if(pd.bufferType < 0x0003)
 	{
 // extract parameter values:
 		QChar c('0');
@@ -855,9 +855,20 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 				neutrons++;
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
 				quint8 modChan = (id << 3) + slotId;
-				quint8 chan = modChan + (mod << 6);
+				quint16 chan = modChan + (mod << 6);
 				quint16 amp = ((pd.data[counter+2] & 0x7F) << 3) + ((pd.data[counter+1] >> 13) & 0x7),
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
+//
+// in MDLL, data format is different:
+// y position (10 bit) is at MPSD "Amplitude" data
+// amplitude (8 bit) is at MPSD "chan" data
+//
+				if(pd.bufferType == 0x0002)
+				{
+					quint16 val = chan;
+					chan = amp;
+					amp = val;
+				}
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
