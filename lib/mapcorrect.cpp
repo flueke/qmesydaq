@@ -518,14 +518,14 @@ void MappedHistogram::setMapCorrection(MapCorrection *pMapCorrection, Histogram 
         m_iWidth = mapRect.width();
         m_iHeight = mapRect.height();
     }
-    else
+    else if (pSrc != NULL) 
     {
-        if (pSrc == NULL) 
-		return;
         m_iWidth = pSrc->width();
         m_iHeight = pSrc->height();
     }
     m_adblData.resize(m_iWidth * m_iHeight);
+    if (pSrc == NULL)
+        return;
     for (int ys = 0; ys < pSrc->height(); ++ys)
     {
         for (int xs = 0; xs < pSrc->width(); ++xs)
@@ -610,7 +610,7 @@ double MappedHistogram::floatValue(quint16 x, quint16 y)
 bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 {
     bool bOK(false);
-    if (!m_pMapCorrection)
+    if (m_pMapCorrection != NULL)
     {
         int iDstX(-1);
         int iDstY(-1);
@@ -623,7 +623,9 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
                 ++m_ullTotalCounts;
 	        m_adblData[iPos] += fCorrection;
 	        m_dblTotalCounts += fCorrection;
-	        if (m_adblData[iPos] > m_adblData[m_iMaxPos])
+                if (m_iMaxPos < 0) 
+                    m_iMaxPos = iPos; 
+	        else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
 	            m_iMaxPos = iPos;
 	        bOK = true;
             }
