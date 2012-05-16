@@ -12,25 +12,10 @@ int main(int, char **)
 
 	MapCorrection 	m;
 
-	Histogram	h(iSrcWidth, iSrcHeight);
-
-	std::cout << iSrcWidth << ", " << iSrcHeight << std::endl;
-	for (quint16 i = 0; i < iSrcWidth; ++i)
-		for (quint16 j = 0; j < iSrcHeight; ++j)
-		{
-			h.setValue(i, j, 1);
-		}
-
-	std::cout << "total counts : " << h.getTotalCounts() << std::endl;
-
 	m.setNoMap();
-	
 	m.initialize(128, 960, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
-
 	m.setMappedRect(QRect(0, 0, 128, 128));
-
 	std::cout << "map is valid " << m.isValid() << std::endl;
-
 // generate linear (default) mapping
   	for (int i = 0; i < iDstHeight; ++i)
 	{
@@ -48,10 +33,17 @@ int main(int, char **)
 	}
 	std::cout << "map is valid " << m.isValid() << std::endl;
 
+	MappedHistogram	mh(&m);
+
+	Histogram	h(iSrcWidth, iSrcHeight);
 	std::cout << "total counts : " << h.getTotalCounts() << std::endl;
 
-	MappedHistogram	mh(&m, &h);
-
+	std::cout << iSrcWidth << ", " << iSrcHeight << std::endl;
+	for (quint16 i = 0; i < iSrcWidth; ++i)
+		for (quint16 j = 0; j < iSrcHeight; ++j)
+		{
+			mh.incVal(i, j);
+		}
 	std::cout << "mapped" << std::endl;
 
 	std::cout << "total counts : " << mh.getTotalCounts() << std::endl;
@@ -60,15 +52,13 @@ int main(int, char **)
 	std::cout << "value(0,0) " << mh.value(0, 0) << std::endl;
 	std::cout << "value(0,1) " << mh.value(0, 1) << std::endl;
 
+	mh.incVal(0, 0);
+	std::cout << "total counts : " << mh.getTotalCounts() << std::endl;
+	std::cout << "value(0,0) " << mh.value(0, 0) << std::endl;
+
 	h.setValue(0, 0, 10);
 
 	std::cout << "total counts : " << h.getTotalCounts() << std::endl;
 
-	std::cout << "total counts : " << mh.getTotalCounts() << std::endl;
-	std::cout << "total counts (corrected) : " << mh.getCorrectedTotalCounts() << std::endl;
-
-	mh.setMapCorrection(&m, &h);
-
-	std::cout << "total counts : " << mh.getTotalCounts() << std::endl;
 	std::cout << "total counts (corrected) : " << mh.getCorrectedTotalCounts() << std::endl;
 }
