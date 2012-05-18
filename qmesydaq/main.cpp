@@ -69,43 +69,44 @@ int main(int argc, char **argv)
 #endif
 
 	MultipleLoopApplication app(argc, argv);
-	QStringList argList = app.arguments();
-	LoopObject *loop = NULL;
-	QString szLoadConfiguration=QString::null;
+	QStringList 		argList = app.arguments();
+	LoopObject 		*loop(NULL);
+	QString 		szLoadConfiguration(QString::null);
 
-	startLogging(g_szShortUsage,g_szLongUsage);
-	for (int i=0; i<argList.size(); ++i)
+	startLogging(g_szShortUsage, g_szLongUsage);
+	for (int i = 0; i < argList.size(); ++i)
 	{
-		QString szArgument=argList[i], szParameter;
-		bool bSeparatedParameter=false;
-		if (szArgument.indexOf('=')>=0)
+		QString szArgument = argList[i], szParameter;
+		bool bSeparatedParameter(false);
+		if (szArgument.indexOf('=') >= 0)
 		{
-			int iPos=szArgument.indexOf('=');
-			szParameter=szArgument.mid(iPos + 1);
-			szArgument.remove(iPos,szArgument.size()-iPos);
+			int iPos = szArgument.indexOf('=');
+			szParameter = szArgument.mid(iPos + 1);
+			szArgument.remove(iPos, szArgument.size() - iPos);
 		}
 		else
 		{
-			szParameter=argList[i];
-			bSeparatedParameter=true;
+			szParameter = argList[i];
+			bSeparatedParameter = true;
 		}
 
 #if USE_TACO
-		if (szArgument=="-n")
-			setenv("NETHOST",szParameter.toStdString().c_str(),1);
+		if (szArgument == "-n")
+			setenv("NETHOST", szParameter.toStdString().c_str(), 1);
 		else
 #endif
 		if (szArgument == "-f" || szArgument == "--file" || szArgument == "--config")
 		{
 			// load this configuration file
 			if (!szLoadConfiguration.isEmpty())
-				szLoadConfiguration=szParameter;
-			if (bSeparatedParameter) ++i;
+				szLoadConfiguration = szParameter;
+			if (bSeparatedParameter) 
+				++i;
 		}
 		else if (szArgument == "-nf" || szArgument == "--nofile" || szArgument == "--noconfig")
 		{
 			// load no configuration
-			szLoadConfiguration="";
+			szLoadConfiguration = "";
 		}
 	}
 
@@ -133,7 +134,7 @@ int main(int argc, char **argv)
 
 	app.setOrganizationName("MesyTec");
 	app.setOrganizationDomain("mesytec.com");
-	app.setApplicationName("Mesydaq2");
+	app.setApplicationName("QMesyDAQ");
 
 	Mesydaq2MainWindow mainWin;
 
@@ -144,13 +145,11 @@ int main(int argc, char **argv)
 		app.setLoopEventReceiver(mainWin.centralWidget());
 		QObject::connect(loop, SIGNAL(terminated()), mainWin.centralWidget(), SLOT(quitContinue()));
 	}
-	mainWin.show();
-
 	if (szLoadConfiguration.isNull())
 	{
 		// get last configuration file name
-		QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
-		szLoadConfiguration=settings.value("lastconfigfile", "mesycfg.mcfg").toString();
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, app.organizationName(), app.applicationName());
+		szLoadConfiguration = settings.value("lastconfigfile", "mesycfg.mcfg").toString();
 	}
 
 	// load configuration
@@ -159,6 +158,8 @@ int main(int argc, char **argv)
 
 	app.processEvents();
 	splash.finish(&mainWin);
+
+	mainWin.show();
 
 	return app.exec();
 }
