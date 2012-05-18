@@ -35,6 +35,7 @@ class Measurement;
 class CorbaThread;
 class ControlInterface;
 class Mesydaq2;
+class QCloseEvent;
 
 /**
  * \short Application Main Window
@@ -62,6 +63,9 @@ public:
 signals:
 	//! load configuration file
 	void	loadConfiguration(const QString& sFilename);
+
+protected:
+	void closeEvent(QCloseEvent *event);
 
 private:
 	void restoreSettings(void);
