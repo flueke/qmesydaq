@@ -69,6 +69,22 @@ public:
 		HistogramLoad,
 	};
 
+	//! Defines the histogram type
+	//! - PositionHistogram - raw position histogram
+	//! - AmplitudeHistogram - raw amplitude histogram
+	//! - CorrectedPositionHistogram - corrected position histogram
+	enum HistoType {
+		PositionHistogram = 0,
+		AmplitudeHistogram,
+		CorrectedPositionHistogram,
+	};
+
+	enum SpectrumType {
+		TimeSpectrum = 0,
+		Diffractogram,
+		TubeSpectrum,
+	};
+
 public:
 	Measurement(Mesydaq2 *mesy, QObject *parent = 0);
 
@@ -117,6 +133,8 @@ public:
 	quint64	getROICounts(void);
 
 	void 	setROI(QRectF r);
+
+        QRectF	getROI(void);
 
 	/** 
 		gets the value of the defined monitor 1
@@ -189,13 +207,13 @@ public:
 	Spectrum *posData();
 
 	//! \return the position histogram
-	Histogram *posHist() {return m_posHist;}
+	Histogram *posHist() {return m_Hist[PositionHistogram];}
 
 	Spectrum *ampData(quint16 line);	
 	Spectrum *ampData();	
 
 	//! \return the amplitude histogram
-	Histogram *ampHist() {return m_ampHist;}	
+	Histogram *ampHist() {return m_Hist[AmplitudeHistogram];}	
 
 	Spectrum *timeData();
 
@@ -328,20 +346,11 @@ private:
 	//! Access to hardware
 	Mesydaq2	*m_mesydaq;
 
-	//! position histogram buffer
-	Histogram	*m_posHist;
-
-	//! amplitude histogram buffer
-	Histogram	*m_ampHist;
+	//! histogram buffer
+	Histogram	*m_Hist[3];
 
 	//! time spectrum
-	Spectrum	*m_timeSpectrum;
-
-	//! 'diffractogram'
-	Spectrum	*m_diffractogram;
-
-	//! spectrum for the MSTD-16, it's only a hack not a solution
-	Spectrum	*m_tubeSpectrum;
+	Spectrum	*m_Spectrum[3];
 
 	//! mapping and correction data for position histogram
 	MapCorrection   *m_posHistMapCorrection;

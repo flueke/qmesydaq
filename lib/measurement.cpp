@@ -45,11 +45,6 @@
 Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	: QObject(parent)
 	, m_mesydaq(mesy)
-	, m_posHist(NULL)
-	, m_ampHist(NULL)
-	, m_timeSpectrum(NULL)
-	, m_diffractogram(NULL)
-	, m_tubeSpectrum(NULL)
 	, m_posHistMapCorrection(NULL)
 	, m_posHistCorrected(NULL)
 	, m_lastTime(0)
@@ -71,6 +66,12 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_histPath(getenv("HOME"))
 	, m_listPath(getenv("HOME"))
 {
+	m_Hist[PositionHistogram] = NULL;
+	m_Hist[AmplitudeHistogram] = NULL;
+	m_Spectrum[TimeSpectrum] = NULL;
+	m_Spectrum[Diffractogram] = NULL;
+	m_Spectrum[TubeSpectrum] = NULL;
+
     	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
     	setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
 
@@ -97,14 +98,14 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 quint16 Measurement::height()
 {
 	if (m_mode == ReplayListFile)
-		return qMax(m_ampHist->height(), m_posHist->height());
+		return qMax(m_Hist[AmplitudeHistogram]->height(), m_Hist[PositionHistogram]->height());
 	return m_height;
 }
 
 quint16 Measurement::width()
 {
 	if (m_mode == ReplayListFile)
-		return qMax(m_ampHist->width(), m_posHist->width());
+		return qMax(m_Hist[AmplitudeHistogram]->width(), m_Hist[PositionHistogram]->width());
 	return m_width;
 }
 
@@ -122,77 +123,77 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 	m_height = h;
 	m_width = w;
 
-	if (!m_ampHist)
-		m_ampHist = new Histogram(w, h);
+	if (!m_Hist[AmplitudeHistogram])
+		m_Hist[AmplitudeHistogram] = new Histogram(w, h);
 	else
 	{
 		if (clr)
-			m_ampHist->clear();
-		m_ampHist->setAutoResize(resize);
-		m_ampHist->resize(w, h);
+			m_Hist[AmplitudeHistogram]->clear();
+		m_Hist[AmplitudeHistogram]->setAutoResize(resize);
+		m_Hist[AmplitudeHistogram]->resize(w, h);
 	}
 
-	if (!m_posHist)
-		m_posHist = new Histogram(w, h);
+	if (!m_Hist[PositionHistogram])
+		m_Hist[PositionHistogram] = new Histogram(w, h);
 	else
 	{
 		if (clr)
-			m_posHist->clear();
-		m_posHist->setAutoResize(resize);
-		m_posHist->resize(w, h);
+			m_Hist[PositionHistogram]->clear();
+		m_Hist[PositionHistogram]->setAutoResize(resize);
+		m_Hist[PositionHistogram]->resize(w, h);
 	}
-	if (!m_timeSpectrum)
-		m_timeSpectrum = new Spectrum(h);
+	if (!m_Spectrum[TimeSpectrum])
+		m_Spectrum[TimeSpectrum] = new Spectrum(h);
 	else
 	{
 		if (clr)
-			m_timeSpectrum->clear();
-		m_timeSpectrum->setAutoResize(resize);
-		m_timeSpectrum->resize(h);
+			m_Spectrum[TimeSpectrum]->clear();
+		m_Spectrum[TimeSpectrum]->setAutoResize(resize);
+		m_Spectrum[TimeSpectrum]->resize(h);
 	}
 	
-	if (!m_diffractogram)
-		m_diffractogram = new Spectrum(w);
+	if (!m_Spectrum[Diffractogram])
+		m_Spectrum[Diffractogram] = new Spectrum(w);
 	else
 	{
 		if (clr)
-			m_diffractogram->clear();
-		m_diffractogram->setAutoResize(resize);
-		m_diffractogram->resize(w);
+			m_Spectrum[Diffractogram]->clear();
+		m_Spectrum[Diffractogram]->setAutoResize(resize);
+		m_Spectrum[Diffractogram]->resize(w);
 	}
 
-	if (!m_tubeSpectrum)
-		m_tubeSpectrum = new Spectrum(w);
+	if (!m_Spectrum[TubeSpectrum])
+		m_Spectrum[TubeSpectrum] = new Spectrum(w);
 	else
 	{
 		if (clr)
-			m_tubeSpectrum->clear();
-		m_tubeSpectrum->setAutoResize(resize);
-		m_tubeSpectrum->resize(w);
+			m_Spectrum[TubeSpectrum]->clear();
+		m_Spectrum[TubeSpectrum]->setAutoResize(resize);
+		m_Spectrum[TubeSpectrum]->resize(w);
 	}
 }
 
 void Measurement::destroyHistogram(void)
 {
-	if (m_ampHist)
-		delete m_ampHist;
-	m_ampHist = NULL;
+	if (m_Hist[AmplitudeHistogram])
+		delete m_Hist[AmplitudeHistogram];
+	m_Hist[AmplitudeHistogram] = NULL;
 
-	if (m_posHist)
-		delete m_posHist;
-	m_posHist = NULL;
+	if (m_Hist[PositionHistogram])
+		delete m_Hist[PositionHistogram];
+	m_Hist[PositionHistogram] = NULL;
 
-	if (m_timeSpectrum)
-		delete m_timeSpectrum;
-	m_timeSpectrum = NULL;
+	if (m_Spectrum[TimeSpectrum])
+		delete m_Spectrum[TimeSpectrum];
+	m_Spectrum[TimeSpectrum] = NULL;
 
-	if (m_diffractogram)
-		delete m_diffractogram;
-	m_diffractogram = NULL;
+	if (m_Spectrum[Diffractogram])
+		delete m_Spectrum[Diffractogram];
+	m_Spectrum[Diffractogram] = NULL;
 	
-	if (m_tubeSpectrum)
-		delete m_tubeSpectrum;
-	m_tubeSpectrum = NULL;
+	if (m_Spectrum[TubeSpectrum])
+		delete m_Spectrum[TubeSpectrum];
+	m_Spectrum[TubeSpectrum] = NULL;
 }
 
 //! destructor
@@ -301,7 +302,7 @@ void Measurement::requestStop()
 	{
 		m_status = STOPPED;
 		emit stopSignal(false);
-		MSG_NOTICE << "Max " << m_posHist->max(0) << " was at pos " << m_posHist->maxpos(0);
+		MSG_NOTICE << "Max " << m_Hist[PositionHistogram]->max(0) << " was at pos " << m_Hist[PositionHistogram]->maxpos(0);
 	}
 }
 
@@ -565,16 +566,16 @@ void Measurement::clearCounter(quint8 cNum)
  */
 void Measurement::clearAllHist(void)
 {
-	if (m_posHist)
-		m_posHist->clear();
-	if (m_ampHist)
-		m_ampHist->clear();
-	if (m_timeSpectrum)
-		m_timeSpectrum->clear();
-	if (m_diffractogram)
-		m_diffractogram->clear();
-	if (m_tubeSpectrum)
-		m_tubeSpectrum->clear();
+	if (m_Hist[PositionHistogram])
+		m_Hist[PositionHistogram]->clear();
+	if (m_Hist[AmplitudeHistogram])
+		m_Hist[AmplitudeHistogram]->clear();
+	if (m_Spectrum[TimeSpectrum])
+		m_Spectrum[TimeSpectrum]->clear();
+	if (m_Spectrum[Diffractogram])
+		m_Spectrum[Diffractogram]->clear();
+	if (m_Spectrum[TubeSpectrum])
+		m_Spectrum[TubeSpectrum]->clear();
 	if (m_posHistCorrected)
 		m_posHistCorrected->clear();
 	m_lastTime = 0;
@@ -589,10 +590,10 @@ void Measurement::clearAllHist(void)
  */
 void Measurement::clearChanHist(quint16 chan)
 {
-	if (m_posHist)
-		m_posHist->clear(chan);
-	if (m_ampHist)
-		m_ampHist->clear(chan);
+	if (m_Hist[PositionHistogram])
+		m_Hist[PositionHistogram]->clear(chan);
+	if (m_Hist[AmplitudeHistogram])
+		m_Hist[AmplitudeHistogram]->clear(chan);
 //	if (m_posHistCorrected)
 //		m_posHistCorrected->clear(chan);
 }
@@ -607,8 +608,8 @@ void Measurement::clearChanHist(quint16 chan)
 */
 Spectrum *Measurement::posData(quint16 line)
 {
-	if (m_posHist)
-		return m_posHist->spectrum(line);
+	if (m_Hist[PositionHistogram])
+		return m_Hist[PositionHistogram]->spectrum(line);
 	else
 		return NULL;
 }
@@ -622,8 +623,8 @@ Spectrum *Measurement::posData(quint16 line)
 */
 Spectrum *Measurement::posData()
 {
-	if (m_posHist)
-		return m_posHist->spectrum();
+	if (m_Hist[PositionHistogram])
+		return m_Hist[PositionHistogram]->spectrum();
 	else
 		return NULL;
 }
@@ -637,8 +638,8 @@ Spectrum *Measurement::posData()
 */
 Spectrum *Measurement::ampData()
 {
-	if (m_ampHist)
-		return m_ampHist->spectrum();
+	if (m_Hist[AmplitudeHistogram])
+		return m_Hist[AmplitudeHistogram]->spectrum();
 	else
 		return NULL;
 }
@@ -653,8 +654,8 @@ Spectrum *Measurement::ampData()
 */
 Spectrum *Measurement::ampData(quint16 line)
 {
-	if (m_ampHist)
-		return m_ampHist->spectrum(line);
+	if (m_Hist[AmplitudeHistogram])
+		return m_Hist[AmplitudeHistogram]->spectrum(line);
 	else
 		return NULL;
 }
@@ -668,7 +669,7 @@ Spectrum *Measurement::ampData(quint16 line)
 */
 Spectrum *Measurement::timeData()
 {
-	return m_timeSpectrum;
+	return m_Spectrum[TimeSpectrum];
 }
 
 /*!
@@ -691,15 +692,15 @@ void Measurement::writeHistograms(const QString &name)
 		// Title
 		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
 		t.flush();
-		if (m_posHist)
+		if (m_Hist[PositionHistogram])
 		{
 			t << "position data: 1 row title (8 x 8 detectors), position data in columns" << '\r' << '\n';
-    			t << m_posHist->format() << '\r' << '\n';
+    			t << m_Hist[PositionHistogram]->format() << '\r' << '\n';
 		}
-		if (m_ampHist)
+		if (m_Hist[AmplitudeHistogram])
 		{
 			t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns" << '\r' << '\n';
-    			t << m_ampHist->format() << '\r' << '\n';
+    			t << m_Hist[AmplitudeHistogram]->format() << '\r' << '\n';
 		}
 		f.close();
 	}
@@ -738,12 +739,12 @@ void Measurement::readHistograms(const QString &name)
 				if (list.size() >= 2 && list[1].startsWith("data"))
 				{
 					if (list[0] == "position")
-						fillHistogram(t, m_posHist);
+						fillHistogram(t, m_Hist[PositionHistogram]);
 					else if (list[0] == "amplitude/energy")
-						fillHistogram(t, m_ampHist);
+						fillHistogram(t, m_Hist[AmplitudeHistogram]);
 				}
 			}	
-			resizeHistogram(m_posHist->width() ? m_posHist->width() : m_ampHist->width(), m_posHist->width() ?  m_posHist->height() : m_ampHist->height(), false);
+			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 		}
 		f.close();
 	}
@@ -886,13 +887,13 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 					continue;
 				}
 				++(*m_counter[EVID]);
-				if (m_posHist)
-					m_posHist->incVal(chan, pos);
-				if (m_ampHist)
-					m_ampHist->incVal(chan, amp);
+				if (m_Hist[PositionHistogram])
+					m_Hist[PositionHistogram]->incVal(chan, pos);
+				if (m_Hist[AmplitudeHistogram])
+					m_Hist[AmplitudeHistogram]->incVal(chan, amp);
 #if 0
-				if (m_diffractogram)
-					m_diffractogram->incVal(chan);
+				if (m_Spectrum[Diffractogram])
+					m_Spectrum[Diffractogram]->incVal(chan);
 #endif
 				if (m_posHistCorrected)
 					m_posHistCorrected->incVal(chan, pos);
@@ -905,11 +906,11 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 //					if (pos >= 480)
 //						++chan;
 					MSG_INFO << "Put this event into channel : " << chan;
-					m_tubeSpectrum->incVal(chan);
-//					MSG_INFO << "Value of this channel : " << m_tubeSpectrum->value(chan);
+					m_Spectrum[TubeSpectrum]->incVal(chan);
+//					MSG_INFO << "Value of this channel : " << m_Spectrum[TubeSpectrum]->value(chan);
 				}
-				else if (m_tubeSpectrum)
-					m_tubeSpectrum->incVal(chan);
+				else if (m_Spectrum[TubeSpectrum])
+					m_Spectrum[TubeSpectrum]->incVal(chan);
 			}
 		}
 		m_triggers += triggers;
@@ -1060,7 +1061,7 @@ void Measurement::readListfile(QString readfilename)
  */
 void Measurement::getPosMean(float &mean, float &sigma)
 {
-	m_posHist->getMean(mean, sigma);
+	m_Hist[PositionHistogram]->getMean(mean, sigma);
 }
 
 /*!
@@ -1074,7 +1075,7 @@ void Measurement::getPosMean(float &mean, float &sigma)
  */
 void Measurement::getPosMean(quint16 chan, float &mean, float &sigma)
 {
-	m_posHist->getMean(chan, mean, sigma);
+	m_Hist[PositionHistogram]->getMean(chan, mean, sigma);
 }
 
 /*!
@@ -1087,7 +1088,7 @@ void Measurement::getPosMean(quint16 chan, float &mean, float &sigma)
  */
 void Measurement::getAmpMean(float &mean, float &sigma)
 {
-	m_ampHist->getMean(mean, sigma);
+	m_Hist[AmplitudeHistogram]->getMean(mean, sigma);
 }
 
 /*!
@@ -1101,7 +1102,7 @@ void Measurement::getAmpMean(float &mean, float &sigma)
  */
 void Measurement::getAmpMean(quint16 chan, float &mean, float &sigma)
 {
-	m_ampHist->getMean(chan, mean, sigma);
+	m_Hist[AmplitudeHistogram]->getMean(chan, mean, sigma);
 }
 
 /**
@@ -1115,7 +1116,7 @@ void Measurement::getAmpMean(quint16 chan, float &mean, float &sigma)
  */
 void Measurement::getTimeMean(float &mean, float &sigma)
 {
-	mean = m_timeSpectrum->mean(sigma);
+	mean = m_Spectrum[TimeSpectrum]->mean(sigma);
 }
 
 /*!
@@ -1135,15 +1136,20 @@ void Measurement::setROI(QRectF r)
 	m_roi = QRect(x, y, w, h);
 }
 
+QRectF Measurement::getROI(void)
+{
+	return m_roi;
+}
+
 quint64 Measurement::ampEventsInROI()
 {
-	quint64 tmp = m_ampHist->getCounts(m_roi);
+	quint64 tmp = m_Hist[AmplitudeHistogram]->getCounts(m_roi);
 	return tmp;
 }
 
 quint64 Measurement::posEventsInROI()
 {
-	quint64 tmp = m_posHist->getCounts(m_roi);
+	quint64 tmp = m_Hist[PositionHistogram]->getCounts(m_roi);
 	return tmp;
 }
 
@@ -1155,17 +1161,17 @@ Spectrum *Measurement::diffractogram()
 #	warning TODO tube spectrum !!!
 #endif
 #if 0
-	if (m_tubeSpectrum->width() > 0)
-		return m_tubeSpectrum;
+	if (m_Spectrum[TubeSpectrum]->width() > 0)
+		return m_Spectrum[TubeSpectrum];
 #endif
-	m_diffractogram->resize(m_posHist->height());
-	for (int i = 0; i < m_diffractogram->width(); ++i)
+	m_Spectrum[Diffractogram]->resize(m_Hist[PositionHistogram]->height());
+	for (int i = 0; i < m_Spectrum[Diffractogram]->width(); ++i)
 	{
-		Spectrum *spec = m_ampHist->spectrum(i);
+		Spectrum *spec = m_Hist[AmplitudeHistogram]->spectrum(i);
 		if (spec)
-			m_diffractogram->setValue(i, spec->getTotalCounts());
+			m_Spectrum[Diffractogram]->setValue(i, spec->getTotalCounts());
 	}
-	return m_diffractogram;
+	return m_Spectrum[Diffractogram];
 }
 
 void Measurement::setListFileHeader(const QByteArray& header)
