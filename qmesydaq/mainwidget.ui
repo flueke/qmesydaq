@@ -454,7 +454,7 @@ Listfile</string>
                <string/>
               </property>
               <property name="checked">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -474,7 +474,7 @@ Listfile</string>
                <string/>
               </property>
               <property name="checked">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -1451,7 +1451,6 @@ Listfile</string>
     </layout>
    </item>
   </layout>
-  <zorder>displayTabWidget</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
