@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <QCloseEvent>
 #include "MultipleLoopApplication.h"
 #include "mainwindow.h"
 #include "mainwidget.h"
@@ -34,7 +35,7 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 
         MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
         if(app)
-            app->setLoopEventReceiver(m_main);
+		app->setLoopEventReceiver(m_main);
 
 	connect(action_Load_Config_File, SIGNAL(triggered()), m_main, SLOT(restoreSetupSlot()));
 	connect(action_Save_Config_File, SIGNAL(triggered()), m_main, SLOT(saveSetupSlot()));
@@ -58,23 +59,27 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 
 Mesydaq2MainWindow::~Mesydaq2MainWindow()
 {
-	saveSettings();
 	delete m_mesy;
 }
 
 void Mesydaq2MainWindow::restoreSettings()
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	QPoint pos = settings.value("pos", QPoint(200, 0)).toPoint();
 	QSize size = settings.value("size", QSize(1280, 980)).toSize();
-	m_main->resize(size);
-	move(pos);
+	setGeometry(QRect(pos, size));
 }
 
 void Mesydaq2MainWindow::saveSettings()
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.setValue("pos", pos());
-	settings.setValue("size", m_main->size());
+	settings.setValue("size", m_main->frameSize());
 	settings.setValue("config/lastrunid", m_mesy->runId());
+}
+
+void Mesydaq2MainWindow::closeEvent(QCloseEvent *event)
+{
+	saveSettings();
+	event->accept();
 }
