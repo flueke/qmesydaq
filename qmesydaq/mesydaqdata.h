@@ -83,7 +83,7 @@ public:
 	QwtRasterData *copy() const;
 
 	//! \return the interval between min count and maximum count
-	QwtDoubleInterval range() const;
+	QwtDoubleInterval range(void) const;
 
 	/**
 	 * gets the value of the cell x, y if exist, otherwise 0,
