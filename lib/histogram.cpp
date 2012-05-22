@@ -40,8 +40,9 @@ Spectrum::Spectrum(quint16 bins)
 	, m_totalCounts(0)
 	, m_meanPos(0)
 	, m_autoResize(false)
+	, m_width(0)
 {
-	m_data.resize(bins);
+	setWidth(bins);
 	m_floatingMean.resize(256);
 	clear();
 }
@@ -63,7 +64,7 @@ bool Spectrum::incVal(quint16 bin)
 {
 	int size = m_data.size();
 	if (bin >= size && autoResize())
-		resize(bin + 1);
+		resize(size = bin + 1);
 	if (bin < size)
 	{
 		m_data[bin]++;
@@ -208,11 +209,7 @@ void Spectrum::setWidth(quint16 w)
 		m_data.resize(w);
 		m_data.squeeze();
 	}
-}
-
-quint16	Spectrum::width() 
-{
-	return m_data.size();
+	m_width = w;
 }
 
 quint64 Spectrum::value(quint16 index)
@@ -285,18 +282,6 @@ bool Histogram::checkChannel(quint16 chan)
 	if (autoResize())
 		setHeight(chan + 1);
 	return true;
-#if 0
-	if (!m_data.contains(chan) && autoResize())
-	{
-		for (quint16 i = 8 * (chan / 8); i < 8 * (1 + chan / 8); ++i)
-			if (!m_data.contains(i))
-				m_data.insert(i, new Spectrum(m_sumSpectrum.width()));
-		m_dataKeys = m_data.keys();
-		qSort(m_dataKeys);
-	}
-	m_maximumPos = m_dataKeys.last();
-	return m_data.contains(chan);
-#endif
 }
 
 bool Histogram::checkBin(quint16 bin)
@@ -577,20 +562,7 @@ void Histogram::setWidth(quint16 w)
 	foreach(Spectrum *s, m_data)
 		s->setWidth(w);
 	m_sumSpectrum.setWidth(w);
-}
-
-/*!
-    \fn quin16 Histogram::width(void)
-
-    \return the width of the histogram
- */
-quint16 Histogram::width(void)
-{
-	quint16 bins(0);
-	foreach(Spectrum *value, m_data)
-		if (value->width() > bins)
-			bins = value->width();
-	return bins;
+	m_width = w;
 }
 
 /*!

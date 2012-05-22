@@ -78,8 +78,15 @@ public:
 	 */
 	quint64 value(quint16 index);
 
-	//! \return the length of the spectrum
-	quint16	width();
+	/*!
+	   \fn quin16 Histogram::width(void)
+
+	   \return the width of the histogram
+	*/
+	quint16	width()
+	{
+		return m_width;
+	}
 
 	void setWidth(quint16);
 
@@ -125,6 +132,8 @@ private:
 	QVector<quint16>	m_floatingMean; 
 
 	bool			m_autoResize;
+
+	quint32			m_width;
 };
 
 
@@ -189,7 +198,7 @@ public:
 
 	void setHeight(quint16 h);
 
-	quint16 width();
+	quint16 width() {return m_width;}
 
 	void setWidth(quint16);
 
@@ -225,6 +234,8 @@ private:
 	quint16				m_maximumPos;
 
 	bool				m_autoResize;
+
+	quint16				m_width;
 };
 
 #endif
