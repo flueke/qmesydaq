@@ -221,25 +221,35 @@ void ModuleSetup::setMCPD(int id)
     checkChannel8Histogram->setChecked(m_theApp->histogram(id, mid, 7));
 }
 
-/*!
-    \fn void ModuleSetup::displaySlot(int)
-
-    \param id
- */
-void ModuleSetup::displaySlot(int id)
+void ModuleSetup::displayMCPDSlot(int id)
 {
     if (id < 0)
-        id = module->value();
+        id = devid->value();
 
     QList<int> modList;
     for (int i = 0; i < 8; ++i)
         if (m_theApp->getMpsdId(id, i))
             modList << i;
     module->setModuleList(modList);
+    displaySlot();
+}
 
+void ModuleSetup::displayMPSDSlot(int id)
+{
+    if (id < 0)
+       id = 0;
+    displaySlot();
+}
+
+/*!
+    \fn void ModuleSetup::displaySlot()
+ */
+void ModuleSetup::displaySlot()
+{
     quint8 chan = comgain->isChecked() ? 8 : channel->value();
 
     quint8 mod = devid->value();
+    quint8 id = module->value();
 // gain:
     gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));
 

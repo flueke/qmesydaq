@@ -57,7 +57,11 @@ private slots:
 
 	void setModeSlot(bool);
 
-	void displaySlot(int = -1);
+	void displayMCPDSlot(int = -1);
+
+	void displayMPSDSlot(int = -1);
+
+	void displaySlot();
 
 private:
 	Mesydaq2	*m_theApp;

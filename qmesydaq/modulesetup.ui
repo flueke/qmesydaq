@@ -735,7 +735,7 @@
    <sender>channel</sender>
    <signal>valueChanged(int)</signal>
    <receiver>ModuleSetup</receiver>
-   <slot>displaySlot(int)</slot>
+   <slot>displayMCPDSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>668</x>
@@ -799,7 +799,7 @@
    <sender>module</sender>
    <signal>valueChanged(int)</signal>
    <receiver>ModuleSetup</receiver>
-   <slot>displaySlot(int)</slot>
+   <slot>displayMPSDSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>353</x>
