@@ -67,7 +67,6 @@ public:
 	void selectCounter(int id);
 	void setPreSelection(double);
 	double preSelection();
-        QList<quint32> read();
 	void readHistogramSize(quint16& width, quint16& height);
 	QList<quint64> readHistogram();
 	QList<quint64> readDiffractogram();
