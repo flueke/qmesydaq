@@ -569,9 +569,13 @@ void MainWidget::checkListfilename(bool checked)
 void MainWidget::updateDisplay(void)
 {
     quint16 id = (quint16) paramId->value();
-    dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
-    cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
-    cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
+    int ci = statusTab->currentIndex();
+    if (statusTab->tabText(statusTab->currentIndex()) == tr("Statistics"))
+    {
+        dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
+        cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
+        cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
+    }
     hTimeText->setText(buildTimestring(m_meas->getHeadertime(), true));
     mTimeText->setText(buildTimestring(m_meas->getMeastime(), false));
     
