@@ -106,10 +106,32 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 	tmp.clear();
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-	QList<quint32> tmpList = m_interface->read();
-	for (int i = 0; i < tmpList.size(); ++i) 
-     		tmp.push_back(tmpList.at(i));
+        
+	QList<quint64> tmpList;
+// complete histogram
+	{
+		quint16 width,
+			height;
+
+		m_interface->readHistogramSize(width, height);
+		tmpList = m_interface->readHistogram();
+
+		tmp.push_back(width);
+		tmp.push_back(height);
+		tmp.push_back(1);
+	}
+// spectrogram
+	{
 // 1 1 1 value
+#if 0
+		tmpList = m_interface->readDiffractogram();
+        	tmp.push_back(m_values.count());
+		tmp.push_back(1);
+		tmp.push_back(1);
+#endif
+	}
+	for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+		tmp.push_back(quint32(*it));
 	return tmp;
 }
 
