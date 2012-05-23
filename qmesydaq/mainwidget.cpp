@@ -583,8 +583,8 @@ void MainWidget::updateDisplay(void)
     m_meas->calcMeanRates();
     
     // measurement values counters and rates
-    tSecsText->setText(tr("%1").arg(m_meas->timer() / 1000.));
-    totalCounts->setText(tr("%1").arg(m_meas->events()));
+    tSecsText->setText(tr("%1").arg(m_meas->timer() / 1000., 0, 'f', 1));
+    totalCounts->setText(tr("%1").arg(m_meas->events(), 20));
     eventRate->setText(tr("%1").arg(m_meas->getRate(EVID)));
     monitor1->setText(tr("%1").arg(m_meas->mon1()));
     monRate1->setText(tr("%1").arg(m_meas->getRate(MON1ID)));
