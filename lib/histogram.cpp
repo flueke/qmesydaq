@@ -27,13 +27,13 @@
 
 
 /**
-    \fn Spectrum::Spectrum(quint16 bins)
+    \fn Spectrum::Spectrum(const quint16 bins)
 
     constructor
 
     \param bins number of points in the spectrum
  */
-Spectrum::Spectrum(quint16 bins)
+Spectrum::Spectrum(const quint16 bins)
 	: QObject()
 	, m_maximumPos(0)
 	, m_meanCount(0)
@@ -53,14 +53,14 @@ Spectrum::~Spectrum()
 }
 
 /*!
-    \fn Spectrum::incVal(quint16 bin)
+    \fn Spectrum::incVal(const quint16 bin)
 
     add a event add position bin
 
     \param bin position inside the spectrum to increment
     \return true or false if successful or not
  */
-bool Spectrum::incVal(quint16 bin)
+bool Spectrum::incVal(const quint16 bin)
 {
 	int size = m_data.size();
 	if (bin >= size && autoResize())
@@ -76,13 +76,13 @@ bool Spectrum::incVal(quint16 bin)
 	return false;
 }
 
-void Spectrum::calcMaximumPosition(quint16 bin)
+void Spectrum::calcMaximumPosition(const quint16 bin)
 {
 	if (m_data[bin] > m_data[m_maximumPos])
 		m_maximumPos = bin;
 }
 
-void Spectrum::calcFloatingMean(quint16 bin)
+void Spectrum::calcFloatingMean(const quint16 bin)
 {
 #if defined(_MSC_VER)
 #	pragma message("TODO mean value determination")
@@ -97,7 +97,7 @@ void Spectrum::calcFloatingMean(quint16 bin)
 }
 
 /*!
-    \fn Spectrum::setValue(quint16 bin, quint64 val)
+    \fn Spectrum::setValue(const quint16 bin, const quint64 val)
 
     sets the events at position bin
 
@@ -105,7 +105,7 @@ void Spectrum::calcFloatingMean(quint16 bin)
     \param val events 
     \return true or false if successful or not
  */
-bool Spectrum::setValue(quint16 bin, quint64 val)
+bool Spectrum::setValue(const quint16 bin, const quint64 val)
 {
 	int size = m_data.size();
 	if (bin >= size && autoResize())
@@ -131,7 +131,7 @@ bool Spectrum::setValue(quint16 bin, quint64 val)
     \param val events 
     \return true or false if successful or not
  */
-bool Spectrum::addValue(quint16 bin, quint64 val)
+bool Spectrum::addValue(const quint16 bin, const quint64 val)
 {
 	int size = m_data.size();
 	if (bin >= size && autoResize())
@@ -190,13 +190,13 @@ float Spectrum::mean(float &s)
 }
 
 /*!
-    \fn void Spectrum::setWidth(quint16 w);
+    \fn void Spectrum::setWidth(const quint16 w);
 
     sets the width of a spectrum
 
     \param w width
  */
-void Spectrum::setWidth(quint16 w)
+void Spectrum::setWidth(const quint16 w)
 {
 	if (w == width())
 		return;
@@ -212,7 +212,7 @@ void Spectrum::setWidth(quint16 w)
 	m_width = w;
 }
 
-quint64 Spectrum::value(quint16 index)
+quint64 Spectrum::value(const quint16 index)
 {
 	if (index < m_data.size())
 		return m_data[index];
@@ -220,14 +220,14 @@ quint64 Spectrum::value(quint16 index)
 }
  
 /*!
-    \fn Histogram::Histogram(quint16 h, quint16 w)
+    \fn Histogram::Histogram(const quint16 h, const quint16 w)
     
     constructor
 
     \param h number of channels (i.e. number of tubes)
     \param w number of bins (inside a tube)
  */
-Histogram::Histogram(quint16 w, quint16 h)
+Histogram::Histogram(const quint16 w, const quint16 h)
 	: QObject()
 	, m_totalCounts(0)
 	, m_maximumPos(0)
@@ -243,17 +243,17 @@ Histogram::~Histogram()
 }
 
 /*!
-    \fn Histogram::max() 
+    \fn Histogram::max(void) const  
 
     \return the maximum of the whole histogram
 */
-quint64 Histogram::max() 
+quint64 Histogram::max(void) const
 {
 	return m_data.size() ? m_data[m_maximumPos]->max() : 0;
 }
 
 /*!
-    \fn Histogram::value(quint16 chan, quint16 bin)
+    \fn Histogram::value(const quint16 chan, const quint16 bin) const
 
     gives the counts of the cell x,y. 
 
@@ -265,7 +265,7 @@ quint64 Histogram::max()
     \param bin number of the tube
     \return 0 rief the cell does not exist, otherwise the counts
  */
-quint64 Histogram::value(quint16 chan, quint16 bin)
+quint64 Histogram::value(const quint16 chan, const quint16 bin) const
 {
 	if (chan < m_dataKeys.size())
 	{
@@ -275,7 +275,7 @@ quint64 Histogram::value(quint16 chan, quint16 bin)
 	return 0;
 }
 
-bool Histogram::checkChannel(quint16 chan)
+bool Histogram::checkChannel(const quint16 chan)
 {
 	if (chan < height())
 		return true;
@@ -284,7 +284,7 @@ bool Histogram::checkChannel(quint16 chan)
 	return true;
 }
 
-bool Histogram::checkBin(quint16 bin)
+bool Histogram::checkBin(const quint16 bin)
 {
 	if (bin < width())
 		return true;
@@ -293,14 +293,14 @@ bool Histogram::checkBin(quint16 bin)
 	return true;
 }
 
-void Histogram::calcMaximumPosition(quint16 chan)
+void Histogram::calcMaximumPosition(const quint16 chan)
 {
 	if (m_data[chan]->max() > m_data[m_maximumPos]->max())
 		m_maximumPos = chan;
 }
 
 /**
-    \fn Histogram::incVal(quint16 chan, quint16 bin)
+    \fn Histogram::incVal(const quint16 chan, const quint16 bin)
 
     increment value by 1 in cell[chan, bin]. If the cell does
     not exist it will be created.
@@ -309,7 +309,7 @@ void Histogram::calcMaximumPosition(quint16 chan)
     \param bin number of the bin in the spectrum
     \return true if it was ok otherwise false
  */
-bool Histogram::incVal(quint16 chan, quint16 bin)
+bool Histogram::incVal(const quint16 chan, const quint16 bin)
 {
 	if (!checkChannel(chan))
 		return false;
@@ -325,7 +325,7 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
 }
 
 /**
-    \fn Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
+    \fn Histogram::setValue(const quint16 chan, const quint16 bin, const quint64 val)
 
     set the event value in cell[chan, bin]. If the cell does
     not exist it will be created.
@@ -335,7 +335,7 @@ bool Histogram::incVal(quint16 chan, quint16 bin)
     \param val events
     \return true if it was ok otherwise false
  */
-bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
+bool Histogram::setValue(const quint16 chan, const quint16 bin, const quint64 val)
 {
 	if (!checkChannel(chan))
 		return false;
@@ -352,7 +352,7 @@ bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
 }
 
 /**
-    \fn Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
+    \fn Histogram::addValue(const quint16 chan, const quint16 bin, const quint64 val)
 
     set the event value in cell[chan, bin]. If the cell does
     not exist it will be created.
@@ -362,7 +362,7 @@ bool Histogram::setValue(quint16 chan, quint16 bin, quint64 val)
     \param val events
     \return true if it was ok otherwise false
  */
-bool Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
+bool Histogram::addValue(const quint16 chan, const quint16 bin, const quint64 val)
 {
 	if (!checkChannel(chan))
 		return false;
@@ -384,13 +384,13 @@ bool Histogram::addValue(quint16 chan, quint16 bin, quint64 val)
 }
 
 /*!
-    \fn Histogram::clear(quint16 channel)
+    \fn Histogram::clear(const quint16 channel)
 
     clears the spectrum channel
 
     \param channel number of the spectrum to be cleared
  */
-void Histogram::clear(quint16 channel)
+void Histogram::clear(const quint16 channel)
 {
 	m_totalCounts -= m_data[channel]->getTotalCounts();
 	m_data[channel]->clear();
@@ -420,22 +420,22 @@ void Histogram::clear(void)
 }
 
 /*!
-    \fn Histogram::getTotalCounts(void)
+    \fn Histogram::getTotalCounts(void) const
 
     \return the sum of all counts
  */
-quint64 Histogram::getTotalCounts(void)
+quint64 Histogram::getTotalCounts(void) const
 {
 	return m_totalCounts;
 }
 
 /*!
-    \fn quint64 Histogram::getCounts(QRect &region)
+    \fn quint64 Histogram::getCounts(const QRect &region) const
 
     \param region region of interest
     \return the number of events in the region
  */
-quint64 Histogram::getCounts(QRect &region)
+quint64 Histogram::getCounts(const QRect &region) const
 {
 	quint64 tmp(0);
 	int h = region.y() + region.width();
@@ -451,40 +451,40 @@ quint64 Histogram::getCounts(QRect &region)
 }
 
 /*!
-    \fn Histogram::spectrum(quint16 channel)
+    \fn Histogram::spectrum(const quint16 channel)
 
     \param channel number of the tube
     \return the spectrum of the tube channel
  */
-Spectrum *Histogram::spectrum(quint16 channel)
+Spectrum *Histogram::spectrum(const quint16 channel)
 {
    	return m_data.contains(channel) ?  m_data[channel] : NULL;
 }
 
 /*!
-    \fn Histogram::max(quint16 channel)
+    \fn Histogram::max(const quint16 channel) const
 
     \param channel number of the tube
     \return the maximum of the spectrum of the tube channel
  */
-quint64 Histogram::max(quint16 channel)
+quint64 Histogram::max(const quint16 channel) const
 {
    	return m_data.contains(channel) ? m_data[channel]->max() : 0;
 }
 
 /*!
-    \fn Histogram::maxpos(quint16 channel)
+    \fn Histogram::maxpos(const quint16 channel) const
 
     \param channel number of the tube
     \return the number of the bin in the tube channel
  */
-quint16 Histogram::maxpos(quint16 channel)
+quint16 Histogram::maxpos(const quint16 channel) const
 {
    	return m_data.contains(channel) ? m_data[channel]->maxpos() : 0;
 }
 
 /*!
-    \fn Histogram::getMean(quint16 chan, float &m, float &s)
+    \fn Histogram::getMean(const quint16 chan, float &m, float &s)
 
     gives the mean value and the standard deviation of the last events in the tube chan
 	
@@ -492,7 +492,7 @@ quint16 Histogram::maxpos(quint16 channel)
     \param m mean value
     \param s standard deviation
  */
-void Histogram::getMean(quint16 chan, float &m, float &s)
+void Histogram::getMean(const quint16 chan, float &m, float &s)
 {
    	if (m_data.contains(chan))
 	{
@@ -516,21 +516,21 @@ void Histogram::getMean(float &m, float &s)
 }
 
 /*!
-    \fn	quint16 Histogram::height() 
+    \fn	quint16 Histogram::height(void) const
 
     \return number of tubes
 */
-quint16	Histogram::height() 
+quint16	Histogram::height(void) const 
 {
 	return m_dataKeys.size();
 }
 
 /*!
-    \fn void Histogram::setHeight(quint16 h)
+    \fn void Histogram::setHeight(const quint16 h)
 
     \param h
  */
-void Histogram::setHeight(quint16 h)
+void Histogram::setHeight(const quint16 h)
 {
 	if (h == height())
 		return;
@@ -551,13 +551,13 @@ void Histogram::setHeight(quint16 h)
 }
 
 /*!
-    \fn void Histogram::setWidth(quint8 width)
+    \fn void Histogram::setWidth(const quint16 w)
 
     sets the width of each cell
 
-    \param w
+    \param w new witdh of histogram (or number of tubes)
  */
-void Histogram::setWidth(quint16 w)
+void Histogram::setWidth(const quint16 w)
 {
 	foreach(Spectrum *s, m_data)
 		s->setWidth(w);
@@ -566,20 +566,20 @@ void Histogram::setWidth(quint16 w)
 }
 
 /*!
-    \fn void Histogram::resize(quint16 w, quint16 h)
+    \fn void Histogram::resize(const quint16 w, const quint16 h)
 
     sets the size of histogram
 
     \param w width of histogram
     \param h height of histogram
  */
-void Histogram::resize(quint16 w, quint16 h) 
+void Histogram::resize(const quint16 w, const quint16 h) 
 {
 	setHeight(h);
 	setWidth(w); 
 }
 
-void Histogram::setAutoResize(bool resize) 
+void Histogram::setAutoResize(const bool resize) 
 {
 	m_autoResize = resize;
 	foreach(Spectrum *s, m_data)

@@ -45,26 +45,26 @@ class LIBQMESYDAQ_EXPORT Spectrum : public QObject
 	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
 
 public:
-	Spectrum(quint16 bins = LINBINS);
+	Spectrum(const quint16 bins = LINBINS);
 
 	~Spectrum();
 
-	bool incVal(quint16 bin);
+	bool incVal(const quint16 bin);
 
-	bool setValue(quint16 bin, quint64 val);
+	bool setValue(const quint16 bin, const quint64 val);
 
-	bool addValue(quint16 bin, quint64 val);
+	bool addValue(const quint16 bin, const quint64 val);
 
-	void clear();
+	void clear(void);
 
 	//! \return the maximum value of the spectrum
 	quint64 max() {return m_data.size() ? m_data[m_maximumPos] : 0;}
 
 	//! \return the first position of the maximum value of the spectrum
-	quint16 maxpos() {return m_maximumPos;}
+	quint16 maxpos(void) const {return m_maximumPos;}
 
 	//! \return sum of counts in the spectrum
-	quint64 getTotalCounts() {return m_totalCounts;}
+	quint64 getTotalCounts(void) const {return m_totalCounts;}
 
 	float mean(float &s);
 
@@ -76,19 +76,17 @@ public:
 	 * \param index position inside the spectrum for the required counts
 	 * \return the number of neutrons
 	 */
-	quint64 value(quint16 index);
+	quint64 value(const quint16 index);
 
 	/*!
-	   \fn quin16 Histogram::width(void)
-
 	   \return the width of the histogram
 	*/
-	quint16	width()
+	quint16	width(void) const
 	{
 		return m_width;
 	}
 
-	void setWidth(quint16);
+	void setWidth(const quint16 w);
 
 	/**
 	 * sets the size of the spectrum to the desired size, if the size
@@ -98,23 +96,27 @@ public:
 	 *
 	 * \param  bins new size of the spectrum
 	 */
-	void resize(quint16 bins) {m_data.resize(bins);}
+	void resize(const quint16 bins) 
+	{
+		m_data.resize(bins);
+		m_width = bins;
+	}
 
 	QString format(void);
 
 	//! \return auto resizing of the spectrum
-	bool autoResize(void) {return m_autoResize;}
+	bool autoResize(void) const {return m_autoResize;}
 
 	/**
              sets the autoresizing capability of the spectrum
              \param resize
          */
-        void setAutoResize(bool resize) {m_autoResize = resize;}
+        void setAutoResize(const bool resize) {m_autoResize = resize;}
 
 private:
-	void calcFloatingMean(quint16 bin);
+	void calcFloatingMean(const quint16 bin);
 
-	void calcMaximumPosition(quint16 bin);
+	void calcMaximumPosition(const quint16 bin);
 
 private:
 	QVector<quint64>	m_data;
@@ -154,87 +156,99 @@ class LIBQMESYDAQ_EXPORT Histogram : public QObject
         //! if the data points not included in the histogram
 	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
 public:
-	Histogram(quint16 channels = CHANNELS, quint16 bins = LINBINS);
+	Histogram(const quint16 channels = CHANNELS, const quint16 bins = LINBINS);
 
 	~Histogram();
 
-	bool incVal(quint16 chan, quint16 bin);
+	bool incVal(const quint16 chan, const quint16 bin);
 
-	bool setValue(quint16 chan, quint16 bin, quint64 val);
+	bool setValue(const quint16 chan, const quint16 bin, const quint64 val);
 
-	bool addValue(quint16 chan, quint16 bin, quint64 val);
+	bool addValue(const quint16 chan, const quint16 bin, const quint64 val);
 
 	void clear(void);
 
-	void clear(quint16 channel);
+	void clear(const quint16 channel);
 
-	quint64 getTotalCounts(void);
+	quint64 getTotalCounts(void) const;
 
-	quint64 getCounts(QRect &r);
+	quint64 getCounts(const QRect &r) const;
 
-	Spectrum *spectrum(quint16 channel);
+	Spectrum *spectrum(const quint16 channel);
 
 	//! \return the sum spectrum
-	Spectrum *spectrum() {return &m_sumSpectrum;}
+	Spectrum *spectrum(void) {return &m_sumSpectrum;}
 
-	quint64 max(quint16 channel);
+	quint64 max(const quint16 channel) const;
 
-	quint64 max(); 
+	quint64 max(void) const; 
 	
 	//! \return the number of the first tube containing the maximum value
-	quint16 maxpos() {return m_maximumPos;}
+	quint16 maxpos(void) const {return m_maximumPos;}
 
-	quint16 maxpos(quint16 channel);
+	quint16 maxpos(const quint16 channel) const;
 
 	void getMean(float &mean, float &sigma);
 
-	void getMean(quint16 chan, float &mean, float &sigma);
+	void getMean(const quint16 chan, float &mean, float &sigma);
 
 	QString format(void);
 
-	quint64 value(quint16 x, quint16 y);
+	quint64 value(const quint16 x, const quint16 y) const;
 
-	quint16	height(); 
+	quint16	height(void) const; 
 
-	void setHeight(quint16 h);
+	void setHeight(const quint16 h);
 
-	quint16 width() {return m_width;}
+	//! /return the width of the histogram
+	quint16 width(void) const {return m_width;}
 
-	void setWidth(quint16);
+	void setWidth(const quint16);
 
-	void resize(quint16 w, quint16 h);
+	void resize(const quint16 w, const quint16 h);
 
 	//! \return auto resizing of the spectrum
-	bool autoResize(void) {return m_autoResize;}
+	bool autoResize(void) const {return m_autoResize;}
 
 	/**
              sets the autoresizing capability of the spectrum
              \param resize
          */
-        void setAutoResize(bool resize); 
+        void setAutoResize(const bool resize); 
 
 private:
-	void calcMaximumPosition(quint16 chan);
+	/**
+	 * Calculates the maximum position of a tube spectrum
+	 * 
+         * \param chan number of the tube
+	 */
+	void calcMaximumPosition(const quint16 chan);
 
-	bool checkChannel(quint16 chan);
+	bool checkChannel(const quint16 chan);
 
-	bool checkBin(quint16 bin);
+	bool checkBin(const quint16 bin);
 
 private:
+	//! total number of counts inside the histogram
 	quint64 			m_totalCounts;
 
+	//! tube spectra list
 	QHash<QPoint, int>		m_data1;
 
 	QHash<quint16, Spectrum*>	m_data;
 
 	QList<quint16>			m_dataKeys;
 
+	//! sum spectrum
 	Spectrum			m_sumSpectrum;
 
+	//! number of the tube containing the histogram maximum
 	quint16				m_maximumPos;
 
+	//! automatic resize of the histogram allowed or not
 	bool				m_autoResize;
 
+	//! number of tubes
 	quint16				m_width;
 };
 
