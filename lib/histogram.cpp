@@ -613,3 +613,13 @@ QString Histogram::format(void)
         return t;
 }
 
+quint64 Histogram::minROI(void) const
+{
+	return 0;
+}
+
+quint64 Histogram::maxROI(void) const
+{
+	return max();
+}
+

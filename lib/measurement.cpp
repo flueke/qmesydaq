@@ -47,11 +47,9 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_mesydaq(mesy)
 	, m_posHistMapCorrection(NULL)
 	, m_posHistCorrected(NULL)
-	, m_lastTime(0)
 	, m_starttime_msec(0)
 	, m_meastime_msec(0)
-	, m_status(IDLE)
-	, m_rateflag(false)
+	, m_status(Idle)
 	, m_online(false)
 	, m_working(true)
 	, m_remote(false)
@@ -95,14 +93,14 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
 }
 
-quint16 Measurement::height()
+quint16 Measurement::height(void) const
 {
 	if (m_mode == ReplayListFile)
 		return qMax(m_Hist[AmplitudeHistogram]->height(), m_Hist[PositionHistogram]->height());
 	return m_height;
 }
 
-quint16 Measurement::width()
+quint16 Measurement::width(void) const
 {
 	if (m_mode == ReplayListFile)
 		return qMax(m_Hist[AmplitudeHistogram]->width(), m_Hist[PositionHistogram]->width());
@@ -173,6 +171,12 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 	}
 }
 
+/*!
+    \fn Measurement::destroyHistogram(void)
+ 
+    This method deletes all existing histograms, spectra, ... .
+    It also initializes all pointer to NULL.
+ */
 void Measurement::destroyHistogram(void)
 {
 	if (m_Hist[AmplitudeHistogram])
@@ -246,7 +250,7 @@ void Measurement::timerEvent(QTimerEvent *event)
  */
 void Measurement::setCurrentTime(quint64 msecs)
 {
-	if(m_status == STARTED)
+	if(m_status == Started)
 	{
     		m_meastime_msec = msecs - m_starttime_msec;
 		for (quint8 i = 0; i < TIMERID; ++i)
@@ -255,11 +259,11 @@ void Measurement::setCurrentTime(quint64 msecs)
 }
 
 /*!
-    \fn Measurement::getMeastime(void)
+    \fn Measurement::getMeastime(void) const
 
     \return measurement time
  */
-quint64 Measurement::getMeastime(void)
+quint64 Measurement::getMeastime(void) const
 {
 	return m_meastime_msec;
 }
@@ -279,7 +283,7 @@ void Measurement::start()
 	m_triggers = 0;
 	m_mesydaq->setRunId(m_mesydaq->runId() + 1);
 	m_mesydaq->start();
-	m_status = STARTED;
+	m_status = Started;
 	m_starttime_msec = m_mesydaq->time();
 	MSG_INFO << "event counter limit : " << m_counter[EVID]->limit();
 	MSG_INFO << "timer limit : " << m_counter[TIMERID]->limit() / 1000;
@@ -298,9 +302,9 @@ void Measurement::start()
  */
 void Measurement::requestStop()
 {
-	if (m_status == STARTED)
+	if (m_status == Started)
 	{
-		m_status = STOPPED;
+		m_status = Stopped;
 		emit stopSignal(false);
 		MSG_NOTICE << "Max " << m_Hist[PositionHistogram]->max(0) << " was at pos " << m_Hist[PositionHistogram]->maxpos(0);
 	}
@@ -313,9 +317,9 @@ void Measurement::requestStop()
  */
 void Measurement::stop()
 {
-	if (m_status != IDLE)
+	if (m_status != Idle)
 	{ 
-		if (m_status == STARTED)
+		if (m_status == Started)
 			m_mesydaq->stop(); 
 		quint64 time = m_mesydaq->time();
 		foreach (MesydaqCounter *c, m_counter)
@@ -327,7 +331,7 @@ void Measurement::stop()
 				MSG_NOTICE << "Counter " << i << " gots " << m_counter[i]->value() << " events";
 		}
 	}
-	m_status = IDLE;
+	m_status = Idle;
 } 
 
 /*!
@@ -357,10 +361,10 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 		else
    			m_counter[cNum]->set(val);
 // is counter master and is limit reached?
-		if(m_counter[cNum]->isStopped() && m_status != STOPPED)
+		if(m_counter[cNum]->isStopped() && m_status != Stopped)
 		{
 			MSG_NOTICE << "stop on counter " << cNum << ", value: " << m_counter[cNum]->value() << ", preset: " << m_counter[cNum]->limit();
-			m_status = STOPPED;
+			m_status = Stopped;
 			emit stopSignal();
 		}
 	}
@@ -389,14 +393,14 @@ void Measurement::calcMeanRates()
 }
 
 /*!
-    \fn Measurement::getCounter(quint8 cNum)
+    \fn Measurement::getCounter(const quint8 cNum) const
 
     get the current value of the counter
 
     \param cNum number of the counter
     \return counter value
  */
-quint64 Measurement::getCounter(quint8 cNum)
+quint64 Measurement::getCounter(const quint8 cNum) const
 {
 	if(m_counter.contains(cNum))
 		return m_counter[cNum]->value();
@@ -404,14 +408,14 @@ quint64 Measurement::getCounter(quint8 cNum)
 }
 
 /*!
-    \fn Measurement::getRate(quint8 cNum)
+    \fn Measurement::getRate(const quint8 cNum) const
 
     get the rate of a counter
 
     \param cNum number of the counter
     \return counter rate
  */
-ulong Measurement::getRate(quint8 cNum)
+quint64 Measurement::getRate(const quint8 cNum) const
 {
 	if(m_counter.contains(cNum))
 		return m_counter[cNum]->rate();
@@ -419,14 +423,14 @@ ulong Measurement::getRate(quint8 cNum)
 }
 
 /*!
-    \fn Measurement::isOk(void)
+    \fn Measurement::isOk(void) const
 
     return the status of the measurement
 	- 0 - online and working
 	- 1 - online and not working
 	- 2 - not oline
  */
-quint8 Measurement::isOk(void)
+quint8 Measurement::isOk(void) const
 {
 	quint8 ret(2);
 	if (m_online)
@@ -518,28 +522,27 @@ void Measurement::setRemote(bool truth)
 	m_remote = truth;
 }
 
-
 /*!
-    \fn Measurement::remoteStart(void)
+    \fn Measurement::remoteStart(void) const
 
      gets information whether the remote control is switched on or not
 	
      \return status of remote control
  */
-bool Measurement::remoteStart(void)
+bool Measurement::remoteStart(void) const
 {
 	return m_remote;
 }
 
 /*!
-    \fn Measurement::isMaster(quint8 cNum)
+    \fn Measurement::isMaster(const quint8 cNum) const
     
     is counter master or not
 
     \param cNum number of the counter
     \return master state
  */
-bool Measurement::isMaster(quint8 cNum)
+bool Measurement::isMaster(const quint8 cNum) const
 {
 	if (m_counter.contains(cNum))
 		return m_counter[cNum]->isMaster();
@@ -578,7 +581,6 @@ void Measurement::clearAllHist(void)
 		m_Spectrum[TubeSpectrum]->clear();
 	if (m_posHistCorrected)
 		m_posHistCorrected->clear();
-	m_lastTime = 0;
 }
 
 /*!
@@ -599,77 +601,71 @@ void Measurement::clearChanHist(quint16 chan)
 }
 
 /*!
-    \fn Spectrum *Measurement::posData(quint16 line)
+    \fn Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 
     gets a position spectrum of a tube
 
+    \param t type of the requested histogram
     \param line tube number
     \return spectrum if line exist otherwise NULL pointer
 */
-Spectrum *Measurement::posData(quint16 line)
+Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 {
-	if (m_Hist[PositionHistogram])
-		return m_Hist[PositionHistogram]->spectrum(line);
+	if (m_Hist[t])
+		return m_Hist[t]->spectrum(line);
 	else
 		return NULL;
 }
 
 /*!
-    \fn Spectrum *Measurement::posData()
+    \fn Spectrum *Measurement::data(const HistogramType t)
 
     gets the position histogram
 
     \return position histogram if exist otherwise NULL pointer
 */
-Spectrum *Measurement::posData()
+Spectrum *Measurement::data(const HistogramType t)
 {
-	if (m_Hist[PositionHistogram])
-		return m_Hist[PositionHistogram]->spectrum();
+	if (m_Hist[t])
+		return m_Hist[t]->spectrum();
 	else
 		return NULL;
 }
 
 /*!
-    \fn Spectrum *Measurement::ampData()
+    \fn Spectrum *Measurement::spectrum(const SpectrumType t)
 
-    gets the amplitude histogram
-
-    \return amplitude histogram if exist otherwise NULL pointer
-*/
-Spectrum *Measurement::ampData()
-{
-	if (m_Hist[AmplitudeHistogram])
-		return m_Hist[AmplitudeHistogram]->spectrum();
-	else
-		return NULL;
-}
-
-/*!
-    \fn Spectrum *Measurement::ampData(quint16 line)
-
-    gets a amplitude spectrum of a tube
-
-    \param line tube number
-    \return spectrum if line exist otherwise NULL pointer
-*/
-Spectrum *Measurement::ampData(quint16 line)
-{
-	if (m_Hist[AmplitudeHistogram])
-		return m_Hist[AmplitudeHistogram]->spectrum(line);
-	else
-		return NULL;
-}
-
-/*!
-    \fn Spectrum *Measurement::timeData()
-
-    gets a time spectrum of all events
+    gets a spectrum of all events
 
     \return spectrum if line exist otherwise NULL pointer
 */
-Spectrum *Measurement::timeData()
+Spectrum *Measurement::spectrum(const SpectrumType t)
 {
-	return m_Spectrum[TimeSpectrum];
+#if defined(_MSC_VER)
+#	pragma message("TODO tube spectrum !!!")
+#else
+#	warning TODO tube spectrum !!!
+#endif
+	switch(t)
+	{
+		case TubeSpectrum :
+			if (m_Spectrum[TubeSpectrum]->width() > 0)
+				return m_Spectrum[TubeSpectrum];
+			break;
+		case Diffractogram :
+			m_Spectrum[Diffractogram]->resize(m_Hist[PositionHistogram]->height());
+			for (int i = 0; i < m_Spectrum[Diffractogram]->width(); ++i)
+			{
+				Spectrum *spec = m_Hist[AmplitudeHistogram]->spectrum(i);
+				if (spec)
+					m_Spectrum[Diffractogram]->setValue(i, spec->getTotalCounts());
+			}
+			return m_Spectrum[Diffractogram];
+			break;
+		default :
+			return m_Spectrum[t];
+	}
+	return NULL;
 }
 
 /*!
@@ -745,6 +741,7 @@ void Measurement::readHistograms(const QString &name)
 				}
 			}	
 			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
+			setROI(QRectF(0,0, width(), height()));
 		}
 		f.close();
 	}
@@ -809,9 +806,9 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 		QChar c('0');
 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 //
-// status IDLE is for replaying files
+// status Idle is for replaying files
 // 
-		for(quint32 counter = 0, i = 0; i < datalen && (m_status == STARTED || m_status == IDLE); ++i, counter += 3)
+		for(quint32 counter = 0, i = 0; i < datalen && (m_status == Started || m_status == Idle); ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
@@ -953,7 +950,7 @@ bool Measurement::acqListfile() const
 
     \param readfilename file name for the list mode data
 */
-void Measurement::readListfile(QString readfilename)
+void Measurement::readListfile(const QString &readfilename)
 {
 	QDataStream datStream;
 	QTextStream textStream;
@@ -985,7 +982,7 @@ void Measurement::readListfile(QString readfilename)
 	resizeHistogram(0 /* 1024 */, 0 /* 128 */, true, true);
 
 	QChar c('0');
-	if (m_status == STARTED)
+	if (m_status == Started)
 	{
 		stop();
 		QCoreApplication::processEvents();
@@ -1052,71 +1049,47 @@ void Measurement::readListfile(QString readfilename)
 }
 
 /*!
-    \fn Measurement::getPosMean(float &mean, float &sigma)
+    \fn Measurement::getMean(const HistogramType t, float &mean, float &sigma)
 
     gives the mean value and the standard deviation of the last position events
   
+    \param t type of the requested histogram
     \param mean mean value
     \param sigma standard deviation
  */
-void Measurement::getPosMean(float &mean, float &sigma)
+void Measurement::getMean(const HistogramType t, float &mean, float &sigma)
 {
-	m_Hist[PositionHistogram]->getMean(mean, sigma);
+	m_Hist[t]->getMean(mean, sigma);
 }
 
 /*!
-    \fn Measurement::getPosMean(quint16 chan, float &mean, float &sigma)
+    \fn Measurement::getMean(const HistogramType t, quint16 chan, float &mean, float &sigma)
 
     gives the mean value and the standard deviation of the last events in the tube chan of the position histogram
 
+    \param t type of the requested histogram
     \param chan the number of the tube
     \param mean mean value
     \param sigma standard deviation
  */
-void Measurement::getPosMean(quint16 chan, float &mean, float &sigma)
+void Measurement::getMean(const HistogramType t, quint16 chan, float &mean, float &sigma)
 {
-	m_Hist[PositionHistogram]->getMean(chan, mean, sigma);
-}
-
-/*!
-    \fn Measurement::getAmpMean(float &mean, float &sigma)
-
-    gives the mean value and the standard deviation of the last amplitude events
-  
-    \param mean mean value
-    \param sigma standard deviation
- */
-void Measurement::getAmpMean(float &mean, float &sigma)
-{
-	m_Hist[AmplitudeHistogram]->getMean(mean, sigma);
-}
-
-/*!
-    \fn Measurement::getAmpMean(quint16 chan, float &mean, float &sigma)
-
-    gives the mean value and the standard deviation of the last events in the tube chan of the amplitude histogram
-
-    \param chan the number of the tube
-    \param mean mean value
-    \param sigma standard deviation
- */
-void Measurement::getAmpMean(quint16 chan, float &mean, float &sigma)
-{
-	m_Hist[AmplitudeHistogram]->getMean(chan, mean, sigma);
+	m_Hist[t]->getMean(chan, mean, sigma);
 }
 
 /**
-    \fn Measurement::getTimeMean(float &mean, float &sigma)
+    \fn Measurement::getMean(const SpectrumType t, float &mean, float &sigma)
 
     gives the mean value and the standard deviation of the last events in the time spectrum
 
+    \param t type of the requested spectrum
     \param mean mean value
     \param sigma standard deviation of the mean value
     \return mean value
  */
-void Measurement::getTimeMean(float &mean, float &sigma)
+void Measurement::getMean(const SpectrumType t, float &mean, float &sigma)
 {
-	mean = m_Spectrum[TimeSpectrum]->mean(sigma);
+	mean = m_Spectrum[t]->mean(sigma);
 }
 
 /*!
@@ -1125,8 +1098,9 @@ void Measurement::getTimeMean(float &mean, float &sigma)
     define a region of interest (ROI) for counting all events in it
  
     \param r rectangle as ROI
+    \see getROI
  */
-void Measurement::setROI(QRectF r)
+void Measurement::setROI(const QRectF &r)
 {
 	int x = round(r.x()),
 	    y = round(r.y()),
@@ -1135,43 +1109,21 @@ void Measurement::setROI(QRectF r)
 	MSG_NOTICE << "setROI : " << x << ',' << y << ',' << w << ',' << h;
 	m_roi = QRect(x, y, w, h);
 }
+/*!
+    \fn QRectF Measurement::getROI(void) const
 
-QRectF Measurement::getROI(void)
+    \return the "region of interest"
+    \see getROI
+ */
+QRectF Measurement::getROI(void) const
 {
 	return m_roi;
 }
 
-quint64 Measurement::ampEventsInROI()
+quint64 Measurement::eventsInROI(const HistogramType t)
 {
-	quint64 tmp = m_Hist[AmplitudeHistogram]->getCounts(m_roi);
+	quint64 tmp = m_Hist[t]->getCounts(m_roi);
 	return tmp;
-}
-
-quint64 Measurement::posEventsInROI()
-{
-	quint64 tmp = m_Hist[PositionHistogram]->getCounts(m_roi);
-	return tmp;
-}
-
-Spectrum *Measurement::diffractogram()
-{
-#if defined(_MSC_VER)
-#	pragma message("TODO tube spectrum !!!")
-#else
-#	warning TODO tube spectrum !!!
-#endif
-#if 0
-	if (m_Spectrum[TubeSpectrum]->width() > 0)
-		return m_Spectrum[TubeSpectrum];
-#endif
-	m_Spectrum[Diffractogram]->resize(m_Hist[PositionHistogram]->height());
-	for (int i = 0; i < m_Spectrum[Diffractogram]->width(); ++i)
-	{
-		Spectrum *spec = m_Hist[AmplitudeHistogram]->spectrum(i);
-		if (spec)
-			m_Spectrum[Diffractogram]->setValue(i, spec->getTotalCounts());
-	}
-	return m_Spectrum[Diffractogram];
 }
 
 void Measurement::setListFileHeader(const QByteArray& header)
@@ -1180,7 +1132,7 @@ void Measurement::setListFileHeader(const QByteArray& header)
 		m_mesydaq->setListFileHeader(header);
 }
 
-void Measurement::setHistfilename(QString name) 
+void Measurement::setHistfilename(const QString &name) 
 {
 	m_histfilename = name;
 	if(m_histfilename.indexOf(".mtxt") == -1)
@@ -1195,7 +1147,7 @@ void Measurement::setConfigfilename(const QString &name)
 		m_configfile.setFile(name);
 }
 
-QString Measurement::getConfigfilename(void) 
+QString Measurement::getConfigfilename(void) const
 {
 	if (m_configfile.exists())
 		return m_configfile.absoluteFilePath();
@@ -1297,6 +1249,11 @@ bool Measurement::saveSetup(const QString &name)
 	return true;
 }
 
+/*!
+    \fn void Measurement::storeLastFile(void)
+
+    stores the last used configuration file name in the global user settings.
+ */
 void Measurement::storeLastFile(void)
 {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");

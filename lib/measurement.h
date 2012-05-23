@@ -46,17 +46,29 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS(Mode)
+	Q_ENUMS(HistogramType)
+	Q_ENUMS(SpectrumType)
+	Q_ENUMS(Status)
 
 	//! stores the current mode of the measurement
 	Q_PROPERTY(Mode m_mode READ mode)
 
+	//! stores the histogram file name
 	Q_PROPERTY(QString m_histfilename READ getHistfilename WRITE setHistfilename)
+	//! stors the default path for histogram files
 	Q_PROPERTY(QString m_histPath READ getHistfilepath WRITE setHistfilepath)
+	//! stors the default path for listmode data files
 	Q_PROPERTY(QString m_listPath READ getListfilepath WRITE setListfilepath)
+	//! stors the default path for configuration files
 	Q_PROPERTY(QString m_configPath READ getConfigfilepath WRITE setConfigfilepath)
 
         //! stores the currently loaded configfile name
 	Q_PROPERTY(QString  m_configfile READ getConfigfilename WRITE setConfigfilename)
+
+	//! stores the height of the histograms
+	Q_PROPERTY(quint16 m_height READ height)
+	//! stores the width of the histograms
+	Q_PROPERTY(quint16 m_width READ width)
 
 public:
 	//! Defines the current mode values of a measurement 
@@ -73,127 +85,137 @@ public:
 	//! - PositionHistogram - raw position histogram
 	//! - AmplitudeHistogram - raw amplitude histogram
 	//! - CorrectedPositionHistogram - corrected position histogram
-	enum HistoType {
+	enum HistogramType {
 		PositionHistogram = 0,
 		AmplitudeHistogram,
 		CorrectedPositionHistogram,
 	};
 
+	//! Defines the spectrum type
+	//! - TimeSpectrum - ???
+	//! - Diffractogram - spectrum over all vertical rows
+        //! - TubeSpectrum - spectrum along a tube 
 	enum SpectrumType {
 		TimeSpectrum = 0,
 		Diffractogram,
 		TubeSpectrum,
 	};
 
+	//! Defines the DAQ status
+	//! - Idle - no acquistion 
+	//! - Running - data acquisition is running
+	//! - Started - data acquisition is requested to run
+	//! - Stopped - data acquisition is requested to stop
+	enum Status {
+		Idle = IDLE,
+		Running,
+		Started,
+		Stopped,
+	};
+
+
 public:
 	Measurement(Mesydaq2 *mesy, QObject *parent = 0);
 
 	~Measurement();
 
-	void resizeHistogram(quint16 w, quint16 h, bool = true, bool = false);
+	void resizeHistogram(const quint16 w, const quint16 h, const bool = true, const bool = false);
 
 	//! \return the width of the histogram
-	quint16 width(void);
+	quint16 width(void) const;
 
 	//! \return the height of the histogram
-	quint16 height(void);
+	quint16 height(void) const;
 
-	quint64	getMeastime(void);
+	quint64	getMeastime(void) const;
 
-	void	setCurrentTime(quint64 msecs);
-	void	stop();
-	void	start();
-	void	cont();
+	void	setCurrentTime(const quint64 msecs);
+	void	stop(void);
+	void	start(void);
+	void	cont(void);
 
-	void	calcMeanRates();
-	ulong	getRate(quint8 cNum);
+	void	calcMeanRates(void);
+	quint64	getRate(const quint8 cNum) const;
 
-	void	setCounter(quint32 cNum, quint64 val);
-	quint64	getCounter(quint8 cNum);
+	void	setCounter(const quint32 cNum, const quint64 val);
+	quint64	getCounter(const quint8 cNum) const;
 
-	quint8	isOk(void);
-	void	setOnline(bool truth);
+	quint8	isOk(void) const;
+	void	setOnline(const bool truth);
 
-	quint64	getPreset(quint8 cNum);
-	void	setPreset(quint8 cNum, quint64 prval, bool mast);
+	quint64	getPreset(const quint8 cNum);
+	void	setPreset(const quint8 cNum, const quint64 prval, const bool mast);
 
-	void	setListmode(bool truth);
-	void	setRemote(bool truth);
-	bool	remoteStart(void);
+	void	setListmode(const bool truth);
+	void	setRemote(const bool truth);
+	bool	remoteStart(void) const;
 
-	bool	isMaster(quint8 cNum);
-	void	clearCounter(quint8 cNum);
+	bool	isMaster(const quint8 cNum) const;
+	void	clearCounter(const quint8 cNum);
 
 	//! \return stream the data into a separate file too
-	bool	acqListfile() const;
+	bool	acqListfile(void) const;
 
-	void	readListfile(QString readfilename);
+	void	readListfile(const QString &readfilename);
 
 	//! \returns the number of counts in the defined ROI
-	quint64	getROICounts(void);
+	quint64	getROICounts(void) const;
 
-	void 	setROI(QRectF r);
+	void 	setROI(const QRectF &r);
 
-        QRectF	getROI(void);
+        QRectF	getROI(void) const;
 
 	/** 
 		gets the value of the defined monitor 1
 		\todo monitor mapping configuration
 		\return counter value for the monitor 1 
 	 */
-	quint64	mon1() {return m_counter[MON1ID]->value();}
+	quint64	mon1() const {return m_counter[MON1ID]->value();}
 
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon2() {return m_counter[MON2ID]->value();}
+	quint64	mon2() const {return m_counter[MON2ID]->value();}
 	
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon3() {return m_counter[MON3ID]->value();}
+	quint64	mon3() const {return m_counter[MON3ID]->value();}
 	
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon4() {return m_counter[MON4ID]->value();}
+	quint64	mon4() const {return m_counter[MON4ID]->value();}
 	
 	/** 
 		gets the value of the defined event counter
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	events() {return m_counter[EVID]->value();}
+	quint64	events() const {return m_counter[EVID]->value();}
 
 	/** 
 		gets the value of the timer
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	timer() {return m_counter[TIMERID]->value();}
+	quint64	timer() const {return m_counter[TIMERID]->value();}
 
 	/** 
 		gets the number of all events in the selected ROI
 		\todo counter mapping configuration
 		\return events in ROI 
 	 */
-	quint64 ampEventsInROI();
-
-	/** 
-		gets the number of all events in the selected ROI
-		\todo counter mapping configuration
-		\return events in ROI 
-	 */
-	quint64 posEventsInROI();
+	quint64 eventsInROI(const HistogramType t);
 
 	//! \return time of the last header read from interface
-	quint64 getHeadertime(void) {return m_headertime;}
+	quint64 getHeadertime(void) const {return m_headertime;}
 
 	void writeHistograms(const QString &name);
 
@@ -201,24 +223,22 @@ public:
 
 	void clearAllHist(void);
 
-	void clearChanHist(quint16 chan);
+	void clearChanHist(const quint16 chan);
 
-	Spectrum *posData(quint16 line);
-	Spectrum *posData();
+	Spectrum *data(const HistogramType t, const quint16 line);
+	Spectrum *data(const HistogramType t);
 
-	//! \return the position histogram
-	Histogram *posHist() {return m_Hist[PositionHistogram];}
+	/**
+	    \param t type of the requested histogram
+            \return a histogram
+	 */
+	Histogram *hist(const HistogramType t) const {return m_Hist[t];}
 
-	Spectrum *ampData(quint16 line);	
-	Spectrum *ampData();	
-
-	//! \return the amplitude histogram
-	Histogram *ampHist() {return m_Hist[AmplitudeHistogram];}	
-
-	Spectrum *timeData();
-
-	//! \return the diffractogram
-	Spectrum *diffractogram(); 
+	/**
+	  \param t type of the requested spectrum
+	  \return a spectrum
+         */
+	Spectrum *spectrum(const SpectrumType t);
 
 	//! \return the mapping and correction data for position histogram
 	MapCorrection*& posHistMapCorrection() { return m_posHistMapCorrection; }
@@ -226,30 +246,28 @@ public:
 	//! \return a mapped and corrected position histogram
 	MappedHistogram*& posHistCorrected() { return m_posHistCorrected; }
 
-	void getPosMean(float &, float &);
-	void getPosMean(quint16, float &, float &);
-	void getAmpMean(float &, float &);
-	void getAmpMean(quint16, float &, float &);
-	void getTimeMean(float &, float &);
+	void getMean(const HistogramType t, float &, float &);
+	void getMean(const HistogramType t, quint16, float &, float &);
+	void getMean(const SpectrumType t, float &, float &);
 
 	//! \brief store header for list mode file
 	void setListFileHeader(const QByteArray& header);
 
 // run ID oriented methods
 	//! \return the current run ID
-	quint16 runId(void) { return m_runID; }
+	quint16 runId(void) const { return m_runID; }
 
 	/*!
             sets the runid for the measurement
             \param runid
 	 */
-	void setRunId(quint16 runid)
+	void setRunId(const quint16 runid)
 	{
 		m_mesydaq->setRunId(runid);
 	}
 
 	//! returns the current operation mode
-	Mode mode(void) {return m_mode;}
+	Mode mode(void) const {return m_mode;}
 
 // histogram file oriented methods
 	/**
@@ -257,20 +275,20 @@ public:
 	 *
 	 * \param path to the histogram data files
 	 */
-	void setHistfilepath(QString path) {m_histPath = path;}
+	void setHistfilepath(const QString &path) {m_histPath = path;}
 
 	//! \return path to store all histogram data files
-	QString getHistfilepath(void) {return m_histPath;}
+	QString getHistfilepath(void) const {return m_histPath;}
 
 	/**
 	 * sets the file name of a histogram data file
          *
          * \param name name of the next histogram data file
          */
-	void setHistfilename(QString name);
+	void setHistfilename(const QString &name);
 
 	//! \return name of the current histogram data file
-	QString getHistfilename(void) {return m_histfilename;}
+	QString getHistfilename(void) const {return m_histfilename;}
 
 // list mode oriented methods
 	/**
@@ -278,10 +296,10 @@ public:
 	 *
 	 * \param path to the list mode data files
 	 */
-	void setListfilepath(QString path) {m_listPath = path;}
+	void setListfilepath(const QString &path) {m_listPath = path;}
 
 	//! \return path to store all list mode data files
-	QString getListfilepath() {return m_listPath;}
+	QString getListfilepath(void) const {return m_listPath;}
 
 // configuration file oriented methods
 	/**
@@ -289,10 +307,10 @@ public:
 	 *
 	 * \param path to the config files
 	 */
-	void setConfigfilepath(QString path) {m_configPath = path;}
+	void setConfigfilepath(const QString &path) {m_configPath = path;}
 
 	//! \return path to store all config files
-	QString getConfigfilepath(void) {return m_configPath;}
+	QString getConfigfilepath(void) const {return m_configPath;}
 
 	/**
 	 * sets the config file name
@@ -302,7 +320,7 @@ public:
 	void setConfigfilename(const QString &name);
 
 	//! \return last loaded config file name
-	QString getConfigfilename(void);
+	QString getConfigfilename(void) const;
 
 	bool loadSetup(const QString &name);
 
@@ -338,9 +356,13 @@ private:
 	void storeLastFile(void);
 
 private:
+	//! separator in the list mode data file
 	static const quint16  	sep0 = 0x0000;
+	//! separator in the list mode data file
 	static const quint16  	sep5 = 0x5555;    
+	//! separator in the list mode data file
 	static const quint16  	sepA = 0xAAAA;
+	//! separator in the list mode data file
 	static const quint16  	sepF = 0xFFFF;
 
 	//! Access to hardware
@@ -358,33 +380,46 @@ private:
 	//! position histogram with mapped and corrected data
 	MappedHistogram	*m_posHistCorrected;
 
-	quint64 	m_lastTime;
-
+	//! time stamp for the start of measurement
 	quint64 	m_starttime_msec;
+	
+	//! time for the duration of measurement
 	quint64 	m_meastime_msec;
 
+	//! current state of measurement
 	quint8 		m_status;
-	bool 		m_rateflag;
+
+	//! are we only or not
 	bool 		m_online;
-	bool 		m_working; 		// it's set to true and nothing else ????
-	bool 		m_listmode;
+	
+	//! it's set to true and nothing else ????
+	bool 		m_working; 		
+
+	//! stores the info whether it will be controlled remotely or not
 	bool 		m_remote;
 
+	//! stores the header timer of the current data package
 	quint64		m_headertime;
 
 	//! definitions of the counters
 	QHash<int, MesydaqCounter *>	m_counter; // [TIMERID + 1];
 
+	//! timer for the ratemeter 
 	int		m_rateTimer;
 
+	//! timer for online checking
 	int 		m_onlineTimer;
 
+	//! stores the ROI
 	QRect		m_roi;
 
+	//! contains the number of received data packages
 	quint32		m_packages;
 
+	//! contains the number of received trigger events
 	quint64		m_triggers;
 
+	//! stores the current run ID 
 	quint16		m_runID;
 
 	quint16		m_width;
@@ -393,14 +428,19 @@ private:
 
 	Mode		m_mode;
 
+	//! currently used histogram file
 	QString 	m_histfilename;
 
+	//! histogram data file name path
 	QString 	m_histPath;
 
+	//! list mode data file name path
 	QString 	m_listPath;
 
+	//! config file name path
 	QString 	m_configPath;
 
+	//! currently used config file
 	QFileInfo 	m_configfile;
 
 };

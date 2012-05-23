@@ -151,13 +151,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     clearMpsd->setHidden(true);
     clearChan->setHidden(true);
 
-    labelCountsInROI->setHidden(true);
-    countsInROI->setHidden(true);
-
-    labelEventSingle->setHidden(true);
-    eventSingle->setHidden(true);
-
-    m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channels"));
+    m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channel"));
     m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
     m_dataFrame->setAxisTitle(QwtPlot::yRight, tr("intensity"));
     m_dataFrame->enableAxis(QwtPlot::yRight, false);
@@ -253,7 +247,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #if 0
     init();
 
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 
     QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
     acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
@@ -268,6 +262,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     monitor3Preset->setLabel(tr("Monitor 3"));
     monitor4Preset->setLabel(tr("Monitor 4"));
 
+    setHistogramMode(true);
+    draw();
 }
 
 //! destructor
@@ -389,8 +385,8 @@ void MainWidget::allPulserOff(void)
 */
 void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
 {
-	if (!m_zoomer->zoomRectIndex())
-		m_zoomer->setZoomBase();
+    if (!m_zoomer->zoomRectIndex())
+        m_zoomer->setZoomBase();
 }
 
 /*!
@@ -405,14 +401,15 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         if (!dispHistogram->isChecked())
         {
             m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas ? m_meas->width() : 1.0);
         }
         else
         {
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->height());
-            m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->width());
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas ? m_meas->height() : 1.0);
+            m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas ? m_meas->width() : 1.0);
         }
-        m_meas->setROI(QRectF(0,0, m_meas->width(), m_meas->height()));
+        if (m_meas)
+            m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
     }
     else
     {
@@ -421,7 +418,9 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
 	    	w, 
 	    	h;
 	rect.getRect(&x, &y, &w, &h);
-        m_meas->setROI(QRectF(x, y, h, w));
+
+        if (m_meas)
+            m_meas->setROI(QRectF(x, y, h, w));
     }
     if (!m_dispTimer)
 	emit redraw();
@@ -700,9 +699,9 @@ void MainWidget::replayListfileSlot()
     {
         startStopButton->setDisabled(true);
         clearAllSlot();
+        displayTabWidget->setEnabled(true);
         m_meas->readListfile(name);
         startStopButton->setEnabled(true);
-        emit redraw();
     }
 }
 
@@ -795,8 +794,8 @@ void MainWidget::loadConfiguration(const QString& sFilename)
 
     QSettings settings(m_meas->getConfigfilename());
     settings.beginGroup("MESYDAQ");
-    acquireFile->setChecked(settings.value("MESYDAQ/listmode", true).toBool());
-    timerPreset->setChecked(settings.value("MESYDAQ/Preset/time", true).toBool());
+    acquireFile->setChecked(settings.value("listmode", true).toBool());
+    timerPreset->setChecked(settings.value("Preset/time", true).toBool());
     settings.endGroup();
 
     QList<int> mcpdList = m_theApp->mcpdId();
@@ -873,18 +872,18 @@ void MainWidget::drawOpData()
     if(dispAll->isChecked())
     {
         if(dispAllPos->isChecked())
-            m_meas->getPosMean(mean, sigma);
+            m_meas->getMean(Measurement::PositionHistogram, mean, sigma);
         else
-            m_meas->getAmpMean(mean, sigma);
+            m_meas->getMean(Measurement::AmplitudeHistogram, mean, sigma);
     }
     else
     {
         if(specialBox->isChecked())
-            m_meas->getTimeMean(mean, sigma);
+            m_meas->getMean(Measurement::TimeSpectrum, mean, sigma);
         else if(dispAllPos->isChecked())
-            m_meas->getPosMean(dispMpsd->value()*8 + dispChan->value(), mean, sigma);
+            m_meas->getMean(Measurement::PositionHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
         else
-            m_meas->getAmpMean(dispMpsd->value()*8 + dispChan->value(), mean, sigma);
+            m_meas->getMean(Measurement::AmplitudeHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
     }
     meanText->setText(tr("%1").arg(mean, 3, 'f', 1));
     sigmaText->setText(tr("%1").arg(sigma, 3, 'f', 1));
@@ -937,6 +936,7 @@ void MainWidget::loadHistSlot()
     if(!name.isEmpty())
     {
         m_meas->readHistograms(name);
+        displayTabWidget->setEnabled(true);
         emit redraw();
     }
 }
@@ -1189,8 +1189,8 @@ void MainWidget::setHistogramMode(bool histo)
         if (log->isChecked())
             m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
         m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
-        m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("channels"));
-        m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->width());
+        m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("channel"));
+        m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas ? m_meas->width() : 1.0);
         m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
         m_picker->setTrackerPen(QColor(Qt::white));
         m_zoomer->setRubberBandPen(QColor(Qt::white));
@@ -1220,7 +1220,7 @@ void MainWidget::setSpectraMode(bool spectra)
         m_dataFrame->enableAxis(QwtPlot::yRight, false);
         
         m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
-        m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channels"));
+        m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channel"));
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
         m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
         m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
@@ -1256,7 +1256,7 @@ void MainWidget::setDiffractogramMode(bool diff)
         m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
         m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-        m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->posHist()->height());
+        m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->hist(Measurement::PositionHistogram)->height());
         m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
         m_picker->setTrackerPen(QColor(Qt::black));
         m_zoomer->setRubberBandPen(QColor(Qt::black));
@@ -1274,53 +1274,58 @@ void MainWidget::setDiffractogramMode(bool diff)
  */
 void MainWidget::draw(void)
 {
+    if (!m_meas)
+    {
+        m_dataFrame->setAxisScale(QwtPlot::yRight, 0, 1.0);
+        return;
+    }
     if (dispHistogram->isChecked())
     {
-        quint64 counts(0);
+        labelCountsInROI->setText(tr("Counts in ROI"));
+	enum Measurement::HistogramType t;
         if(dispAllPos->isChecked())
-        {
-            m_histData->setData(m_meas->posHist());
-            counts = m_meas->posEventsInROI();
-        }
+            t = Measurement::PositionHistogram;
         else
-        {
-            m_histData->setData(m_meas->ampHist());
-            counts = m_meas->ampEventsInROI();
-        }
-        countsInROI->setText(tr("%1").arg(counts));
-
-        QwtDoubleInterval interval = m_histogram->data().range();
-
-        m_dataFrame->setAxisScale(QwtPlot::yRight,  interval.minValue(), interval.maxValue());
-        m_dataFrame->axisWidget(QwtPlot::yRight)->setColorMap(interval, m_histogram->colorMap());
+            t = Measurement::AmplitudeHistogram;
+        m_histData->setData(m_meas->hist(t));
+        countsInROI->setText(tr("%1").arg(m_meas->eventsInROI(t)));
 
         m_histogram->setData(*m_histData);
+        QwtDoubleInterval interval = m_histogram->data().range();
+
+        m_dataFrame->setAxisScale(QwtPlot::yRight, interval.minValue(), interval.maxValue());
+        m_dataFrame->axisWidget(QwtPlot::yRight)->setColorMap(interval, m_histogram->colorMap());
 
         if (!m_zoomer->zoomRectIndex())
 	{
             m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->height());
             m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas->width());
 	}
-        m_dataFrame->replot();
     }
     else if (dispDiffractogram->isChecked())
     {
-        m_data->setData(m_meas->diffractogram());
+        labelCountsInROI->setText(tr("Counts"));
+        Spectrum *spec = m_meas->spectrum(Measurement::Diffractogram); 
+        m_data->setData(spec);
         m_diffractogram->setData(*m_data);
         if (!m_zoomer->zoomRectIndex())
             m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->height());
-        m_dataFrame->replot();
+        countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
     }
     else
     {
         if(dispAll->isChecked())
         {
+            labelCountsInROI->setText(tr("Counts"));
             for (int i = 1; i < 8; ++i)
                 m_curve[i]->detach();
+            Spectrum *spec(NULL);
             if(dispAllPos->isChecked())
-                m_data->setData(m_meas->posData());
+                spec = m_meas->data(Measurement::PositionHistogram);
             else
-                m_data->setData(m_meas->ampData());
+                spec = m_meas->data(Measurement::AmplitudeHistogram);
+            m_data->setData(spec);
+            countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
         }
         else
         {
@@ -1332,34 +1337,46 @@ void MainWidget::draw(void)
                     m_curve[i]->attach(m_dataFrame);
             }
             if (specialBox->isChecked())
-                m_data->setData(m_meas->timeData());
+            {
+                labelCountsInROI->setText(tr("Time"));
+		Spectrum *spec = m_meas->spectrum(Measurement::TimeSpectrum);
+                m_data->setData(spec);
+                countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
+            }
             else if (dispAllChannels->isChecked())
             {
                 quint32 chan = dispMcpd->value() * 64 + dispMpsd->value() * 8;
+                labelCountsInROI->setText(tr("Counts in MCPD: %1 MPSD: %2").arg(dispMcpd->value()).arg(dispMpsd->value()));
+                quint64 counts(0);
                 for (int i = 7; i >= 0; --i)
                 {
+                    Spectrum *spec(NULL);
                     if(dispAllPos->isChecked())
-                        m_data->setData(m_meas->posData(chan + i));
+                        spec = m_meas->data(Measurement::PositionHistogram, chan + i);
                     else
-                        m_data->setData(m_meas->ampData(chan + i));
+                        spec = m_meas->data(Measurement::AmplitudeHistogram, chan + i);
+                    if (spec)
+                        counts += spec->getTotalCounts();
+                    m_data->setData(spec);
                     if (m_data->size())
                         m_curve[i]->setData(*m_data);
+                    countsInROI->setText(tr("%1").arg(counts));
                 }
             }
             else
             {
                 quint32 chan = dispMcpd->value() * 64 + dispMpsd->value() * 8 + dispChan->value();
-                labelEventSingle->setText(tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value()));
+                labelCountsInROI->setText(tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value()));
                 quint64 counts(0);
                 Spectrum *spec(NULL);
                 if(dispAllPos->isChecked())
-                    spec = m_meas->posData(chan);
+                    spec = m_meas->data(Measurement::PositionHistogram, chan);
                 else
-                    spec = m_meas->ampData(chan);
+                    spec = m_meas->data(Measurement::AmplitudeHistogram, chan);
                 m_data->setData(spec);
                 if (spec)
                     counts = spec->getTotalCounts();
-                eventSingle->setText(tr("%1").arg(counts));
+                countsInROI->setText(tr("%1").arg(counts));
             }
         }
         m_curve[0]->setData(*m_data);
@@ -1370,8 +1387,8 @@ void MainWidget::draw(void)
             m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
         if (!m_zoomer->zoomRectIndex())
             m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
-        m_dataFrame->replot();
     }
+    m_dataFrame->replot();
     drawOpData();
     updateDisplay();
 }
@@ -1513,7 +1530,7 @@ void MainWidget::setupGeneral()
     GeneralSetup d(m_meas);
     if (d.exec() == QDialog::Accepted)
     {
-    	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+    	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.setValue("config/configfilepath", d.configFilePath());
 	settings.setValue("config/lastrunid", d.lastRunId());
 //	settings.setValue("config/listfilepath", d.listFilePath());
@@ -1645,7 +1662,7 @@ void MainWidget::customEvent(QEvent *e)
                 if(interface)
                 {
                     QList<QVariant> retVal;
-                    Spectrum *tmpSpectrum = m_meas->diffractogram();
+                    Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::Diffractogram);
                     if (tmpSpectrum->width() > 0)
                     {
                         for (int i = 0; i < tmpSpectrum->width(); ++i)
@@ -1660,7 +1677,7 @@ void MainWidget::customEvent(QEvent *e)
                 if (interface)
                 {
                     QList<QVariant> retVal;
-                    Histogram *tmpHistogram= m_meas->posHist();
+                    Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
                     retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
                     retVal << (m_meas->width() + 1);    // height (should be 960)
                     interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM_SIZE, retVal);
@@ -1670,14 +1687,14 @@ void MainWidget::customEvent(QEvent *e)
                 if(interface)
                 {
                     QList<QVariant> retVal;
-                    QList<quint64>* tmpData=new QList<quint64>();
-                    Histogram *tmpHistogram=m_meas->posHist();
-                    if (tmpHistogram->height()>0 && tmpHistogram->width()>0)
+                    QList<quint64>* tmpData = new QList<quint64>();
+                    Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+                    if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
                     {
                         // CARESS has it's x=0:y=0 position at top left corner
-                        for (int y=tmpHistogram->width()-1; y>=0; --y)
-                            for (int x=0; x<tmpHistogram->height(); ++x)
-							tmpData->append(tmpHistogram->value(x,y));
+                        for (int y = tmpHistogram->width() - 1; y >= 0; --y)
+                            for (int x = 0; x < tmpHistogram->height(); ++x)
+							tmpData->append(tmpHistogram->value(x, y));
                     }
                     else
                         tmpData->append(m_meas->events());
@@ -1690,18 +1707,19 @@ void MainWidget::customEvent(QEvent *e)
                 if(interface)
                 {
                     QList<QVariant> retVal;
-                    Histogram *tmpHistogram= m_meas->posHist();
-                    Spectrum* tmpSpectrum=NULL;
-                    int i=-1;
+                    Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+                    Spectrum* tmpSpectrum = NULL;
+                    int i(-1);
                     if (!args.isEmpty())
                     {
-                        i=args[0].toInt();
-                        if (i<0 || i>tmpHistogram->height()) i=-1;
+                        i = args[0].toInt();
+                        if (i < 0 || i > tmpHistogram->height()) 
+                            i =- 1;
                     }
-                    if (i>=0)
-                        tmpSpectrum=tmpHistogram->spectrum(i);
+                    if (i >= 0)
+                        tmpSpectrum = tmpHistogram->spectrum(i);
                     else
-                        tmpSpectrum=tmpHistogram->spectrum();
+                        tmpSpectrum = tmpHistogram->spectrum();
                     if (tmpSpectrum->width() > 0)
                     {
                         for (int x = 0; x < tmpSpectrum->width(); ++x)
@@ -1738,7 +1756,7 @@ void MainWidget::customEvent(QEvent *e)
                             if (pHist == NULL)
                                 pHist = new MappedHistogram(pMap);
                             else
-                                pHist->setMapCorrection(pMap, m_meas->posHist());
+                                pHist->setMapCorrection(pMap, m_meas->hist(Measurement::PositionHistogram));
                         }
                         else
                         {

@@ -1211,35 +1211,35 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
            <string>Monitor 1</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="0">
+        <item row="9" column="0">
          <widget class="QLabel" name="label_5">
           <property name="text">
            <string>Monitor 2</string>
           </property>
          </widget>
         </item>
-        <item row="12" column="0">
+        <item row="11" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>Monitor 3</string>
           </property>
          </widget>
         </item>
-        <item row="15" column="0">
+        <item row="14" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
            <string>Monitor 4</string>
           </property>
          </widget>
         </item>
-        <item row="17" column="0">
+        <item row="16" column="0">
          <widget class="QLabel" name="textLabel1_5">
           <property name="text">
            <string>Sliding Mean:</string>
@@ -1249,7 +1249,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="19" column="0">
+        <item row="18" column="0">
          <widget class="QLabel" name="textLabel1_5_3">
           <property name="text">
            <string>Sigma:</string>
@@ -1259,7 +1259,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="19" column="2">
+        <item row="18" column="2">
          <widget class="QLabel" name="sigmaText">
           <property name="text">
            <string>0.0</string>
@@ -1311,7 +1311,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="8" column="2">
+        <item row="7" column="2">
          <widget class="QLabel" name="monRate1">
           <property name="text">
            <string>0</string>
@@ -1324,7 +1324,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="1" colspan="2">
+        <item row="5" column="1" colspan="2">
          <widget class="QLabel" name="monitor1">
           <property name="text">
            <string>0</string>
@@ -1337,7 +1337,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="11" column="2">
+        <item row="10" column="2">
          <widget class="QLabel" name="monRate2">
           <property name="text">
            <string>0</string>
@@ -1350,7 +1350,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="1" colspan="2">
+        <item row="9" column="1" colspan="2">
          <widget class="QLabel" name="monitor2">
           <property name="text">
            <string>0</string>
@@ -1363,7 +1363,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="14" column="2">
+        <item row="13" column="2">
          <widget class="QLabel" name="monRate3">
           <property name="text">
            <string>0</string>
@@ -1376,7 +1376,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="12" column="1" colspan="2">
+        <item row="11" column="1" colspan="2">
          <widget class="QLabel" name="monitor3">
           <property name="text">
            <string>0</string>
@@ -1389,7 +1389,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="15" column="1" colspan="2">
+        <item row="14" column="1" colspan="2">
          <widget class="QLabel" name="monitor4">
           <property name="text">
            <string>0</string>
@@ -1402,7 +1402,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="16" column="2">
+        <item row="15" column="2">
          <widget class="QLabel" name="monRate4">
           <property name="text">
            <string>0</string>
@@ -1415,7 +1415,7 @@ Listfile</string>
           </property>
          </widget>
         </item>
-        <item row="17" column="2">
+        <item row="16" column="2">
          <widget class="QLabel" name="meanText">
           <property name="text">
            <string>0.0</string>
@@ -1425,23 +1425,6 @@ Listfile</string>
           </property>
           <property name="wordWrap">
            <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0" colspan="2">
-         <widget class="QLabel" name="labelEventSingle">
-          <property name="text">
-           <string>MCPD %1 Module %2 Chan %3</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="2">
-         <widget class="QLabel" name="eventSingle">
-          <property name="text">
-           <string>0</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -1881,70 +1864,6 @@ Listfile</string>
     <hint type="destinationlabel">
      <x>77</x>
      <y>776</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispHistogram</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>labelCountsInROI</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>624</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1199</x>
-     <y>489</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispHistogram</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>countsInROI</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>624</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1178</x>
-     <y>516</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>labelEventSingle</receiver>
-   <slot>setHidden(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>98</x>
-     <y>776</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1060</x>
-     <y>664</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>eventSingle</receiver>
-   <slot>setHidden(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>112</x>
-     <y>776</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1229</x>
-     <y>664</y>
     </hint>
    </hints>
   </connection>

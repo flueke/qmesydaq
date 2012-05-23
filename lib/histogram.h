@@ -216,6 +216,9 @@ public:
          */
         void setAutoResize(const bool resize); 
 
+	quint64	minROI(void) const;
+
+	quint64 maxROI(void) const;
 private:
 	/**
 	 * Calculates the maximum position of a tube spectrum
