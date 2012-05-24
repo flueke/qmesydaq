@@ -27,16 +27,33 @@
 class QtInterface;
 class RemoteServer;
 
+/**
+  \short TCP loop to manange incoming TCP requests
+
+   This class gets its information from the TCP section of the QMesyDAQ settings
+   file
+
+   \code
+   [TCP]
+   personal='personal name of the TACO server'
+   device='TACO device name which has to be created'
+   \endcode
+
+   \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class TCPLoop : public LoopObject
 {
 	Q_OBJECT
 public:
+	//! constructor
 	TCPLoop(QtInterface *interface = 0);
 
 protected:
+	//! thread  loop
 	void runLoop();
 
 private:
+	//! TCP server object
 	RemoteServer	*m_server;
 };
 
