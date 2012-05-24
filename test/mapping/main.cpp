@@ -1,5 +1,5 @@
-#include <mapcorrect.h>
-#include <histogram.h>
+#include "../../lib/mapcorrect.cpp"
+#include "../../lib/histogram.cpp"
 
 #include <iostream>
 
@@ -36,13 +36,18 @@ int main(int, char **)
 	MappedHistogram	mh(&m);
 
 	Histogram	h(iSrcWidth, iSrcHeight);
+	Histogram	h2(iSrcWidth, iSrcHeight);
 	std::cout << "total counts : " << h.getTotalCounts() << std::endl;
 
 	std::cout << iSrcWidth << ", " << iSrcHeight << std::endl;
+// ca. 12 million events
+	for (int k = 0; k < 100; ++k)
 	for (quint16 i = 0; i < iSrcWidth; ++i)
 		for (quint16 j = 0; j < iSrcHeight; ++j)
 		{
-			mh.incVal(i, j);
+			mh.incVal(i, j);	// ratio is at the moment about 2.4 (2012/05/24)
+			h.incVal(i, j);
+			h2.incVal(i, j);
 		}
 	std::cout << "mapped" << std::endl;
 
