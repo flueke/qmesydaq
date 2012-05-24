@@ -26,6 +26,7 @@
 #include <iostream>
 #include <QApplication>
 #include <QDebug>
+#include <QSettings>
 
 #include <API.h>
 #include <private/ApiP.h>
@@ -34,15 +35,19 @@
 
 TACOLoop::TACOLoop(QtInterface *interface)
 	: m_server("qmesydaq")
-	, m_personal("srv0")
-	, m_device("puma/qmesydaq/det")
 {
 	setObjectName("TACOLoop");
-// testing
 }
 
 void TACOLoop::runLoop()
 {
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+	settings.beginGroup("TACO");
+	m_personal = settings.value("personal", "srv0").toString();
+	m_device = settings.value("device", "puma/qmesydaq/det").toString();
+	settings.endGroup(); 
+
+	MSG_DEBUG << "device_server to start " << m_server << "/" << m_personal << " with device " << m_device;
 	char *p = const_cast<char *>(m_device.toStdString().c_str());
 	char *devList = new char[m_device.toStdString().size() + 1];
 	strcpy(devList, p);

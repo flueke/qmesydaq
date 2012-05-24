@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008 by Lutz Rossa <rossa@hmi.de>                       *
- *   Copyright (C) 2009-2010 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2012 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -26,18 +26,38 @@
 
 class QtInterface;
 
+/**
+  \short TACO loop to manange incoming TACO requests
+
+   This class gets its information from the TACO section of the QMesyDAQ settings
+   file
+
+   \code
+   [TACO]
+   personal='personal name of the TACO server'
+   device='TACO device name which has to be created'
+   \endcode
+
+   \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class TACOLoop : public LoopObject
 {
 	Q_OBJECT
 public:
+	//! Constructor
 	TACOLoop(QtInterface *interface = 0);
 
 protected:
+	//! thread loop
 	void runLoop();
 
 private:
+	//! server name = "qmesydaq"
 	QString m_server;
+	//! personal name, default = "srv0"
 	QString m_personal;
+
+	//! TACO device name, default = "puma/qmesydaq/det"
 	QString m_device;
 };
 
