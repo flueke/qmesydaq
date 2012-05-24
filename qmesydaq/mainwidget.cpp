@@ -570,7 +570,7 @@ void MainWidget::updateDisplay(void)
 {
     quint16 id = (quint16) paramId->value();
     int ci = statusTab->currentIndex();
-    if (statusTab->tabText(statusTab->currentIndex()) == tr("Statistics"))
+    if (statusTab->tabText(ci) == tr("Statistics"))
     {
         dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
         cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
@@ -1683,7 +1683,8 @@ void MainWidget::customEvent(QEvent *e)
                     QList<QVariant> retVal;
                     Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
                     retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
-                    retVal << (m_meas->width() + 1);    // height (should be 960)
+                    retVal << tmpHistogram->width(); 	// width  (should be equal to number of MPSD inputs)
+//                  retVal << (m_meas->width() + 1);    // height (should be 960)
                     interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM_SIZE, retVal);
                 }
                 break;
@@ -1698,7 +1699,7 @@ void MainWidget::customEvent(QEvent *e)
                         // CARESS has it's x=0:y=0 position at top left corner
                         for (int y = tmpHistogram->width() - 1; y >= 0; --y)
                             for (int x = 0; x < tmpHistogram->height(); ++x)
-							tmpData->append(tmpHistogram->value(x, y));
+                                tmpData->append(tmpHistogram->value(x, y));
                     }
                     else
                         tmpData->append(m_meas->events());
