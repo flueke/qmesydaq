@@ -57,6 +57,7 @@ NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 po
 		}
 	}
 	tmp = new NetworkDevice(parent, source, port);
+	Q_ASSERT(parent == NULL);
 	m_networks.push_back(tmp);
 	m_inUse.push_back(1);
 	m_mutex.unlock();
@@ -73,14 +74,13 @@ NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 po
  */
 void NetworkDevice::destroy(NetworkDevice *nd)
 {
-	NetworkDevice *tmp;
 	m_mutex.lock();
-	for (int i=m_networks.size()-1; i>=0; --i)
+	for (int i = m_networks.size() - 1; i >= 0; --i)
 	{
-		tmp = m_networks.at(i);
+		NetworkDevice *tmp = m_networks.at(i);
                 if (tmp->ip() == nd->ip() && tmp->port() == nd->port())
 		{
-			Q_ASSERT(m_inUse[i]>0);
+			Q_ASSERT(m_inUse[i] > 0);
 			m_inUse[i]--;
 			if (!m_inUse.at(i))
 			{
@@ -110,16 +110,16 @@ NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
 	, m_sock(NULL)
 	, m_notifyNet(NULL)
 {
-  Q_ASSERT(parent==NULL);
-  if (QMetaType::type("MDP_PACKET")==0)
-    qRegisterMetaType<MDP_PACKET>();
-  m_pThread=new QThread;
-  moveToThread(m_pThread);
-  connect(m_pThread,SIGNAL(started()),this,SLOT(createSocket()),Qt::DirectConnection);
-  connect(m_pThread,SIGNAL(finished()),this,SLOT(destroySocket()),Qt::DirectConnection);
-  m_pThread->start(QThread::HighestPriority);
-  while (!m_bFlag)
-    usleep(10000);
+	Q_ASSERT(parent == NULL);
+	if (QMetaType::type("MDP_PACKET") == 0)
+		qRegisterMetaType<MDP_PACKET>();
+	m_pThread = new QThread;
+	moveToThread(m_pThread);
+	connect(m_pThread, SIGNAL(started()), this, SLOT(createSocket()), Qt::DirectConnection);
+	connect(m_pThread, SIGNAL(finished()), this, SLOT(destroySocket()), Qt::DirectConnection);
+	m_pThread->start(QThread::HighestPriority);
+	while (!m_bFlag)
+		usleep(10000);
 }
 
 /*!
@@ -127,9 +127,12 @@ NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
  */
 NetworkDevice::~NetworkDevice()
 {
-  m_pThread->quit();
-  m_pThread->wait();
-  delete m_pThread;
+	if (m_pThread)
+	{
+		m_pThread->quit();
+		m_pThread->wait();
+		delete m_pThread;
+	}
 }
 
 /*!
@@ -148,7 +151,7 @@ void NetworkDevice::destroySocket()
 	m_notifyNet = NULL;
 	delete m_sock;
 	m_sock = NULL;
-	m_bFlag=false;
+	m_bFlag = false;
 }
 
 
