@@ -207,9 +207,9 @@ void Mesydaq2::startedDaq(void)
 		m_datfile.setFileName(m_listfilename);
 		m_datfile.open(QIODevice::WriteOnly);
 		m_datStream.setDevice(&m_datfile);
+		writeListfileHeader();
+		writeHeaderSeparator();
 	}
-	writeListfileHeader();
-	writeHeaderSeparator();
 	m_daq = RUNNING;
 	emit statusChanged("RUNNING");
 	MSG_DEBUG << "daq started";
