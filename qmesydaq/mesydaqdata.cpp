@@ -22,6 +22,8 @@
 #include "mesydaqdata.h"
 #include "histogram.h"
 
+#include "logging.h"
+
 /*!
     constructor
  */
@@ -91,8 +93,10 @@ QwtDoubleInterval MesydaqHistogramData::range() const
 {
 	if (m_histogram)
 	{
-		double m = double(m_histogram->max());
-		return QwtDoubleInterval(0.0, m);
+		double _max = double(m_histogram->maxROI());
+		double _min = double(m_histogram->minROI());
+		MSG_ERROR << _min << " " << _max;
+		return QwtDoubleInterval(_min, _max);
 	}
 	else
 		return QwtDoubleInterval(0.0, 1.0);

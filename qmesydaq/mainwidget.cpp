@@ -1291,6 +1291,8 @@ void MainWidget::draw(void)
             t = Measurement::PositionHistogram;
         else
             t = Measurement::AmplitudeHistogram;
+        Histogram *h = m_meas->hist(t);
+	h->calcMinMaxInROI(m_meas->getROI());
         m_histData->setData(m_meas->hist(t));
         countsInROI->setText(tr("%1").arg(m_meas->eventsInROI(t)));
 
@@ -1816,7 +1818,7 @@ void MainWidget::customEvent(QEvent *e)
 				value = m_meas->events(); 
 				break;
                             case TCT:  
-                                value = m_meas->timer()/1000.0;
+                                value = m_meas->timer() / 1000.0;
 				break;
                         }
                         interface->postCommandToInterface(CommandEvent::C_READ_COUNTER,QList<QVariant>() << value);

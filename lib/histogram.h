@@ -219,6 +219,9 @@ public:
 	quint64	minROI(void) const;
 
 	quint64 maxROI(void) const;
+
+	void calcMinMaxInROI(const QRectF &);
+
 private:
 	/**
 	 * Calculates the maximum position of a tube spectrum
@@ -253,6 +256,12 @@ private:
 
 	//! number of tubes
 	quint16				m_width;
+
+	//! minimum value in ROI
+	quint64				m_minROI;
+
+	//! maximum value in ROI
+	quint64				m_maxROI;
 };
 
 #endif
