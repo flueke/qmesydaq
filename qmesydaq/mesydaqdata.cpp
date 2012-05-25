@@ -95,7 +95,7 @@ QwtDoubleInterval MesydaqHistogramData::range() const
 	{
 		double _max = double(m_histogram->maxROI());
 		double _min = double(m_histogram->minROI());
-		MSG_ERROR << _min << " " << _max;
+		MSG_DEBUG << _min << " " << _max;
 		return QwtDoubleInterval(_min, _max);
 	}
 	else
