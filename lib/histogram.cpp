@@ -281,7 +281,9 @@ bool Histogram::checkChannel(const quint16 chan)
 		return true;
 	if (autoResize())
 		setHeight(chan + 1);
-	return true;
+	else
+		return false;
+	return chan < height();
 }
 
 bool Histogram::checkBin(const quint16 bin)
@@ -290,7 +292,9 @@ bool Histogram::checkBin(const quint16 bin)
 		return true;
 	if (autoResize())
 		setWidth(bin + 1);
-	return true;
+	else
+		return false;
+	return bin < width();
 }
 
 void Histogram::calcMaximumPosition(const quint16 chan)
@@ -412,7 +416,10 @@ void Histogram::clear(const quint16 channel)
 void Histogram::clear(void)
 {
 	foreach (Spectrum *value, m_data)
+	{
+		Q_ASSERT_X(value != NULL, "Histogram::clear", "one of the spectra is NULL");
 		value->clear();
+	}
 //	m_data.clear();
 	m_sumSpectrum.clear();
 	m_totalCounts = 0;
@@ -560,7 +567,10 @@ void Histogram::setHeight(const quint16 h)
 void Histogram::setWidth(const quint16 w)
 {
 	foreach(Spectrum *s, m_data)
+	{
+		Q_ASSERT_X(s != NULL, "Histogram::setWidth", "one of the spectra is NULL");
 		s->setWidth(w);
+	}
 	m_sumSpectrum.setWidth(w);
 	m_width = w;
 }
@@ -583,7 +593,10 @@ void Histogram::setAutoResize(const bool resize)
 {
 	m_autoResize = resize;
 	foreach(Spectrum *s, m_data)
+	{
+		Q_ASSERT_X(s != NULL, "Histogram::setAutoResize", "one of the spectra is NULL");
 		s->setAutoResize(resize);
+	}
 }
 
 /*!
