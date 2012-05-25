@@ -1005,6 +1005,7 @@ void Measurement::readListfile(const QString &readfilename)
 		dataBuf.bufferNumber = sep4;
 		if(dataBuf.bufferLength > 729)
 		{
+			MSG_ERROR << "in block " << blocks;
 			MSG_ERROR << "erroneous length: " << dataBuf.bufferLength << " - aborting";
 			datStream >> sep1 >> sep2 >> sep3 >> sep4;
 			MSG_ERROR << tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
