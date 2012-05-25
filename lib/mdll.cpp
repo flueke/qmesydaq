@@ -35,8 +35,8 @@
  */
 MDLL::MDLL(quint8 id, QObject *parent)
     : QObject(parent)
-    , m_busNum(id)
     , m_mdllId(TYPE_MDLL)
+    , m_busNum(id)
 {
     quint8 i = 0;
     for(quint8 pre = 0; pre < 2; pre++)
@@ -84,6 +84,7 @@ MDLL::~MDLL()
  */
 MDLL *MDLL::create(int bus, int typ, QObject *parent)
 {
+    Q_UNUSED(typ);
     return new MDLL(bus, parent);
 }
 

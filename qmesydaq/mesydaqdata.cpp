@@ -155,7 +155,7 @@ QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtSca
 	if (d_data.boundingRect().isEmpty())
 		return QImage();
 	
-	QRect dataRect = transform(xMap, yMap, d_data.boundingRect());
+//	QRect dataRect = transform(xMap, yMap, d_data.boundingRect());
 
 	QwtColorMap::Format format = colorMap().format();
 	

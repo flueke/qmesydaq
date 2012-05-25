@@ -46,7 +46,6 @@ private slots:
 private:
   bool        m_bDoLoop;     //!< flag to detect exit of QMesyDAQ
   QStringList m_asArguments; //!< command line arguments of QMesyDAQ
-  QString     m_sName;       //!< name of this thread
 };
 
 #endif // CARESSLOOP_H

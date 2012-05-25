@@ -1505,6 +1505,7 @@ void MainWidget::setupModule(void)
  */
 void MainWidget::setupMdll(quint8 id)
 {
+    Q_UNUSED(id);
     MdllSetup d(m_theApp, this);
 //  d.setMCPD(devid_2->value());
     d.exec();
@@ -1815,7 +1816,7 @@ void MainWidget::customEvent(QEvent *e)
 				value = m_meas->events(); 
 				break;
                             case TCT:  
-				value = m_meas->timer();
+                                value = m_meas->timer()/1000.0;
 				break;
                         }
                         interface->postCommandToInterface(CommandEvent::C_READ_COUNTER,QList<QVariant>() << value);

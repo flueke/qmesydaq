@@ -38,6 +38,9 @@ const char* g_szLongUsage =
 #if USE_TACO
 	"  -n=<nethost> set environment variable NETHOST\n"
 #endif
+#if USE_CARESS
+	"  -n=<name>    use this name in CORBA name service\n"
+#endif
 	"  -f=<file>\n  --file=<file>\n  --config=<file>\n" \
 	"               load configuration from file\n" \
 	"  -nf\n  --nofile\r\n  --noconfig   do not load last configuration automatically";

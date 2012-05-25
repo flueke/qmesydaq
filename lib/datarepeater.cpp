@@ -293,28 +293,28 @@ void DataRepeater::SendDatagram(bool bForce)
   while (iLength>0)
   {
     int len=iLength;
-	unsigned int uiMaxSendableDatagramSize = m_iMaxDatagramSize - sizeof(m_globalPackageCounter); //n Byte for the UDP Package Counter
+        unsigned int uiMaxSendableDatagramSize = m_iMaxDatagramSize - sizeof(m_globalPackageCounter); //n Byte for the UDP Package Counter
     if (len>(uiMaxSendableDatagramSize))
-	{
-		MSG_DEBUG << "UDP Server: Send more than one UDP package for one block!";
+        {
+                MSG_DEBUG << "UDP Server: Send more than one UDP package for one block!";
         len=m_iMaxDatagramSize;
-	}
-	//Add UDP package number to datagram
-	m_abyTodo = m_abyTodo.insert(0, QByteArray((const char*)&m_globalPackageCounter, sizeof(m_globalPackageCounter)));
-	m_globalPackageCounter++;
+        }
+        //Add UDP package number to datagram
+        m_abyTodo = m_abyTodo.insert(0, QByteArray((const char*)&m_globalPackageCounter, sizeof(m_globalPackageCounter)));
+        m_globalPackageCounter++;
 #ifdef USE_CONNECTED_UDP
     if (m_pSocket->write(m_abyTodo.data(),len)<0)
 #else
     if (m_pSocket->writeDatagram(m_abyTodo.data(),len,m_Target,m_wPort)<0)
 #endif
     {
-		MSG_DEBUG << "UDP Server: Can't send the data";
+                MSG_DEBUG << "UDP Server: Can't send the data";
         if (m_pSocket->error()==QAbstractSocket::DatagramTooLargeError && m_iMaxDatagramSize>=16)
         {
-			m_iMaxDatagramSize>>=1;
-			continue;
-		}
-		break;
+                        m_iMaxDatagramSize>>=1;
+                        continue;
+                }
+                break;
     }
     m_abyTodo.remove(0,len);
     iLength-=uiMaxSendableDatagramSize;

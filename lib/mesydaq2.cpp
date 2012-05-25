@@ -310,7 +310,7 @@ void Mesydaq2::writeListfileHeader(void)
  */
 void Mesydaq2::writeHeaderSeparator(void)
 {
-	const unsigned short awBuffer[]={sep0,sep5,sepA,sepF};
+	//const unsigned short awBuffer[]={sep0,sep5,sepA,sepF};
 	if (m_datfile.isOpen())
 		m_datStream << sep0 << sep5 << sepA << sepF;
 	//m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer));
@@ -725,7 +725,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 		int iMCPDId = iId / 8;
 
-		int j = iId % 8;
+//		int j = iId % 8;
 
 		if (getMdllId(iMCPDId))
 		{
