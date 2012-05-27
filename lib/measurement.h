@@ -443,6 +443,11 @@ private:
 	//! currently used config file
 	QFileInfo 	m_configfile;
 
+	//! number of triggers
+	quint64 	g_triggers;
+
+	//! number of neutrons
+	quint64		m_neutrons;
 };
 
 #endif

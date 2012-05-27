@@ -63,6 +63,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_histfilename("")
 	, m_histPath(getenv("HOME"))
 	, m_listPath(getenv("HOME"))
+	, m_neutrons(0)
 {
 	m_Hist[PositionHistogram] = NULL;
 	m_Hist[AmplitudeHistogram] = NULL;
@@ -281,6 +282,7 @@ void Measurement::start()
 		c->reset();	
 	m_packages = 0;
 	m_triggers = 0;
+	m_neutrons = 0;
 	m_mesydaq->setRunId(m_mesydaq->runId() + 1);
 	m_mesydaq->start();
 	m_status = Started;
@@ -792,6 +794,10 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 	ulong 	data;
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
+	quint16	monitorTriggers = 0;
+	quint16	ttlTriggers = 0;
+	quint16	adcTriggers = 0;
+	quint16 counterTriggers = 0;
 	quint64 tim;
 	quint16 mod = pd.deviceId;
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
@@ -829,20 +835,24 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 					case MON2ID :
 					case MON3ID :
 					case MON4ID :
+						++monitorTriggers;
 						++(*m_counter[dataId]);
 //						MSG_DEBUG << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
 						break;
 					case TTL1ID :
 					case TTL2ID :
+						++ttlTriggers;
 						++(*m_counter[dataId]);
 						MSG_NOTICE << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
 						break;
 					case ADC1ID :
 					case ADC2ID :
+						++adcTriggers;
 						++(*m_counter[dataId]);
 						MSG_NOTICE << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
 						break;
 					default:
+						++counterTriggers;
 						MSG_ERROR << "counter " << dataId << " : " << i;
 						break;
 				}
@@ -910,7 +920,11 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 					m_Spectrum[TubeSpectrum]->incVal(chan);
 			}
 		}
+ 		MSG_DEBUG << QObject::tr("# : %1 has %2 trigger events and %3 neutrons").arg(pd.bufferNumber).arg(triggers).arg(neutrons);
+		MSG_DEBUG << QObject::tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pd.bufferNumber)
+					.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);
 		m_triggers += triggers;
+		m_neutrons += neutrons;
 #if 0
 		for(int i = 0; i < 4; i++)
 		{
@@ -952,6 +966,13 @@ bool Measurement::acqListfile() const
 */
 void Measurement::readListfile(const QString &readfilename)
 {
+	if (m_status == Started)
+	{
+		stop();
+		QCoreApplication::processEvents();
+	}
+	m_mode = ReplayListFile;
+
 	QDataStream datStream;
 	QTextStream textStream;
 	QFile datfile;
@@ -963,12 +984,12 @@ void Measurement::readListfile(const QString &readfilename)
 	datStream.setDevice(&datfile);
 	textStream.setDevice(&datfile);
 
-	m_mode = ReplayListFile;
+	m_neutrons = m_triggers = 0;
 
 	quint32 blocks(0),
 		bcount(0);
-
 	qint64  seekPos(0);
+
 	for(;;)
 	{
 		str = textStream.readLine();
@@ -987,11 +1008,6 @@ void Measurement::readListfile(const QString &readfilename)
 	resizeHistogram(0 /* 1024 */, 0 /* 128 */, true, true);
 
 	QChar c('0');
-	if (m_status == Started)
-	{
-		stop();
-		QCoreApplication::processEvents();
-	}
 	DATA_PACKET 	dataBuf;
 	while(ok)
 	{
@@ -1052,6 +1068,8 @@ void Measurement::readListfile(const QString &readfilename)
 		}
 	}	
 	datfile.close();
+	MSG_NOTICE << "Found " << blocks << " data packages";
+	MSG_NOTICE << QObject::tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
 }
 
 /*!

@@ -13,12 +13,19 @@ static const quint16  	sep5 = 0x5555;
 static const quint16  	sepA = 0xAAAA;
 static const quint16  	sepF = 0xFFFF;
 
+static quint64 	g_triggers(0),
+		g_neutrons(0);
+
 void analyzeBuffer(DATA_PACKET pd)
 {
 	quint16 time;
 	ulong 	data;
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
+	quint16	monitorTriggers = 0;
+	quint16	ttlTriggers = 0;
+	quint16	adcTriggers = 0;
+	quint16 counterTriggers = 0;
 	quint64 tim;
 	quint16 mod = pd.deviceId;
 	quint64 headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
@@ -60,22 +67,26 @@ void analyzeBuffer(DATA_PACKET pd)
 					case MON2ID :
 					case MON3ID :
 					case MON4ID :
+						++monitorTriggers;
 //						++(*m_counter[dataId]);
 //						qDebug() << QObject::tr("counter %1 : (%3 - %4)%2 : %5").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), DEBUG);
 						break;
 					case TTL1ID :
 					case TTL2ID :
+						++ttlTriggers;
 //						++(*m_counter[dataId]);
 //						qDebug() << QObject::tr("counter %1 : (%3 - %4)%2 : %5")
 //							.arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data);
 						break;
 					case ADC1ID :
 					case ADC2ID :
+						++adcTriggers;
 //						++(*m_counter[dataId]);
 //						qDebug() << QObject::tr("counter %1 : (%3 - %4)%2 : %5")
 //							.arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data);
 						break;
 					default:
+						++counterTriggers;
 						qDebug() << QObject::tr("counter %1 : %2").arg(dataId).arg(i);
 						break;
 				}
@@ -137,6 +148,10 @@ void analyzeBuffer(DATA_PACKET pd)
 			}
 		}
 		qDebug() << QObject::tr("# : %1 has %2 trigger events and %3 neutrons").arg(pd.bufferNumber).arg(triggers).arg(neutrons);
+		qDebug() << QObject::tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pd.bufferNumber)
+					.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);
+		g_triggers += triggers;
+		g_neutrons += neutrons;
 #if 0
 		m_triggers += triggers;
 #endif
@@ -184,6 +199,8 @@ void readListfile(QString readfilename)
 
 	quint32 blocks(0),
 		bcount(0);
+
+	g_neutrons = g_triggers = 0;
 
 	qint64	seekPos(0);
 	for(;;) 
@@ -257,4 +274,5 @@ void readListfile(QString readfilename)
 	}	
 	datfile.close();
         qDebug() << "Found " << blocks << " data packages";
+	qDebug() << QObject::tr("%2 trigger events and %3 neutrons").arg(g_triggers).arg(g_neutrons);
 }
