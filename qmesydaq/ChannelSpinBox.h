@@ -36,6 +36,7 @@ public:
 	virtual void stepBy(int steps);
 
 signals:
+	//! this signal will be emitted if the module number over/underruns
 	void changeModule(int);
 };
 

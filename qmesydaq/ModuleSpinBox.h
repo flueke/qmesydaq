@@ -38,12 +38,14 @@ public:
 	virtual void stepBy(int steps);
 
 public slots:
+	//! call back for steps up/down
 	void steps(int steps)
 	{
 		stepBy(steps);
 	}
 
 signals:
+	//! this signal will be emitted if the module number over/underruns
 	void changeModule(int);
 
 protected:

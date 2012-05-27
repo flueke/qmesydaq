@@ -26,7 +26,7 @@
 /*!
     constructor
 
-    \param mesy
+    \param meas
     \param parent
  */
 GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
