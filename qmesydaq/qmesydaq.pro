@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.2.3
+VERSION		= 0.4.0
 
 include(../qmesydaqconfig.pri)
 
@@ -57,7 +57,8 @@ HEADERS 	+= mainwidget.h \
 		moduleidentificationpage.h \
 		modulemasterpage.h \
                 modulesetup.h \
-                mdllsetup.h
+                mdllsetup.h \
+		plot.h 
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -95,7 +96,8 @@ SOURCES 	+= main.cpp \
 		modulewizard.cpp \
 		moduleidentificationpage.cpp \
 		modulemasterpage.cpp \
-		mainwidget.cpp 
+		mainwidget.cpp \
+		plot.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
