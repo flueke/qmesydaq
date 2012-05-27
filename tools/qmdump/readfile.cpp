@@ -185,12 +185,15 @@ void readListfile(QString readfilename)
 	quint32 blocks(0),
 		bcount(0);
 
-	str = textStream.readLine();
-	qint64	seekPos = str.size() + 1;
-	str = textStream.readLine();
-	seekPos += str.size() + 1;
-	str = textStream.readLine();
-	seekPos += str.size() + 1;
+	qint64	seekPos(0);
+	for(;;) 
+	{
+		str = textStream.readLine();
+		seekPos += str.size() + 1;
+		qDebug() << str;
+		if (str.startsWith("header length:"))
+			break;
+	}
 	textStream.seek(seekPos);
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
 
