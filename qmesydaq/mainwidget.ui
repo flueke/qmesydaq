@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Mesydaq2MainWidget</class>
- <widget class="QWidget" name="Mesydaq2MainWidget">
+ <class>MainWidget</class>
+ <widget class="QWidget" name="MainWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -1486,7 +1486,7 @@ Listfile</string>
   <connection>
    <sender>applyDispThreshButton</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>applyThreshSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1502,7 +1502,7 @@ Listfile</string>
   <connection>
    <sender>clearAll</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>clearAllSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1518,7 +1518,7 @@ Listfile</string>
   <connection>
    <sender>clearChan</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>clearChanSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1534,7 +1534,7 @@ Listfile</string>
   <connection>
    <sender>clearMcpd</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>clearMcpdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1550,7 +1550,7 @@ Listfile</string>
   <connection>
    <sender>clearMpsd</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>clearMpsdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1662,7 +1662,7 @@ Listfile</string>
   <connection>
    <sender>log</sender>
    <signal>toggled(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>linlogSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1678,7 +1678,7 @@ Listfile</string>
   <connection>
    <sender>logGroup</sender>
    <signal>toggled(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>draw()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1694,7 +1694,7 @@ Listfile</string>
   <connection>
    <sender>specialBox</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>draw()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1710,7 +1710,7 @@ Listfile</string>
   <connection>
    <sender>startStopButton</sender>
    <signal>clicked(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>startStopSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1726,7 +1726,7 @@ Listfile</string>
   <connection>
    <sender>useThresh</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>applyThreshSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1774,7 +1774,7 @@ Listfile</string>
   <connection>
    <sender>log</sender>
    <signal>toggled(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>linlogSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1870,7 +1870,7 @@ Listfile</string>
   <connection>
    <sender>timerPreset</sender>
    <signal>presetClicked(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>tPresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1886,7 +1886,7 @@ Listfile</string>
   <connection>
    <sender>timerPreset</sender>
    <signal>resetClicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>tResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1902,7 +1902,7 @@ Listfile</string>
   <connection>
    <sender>eventsPreset</sender>
    <signal>presetClicked(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>ePresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1918,7 +1918,7 @@ Listfile</string>
   <connection>
    <sender>eventsPreset</sender>
    <signal>resetClicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>eResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1934,7 +1934,7 @@ Listfile</string>
   <connection>
    <sender>monitor1Preset</sender>
    <signal>presetClicked(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m1PresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1950,7 +1950,7 @@ Listfile</string>
   <connection>
    <sender>monitor1Preset</sender>
    <signal>resetClicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m1ResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1966,7 +1966,7 @@ Listfile</string>
   <connection>
    <sender>monitor2Preset</sender>
    <signal>presetClicked(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m2PresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1982,7 +1982,7 @@ Listfile</string>
   <connection>
    <sender>monitor2Preset</sender>
    <signal>resetClicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m2ResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1998,7 +1998,7 @@ Listfile</string>
   <connection>
    <sender>monitor3Preset</sender>
    <signal>presetClicked(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m3PresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2014,7 +2014,7 @@ Listfile</string>
   <connection>
    <sender>monitor3Preset</sender>
    <signal>resetClicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m3ResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2030,7 +2030,7 @@ Listfile</string>
   <connection>
    <sender>monitor4Preset</sender>
    <signal>presetClicked(bool)</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m4PresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2046,7 +2046,7 @@ Listfile</string>
   <connection>
    <sender>monitor4Preset</sender>
    <signal>resetClicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>m4ResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2062,7 +2062,7 @@ Listfile</string>
   <connection>
    <sender>scanPeri</sender>
    <signal>clicked()</signal>
-   <receiver>Mesydaq2MainWidget</receiver>
+   <receiver>MainWidget</receiver>
    <slot>scanPeriSlot()</slot>
    <hints>
     <hint type="sourcelabel">

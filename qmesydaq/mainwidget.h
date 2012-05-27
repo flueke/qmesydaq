@@ -41,7 +41,7 @@ class ControlInterface;
 
     \author Gregor Montermann <g.montermann@mesytec.com>
 */
-class MainWidget : public QWidget, public Ui_Mesydaq2MainWidget
+class MainWidget : public QWidget, public Ui_MainWidget
 {
 Q_OBJECT
 public:

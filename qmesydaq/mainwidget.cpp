@@ -57,7 +57,7 @@
 */
 MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     : QWidget(parent)
-    , Ui_Mesydaq2MainWidget()
+    , Ui_MainWidget()
     , m_theApp(mesy)
     , m_dispThresh(false)
     , m_dispLoThresh(0)
