@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 	app.setOrganizationDomain("mesytec.com");
 	app.setApplicationName("QMesyDAQ");
 
-	Mesydaq2MainWindow mainWin;
+	MainWindow mainWin;
 
 	if (loop)
 	{

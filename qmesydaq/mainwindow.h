@@ -43,19 +43,19 @@ class QCloseEvent;
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  * \version 0.9
  */
-class Mesydaq2MainWindow : public QMainWindow, public Ui_Mesydaq2MainWindow
+class MainWindow : public QMainWindow, public Ui_MainWindow
 {
 	Q_OBJECT
 public:
     /**
      * Default Constructor
      */
-	Mesydaq2MainWindow(QWidget *parent = 0);
+	MainWindow(QWidget *parent = 0);
 
     /**
      * Default Destructor
      */
-	virtual ~Mesydaq2MainWindow();
+	virtual ~MainWindow();
 
         //! wrapper method to emit signal to load a configuration file
 	void	doLoadConfiguration(const QString &sFilename) { emit loadConfiguration(sFilename); }

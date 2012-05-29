@@ -23,9 +23,9 @@
 #include "mainwidget.h"
 #include "mesydaq2.h"
 
-Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
-	, Ui_Mesydaq2MainWindow()
+	, Ui_MainWindow()
 {
 	setupUi(this);
 
@@ -57,12 +57,12 @@ Mesydaq2MainWindow::Mesydaq2MainWindow(QWidget *parent)
 	restoreSettings();
 }
 
-Mesydaq2MainWindow::~Mesydaq2MainWindow()
+MainWindow::~MainWindow()
 {
 	delete m_mesy;
 }
 
-void Mesydaq2MainWindow::restoreSettings()
+void MainWindow::restoreSettings()
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	QPoint pos = settings.value("pos", QPoint(200, 0)).toPoint();
@@ -70,7 +70,7 @@ void Mesydaq2MainWindow::restoreSettings()
 	setGeometry(QRect(pos, size));
 }
 
-void Mesydaq2MainWindow::saveSettings()
+void MainWindow::saveSettings()
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.setValue("pos", pos());
@@ -78,7 +78,7 @@ void Mesydaq2MainWindow::saveSettings()
 	settings.setValue("config/lastrunid", m_mesy->runId());
 }
 
-void Mesydaq2MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::closeEvent(QCloseEvent *event)
 {
 	saveSettings();
 	event->accept();
