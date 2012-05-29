@@ -103,9 +103,9 @@ public:
 	 */
 	void setData(Histogram *data);
 
-	virtual void initRaster(const QwtDoubleRect &, const QSize &);
+	virtual void initRaster(const QRectF &, const QSize &);
 
-	QSize rasterHint(const QwtDoubleRect &) const;
+	QSize rasterHint(const QRectF &) const;
 	
 private:
 	Histogram	*m_histogram;
@@ -130,7 +130,7 @@ public:
 	}
 
 protected:
-	virtual QImage renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area) const;
+	virtual QImage renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area) const;
 };
 
 #endif

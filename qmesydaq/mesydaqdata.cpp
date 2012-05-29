@@ -113,27 +113,27 @@ double MesydaqHistogramData::value(double x, double y) const
 void MesydaqHistogramData::setData(Histogram *data)
 {
 	m_histogram = data;
-	setBoundingRect(QwtDoubleRect(0.0, 0.0, data ? data->height() : 0.0, data ? data->width() : 0.0));
+	setBoundingRect(QRectF(0.0, 0.0, data ? data->height() : 0.0, data ? data->width() : 0.0));
 }
 
 /*!
-    \fn void MesydaqHistogramData::initRaster(const QwtDoubleRect &, const QSize &)
+    \fn void MesydaqHistogramData::initRaster(const QRectF &, const QSize &)
 
     initialize the raster data
 
  */
-void MesydaqHistogramData::initRaster(const QwtDoubleRect &, const QSize &)
+void MesydaqHistogramData::initRaster(const QRectF &, const QSize &)
 {
 }
 
 /*!
-    \fn QSize MesydaqHistogramData::rasterHint(const QwtDoubleRect &r) const
+    \fn QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
 
     \note set Qwt library
 
     \param r
  */
-QSize MesydaqHistogramData::rasterHint(const QwtDoubleRect &r) const
+QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
 {
 	return QwtRasterData::rasterHint(r);
 }
@@ -149,7 +149,7 @@ QSize MesydaqHistogramData::rasterHint(const QwtDoubleRect &r) const
  
     \return image of the rendered spectrogram
  */
-QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area)	const
+QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area)	const
 {
 	if (area.isEmpty())
 		return QImage();
