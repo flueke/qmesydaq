@@ -517,7 +517,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		// MPSD part
 		for (int j = 0; j < 8; ++j)
 		{
-//			if (value->getMpsdId(j))
+//			if (value->getModuleId(j))
 			{
 				QString moduleName = QString("MODULE-%1").arg(8 * i + j);
 				
@@ -680,7 +680,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 		int j = iId % 8;
 
-		if (getMpsdId(iMCPDId, j))
+		if (getModuleId(iMCPDId, j))
 		{
 			quint8 	gains[8],
 				threshold;
@@ -820,7 +820,7 @@ void Mesydaq2::allPulserOff()
 // send pulser off to all connected MPSD
 	foreach(MCPD8 *value, m_mcpd)
 		for(quint8 j = 0; j < 8; j++)
-			if(value->getMpsdId(j))
+			if(value->getModuleId(j))
 				value->setPulser(j, 0, 2, 40, 0);
 }
 
@@ -1238,7 +1238,7 @@ void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
 
 
 /*!
-    \fn quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
+    \fn quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
 
     get the detected ID of the MPSD. If MPSD not exists it will return 0.
 
@@ -1247,10 +1247,10 @@ void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
     \return module ID (type)
     \see readId
  */
-quint8 Mesydaq2::getMpsdId(quint16 id, quint8 addr)
+quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
-		return m_mcpd[id]->getMpsdId(addr);
+		return m_mcpd[id]->getModuleId(addr);
 	return 0;
 }
 
@@ -1371,7 +1371,7 @@ bool Mesydaq2::online(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::getMpsdType(quint16 id, quint8 addr)
+    \fn Mesydaq2::getModuleType(quint16 id, quint8 addr)
 
     get the detected ID of the MPSD. If MPSD not exists it will return 0.
     the value is a human readable value.
@@ -1381,15 +1381,15 @@ bool Mesydaq2::online(quint16 id, quint8 addr)
     \return module ID (type)
     \see readId
  */
-QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
+QString Mesydaq2::getModuleType(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
-		return m_mcpd[id]->getMpsdType(addr);
+		return m_mcpd[id]->getModuleType(addr);
 	return "-";
 }
 
 /*!
-    \fn float Mesydaq2::getMpsdVersion(quint16 id, quint8 addr)
+    \fn float Mesydaq2::getModuleVersion(quint16 id, quint8 addr)
 
     get the detected version of the MPSD. If MPSD not exists it will return 0.
 
@@ -1398,7 +1398,7 @@ QString Mesydaq2::getMpsdType(quint16 id, quint8 addr)
     \return module ID (type)
     \see readId
 */
-float Mesydaq2::getMpsdVersion(quint16 id, quint8 addr)
+float Mesydaq2::getModuleVersion(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->version(addr);
@@ -1605,7 +1605,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
 			{
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
 				quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
-				if (getMpsdId(mod, slotId) == TYPE_MPSD8 && getMode(mod, id)) // amplitude mode
+				if (getModuleId(mod, slotId) == TYPE_MPSD8 && getMode(mod, id)) // amplitude mode
 				{
 					// put the amplitude to the new format position
 					quint16 amp = (pd.data[counter + 1] >> 3) & 0x3FF;

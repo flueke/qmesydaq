@@ -880,7 +880,7 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
-				if (m_mesydaq->getMpsdId(mod, id) == TYPE_MPSD8OLD)
+				if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
 				{
 					amp >>= 2;
 					pos >>= 2;
@@ -904,7 +904,7 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 #endif
 				if (m_posHistCorrected)
 					m_posHistCorrected->incVal(chan, pos);
-				if (m_mesydaq->getMpsdId(mod, id) == TYPE_MSTD16)
+				if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
 				{
 //					MSG_INFO << "MSTD-16 event : chan : " << chan << " : pos : " << pos << " : id : " << id;
 					chan <<= 1;

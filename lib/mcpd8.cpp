@@ -117,7 +117,7 @@ bool MCPD8::init(void)
 	for (quint8 c = 0; c < 8; c++)
 		if (m_mpsd.find(c) != m_mpsd.end())
 		{
-			switch (m_mpsd[c]->getMpsdId())
+			switch (m_mpsd[c]->getModuleId())
 			{
 				case TYPE_MPSD8P:
 					cap = capabilities(c);
@@ -137,7 +137,7 @@ bool MCPD8::init(void)
 	for(quint8 c = 0; c < 8; c++)
 		if (m_mpsd.find(c) != m_mpsd.end())
 		{
-			if (m_mpsd[c]->getMpsdId() == TYPE_MPSD8P)
+			if (m_mpsd[c]->getModuleId() == TYPE_MPSD8P)
 				writePeriReg(c, 1, modus);
 			version(c);
 		}
@@ -206,7 +206,7 @@ bool MCPD8::cont(void)
 }
 
 /*!
-    \fn MCPD8::getMpsdId(quint8 addr)
+    \fn MCPD8::getModuleId(quint8 addr)
 
     get the detected ID of the MPSD. If MPSD not exists it will return 0.
 
@@ -214,10 +214,10 @@ bool MCPD8::cont(void)
     \return module ID (type)
     \see readId
  */
-quint8 MCPD8::getMpsdId(quint8 addr)
+quint8 MCPD8::getModuleId(quint8 addr)
 {
 	if (m_mpsd.contains(addr))
-		return m_mpsd[addr]->getMpsdId();
+		return m_mpsd[addr]->getModuleId();
 	else
 		return 0;
 }
@@ -351,7 +351,7 @@ float MCPD8::version(quint16 mod)
     reads the ID's of all connected MPSD-8/8+ and MSTD-16
 
     \return true if operation was succesful or not
-    \see getMpsdId
+    \see getModuleId
  */
 bool MCPD8::readId(void)
 {
@@ -1827,7 +1827,7 @@ bool MCPD8::isPulserOn(quint8 addr)
 {
 	if (m_mpsd.find(addr) == m_mpsd.end())
 		return false;
-	if (getMpsdId(addr) && m_mpsd[addr]->isPulserOn())
+	if (getModuleId(addr) && m_mpsd[addr]->isPulserOn())
 		return true;
 	return false;
 }
@@ -1846,7 +1846,7 @@ quint16 MCPD8::bins()
         	return 960;
 
 	for (quint8 i = 0; i < 8; ++i)
-		if (m_mpsd.find(i) != m_mpsd.end() && getMpsdId(i))
+		if (m_mpsd.find(i) != m_mpsd.end() && getModuleId(i))
 			if (m_mpsd[i]->bins() > bins)
 				bins = m_mpsd[i]->bins();
 	return bins;
@@ -1922,9 +1922,9 @@ quint8	MCPD8::getPulsChan(quint8 addr, bool preset)
 } 
 
 /*!
-    \fn MCPD8::initMpsd(quint8 id)
+    \fn MCPD8::initModule(quint8 id)
     
-    initializes a MPSD:
+    initializes a Module:
 	- sets threshold
 	- sets pulser
 	- sets mode
@@ -1933,7 +1933,7 @@ quint8	MCPD8::getPulsChan(quint8 addr, bool preset)
     
     \param id number of the MPSD
  */
-void MCPD8::initMpsd(quint8 id)
+void MCPD8::initModule(quint8 id)
 {
 #if defined(_MSC_VER)
 #	pragma message("TODO gain initialization")
@@ -1966,7 +1966,7 @@ void MCPD8::initMpsd(quint8 id)
 	setMode(id, false);
 	
 // now set tx capabilities, if id == 105
-	if(getMpsdId(id) == 105)
+	if(getModuleId(id) == 105)
 	{
 		// write register 1
 		writePeriReg(id, 1, 4);
@@ -1974,12 +1974,12 @@ void MCPD8::initMpsd(quint8 id)
 }
 
 /*!
-    \fn QString MPCD8::getMpsdType(quint8 addr)
+    \fn QString MPCD8::getModuleType(quint8 addr)
  
     \param addr id number of the MPSD
     \return the type of the MPSD
  */
-QString MCPD8::getMpsdType(quint8 addr)
+QString MCPD8::getModuleType(quint8 addr)
 {
 	if (m_mpsd.find(addr) != m_mpsd.end())
 	{
@@ -2193,7 +2193,7 @@ quint8 MCPD8::numModules(void)
 {
 	quint8 n(0);
 	foreach(MPSD8 *it, m_mpsd)	
-		if (it->getMpsdId())
+		if (it->getModuleId())
 			n++;
 	return n;
 }

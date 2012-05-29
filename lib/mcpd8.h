@@ -193,15 +193,15 @@ public:
 
 	bool getMode(quint16 addr);
 
-	quint8 getMpsdId(quint8 addr);
+	quint8 getModuleId(quint8 addr);
 
 	quint8 getMdllId(void);
 
-	QString getMpsdType(quint8 addr);
+	QString getModuleType(quint8 addr);
 
 	bool online(quint8 addr);
 
-	void initMpsd(quint8 id);
+	void initModule(quint8 id);
 
 // commands: MCPD-8 ports
 	bool setDac(quint16 dac, quint16 val);
@@ -283,7 +283,7 @@ public:
 	{
     		QList<int> modList;
     		for (int i = 0; i < 8; ++i)
-        		if (getMpsdId(i))
+        		if (getModuleId(i))
             			modList << i;
 		return modList;
 	}	

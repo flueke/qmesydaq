@@ -20,7 +20,7 @@ INCLUDEPATH 	+= ../../lib .
 SOURCES 	+= main.cpp \
 		   readfile.cpp
 
-# LIBS        	+= -L../../lib -lmesydaq
+LIBS        	+= -L../../lib -lmesydaq
 
 INSTALLS        = target
 

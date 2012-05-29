@@ -126,7 +126,7 @@ public:
 
 	bool getMode(const quint16 mod, quint8 addr);
 
-	quint8 getMpsdId(quint16 mod, quint8 addr);
+	quint8 getModuleId(quint16 mod, quint8 addr);
 
 	quint8 getMdllId(quint16 mod);
 
@@ -142,9 +142,9 @@ public:
 
 	quint8 getMdllPulser(quint16 id, quint8 val);
 
-	QString getMpsdType(quint16 mod, quint8 addr);
+	QString getModuleType(quint16 mod, quint8 addr);
 
-	float getMpsdVersion(quint16 mod, quint8 addr);
+	float getModuleVersion(quint16 mod, quint8 addr);
 
 	bool online(quint16 mod, quint8 addr);
 

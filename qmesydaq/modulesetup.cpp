@@ -228,7 +228,7 @@ void ModuleSetup::displayMCPDSlot(int id)
 
     QList<int> modList;
     for (int i = 0; i < 8; ++i)
-        if (m_theApp->getMpsdId(id, i))
+        if (m_theApp->getModuleId(id, i))
             modList << i;
     module->setModuleList(modList);
     displaySlot();

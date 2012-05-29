@@ -739,14 +739,14 @@ void MainWidget::displayMpsdSlot(int iModule)
     firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod)));
     
 // Status display:
-    moduleStatus0->update(m_theApp->getMpsdType(mod, 0), m_theApp->getMpsdVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));
-    moduleStatus1->update(m_theApp->getMpsdType(mod, 1), m_theApp->getMpsdVersion(mod, 1), m_theApp->online(mod, 1), m_theApp->histogram(mod, 1), m_theApp->active(mod, 1));
-    moduleStatus2->update(m_theApp->getMpsdType(mod, 2), m_theApp->getMpsdVersion(mod, 2), m_theApp->online(mod, 2), m_theApp->histogram(mod, 2), m_theApp->active(mod, 2));
-    moduleStatus3->update(m_theApp->getMpsdType(mod, 3), m_theApp->getMpsdVersion(mod, 3), m_theApp->online(mod, 3), m_theApp->histogram(mod, 3), m_theApp->active(mod, 3));
-    moduleStatus4->update(m_theApp->getMpsdType(mod, 4), m_theApp->getMpsdVersion(mod, 4), m_theApp->online(mod, 4), m_theApp->histogram(mod, 4), m_theApp->active(mod, 4));
-    moduleStatus5->update(m_theApp->getMpsdType(mod, 5), m_theApp->getMpsdVersion(mod, 5), m_theApp->online(mod, 5), m_theApp->histogram(mod, 5), m_theApp->active(mod, 5));
-    moduleStatus6->update(m_theApp->getMpsdType(mod, 6), m_theApp->getMpsdVersion(mod, 6), m_theApp->online(mod, 6), m_theApp->histogram(mod, 6), m_theApp->active(mod, 6));
-    moduleStatus7->update(m_theApp->getMpsdType(mod, 7), m_theApp->getMpsdVersion(mod, 7), m_theApp->online(mod, 7), m_theApp->histogram(mod, 7), m_theApp->active(mod, 7));
+    moduleStatus0->update(m_theApp->getModuleType(mod, 0), m_theApp->getModuleVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));
+    moduleStatus1->update(m_theApp->getModuleType(mod, 1), m_theApp->getModuleVersion(mod, 1), m_theApp->online(mod, 1), m_theApp->histogram(mod, 1), m_theApp->active(mod, 1));
+    moduleStatus2->update(m_theApp->getModuleType(mod, 2), m_theApp->getModuleVersion(mod, 2), m_theApp->online(mod, 2), m_theApp->histogram(mod, 2), m_theApp->active(mod, 2));
+    moduleStatus3->update(m_theApp->getModuleType(mod, 3), m_theApp->getModuleVersion(mod, 3), m_theApp->online(mod, 3), m_theApp->histogram(mod, 3), m_theApp->active(mod, 3));
+    moduleStatus4->update(m_theApp->getModuleType(mod, 4), m_theApp->getModuleVersion(mod, 4), m_theApp->online(mod, 4), m_theApp->histogram(mod, 4), m_theApp->active(mod, 4));
+    moduleStatus5->update(m_theApp->getModuleType(mod, 5), m_theApp->getModuleVersion(mod, 5), m_theApp->online(mod, 5), m_theApp->histogram(mod, 5), m_theApp->active(mod, 5));
+    moduleStatus6->update(m_theApp->getModuleType(mod, 6), m_theApp->getModuleVersion(mod, 6), m_theApp->online(mod, 6), m_theApp->histogram(mod, 6), m_theApp->active(mod, 6));
+    moduleStatus7->update(m_theApp->getModuleType(mod, 7), m_theApp->getModuleVersion(mod, 7), m_theApp->online(mod, 7), m_theApp->histogram(mod, 7), m_theApp->active(mod, 7));
 }
 
 /*!

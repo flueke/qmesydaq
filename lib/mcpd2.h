@@ -134,9 +134,9 @@ public:
 
 	bool getMode(quint16 addr);
 
-	quint8 getMpsdId(quint8 addr);
+	quint8 getModuleId(quint8 addr);
 
-	void initMpsd(quint8 id);
+	void initModule(quint8 id);
 
 // commands: MCPD-8 ports
 	bool setDac(quint16 dac, quint16 val);

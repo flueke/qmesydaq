@@ -63,7 +63,7 @@ public:
 	QList<quint16> getActiveList(void);
 
 	//! \return the ID of the MPSD
-	quint8 	getMpsdId(void) {return m_mpsdId;}
+	quint8 	getModuleId(void) {return m_mpsdId;}
 
 	//! \return the type of the MPSD as string
 	virtual QString getType(void) {return tr("MPSD-8");}
