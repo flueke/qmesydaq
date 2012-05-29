@@ -234,7 +234,7 @@ quint8 MCPD8::getModuleId(quint8 addr)
 quint8 MCPD8::getMdllId()
 {
 	if (m_mdll.contains(0))
-        	return m_mdll[0]->getMdllId();
+        	return m_mdll[0]->getModuleId();
 	else
 		return 0;
 }

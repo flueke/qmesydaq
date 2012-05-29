@@ -64,7 +64,7 @@ public:
     QList<quint16> getActiveList(void);
 
     //! \return the ID of the MDLL
-    quint8 	getMdllId(void) {return m_mdllId;}
+    quint8 	getModuleId(void) {return m_mdllId;}
 
     //! \return the type of the MDLL as string
     QString getType(void) {return tr("MDLL");}
