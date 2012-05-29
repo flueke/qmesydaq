@@ -1083,12 +1083,12 @@ void MainWidget::m4PresetSlot(bool pr)
 void MainWidget::updatePresets(void)
 {
     // presets
-    timerPreset->setValue(m_meas->getPreset(TIMERID));
-    eventsPreset->setValue(m_meas->getPreset(EVID));
-    monitor1Preset->setValue(m_meas->getPreset(MON1ID));
-    monitor2Preset->setValue(m_meas->getPreset(MON2ID));
-    monitor3Preset->setValue(m_meas->getPreset(MON3ID));
-    monitor4Preset->setValue(m_meas->getPreset(MON4ID));
+    timerPreset->setPresetValue(m_meas->getPreset(TIMERID));
+    eventsPreset->setPresetValue(m_meas->getPreset(EVID));
+    monitor1Preset->setPresetValue(m_meas->getPreset(MON1ID));
+    monitor2Preset->setPresetValue(m_meas->getPreset(MON2ID));
+    monitor3Preset->setPresetValue(m_meas->getPreset(MON3ID));
+    monitor4Preset->setPresetValue(m_meas->getPreset(MON4ID));
     
     // check for master preset counter
     timerPreset->setChecked(m_meas->isMaster(TIMERID));
