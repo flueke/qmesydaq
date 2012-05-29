@@ -264,6 +264,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     setHistogramMode(true);
     draw();
+    selectUserMode();
 }
 
 //! destructor
@@ -451,7 +452,7 @@ void MainWidget::startStopSlot(bool checked)
     {
         checkListfilename(acquireFile->isChecked());
         // get timing binwidth
-        m_theApp->setTimingwidth(timingBox->value());
+        // m_theApp->setTimingwidth(timingBox->value());
 
         // get latest preset entry
         if(m_meas->isMaster(TIMERID))
@@ -1951,3 +1952,28 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
 	m_theApp->setActive(devid_2->value(), id, set);
 }
+
+/*!
+    sets the user mode
+ */
+void MainWidget::selectUserMode()
+{
+//	slidingFrame->setHidden(true);
+}
+
+/*!
+    sets the expert mode
+ */
+void MainWidget::selectExpertMode()
+{
+//	slidingFrame->setHidden(true);
+}
+
+/*!
+    sets the superuser mode
+ */
+void MainWidget::selectSuperUserMode()
+{
+//	slidingFrame->setVisible(true);
+}
+

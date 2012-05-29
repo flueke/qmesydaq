@@ -64,6 +64,13 @@ signals:
 	//! load configuration file
 	void	loadConfiguration(const QString& sFilename);
 
+private slots:
+	void	selectUser(void);
+
+	void 	selectExpert(void);
+
+	void	selectSuperuser(void);
+
 protected:
 	void closeEvent(QCloseEvent *event);
 
@@ -71,6 +78,8 @@ private:
 	void restoreSettings(void);
 
 	void saveSettings(void);
+
+	bool checkPasswd(const QString &section);
 
 private:
 	MainWidget 	*m_main;

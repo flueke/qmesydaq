@@ -13,7 +13,9 @@
   <property name="windowTitle">
    <string>QMesyDAQ</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout"/>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -61,10 +63,20 @@
      <addaction name="actionSetupMCPD"/>
      <addaction name="actionAddMCPD"/>
     </widget>
+    <widget class="QMenu" name="menuMode">
+     <property name="title">
+      <string>Mode</string>
+     </property>
+     <addaction name="actionUser"/>
+     <addaction name="actionExpert"/>
+     <addaction name="actionSuperuser"/>
+    </widget>
     <addaction name="actionGeneral"/>
     <addaction name="menuMCPD"/>
     <addaction name="actionModule"/>
     <addaction name="actionMdll"/>
+    <addaction name="separator"/>
+    <addaction name="menuMode"/>
    </widget>
    <addaction name="menu_Files"/>
    <addaction name="menu_Configuration"/>
@@ -148,6 +160,33 @@
     <string>&amp;New Setup</string>
    </property>
   </action>
+  <action name="actionSuperuser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Superuser</string>
+   </property>
+  </action>
+  <action name="actionExpert">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Expert</string>
+   </property>
+  </action>
+  <action name="actionUser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>User</string>
+   </property>
+  </action>
   <action name="actionModule">
    <property name="text">
     <string>Module</string>
@@ -172,6 +211,22 @@
  <resources/>
  <connections>
   <connection>
+   <sender>actionUser</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectUser()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>action_Quit</sender>
    <signal>activated()</signal>
    <receiver>MainWindow</receiver>
@@ -187,5 +242,42 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExpert</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectExpert()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSuperuser</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectSuperuser()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>selectUser()</slot>
+  <slot>selectExpert()</slot>
+  <slot>selectSuperuser()</slot>
+ </slots>
 </ui>

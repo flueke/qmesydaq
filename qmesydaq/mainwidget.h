@@ -49,6 +49,12 @@ public:
 
 	~MainWidget();
 
+	void selectUserMode(void);
+
+	void selectExpertMode(void);
+
+	void selectSuperUserMode(void);
+
 signals:
 	//! will be emitted in case of start of data acquisition
 	void	started(bool);

@@ -21,6 +21,7 @@
 #include "MultipleLoopApplication.h"
 #include "mainwindow.h"
 #include "mainwidget.h"
+#include "passworddialog.h"
 #include "mesydaq2.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -28,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 	, Ui_MainWindow()
 {
 	setupUi(this);
+	setWindowTitle("QMesyDAQ " + QString(VERSION) + " " __DATE__);
 
 	m_mesy = new Mesydaq2(NULL);
 	m_main = new MainWidget(m_mesy, this);
@@ -54,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
+
 	restoreSettings();
 }
 
@@ -82,4 +85,51 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
 	saveSettings();
 	event->accept();
+}
+
+void MainWindow::selectUser(void)
+{
+	actionExpert->setChecked(false);
+	actionSuperuser->setChecked(false);
+	m_main->selectUserMode();
+}
+
+void MainWindow::selectExpert(void)
+{
+	if (checkPasswd("expert"))
+	{	
+		actionUser->setChecked(false);
+		actionSuperuser->setChecked(false);
+		m_main->selectExpertMode();
+	}
+	else
+		selectUser();
+}
+
+void MainWindow::selectSuperuser(void)
+{
+	if (checkPasswd("superuser"))
+	{	
+		actionUser->setChecked(false);
+		actionExpert->setChecked(false);
+		m_main->selectSuperUserMode();
+	}
+	else
+		selectUser();
+}
+
+bool MainWindow::checkPasswd(const QString &section)
+{
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	QString passwd = settings.value(section + "/passwd", "").toString();
+	QString usertyped("");
+	if (!passwd.isEmpty())
+	{
+		PasswordDialog d;
+		if (d.exec() == QDialog::Accepted)
+		{
+			usertyped = d.password();
+		}
+	}
+	return passwd == usertyped;
 }
