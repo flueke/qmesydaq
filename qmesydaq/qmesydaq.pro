@@ -58,6 +58,7 @@ HEADERS 	+= mainwidget.h \
 		modulemasterpage.h \
                 modulesetup.h \
                 mdllsetup.h \
+		passworddialog.h \
 		plot.h 
 
 FORMS 		+= mainwidget.ui \
@@ -72,7 +73,8 @@ FORMS 		+= mainwidget.ui \
 		modulemasterpage.ui \
 		channelhistogramsetup.ui \
                 modulesetup.ui \
-                mdllsetup.ui
+                mdllsetup.ui \
+		passworddialog.ui
 
 SOURCES 	+= main.cpp \
 		mainwindow.cpp \
