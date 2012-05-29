@@ -27,7 +27,7 @@ PresetWidget::PresetWidget(QWidget *parent)
 {
     setupUi(this);
     setLabel("");
-    setValue(0);
+    setPresetValue(0);
 //  connect(resetButton, SIGNAL(clicked()), this, SLOT(resetButtonClicked()));
 //  connect(presetButton, SIGNAL(clicked(bool)), this, SLOT(presetCheckClicked(bool)));
 }
@@ -46,23 +46,47 @@ void PresetWidget::setLabel(const QString &text)
 }
 
 /*!
-    \fn quint64 PresetWidget::value(void)
+    \fn quint64 PresetWidget::presetValue(void)
 
     \return the current selected preset value
  */
-quint64 PresetWidget::value(void)
+quint64 PresetWidget::presetValue(void)
 {
     return preset->value();
 }
 
 /*!
+    \fn void PresetWidget::setRate(const quint64 val)
+
+    sets the current rate
+
+    \param val current rate
+ */
+void PresetWidget::setRate(const quint64 val)
+{
+    rate->setText(QString::number(val));
+}
+
+/*! 
     \fn void PresetWidget::setValue(const quint64 val)
+
+    sets the current value
+
+    \param val current value
+ */
+void PresetWidget::setValue(const quint64 val)
+{
+    currentValue->setText(QString::number(val));
+}
+
+/*!
+    \fn void PresetWidget::setPresetValue(const quint64 val)
 
     sets the preset value
 
     \param val new value of the preset
  */
-void PresetWidget::setValue(const quint64 val)
+void PresetWidget::setPresetValue(const quint64 val)
 {
     preset->setValue(val);
 }
@@ -114,7 +138,7 @@ void PresetWidget::presetCheckClicked(bool val)
  */
 void PresetWidget::resetButtonClicked()
 {
-	setValue(0);
+	setPresetValue(0);
 	emit resetClicked();
 }
 

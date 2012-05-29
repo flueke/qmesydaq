@@ -44,9 +44,11 @@ public:
 
 	void setChecked(const bool);
 
-	void setValue(const double = 0);
+	void setPresetValue(const double = 0);
 
-	double value(void);
+	double presetValue(void);
+
+	void setValue(const double = 0);
 
 signals:
         //! this signal is emitted if the reset button is clicked

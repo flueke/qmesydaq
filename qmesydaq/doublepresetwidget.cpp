@@ -28,7 +28,7 @@ DoublePresetWidget::DoublePresetWidget(QWidget *parent)
 {
     setupUi(this);
     setLabel("");
-    setValue(0.0);
+    setPresetValue(0.0);
 }
 
 /*!
@@ -45,11 +45,11 @@ void DoublePresetWidget::setLabel(const QString &text)
 }
 
 /*!
-    \fn quint64 DoublePresetWidget::value(void)
+    \fn quint64 DoublePresetWidget::presetValue(void)
 
     \return the current selected preset value
  */
-double DoublePresetWidget::value(void)
+double DoublePresetWidget::presetValue(void)
 {
     return preset->value();
 }
@@ -57,11 +57,23 @@ double DoublePresetWidget::value(void)
 /*!
     \fn void DoublePresetWidget::setValue(const double val)
 
+    sets the value
+
+    \param val new value 
+ */
+void DoublePresetWidget::setValue(const double val)
+{
+    currentValue->setText(QString::number(val));
+}
+
+/*!
+    \fn void DoublePresetWidget::setPresetValue(const double val)
+
     sets the preset value
 
     \param val new value of the preset
  */
-void DoublePresetWidget::setValue(const double val)
+void DoublePresetWidget::setPresetValue(const double val)
 {
     preset->setValue(val);
 }
@@ -113,7 +125,7 @@ void DoublePresetWidget::presetCheckClicked(bool val)
  */
 void DoublePresetWidget::resetButtonClicked()
 {
-	setValue(0);
+	setPresetValue(0);
 	emit resetClicked();
 }
 

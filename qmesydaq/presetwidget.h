@@ -44,9 +44,13 @@ public:
 
 	void setChecked(const bool);
 
-	void setValue(const quint64 = 0);
+	void setPresetValue(const quint64 = 0);
 
-	quint64 value(void);
+	void setValue(const quint64 = 0); 
+
+	void setRate(const quint64 = 0);
+
+	quint64 presetValue(void);
 
 signals:
 	//! this signal will be emitted if the reset button is pressed
