@@ -39,6 +39,8 @@
     <addaction name="actionSave_Histogram_File"/>
     <addaction name="actionLoad_Histogram_File"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_Calibration_File"/>
+    <addaction name="separator"/>
     <addaction name="actionPrint"/>
     <addaction name="actionExport_PDF"/>
     <addaction name="actionExport_SVG"/>
@@ -228,6 +230,11 @@
    </property>
    <property name="text">
     <string>Superuser</string>
+   </property>
+  </action>
+  <action name="actionLoad_Calibration_File">
+   <property name="text">
+    <string>Load &amp;Calibration File ...</string>
    </property>
   </action>
  </widget>

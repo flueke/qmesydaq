@@ -221,6 +221,8 @@ public:
 
 	void readHistograms(const QString &name);
 
+	void readCalibration(const QString &name);
+
 	void clearAllHist(void);
 
 	void clearChanHist(const quint16 chan);
@@ -448,6 +450,9 @@ private:
 
 	//! number of neutrons
 	quint64		m_neutrons;
+
+	QString		m_calibrationfile;
+
 };
 
 #endif

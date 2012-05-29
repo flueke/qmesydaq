@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(action_Replay_List_File, SIGNAL(triggered()), m_main, SLOT(replayListfileSlot()));
 	connect(actionSave_Histogram_File, SIGNAL(triggered()), m_main, SLOT(writeHistSlot()));
 	connect(actionLoad_Histogram_File, SIGNAL(triggered()), m_main, SLOT(loadHistSlot()));
+	connect(actionLoad_Calibration_File, SIGNAL(triggered()), m_main, SLOT(loadCalibrationSlot()));
 	connect(actionPrint, SIGNAL(triggered()), m_main, SLOT(printPlot()));
 	connect(actionExport_PDF, SIGNAL(triggered()), m_main, SLOT(exportPDF()));
 	connect(actionExport_SVG, SIGNAL(triggered()), m_main, SLOT(exportSVG()));

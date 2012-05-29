@@ -173,6 +173,8 @@ private slots:
 
 	void loadHistSlot();
 
+	void loadCalibrationSlot();
+
 	void draw(void);
 
 	void zoomAreaSelected(const QRectF &);

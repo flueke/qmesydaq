@@ -951,6 +951,21 @@ void MainWidget::loadHistSlot()
 }
 
 /*!
+   \fn void MainWidget::loadCalibrationSlot()
+
+   callback to read a calibration data file
+*/
+void MainWidget::loadCalibrationSlot()
+{
+    QString name = QFileDialog::getOpenFileName(this, tr("Load Calibration File ..."), m_meas->getHistfilepath(), "mesydaq calibration files (*.txt);;all files (*.*)");
+    if(!name.isEmpty())
+    {
+        m_meas->readCalibration(name);
+	emit redraw();
+    }
+}
+
+/*!
    \fn void MainWidget::ePresetSlot(bool pr)
 
    callback to enable/disable event counter

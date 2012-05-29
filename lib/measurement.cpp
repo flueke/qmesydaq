@@ -749,6 +749,54 @@ void Measurement::readHistograms(const QString &name)
 	}
 }
 
+void Measurement::readCalibration(const QString &name)
+{
+	if (name.isEmpty())
+		return;
+
+	QFile f;
+	f.setFileName(name);
+	if (f.open(QIODevice::ReadOnly))
+	{
+		m_calibrationfile = name;
+		QTextStream t(&f);
+
+// first line contains detector limits (min max)
+		QStringList list = t.readLine().split(QRegExp("\\s+"));
+		if (list.size() > 1)
+		{
+			qreal min = list[0].toUInt(),
+			      max = list[1].toUInt();
+//			if (min < max)
+//				m_detectorRange = TubeRange(min, max);
+		}
+		for (int i = 0; !t.atEnd(); ++i)
+		{
+			list = t.readLine().split(QRegExp("\\s+"));
+			if (list.size() > 3 && !list[3].isEmpty())
+			{
+#if 0
+				for (int j = 0; j < list.size(); ++j)
+					if (!i)
+						m_calibration[i] = TubeRange(list[j].toUInt());
+					else
+						m_calibration[i].setMax(list[j].toUInt());
+#endif
+			}
+			else
+			{
+				quint32 index = list[0].toUInt();
+				qreal min = list[1].toUInt(),
+			              max = list[2].toUInt();
+//				m_calibration[index] = TubeRange(min, max);
+				MSG_DEBUG << index << min << max;
+			}
+		}
+
+		f.close();
+	}
+}
+
 /*!
     \fn Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 
@@ -994,7 +1042,7 @@ void Measurement::readListfile(const QString &readfilename)
 	{
 		str = textStream.readLine();
 		seekPos += str.size() + 1;
-		qDebug() << str;
+		MSG_DEBUG << str;
 		if (str.startsWith("header length:"))
 			break;
 	}
@@ -1063,6 +1111,8 @@ void Measurement::readListfile(const QString &readfilename)
 		}
 		if(!(bcount % 1000))
 		{
+			if (getROI().isEmpty())
+				setROI(QRectF(0,0, width(), height()));
 			emit draw();
 			QCoreApplication::processEvents();
 		}
@@ -1208,10 +1258,14 @@ bool Measurement::loadSetup(const QString &name)
 	QString	home(getenv("HOME"));
 	m_histPath = settings.value("histogramPath", home).toString();
 	m_listPath = settings.value("listfilePath", home).toString();
-	QString sz = settings.value("debugLevel", QString("%1").arg(NOTICE)).toString();
+	QString sz = settings.value("debugLevel", QString("%1").arg(WARNING)).toString();
 	int n = sz.toInt(&bOK);
 	if (bOK)
+	{
 		DEBUGLEVEL = n;
+		if (DEBUGLEVEL > DEBUG)
+			DEBUGLEVEL = DEBUG;
+	}
 	else
 	{
 		if (sz.contains("fatal", Qt::CaseInsensitive)) 
@@ -1231,6 +1285,11 @@ bool Measurement::loadSetup(const QString &name)
 	settings.endGroup();
 
 	m_mesydaq->loadSetup(settings);
+
+	sz = settings.value("calibrationfile", "").toString();
+
+	readCalibration(sz);
+
 	storeLastFile();
 	return true;
 }
@@ -1250,6 +1309,14 @@ bool Measurement::loadSetup(const QString &name)
  */
 bool Measurement::saveSetup(const QString &name)
 {
+	static const QString debug[] = {"FATAL",
+				"ERROR",
+				"WARNING",
+				"NOTICE",
+				"INFO",
+				"DEBUG",
+				};
+
 	if(name.isEmpty())
 		m_configfile.setFile("mesycfg.mcfg");
 	m_configfile.setFile(name);
@@ -1264,7 +1331,8 @@ bool Measurement::saveSetup(const QString &name)
 	settings.setValue("date", QDateTime::currentDateTime().toString(Qt::ISODate));
 	settings.setValue("histogramPath", m_histPath);
 	settings.setValue("listfilePath", m_listPath);
-	settings.setValue("debugLevel", QString("%1").arg(DEBUGLEVEL));
+	settings.setValue("debugLevel", QString("%1").arg(debug[DEBUGLEVEL]));
+	settings.setValue("calibrationfile", m_calibrationfile);
 	settings.endGroup();
 
 	m_mesydaq->saveSetup(settings);
