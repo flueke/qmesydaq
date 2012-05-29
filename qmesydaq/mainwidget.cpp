@@ -1958,7 +1958,7 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
  */
 void MainWidget::selectUserMode()
 {
-//	slidingFrame->setHidden(true);
+	slidingFrame->setHidden(true);
 }
 
 /*!
@@ -1966,7 +1966,7 @@ void MainWidget::selectUserMode()
  */
 void MainWidget::selectExpertMode()
 {
-//	slidingFrame->setHidden(true);
+	slidingFrame->setHidden(true);
 }
 
 /*!
@@ -1974,6 +1974,6 @@ void MainWidget::selectExpertMode()
  */
 void MainWidget::selectSuperUserMode()
 {
-//	slidingFrame->setVisible(true);
+	slidingFrame->setVisible(true);
 }
 
