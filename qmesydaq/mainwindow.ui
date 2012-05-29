@@ -102,15 +102,11 @@
    </property>
   </action>
   <action name="action_Replay_List_File">
-   <property name="icon">
-   </property>
    <property name="text">
     <string>&amp;Replay List File ...</string>
    </property>
   </action>
   <action name="actionSave_Histogram_File">
-   <property name="icon">
-   </property>
    <property name="text">
     <string>Save &amp;Histogram File ...</string>
    </property>
@@ -207,6 +203,33 @@
     <string>MDLL</string>
    </property>
   </action>
+  <action name="actionExpert">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Expert</string>
+   </property>
+  </action>
+  <action name="actionUser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>User</string>
+   </property>
+  </action>
+  <action name="actionSuperuser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Superuser</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -231,6 +254,22 @@
    <signal>activated()</signal>
    <receiver>MainWindow</receiver>
    <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionUser</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectUser()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
