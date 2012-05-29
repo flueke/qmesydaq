@@ -1864,32 +1864,32 @@ void MainWidget::customEvent(QEvent *e)
                 case CommandEvent::C_SET_PRESELECTION:
                     if (timerPreset->isChecked())
                     {
-                        timerPreset->setValue(args[0].toDouble());
+                        timerPreset->setPresetValue(args[0].toDouble());
                         m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
                     }
                     else if (eventsPreset->isChecked())
                     {
-                        eventsPreset->setValue(args[0].toInt());
+                        eventsPreset->setPresetValue(args[0].toInt());
                         m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
                     }
                     else if (monitor1Preset->isChecked())
                     {
-                        monitor1Preset->setValue(args[0].toInt());
+                        monitor1Preset->setPresetValue(args[0].toInt());
                         m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
                     }
                     else if (monitor2Preset->isChecked())
                     {
-                        monitor2Preset->setValue(args[0].toInt());
+                        monitor2Preset->setPresetValue(args[0].toInt());
                         m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
                     }
                     else if (monitor3Preset->isChecked())
                     {
-                        monitor3Preset->setValue(args[0].toInt());
+                        monitor3Preset->setPresetValue(args[0].toInt());
                         m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
                     }
                     else if (monitor4Preset->isChecked())
                     {
-                        monitor4Preset->setValue(args[0].toInt());
+                        monitor4Preset->setPresetValue(args[0].toInt());
                         m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
                     }
                     break;
@@ -1951,4 +1951,3 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
 	m_theApp->setActive(devid_2->value(), id, set);
 }
-
