@@ -114,7 +114,9 @@ protected:
 //	void 	paintEvent(QPaintEvent *);
 
 private:
+#if QWT_VERSION < 0x060000
 	void	print(QPrinter *, QwtPlotPrintFilter &);
+#endif
 
 	void 	updateDisplay(void);
 
@@ -167,9 +169,9 @@ private slots:
 
 	void draw(void);
 
-	void zoomAreaSelected(const QwtDoubleRect&);
+	void zoomAreaSelected(const QRectF &);
 
-	void zoomed(const QwtDoubleRect&);
+	void zoomed(const QRectF &);
 
 	void setHistogramMode(bool);
 

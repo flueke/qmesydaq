@@ -160,8 +160,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, m_dataFrame->canvas());
 
-    connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
-    connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+    connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QRectF &)));
+    connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QRectF &)));
 
 #if 0
 #if QT_VERSION < 0x040000
@@ -379,22 +379,22 @@ void MainWidget::allPulserOff(void)
 }
 
 /*!
-    \fn void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
+    \fn void MainWidget::zoomAreaSelected(const QRectF &)
 
     \param 
 */
-void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
+void MainWidget::zoomAreaSelected(const QRectF &)
 {
     if (!m_zoomer->zoomRectIndex())
         m_zoomer->setZoomBase();
 }
 
 /*!
-    \fn void MainWidget::zoomed(const QwtDoubleRect &rect)
+    \fn void MainWidget::zoomed(const QRectF &rect)
 
     \param rect
 */
-void MainWidget::zoomed(const QwtDoubleRect &rect)
+void MainWidget::zoomed(const QRectF &rect)
 {
     if (rect == m_zoomer->zoomBase())
     {
@@ -455,17 +455,17 @@ void MainWidget::startStopSlot(bool checked)
 
         // get latest preset entry
         if(m_meas->isMaster(TIMERID))
-            m_meas->setPreset(TIMERID, quint64(timerPreset->value() * 1000), true);
+            m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
         if(m_meas->isMaster(EVID))
-            m_meas->setPreset(EVID, eventsPreset->value(), true);
+            m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
         if(m_meas->isMaster(MON1ID))
-            m_meas->setPreset(MON1ID, monitor1Preset->value(), true);
+            m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
         if(m_meas->isMaster(MON2ID))
-            m_meas->setPreset(MON2ID, monitor2Preset->value(), true);
+            m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
         if(m_meas->isMaster(MON3ID))
-            m_meas->setPreset(MON3ID, monitor3Preset->value(), true);
+            m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
         if(m_meas->isMaster(MON4ID))
-            m_meas->setPreset(MON4ID, monitor4Preset->value(), true);
+            m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
         startStopButton->setText("Stop");
         // set device id to 0 -> will be filled by mesydaq for master
         m_meas->start();
@@ -558,7 +558,10 @@ void MainWidget::checkListfilename(bool checked)
         if(!name.isEmpty())
             m_theApp->setListfilename(name);
         else
+	{
+	    qDebug() << "disable list file";
             acquireFile->setChecked(false);
+	}
         emit redraw();
     }
 }	
@@ -643,7 +646,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 void MainWidget::clearAllSlot()
 {
     m_meas->clearAllHist();
-    m_meas->setROI(QwtDoubleRect(0,0,0,0));
+    m_meas->setROI(QRectF(0,0,0,0));
     m_meas->setHistfilename("");
     m_zoomer->setZoomBase();
     m_meas->clearCounter(TIMERID);
@@ -704,6 +707,7 @@ void MainWidget::replayListfileSlot()
         startStopButton->setDisabled(true);
         clearAllSlot();
         displayTabWidget->setEnabled(true);
+        m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
         m_meas->readListfile(name);
         startStopButton->setEnabled(true);
     }
@@ -963,7 +967,7 @@ void MainWidget::ePresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     eventsPreset->setChecked(pr);
-    m_meas->setPreset(EVID, eventsPreset->value(), pr);
+    m_meas->setPreset(EVID, eventsPreset->presetValue(), pr);
 }
 
 /*!
@@ -984,7 +988,7 @@ void MainWidget::tPresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     timerPreset->setChecked(pr);
-    m_meas->setPreset(TIMERID, quint64(timerPreset->value() * 1000), pr);
+    m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), pr);
 }
 
 /*!
@@ -1005,7 +1009,7 @@ void MainWidget::m1PresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     monitor1Preset->setChecked(pr);
-    m_meas->setPreset(MON1ID, monitor1Preset->value(), pr);
+    m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), pr);
 }
 
 /*!
@@ -1026,7 +1030,7 @@ void MainWidget::m2PresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     monitor2Preset->setChecked(pr);
-    m_meas->setPreset(MON2ID, monitor2Preset->value(), pr);
+    m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), pr);
 }
 
 /*!
@@ -1047,7 +1051,7 @@ void MainWidget::m3PresetSlot(bool pr)
         monitor4Preset->setChecked(false);
     }
     monitor3Preset->setChecked(pr);
-    m_meas->setPreset(MON3ID, monitor3Preset->value(), pr);
+    m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), pr);
 }
 
 /*!
@@ -1068,7 +1072,7 @@ void MainWidget::m4PresetSlot(bool pr)
         monitor3Preset->setChecked(false);
     }
     monitor4Preset->setChecked(pr);
-    m_meas->setPreset(MON4ID, monitor4Preset->value(), pr);
+    m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), pr);
 }
 
 /*!
@@ -1202,7 +1206,7 @@ void MainWidget::setHistogramMode(bool histo)
 #if 0
         QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
         	right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
-        m_meas->setROI(QwtDoubleRect(right, left));
+        m_meas->setROI(QRectF(right, left));
 #endif
         m_histogram->attach(m_dataFrame);
         m_zoomer->zoom(0);
@@ -1562,9 +1566,19 @@ void MainWidget::printPlot(void)
     QPrintDialog dialog(m_printer);
     if(dialog.exec() == QDialog::Accepted)
     {
+#if QWT_VERSION < 0x060000
         QwtPlotPrintFilter filter;
         filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
         print(m_printer, filter);
+#else
+
+        QwtPlotRenderer renderer;
+
+        renderer.setDiscardFlag(QwtPlotRenderer::DiscardBackground, false);
+        renderer.setLayoutFlag(QwtPlotRenderer::KeepFrames, true);
+
+        renderer.renderTo(this, printer);
+#endif
     }
 }
 
@@ -1651,17 +1665,17 @@ void MainWidget::customEvent(QEvent *e)
                 {
                     double value(0);
                     if (timerPreset->isChecked())
-                        value = timerPreset->value();
+                        value = timerPreset->presetValue();
                     else if (eventsPreset->isChecked())
-                        value = eventsPreset->value();
+                        value = eventsPreset->presetValue();
                     else if (monitor1Preset->isChecked())
-                        value = monitor1Preset->value();
+                        value = monitor1Preset->presetValue();
                     else if (monitor2Preset->isChecked())
-                        value = monitor2Preset->value();
+                        value = monitor2Preset->presetValue();
                     else if (monitor3Preset->isChecked())
-                        value = monitor3Preset->value();
+                        value = monitor3Preset->presetValue();
                     else if (monitor4Preset->isChecked())
-                        value = monitor4Preset->value();
+                        value = monitor4Preset->presetValue();
                     interface->postCommandToInterface(CommandEvent::C_PRESELECTION, QList<QVariant>() << value);
                 }
                 break;
@@ -1851,32 +1865,32 @@ void MainWidget::customEvent(QEvent *e)
                     if (timerPreset->isChecked())
                     {
                         timerPreset->setValue(args[0].toDouble());
-                        m_meas->setPreset(TIMERID, quint64(timerPreset->value() * 1000), true);
+                        m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
                     }
                     else if (eventsPreset->isChecked())
                     {
                         eventsPreset->setValue(args[0].toInt());
-                        m_meas->setPreset(EVID, eventsPreset->value(), true);
+                        m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
                     }
                     else if (monitor1Preset->isChecked())
                     {
                         monitor1Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(MON1ID, monitor1Preset->value(), true);
+                        m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
                     }
                     else if (monitor2Preset->isChecked())
                     {
                         monitor2Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(MON2ID, monitor2Preset->value(), true);
+                        m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
                     }
                     else if (monitor3Preset->isChecked())
                     {
                         monitor3Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(MON3ID, monitor3Preset->value(), true);
+                        m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
                     }
                     else if (monitor4Preset->isChecked())
                     {
                         monitor4Preset->setValue(args[0].toInt());
-                        m_meas->setPreset(MON4ID, monitor4Preset->value(), true);
+                        m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
                     }
                     break;
                 case CommandEvent::C_SET_LISTMODE:
@@ -1937,3 +1951,4 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
 	m_theApp->setActive(devid_2->value(), id, set);
 }
+
