@@ -13,8 +13,8 @@ int main(int, char **)
 	MapCorrection 	m;
 
 	m.setNoMap();
-	m.initialize(128, 960, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
-	m.setMappedRect(QRect(0, 0, 128, 128));
+	m.initialize(iSrcWidth, iSrcHeight, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
+	m.setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
 	std::cout << "map is valid " << m.isValid() << std::endl;
 // generate linear (default) mapping
   	for (int i = 0; i < iDstHeight; ++i)
