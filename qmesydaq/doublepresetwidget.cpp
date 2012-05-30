@@ -63,7 +63,7 @@ double DoublePresetWidget::presetValue(void)
  */
 void DoublePresetWidget::setValue(const double val)
 {
-    currentValue->setText(QString::number(val));
+    currentValue->setText(tr("%1").arg(val, 0, 'f', 1));
 }
 
 /*!
