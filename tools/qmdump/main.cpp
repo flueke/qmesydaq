@@ -23,9 +23,9 @@ void help(const QString &program)
 
 int main(int argc, char **argv)
 {
-	DEBUGLEVEL = FATAL /* NOTICE */;
-
 	QCoreApplication app(argc, argv);
+
+	DEBUGLEVEL = ERROR /* NOTICE */;
 
 	QStringList 	args = app.arguments();
 	QString		fileName;
