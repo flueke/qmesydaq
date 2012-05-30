@@ -147,9 +147,9 @@ static QString createMessage(const char *msg, char cLogLevel)
 static void messageToFile(QtMsgType type, const char *msg)
 {
 	char cLogLevel='\0';
-  int iLogLevel;
-  switch (type)
-  {
+	int iLogLevel;
+	switch (type)
+	{
 		case QtDebugMsg:
 			iLogLevel=3;
 			if (msg[0]>='0' && msg[0]<='9')
@@ -159,55 +159,56 @@ static void messageToFile(QtMsgType type, const char *msg)
 				++msg;
 			}
 			break;
-    case QtWarningMsg:  iLogLevel=2; break;
-    case QtCriticalMsg: iLogLevel=1; break;
-    case QtFatalMsg:    iLogLevel=0; break;
-  }
+		case QtWarningMsg:  iLogLevel=2; break;
+		case QtCriticalMsg: iLogLevel=1; break;
+		case QtFatalMsg:    iLogLevel=0; break;
+	}
 	if (iLogLevel<=DEBUGLEVEL)
-  {
+	{
 		QString logline=createMessage(msg,cLogLevel);
 		std::cerr << logline.toStdString();
 
-    if (g_bUseLogfile)
-    {
-      if (g_LogFile.open(QFile::WriteOnly | QFile::Append))
-      {
-        g_LogFile.write(logline.toLocal8Bit());
-        g_LogFile.close();
-      }
-    }
-  }  
+		if (g_bUseLogfile)
+		{
+			if (g_LogFile.open(QFile::WriteOnly | QFile::Append))
+			{
+				g_LogFile.write(logline.toLocal8Bit());
+				g_LogFile.close();
+			}
+		}
+	}  
 }
 
 //==================================================================================================================
 // start logging (parse command line parameters from QCoreApplication)
 void startLogging(const char* szShortUsage, const char* szLongUsage)
 {
-  QStringList args=QCoreApplication::instance()->arguments();
+	QStringList args = QCoreApplication::instance()->arguments();
 
-  g_bUseLogfile=false;
-	DEBUGLEVEL=1;
+	g_bUseLogfile = false;
+	DEBUGLEVEL = 1;
 
-  qInstallMsgHandler(messageToFile);
-  for (int i=1; i<args.size(); ++i)
-  {
-		QString szArgument=args[i], szParameter;
-		bool bSeparatedParameter=false;
-		if (szArgument.indexOf('=')>=0)
+	qInstallMsgHandler(messageToFile);
+	for (int i = 1; i < args.size(); ++i)
+	{
+		QString szArgument = args[i], 
+			szParameter;
+		bool 	bSeparatedParameter=false;
+		if (szArgument.indexOf('=') >= 0)
 		{
-			int iPos=szArgument.indexOf('=');
-			szParameter=szArgument.mid(iPos);
-			szArgument.remove(iPos,szArgument.size()-iPos);
+			int iPos = szArgument.indexOf('=');
+			szParameter = szArgument.mid(iPos);
+			szArgument.remove(iPos, szArgument.size() - iPos);
 		}
 		else
 		{
-			szParameter=args[i];
-			bSeparatedParameter=true;
+			szParameter = args[i];
+			bSeparatedParameter = true;
 		}
 
 		if (szArgument.startsWith("--"))
-			szArgument.remove(0,1);
-		if (szArgument=="-l" || szArgument=="-log")
+			szArgument.remove(0, 1);
+		if (szArgument == "-l" || szArgument == "-log")
 		{
 			g_LogFile.setFileName(szParameter);
 			if (!g_LogFile.open(QFile::WriteOnly | QFile::Append))
@@ -218,43 +219,48 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 			else
 			{
 				g_LogFile.close();
-				g_bUseLogfile=true;
+				g_bUseLogfile = true;
 				MSG_DEBUG << "logfile found or created: " << szParameter;
 			}
-			if (bSeparatedParameter) ++i;
+			if (bSeparatedParameter) 
+				++i;
 		}
-		else if (szArgument=="-d" || szArgument=="-debug")
+		else if (szArgument == "-d" || szArgument == "-debug")
 		{
-			bool bOK=false;
-			int iLogLevel=szParameter.toInt(&bOK);
-			if (bOK) DEBUGLEVEL=iLogLevel;
-			if (bSeparatedParameter) ++i;
+			bool bOK(false);
+			int iLogLevel = szParameter.toInt(&bOK);
+			if (bOK) 
+				DEBUGLEVEL = iLogLevel;
+			if (bSeparatedParameter) 
+				++i;
 			MSG_DEBUG << "logging level " << DEBUGLEVEL;
 		}
-		else if (szArgument=="-nt" || szArgument.indexOf(QRegExp("-no.?time"))>=0)
+		else if (szArgument == "-nt" || szArgument.indexOf(QRegExp("-no.?time")) >= 0)
 		{
-			g_bUseTimestamp=false;
+			g_bUseTimestamp = false;
 		}
-		else if (szArgument=="-ns" || szArgument.indexOf(QRegExp("-no.?source"))>=0)
+		else if (szArgument == "-ns" || szArgument.indexOf(QRegExp("-no.?source")) >= 0)
 		{
-			g_bUseSourcefile=false;
+			g_bUseSourcefile = false;
 		}
-		else if (szArgument=="-h" || szArgument=="-help" || szArgument=="-?")
+		else if (szArgument == "-h" || szArgument == "-help" || szArgument == "-?")
 		{
 			std::cout << args.first().split('/').last().toStdString() << " [-l=<logfile> | --log=<logfile] [-d|--debug|-d=<level>|--debug=<level>]" << std::endl
 								<< "         [-nt|--no-timestamp] [-ns|--no-source]" << std::endl;
-			if (szShortUsage!=NULL && szShortUsage[0]!='\0') std::cout << "         " << szShortUsage << std::endl;
+			if (szShortUsage != NULL && szShortUsage[0] != '\0') 
+				std::cout << "         " << szShortUsage << std::endl;
 			std::cout << "  -h --help    this help text" << std::endl
-								<< "  -l --log     write messages to this log file" << std::endl
-								<< "  -d=<level> --debug=<level>" << std::endl
-								<< "  -d --debug   set logging level: 0=fatal errors only, 1=errors, 2=warnings," << std::endl
-								<< "               3=notices (default), 4=info messages, 5=debug messages" << std::endl
-								<< "  -nt --no-timestamps" << std::endl
-								<< "               do not print timestamps" << std::endl
-								<< "  -ns --no-source" << std::endl
-								<< "               do not print source file names" << std::endl;
-			if (szLongUsage!=NULL && szLongUsage[0]!='\0') std::cout << szLongUsage << std::endl;
+				<< "  -l --log     write messages to this log file" << std::endl
+				<< "  -d=<level> --debug=<level>" << std::endl
+				<< "  -d --debug   set logging level: 0=fatal errors only, 1=errors, 2=warnings," << std::endl
+				<< "               3=notices (default), 4=info messages, 5=debug messages" << std::endl
+				<< "  -nt --no-timestamps" << std::endl
+				<< "               do not print timestamps" << std::endl
+				<< "  -ns --no-source" << std::endl
+				<< "               do not print source file names" << std::endl;
+			if (szLongUsage != NULL && szLongUsage[0] != '\0') 
+				std::cout << szLongUsage << std::endl;
 			exit(0);
 		}
-  }
+	}
 }

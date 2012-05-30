@@ -34,12 +34,12 @@
 
 #include "libqmesydaq_global.h"
 
-#define MSG_FATAL    qDebug().nospace() << '0' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
-#define MSG_ERROR    qDebug().nospace() << '1' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
-#define MSG_WARNING  qDebug().nospace() << '2' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
-#define MSG_NOTICE   qDebug().nospace() << '3' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
-#define MSG_INFO     qDebug().nospace() << '4' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
-#define MSG_DEBUG    qDebug().nospace() << '5' << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
+#define MSG_FATAL    qDebug().nospace() << QString("[0] %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
+#define MSG_ERROR    qDebug().nospace() << QString("[1] %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
+#define MSG_WARNING  qDebug().nospace() << QString("[2] %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
+#define MSG_NOTICE   qDebug().nospace() << QString("[3] %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
+#define MSG_INFO     qDebug().nospace() << QString("[4] %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
+#define MSG_DEBUG    qDebug().nospace() << QString("[5] %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
 
 #define MSG_QCRITICAL qCritical().nospace() << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
 #define MSG_QWARNING  qWarning().nospace() << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
