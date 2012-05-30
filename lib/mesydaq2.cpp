@@ -310,10 +310,10 @@ void Mesydaq2::writeListfileHeader(void)
  */
 void Mesydaq2::writeHeaderSeparator(void)
 {
-	//const unsigned short awBuffer[]={sep0,sep5,sepA,sepF};
+	//const unsigned short awBuffer[] = {sep0, sep5, sepA, sepF};
 	if (m_datfile.isOpen())
 		m_datStream << sep0 << sep5 << sepA << sepF;
-	//m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer));
+	//m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer));
 }
 
 
@@ -328,7 +328,7 @@ void Mesydaq2::writeHeaderSeparator(void)
  */
 void Mesydaq2::writeBlockSeparator(void)
 {
-	const unsigned short awBuffer[]={sep0,sepF,sep5,sepA};
+	const unsigned short awBuffer[] = {sep0, sepF, sep5, sepA};
 	if (m_datfile.isOpen())
 		m_datStream << sep0 << sepF << sep5 << sepA;
 	m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer));
@@ -344,10 +344,10 @@ void Mesydaq2::writeBlockSeparator(void)
  */
 void Mesydaq2::writeClosingSignature(void)
 {
-	const unsigned short awBuffer[]={sepF,sepA,sep5,sep0};
+	const unsigned short awBuffer[] = {sepF, sepA, sep5, sep0};
 	if (m_datfile.isOpen())
 		m_datStream << sepF << sepA << sep5 << sep0;
-	m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer), true);
+	m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer), true);
 }
 
 /*!
