@@ -357,6 +357,8 @@ private:
 
 	void storeLastFile(void);
 
+	bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf);
+
 private:
 	//! separator in the list mode data file
 	static const quint16  	sep0 = 0x0000;

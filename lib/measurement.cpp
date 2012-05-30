@@ -33,6 +33,7 @@
 #endif
 
 #include <cmath>
+#include <algorithm>
 
 /*!
     \fn Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
@@ -1004,6 +1005,76 @@ bool Measurement::acqListfile() const
 	return m_mesydaq ? m_mesydaq->acqListfile() : true;
 }
 
+/**
+    \fn bool Measurement::getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
+
+    Read the next data buffer block from file
+
+    block starts with:
+	- buffer length
+	- buffer type
+	- header length
+	- buffer number
+
+    If this words contain 0xFFFF 0xAAAA 0x5555 0x0000 the EOF is reached
+
+    If after the block do not follow 0x0000 0xFFFF 0x5555 0xAAAA (block separator)
+    the data file is corrupted
+
+    \param datStream data stream 
+    \param dataBuf data buffer, will be filled 
+
+    \return true if block complete otherwise false
+ */
+bool Measurement::getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
+{
+	const QChar c('0');
+	quint16 sep1, sep2, sep3, sep4;
+
+	datStream >> sep1 >> sep2 >> sep3 >> sep4;
+// check for closing signature:
+// closing separator: sepF sepA sep5 sep0
+	bool ok = !((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0));
+	if (ok)
+	{
+//		memset(&dataBuf, 0, sizeof(dataBuf));
+		dataBuf.bufferLength = sep1;
+		dataBuf.bufferType = sep2;
+		dataBuf.headerLength = sep3;
+		dataBuf.bufferNumber = sep4;
+		ok = (dataBuf.bufferLength < 730);
+		if (ok)
+		{
+			int buflen = (dataBuf.bufferLength - 4) * sizeof(quint16); 
+			char *pD = (char *)&dataBuf.runID;
+			ok = datStream.readRawData(pD, buflen) == buflen;
+			if (ok)
+				for (int i = 0; i < buflen; i += 2)
+				{
+					char tmp = pD[i];
+					pD[i] = pD[i + 1];
+					pD[i + 1] = tmp;
+				}
+			else
+				MSG_ERROR << "corrupted file";
+			datStream >> sep1 >> sep2 >> sep3 >> sep4;
+			// block separator : sep0 sepF sep5 sepA
+			ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
+		}
+		else
+		{
+			MSG_DEBUG << QObject::tr("erroneous length: %1 - aborting").arg(dataBuf.bufferLength);
+			datStream >> sep1 >> sep2 >> sep3 >> sep4;
+			MSG_DEBUG << QObject::tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
+		}
+	}
+	else
+	{
+			MSG_DEBUG << QObject::tr("EOF reached");
+	}
+	return ok;
+}
+
 /*!
     \fn Measurement::readListfile(QString readfilename)
 
@@ -1021,6 +1092,7 @@ void Measurement::readListfile(const QString &readfilename)
 	}
 	m_mode = ReplayListFile;
 
+	MSG_ERROR << "Start replay";
 	QDataStream datStream;
 	QTextStream textStream;
 	QFile datfile;
@@ -1048,78 +1120,39 @@ void Measurement::readListfile(const QString &readfilename)
 	}
 	textStream.seek(seekPos);
 
-	datStream >> sep1 >> sep2 >> sep3 >> sep4;
-
-	bool ok = ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF));
-	MSG_NOTICE << "readListfile : " << ok;
-
 	resizeHistogram(0 /* 1024 */, 0 /* 128 */, true, true);
+	foreach(MesydaqCounter *c, m_counter)
+		c->reset();
 
-	QChar c('0');
+	QChar 		c('0');
 	DATA_PACKET 	dataBuf;
-	while(ok)
-	{
-		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-// check for closing signature:
-		if((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0))
-		{
-			MSG_NOTICE << "EOF reached after " << blocks << " buffers";
-			break;
-		}
 
-//		memset(&dataBuf, 0, sizeof(dataBuf));
-		dataBuf.bufferLength = sep1;
-		dataBuf.bufferType = sep2;
-		dataBuf.headerLength = sep3;
-		dataBuf.bufferNumber = sep4;
-		if(dataBuf.bufferLength > 729)
+	// header separator : sep0 sep5 sepA sepF
+	datStream >> sep1 >> sep2 >> sep3 >> sep4;
+	if ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF))
+		for(; getNextBlock(datStream, dataBuf); ++blocks, ++bcount)
 		{
-			MSG_ERROR << "in block " << blocks;
-			MSG_ERROR << "erroneous length: " << dataBuf.bufferLength << " - aborting";
-			datStream >> sep1 >> sep2 >> sep3 >> sep4;
-			MSG_ERROR << tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
-			break;
-		}
-		quint16 *pD = (quint16 *)&dataBuf.bufferLength;
-		for(int i = 4; i < dataBuf.bufferLength; i++)
-			datStream >> pD[i];
-		if (!blocks)
-		{
-			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
-			foreach(MesydaqCounter *c, m_counter)
-				c->reset();
-			m_counter[TIMERID]->start(tmp / 10000);
-		}
-
+			if (!bcount)
+			{
+				quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
+				m_counter[TIMERID]->start(tmp / 10000);
+			}
 // hand over data buffer for processing
-		analyzeBuffer(dataBuf);
-// increment local counters
-		blocks++;
-		bcount++;
-// check for next separator:
-//		qint64 p = textStream.device()->pos();
-//		MSG_DEBUG << tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c);
-		datStream >> sep1 >> sep2 >> sep3 >> sep4;
-//		MSG_ERROR << tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
-		ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
-		if (!ok)
-		{
-			MSG_ERROR << "File structure error - read aborted after " << blocks << " buffers";
-			qint64 p = textStream.device()->pos();
-			MSG_ERROR << tr("at position : %1 (0x%2)").arg(p).arg(p, 8, 16, c);
-			MSG_ERROR << tr("Separator: %1 %2 %3 %4").arg(sep1, 2, 16, c).arg(sep2, 2, 16, c).arg(sep3, 2, 16, c).arg(sep4, 2, 16, c);
-		}
-		if(!(bcount % 1000))
-		{
-			if (getROI().isEmpty())
-				setROI(QRectF(0,0, width(), height()));
-			emit draw();
-			QCoreApplication::processEvents();
-		}
-	}	
+			analyzeBuffer(dataBuf);
+			if(!(bcount % 5000))
+			{
+				if (getROI().isEmpty())
+					setROI(QRectF(0,0, width(), height()));
+				emit draw();
+				QCoreApplication::processEvents();
+			}
+		}	
 	datfile.close();
+	MSG_ERROR << "End replay";
 	MSG_NOTICE << "Found " << blocks << " data packages";
 	MSG_NOTICE << QObject::tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
+	emit draw();
+	QCoreApplication::processEvents();
 }
 
 /*!
