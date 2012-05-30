@@ -28,12 +28,6 @@
 #include "structures.h"
 
 class MainWidget;
-class Histogram;
-class MCPD8;
-class MPSD_8;
-class Measurement;
-class CorbaThread;
-class ControlInterface;
 class Mesydaq2;
 class QCloseEvent;
 
