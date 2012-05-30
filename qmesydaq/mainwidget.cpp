@@ -72,6 +72,25 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_controlInt(NULL)
 {
     setupUi(this);
+    tSecsText->setVisible(false);
+    totalCounts->setVisible(false);
+    eventRate->setVisible(false);
+    monitor1->setVisible(false);
+    monRate1->setVisible(false);
+    monitor2->setVisible(false);
+    monRate2->setVisible(false);
+    monitor3->setVisible(false);
+    monRate3->setVisible(false);
+    monitor4->setVisible(false);
+    monRate4->setVisible(false);
+
+    label_2->setVisible(false);
+    label_3->setVisible(false);
+    label_4->setVisible(false);
+    label_5->setVisible(false);
+    label_6->setVisible(false);
+    label_7->setVisible(false);
+
     statusTab->setCurrentIndex(0);
 
     moduleStatus0->setId(0);
@@ -592,16 +611,33 @@ void MainWidget::updateDisplay(void)
     
     // measurement values counters and rates
     tSecsText->setText(tr("%1").arg(m_meas->timer() / 1000., 0, 'f', 1));
+    timerPreset->setValue(m_meas->timer() / 1000.);
+
     totalCounts->setText(tr("%1").arg(m_meas->events(), 20));
     eventRate->setText(tr("%1").arg(m_meas->getRate(EVID)));
+    eventsPreset->setValue(m_meas->events());
+    eventsPreset->setRate(m_meas->getRate(EVID));
+
     monitor1->setText(tr("%1").arg(m_meas->mon1()));
     monRate1->setText(tr("%1").arg(m_meas->getRate(MON1ID)));
+    monitor1Preset->setValue(m_meas->mon1());
+    monitor1Preset->setRate(m_meas->getRate(MON1ID));
+
     monitor2->setText(tr("%1").arg(m_meas->mon2()));
     monRate2->setText(tr("%1").arg(m_meas->getRate(MON2ID)));
+    monitor2Preset->setValue(m_meas->mon2());
+    monitor2Preset->setRate(m_meas->getRate(MON2ID));
+
     monitor3->setText(tr("%1").arg(m_meas->mon3()));
     monRate3->setText(tr("%1").arg(m_meas->getRate(MON3ID)));
+    monitor3Preset->setValue(m_meas->mon3());
+    monitor3Preset->setRate(m_meas->getRate(MON3ID));
+
     monitor4->setText(tr("%1").arg(m_meas->mon4()));
     monRate4->setText(tr("%1").arg(m_meas->getRate(MON4ID)));
+    monitor4Preset->setValue(m_meas->mon4());
+    monitor4Preset->setRate(m_meas->getRate(MON4ID));
+
 
     lcdRunID->display(m_meas->runId());
     dispFiledata();
