@@ -89,7 +89,8 @@ MCPD8::~MCPD8()
 	NetworkDevice* network=m_network;
 	m_network = NULL;
 	NetworkDevice::destroy(network);
-	delete m_commTimer;
+	if (m_commTimer)
+		delete m_commTimer;
 	m_commTimer = NULL;
 }
 
@@ -1686,7 +1687,7 @@ void MCPD8::    analyzeBuffer(MDP_PACKET recBuf)
 void MCPD8::commTimeout()
 {
 	communicate(false);
-	MSG_ERROR << "timeout while waiting for cmd " << m_cmdBuf.cmd << " answer from ID: " << m_id;
+	MSG_ERROR << "T I M E O U T : timeout while waiting for cmd " << m_cmdBuf.cmd << " answer from ID: " << m_id;
 }
 
 /*!
