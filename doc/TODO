@@ -1,0 +1,71 @@
+Accepted:
+
+O  Forward streaming of the incoming data packages
+  The incoming data should be streamed via an UDP port additionally and optional
+
+1  File header in measurement header
+  The list mode files should contain an extended header (in INI format)
+  see: http://en.wikipedia.org/wiki/INI_file
+  Problem: Playback of such files requires a parsing of the header
+
+2  Conversion from channel/tube numbers to physical units
+  The channel/tube numbers should be converted to physical units via configureable
+  formulas
+
+3  Display of counters (monitors, ...) besides the desired set values (for better comparison)
+  The current values of different counters should be display close to the preselection
+  values for better comparison.
+
+4  Add information about position and intensity when cursor is moving over the plot
+  If the cursor is moving over the plot area the position values and and intensity should
+  be displayed
+
+5  Additional plots 
+  - Count rate plots (detector, monitor, external signals, ...) over time
+    (as history)
+    display over full time or fixed time window (sliding curves)
+    (Q: time between recording values)
+  - along tube/channel (or row/column) of 2D picture
+  - 'sum spectra' over the whole tube/channel (or row/column)
+
+6  Selecting coloring scheme in 2D plot
+  The colors to display the intensity should be selected by user. The color tables could be
+  configured via files. The default is the current scheme.
+
+7  Scaling in 1D plots
+  The scaling of the 1D plots should be scaled automatically by default. Optionally the user
+  may set the limits manually.
+  For the 'diffractogram over tube' display an additional line with the max. value should be
+  added and this max value should defineable by user.
+
+8  Disk space display
+  The free disk space on the data partition (for storing the listmode file data) should be
+  displayed in user front end.
+
+9  Automatic list mode file naming
+  In the remote operation mode the list mode file name should be controlled by the control
+  software and the user should not be able to change the filename.
+
+10 Display some additional extrema from spectra and histograms
+  - in 1D spectra 
+    - maximum/minimum channel 
+    - counts in a ROI
+  - in 2D histogram
+    - maximum/minimum channel and tube
+    - counts in a ROI
+
+11 Calibration and re-binning
+
+12 MDLL integration
+
+Refused:
+
+- Splitting of the list mode data files
+  (File size on current OS should be large enough to store data
+   of one measurement)
+
+- Clearing data during the data acquisition 
+  (May be a source of errors in real measurements, if no list mode
+   data written) 
+  For adjustments (of beam stop) it can be simulated by start/stop/clear 
+

@@ -1,0 +1,58 @@
+Hallo Jens, hallo Lutz,
+
+(nicht nur) für's MDLL bräuchte es noch ein paar weitere, spezielle
+Histogramme, bei denen ich mir noch nicht ganz klar bin, wie man die am
+besten in's Gesamtkonzept integriert.
+
+1) MDLL-Amplitudenspektrum
+MDLL liefert ja wie die "neuen" MPSD-8+ zwei Orte und eine Amplitude
+gleichzeitig.
+Bei den MPSD interessiert man sich eher für die Amplituden der
+einzelnen Detektoren, um gain und threshold einzustellen.
+Das liefern die aktuellen kanalweisen Histogramme.
+
+Beim MDLL dagegen braucht man ein Histogramm kumuliert über alle
+Amplituden, um den threshold einstellen zu können.
+Wäre also ein weiteres Histogramm mit 256 bins, was da benötigt wird.
+Akkumuliert wird's wohl am einfachsten gleich bei der Paketauswertung?
+Wie baut man das am geschicktesten ein?
+
+2) TOF: Wellenlängenspektrum
+Olaf Soltwedel vom NREX am FRM hat mir einen Wunsch bezüglich
+TOF-Messungen gemailt:
+
+Anscheinend ist die in seinem anhängenden Dokument beschriebene
+Wellenlängenmessung eine Standardanwendung an allen TOF-Instrumenten,
+unabhängig von der Detektorart.
+
+Habt ihr diese Anforderung auch von anderen Instrumenten bekommen?
+
+Dann müsste man da ein weiteres Histogramm hinzufügen, in dem die
+Flugzeit der Neutronen bzw. die Zeitdifferenz tNeutron-tChopper
+über alle eintreffenden Neutronen dargestellt ist.
+
+
+Wie sah eigentlich das Ergebnis der Wunschsammlung letzten Herbst aus?
+Kam da nennenswert etwas zusammen?
+
+Sollen wir uns gelegentlich mal zusammentelefonieren/-setzen, um 
+Erweiterungen etc. zu diskutieren?
+Ich bin nächste Woche nicht da, aber ab Mitte Juni würd's passen.
+
+Was meint ihr?
+
+Schönes Wochenende!
+
+Gregor
+
+
+-- 
+-------------------------------------
+Gregor Montermann
+mesytec GmbH & Co. KG
+Wernher-von-Braun-Str. 1
+85640 Putzbrunn
+T. +49-89-45600730, F. +49-89-45600739
+www.mesytec.com
+--------------------------------------
+

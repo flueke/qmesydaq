@@ -1,3 +1,13 @@
+- Counts in ROI for spectra view
+	solved: JK 05/25/2012
+
+- rescaling of histogram view in case of zoom !!!!
+	solved: JK 05/25/2012
+
+- Display of slices in X direction
+
+- 1024/960 problem 10 bit/6bit (1024/64) bit 
+
 list mode data files:
 	- the interpretation of the data depends on the mode of the 
 	  MPSD's:
