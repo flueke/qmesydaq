@@ -69,7 +69,10 @@ public:
 	QList<QVariant> getArgs() const { return m_args; }
 
 private:
+	//! current command
 	Command 	m_command;
+
+	//! list of command arguments
 	QList<QVariant> m_args;
 };
 

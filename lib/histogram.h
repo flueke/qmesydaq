@@ -216,8 +216,10 @@ public:
          */
         void setAutoResize(const bool resize); 
 
+	//! returns the minimum value in currently set ROI
 	quint64	minROI(void) const;
 
+	//! returns the minimum value in currently set ROI
 	quint64 maxROI(void) const;
 
 	void calcMinMaxInROI(const QRectF &);
@@ -230,8 +232,22 @@ private:
 	 */
 	void calcMaximumPosition(const quint16 chan);
 
+        /**
+            checks whether the channel chan is inside the histogram or not.
+            If the autoresize is set and the channel isn't inside the size
+	    of the histogram will be resized to the channel number.
+            
+	    \param chan requested channel
+         */
 	bool checkChannel(const quint16 chan);
 
+        /**
+            checks whether the bin is inside the histogram or not.
+            If the autoresize is set and the bin isn't inside the size
+	    of the histogram will be resized to the bin number.
+            
+	    \param bin requested bin
+         */
 	bool checkBin(const quint16 bin);
 
 private:

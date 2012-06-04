@@ -1975,7 +1975,7 @@ void MCPD8::initModule(quint8 id)
 }
 
 /*!
-    \fn QString MPCD8::getModuleType(quint8 addr)
+    \fn QString MCPD8::getModuleType(quint8 addr)
  
     \param addr id number of the MPSD
     \return the type of the MPSD

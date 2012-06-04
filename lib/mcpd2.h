@@ -157,7 +157,7 @@ public:
 
 	float version(void); 
 
-	float version(quint16);
+	float version(quint16 mod);
 
 	//! \return number of modules found
 	quint8 numModules(void) {return m_mpsd.size();}

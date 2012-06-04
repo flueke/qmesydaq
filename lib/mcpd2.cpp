@@ -283,7 +283,7 @@ float MCPD2::version(void)
 }
 
 /*!
-   \fn float MPCD2::version(quint16 mod)
+   \fn float MCPD2::version(quint16 mod)
 
    In the peripheral register 2 is the version of its firmware. The upper byte is the major 
    and the lower byte the minor number

@@ -130,13 +130,11 @@ void PresetWidget::presetCheckClicked(bool val)
 }
 
 /*!
-    \fn void PresetWidget::resetButtonClicked(bool val)
+    \fn void PresetWidget::resetButtonClicked(void)
 
     callback for clicking the preset checkbox
-
-    \param val
  */
-void PresetWidget::resetButtonClicked()
+void PresetWidget::resetButtonClicked(void)
 {
 	setPresetValue(0);
 	emit resetClicked();

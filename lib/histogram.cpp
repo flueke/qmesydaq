@@ -626,6 +626,13 @@ QString Histogram::format(void)
         return t;
 }
 
+/**
+   \fn void Histogram::calcMinMaxInROI(const QRectF &r)
+
+   calculates the min and max in the ROI
+  
+   \param r required ROI
+ */
 void Histogram::calcMinMaxInROI(const QRectF &r)
 {
 	m_minROI = max();
