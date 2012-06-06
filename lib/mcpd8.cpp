@@ -127,13 +127,17 @@ bool MCPD8::init(void)
 //					MSG_NOTICE << "modus : " << modus;
 					MSG_FATAL << "modus : " << modus;
 					break;
+				case TYPE_MDLL :
+					break;
 				default:
 					modus = P;
 			}
 		}
 // Register 103 is the TX mode register
 // set tx capability 
-	writeRegister(103, modus);
+# warning TODO writeRegister 103 in case of MDLL ?
+	if (m_mdll.isEmpty())
+		writeRegister(103, modus);
 
 	for(quint8 c = 0; c < 8; c++)
 		if (m_mpsd.find(c) != m_mpsd.end())
@@ -217,6 +221,9 @@ bool MCPD8::cont(void)
  */
 quint8 MCPD8::getModuleId(quint8 addr)
 {
+// MDLL is always located at address 0
+	if (addr == 0 && m_mdll.contains(addr))
+        	return m_mdll[addr]->getModuleId();
 	if (m_mpsd.contains(addr))
 		return m_mpsd[addr]->getModuleId();
 	else
@@ -342,7 +349,7 @@ float MCPD8::version(quint16 mod)
 		tmpFloat /= 100.;
 		tmpFloat += (tmp >> 8);
 	}
-	MSG_INFO << "MPSD (ID " << mod << "): Version number : " << tmpFloat;
+	MSG_INFO << "Module (ID " << mod << "): Version number : " << QString("%1").arg(tmpFloat, 0, 'f', 2);
 	return tmpFloat;
 }
 
@@ -1505,7 +1512,7 @@ void MCPD8::    analyzeBuffer(MDP_PACKET recBuf)
 				while (m_version > 1)
 					m_version /= 10.;
 				m_version += recBuf.data[0];
-				MSG_DEBUG << "Modul (ID " << m_id << "): Version number : " << m_version;
+				MSG_DEBUG << "Modul (ID " << m_id << "): Version number : " << QString("%1").arg(m_version, 0, 'f', 2);
 				break;
 			case READPERIREG:
 				ptrMPSD = m_mpsd[recBuf.data[0]];
@@ -1982,10 +1989,10 @@ void MCPD8::initModule(quint8 id)
  */
 QString MCPD8::getModuleType(quint8 addr)
 {
+	if (addr == 0 && m_mdll.find(addr) != m_mdll.end())
+		return m_mdll[addr]->getType();
 	if (m_mpsd.find(addr) != m_mpsd.end())
-	{
 		return m_mpsd[addr]->getType();
-	}
 	return "-";
 }
 	
