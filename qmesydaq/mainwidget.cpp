@@ -777,7 +777,7 @@ void MainWidget::displayMpsdSlot(int iModule)
     if (iModule<0)
       mod = devid_2->value();
 // firmware version
-    firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod)));
+    firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod), 0, 'f', 2));
     
 // Status display:
     moduleStatus0->update(m_theApp->getModuleType(mod, 0), m_theApp->getModuleVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));
