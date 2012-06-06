@@ -514,7 +514,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		}
 		settings.endGroup();
 
-		// MPSD part
+		// Module part
 		for (int j = 0; j < 8; ++j)
 		{
 //			if (value->getModuleId(j))
@@ -680,7 +680,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 		int j = iId % 8;
 
-		if (getModuleId(iMCPDId, j))
+		if (getModuleId(iMCPDId, j) != TYPE_MDLL)
 		{
 			quint8 	gains[8],
 				threshold;
@@ -719,15 +719,15 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-		MSG_ERROR << tr("found no or invalid Module id").toStdString().c_str();
-		continue;
+			MSG_ERROR << tr("found no or invalid Module id").toStdString().c_str();
+			continue;
 		}
 
 		int iMCPDId = iId / 8;
 
 //		int j = iId % 8;
 
-		if (getMdllId(iMCPDId))
+		if (getModuleId(iMCPDId, 0) == TYPE_MDLL)
 		{
 			quint8 	thresh[3], 
 				shift[2], 
@@ -1251,23 +1251,6 @@ quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getModuleId(addr);
-	return 0;
-}
-
-/*!
-    \fn quint8 Mesydaq2::getMdllId(quint16 id, quint8 addr)
-
-    get the detected ID of the MDLL. If MDLL not exists it will return 0.
-
-    \param id number of the MCPD
-    \param addr module number
-    \return module ID (type)
-    \see readId
- */
-quint8 Mesydaq2::getMdllId(quint16 id)
-{
-	if (m_mcpd.contains(id))
-		return m_mcpd[id]->getMdllId();
 	return 0;
 }
 

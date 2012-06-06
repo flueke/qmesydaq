@@ -195,8 +195,6 @@ public:
 
 	quint8 getModuleId(quint8 addr);
 
-	quint8 getMdllId(void);
-
 	QString getModuleType(quint8 addr);
 
 	bool online(quint8 addr);

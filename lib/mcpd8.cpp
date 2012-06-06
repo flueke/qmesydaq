@@ -231,23 +231,6 @@ quint8 MCPD8::getModuleId(quint8 addr)
 }
 
 /*!
-    \fn MCPD8::getMdllId(quint8 addr)
-
-    get the detected ID of the MDLL. If MDLL not exists it will return 0.
-
-    \param addr module number
-    \return module ID (type)
-    \see readId
- */
-quint8 MCPD8::getMdllId()
-{
-	if (m_mdll.contains(0))
-        	return m_mdll[0]->getModuleId();
-	else
-		return 0;
-}
-
-/*!
     \fn bool MCPD8::online(quint8)
 
     returns whether the module with id was found and online or not
