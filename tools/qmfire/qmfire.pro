@@ -17,7 +17,8 @@ DEPENDPATH 	+= ../../lib .
 INCLUDEPATH 	+= ../../lib .
 
 # Input
-SOURCES 	+= main.cpp
+SOURCES 	+= main.cpp \
+		readfile.cpp
 
 LIBS        	+= -L../../lib -lmesydaq
 

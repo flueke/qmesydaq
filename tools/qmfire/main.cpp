@@ -11,6 +11,8 @@
 #include "mdefines.h"
 #include "logging.h"
 
+extern void readListfile(const QString &readfilename);
+
 void version(void)
 {
 	qDebug() << "version : " << VERSION;
@@ -40,14 +42,22 @@ quint64 createEvent(void)
 	return ret;
 }
 
+static QString ip = "192.168.168.5";
+QUdpSocket *socket;
+
+void fireData(const DATA_PACKET &dataPacket)
+{
+	qDebug() << dataPacket.bufferNumber;
+	socket->writeDatagram(reinterpret_cast<const char *>(&dataPacket), sizeof(dataPacket), QHostAddress(ip), 54321);
+}
+
 int main(int argc, char **argv)
 {
 	DEBUGLEVEL = FATAL;
 
 	QCoreApplication app(argc, argv);
 
-	QString ip = "192.168.168.5";
-	int	id = 0;
+	QString	fileName("");
 
 	QStringList args = app.arguments();
 	if (args.size() > 1)
@@ -63,52 +73,51 @@ int main(int argc, char **argv)
 				version();
 				return 1;
 			}
-			else if (args.at(i).count('.'))	// may be ip address
+			else if (args.at(i).count('.') > 1)	// may be ip address
 				ip = args.at(i);
 			else
-				id = args.at(i).toInt();
+				fileName = args.at(i);
 	}
-
-	DATA_PACKET	dataPacket;
-
-	qDebug() << "sizeof(dataPacket) " << sizeof(dataPacket);
-
-	dataPacket.bufferLength = 750;
-	dataPacket.bufferType = 0;
-	dataPacket.headerLength = 21;
-
-	dataPacket.runID = 1;
-	dataPacket.deviceId = 0;
-	dataPacket.deviceStatus = 0b11;
-
-	for (int i = 0; i < 3; ++i)
-		dataPacket.time[i] = 0;
-
-	for (int i = 0; i < 4; ++i)
-		for (int j = 0; j < 3; ++j)
-			dataPacket.param[i][j] = 0;
-
-	QUdpSocket *socket = new QUdpSocket();
-
-//	socket->connectToHost(ip, 54321);
-
-	for (int j = 0; j < 100000; ++j)
+	socket = new QUdpSocket();
+	if (!fileName.isEmpty())
+		readListfile(fileName);
+	else
 	{
-		dataPacket.bufferNumber = j;
-		for (int i = 0; i < 729; i += 3)
+		DATA_PACKET	dataPacket;
+
+		qDebug() << "sizeof(dataPacket) " << sizeof(dataPacket);
+
+		dataPacket.bufferLength = 750;
+		dataPacket.bufferType = 0;
+		dataPacket.headerLength = 21;
+
+		dataPacket.runID = 1;
+		dataPacket.deviceId = 0;
+		dataPacket.deviceStatus = 0b11;
+
+		for (int i = 0; i < 3; ++i)
+			dataPacket.time[i] = 0;
+
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 3; ++j)
+				dataPacket.param[i][j] = 0;
+
+		for (int j = 0; j < 100000; ++j)
 		{
-			quint64 e = createEvent();
-			dataPacket.data[i] = e & 0xFFFF;
-			dataPacket.data[i + 1] = (e >> 16) & 0xFFFF;
-			dataPacket.data[i + 2] = (e >> 32) & 0xFFFF;
-		}	
-		socket->writeDatagram(reinterpret_cast<const char *>(&dataPacket), sizeof(dataPacket), QHostAddress(ip), 54321);
-		usleep(10);
+			dataPacket.bufferNumber = j;
+			for (int i = 0; i < 729; i += 3)
+			{
+				quint64 e = createEvent();
+				dataPacket.data[i] = e & 0xFFFF;
+				dataPacket.data[i + 1] = (e >> 16) & 0xFFFF;
+				dataPacket.data[i + 2] = (e >> 32) & 0xFFFF;
+			}	
+			fireData(dataPacket);
+			usleep(10);
+		}
 	}
 
-//	QTimer::singleShot(50, &app, SLOT(quit()));
-
-//	app.exec();
+	delete socket;
 
 	return 0;
 }
