@@ -47,8 +47,9 @@ QUdpSocket *socket;
 
 void fireData(const DATA_PACKET &dataPacket)
 {
-	qDebug() << dataPacket.bufferNumber;
-	socket->writeDatagram(reinterpret_cast<const char *>(&dataPacket), sizeof(dataPacket), QHostAddress(ip), 54321);
+//	qDebug() << dataPacket.deviceId << " " << dataPacket.bufferNumber << " " << (dataPacket.bufferLength - dataPacket.headerLength) / 3;
+	socket->writeDatagram(reinterpret_cast<const char *>(&dataPacket), dataPacket.bufferLength * 2, QHostAddress(ip), 54321);
+	usleep(50);
 }
 
 int main(int argc, char **argv)
@@ -113,7 +114,6 @@ int main(int argc, char **argv)
 				dataPacket.data[i + 2] = (e >> 32) & 0xFFFF;
 			}	
 			fireData(dataPacket);
-			usleep(10);
 		}
 	}
 
