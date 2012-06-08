@@ -20,7 +20,13 @@
 
 TEMPLATE 	= subdirs
 
-SUBDIRS		+= qmsetip qmlsmod qmsetid qmmaster qmdump fixlmfile
+SUBDIRS		+= qmsetip \
+		qmlsmod \
+		qmsetid \
+		qmmaster \
+		qmdump \
+		qmfire \
+		fixlmfile
 
 TARGET = 	
 DEPENDPATH 	+= ../lib 
