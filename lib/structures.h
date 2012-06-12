@@ -21,6 +21,33 @@
 #define STRUCTURES_H
 
 #include <QMetaType>
+#include <QSharedDataPointer>
+
+struct SD_MPD_PACKET_DATA : public QSharedData
+{
+	//! length of the buffer
+	quint16 bufferLength;
+	//! the buffer type
+	quint16 bufferType;
+	//! the length of the buffer header
+	quint16 headerLength;
+	//! number of the packet 
+	quint16 bufferNumber;
+	//! the command number
+	quint16 cmd;
+	//! the device state
+	quint8 	deviceStatus;
+	//! the id of the device
+	quint8 	deviceId;
+	//! device time
+	quint16 time[3];
+	//! check sum of the header
+	quint16 headerChksum;
+	//! the data, length of the data = length of the buffer - length of the header
+	quint16 data[750];
+};
+
+Q_DECLARE_METATYPE(SD_MPD_PACKET_DATA);
 
 //! command packet structure
 struct MDP_PACKET

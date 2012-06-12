@@ -65,7 +65,7 @@ MCPD2::MCPD2(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 	stdInit();
 
 	m_network = NetworkDevice::create(this, sourceIP, port);
-	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET)), this, SLOT(analyzeBuffer(MDP_PACKET)));
+	connect(m_network, SIGNAL(bufferReceived(const MDP_PACKET &)), this, SLOT(analyzeBuffer(const MDP_PACKET &)));
 
 	m_commTimer = new QTimer(this);
 	connect(m_commTimer, SIGNAL(timeout()), this, SLOT(commTimeout()));
@@ -1022,13 +1022,13 @@ quint8 MCPD2::calcChksum(const MDP_PACKET2 &buffer)
 }
 
 /*!
-    \fn MCPD2::analyzeBuffer(MDP_PACKET recBuf)
+    \fn MCPD2::analyzeBuffer(const MDP_PACKET &recBuf)
 	
     analyze the data package coming from the MCPD-8
 
     \param recBuf data package
  */
-void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
+void MCPD2::analyzeBuffer(const MDP_PACKET &recBuf)
 {
 	if (recBuf.deviceId != m_id)
 		return;
@@ -1258,7 +1258,7 @@ void MCPD2::analyzeBuffer(MDP_PACKET recBuf)
 	{
 		++m_dataRxd;
 //		MSG_DEBUG << "ID " << m_id << " : emit analyzeBuffer(recBuf)";
-		emit analyzeDataBuffer(*((DATA_PACKET*)(&recBuf)));
+		emit analyzeDataBuffer((DATA_PACKET&)(recBuf));
 	}
 }
 

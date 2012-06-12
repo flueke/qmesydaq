@@ -212,7 +212,7 @@ void Mesydaq2::startedDaq(void)
 	}
 	m_daq = RUNNING;
 	emit statusChanged("RUNNING");
-	MSG_DEBUG << "daq started";
+	MSG_ERROR << "daq started";
 }
 
 /*!
@@ -249,7 +249,7 @@ void Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
 	if (m_mcpd.contains(id))
 		return;
 	m_mcpd[id] = new MCPD8(id, this, ip, port, sourceIP);
-	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET)), this, SLOT(analyzeBuffer(DATA_PACKET)));
+	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
 	connect(m_mcpd[id], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 	connect(m_mcpd[id], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 }
@@ -1569,13 +1569,13 @@ void Mesydaq2::setRunId(quint16 runid)
 }
 
 /*!
-    \fn Mesydaq2::analyzeBuffer(DATA_PACKET pd)
+    \fn Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 
     callback to analyze input data packet
 
     \param pd data packet
  */
-void Mesydaq2::analyzeBuffer(DATA_PACKET pd)
+void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
 	if (m_daq == RUNNING)
 	{

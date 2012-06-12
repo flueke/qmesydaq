@@ -209,7 +209,7 @@ public:
 
 public slots:
 	//! analyse network packet
-	void analyzeBuffer(MDP_PACKET pd);
+	void analyzeBuffer(const MDP_PACKET &pd);
 
 private slots:
 	//! callback for the communication timer to detect a timeout

@@ -288,7 +288,7 @@ public:
 
 public slots:
 	//! analyse network packet
-	void analyzeBuffer(MDP_PACKET pd);
+	void analyzeBuffer(const MDP_PACKET &pd);
 
 private slots:
 	//! callback for the communication timer to detect a timeout
@@ -309,7 +309,7 @@ signals:
 	 *
 	 * \param pd data packet
 	 */
-	void analyzeDataBuffer(DATA_PACKET pd);
+	void analyzeDataBuffer(DATA_PACKET &pd);
 
 protected:
 	void initCmdBuffer(quint16);

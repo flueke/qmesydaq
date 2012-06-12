@@ -330,7 +330,7 @@ public:
 
 
 public slots:
-	void analyzeBuffer(DATA_PACKET pd);
+	void analyzeBuffer(const DATA_PACKET &pd);
 
 	void calcRates();
 

@@ -77,7 +77,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 
 	setRunId(settings.value("config/lastrunid", "0").toUInt());
 
-	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(DATA_PACKET)), this, SLOT(analyzeBuffer(DATA_PACKET)));
+	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(const DATA_PACKET &)), this, SLOT(analyzeBuffer(const DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	for (quint8 i = 0; i < TIMERID; ++i)
 	{
@@ -171,6 +171,16 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 		m_Spectrum[TubeSpectrum]->setAutoResize(resize);
 		m_Spectrum[TubeSpectrum]->resize(w);
 	}
+	if (m_posHistMapCorrection)
+		delete m_posHistMapCorrection;
+	m_posHistMapCorrection = new MapCorrection();
+	m_posHistMapCorrection->setNoMap();
+	m_posHistMapCorrection->initialize(w, h, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
+
+	if (m_posHistCorrected)
+		delete m_posHistCorrected;
+	m_posHistCorrected = new MappedHistogram(m_posHistMapCorrection);
+	
 }
 
 /*!
@@ -832,13 +842,13 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 }
 
 /*!
-    \fn Measurement::analyzeBuffer(DATA_PACKET pd)
+    \fn Measurement::analyzeBuffer(const DATA_PACKET &pd)
 
     analyze the data packet and put all events into the right counters and/or histogram
 
     \param pd data packet
  */
-void Measurement::analyzeBuffer(DATA_PACKET pd)
+void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 {
 	ulong 	data;
 	quint16 neutrons = 0;
@@ -951,8 +961,10 @@ void Measurement::analyzeBuffer(DATA_PACKET pd)
 				if (m_Spectrum[Diffractogram])
 					m_Spectrum[Diffractogram]->incVal(chan);
 #endif
+#if 0
 				if (m_posHistCorrected)
 					m_posHistCorrected->incVal(chan, pos);
+#endif
 				if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
 				{
 //					MSG_INFO << "MSTD-16 event : chan : " << chan << " : pos : " << pos << " : id : " << id;

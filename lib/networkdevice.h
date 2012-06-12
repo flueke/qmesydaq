@@ -67,7 +67,7 @@ public slots:
 
 signals:
 	//! This signal is emitted if a complete data or command packet has read.
-	void bufferReceived(MDP_PACKET);
+	void bufferReceived(const MDP_PACKET &);
 
 private slots:
 	int createSocket(void);

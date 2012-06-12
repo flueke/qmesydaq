@@ -65,7 +65,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 {
 	stdInit();
 	m_network = NetworkDevice::create(NULL, sourceIP, port);
-	connect(m_network, SIGNAL(bufferReceived(MDP_PACKET)), this, SLOT(analyzeBuffer(MDP_PACKET)));
+	connect(m_network, SIGNAL(bufferReceived(const MDP_PACKET &)), this, SLOT(analyzeBuffer(const MDP_PACKET &)));
 
 	m_commTimer = new QTimer(this);
 	connect(m_commTimer, SIGNAL(timeout()), this, SLOT(commTimeout()));
@@ -1251,11 +1251,11 @@ quint16 MCPD8::calcChksum(const MDP_PACKET &buffer)
 
     \param recBuf data package
  */
-void MCPD8::    analyzeBuffer(MDP_PACKET recBuf)
+void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
 {
 	if (recBuf.deviceId != m_id)
 	{
-		MSG_FATAL << "deviceId : " << recBuf.deviceId << " <-> " << m_id;
+//		MSG_FATAL << "deviceId : " << recBuf.deviceId << " <-> " << m_id;
 		return;
 	}
 
@@ -1667,7 +1667,7 @@ void MCPD8::    analyzeBuffer(MDP_PACKET recBuf)
 	{
 		++m_dataRxd;
 //		MSG_DEBUG << tr("ID " << m_id << " : emit analyzeBuffer(recBuf)";
-		emit analyzeDataBuffer(*((DATA_PACKET*)(&recBuf)));
+		emit analyzeDataBuffer((DATA_PACKET &)recBuf);
 	}
 }
 
@@ -1988,7 +1988,10 @@ QString MCPD8::getModuleType(quint8 addr)
 void MCPD8::setHistogram(bool hist)
 {
 	foreach(MPSD8 *it, m_mpsd)
+	{
+		Q_ASSERT_X(it != NULL, "MCPD8::setHistogram", "one of the MPSD's is NULL");
 		it->setHistogram(hist);
+	}
 }
 
 /*!
@@ -2027,7 +2030,10 @@ void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
 void MCPD8::setActive(bool act)
 {
 	foreach(MPSD8 *it, m_mpsd)
+	{
+		Q_ASSERT_X(it != NULL, "MCPD8::setActive", "one of the MPSD's is NULL");
 		it->setActive(act);
+	}
 }
 
 /*!
@@ -2064,7 +2070,10 @@ bool MCPD8::active(void)
 {
 	bool result(false);
 	foreach(MPSD8 *it, m_mpsd)
+	{
+		Q_ASSERT_X(it != NULL, "MCPD8::active", "one of the MPSD's is NULL");
 		result |= it->active();
+	}
 	return result;
 }
 
@@ -2077,7 +2086,10 @@ bool MCPD8::histogram(void)
 {
 	bool result(false);
 	foreach(MPSD8 *it, m_mpsd)
+	{
+		Q_ASSERT_X(it != NULL, "MCPD8::histogram", "one of the MPSD's is NULL");
 		result |= it->histogram();
+	}
 	return result;
 }
 
@@ -2154,6 +2166,7 @@ QList<quint16> MCPD8::getHistogramList(void)
 
 	foreach(MPSD8 *it, m_mpsd)
 	{
+		Q_ASSERT_X(it != NULL, "MCPD8::getHistogramList", "one of the MPSD's is NULL");
 		QList<quint16> tmpHistList = it->getHistogramList();
 		foreach(quint16 hit, tmpHistList)
 			result.append(hit + it->busNumber() * 8);
@@ -2183,8 +2196,11 @@ QList<quint16> MCPD8::getActiveList(void)
 quint8 MCPD8::numModules(void)
 {
 	quint8 n(0);
-	foreach(MPSD8 *it, m_mpsd)	
+	foreach(MPSD8 *it, m_mpsd)
+	{
+		Q_ASSERT_X(it != NULL, "MCPD8::numModules", "one of the MPSD's is NULL");
 		if (it->getModuleId())
 			n++;
+	}
 	return n;
 }
