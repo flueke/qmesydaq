@@ -9,10 +9,12 @@ INCLUDEPATH 	+= . ../../lib
 
 QT		+= core network
 
-CONFIG		+= debug
+CONFIG		+= debug # release
 
 # Input
 SOURCES 	+= main.cpp \
 		../../lib/histogram.cpp
+
+HEADERS		+= hist.h
 
 LIBS        	+= -L../../lib -lmesydaq
