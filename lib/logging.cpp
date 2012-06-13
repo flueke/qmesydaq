@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <iostream>
 #include "logging.h"
+#include "mdefines.h"
 
 // maximum length of logging data before word wrapping
 //#define MAX_LOGLINE_LENGTH 80
@@ -55,7 +56,7 @@ static QString lastlogDateString;
 static bool g_bUseLogfile=false;
 static bool g_bUseTimestamp=true;
 static bool g_bUseSourcefile=true;
-int DEBUGLEVEL=3;
+int DEBUGLEVEL=NOTICE;
 
 //==============================================================================
 // writes a message with date and time to the given file
@@ -186,7 +187,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 	QStringList args = QCoreApplication::instance()->arguments();
 
 	g_bUseLogfile = false;
-	DEBUGLEVEL = 1;
+	DEBUGLEVEL = ERROR;
 
 	qInstallMsgHandler(messageToFile);
 	for (int i = 1; i < args.size(); ++i)
