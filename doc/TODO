@@ -58,6 +58,10 @@ O  Forward streaming of the incoming data packages
 
 12 MDLL integration
 
+13 TOF mode
+  - Chopper signal comes from external source and all events coming are considered as event
+    in a time slice independing from the location on detector ==> time spectrum
+
 Refused:
 
 - Splitting of the list mode data files
