@@ -38,7 +38,7 @@ void analyzeBuffer(const DATA_PACKET &pd)
 
 	MSG_DEBUG << QObject::tr("# : %3, mod : %1, runID : %2").arg(mod).arg(runID).arg(pd.bufferNumber);
 
-	if(pd.bufferType < 0x0002)
+	if(pd.bufferType < 0x0003)
 	{
 // extract parameter values:
 		QChar c('0');
@@ -103,6 +103,22 @@ void analyzeBuffer(const DATA_PACKET &pd)
 				quint8 chan = modChan + (mod << 6);
 				quint16 amp = ((pd.data[counter+2] & 0x7F) << 3) + ((pd.data[counter+1] >> 13) & 0x7),
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
+
+				if(pd.bufferType == 0x0002)
+				{
+//
+// in MDLL, data format is different:
+// The position inside the PSD is used as y direction 
+// Therefore the x position of the MDLL has to be used as channel
+// the y position as position and the channel value is the amplitude value
+// y position (10 bit) is at MPSD "Amplitude" data
+// amplitude (8 bit) is at MPSD "chan" data
+//
+					quint16 val = chan;
+					chan = pos;
+					pos = amp;
+					amp = val;
+				}
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //

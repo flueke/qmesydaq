@@ -925,15 +925,19 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 				quint16 chan = modChan + (mod << 6);
 				quint16 amp = ((pd.data[counter+2] & 0x7F) << 3) + ((pd.data[counter+1] >> 13) & 0x7),
 					pos = (pd.data[counter+1] >> 3) & 0x3FF;
+				if(pd.bufferType == 0x0002)
+				{
 //
 // in MDLL, data format is different:
+// The position inside the PSD is used as y direction 
+// Therefore the x position of the MDLL has to be used as channel
+// the y position as position and the channel value is the amplitude value
 // y position (10 bit) is at MPSD "Amplitude" data
 // amplitude (8 bit) is at MPSD "chan" data
 //
-				if(pd.bufferType == 0x0002)
-				{
 					quint16 val = chan;
-					chan = amp;
+					chan = pos;
+					pos = amp;
 					amp = val;
 				}
 //
