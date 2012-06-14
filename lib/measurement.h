@@ -55,11 +55,13 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 
 	//! stores the histogram file name
 	Q_PROPERTY(QString m_histfilename READ getHistfilename WRITE setHistfilename)
-	//! stors the default path for histogram files
+	//! stores the default path for histogram files
 	Q_PROPERTY(QString m_histPath READ getHistfilepath WRITE setHistfilepath)
-	//! stors the default path for listmode data files
+	//! stores the listmod file name
+	// Q_PROPERTY(QString m_listfilename READ getListfilename WRITE setListfilename)
+	//! stores the default path for listmode data files
 	Q_PROPERTY(QString m_listPath READ getListfilepath WRITE setListfilepath)
-	//! stors the default path for configuration files
+	//! stores the default path for configuration files
 	Q_PROPERTY(QString m_configPath READ getConfigfilepath WRITE setConfigfilepath)
 
         //! stores the currently loaded configfile name
@@ -99,6 +101,9 @@ public:
 		TimeSpectrum = 0,
 		Diffractogram,
 		TubeSpectrum,
+		XSpectrum,
+		YSpectrum,
+		EnergySpectrum,
 	};
 
 	//! Defines the DAQ status
@@ -437,6 +442,9 @@ private:
 
 	//! histogram data file name path
 	QString 	m_histPath;
+
+	//! currently used list mode file
+	QString		m_listfilename;
 
 	//! list mode data file name path
 	QString 	m_listPath;
