@@ -820,8 +820,10 @@ void Mesydaq2::allPulserOff()
 // send pulser off to all connected MPSD
 	foreach(MCPD8 *value, m_mcpd)
 		for(quint8 j = 0; j < 8; j++)
-			if(value->getModuleId(j))
+			if(value->getModuleId(j) != TYPE_MDLL)
 				value->setPulser(j, 0, 2, 40, 0);
+			else if (j == 0)
+				value->setMdllPulser(0, 0, 0);
 }
 
 /*!
