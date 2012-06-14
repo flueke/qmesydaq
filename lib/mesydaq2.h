@@ -226,8 +226,6 @@ public slots:
 
 	void setPulser(const quint16 mod, quint8 addr, quint8 channel, quint8 position, quint8 amp, bool onoff);
 
-	void setMdllPulser(const quint16 mod, quint8 on, quint8 amp, quint8 pos);
-
 	void setCounterCell(quint16 mod, quint16 source, quint16 trigger, quint16 compare);
 
 	void setParamSource(quint16 mod, quint16 param, quint16 source);

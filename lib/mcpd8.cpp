@@ -543,19 +543,6 @@ bool MCPD8::setMdllEnergyWindow(quint8 elo, quint8 ehi)
 	return sendCommand();
  }
 
-bool MCPD8::setMdllPulser(quint8 on, quint8 amp, quint8 pos)
-{
-	m_mdll[0]->setPulser(pos, amp, on, 1);
-	initCmdBuffer(SETMDLLPULSER);
-	m_cmdBuf.data[0] = on;
-	m_cmdBuf.data[1] = amp;
-	m_cmdBuf.data[2] = pos;
-	finishCmdBuffer(3);
-	return sendCommand();
-}
-
-
-
 /*!
     \fn quint8 MCPD8::getThreshold(quint16 addr)
 
@@ -700,34 +687,47 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 {
 	MSG_INFO << "MCPD8::setPulser(addr = " << addr << ", chan = " << chan << ", pos = " << pos
 					 << ", amp = " << amp << ", onoff = " << onoff << ')';
+
 	if (m_mpsd.find(addr) == m_mpsd.end())
 		return false;
-	if (addr > 7)
-		addr = 7;
 	if (chan > 8)
 		chan = 8;
 	if (pos > 2)
 		pos = 2;
-	if (chan == 8)
+	if (getModuleId(chan) == TYPE_MDLL)
 	{
-#if defined(_MSC_VER)
-#	pragma message("TODO common pulser handling")
-#else
-#	warning TODO common pulser handling
-#endif
-//! \todo common pulser handling
-		for (int i = 0; i < 8; ++i)
-			m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
+		m_mdll[0]->setPulser(pos, amp, onoff, 1);
+		initCmdBuffer(SETMDLLPULSER);
+		m_cmdBuf.data[0] = onoff;
+		m_cmdBuf.data[1] = amp;
+		m_cmdBuf.data[2] = pos;
+		finishCmdBuffer(3);
 	}
 	else
-		m_mpsd[addr]->setPulserPoti(chan, pos, amp, onoff, 1);
-	initCmdBuffer(SETPULSER);
-	m_cmdBuf.data[0] = addr;
-	m_cmdBuf.data[1] = chan;
-	m_cmdBuf.data[2] = pos;
-	m_cmdBuf.data[3] = amp;
-	m_cmdBuf.data[4] = onoff;
-	finishCmdBuffer(5);
+	{
+		if (addr > 7)
+			addr = 7;
+		if (chan == 8)
+		{
+#if defined(_MSC_VER)
+#			pragma message("TODO common pulser handling")
+#else
+#			warning TODO common pulser handling
+#endif
+//! \todo common pulser handling
+			for (int i = 0; i < 8; ++i)
+				m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
+		}
+		else
+			m_mpsd[addr]->setPulserPoti(chan, pos, amp, onoff, 1);
+		initCmdBuffer(SETPULSER);
+		m_cmdBuf.data[0] = addr;
+		m_cmdBuf.data[1] = chan;
+		m_cmdBuf.data[2] = pos;
+		m_cmdBuf.data[3] = amp;
+		m_cmdBuf.data[4] = onoff;
+		finishCmdBuffer(5);
+	}
 	return sendCommand();
 }
 

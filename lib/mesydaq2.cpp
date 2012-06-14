@@ -821,9 +821,7 @@ void Mesydaq2::allPulserOff()
 	foreach(MCPD8 *value, m_mcpd)
 		for(quint8 j = 0; j < 8; j++)
 			if(value->getModuleId(j) != TYPE_MDLL)
-				value->setPulser(j, 0, 2, 40, 0);
-			else if (j == 0)
-				value->setMdllPulser(0, 0, 0);
+				value->setPulser(j, 0, 2, 40, false);
 }
 
 /*!
@@ -1210,12 +1208,6 @@ void Mesydaq2::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllSpectrum(shiftX, shiftY, scaleX, scaleY);
-}
-
-void Mesydaq2::setMdllPulser(quint16 id, quint8 on, quint8 amp, quint8 pos)
-{
-	if (m_mcpd.contains(id))
-		m_mcpd[id]->setMdllPulser(on, amp, pos);
 }
 
 void Mesydaq2::setMdllDataset(quint16 id, quint8 set)

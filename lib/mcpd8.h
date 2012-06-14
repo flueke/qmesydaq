@@ -157,8 +157,6 @@ public:
 
 	bool setMdllEnergyWindow(quint8 elo, quint8 ehi);
 
-	bool setMdllPulser(quint8 on, quint8 amp, quint8 pos);
-
 	quint8 getMdllThreshold(quint8 val);
 
 	quint8 getMdllSpectrum(quint8 val);
