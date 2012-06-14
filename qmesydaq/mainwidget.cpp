@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "diskspace.h"
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QPrinter>
@@ -581,6 +582,12 @@ void MainWidget::updateDisplay(void)
         dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
         cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
         cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
+    }
+    if (statusTab->tabText(ci) == tr("Disk space"))
+    {
+	listModeFileDir->setText(m_meas->getListfilepath());
+	DiskSpace ds(m_meas->getListfilepath());
+	listModeFileDirSpace->setText(QString("%1 GB").arg(ds.availableGB()));
     }
     hTimeText->setText(buildTimestring(m_meas->getHeadertime(), true));
     mTimeText->setText(buildTimestring(m_meas->timer(), /*getMeastime(),*/ false));

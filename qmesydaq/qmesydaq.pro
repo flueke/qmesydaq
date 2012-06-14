@@ -27,6 +27,8 @@ TARGET 		= qmesydaq
 DEPENDPATH 	+= . ../lib
 INCLUDEPATH 	+= . ../lib ..
 
+SUBDIRS		+= diskspace
+
 INSTALLS	= target
 
 target.path	= /usr/local/bin
@@ -115,3 +117,8 @@ DEPENDPATH	+= ../interfaces/caress
 INCLUDEPATH	+= ../interfaces/caress
 LIBS		= -L../interfaces/caress -lcaressInterface $${LIBS}
 }
+
+INCLUDEPATH	+= diskspace
+DEPENDPATH	+= diskspace
+
+LIBS += -lboost_filesystem -lboost_system
