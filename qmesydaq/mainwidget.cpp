@@ -554,7 +554,6 @@ void MainWidget::checkListfilename(bool checked)
                 name = interface->getListFileName();
         }
 
-	
         if (name.isEmpty())
             name = selectListfile();
         else
@@ -563,11 +562,11 @@ void MainWidget::checkListfilename(bool checked)
             m_theApp->setListfilename(name);
         else
 	{
-	    qDebug() << "disable list file";
+	    MSG_DEBUG << "disable list file";
             acquireFile->setChecked(false);
 	}
-        emit redraw();
     }
+    emit redraw();
 }	
 
 /*!
