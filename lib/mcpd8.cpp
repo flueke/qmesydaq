@@ -688,25 +688,27 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 	MSG_INFO << "MCPD8::setPulser(addr = " << addr << ", chan = " << chan << ", pos = " << pos
 					 << ", amp = " << amp << ", onoff = " << onoff << ')';
 
-	if (m_mpsd.find(addr) == m_mpsd.end())
-		return false;
-	if (chan > 8)
-		chan = 8;
 	if (pos > 2)
 		pos = 2;
-	if (getModuleId(chan) == TYPE_MDLL)
+	if (addr == 0 && getModuleId(addr) == TYPE_MDLL)
 	{
+		if (amp > 3)
+			amp = 3;
+		m_cmdBuf.data[1] = amp;
 		m_mdll[0]->setPulser(pos, amp, onoff, 1);
 		initCmdBuffer(SETMDLLPULSER);
 		m_cmdBuf.data[0] = onoff;
-		m_cmdBuf.data[1] = amp;
 		m_cmdBuf.data[2] = pos;
 		finishCmdBuffer(3);
 	}
 	else
 	{
+		if (m_mpsd.find(addr) == m_mpsd.end())
+			return false;
 		if (addr > 7)
 			addr = 7;
+		if (chan > 8)
+			chan = 8;
 		if (chan == 8)
 		{
 #if defined(_MSC_VER)

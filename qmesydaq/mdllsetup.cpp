@@ -72,9 +72,9 @@ void MdllSetup::setPulserSlot()
     quint8 amp = pulsamp->currentIndex();
     quint8 pos = pulspos->currentIndex();
     if(pulserBox->isChecked())
-        m_theApp->setPulser(0, -1, -1, pos, amp, true);
+        m_theApp->setPulser(0, 0, 0, pos, amp, true);
     else
-        m_theApp->setPulser(0, -1, -1, pos, amp, false);
+        m_theApp->setPulser(0, 0, 0, pos, amp, false);
 }
 
 
