@@ -218,16 +218,20 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_histogram = new MesydaqPlotSpectrogram();
 
     m_linColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
-    m_linColorMap->addColorStop(0.2, Qt::blue);
-    m_linColorMap->addColorStop(0.4, Qt::green);
-    m_linColorMap->addColorStop(0.6, Qt::yellow);
-    m_linColorMap->addColorStop(0.8, Qt::red);
+    m_linColorMap->addColorStop(0.143, Qt::blue);
+    m_linColorMap->addColorStop(0.286, Qt::darkCyan);
+    m_linColorMap->addColorStop(0.429, Qt::cyan);
+    m_linColorMap->addColorStop(0.572, Qt::green);
+    m_linColorMap->addColorStop(0.715, Qt::yellow);
+    m_linColorMap->addColorStop(0.858, Qt::red);
 
     m_logColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
-    m_logColorMap->addColorStop(0.1585, Qt::blue);
-    m_logColorMap->addColorStop(0.2511, Qt::green);
-    m_logColorMap->addColorStop(0.3981, Qt::yellow);
-    m_logColorMap->addColorStop(0.631, Qt::red);
+    m_logColorMap->addColorStop(0.139, Qt::blue);
+    m_logColorMap->addColorStop(0.193, Qt::darkCyan);
+    m_logColorMap->addColorStop(0.269, Qt::cyan);
+    m_logColorMap->addColorStop(0.373, Qt::green);
+    m_logColorMap->addColorStop(0.519, Qt::yellow);
+    m_logColorMap->addColorStop(0.721, Qt::red);
 
     m_histogram->setColorMap(*m_linColorMap);
 
