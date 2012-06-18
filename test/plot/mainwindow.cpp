@@ -63,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	m_plot->setSpectrumData(m_spectrumData);
 	m_plot->setHistogramData(m_histogramData);
+	m_plot->setDisplayMode(Plot::Histogram);
 
 	btnSpectrogram->setChecked(true);
 }

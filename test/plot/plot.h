@@ -67,7 +67,7 @@ private:
 
 	QwtPlotPanner		*m_panner;
 
-	QwtPlotCurve 		*m_curve;
+	QwtPlotCurve 		*m_curve[8];
 
 	QwtPlotSpectrogram	*m_histogram;
 

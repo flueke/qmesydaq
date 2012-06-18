@@ -41,7 +41,6 @@ Plot::Plot(QWidget *parent)
 	: QwtPlot(parent)
 	, m_zoomer(NULL)
 	, m_panner(NULL)
-	, m_curve(NULL)
 	, m_histogram(NULL)
 	, m_spectrumData(NULL)
 	, m_histogramData(NULL)
@@ -81,15 +80,26 @@ Plot::Plot(QWidget *parent)
 
 	plotLayout()->setAlignCanvasToScales(true);
 
+	QPen p[8];
+	p[0] = QPen(Qt::red);
+	p[1] = QPen(Qt::black);
+	p[2] = QPen(Qt::green);
+	p[3] = QPen(Qt::blue);
+	p[4] = QPen(Qt::yellow);
+	p[5] = QPen(Qt::magenta);
+	p[6] = QPen(Qt::cyan);
+	p[7] = QPen(Qt::white);
+
 // Insert new curves
-	m_curve = new QwtPlotCurve("spectrum");
-	m_curve->setPen(QPen(Qt::red));
-	m_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
+	for (int i = 0; i < 8; ++i)
+	{
+		m_curve[i] = new QwtPlotCurve(QString("spectrum_%1").arg(i));
+		m_curve[i]->setPen(p[i]);
+		m_curve[i]->setRenderHint(QwtPlotItem::RenderAntialiased);
+	}
 
 	m_histogram = new QwtPlotSpectrogram("histogram");
 	m_histogram->setColorMap(*m_linColorMap);
-
-	setDisplayMode(Histogram);
 }
 
 void Plot::setSpectrumData(SpectrumData *data)
@@ -97,7 +107,7 @@ void Plot::setSpectrumData(SpectrumData *data)
 	if (data)
 	{
 		m_spectrumData = data;
-		m_curve->setData(*m_spectrumData);
+		m_curve[0]->setData(*m_spectrumData);
 	}
 }
 
@@ -135,7 +145,7 @@ void Plot::setDisplayMode(const Mode &m)
 	if (m_mode ==  m)
 		return;
 	m_mode = m;
-	m_curve->detach();
+	m_curve[0]->detach();
 	m_histogram->detach();
 	switch (m_mode)
 	{
@@ -147,7 +157,7 @@ void Plot::setDisplayMode(const Mode &m)
             			setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 			setAxisTitle(xBottom, "channel");
 			setAxisTitle(yLeft, "counts");
-			m_curve->attach(this);
+			m_curve[0]->attach(this);
 			break;
 		case Histogram:
 			enableAxis(QwtPlot::yRight);
