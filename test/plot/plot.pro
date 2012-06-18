@@ -28,7 +28,8 @@ INCLUDEPATH 	+= .
 SOURCES 	+= main.cpp \
 		plot.cpp \
 		mainwindow.cpp \
-		zoomer.cpp
+		zoomer.cpp \
+		data.cpp
 
 HEADERS 	+= data.h \
 		plot.h \

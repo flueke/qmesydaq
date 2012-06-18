@@ -18,49 +18,63 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef _DATA_H_
-#define _DATA_H
+#include "data.h"
 
-#include <qwt_data.h>
-#include <qwt_raster_data.h>
+#include <cmath>
 
-double myspectrum(double value);
-
-class SpectrumData: public QwtData
+double myspectrum(double value)
 {
-    // The x values depend on its index and the y values
-    // can be calculated from the corresponding x value. 
-    // So we don´t need to store the values.
-    // Such an implementation is slower because every point 
-    // has to be recalculated for every replot, but it demonstrates how
-    // QwtData can be used.
+	return 1.1 + sin(value);
+}
 
-public:
-	SpectrumData(double(*y)(double), size_t size);
+SpectrumData::SpectrumData(double(*y)(double), size_t size)
+	: d_size(size)
+	, d_y(y)
+{
+}
 
-	virtual QwtData *copy() const;
+QwtData *SpectrumData::copy() const
+{
+	return new SpectrumData(d_y, d_size);
+}
 
-	virtual size_t size() const;
+size_t SpectrumData::size() const
+{
+	return d_size;
+}
 
-	virtual double x(size_t i) const;
+double SpectrumData::x(size_t i) const
+{
+	return 0.1 * i;
+}
 	
-	virtual double y(size_t i) const;
-private:
-	size_t d_size;
-
-	double(*d_y)(double);
-};
-
-class HistogramData: public QwtRasterData
+double SpectrumData::y(size_t i) const
 {
-public:
-	HistogramData();
+	return d_y(x(i));
+}
 
-	virtual QwtRasterData *copy() const;
+HistogramData::HistogramData()
+	: QwtRasterData(QwtDoubleRect(-1.5, -1.5, 3.0, 3.0))
+{
+}
 
-	virtual QwtDoubleInterval range() const;
+QwtRasterData *HistogramData::copy() const
+{
+       	return new HistogramData();
+}
 
-	virtual double value(double x, double y) const;
-};
+QwtDoubleInterval HistogramData::range() const
+{
+       	return QwtDoubleInterval(0.0, 10.0);
+}
 
-#endif
+double HistogramData::value(double x, double y) const
+{
+	const double c = 0.842;
+
+	const double v1 = x * x + (y-c) * (y+c);
+	const double v2 = x * (y+c) + x * (y+c);
+
+	return 1.0 / (v1 * v1 + v2 * v2);
+}
+
