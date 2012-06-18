@@ -1,3 +1,23 @@
+/***************************************************************************
+ *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
+ *   Copyright (C) 2009-2012 by Jens Kr�ger <jens.krueger@frm2.tum.de>     *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "plot.h"
 
 #include <qwt_plot_curve.h>
@@ -11,6 +31,7 @@
 #include <qwt_plot_layout.h>
 
 #include "data.h"
+#include "zoomer.h"
 
 #include <QDebug>
 
@@ -44,10 +65,8 @@ Plot::Plot(QWidget *parent)
 	m_rightAxis->setTitle("counts");
 	m_rightAxis->setColorBarEnabled(true);
 
-	m_zoomer = new QwtPlotZoomer(canvas());
-	m_zoomer->setSelectionFlags(QwtPicker::DragSelection | QwtPicker::CornerToCorner);
-	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier);
-	m_zoomer->setMousePattern(QwtEventPattern::MouseSelect3, Qt::RightButton);
+	setAxisAutoScale(QwtPlot::yLeft);
+	setAxisAutoScale(QwtPlot::xBottom);
 
 #if 0
 	m_panner = new QwtPlotPanner(canvas());
@@ -85,6 +104,7 @@ void Plot::setDisplayMode(const Mode &m)
 	m_mode = m;
 	m_curve->detach();
 	m_histogram->detach();
+	QwtDoubleRect 	r;
 	switch (m_mode)
 	{
 		case Spectrum:
@@ -92,6 +112,7 @@ void Plot::setDisplayMode(const Mode &m)
 			setAxisTitle(xBottom, "channel");
 			setAxisTitle(yLeft, "counts");
 			m_curve->attach(this);
+			r = m_spectrumData->boundingRect();
 			m_curve->setData(*m_spectrumData);
 			break;
 		case Histogram:
@@ -99,17 +120,21 @@ void Plot::setDisplayMode(const Mode &m)
 			setAxisTitle(xBottom, "tube");
 			setAxisTitle(yLeft, "channel");
 			m_histogram->attach(this);
+			r = m_histogramData->boundingRect();
 			m_histogram->setData(*m_histogramData);
 			break;
 		default:
 			break;
 	}
-	m_zoomer->setZoomBase();
+	setAxisAutoScale(QwtPlot::xBottom);
+	setAxisAutoScale(QwtPlot::yLeft);
+	if (m_zoomer)
+		delete m_zoomer;
+	m_zoomer = new Zoomer(canvas());
 }
 
 void Plot::replot(void) 
 {
-	qDebug() << __FUNCTION__;
 	switch(m_mode)
 	{
 		case Histogram:
