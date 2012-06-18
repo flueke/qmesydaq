@@ -29,11 +29,15 @@ SOURCES 	+= main.cpp \
 		plot.cpp \
 		mainwindow.cpp \
 		zoomer.cpp \
-		data.cpp
+		data.cpp \
+		plotwidget.cpp
 
 HEADERS 	+= data.h \
 		plot.h \
 		mainwindow.h \
-		zoomer.h
+		zoomer.h \
+		plotwidget.h
 
 CONFIG		+= debug
+
+FORMS		+= plotwidget.ui

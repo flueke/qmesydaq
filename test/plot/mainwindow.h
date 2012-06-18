@@ -26,6 +26,7 @@
 class Plot;
 class SpectrumData;
 class HistogramData;
+class PlotWidget;
 
 class MainWindow: public QMainWindow
 {
@@ -36,9 +37,9 @@ public:
 private slots:
 	void showSpectrogram(bool);
 
-	void setLinLog(bool);
-
 private:
+	PlotWidget	*m_plotWidget;
+
 	Plot 		*m_plot;
 
 	SpectrumData	*m_spectrumData;

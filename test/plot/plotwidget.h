@@ -18,49 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mainwindow.h"
+#ifndef _PLOTWIDGET_H_
+#define _PLOTWIDGET_H_
 
-#include <QToolBar>
-#include <QToolButton>
+#include "ui_plotwidget.h"
 
-#include "plotwidget.h"
-#include "plot.h"
-#include "data.h"
-
-MainWindow::MainWindow(QWidget *parent)
-	: QMainWindow(parent)
-	, m_plot(NULL)
-	, m_spectrumData(NULL)
-	, m_histogramData(NULL)
+class PlotWidget : public QWidget, public Ui_PlotWidget
 {
-	m_plotWidget = new PlotWidget(this);
+	Q_OBJECT
 
-	setCentralWidget(m_plotWidget);
+public:
+	PlotWidget(QWidget * = NULL);
 
-	m_plot = m_plotWidget->m_plot;
+private slots:
+	void setLinLog(bool);
+};
 
-// Create spectrum data
-	m_spectrumData = new SpectrumData(::myspectrum, 100);
-// Create histogram data
-	m_histogramData = new HistogramData();
-
-	m_plot->setSpectrumData(m_spectrumData);
-	m_plot->setHistogramData(m_histogramData);
-	m_plot->setDisplayMode(Plot::Histogram);
-
-	connect(m_plotWidget->radioHistogram, SIGNAL(toggled(bool)), this, SLOT(showSpectrogram(bool)));
-}
-
-void MainWindow::showSpectrogram(bool val)
-{
-	if (val)
-	{
-		m_plot->setSpectrumData(m_spectrumData);
-		m_plot->setDisplayMode(Plot::Histogram);
-	}
-	else
-	{
-		m_plot->setHistogramData(m_histogramData);
-		m_plot->setDisplayMode(Plot::Spectrum);
-	}
-}
+#endif
