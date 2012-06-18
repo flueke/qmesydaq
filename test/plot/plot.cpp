@@ -30,6 +30,8 @@
 #include <qwt_scale_widget.h>
 #include <qwt_plot_layout.h>
 
+#include <qwt_scale_engine.h>
+
 #include "data.h"
 #include "zoomer.h"
 
@@ -46,6 +48,7 @@ Plot::Plot(QWidget *parent)
 	, m_linColorMap(NULL)
 	, m_logColorMap(NULL)
 	, m_mode(None)
+	, m_linlog(false)
 {
 	m_linColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
 	m_linColorMap->addColorStop(0.143, Qt::blue);
@@ -56,11 +59,13 @@ Plot::Plot(QWidget *parent)
 	m_linColorMap->addColorStop(0.858, Qt::red);
 	
 	m_logColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
-	m_logColorMap->addColorStop(0.1585, Qt::blue);
-	m_logColorMap->addColorStop(0.2511, Qt::green);
-	m_logColorMap->addColorStop(0.3981, Qt::yellow);
-	m_logColorMap->addColorStop(0.631, Qt::red);
-    
+	m_logColorMap->addColorStop(0.139, Qt::blue);
+	m_logColorMap->addColorStop(0.193, Qt::darkCyan);
+	m_logColorMap->addColorStop(0.269, Qt::cyan);
+	m_logColorMap->addColorStop(0.373, Qt::green);
+	m_logColorMap->addColorStop(0.519, Qt::yellow);
+	m_logColorMap->addColorStop(0.721, Qt::red);
+
 	m_rightAxis = axisWidget(QwtPlot::yRight);
 	m_rightAxis->setTitle("counts");
 	m_rightAxis->setColorBarEnabled(true);
@@ -79,22 +84,50 @@ Plot::Plot(QWidget *parent)
 // Insert new curves
 	m_curve = new QwtPlotCurve("spectrum");
 	m_curve->setPen(QPen(Qt::red));
-
 	m_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
 
 	m_histogram = new QwtPlotSpectrogram("histogram");
 	m_histogram->setColorMap(*m_linColorMap);
 
-// Create spectrum data
-	m_spectrumData = new SpectrumData(::sin, 100);
-// Create histogram data
-	m_histogramData = new HistogramData();
-
 	setDisplayMode(Histogram);
 }
 
-void Plot::setLinLog(const bool)
+void Plot::setSpectrumData(SpectrumData *data)
 {
+	if (data)
+	{
+		m_spectrumData = data;
+		m_curve->setData(*m_spectrumData);
+	}
+}
+
+void Plot::setHistogramData(HistogramData *data)
+{
+	if (data)
+	{
+		m_histogramData = data;
+		m_histogram->setData(*m_histogramData);
+	}
+}
+
+void Plot::setLinLog(const bool log)
+{
+	m_linlog = log;
+	switch (m_mode)
+	{
+		case Histogram :
+			m_histogram->setColorMap(m_linlog ? *m_logColorMap : *m_linColorMap);
+			break;
+		case Spectrum :
+			if (m_linlog)
+            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+			else 
+            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+			break;
+		default :
+			break;
+	}
+	replot();
 }
 
 void Plot::setDisplayMode(const Mode &m)
@@ -104,24 +137,25 @@ void Plot::setDisplayMode(const Mode &m)
 	m_mode = m;
 	m_curve->detach();
 	m_histogram->detach();
-	QwtDoubleRect 	r;
 	switch (m_mode)
 	{
 		case Spectrum:
 			enableAxis(QwtPlot::yRight, false);
+			if (m_linlog)
+            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+			else 
+            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 			setAxisTitle(xBottom, "channel");
 			setAxisTitle(yLeft, "counts");
 			m_curve->attach(this);
-			r = m_spectrumData->boundingRect();
-			m_curve->setData(*m_spectrumData);
 			break;
 		case Histogram:
 			enableAxis(QwtPlot::yRight);
+            		setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+			m_histogram->setColorMap(m_linlog ? *m_logColorMap : *m_linColorMap);
 			setAxisTitle(xBottom, "tube");
 			setAxisTitle(yLeft, "channel");
 			m_histogram->attach(this);
-			r = m_histogramData->boundingRect();
-			m_histogram->setData(*m_histogramData);
 			break;
 		default:
 			break;
@@ -131,6 +165,7 @@ void Plot::setDisplayMode(const Mode &m)
 	if (m_zoomer)
 		delete m_zoomer;
 	m_zoomer = new Zoomer(canvas());
+	replot();
 }
 
 void Plot::replot(void) 
@@ -149,3 +184,4 @@ void Plot::replot(void)
 	}
 	QwtPlot::replot();
 }
+

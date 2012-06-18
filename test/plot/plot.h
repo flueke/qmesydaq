@@ -53,6 +53,10 @@ public:
 
 	void setDisplayMode(const Mode &m);
 
+	void setSpectrumData(SpectrumData *);
+
+	void setHistogramData(HistogramData *);
+
 public slots:
 	void 	setLinLog(const bool);
 
@@ -78,6 +82,8 @@ private:
 	QwtScaleWidget		*m_rightAxis;
 
 	enum Mode		m_mode;
+
+	bool			m_linlog;
 };
 
 #endif

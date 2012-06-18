@@ -24,10 +24,13 @@
 #include <QToolButton>
 
 #include "plot.h"
+#include "data.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 	, m_plot(NULL)
+	, m_spectrumData(NULL)
+	, m_histogramData(NULL)
 {
 	m_plot = new Plot(this);
 
@@ -36,15 +39,30 @@ MainWindow::MainWindow(QWidget *parent)
 	QToolBar *toolBar = new QToolBar(this);
 
 	QToolButton *btnSpectrogram = new QToolButton(toolBar);
-
 	btnSpectrogram->setText("Spectrogram");
 	btnSpectrogram->setCheckable(true);
 	btnSpectrogram->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
+	QToolButton *btnLinLog = new QToolButton(toolBar);
+	btnLinLog->setText("Logarithmic Scale");
+	btnLinLog->setCheckable(true);
+	btnLinLog->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
 	toolBar->addWidget(btnSpectrogram);
+	toolBar->addWidget(btnLinLog);
 
 	addToolBar(toolBar);
 
 	connect(btnSpectrogram, SIGNAL(toggled(bool)), this, SLOT(showSpectrogram(bool)));
+	connect(btnLinLog, SIGNAL(toggled(bool)), this, SLOT(setLinLog(bool)));
+
+// Create spectrum data
+	m_spectrumData = new SpectrumData(::myspectrum, 100);
+// Create histogram data
+	m_histogramData = new HistogramData();
+
+	m_plot->setSpectrumData(m_spectrumData);
+	m_plot->setHistogramData(m_histogramData);
 
 	btnSpectrogram->setChecked(true);
 }
@@ -52,7 +70,18 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::showSpectrogram(bool val)
 {
 	if (val)
+	{
+		m_plot->setSpectrumData(m_spectrumData);
 		m_plot->setDisplayMode(Plot::Histogram);
+	}
 	else
+	{
+		m_plot->setHistogramData(m_histogramData);
 		m_plot->setDisplayMode(Plot::Spectrum);
+	}
+}
+
+void MainWindow::setLinLog(bool val)
+{
+	m_plot->setLinLog(val);
 }

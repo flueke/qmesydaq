@@ -24,6 +24,8 @@
 #include <QMainWindow>
 
 class Plot;
+class SpectrumData;
+class HistogramData;
 
 class MainWindow: public QMainWindow
 {
@@ -34,8 +36,14 @@ public:
 private slots:
 	void showSpectrogram(bool);
 
+	void setLinLog(bool);
+
 private:
-	Plot *m_plot;
+	Plot 		*m_plot;
+
+	SpectrumData	*m_spectrumData;
+
+	HistogramData	*m_histogramData;
 };
 
 #endif
