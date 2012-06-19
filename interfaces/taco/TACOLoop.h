@@ -57,8 +57,14 @@ private:
 	//! personal name, default = "srv0"
 	QString m_personal;
 
-	//! TACO device name, default = "puma/qmesydaq/det"
-	QString m_device;
+	//! TACO detector device name, default = "puma/qmesydaq/det"
+	QString m_detDevice;
+
+	//! TACO timer device name, default = "puma/qmesydaq/timer"
+	QString m_timerDevice;
+
+	//! TACO counter device names, default = "puma/qmesydaq/counter[0..3]" "puma/qmesydaq/events"
+	QString m_counterDevice[5];
 };
 
 #endif // TACOLOOP_H

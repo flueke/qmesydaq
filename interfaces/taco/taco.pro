@@ -18,11 +18,17 @@ target.path	= /usr/local/lib
 
 # Input
 HEADERS 	+= MesyDAQDetectorDetector.h \
+		MesyDAQIOCounter.h \
+		MesyDAQIOTimer.h \
 		MesyDAQServer.h \
 		TACOLoop.h 
 
 SOURCES 	+= MesyDAQDetectorDetector.cpp \
            	MesyDAQDetectorDetectorImpl.cpp \
+		MesyDAQIOCounter.cpp \
+		MesyDAQIOCounterImpl.cpp \
+		MesyDAQIOTimer.cpp \
+		MesyDAQIOTimerImpl.cpp \
 		startup.cpp \
 		TACOLoop.cpp
 		

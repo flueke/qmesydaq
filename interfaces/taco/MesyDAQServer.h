@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2009-2010 Jens Krüger
+// Copyright (C) 2012 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
 #include "MesyDAQDetectorDetector.h"
+#include "MesyDAQIOCounter.h"
+#include "MesyDAQIOTimer.h"
 
 namespace MesyDAQ {
 	const unsigned int DEVICE_MAX = 0;
