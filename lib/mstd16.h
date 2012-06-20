@@ -39,6 +39,8 @@ public:
 
 	//! \return the type of the MPSD as number
 	virtual int type(void) {return TYPE_MSTD16;}
+
+	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 protected:
 
 };

@@ -33,4 +33,37 @@ MSTD16::MSTD16(quint8 id, QObject *parent)
 // set calibration factors for gain, threshold and pulser calculation
 {
 	m_mpsdId = TYPE_MSTD16;
+	m_pulsPos[0] = m_pulsPos[1] = RIGHT;
+}
+
+/*!
+    \fn MSTD16::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
+
+    set the pulser with amplitude value
+
+    \param chan channel of the module
+    \param pos position in the channel left, right, middle
+    \param amp amplitude of the pulser
+    \param on switch on or off
+    \param preset ????
+    \see setPulser
+ */
+void MSTD16::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
+{
+	if(pos != LEFT && pos != RIGHT)
+		m_pulsPos[preset] = LEFT;
+	else
+		m_pulsPos[preset] = pos;
+    
+	if(chan > 7)
+		m_pulsChan[preset] = 7;
+	else
+		m_pulsChan[preset] = chan;
+    	
+	m_pulsPoti[preset] = calcPulsPoti(amp, m_gainVal[chan][0]);
+	m_pulsAmp[preset] = amp;
+	m_pulser[preset] = on;
+   	
+	MSG_NOTICE << "pulser " << (const char*)(preset?"preset ":"") << m_mcpdId << ", bus " << m_busNum
+						 << " to pos " << m_pulsPos[preset] << ", ampl " << amp << " - poti " << m_pulsPoti[preset];
 }

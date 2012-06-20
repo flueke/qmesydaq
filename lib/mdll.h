@@ -75,13 +75,37 @@ public:
     //! \return is the module online or not
     bool online(void);
 
+    void setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY, bool preset);
+
     quint8 getSpectrum(quint8 val);
-    quint8 getThreshold(quint8 val) {return m_thresh[val][1];}
-    quint16 getTimingWindow(quint8 val) {return m_timingWindow[val][1];}
-    quint8 getEnergyWindow(quint8 val) {return m_energyWindow[val][1];}
-    quint8 getDataset(void) {return m_dataset[1];};
 
+    void setThresholds(quint8 thresh_x, quint8 thresh_y, quint8 thresh_a, bool preset = false);
 
+    quint8 getThreshold(quint8 val) 
+    {
+        return m_thresh[val][1];
+    }
+
+    void setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset);
+
+    quint16 getTimingWindow(quint8 val) 
+    {
+        return m_timingWindow[val][1];
+    }
+
+    void setEnergyWindow(quint8 elo, quint8 ehi, bool preset);
+
+    quint8 getEnergyWindow(quint8 val) 
+    {
+        return m_energyWindow[val][1];
+    }
+
+    void setDataset(quint8 set, bool preset = false);
+
+    quint8 getDataset(void) 
+    {
+        return m_dataset[1];
+    }
 
     // Pulser related methods
     void	setPulser(quint8 pos = 2, quint8 ampl = 3, quint8 on = 0, bool preset = false);
@@ -92,16 +116,6 @@ public:
 
     //! \return is the pulser on
     bool isPulserOn(bool preset = false) {return m_pulser[preset];};
-
-    void setThresholds(quint8 thresh_x, quint8 thresh_y, quint8 thresh_a, bool preset = false);
-
-    void setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY, bool preset);
-
-    void setDataset(quint8 set, bool preset = false);
-
-    void setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset);
-
-    void setEnergyWindow(quint8 elo, quint8 ehi, bool preset);
 
     void initMdll(void);
 

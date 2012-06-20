@@ -88,7 +88,7 @@ public:
 	 * \see setPulser
 	 * \see setPulserPoti
 	 */
-	quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
+	virtual quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
 	
 	/**
 	 * get the pulser amplitude
@@ -232,11 +232,10 @@ protected:
 public:
 	virtual quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
-private:
+protected:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
 	
-protected:
 	//! MPSD-8 id
 	quint8 		m_mpsdId;
 
@@ -249,7 +248,6 @@ protected:
 	//! Common gain
 	bool 		m_comgain;
 
-protected:
 	//! Threshold poti values
 	quint8 		m_threshPoti[2];
 
@@ -262,7 +260,6 @@ protected:
 	//! Pulser amplitude
 	float		m_pulsAmp[2];
 
-private:
 	//! Pulser position
 	quint8 		m_pulsPos[2];
 
@@ -272,6 +269,7 @@ private:
 	//! Pulser 
 	quint8 		m_pulser[2];
 
+private:
 	//! amplitude mode
 	bool		m_ampMode[2]; 
 

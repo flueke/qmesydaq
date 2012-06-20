@@ -542,7 +542,6 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		settings.setValue("threshY", value->getMdllThreshold(1));
 		settings.setValue("threshA", value->getMdllThreshold(2));
 
-
 		settings.setValue("shiftX", value->getMdllSpectrum(0));
 		settings.setValue("shiftY", value->getMdllSpectrum(1));
 		settings.setValue("scaleX", value->getMdllSpectrum(2));

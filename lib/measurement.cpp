@@ -977,7 +977,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 					amp &= 0x1FF;
 //					if (pos >= 480)
 //						++chan;
-					MSG_INFO << "Put this event into channel : " << chan;
+//					MSG_DEBUG << "Put this event into channel : " << chan;
 					m_Spectrum[TubeSpectrum]->incVal(chan);
 //					MSG_INFO << "Value of this channel : " << m_Spectrum[TubeSpectrum]->value(chan);
 				}

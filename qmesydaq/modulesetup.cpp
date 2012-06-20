@@ -21,6 +21,8 @@
 #include "modulesetup.h"
 #include "mesydaq2.h"
 
+#include "logging.h"
+
 /*!
     constructor
 
@@ -62,6 +64,8 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 
     channelLabel->setHidden(comgain->isChecked());
     channel->setHidden(comgain->isChecked());
+
+    displaySlot();
 }
 
 /*!
@@ -70,6 +74,8 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 */
 void ModuleSetup::setPulserSlot()
 {
+    if (tabWidget->tabText(tabWidget->currentIndex()) != tr("Pulser"))
+       return;
     bool ok;
     quint16 id = (quint16) devid->value();
     quint16 mod = module->value();
@@ -82,10 +88,12 @@ void ModuleSetup::setPulserSlot()
         ampl = (quint8) pulsAmp2->text().toInt(&ok);
 
     quint16 pos = MIDDLE;
+    int modType = m_theApp->getModuleId(mod, id);
+    
     if (pulsLeft->isChecked())
-        pos = LEFT;
+        pos = (modType != TYPE_MSTD16) ? LEFT : RIGHT;
     else if (pulsRight->isChecked())
-        pos = RIGHT;
+        pos = (modType != TYPE_MSTD16) ? RIGHT : LEFT;
     else if (pulsMid->isChecked())
         pos = MIDDLE;
 
@@ -270,17 +278,24 @@ void ModuleSetup::displaySlot()
 // channel
     pulsChan->setValue((int)m_theApp->getPulsChan(mod, id));
 // amplitude
+#if 0
     QString dstr;
     dstr.sprintf("%3d", m_theApp->getPulsAmp(mod, id));
-//  pulsAmp->setValue((int)m_theApp->getPulsAmp(mod, id));
+    pulsAmp->setValue((int)m_theApp->getPulsAmp(mod, id));
+#endif
+    int modType = m_theApp->getModuleId(mod, id);
+    pulsMid->setVisible(modType != TYPE_MSTD16);
+    qDebug() << mod << " " << id << " modType " << modType;
+
 // position
+    qDebug() << "pulser Pos " << m_theApp->getPulsPos(mod, id);
     switch(m_theApp->getPulsPos(mod, id))
     {
     	case LEFT:
-        	pulsLeft->setChecked(true);
+        	modType != TYPE_MSTD16 ? pulsLeft->setChecked(true) : pulsRight->setChecked(true);
         	break;
     	case RIGHT:
-        	pulsRight->setChecked(true);
+        	modType != TYPE_MSTD16 ? pulsRight->setChecked(true) : pulsLeft->setChecked(true);
         	break;
     	case MIDDLE:
         	pulsMid->setChecked(true);

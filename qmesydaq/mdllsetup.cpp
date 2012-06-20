@@ -38,10 +38,7 @@ MdllSetup::MdllSetup(Mesydaq2 *mesy, QWidget *parent)
 
     devid->setMCPDList(m_theApp->mcpdId());
     displaySlot(devid->value());
-
 }
-
-
 
 /*!
     \fn void MdllSetup::setMCPD(int)
