@@ -638,15 +638,19 @@ void Histogram::calcMinMaxInROI(const QRectF &r)
 	m_minROI = max();
 	m_maxROI = 0;
 // no idea why, but Qwt seems to define height as width and vice versa
-	int right = r.left() + r.height(); 
-	int top = r.top() + r.width();
-	for (int i = floor(r.left()); i < ceil(right); ++i)
-		for (int j = floor(r.top()); j < ceil(top); ++j)
+	int right = ceil(r.left() + r.height()); 
+	int top = ceil(r.top() + r.width());
+	for (int j = floor(r.top()); j <= top; ++j)
+		for (int i = floor(r.left()); i <= right; ++i)
 		{
 			quint64 tmp = value(i, j);
 			m_minROI = std::min(m_minROI, tmp);
 			m_maxROI = std::max(m_maxROI, tmp);
 		}
+	if (m_minROI == max())
+	{
+		m_maxROI = m_minROI = value(round(r.left()), round(r.top()));
+	}
 }
 
 quint64 Histogram::minROI(void) const

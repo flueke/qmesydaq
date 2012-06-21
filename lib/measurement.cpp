@@ -1225,9 +1225,9 @@ void Measurement::getMean(const SpectrumType t, float &mean, float &sigma)
  */
 void Measurement::setROI(const QRectF &r)
 {
-	int x = round(r.x()),
-	    y = round(r.y()),
-	    w = round(r.width()),
+	int x = floor(r.x()),	// to ensure, that we always in the left column
+	    y = floor(r.y()),	// or bottom row 
+	    w = round(r.width()),	// we should use the best fit
 	    h = round(r.height());
 	MSG_NOTICE << "setROI : " << x << ',' << y << ',' << w << ',' << h;
 	m_roi = QRect(x, y, w, h);
