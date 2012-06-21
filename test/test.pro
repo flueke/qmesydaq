@@ -4,5 +4,5 @@
 
 TEMPLATE 	= subdirs
 TARGET 		= 
-SUBDIRS	 	+= listfile dummy mapping
+SUBDIRS	 	+= listfile dummy mapping plot loadsetup
 
