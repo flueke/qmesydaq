@@ -27,6 +27,8 @@ class Zoomer : public QwtPlotZoomer
 {
 public:
 	Zoomer(QwtPlotCanvas *);
+
+	void setColor(const QColor &);
 };
 
 #endif

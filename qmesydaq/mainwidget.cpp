@@ -24,10 +24,11 @@
 #include <QPrintDialog>
 #include <QSvgGenerator>
 #include <qwt_plot_curve.h>
-#include <qwt_plot_zoomer.h>
 #include <qwt_scale_widget.h>
 #include <qwt_color_map.h>
 #include <qwt_scale_engine.h>
+
+#include "zoomer.h"
 #include "mainwidget.h"
 #include "mdefines.h"
 #include "measurement.h"
@@ -73,6 +74,11 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_controlInt(NULL)
 {
     setupUi(this);
+
+    m_time = QTime(QTime::currentTime());
+    realTimeLabel->setHidden(true);
+
+    dateTimeLabel->setText(QString("Date/Time: %1").arg(m_time.toString("HH:mm:ss")));
 
     statusTab->setCurrentIndex(0);
 
@@ -160,25 +166,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 //  m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
     m_dataFrame->setAutoReplot(false);
 
-    m_zoomer = new QwtPlotZoomer(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::DragSelection, QwtPicker::ActiveOnly, m_dataFrame->canvas());
-
-    connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QRectF &)));
-    connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QRectF &)));
-
 #if 0
-#if QT_VERSION < 0x040000
-    m_zoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlButton);
-#else
-    m_zoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier);
-#endif
-    m_zoomer->setMousePattern(QwtEventPattern::MouseSelect3, Qt::RightButton);
-#endif
-    m_zoomer->setRubberBandPen(QColor(Qt::black));
-    m_zoomer->setTrackerPen(QColor(Qt::black));
-    m_zoomer->setTrackerMode(QwtPicker::ActiveOnly);
-    m_zoomer->setEnabled(true);
-    m_zoomer->setZoomBase();
-
     m_picker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft,
                                  QwtPicker::PointSelection | QwtPicker::DragSelection,
                                  QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn,
@@ -186,6 +174,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_picker->setRubberBandPen(QColor(Qt::green));
     m_picker->setRubberBand(QwtPicker::CrossRubberBand);
     m_picker->setTrackerPen(QColor(Qt::black));
+#endif
 
     for (int i = 0; i < 8; ++i)
     {
@@ -476,12 +465,14 @@ void MainWidget::startStopSlot(bool checked)
             m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
         startStopButton->setText("Stop");
         // set device id to 0 -> will be filled by mesydaq for master
+	m_time.start();
         m_meas->start();
 	m_dispTimer = startTimer(500);
     }
     else
     {
         m_meas->stop();
+//	m_time.stop();
         if (m_dispTimer)
             killTimer(m_dispTimer);
         m_dispTimer = 0;
@@ -580,6 +571,9 @@ void MainWidget::updateDisplay(void)
 {
     quint16 id = (quint16) paramId->value();
     int ci = statusTab->currentIndex();
+    QTime tmpTime;
+    tmpTime = tmpTime.addMSecs(m_time.elapsed());
+    realTimeLabel->setText(QString("Real time: %1").arg(tmpTime.toString("HH:mm:ss.zzz")));
     if (statusTab->tabText(ci) == tr("Statistics"))
     {
         dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
@@ -1212,6 +1206,24 @@ void MainWidget::mpsdCheck(int mod)
 }
 
 /*!
+ */
+void MainWidget::setZoomer(const QColor &c)
+{
+	if (m_zoomer)
+	{
+		disconnect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+		disconnect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+		delete m_zoomer;
+	}
+	m_zoomer = new Zoomer(m_dataFrame->canvas());
+        m_zoomer->setColor(c);
+
+	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+}
+
+
+/*!
     \fn void MainWidget::setHistogramMode(bool histo)
 
     \param histo
@@ -1220,31 +1232,31 @@ void MainWidget::setHistogramMode(bool histo)
 {
     if (histo)
     {
+        m_diffractogram->detach();
+        for (int i = 0; i < 8; ++i)
+            m_curve[i]->detach();
+
         m_dataFrame->enableAxis(QwtPlot::yRight, true);
         m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, true);
         m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
 	
 //      QRectF tmpRect = m_zoomer->zoomRect();
 	
-        m_diffractogram->detach();
-        for (int i = 0; i < 8; ++i)
-            m_curve[i]->detach();
         if (log->isChecked())
             m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
         m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("channel"));
         m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas ? m_meas->width() : 1.0);
         m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
-        m_picker->setTrackerPen(QColor(Qt::white));
-        m_zoomer->setRubberBandPen(QColor(Qt::white));
-        m_zoomer->setTrackerPen(QColor(Qt::white));
+//	m_picker->setTrackerPen(QColor(Qt::white));
 #if 0
         QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
         	right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
         m_meas->setROI(QRectF(right, left));
 #endif
         m_histogram->attach(m_dataFrame);
-        m_zoomer->zoom(0);
+	m_dataFrame->replot();
+	setZoomer(QColor(Qt::white));
         emit redraw();
     }
 }
@@ -1267,17 +1279,16 @@ void MainWidget::setSpectraMode(bool spectra)
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
         m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
         m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-        m_picker->setTrackerPen(QColor(Qt::black));
-        m_zoomer->setRubberBandPen(QColor(Qt::black));
-        m_zoomer->setTrackerPen(QColor(Qt::black));
+//        m_picker->setTrackerPen(QColor(Qt::black));
         for (int i = 0; i < 8; ++i)
             m_curve[i]->attach(m_dataFrame);
-        m_zoomer->zoom(0);
 #if 0
 	if (!m_lastZoom.isEmpty())
 		m_zoomer->zoom(m_lastZoom);
 	m_lastZoom = tmpRect;
 #endif
+	m_dataFrame->replot();
+	setZoomer(QColor(Qt::black));
         emit redraw();
     }
 }
@@ -1301,11 +1312,10 @@ void MainWidget::setDiffractogramMode(bool diff)
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
         m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->hist(Measurement::PositionHistogram)->height());
         m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-        m_picker->setTrackerPen(QColor(Qt::black));
-        m_zoomer->setRubberBandPen(QColor(Qt::black));
-        m_zoomer->setTrackerPen(QColor(Qt::black));
+//      m_picker->setTrackerPen(QColor(Qt::black));
         m_diffractogram->attach(m_dataFrame);
-        m_zoomer->zoom(0);
+	m_dataFrame->replot();
+	setZoomer(QColor(Qt::black));
         emit redraw();
     }
 }
@@ -1429,9 +1439,10 @@ void MainWidget::draw(void)
         if (m_dispThresh)
             m_dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
         else if (!m_zoomer->zoomRectIndex())
-            m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-        if (!m_zoomer->zoomRectIndex())
+	{
+//            m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
             m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
+	}
     }
     m_dataFrame->replot();
     drawOpData();
@@ -1992,6 +2003,7 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
  */
 void MainWidget::selectUserMode()
 {
+	realTimeLabel->setHidden(true);
 	slidingFrame->setHidden(true);
 }
 
@@ -2000,6 +2012,7 @@ void MainWidget::selectUserMode()
  */
 void MainWidget::selectExpertMode()
 {
+	realTimeLabel->setVisible(true);
 	slidingFrame->setHidden(true);
 }
 
@@ -2008,6 +2021,7 @@ void MainWidget::selectExpertMode()
  */
 void MainWidget::selectSuperUserMode()
 {
+	realTimeLabel->setVisible(true);
 	slidingFrame->setVisible(true);
 }
 

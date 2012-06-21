@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>943</width>
-    <height>620</height>
+    <height>638</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -565,6 +565,13 @@ Listfile</string>
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="dateTimeLabel">
+            <property name="text">
+             <string>Date/Time:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer_3">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -857,6 +864,13 @@ Listfile</string>
              <widget class="PresetWidget" name="monitor4Preset" native="true">
               <property name="label" stdset="0">
                <string>Monitor 4</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4">
+             <widget class="QLabel" name="realTimeLabel">
+              <property name="text">
+               <string>Real time:</string>
               </property>
              </widget>
             </item>

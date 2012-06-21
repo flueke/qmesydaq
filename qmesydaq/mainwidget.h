@@ -21,13 +21,16 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QColor>
+#include <QTime>
 #include "ui_mainwidget.h"
 
 class QwtPlotCurve;
-class QwtPlotZoomer;
 class QwtPlotPicker;
 class QwtLinearColorMap;
 class QTimer;
+
+class Zoomer;
 class MesydaqPlotSpectrogram;
 class MesydaqSpectrumData;
 class MesydaqHistogramData;
@@ -88,31 +91,31 @@ public slots:
 	void 	addMCPD();
 
 	//! load configuration file
-	void loadConfiguration(const QString &sFilename);
+	void	loadConfiguration(const QString &sFilename);
 
-	void tPresetSlot(bool pr);
+	void	tPresetSlot(bool pr);
 
-	void tResetSlot();
+	void	tResetSlot();
 
-	void ePresetSlot(bool pr);
+	void	ePresetSlot(bool pr);
 
-	void eResetSlot();
+	void	eResetSlot();
 
-	void m1PresetSlot(bool pr);
+	void	m1PresetSlot(bool pr);
 
-	void m1ResetSlot();
+	void	m1ResetSlot();
 
-	void m2PresetSlot(bool pr);
+	void	m2PresetSlot(bool pr);
 
-	void m2ResetSlot();
+	void	m2ResetSlot();
 
-	void m3PresetSlot(bool pr);
+	void	m3PresetSlot(bool pr);
 
-	void m3ResetSlot();
+	void	m3ResetSlot();
 
-	void m4PresetSlot(bool pr);
+	void	m4PresetSlot(bool pr);
 
-	void m4ResetSlot();
+	void	m4ResetSlot();
 
 protected:
         void    customEvent(QEvent *);
@@ -177,9 +180,9 @@ private slots:
 
 	void draw(void);
 
-	void zoomAreaSelected(const QRectF &);
+	void zoomAreaSelected(const QwtDoubleRect &);
 
-	void zoomed(const QRectF &);
+	void zoomed(const QwtDoubleRect &);
 
 	void setHistogramMode(bool);
 
@@ -196,6 +199,8 @@ private slots:
 	void statusTabChanged(int);
 
 private:
+	void	setZoomer(const QColor & = QColor(Qt::black));
+
 	void 	dispFiledata(void);
 
 	void 	timerEvent(QTimerEvent *event);
@@ -241,7 +246,7 @@ private:
 
 	int 			m_dispTimer;
 
-	QwtPlotZoomer		*m_zoomer;
+	Zoomer			*m_zoomer;
 
 	CorbaThread		*m_ct;
 
@@ -256,6 +261,8 @@ private:
 	QwtLinearColorMap 	*m_logColorMap;
 
 	QRectF			m_lastZoom;
+
+	QTime			m_time;
 };	
 
 #endif

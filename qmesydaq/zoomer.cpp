@@ -30,3 +30,8 @@ Zoomer::Zoomer(QwtPlotCanvas *canvas)
 	setZoomBase(true);
 }
 
+void Zoomer::setColor(const QColor &c)
+{
+        setRubberBandPen(c);
+        setTrackerPen(c);
+}
