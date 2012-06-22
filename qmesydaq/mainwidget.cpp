@@ -27,6 +27,7 @@
 #include <qwt_scale_widget.h>
 #include <qwt_scale_engine.h>
 
+#include "plot.h"
 #include "colormaps.h"
 #include "zoomer.h"
 #include "mainwidget.h"
@@ -91,69 +92,31 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     moduleStatus6->setId(6);
     moduleStatus7->setId(7);
 
-    connect(moduleStatus0, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus0, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus0, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+    linlogButtonGroup->setId(lin, Plot::Linear);
+    linlogButtonGroup->setId(log, Plot::Logarithmic);
 
-    connect(moduleStatus1, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus1, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus1, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+    posampButtonGroup->setId(dispAllPos, Plot::Position);
+    posampButtonGroup->setId(dispAllAmpl, Plot::Amplitude);
 
-    connect(moduleStatus2, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus2, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus2, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
-
-    connect(moduleStatus3, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus3, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus3, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
-
-    connect(moduleStatus4, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus4, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus4, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
-
-    connect(moduleStatus5, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus5, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus5, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
-
-    connect(moduleStatus6, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus6, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus6, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
-
-    connect(moduleStatus7, SIGNAL(clicked(quint8)), this, SLOT(setupModule(quint8)));
-    connect(moduleStatus7, SIGNAL(histogram(quint8, bool)), this, SLOT(moduleHistogramSlot(quint8, bool)));
-    connect(moduleStatus7, SIGNAL(active(quint8, bool)), this, SLOT(moduleActiveSlot(quint8, bool)));
+    displayModeButtonGroup->setId(dispSpectra, Plot::Spectrum);
+    displayModeButtonGroup->setId(dispHistogram, Plot::Histogram);
+    displayModeButtonGroup->setId(dispDiffractogram, Plot::Diffractogram);
 
     versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
 
     connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
-    connect(allPulsersoffButton, SIGNAL(clicked()), this, SLOT(allPulserOff()));
     connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
-    connect(this, SIGNAL(redraw()), this, SLOT(draw()));
+
+    connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
+
 #if 0
     connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
     connect(devid, SIGNAL(valueChanged(int)), devid_2, SLOT(setValue(int)));
     connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
     connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
+
+    connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 #endif
-    connect(dispHistogram, SIGNAL(toggled(bool)), this, SLOT(setHistogramMode(bool)));
-    connect(dispSpectra, SIGNAL(toggled(bool)), this, SLOT(setSpectraMode(bool)));
-    connect(dispDiffractogram, SIGNAL(toggled(bool)), this, SLOT(setDiffractogramMode(bool)));
-    connect(dispChan, SIGNAL(valueChanged(int)), this, SLOT(draw()));
-    connect(dispAll, SIGNAL(toggled(bool)), this, SLOT(draw()));
-    connect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(draw()));
-    connect(dispMpsd, SIGNAL(valueChanged(int)), this, SLOT(draw()));
-    connect(dispAllChannels, SIGNAL(toggled(bool)), this, SLOT(draw()));
-    connect(dispAllPos, SIGNAL(toggled(bool)), this, SLOT(draw()));
-    connect(dispAllAmpl, SIGNAL(toggled(bool)), this, SLOT(draw()));
-    connect(devid_2, SIGNAL(valueChanged(int)), this, SLOT(scanPeriSlot()));
-    connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
-    connect(statusTab, SIGNAL(currentChanged(int)), this, SLOT(statusTabChanged(int)));
-
-    connect(dispChan, SIGNAL(changeModule(int)), dispMpsd, SLOT(steps(int)));
-    connect(dispMpsd, SIGNAL(changeModule(int)), dispMcpd, SLOT(steps(int)));
-    connect(paramId, SIGNAL(valueChanged(int)), this, SLOT(draw()));
-
-//	connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 
     clearMcpd->setHidden(true);
     clearMpsd->setHidden(true);
@@ -163,6 +126,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
     m_dataFrame->setAxisTitle(QwtPlot::yRight, tr("intensity"));
     m_dataFrame->enableAxis(QwtPlot::yRight, false);
+
 //  m_dataFrame->plotLayout()->setAlignCanvasToScales(true);
     m_dataFrame->setAutoReplot(false);
 
@@ -176,29 +140,20 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_picker->setTrackerPen(QColor(Qt::black));
 #endif
 
-    for (int i = 0; i < 8; ++i)
-    {
-        m_curve[i] = new QwtPlotCurve("");
-        m_curve[i]->setStyle(QwtPlotCurve::Steps);
-#if QT_VERSION >= 0x040000
-        m_curve[i]->setRenderHint(QwtPlotItem::RenderAntialiased);
-#endif
-        m_curve[i]->attach(m_dataFrame);
-    }
-    m_curve[0]->setPen(QPen(Qt::red));
-    m_curve[1]->setPen(QPen(Qt::black));
-    m_curve[2]->setPen(QPen(Qt::green));
-    m_curve[3]->setPen(QPen(Qt::blue));
-    m_curve[4]->setPen(QPen(Qt::yellow));
-    m_curve[5]->setPen(QPen(Qt::magenta));
-    m_curve[6]->setPen(QPen(Qt::cyan));
-    m_curve[7]->setPen(QPen(Qt::white));
+    QPen p[] = {QPen(Qt::red)
+		, QPen(Qt::black)
+		, QPen(Qt::green)
+		, QPen(Qt::blue)
+		, QPen(Qt::yellow)
+		, QPen(Qt::magenta)
+		, QPen(Qt::cyan)
+		, QPen(Qt::white)
+		};
 
-    m_diffractogram = new QwtPlotCurve("");
-//    m_diffractogram->setStyle(QwtPlotCurve::Steps);
-#if QT_VERSION >= 0x040000
-    m_diffractogram->setRenderHint(QwtPlotItem::RenderAntialiased);
-#endif
+    for (int i = 0; i < 8; ++i)
+        m_curve[i] = new SpectrumCurve(p[i]);
+
+    m_diffractogram = new SpectrumCurve();
     m_diffractogram->setPen(QPen(Qt::black));
 
     m_data = new MesydaqSpectrumData();
@@ -222,8 +177,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_printer->setDocName("PlotCurves");
     m_printer->setCreator("QMesyDAQ Version: " VERSION);
 
-    // display refresh timer
-    //	m_dispTimer = startTimer(1000);
+// display refresh timer
+//  m_dispTimer = startTimer(1000);
 
 #if 0
     init();
@@ -243,9 +198,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     monitor3Preset->setLabel(tr("Monitor 3"));
     monitor4Preset->setLabel(tr("Monitor 4"));
 
-    setHistogramMode(true);
+    setDisplayMode(Plot::Histogram);
     draw();
-    selectUserMode();
+    selectUserMode(User);
 }
 
 //! destructor
@@ -356,9 +311,6 @@ void MainWidget::timerEvent(QTimerEvent *event)
 void MainWidget::allPulserOff(void)
 {
     m_theApp->allPulserOff();
-#if 0
-    pulserButton->setChecked(false);
-#endif
 }
 
 /*!
@@ -417,10 +369,10 @@ void MainWidget::zoomed(const QRectF &rect)
  */
 void MainWidget::statusTabChanged(int )
 {
-	if (statusTab->currentWidget() == statusModuleTab)
-	{
-		scanPeri->animateClick();
-	}
+    if (statusTab->currentWidget() == statusModuleTab)
+    {
+        scanPeri->animateClick();
+    }
 }
 
 /*!
@@ -616,7 +568,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
     QString str;
     quint64 val;
     ulong /*nsec,*/ sec, min, hr;
-    // calculate raw seconds
+// calculate raw seconds
     val = round(timeval / 1000.0);
 //  nsec = timeval - (1000 * val);
     if(nano)
@@ -849,19 +801,19 @@ void MainWidget::applyThreshSlot()
 
     \param bLog
  */
-void MainWidget::linlogSlot(bool bLog)
+void MainWidget::linlogSlot(int bLog)
 {
     MSG_ERROR << __PRETTY_FUNCTION__;
     if (dispHistogram->isChecked())
     {
-        if (bLog)
+        if (bLog == Plot::Logarithmic)
             m_histogram->setColorMap(*m_logColorMap);
         else
             m_histogram->setColorMap(*m_linColorMap);
     }
     else
     {
-        if (bLog)
+        if (bLog == Plot::Logarithmic)
             m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
         else
             m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
@@ -897,7 +849,7 @@ void MainWidget::drawOpData()
     meanText->setText(tr("%1").arg(mean, 3, 'f', 1));
     sigmaText->setText(tr("%1").arg(sigma, 3, 'f', 1));
 
-    // pulser warning
+// pulser warning
     if(m_theApp->isPulserOn())
         pulserWarning->setText(tr("<p align=\"center\">PULSER ON!</p>"));
     else
@@ -1209,25 +1161,39 @@ void MainWidget::setZoomer(const QColor &c)
 	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
 }
 
+void MainWidget::setDisplayMode(int val)
+{
+	m_diffractogram->detach();
+	for (int i = 0; i < 8; ++i)
+		m_curve[i]->detach();
+        m_histogram->detach();
+
+	switch (val)
+	{
+		case Plot::Spectrum:
+			setSpectraMode();
+			break;
+		case Plot::Histogram:
+			setHistogramMode();
+			break;
+		case Plot::Diffractogram:
+			setDiffractogramMode();
+			break;
+		default:
+			break;
+	}
+}
 
 /*!
     \fn void MainWidget::setHistogramMode(bool histo)
 
     \param histo
 */
-void MainWidget::setHistogramMode(bool histo)
+void MainWidget::setHistogramMode(void)
 {
-    if (histo)
-    {
-        m_diffractogram->detach();
-        for (int i = 0; i < 8; ++i)
-            m_curve[i]->detach();
-
         m_dataFrame->enableAxis(QwtPlot::yRight, true);
         m_histogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, true);
-        m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
-	
-//      QRectF tmpRect = m_zoomer->zoomRect();
+//      m_histogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
 	
         if (log->isChecked())
             m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
@@ -1236,16 +1202,10 @@ void MainWidget::setHistogramMode(bool histo)
         m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas ? m_meas->width() : 1.0);
         m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
 //	m_picker->setTrackerPen(QColor(Qt::white));
-#if 0
-        QPointF left(ceil(m_zoomer->zoomRect().x()), ceil(m_zoomer->zoomRect().y())),
-        	right(trunc(m_zoomer->zoomRect().x() + m_zoomer->zoomRect().width()), trunc(m_zoomer->zoomRect().y() + m_zoomer->zoomRect().height()));
-        m_meas->setROI(QRectF(right, left));
-#endif
+
         m_histogram->attach(m_dataFrame);
 	m_dataFrame->replot();
 	setZoomer(QColor(Qt::white));
-        emit redraw();
-    }
 }
 
 /*!
@@ -1253,12 +1213,8 @@ void MainWidget::setHistogramMode(bool histo)
 
     \param spectra
 */
-void MainWidget::setSpectraMode(bool spectra)
+void MainWidget::setSpectraMode(void)
 {
-    if (spectra)
-    {
-        m_histogram->detach();
-        m_diffractogram->detach();
         m_dataFrame->enableAxis(QwtPlot::yRight, false);
         
         m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
@@ -1266,18 +1222,13 @@ void MainWidget::setSpectraMode(bool spectra)
         m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
         m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
         m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-//        m_picker->setTrackerPen(QColor(Qt::black));
+//      m_picker->setTrackerPen(QColor(Qt::black));
+
         for (int i = 0; i < 8; ++i)
             m_curve[i]->attach(m_dataFrame);
-#if 0
-	if (!m_lastZoom.isEmpty())
-		m_zoomer->zoom(m_lastZoom);
-	m_lastZoom = tmpRect;
-#endif
 	m_dataFrame->replot();
 	setZoomer(QColor(Qt::black));
-        emit redraw();
-    }
+	emit draw();
 }
 
 /*!
@@ -1285,13 +1236,8 @@ void MainWidget::setSpectraMode(bool spectra)
 
     \param diff
 */
-void MainWidget::setDiffractogramMode(bool diff)
+void MainWidget::setDiffractogramMode(void)
 {
-    if (diff)
-    {
-        for (int i = 0; i < 8; ++i)
-            m_curve[i]->detach();
-        m_histogram->detach();
         m_dataFrame->enableAxis(QwtPlot::yRight, false);
         
         m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
@@ -1300,11 +1246,11 @@ void MainWidget::setDiffractogramMode(bool diff)
         m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->hist(Measurement::PositionHistogram)->height());
         m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
 //      m_picker->setTrackerPen(QColor(Qt::black));
+
         m_diffractogram->attach(m_dataFrame);
 	m_dataFrame->replot();
 	setZoomer(QColor(Qt::black));
-        emit redraw();
-    }
+	emit draw();
 }
 
 /*!
@@ -1321,7 +1267,6 @@ void MainWidget::draw(void)
     }
     if (dispHistogram->isChecked())
     {
-	MSG_ERROR << __FUNCTION__;
         labelCountsInROI->setText(tr("Counts in ROI"));
 	enum Measurement::HistogramType t;
         if(dispAllPos->isChecked())
@@ -1977,39 +1922,36 @@ void MainWidget::customEvent(QEvent *e)
 
 void MainWidget::moduleHistogramSlot(quint8 id, bool set)
 {
-//	MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
-	m_theApp->setHistogram(devid_2->value(), id, set);
+//  MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
+    m_theApp->setHistogram(devid_2->value(), id, set);
 }
 
 void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
-	m_theApp->setActive(devid_2->value(), id, set);
+    m_theApp->setActive(devid_2->value(), id, set);
 }
 
 /*!
     sets the user mode
  */
-void MainWidget::selectUserMode()
+void MainWidget::selectUserMode(int val)
 {
-	realTimeLabel->setHidden(true);
-	slidingFrame->setHidden(true);
-}
-
-/*!
-    sets the expert mode
- */
-void MainWidget::selectExpertMode()
-{
-	realTimeLabel->setVisible(true);
-	slidingFrame->setHidden(true);
-}
-
-/*!
-    sets the superuser mode
- */
-void MainWidget::selectSuperUserMode()
-{
-	realTimeLabel->setVisible(true);
-	slidingFrame->setVisible(true);
+    switch (val)
+    {
+        case MainWidget::User :
+            realTimeLabel->setHidden(true);
+            slidingFrame->setHidden(true);
+            break;
+        case MainWidget::Expert:
+            realTimeLabel->setVisible(true);
+            slidingFrame->setHidden(true);
+            break;
+        case MainWidget::SuperUser:
+            realTimeLabel->setVisible(true);
+            slidingFrame->setVisible(true);
+            break;
+        default:
+            break;
+    }
 }
 

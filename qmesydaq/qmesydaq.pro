@@ -24,8 +24,8 @@ include(../qmesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= qmesydaq
-DEPENDPATH 	+= . ../lib
-INCLUDEPATH 	+= . ../lib ..
+DEPENDPATH 	+= . ../lib ../test/plot
+INCLUDEPATH 	+= . ../lib .. ../test/plot
 
 SUBDIRS		+= diskspace
 

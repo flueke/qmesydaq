@@ -235,6 +235,9 @@ Listfile</string>
               <property name="checked">
                <bool>true</bool>
               </property>
+              <attribute name="buttonGroup">
+               <string>linlogButtonGroup</string>
+              </attribute>
              </widget>
             </item>
             <item row="1" column="0">
@@ -242,6 +245,9 @@ Listfile</string>
               <property name="text">
                <string>log</string>
               </property>
+              <attribute name="buttonGroup">
+               <string>linlogButtonGroup</string>
+              </attribute>
              </widget>
             </item>
            </layout>
@@ -264,6 +270,9 @@ Listfile</string>
               <property name="checked">
                <bool>true</bool>
               </property>
+              <attribute name="buttonGroup">
+               <string>posampButtonGroup</string>
+              </attribute>
              </widget>
             </item>
             <item row="1" column="0">
@@ -274,6 +283,9 @@ Listfile</string>
               <property name="shortcut">
                <string/>
               </property>
+              <attribute name="buttonGroup">
+               <string>posampButtonGroup</string>
+              </attribute>
              </widget>
             </item>
            </layout>
@@ -456,6 +468,9 @@ Listfile</string>
               <property name="checked">
                <bool>false</bool>
               </property>
+              <attribute name="buttonGroup">
+               <string>displayModeButtonGroup</string>
+              </attribute>
              </widget>
             </item>
             <item row="2" column="0" colspan="2">
@@ -463,6 +478,9 @@ Listfile</string>
               <property name="text">
                <string>Diffractogram</string>
               </property>
+              <attribute name="buttonGroup">
+               <string>displayModeButtonGroup</string>
+              </attribute>
              </widget>
             </item>
             <item row="1" column="0">
@@ -476,6 +494,9 @@ Listfile</string>
               <property name="checked">
                <bool>true</bool>
               </property>
+              <attribute name="buttonGroup">
+               <string>displayModeButtonGroup</string>
+              </attribute>
              </widget>
             </item>
            </layout>
@@ -1332,21 +1353,36 @@ Listfile</string>
    <class>ModuleSpinBox</class>
    <extends>QSpinBox</extends>
    <header>ModuleSpinBox.h</header>
+   <slots>
+    <signal>changeModule(int)</signal>
+    <slot>steps(int)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>ChannelSpinBox</class>
    <extends>QSpinBox</extends>
    <header>ChannelSpinBox.h</header>
+   <slots>
+    <signal>changeModule(int)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>MCPDSpinBox</class>
    <extends>QSpinBox</extends>
    <header>MCPDSpinBox.h</header>
+   <slots>
+    <slot>steps(int)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>ModuleStatus</class>
    <extends>QWidget</extends>
    <header>modulestatus.h</header>
+   <slots>
+    <signal>clicked(quint8)</signal>
+    <signal>histogram(quint8, bool)</signal>
+    <signal>active(quint8, bool)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>PresetWidget</class>
@@ -1376,8 +1412,8 @@ Listfile</string>
    <slot>applyThreshSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>53</x>
-     <y>294</y>
+     <x>77</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1392,8 +1428,8 @@ Listfile</string>
    <slot>clearAllSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>200</x>
-     <y>468</y>
+     <x>197</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1408,8 +1444,8 @@ Listfile</string>
    <slot>clearChanSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>200</x>
-     <y>579</y>
+     <x>197</x>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1424,8 +1460,8 @@ Listfile</string>
    <slot>clearMcpdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>200</x>
-     <y>496</y>
+     <x>197</x>
+     <y>498</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1440,8 +1476,8 @@ Listfile</string>
    <slot>clearMpsdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>200</x>
-     <y>525</y>
+     <x>197</x>
+     <y>530</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1456,8 +1492,8 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>466</y>
+     <x>58</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
      <x>39</x>
@@ -1472,12 +1508,12 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>466</y>
+     <x>58</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>200</x>
-     <y>579</y>
+     <x>197</x>
+     <y>589</y>
     </hint>
    </hints>
   </connection>
@@ -1488,12 +1524,12 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>466</y>
+     <x>58</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>200</x>
-     <y>525</y>
+     <x>197</x>
+     <y>530</y>
     </hint>
    </hints>
   </connection>
@@ -1504,12 +1540,12 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>466</y>
+     <x>58</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>200</x>
-     <y>496</y>
+     <x>197</x>
+     <y>498</y>
     </hint>
    </hints>
   </connection>
@@ -1520,12 +1556,12 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>466</y>
+     <x>58</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>124</x>
-     <y>579</y>
+     <x>111</x>
+     <y>587</y>
     </hint>
    </hints>
   </connection>
@@ -1536,44 +1572,12 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>466</y>
+     <x>58</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>124</x>
-     <y>525</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>log</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>linlogSlot(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>70</x>
-     <y>426</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logGroup</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>36</x>
-     <y>440</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
+     <x>111</x>
+     <y>528</y>
     </hint>
    </hints>
   </connection>
@@ -1600,8 +1604,8 @@ Listfile</string>
    <slot>startStopSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>930</x>
-     <y>58</y>
+     <x>921</x>
+     <y>56</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1616,8 +1620,8 @@ Listfile</string>
    <slot>applyThreshSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>53</x>
-     <y>275</y>
+     <x>77</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1632,12 +1636,12 @@ Listfile</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>53</x>
-     <y>275</y>
+     <x>77</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
-     <x>74</x>
-     <y>288</y>
+     <x>98</x>
+     <y>277</y>
     </hint>
    </hints>
   </connection>
@@ -1648,28 +1652,12 @@ Listfile</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>53</x>
-     <y>275</y>
+     <x>77</x>
+     <y>267</y>
     </hint>
     <hint type="destinationlabel">
-     <x>74</x>
-     <y>281</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>log</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>linlogSlot(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>70</x>
-     <y>426</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
+     <x>98</x>
+     <y>272</y>
     </hint>
    </hints>
   </connection>
@@ -1680,12 +1668,12 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>88</x>
-     <y>466</y>
+     <x>100</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>200</x>
-     <y>496</y>
+     <x>197</x>
+     <y>498</y>
     </hint>
    </hints>
   </connection>
@@ -1696,11 +1684,11 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>60</x>
-     <y>466</y>
+     <x>72</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>124</x>
+     <x>111</x>
      <y>496</y>
     </hint>
    </hints>
@@ -1712,8 +1700,8 @@ Listfile</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>88</x>
-     <y>466</y>
+     <x>100</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
      <x>88</x>
@@ -1732,8 +1720,8 @@ Listfile</string>
      <y>551</y>
     </hint>
     <hint type="destinationlabel">
-     <x>124</x>
-     <y>579</y>
+     <x>111</x>
+     <y>587</y>
     </hint>
    </hints>
   </connection>
@@ -1744,12 +1732,12 @@ Listfile</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>83</x>
-     <y>300</y>
+     <x>106</x>
+     <y>297</y>
     </hint>
     <hint type="destinationlabel">
-     <x>86</x>
-     <y>466</y>
+     <x>98</x>
+     <y>463</y>
     </hint>
    </hints>
   </connection>
@@ -1856,8 +1844,8 @@ Listfile</string>
    <slot>m2PresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>504</y>
+     <x>421</x>
+     <y>535</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1872,8 +1860,8 @@ Listfile</string>
    <slot>m2ResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>504</y>
+     <x>421</x>
+     <y>535</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1888,8 +1876,8 @@ Listfile</string>
    <slot>m3PresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>537</y>
+     <x>421</x>
+     <y>570</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1904,8 +1892,8 @@ Listfile</string>
    <slot>m3ResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>537</y>
+     <x>421</x>
+     <y>570</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1920,8 +1908,8 @@ Listfile</string>
    <slot>m4PresetSlot(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>570</y>
+     <x>421</x>
+     <y>605</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1936,8 +1924,8 @@ Listfile</string>
    <slot>m4ResetSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>400</x>
-     <y>570</y>
+     <x>421</x>
+     <y>605</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1952,8 +1940,8 @@ Listfile</string>
    <slot>scanPeriSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>860</x>
-     <y>599</y>
+     <x>938</x>
+     <y>605</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1977,8 +1965,633 @@ Listfile</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>linlogButtonGroup</sender>
+   <signal>buttonClicked(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>linlogSlot(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>displayModeButtonGroup</sender>
+   <signal>buttonClicked(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setDisplayMode(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>posampButtonGroup</sender>
+   <signal>buttonClicked(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus0</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus1</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus2</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus3</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus4</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus5</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus6</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus7</sender>
+   <signal>clicked(quint8)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setupModule(quint8)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus0</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus1</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus2</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus3</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus4</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus5</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus6</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus7</sender>
+   <signal>histogram(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleHistogramSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus0</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus1</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus2</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus3</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus4</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus5</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus6</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleStatus7</sender>
+   <signal>active(quint8, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>moduleActiveSlot(quint8, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>337</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispChan</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>578</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispMcpd</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispMpsd</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>519</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAllChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>548</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MainWidget</sender>
+   <signal>redraw()</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>allPulsersoffButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWidget</receiver>
+   <slot>allPulserOff()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>866</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>devid_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>scanPeriSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>307</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>statusTab</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>statusTabChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>575</x>
+     <y>439</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>paramId</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>503</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispChan</sender>
+   <signal>changeModule(int)</signal>
+   <receiver>dispMpsd</receiver>
+   <slot>steps(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>578</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>88</x>
+     <y>519</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispMpsd</sender>
+   <signal>changeModule(int)</signal>
+   <receiver>dispMcpd</receiver>
+   <slot>steps(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>519</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>88</x>
+     <y>487</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
+  <signal>redraw()</signal>
   <slot>scanPeriSlot()</slot>
   <slot>tPresetSlot(bool)</slot>
   <slot>tResetSlot()</slot>
@@ -1993,5 +2606,18 @@ Listfile</string>
   <slot>m4PresetSlot(bool)</slot>
   <slot>m4ResetSlot()</slot>
   <slot>updateDisplay()</slot>
+  <slot>setDisplayMode(int)</slot>
+  <slot>linlogSlot(int)</slot>
+  <slot>draw()</slot>
+  <slot>setupModule(quint8)</slot>
+  <slot>moduleHistogramSlot(quint8, bool)</slot>
+  <slot>moduleActiveSlot(quint8, bool)</slot>
+  <slot>allPulserOff()</slot>
+  <slot>statusTabChanged(int)</slot>
  </slots>
+ <buttongroups>
+  <buttongroup name="displayModeButtonGroup"/>
+  <buttongroup name="posampButtonGroup"/>
+  <buttongroup name="linlogButtonGroup"/>
+ </buttongroups>
 </ui>

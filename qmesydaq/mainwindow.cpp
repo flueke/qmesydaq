@@ -91,8 +91,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::selectUser(void)
 {
 	actionExpert->setChecked(false);
-	actionSuperuser->setChecked(false);
-	m_main->selectUserMode();
+	actionSuperUser->setChecked(false);
+	m_main->selectUserMode(MainWidget::User);
 }
 
 void MainWindow::selectExpert(void)
@@ -100,11 +100,11 @@ void MainWindow::selectExpert(void)
 	if (checkPasswd("expert"))
 	{	
 		actionUser->setChecked(false);
-		actionSuperuser->setChecked(false);
-		m_main->selectExpertMode();
+		actionSuperUser->setChecked(false);
+		m_main->selectUserMode(MainWidget::Expert);
 	}
 	else
-		selectUser();
+		actionUser->setChecked(true);
 }
 
 void MainWindow::selectSuperuser(void)
@@ -113,10 +113,10 @@ void MainWindow::selectSuperuser(void)
 	{	
 		actionUser->setChecked(false);
 		actionExpert->setChecked(false);
-		m_main->selectSuperUserMode();
+		m_main->selectUserMode(MainWidget::SuperUser);
 	}
 	else
-		selectUser();
+		actionUser->setChecked(true);
 }
 
 bool MainWindow::checkPasswd(const QString &section)

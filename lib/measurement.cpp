@@ -654,11 +654,6 @@ Spectrum *Measurement::data(const HistogramType t)
 */
 Spectrum *Measurement::spectrum(const SpectrumType t)
 {
-#if defined(_MSC_VER)
-#	pragma message("TODO tube spectrum !!!")
-#else
-#	warning TODO tube spectrum !!!
-#endif
 	switch(t)
 	{
 		case TubeSpectrum :
@@ -1227,7 +1222,6 @@ void Measurement::setROI(const QRectF &r)
 	    y = floor(r.y()),	// or bottom row 
 	    w = round(r.width()),	// we should use the best fit
 	    h = round(r.height());
-	MSG_NOTICE << "setROI : " << x << ',' << y << ',' << w << ',' << h;
 	m_roi = QRect(x, y, w, h);
 }
 /*!

@@ -48,15 +48,19 @@ class MainWidget : public QWidget, public Ui_MainWidget
 {
 Q_OBJECT
 public:
+	enum UserLevel 
+	{
+		User = 0,
+		Expert,
+		SuperUser,
+	};
+
+public:
 	MainWidget(Mesydaq2 *, QWidget* parent = 0);
 
 	~MainWidget();
 
-	void selectUserMode(void);
-
-	void selectExpertMode(void);
-
-	void selectSuperUserMode(void);
+	void selectUserMode(int);
 
 signals:
 	//! will be emitted in case of start of data acquisition
@@ -168,7 +172,7 @@ private slots:
 
 	void checkListfilename(bool);
 
-	void linlogSlot(bool);
+	void linlogSlot(int);
 
 	void applyThreshSlot();
 
@@ -184,12 +188,6 @@ private slots:
 
 	void zoomed(const QwtDoubleRect &);
 
-	void setHistogramMode(bool);
-
-	void setSpectraMode(bool);
-
-	void setDiffractogramMode(bool);
-
 	void closeEvent(QCloseEvent *);
 
 	void moduleHistogramSlot(quint8, bool);
@@ -198,7 +196,15 @@ private slots:
 
 	void statusTabChanged(int);
 
+	void setDisplayMode(int);
+
 private:
+	void setHistogramMode();
+
+	void setSpectraMode();
+
+	void setDiffractogramMode();
+
 	void	setZoomer(const QColor & = QColor(Qt::black));
 
 	void 	dispFiledata(void);
