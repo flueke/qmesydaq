@@ -778,29 +778,27 @@ void Measurement::readCalibration(const QString &name)
 		{
 			qreal min = list[0].toUInt(),
 			      max = list[1].toUInt();
-//			if (min < max)
-//				m_detectorRange = TubeRange(min, max);
+			if (min < max)
+				m_detectorRange = TubeRange(min, max);
 		}
 		for (int i = 0; !t.atEnd(); ++i)
 		{
 			list = t.readLine().split(QRegExp("\\s+"));
 			if (list.size() > 3 && !list[3].isEmpty())
 			{
-#if 0
 				for (int j = 0; j < list.size(); ++j)
 					if (!i)
 						m_calibration[i] = TubeRange(list[j].toUInt());
 					else
 						m_calibration[i].setMax(list[j].toUInt());
-#endif
 			}
 			else
 			{
 				quint32 index = list[0].toUInt();
 				qreal min = list[1].toUInt(),
 			              max = list[2].toUInt();
-//				m_calibration[index] = TubeRange(min, max);
-				MSG_DEBUG << index << min << max;
+				m_calibration[index] = TubeRange(min, max);
+				qDebug() << index << min << max;
 			}
 		}
 

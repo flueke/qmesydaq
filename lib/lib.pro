@@ -42,7 +42,8 @@ HEADERS 	+= stdafx.h \
 		   mcpd2.h \
 		   mdll.h \
 		   networkdevice.h \
-		   structures.h
+        	   structures.h \
+		   calibration.h
 
 SOURCES 	+= stdafx.cpp \
 		   counter.cpp \

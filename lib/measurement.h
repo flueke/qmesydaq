@@ -29,6 +29,7 @@
 #include "structures.h"
 #include "mdefines.h"
 #include "mesydaq2.h"
+#include "calibration.h"
 
 class Histogram;
 class Spectrum;
@@ -462,6 +463,10 @@ private:
 	quint64		m_neutrons;
 
 	QString		m_calibrationfile;
+
+	TubeRange	m_detectorRange;
+
+	QHash<quint32, TubeRange>	m_calibration;
 
 };
 
