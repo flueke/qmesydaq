@@ -36,7 +36,7 @@ class MdllSetup : public QDialog, public Ui_MdllSetup
 {
 	Q_OBJECT
 public:
-    MdllSetup(Mesydaq2 *, QWidget * = 0);
+	MdllSetup(Mesydaq2 *, QWidget * = 0);
 
 public slots:
 	void setMCPD(int);
@@ -46,13 +46,18 @@ private slots:
 
 	void displaySlot(int = -1);
 
-    void setTimingSlot();
-    void setThresholdsSlot();
-    void setEnergySlot();
-    void setSpectrumSlot();
-    void setDatasetSlot();
+	void setTimingSlot();
+
+	void setThresholdsSlot();
+
+	void setEnergySlot();
+
+	void setSpectrumSlot();
+
+	void setDatasetSlot();
 
 private:
+	//! The Mesydaq object
 	Mesydaq2	*m_theApp;
 
 };

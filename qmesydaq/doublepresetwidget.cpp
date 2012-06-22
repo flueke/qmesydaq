@@ -117,11 +117,9 @@ void DoublePresetWidget::presetCheckClicked(bool val)
 }
 
 /*!
-    \fn void DoublePresetWidget::resetButtonClicked(bool val)
+    \fn void DoublePresetWidget::resetButtonClicked()
 
     callback for clicking the preset checkbox
-
-    \param val
  */
 void DoublePresetWidget::resetButtonClicked()
 {

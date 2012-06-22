@@ -218,10 +218,10 @@ private:
 	QString selectListfile(void);
 
 private:
+	//! The MesyDaq object
 	Mesydaq2		*m_theApp;
 	
-	ulong 			*m_pDispBuffer;
-
+	
 // using thresholds for display
 	//! using thresholds ?
 	bool			m_dispThresh;
@@ -250,24 +250,31 @@ private:
 	//! measurement objct
 	Measurement 		*m_meas;
 
+	//! display timer ID
 	int 			m_dispTimer;
 
+	//! zoomer
 	Zoomer			*m_zoomer;
 
+	//! ???
 	CorbaThread		*m_ct;
 
+	//! the remote control interface
 	ControlInterface 	*m_controlInt;
 
+	//! the printer
 	QPrinter		*m_printer;
 
+	//! ????
 	QwtPlotPicker		*m_picker;
 
+	//! the color map for the linear scaled plots
 	QwtLinearColorMap 	*m_linColorMap;
 
+	//! the color map for the logarithmic scaled plots
 	QwtLinearColorMap 	*m_logColorMap;
 
-	QRectF			m_lastZoom;
-
+	//! time object
 	QTime			m_time;
 };	
 

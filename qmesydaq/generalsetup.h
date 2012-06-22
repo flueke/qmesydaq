@@ -66,6 +66,7 @@ private slots:
 	void setRunIdSlot();
 
 private:
+	//! store the measurement object
 	Measurement 	*m_meas;
 };
 #endif

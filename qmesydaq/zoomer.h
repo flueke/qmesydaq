@@ -23,12 +23,27 @@
 
 #include <qwt_plot_zoomer.h>
 
+/**
+ * \short The standard zoomer object for all displays
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class Zoomer : public QwtPlotZoomer
 {
 public:
-	Zoomer(QwtPlotCanvas *);
+	/*!
+	 * Constructor
+	 *
+ 	 * \param canvas canvas
+	 */
+	Zoomer(QwtPlotCanvas *canvas);
 
-	void setColor(const QColor &);
+	/*!
+	 * Sets the color of the rubber band of the zoomer
+	 *
+	 * \param color color 
+         */
+	void setColor(const QColor &color);
 };
 
 #endif

@@ -63,6 +63,7 @@ private slots:
 	void cellTriggerChangedSlot(int);
 
 private:
+	//! stores the Mesydaq object
 	Mesydaq2 *m_theApp;
 
 };

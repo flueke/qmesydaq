@@ -35,7 +35,7 @@ class QTimer;
  * \short representation of MCPD-8 central module
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
-*/
+ */
 class LIBQMESYDAQ_EXPORT MCPD8 : public QObject
 {
 	Q_OBJECT

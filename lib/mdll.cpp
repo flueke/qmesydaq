@@ -30,7 +30,7 @@
 
 /*!
     constructor
-    \param app
+    \param id
     \param parent
  */
 MDLL::MDLL(quint8 id, QObject *parent)
@@ -272,12 +272,12 @@ void MDLL::initMdll(void)
 
 #endif
 
+#if 0
 /*!
     \fn void MDll::serialize(QFile * fi)
 
     \param fi
  */
-#if 0
 void MDLL::serialize(QFile *fi)
 {
         quint8 c;

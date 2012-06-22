@@ -41,17 +41,21 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 {
 	Q_OBJECT
 public:
-    /**
-     * Default Constructor
-     */
+	/**
+	 * Default Constructor
+	 */
 	MainWindow(QWidget *parent = 0);
 
-    /**
-     * Default Destructor
-     */
+	/**
+	 * Destructor
+	 */
 	virtual ~MainWindow();
 
-        //! wrapper method to emit signal to load a configuration file
+        /*! 
+	 * wrapper method to emit signal to load a configuration file
+	 *
+	 * \param sFilename name of the file
+	 */
 	void	doLoadConfiguration(const QString &sFilename) { emit loadConfiguration(sFilename); }
 
 signals:
@@ -59,25 +63,32 @@ signals:
 	void	loadConfiguration(const QString& sFilename);
 
 private slots:
+	//! callback if the normal user mode is selected
 	void	selectUser(void);
 
+	//! callback if the expert user mode is selected
 	void 	selectExpert(void);
 
+	//! callback if the super user mode is selected
 	void	selectSuperuser(void);
 
 protected:
 	void closeEvent(QCloseEvent *event);
 
 private:
+	//! restore the last settings
 	void restoreSettings(void);
 
+	//! saves the current settings
 	void saveSettings(void);
 
 	bool checkPasswd(const QString &section);
 
 private:
+	//! the main widget
 	MainWidget 	*m_main;
 
+	//! the MesyDaq object
 	Mesydaq2	*m_mesy;
 };
 

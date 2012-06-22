@@ -34,14 +34,31 @@ class Zoomer;
 class SpectrumData;
 class HistogramData;
 
+/**
+ * \short The curve to display a spectrum 
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class SpectrumCurve : public QwtPlotCurve
 {
 public:
+	//! default constructor
 	SpectrumCurve();
 	
-	SpectrumCurve(const QPen&, const QString & = "");
+	/*!
+	 * Constructor
+	 *	 
+	 * \param p pen for the curve 
+	 * \param s curve name
+	 */
+	SpectrumCurve(const QPen &p, const QString &s = "");
 };
 
+/**
+ * \short The class to display the curves, histograms, ... 
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class Plot : public QwtPlot
 {
 	Q_OBJECT
@@ -67,43 +84,82 @@ public:
 		Amplitude,
 	};
 
-	Plot(QWidget * = NULL);
+	/*!
+	 * Constructor
+	 *
+	 * \param parent parent widget
+	 */
+	Plot(QWidget *parent = NULL);
 
+	//! returns the the current display mode
 	Mode displayMode(void) const
 	{
 		return m_mode;
 	}
 
+	/*!
+	 * Sets the display of the plot
+	 * 
+	 * \param m display mode
+	 */
 	void setDisplayMode(const Mode &m);
 
-	void setSpectrumData(SpectrumData *);
+	/*!
+	 * sets the data for the spectrum data
+	 *
+	 * \param data spectrum data
+	 */
+	void setSpectrumData(SpectrumData *data);
 
+	/*!
+	 * Sets the data for the histogram data
+	 *
+	 * \param data histogram data
+	 */
 	void setHistogramData(HistogramData *);
 
 public slots:
-	void 	setLinLog(const bool);
+	/*!
+	 * Sets the lin/log scaling
+	 *
+	 * \param log if true set the logarithmic plot 
+	 */
+	void 	setLinLog(const bool log);
 
+	/*!
+	 * replot the widget
+	 */
 	void	replot(void);
 
 private:
+	//! the zoomer object
 	Zoomer 			*m_zoomer;
 
+	//! the curves 
 	QwtPlotCurve 		*m_curve[8];
 
+	//! the histogram
 	QwtPlotSpectrogram	*m_histogram;
 
+	//! data for the spectrum
 	SpectrumData		*m_spectrumData;
-
+	
+	//! data for the histogram
 	HistogramData		*m_histogramData;
 
+	//! color map for the linear scaling
 	QwtLinearColorMap	*m_linColorMap;
 
+	//! color map for the logarithmic scaling
 	QwtLinearColorMap	*m_logColorMap;
 
+	//! the right axis 
 	QwtScaleWidget		*m_rightAxis;
 
+	//! display mode
 	enum Mode		m_mode;
 
+	//! lin/log scaling
 	bool			m_linlog;
 };
 

@@ -243,6 +243,7 @@ void DataRepeater::SetTarget(const QString &target, quint16 port)
   \brief store or send data to target (short data: store only and start timer)
   \param ptr     pointer to data
   \param length  data length in bytes
+  \param doSend  data send or not ?
 */
 void DataRepeater::WriteData(const void* ptr, int length, bool doSend /*= false*/)
 {

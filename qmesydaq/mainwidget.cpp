@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2009-2012 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -256,6 +256,7 @@ void MainWidget::about()
 /*!
     \fn void MainWidget::init()
 
+    initialising the widget
 */
 void MainWidget::init()
 {
@@ -293,9 +294,11 @@ void MainWidget::init()
 }
 
 /*!
-    \fn void MainWidget::timerEvent(QTimerEvent *)
+    \fn void MainWidget::timerEvent(QTimerEvent *event)
 
     callback for the timer
+
+    \param event timer event
 */
 void MainWidget::timerEvent(QTimerEvent *event)
 {
@@ -314,22 +317,24 @@ void MainWidget::allPulserOff(void)
 }
 
 /*!
-    \fn void MainWidget::zoomAreaSelected(const QRectF &)
+    \fn void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
 
-    \param 
+    callback for the zoomer area 
 */
-void MainWidget::zoomAreaSelected(const QRectF &)
+void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
 {
     if (!m_zoomer->zoomRectIndex())
         m_zoomer->setZoomBase();
 }
 
 /*!
-    \fn void MainWidget::zoomed(const QRectF &rect)
+    \fn void MainWidget::zoomed(const QwtDoubleRect &rect)
 
-    \param rect
+    callback if the zoomer has changed
+
+    \param rect zoom area
 */
-void MainWidget::zoomed(const QRectF &rect)
+void MainWidget::zoomed(const QwtDoubleRect &rect)
 {
     if (rect == m_zoomer->zoomBase())
     {
@@ -377,6 +382,8 @@ void MainWidget::statusTabChanged(int )
 
 /*!
     \fn void MainWidget::startStopSlot(bool checked)
+
+    callback for start and stop
 
     \param checked
 */
@@ -471,6 +478,8 @@ QString MainWidget::selectListfile(void)
 /*!
     \fn void MainWidget::checkListfilename(bool checked)
 
+    checks whether a list mode file name is given, otherwise the checkbox will be disabled
+
     \param checked
 */
 void MainWidget::checkListfilename(bool checked)
@@ -504,6 +513,8 @@ void MainWidget::checkListfilename(bool checked)
 
 /*!
     \fn void MainWidget::updateDisplay(void)
+
+    updates the whole display
  */
 void MainWidget::updateDisplay(void)
 {
@@ -559,6 +570,13 @@ void MainWidget::updateDisplay(void)
 
 /*!
     \fn QString MainWidget::buildTimestring(quint64 timeval, bool nano)
+
+    creates a string to display the a time
+
+    \param timeval time in multiples of 100ns
+    \param nano
+
+    \return the time as a string in HH:MM::SS format
  */
 QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 {
@@ -593,6 +611,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 /*!
     \fn void MainWidget::clearAllSlot()
 
+    callback to clear the data
 */
 void MainWidget::clearAllSlot()
 {
@@ -612,6 +631,7 @@ void MainWidget::clearAllSlot()
 /*!
     \fn void MainWidget::clearMcpdSlot()
 
+    callback to clear the MCPD list
 */
 void MainWidget::clearMcpdSlot()
 {
@@ -624,6 +644,7 @@ void MainWidget::clearMcpdSlot()
 /*!
     \fn void MainWidget::clearMpsdSlot()
 
+    callback to clear the MPSD list
 */
 void MainWidget::clearMpsdSlot()
 {
@@ -637,6 +658,7 @@ void MainWidget::clearMpsdSlot()
 /*!
     \fn void MainWidget::clearChanSlot()
 
+    callback to clear the channel list
 */
 void MainWidget::clearChanSlot()
 {
@@ -665,7 +687,9 @@ void MainWidget::replayListfileSlot()
 }
 
 /*!
-    \fn void MainWidget::displayMcpdSlot(int)
+    \fn void MainWidget::displayMcpdSlot(int id)
+
+    callback to display MCPD 
 
     \param id
  */
@@ -680,9 +704,11 @@ void MainWidget::displayMcpdSlot(int id)
 }
 
 /*!
-    \fn void MainWidget::displayMpsdSlot(int)
+    \fn void MainWidget::displayMpsdSlot(int iModule)
 
-    \param id
+    callback to display the Module
+
+    \param iModule the module number
  */
 void MainWidget::displayMpsdSlot(int iModule)
 {
@@ -706,6 +732,8 @@ void MainWidget::displayMpsdSlot(int iModule)
 
 /*!
     \fn void MainWidget::scanPeriSlot(bool real)
+
+    callback to rescan the modules behind the MCPD
 
     \param real
 */
@@ -784,6 +812,8 @@ void MainWidget::restoreSetupSlot()
 
 /*!
     \fn void MainWidget::applyThreshSlot()
+
+    callback to apply the threshold settings
  */
 void MainWidget::applyThreshSlot()
 {
@@ -798,6 +828,8 @@ void MainWidget::applyThreshSlot()
 
 /*!
     \fn void MainWidget::linlogSlot(bool bLog)
+
+    callback to apply the linear/logarithmic scaling
 
     \param bLog
  */
@@ -823,6 +855,8 @@ void MainWidget::linlogSlot(int bLog)
 
 /*!
     \fn void MainWidget::drawOpData()
+
+    draw all operational data
  */
 void MainWidget::drawOpData()
 {
@@ -858,6 +892,8 @@ void MainWidget::drawOpData()
 
 /*!
     \fn void MainWidget::dispFiledata(void)
+
+    display informations about the data
  */
 void MainWidget::dispFiledata(void)
 {
@@ -1145,6 +1181,11 @@ void MainWidget::mpsdCheck(int mod)
 }
 
 /*!
+    \fn void MainWidget::setZoomer(const QColor &c)
+ 
+    installs the zoomer new (due to the internals of Qwt)
+
+    \param c color of the zoomer
  */
 void MainWidget::setZoomer(const QColor &c)
 {
@@ -1161,6 +1202,13 @@ void MainWidget::setZoomer(const QColor &c)
 	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
 }
 
+/*!
+    \fn void MainWidget::setDisplayMode(int val)
+
+    sets the display mode
+
+    \param val new display mode
+ */
 void MainWidget::setDisplayMode(int val)
 {
 	m_diffractogram->detach();
@@ -1185,9 +1233,9 @@ void MainWidget::setDisplayMode(int val)
 }
 
 /*!
-    \fn void MainWidget::setHistogramMode(bool histo)
+    \fn void MainWidget::setHistogramMode(void)
 
-    \param histo
+    sets the histogram mode
 */
 void MainWidget::setHistogramMode(void)
 {
@@ -1209,48 +1257,48 @@ void MainWidget::setHistogramMode(void)
 }
 
 /*!
-    \fn void MainWidget::setSpectraMode(bool spectra)
+    \fn void MainWidget::setSpectraMode(void)
 
-    \param spectra
+    sets the spectrum mode
 */
 void MainWidget::setSpectraMode(void)
 {
-        m_dataFrame->enableAxis(QwtPlot::yRight, false);
+    m_dataFrame->enableAxis(QwtPlot::yRight, false);
         
-        m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
-        m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channel"));
-        m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-        m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
-        m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-//      m_picker->setTrackerPen(QColor(Qt::black));
+    m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
+    m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channel"));
+    m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
+    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
+    m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+//  m_picker->setTrackerPen(QColor(Qt::black));
 
-        for (int i = 0; i < 8; ++i)
-            m_curve[i]->attach(m_dataFrame);
-	m_dataFrame->replot();
-	setZoomer(QColor(Qt::black));
-	emit draw();
+    for (int i = 0; i < 8; ++i)
+        m_curve[i]->attach(m_dataFrame);
+    m_dataFrame->replot();
+    setZoomer(QColor(Qt::black));
+    emit draw();
 }
 
 /*!
-    \fn void MainWidget::setDiffractogramMode(bool diff)
+    \fn void MainWidget::setDiffractogramMode(void)
 
-    \param diff
+    sets the diffractogram mode
 */
 void MainWidget::setDiffractogramMode(void)
 {
-        m_dataFrame->enableAxis(QwtPlot::yRight, false);
+    m_dataFrame->enableAxis(QwtPlot::yRight, false);
         
-        m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
-        m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
-        m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-        m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->hist(Measurement::PositionHistogram)->height());
-        m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-//      m_picker->setTrackerPen(QColor(Qt::black));
+    m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
+    m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
+    m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
+    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->hist(Measurement::PositionHistogram)->height());
+    m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
+//  m_picker->setTrackerPen(QColor(Qt::black));
 
-        m_diffractogram->attach(m_dataFrame);
-	m_dataFrame->replot();
-	setZoomer(QColor(Qt::black));
-	emit draw();
+    m_diffractogram->attach(m_dataFrame);
+    m_dataFrame->replot();
+    setZoomer(QColor(Qt::black));
+    emit draw();
 }
 
 /*!
@@ -1564,6 +1612,10 @@ void MainWidget::printPlot(void)
 /*!
     \fn void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
 
+    callback to print the plot window
+
+    \param printer the printer object
+    \param filter filter object
 */
 void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
 {
@@ -1920,12 +1972,27 @@ void MainWidget::customEvent(QEvent *e)
     }
 }
 
+/*!
+    \fn void MainWidget::moduleHistogramSlot(quint8 id, bool set)
+
+     ????
+
+    \param id
+    \param set
+ */
 void MainWidget::moduleHistogramSlot(quint8 id, bool set)
 {
 //  MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
     m_theApp->setHistogram(devid_2->value(), id, set);
 }
 
+/*!
+    \fn void MainWidget::moduleActiveSlot(quint8 id, bool set)
+     ????
+
+    \param id
+    \param set
+ */
 void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
     m_theApp->setActive(devid_2->value(), id, set);
@@ -1933,6 +2000,8 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
 
 /*!
     sets the user mode
+
+    \param val new user mode
  */
 void MainWidget::selectUserMode(int val)
 {

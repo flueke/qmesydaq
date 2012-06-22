@@ -82,6 +82,11 @@ void MainWindow::saveSettings()
 	settings.setValue("config/lastrunid", m_mesy->runId());
 }
 
+/*! 
+    if the the windows closes it will be called
+
+    \param event close event
+ */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	saveSettings();
@@ -119,6 +124,11 @@ void MainWindow::selectSuperuser(void)
 		actionUser->setChecked(true);
 }
 
+/*!
+    checks the password for the user level
+
+    \param section 
+ */
 bool MainWindow::checkPasswd(const QString &section)
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");

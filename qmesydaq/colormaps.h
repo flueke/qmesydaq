@@ -23,15 +23,27 @@
 
 #include <qwt_color_map.h>
 
+/**
+ * \short The standard color map for linear scaling 
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class StdLinColorMap : public QwtLinearColorMap
 {
 public:
+	//! constructor
 	StdLinColorMap();
 };
 
+/**
+ * \short The standard color map for logarithmic scaling 
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class StdLogColorMap : public QwtLinearColorMap
 {
 public:
+	//! constructor
 	StdLogColorMap();
 };
 

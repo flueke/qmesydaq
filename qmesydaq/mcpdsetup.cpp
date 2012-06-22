@@ -48,7 +48,8 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 /*!
     \fn void MCPDSetup::sendCellSlot()
 
-*/
+    callback to send the cell setup
+ */
 void MCPDSetup::sendCellSlot()
 {
     quint16 id = mcpdId->value();
@@ -58,17 +59,19 @@ void MCPDSetup::sendCellSlot()
 /*!
     \fn void MCPDSetup::sendParamSlot()
 
-*/
+    callback to send the parameter setup
+ */
 void MCPDSetup::sendParamSlot()
 {
     qint16 id = mcpdId->value();
     m_theApp->setParamSource(id, param->value(), paramSource->currentIndex());
 }
 
-/*
+/*!
     \fn void MCPDSetup::sendAuxSlot()
 
-*/
+    callback to send the auxiliary timer setup
+ */
 void MCPDSetup::sendAuxSlot()
 {
     bool ok;
@@ -80,7 +83,8 @@ void MCPDSetup::sendAuxSlot()
 /*!
     \fn void MCPDSetup::resetTimerSlot()
 
-*/
+    callback to reset the master timer clock
+ */
 void MCPDSetup::resetTimerSlot()
 {
     quint16 id = mcpdId->value();
@@ -91,7 +95,8 @@ void MCPDSetup::resetTimerSlot()
 /*!
     \fn void MCPDSetup::setTimingSlot()
 
-*/
+    callback to send the timing setup
+ */
 void MCPDSetup::setTimingSlot()
 {
     quint16 id = mcpdId->value();
@@ -102,7 +107,9 @@ void MCPDSetup::setTimingSlot()
 
 /*!
     \fn void MCPDSetup::setMcpdIdSlot()
-*/
+
+    callback to set the MCPD ID
+ */
 void MCPDSetup::setMcpdIdSlot()
 {
     m_theApp->setId(mcpdId->value(), deviceId->value());
@@ -111,7 +118,8 @@ void MCPDSetup::setMcpdIdSlot()
 /*!
     \fn void MCPDSetup::setIpUdpSlot()
 
-*/
+    callback to send the networking setup of the MCPD
+ */
 void MCPDSetup::setIpUdpSlot()
 {
     quint16 id =  mcpdId->value();
@@ -124,9 +132,11 @@ void MCPDSetup::setIpUdpSlot()
 }
 
 /*!
-    \fn void MCPDSetup::displaySlot(int id)
+    \fn void MCPDSetup::displayMCPDSlot(int id)
+   
+    display the information if the MCPD was changed
 
-    \param id
+    \param id  ID of the MCPD
  */
 void MCPDSetup::displayMCPDSlot(int id)
 {
@@ -150,7 +160,9 @@ void MCPDSetup::displayMCPDSlot(int id)
 /*!
     \fn void MCPDSetup::displayCounterCellSlot(int id)
 
-    \parma id
+    display the counter/cell setup
+
+    \param id number of the counter cell
  */
 void MCPDSetup::displayCounterCellSlot(int id)
 {

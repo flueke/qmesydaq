@@ -43,6 +43,8 @@ MdllSetup::MdllSetup(Mesydaq2 *mesy, QWidget *parent)
 /*!
     \fn void MdllSetup::setMCPD(int)
 
+    sets the MCPD
+
     \param id
  */
 void MdllSetup::setMCPD(int id)
@@ -60,9 +62,9 @@ void MdllSetup::setMCPD(int id)
 }
 
 /*!
-    \fn void MdllSetup::setPulserSlot(int)
+    \fn void MdllSetup::setPulserSlot()
 
-    \param id
+    set pulser 
  */
 void MdllSetup::setPulserSlot()
 {
@@ -78,6 +80,7 @@ void MdllSetup::setPulserSlot()
 /*!
     \fn void MdllSetup::setTimingSlot()
 
+    callback to set the timing window
  */
 void MdllSetup::setTimingSlot()
 {
@@ -91,6 +94,7 @@ void MdllSetup::setTimingSlot()
 /*!
     \fn void MdllSetup::setSpectrumSlot()
 
+    callback to set the spectrum
  */
 void MdllSetup::setSpectrumSlot()
 {
@@ -104,6 +108,7 @@ void MdllSetup::setSpectrumSlot()
 /*!
     \fn void MdllSetup::setThresholdsSlot()
 
+    callback to set the thresholds
  */
 void MdllSetup::setThresholdsSlot()
 {
@@ -116,6 +121,7 @@ void MdllSetup::setThresholdsSlot()
 /*!
     \fn void MdllSetup::setDatasetSlot()
 
+    callback to set the data set
  */
 void MdllSetup::setDatasetSlot()
 {
@@ -128,6 +134,7 @@ void MdllSetup::setDatasetSlot()
 /*!
     \fn void MdllSetup::setEnergySlot()
 
+    callback to set the energy window
  */
 void MdllSetup::setEnergySlot()
 {
@@ -139,6 +146,9 @@ void MdllSetup::setEnergySlot()
 /*!
     \fn void MdllSetup::displaySlot()
 
+    callback to display the setup
+
+    \param id
  */
 void MdllSetup::displaySlot(int id)
 {
