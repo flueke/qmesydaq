@@ -24,12 +24,13 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
-class Zoomer;
-class QwtPlotPanner;
 class QwtPlotCurve;
 class QwtPlotSpectrogram;
 class QwtLinearColorMap;
 class QwtScaleWidget;
+
+class Zoomer;
+
 class SpectrumData;
 class HistogramData;
 
@@ -86,8 +87,6 @@ public slots:
 
 private:
 	Zoomer 			*m_zoomer;
-
-	QwtPlotPanner		*m_panner;
 
 	QwtPlotCurve 		*m_curve[8];
 

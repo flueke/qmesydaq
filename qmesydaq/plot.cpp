@@ -20,11 +20,9 @@
 
 #include "plot.h"
 
-#include <qwt_plot_curve.h>
 #include <qwt_plot_spectrogram.h>
 
 #include <qwt_plot_zoomer.h>
-#include <qwt_plot_panner.h>
 
 #include <qwt_scale_widget.h>
 #include <qwt_plot_layout.h>
@@ -55,7 +53,6 @@ SpectrumCurve::SpectrumCurve(const QPen &p, const QString &s)
 Plot::Plot(QWidget *parent)
 	: QwtPlot(parent)
 	, m_zoomer(NULL)
-	, m_panner(NULL)
 	, m_histogram(NULL)
 	, m_spectrumData(NULL)
 	, m_histogramData(NULL)
@@ -65,7 +62,6 @@ Plot::Plot(QWidget *parent)
 	, m_linlog(false)
 {
 	m_linColorMap = new StdLinColorMap();
-	
 	m_logColorMap = new StdLogColorMap();
 
 	m_rightAxis = axisWidget(QwtPlot::yRight);
@@ -74,12 +70,6 @@ Plot::Plot(QWidget *parent)
 
 	setAxisAutoScale(QwtPlot::yLeft);
 	setAxisAutoScale(QwtPlot::xBottom);
-
-#if 0
-	m_panner = new QwtPlotPanner(canvas());
-	m_panner->setAxisEnabled(QwtPlot::yRight, false);
-	m_panner->setMouseButton(Qt::MidButton);
-#endif
 
 	plotLayout()->setAlignCanvasToScales(true);
 
