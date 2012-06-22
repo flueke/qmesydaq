@@ -30,13 +30,15 @@ SOURCES 	+= main.cpp \
 		mainwindow.cpp \
 		zoomer.cpp \
 		data.cpp \
-		plotwidget.cpp
+		plotwidget.cpp \
+		colormaps.cpp
 
 HEADERS 	+= data.h \
 		plot.h \
 		mainwindow.h \
 		zoomer.h \
-		plotwidget.h
+		plotwidget.h \
+		colormaps.h
 
 CONFIG		+= debug
 
