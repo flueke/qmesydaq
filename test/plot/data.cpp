@@ -27,15 +27,33 @@ double myspectrum(double value)
 	return 1.1 + sin(value);
 }
 
-SpectrumData::SpectrumData(double(*y)(double), size_t size)
+SpectrumData::SpectrumData(size_t size)
 	: d_size(size)
-	, d_y(y)
 {
+	m_data = new double[size];
+}
+
+SpectrumData::SpectrumData()
+	: d_size(0)
+	, m_data(NULL)
+{
+}
+
+SpectrumData::SpectrumData(const SpectrumData &data)
+{
+	this->d_size = data.d_size;
+	m_data = new double[this->d_size];
+	memcpy(this->m_data, data.m_data, d_size * sizeof(double));
+}
+
+SpectrumData::~SpectrumData()
+{
+	delete m_data;
 }
 
 QwtData *SpectrumData::copy() const
 {
-	return new SpectrumData(d_y, d_size);
+	return new SpectrumData(*this);
 }
 
 size_t SpectrumData::size() const
@@ -45,12 +63,24 @@ size_t SpectrumData::size() const
 
 double SpectrumData::x(size_t i) const
 {
-	return 0.1 * i;
+	return i;
 }
 	
 double SpectrumData::y(size_t i) const
 {
-	return d_y(x(i));
+	return m_data[i];
+}
+
+TestSpectrumData::TestSpectrumData(double(*_y)(double), size_t size)
+	: SpectrumData(size)
+{
+	for (size_t i = 0; i < d_size; ++i)
+		m_data[i] = _y(0.1 * i);
+}
+
+double TestSpectrumData::x(size_t i) const
+{
+	return 0.1 * i;
 }
 
 HistogramData::HistogramData()
@@ -76,5 +106,50 @@ double HistogramData::value(double x, double y) const
 	const double v2 = x * (y+c) + x * (y+c);
 
 	return 1.0 / (v1 * v1 + v2 * v2);
+}
+
+DiffractogramData::DiffractogramData(const SpectrumData &data)
+{
+	d_size = data.size();
+}
+
+DiffractogramData::DiffractogramData(const HistogramData &data, int dir)
+	: SpectrumData()
+{
+	QwtDoubleRect r = data.boundingRect();
+	if (dir == Data::xDir)
+	{
+		d_size = size_t(r.width() / 0.1);
+		m_data = new double[d_size];
+		for (size_t i = 0; i < d_size; ++i)
+			m_data[i] = data.value(i * 0.1 - r.width() / 2, 0);
+	}
+	else
+	{
+		d_size = size_t(r.height() / 0.1);
+		m_data = new double[d_size];
+		for (size_t i = 0; i < d_size; ++i)
+			m_data[i] = data.value(0, i * 0.1 - r.height() / 2);
+	}
+}
+
+QwtData *DiffractogramData::copy() const
+{
+	return new DiffractogramData(*this);
+}
+
+size_t DiffractogramData::size() const
+{
+	return d_size;
+}
+
+double DiffractogramData::x(size_t i) const
+{
+	return i;
+}
+
+double DiffractogramData::y(size_t i) const
+{
+	return m_data[i];
 }
 

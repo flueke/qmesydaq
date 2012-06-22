@@ -26,6 +26,14 @@
 
 double myspectrum(double value);
 
+namespace Data
+{
+	enum Direction {
+		xDir = 0,
+		yDir,
+	};
+}
+
 class SpectrumData: public QwtData
 {
     // The x values depend on its index and the y values
@@ -36,7 +44,13 @@ class SpectrumData: public QwtData
     // QwtData can be used.
 
 public:
-	SpectrumData(double(*y)(double), size_t size);
+	SpectrumData(size_t size);
+
+	SpectrumData(const SpectrumData  &);
+
+	SpectrumData();
+
+	~SpectrumData();
 
 	virtual QwtData *copy() const;
 
@@ -45,10 +59,19 @@ public:
 	virtual double x(size_t i) const;
 	
 	virtual double y(size_t i) const;
-private:
-	size_t d_size;
 
-	double(*d_y)(double);
+protected:
+	size_t 	d_size;
+
+	double	*m_data;
+};
+
+class TestSpectrumData : public SpectrumData
+{
+public:
+	TestSpectrumData(double(*y)(double), size_t size);
+
+	virtual double x(size_t i) const;
 };
 
 class HistogramData: public QwtRasterData
@@ -61,6 +84,23 @@ public:
 	virtual QwtDoubleInterval range() const;
 
 	virtual double value(double x, double y) const;
+};
+
+class DiffractogramData : public SpectrumData
+{
+public:
+	DiffractogramData(const SpectrumData &);
+
+	DiffractogramData(const HistogramData &, int );
+
+	virtual QwtData *copy() const;
+
+	virtual size_t size() const;
+
+	virtual double x(size_t i) const;
+
+	virtual double y(size_t i) const;
+
 };
 
 #endif

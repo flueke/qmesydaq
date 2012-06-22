@@ -22,10 +22,13 @@
 
 #include <QToolBar>
 #include <QToolButton>
+#include <QButtonGroup>
 
 #include "plotwidget.h"
 #include "plot.h"
 #include "data.h"
+
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -40,27 +43,36 @@ MainWindow::MainWindow(QWidget *parent)
 	m_plot = m_plotWidget->m_plot;
 
 // Create spectrum data
-	m_spectrumData = new SpectrumData(::myspectrum, 100);
+	m_spectrumData = new TestSpectrumData(::myspectrum, 100);
 // Create histogram data
 	m_histogramData = new HistogramData();
+// Create diffractogram data
+	m_diffData = new DiffractogramData(*m_histogramData, Data::xDir);
 
 	m_plot->setSpectrumData(m_spectrumData);
 	m_plot->setHistogramData(m_histogramData);
 	m_plot->setDisplayMode(Plot::Histogram);
 
-	connect(m_plotWidget->radioHistogram, SIGNAL(toggled(bool)), this, SLOT(showSpectrogram(bool)));
+	QButtonGroup *bg = m_plotWidget->displayButtonGroup;
+
+	connect(bg, SIGNAL(buttonClicked(int)), this, SLOT(setDisplayMode(int)));
 }
 
-void MainWindow::showSpectrogram(bool val)
+void MainWindow::setDisplayMode(int val)
 {
-	if (val)
+	switch (val)
 	{
-		m_plot->setSpectrumData(m_spectrumData);
-		m_plot->setDisplayMode(Plot::Histogram);
-	}
-	else
-	{
-		m_plot->setHistogramData(m_histogramData);
-		m_plot->setDisplayMode(Plot::Spectrum);
+		case Plot::Spectrum :
+			m_plot->setSpectrumData(m_spectrumData);
+			m_plot->setDisplayMode(Plot::Spectrum);
+			break;
+		case Plot::Histogram :
+			m_plot->setHistogramData(m_histogramData);
+			m_plot->setDisplayMode(Plot::Histogram);
+			break;
+		case Plot::Diffractogram :
+			break;
+		default:
+			break;
 	}
 }

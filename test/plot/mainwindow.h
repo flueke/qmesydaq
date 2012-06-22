@@ -26,6 +26,7 @@
 class Plot;
 class SpectrumData;
 class HistogramData;
+class DiffractogramData;
 class PlotWidget;
 
 class MainWindow: public QMainWindow
@@ -35,16 +36,18 @@ public:
 	MainWindow(QWidget * = NULL);
 
 private slots:
-	void showSpectrogram(bool);
+	void setDisplayMode(int);
 
 private:
-	PlotWidget	*m_plotWidget;
+	PlotWidget		*m_plotWidget;
 
-	Plot 		*m_plot;
+	Plot 			*m_plot;
 
-	SpectrumData	*m_spectrumData;
+	SpectrumData		*m_spectrumData;
 
-	HistogramData	*m_histogramData;
+	HistogramData		*m_histogramData;
+
+	DiffractogramData	*m_diffData;
 };
 
 #endif

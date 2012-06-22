@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 
 	MainWindow mainWindow;
 
-	mainWindow.resize(600,400);
+	mainWindow.resize(600, 700);
 	mainWindow.show();
 
 	return a.exec(); 

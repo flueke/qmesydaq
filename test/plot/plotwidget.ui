@@ -39,7 +39,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="displayTab">
       <attribute name="title">
@@ -57,6 +57,9 @@
             <property name="text">
              <string>Spectrum</string>
             </property>
+            <attribute name="buttonGroup">
+             <string notr="true">displayButtonGroup</string>
+            </attribute>
            </widget>
           </item>
           <item row="1" column="0">
@@ -67,6 +70,9 @@
             <property name="checked">
              <bool>true</bool>
             </property>
+            <attribute name="buttonGroup">
+             <string notr="true">displayButtonGroup</string>
+            </attribute>
            </widget>
           </item>
           <item row="2" column="0">
@@ -74,6 +80,9 @@
             <property name="text">
              <string>Diffractogram</string>
             </property>
+            <attribute name="buttonGroup">
+             <string notr="true">displayButtonGroup</string>
+            </attribute>
            </widget>
           </item>
          </layout>
@@ -145,24 +154,8 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>radioHistogram</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>PlotWidget</receiver>
-   <slot>showSpectrogram(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>63</x>
-     <y>322</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>204</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
- <slots>
-  <slot>showSpectrogram(bool)</slot>
- </slots>
+ <buttongroups>
+  <buttongroup name="displayButtonGroup"/>
+ </buttongroups>
 </ui>

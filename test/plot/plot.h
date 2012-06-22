@@ -41,7 +41,8 @@ public:
 	{
 		None	= 0,
 		Spectrum,
-		Histogram, 
+		Histogram,
+		Diffractogram, 
 	};
 
 	Plot(QWidget * = NULL);
