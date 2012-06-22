@@ -61,7 +61,9 @@ HEADERS 	+= mainwidget.h \
                 modulesetup.h \
                 mdllsetup.h \
 		passworddialog.h \
-		plot.h 
+		plot.h \
+		zoomer.h \
+		colormaps.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -101,7 +103,9 @@ SOURCES 	+= main.cpp \
 		moduleidentificationpage.cpp \
 		modulemasterpage.cpp \
 		mainwidget.cpp \
-		plot.cpp
+		plot.cpp \
+		zoomer.cpp \
+		colormaps.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
@@ -121,4 +125,4 @@ LIBS		= -L../interfaces/caress -lcaressInterface $${LIBS}
 INCLUDEPATH	+= diskspace
 DEPENDPATH	+= diskspace
 
-LIBS += -lboost_filesystem -lboost_system
+LIBS += -lboost_filesystem-mt -lboost_system-mt

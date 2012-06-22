@@ -25,9 +25,9 @@
 #include <QSvgGenerator>
 #include <qwt_plot_curve.h>
 #include <qwt_scale_widget.h>
-#include <qwt_color_map.h>
 #include <qwt_scale_engine.h>
 
+#include "colormaps.h"
 #include "zoomer.h"
 #include "mainwidget.h"
 #include "mdefines.h"
@@ -206,22 +206,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     m_histogram = new MesydaqPlotSpectrogram();
 
-    m_linColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
-    m_linColorMap->addColorStop(0.143, Qt::blue);
-    m_linColorMap->addColorStop(0.286, Qt::darkCyan);
-    m_linColorMap->addColorStop(0.429, Qt::cyan);
-    m_linColorMap->addColorStop(0.572, Qt::green);
-    m_linColorMap->addColorStop(0.715, Qt::yellow);
-    m_linColorMap->addColorStop(0.858, Qt::red);
-
-    m_logColorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::darkRed);
-    m_logColorMap->addColorStop(0.139, Qt::blue);
-    m_logColorMap->addColorStop(0.193, Qt::darkCyan);
-    m_logColorMap->addColorStop(0.269, Qt::cyan);
-    m_logColorMap->addColorStop(0.373, Qt::green);
-    m_logColorMap->addColorStop(0.519, Qt::yellow);
-    m_logColorMap->addColorStop(0.721, Qt::red);
-
+    m_linColorMap = new StdLinColorMap();
+    m_logColorMap = new StdLogColorMap();
     m_histogram->setColorMap(*m_linColorMap);
 
     m_dataFrame->axisWidget(QwtPlot::yRight)->setColorBarEnabled(true);
@@ -865,6 +851,7 @@ void MainWidget::applyThreshSlot()
  */
 void MainWidget::linlogSlot(bool bLog)
 {
+    MSG_ERROR << __PRETTY_FUNCTION__;
     if (dispHistogram->isChecked())
     {
         if (bLog)
@@ -887,8 +874,8 @@ void MainWidget::linlogSlot(bool bLog)
  */
 void MainWidget::drawOpData()
 {
-    float	mean,
-    sigma;
+    float   mean,
+            sigma;
 
     // display mean and sigma:
     if(dispAll->isChecked())
@@ -1334,6 +1321,7 @@ void MainWidget::draw(void)
     }
     if (dispHistogram->isChecked())
     {
+	MSG_ERROR << __FUNCTION__;
         labelCountsInROI->setText(tr("Counts in ROI"));
 	enum Measurement::HistogramType t;
         if(dispAllPos->isChecked())
