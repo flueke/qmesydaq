@@ -929,8 +929,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 // amplitude (8 bit) is at MPSD "chan" data
 //
 					quint16 val = chan;
-					chan = pos;
-					pos = amp;
+					chan = amp;
 					amp = val;
 				}
 //
