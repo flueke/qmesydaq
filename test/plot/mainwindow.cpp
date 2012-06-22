@@ -53,9 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
 	m_plot->setHistogramData(m_histogramData);
 	m_plot->setDisplayMode(Plot::Histogram);
 
-	QButtonGroup *bg = m_plotWidget->displayButtonGroup;
-
-	connect(bg, SIGNAL(buttonClicked(int)), this, SLOT(setDisplayMode(int)));
+	connect(m_plotWidget->displayButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(setDisplayMode(int)));
 }
 
 void MainWindow::setDisplayMode(int val)
