@@ -107,6 +107,8 @@ void MCPDSpinBox::stepBy(int steps)
 
     \param input string to validate
     \param pos indicates the position in the string. 
+
+    \return the result of the validator
 */
 QValidator::State MCPDSpinBox::validate(QString &input, int &) const
 {

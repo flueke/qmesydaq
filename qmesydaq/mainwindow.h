@@ -43,12 +43,12 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 public:
 	/**
 	 * Default Constructor
+	 *
+	 * \param parent parent widget
 	 */
 	MainWindow(QWidget *parent = 0);
 
-	/**
-	 * Destructor
-	 */
+	//!  Destructor
 	virtual ~MainWindow();
 
         /*! 

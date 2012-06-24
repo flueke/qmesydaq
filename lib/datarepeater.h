@@ -122,8 +122,8 @@ protected:
   //! stored sending data
   QByteArray   m_abyTodo;
 
-  //  UDP Package Counter (to check if one package losed)
-  quint64 m_globalPackageCounter;
+  //! UDP Package Counter (to check if one package losed)
+  quint64 	m_globalPackageCounter;
 
   void InitSocket();
   void SendDatagram(bool bForce);

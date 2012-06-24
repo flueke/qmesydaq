@@ -63,7 +63,10 @@ public:
         int exec();
 
 private:
+	//! the 'loop' object 
 	LoopObject 	*m_loop;
+
+	//! the interface to the Qt
 	QtInterface 	*m_interface;
 };
 

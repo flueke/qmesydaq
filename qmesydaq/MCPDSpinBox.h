@@ -48,6 +48,7 @@ protected:
 	virtual QValidator::State validate(QString & input, int &pos) const;
 
 private:
+	//! the list of all MCPD ID's
 	QList<int>	m_mcpdList;
 
 };

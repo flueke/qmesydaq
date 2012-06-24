@@ -22,19 +22,29 @@
 
 /*!
     constructor
+    
+    \param parent parent widget
  */
 ModuleMasterPage::ModuleMasterPage(QWidget *parent)
 	: QWizardPage(parent)
 {
-    setupUi(this);
+	setupUi(this);
 
-    registerField("master", masterCheckBox);
-    registerField("terminate", terminateCheckBox); 
+	registerField("master", masterCheckBox);
+	registerField("terminate", terminateCheckBox); 
 
-    connect(masterCheckBox, SIGNAL(toggled(bool)), this, SLOT(valueChanged(bool)));
-    setFinalPage(true);
+	connect(masterCheckBox, SIGNAL(toggled(bool)), this, SLOT(valueChanged(bool)));
+	setFinalPage(true);
 }
 
+/*!
+    \fn void ModuleMasterPage::valueChanged(bool val)
+
+    callback for setting the master/slave
+    if val is true it sets automatically the termination of the bus to true
+
+    \param val indicates the master
+ */
 void ModuleMasterPage::valueChanged(bool val)
 {
 	if (val)

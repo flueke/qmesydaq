@@ -52,8 +52,8 @@ protected:
 	virtual QValidator::State validate(QString & input, int &pos) const;
 
 private:
+        //! list of the existing modules
 	QList<int>	m_modList;
-
 };
 
 #endif

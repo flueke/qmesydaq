@@ -64,24 +64,27 @@ class Plot : public QwtPlot
 	Q_OBJECT
 
 public:
+	//! what should be displayed ?
 	enum Mode
 	{
-		None	= 0,
-		Spectrum,
-		Histogram,
-		Diffractogram, 
+		None	= 0,	//!< self explaining :-)
+		Spectrum,	//!< spectra
+		Histogram,	//!< histogram
+		Diffractogram, 	//!< diffractogram
 	};
 
+	//! how should the y scale be displayed
 	enum Scale
 	{
-		Linear = 1,
-		Logarithmic,
+		Linear = 1,	//!< linear scaled
+		Logarithmic,	//!< logarithmic scaled
 	};
 
+	//! what should be displayed
 	enum What
 	{
-		Position = 1,
-		Amplitude,
+		Position = 1,	//!< position data
+		Amplitude,	//!< amplitude data
 	};
 
 	/*!

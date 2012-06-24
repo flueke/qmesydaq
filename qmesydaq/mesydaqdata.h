@@ -47,10 +47,16 @@ public:
 	//! \return the length of the spectrum
 	virtual size_t size() const; 
 
-	//! \return the cell number of the spectrum
+	/*! 
+	    \param i cell number
+	    \return the cell number of the spectrum
+	 */
 	virtual double x(size_t i) const;
 
-	//! \return the counts of the cell i in spectrum
+	/*!
+	    \param i cell number 
+	    \return the counts of the cell i in spectrum
+	 */
 	virtual double y(size_t i) const;
 
 	/**
@@ -65,6 +71,7 @@ public:
 	quint32 max(void);
 
 private:
+	//! The spectrum data
 	Spectrum	*m_spectrum;
 };
 
@@ -108,6 +115,7 @@ public:
 	QSize rasterHint(const QRectF &) const;
 	
 private:
+	//! The histogram data
 	Histogram	*m_histogram;
 };
 

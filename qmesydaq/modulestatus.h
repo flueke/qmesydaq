@@ -63,8 +63,10 @@ private slots:
 	void activeSlot(bool);
 
 private:
+	//! number of the module
 	quint8	m_id;
 
+	//! module online or not
 	bool	m_online;
 };
 #endif

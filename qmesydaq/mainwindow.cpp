@@ -127,7 +127,8 @@ void MainWindow::selectSuperuser(void)
 /*!
     checks the password for the user level
 
-    \param section 
+    \param section the section name to protect
+    \return true if no password required or password hash fits the configured password hash
  */
 bool MainWindow::checkPasswd(const QString &section)
 {

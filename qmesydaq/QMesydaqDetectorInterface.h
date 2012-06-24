@@ -97,22 +97,36 @@ protected:
 	void customEvent(QEvent *);
 
 private:
+	//! mutex to lock the access
 	mutable QMutex		m_mutex;
 
 	bool                    m_bDoLoop;
 
+	//! preselection value
 	double 			m_preSelection;
+
+	//! counter value
 	double 			m_counter;
 
+	//! with
 	quint16			m_width;
+
+	//! height
 	quint16			m_height;
+
+	//! stores the current data set
 	QList<quint64>		m_values;
+
+	//! ????
 	QObject*                m_pObject;
 
+	//! stores the current state
 	int 			m_status;
 
+	//! name of the current listmode file
 	QString			m_listFileName;
 
+	//! name of the current histogram file
 	QString 		m_histFileName;
 };
 

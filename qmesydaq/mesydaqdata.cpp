@@ -132,6 +132,8 @@ void MesydaqHistogramData::initRaster(const QRectF &, const QSize &)
     \note set Qwt library
 
     \param r
+
+    \return the size of the raster data
  */
 QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
 {

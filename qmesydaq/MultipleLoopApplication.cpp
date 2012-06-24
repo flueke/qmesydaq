@@ -26,6 +26,9 @@
 
 /*!
     constructor
+    \param argc
+    \param argv
+    \param loop
  */
 MultipleLoopApplication::MultipleLoopApplication(int &argc, char**argv, LoopObject *loop)
 	: QApplication(argc, argv)

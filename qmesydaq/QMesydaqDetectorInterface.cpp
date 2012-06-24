@@ -115,6 +115,8 @@ void QMesyDAQDetectorInterface::setPreSelection(double value)
 }
 
 /*!
+    returns the preselection
+
     \return the preselection value of the preset counter
  */
 double QMesyDAQDetectorInterface::preSelection()
@@ -259,7 +261,8 @@ const MappedHistogram *QMesyDAQDetectorInterface::getMappedHistogram()
 }
 
 /*!
-    \param name
+    sets the histogram file name
+    \param name histogram file name
  */
 void QMesyDAQDetectorInterface::setHistogramFileName(const QString name)
 {
@@ -267,7 +270,8 @@ void QMesyDAQDetectorInterface::setHistogramFileName(const QString name)
 }
 
 /*!
-    \param name
+    sets the listmode file name
+    \param name listmode file name
  */
 void QMesyDAQDetectorInterface::setListFileName(const QString name)
 {
@@ -275,6 +279,8 @@ void QMesyDAQDetectorInterface::setListFileName(const QString name)
 }
 
 /*!
+    enable/disable the listmode
+
     \param bEnable
  */
 void QMesyDAQDetectorInterface::setListMode(bool bEnable)
@@ -290,7 +296,7 @@ void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength
 }
 
 /*!
-
+    
     \param iWidth
     \param iHeight
     \param iRunNo
@@ -311,6 +317,13 @@ void QMesyDAQDetectorInterface::updateMainWidget(const QString& sWidth, const QS
 	postCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << sWidth << sHeight << sRunNo);
 }
 
+/*!
+    \fn void QMesyDAQDetectorInterface::customEvent(QEvent *e)
+
+    handles the custom events 
+
+    \param e custom event structure
+ */
 void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 {
 	CommandEvent *event = dynamic_cast<CommandEvent*>(e);

@@ -64,6 +64,7 @@ private slots:
 	void displaySlot();
 
 private:
+	//! The MesyDaq objext
 	Mesydaq2	*m_theApp;
 
 };

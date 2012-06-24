@@ -71,6 +71,7 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 /*!
     \fn void ModuleSetup::setPulserSlot()
 
+    callback to handle the pulser settings
 */
 void ModuleSetup::setPulserSlot()
 {
@@ -109,6 +110,8 @@ void ModuleSetup::setPulserSlot()
 /*!
     \fn void ModuleSetup::setGainSlot()
 
+    callback to handle the gain settings
+
 */
 void ModuleSetup::setGainSlot()
 {
@@ -123,6 +126,8 @@ void ModuleSetup::setGainSlot()
 
 /*!
     \fn void ModuleSetup::setThresholdSlot()
+
+    callback to handle the threshold settings
 
 */
 void ModuleSetup::setThresholdSlot()
@@ -174,6 +179,8 @@ void ModuleSetup::writeRegisterSlot()
 /*!
     \fn void ModuleSetup::setModeSlot(bool mode)
 
+    callback to handle the settings of the amplitude/position mode
+
     \param mode
 */
 void ModuleSetup::setModeSlot(bool mode)
@@ -184,6 +191,8 @@ void ModuleSetup::setModeSlot(bool mode)
 /*!
     \fn void ModuleSetup::setModule(int)
 
+    callback to handle the id setting of the module
+
     \param id
  */
 void ModuleSetup::setModule(int id)
@@ -193,6 +202,8 @@ void ModuleSetup::setModule(int id)
 
 /*!
     \fn void ModuleSetup::setMCPD(int)
+
+    callback to display the found module configuration
 
     \param id
  */
@@ -229,6 +240,13 @@ void ModuleSetup::setMCPD(int id)
     checkChannel8Histogram->setChecked(m_theApp->histogram(id, mid, 7));
 }
 
+/*!
+    \fn void ModuleSetup::displayMCPDSlot(int id)
+    
+    callback to handle the change of the MCPD ID by the user
+
+    \param id new MCPD ID
+ */
 void ModuleSetup::displayMCPDSlot(int id)
 {
     if (id < 0)
@@ -242,6 +260,13 @@ void ModuleSetup::displayMCPDSlot(int id)
     displaySlot();
 }
 
+/*!
+    \fn void ModuleSetup::displayMPSDSlot(int id)
+
+    callback to handle the change of the MPSD by the user
+
+    \param id new module id
+ */
 void ModuleSetup::displayMPSDSlot(int id)
 {
     if (id < 0)
@@ -251,6 +276,8 @@ void ModuleSetup::displayMPSDSlot(int id)
 
 /*!
     \fn void ModuleSetup::displaySlot()
+
+    callback to display the settings of the module
  */
 void ModuleSetup::displaySlot()
 {
