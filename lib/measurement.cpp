@@ -755,6 +755,11 @@ void Measurement::readHistograms(const QString &name)
 	}
 }
 
+/*!
+    \fn void Measurement::readCalibration(const QString &name)
+
+    \param name calibration file name
+ */
 void Measurement::readCalibration(const QString &name)
 {
 	if (name.isEmpty())

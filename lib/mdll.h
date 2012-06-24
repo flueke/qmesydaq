@@ -34,7 +34,6 @@
 class MDLL : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(quint8 m_busNum READ busNumber)
 
 public:
     MDLL(quint8, QObject * = 0);
@@ -43,25 +42,25 @@ public:
 
     static MDLL *create(int, int, QObject * = 0);
 
-    bool	active(void);
+    // bool	active(void);
 
-    bool	active(quint16);
+    // bool	active(quint16);
 
-    void	setActive(bool act);
+    // void	setActive(bool act);
 
-    void	setActive(quint16, bool);
+    // void	setActive(quint16, bool);
 
-    bool	histogram(void);
+    // bool	histogram(void);
 
-    bool	histogram(quint16);
+    // bool	histogram(quint16);
 
-    void	setHistogram(bool hist);
+    // void	setHistogram(bool hist);
 
-    void	setHistogram(quint16, bool);
+    // void	setHistogram(quint16, bool);
 
-    QList<quint16> getHistogramList(void);
+    // QList<quint16> getHistogramList(void);
 
-    QList<quint16> getActiveList(void);
+    // QList<quint16> getActiveList(void);
 
     //! \return the ID of the MDLL
     quint8 	getModuleId(void) {return m_mdllId;}
@@ -81,6 +80,10 @@ public:
 
     void setThresholds(quint8 thresh_x, quint8 thresh_y, quint8 thresh_a, bool preset = false);
 
+    /*!
+        \param val
+        \return the threshold
+     */
     quint8 getThreshold(quint8 val) 
     {
         return m_thresh[val][1];
@@ -88,6 +91,10 @@ public:
 
     void setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset);
 
+    /*!
+        \param val
+        \return the timing window
+     */
     quint16 getTimingWindow(quint8 val) 
     {
         return m_timingWindow[val][1];
@@ -95,6 +102,10 @@ public:
 
     void setEnergyWindow(quint8 elo, quint8 ehi, bool preset);
 
+    /*!
+        \param val
+        \return the energy window
+     */
     quint8 getEnergyWindow(quint8 val) 
     {
         return m_energyWindow[val][1];
@@ -102,6 +113,9 @@ public:
 
     void setDataset(quint8 set, bool preset = false);
 
+    /*!
+         \return the data set type
+     */
     quint8 getDataset(void) 
     {
         return m_dataset[1];
@@ -110,13 +124,16 @@ public:
     // Pulser related methods
     void	setPulser(quint8 pos = 2, quint8 ampl = 3, quint8 on = 0, bool preset = false);
 
+    //! return the pulser position
     quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
 
+    //! return the pulser amplitude
     quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
 
     //! \return is the pulser on
     bool isPulserOn(bool preset = false) {return m_pulser[preset];};
 
+    //! initialises the MDLL
     void initMdll(void);
 
 
@@ -154,15 +171,16 @@ public:
     quint16	getInternalreg(quint8 reg, bool preset = false) {return m_internalReg[reg][preset];}
 #endif
 
+    //! returns the number of bins
     virtual quint16 bins() {return 960;}
 
     //! returns the number of the bus
-    quint8 busNumber(void) {return m_busNum;}
+    quint8 busNumber(void) {return 0;}
 
 protected:
-    quint8	calcThreshval(quint8 thr);
+    // quint8	calcThreshval(quint8 thr);
 public:
-    quint8	calcThreshpoti(quint8 tval);
+    // quint8	calcThreshpoti(quint8 tval);
 
 private:
     //! MCPD-8 id
@@ -175,13 +193,9 @@ protected:
     //! timing mode
     bool		m_timingMode[2];
 
-    //! the bus number ????
-    quint8		m_busNum;
+    // bool		m_active;
 
-    bool		m_active;
-
-    bool		m_histogram;
-
+    // bool		m_histogram;
 
     //! MDLL specific parameters:
 

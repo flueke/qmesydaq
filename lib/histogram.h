@@ -102,6 +102,11 @@ public:
 		m_width = bins;
 	}
 
+	/*!
+    	 * The histogram will be formatted
+	 *
+	 * \return formatted histogram as string
+	 */
 	QString format(void);
 
 	//! \return auto resizing of the spectrum

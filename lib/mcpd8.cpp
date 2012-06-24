@@ -494,6 +494,15 @@ bool MCPD8::setMdllThresholds(quint8 threshX, quint8 threshY, quint8 threshA)
 	return sendCommand();
 }
 
+/*!
+    \fn bool MCPD8::setMdllSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
+
+    \param shiftX
+    \param shiftY
+    \param scaleX
+    \param scaleY
+    \return true if operation was succesful or not
+ */
 bool MCPD8::setMdllSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 {
 	m_mdll[0]->setSpectrum(shiftX, shiftY, scaleX, scaleY, 1);
@@ -506,6 +515,12 @@ bool MCPD8::setMdllSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 
 	return sendCommand();
 }
 
+/*!
+    \fn bool MCPD8::setMdllDataset(quint8 set)
+
+    \param set
+    \return true if operation was succesful or not
+ */
 bool MCPD8::setMdllDataset(quint8 set)
 {
 	m_mdll[0]->setDataset(set, true);
@@ -515,7 +530,15 @@ bool MCPD8::setMdllDataset(quint8 set)
 	return sendCommand();
 }
 
+/*!
+    \fn bool MCPD8::setMdllTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
 
+    \param xlo
+    \param xhi
+    \param ylo
+    \param yhi
+    \return true if operation was succesful or not
+ */
 bool MCPD8::setMdllTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
 {    
 	m_mdll[0]->setTimingWindow(xlo, xhi, ylo, yhi, 1);
@@ -528,9 +551,17 @@ bool MCPD8::setMdllTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 y
 	m_cmdBuf.data[5] = yhi;
 	finishCmdBuffer(6);
 	return sendCommand();
- }
+}
 
+/*!
+    \fn bool MCPD8::setMdllEnergyWindow(quint8 elo, quint8 ehi)
 
+    sets the energy window
+
+    \param elo lower limit of the energy range
+    \param ehi upper limit of the energy range
+    \return true if operation was succesful or not
+ */
 bool MCPD8::setMdllEnergyWindow(quint8 elo, quint8 ehi)
 {    
 	m_mdll[0]->setEnergyWindow(elo, ehi, 1);
@@ -559,6 +590,12 @@ quint8 MCPD8::getThreshold(quint16 addr)
 	return 0;
 }
 
+/*!
+    \fn quint8 MCPD8::getMdllThreshold(quint8 val)
+
+    \param val 
+    \return the threshold value
+ */
 quint8 MCPD8::getMdllThreshold(quint8 val)
 {
 	if (m_mdll.find(0) != m_mdll.end())
@@ -566,6 +603,12 @@ quint8 MCPD8::getMdllThreshold(quint8 val)
 	return 0;
 }
 
+/*!
+    \fn quint8 MCPD8::getMdllSpectrum(quint8 val)
+    
+    \param val
+    \return the spectrum
+ */
 quint8 MCPD8::getMdllSpectrum(quint8 val)
 {
 	if (m_mdll.find(0) != m_mdll.end())
@@ -573,6 +616,12 @@ quint8 MCPD8::getMdllSpectrum(quint8 val)
 	return 0;
 }
 
+/*!
+    \fn quint16 MCPD8::getMdllTimingWindow(quint8 val)
+
+    \param val
+    \return timing window 
+ */
 quint16 MCPD8::getMdllTimingWindow(quint8 val)
 {
 	if (m_mdll.find(0) != m_mdll.end())
@@ -580,6 +629,12 @@ quint16 MCPD8::getMdllTimingWindow(quint8 val)
 	return 0;
 }
 
+/*!
+    \fn quint8 MCPD8::getMdllEnergyWindow(quint8 val)
+
+    \param val
+    \return energy window
+ */
 quint8 MCPD8::getMdllEnergyWindow(quint8 val)
 {
 	if (m_mdll.find(0) != m_mdll.end())
@@ -587,6 +642,11 @@ quint8 MCPD8::getMdllEnergyWindow(quint8 val)
 	return 0;
 }
 
+/*!
+    \fn quint8 MCPD8::getMdllDataset(void)
+
+    \return the type of data set
+ */
 quint8 MCPD8::getMdllDataset(void)
 {
 	if (m_mdll.find(0) != m_mdll.end())
@@ -594,6 +654,12 @@ quint8 MCPD8::getMdllDataset(void)
 	return 0;
 }
 
+/*!
+    \fn quint8 MCPD8::getMdllPulser(quint8 val)
+
+    \param val
+    \return 
+ */
 quint8 MCPD8::getMdllPulser(quint8 val)
 {
 	if (m_mdll.find(0) != m_mdll.end())
@@ -1247,7 +1313,7 @@ quint16 MCPD8::calcChksum(const MDP_PACKET &buffer)
 }
 
 /*!
-    \fn MCPD8::analyzeBuffer(MDP_PACKET recBuf)
+    \fn MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
 	
     analyze the data package coming from the MCPD-8
 
@@ -2150,7 +2216,9 @@ bool MCPD8::histogram(quint16 id, quint16 chan)
 }
 
 /*!
-    \fn QList<quint16> MPSD8::getHistogramList(void)
+    \fn QList<quint16> MCPD8::getHistogramList(void)
+
+    return the list of channels used in histograms
     
     \return the list of channels used in histograms
  */
@@ -2178,7 +2246,7 @@ QList<quint16> MCPD8::getHistogramList(void)
 }
 
 /*!
-    \fn QList<quint16> MPSD8::getActiveList(void)
+    \fn QList<quint16> MCPD8::getActiveList(void)
 
     provides list of active modules
 

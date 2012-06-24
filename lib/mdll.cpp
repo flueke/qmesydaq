@@ -30,22 +30,19 @@
 
 /*!
     constructor
-    \param id
     \param parent
  */
-MDLL::MDLL(quint8 id, QObject *parent)
+MDLL::MDLL(quint8 , QObject *parent)
     : QObject(parent)
     , m_mdllId(TYPE_MDLL)
-    , m_busNum(id)
 {
-    quint8 i = 0;
-    for(quint8 pre = 0; pre < 2; pre++)
+    for(quint8 pre = 0; pre < 2; ++pre)
     {
-        for(i = 0; i < 3; i++)
+        for(quint8 i = 0; i < 3; ++i)
         {
             m_thresh[i][pre] = 20;
         }
-        for(i = 0; i < 2; i++)
+        for(quint8 i = 0; i < 2; ++i)
         {
             m_shift[i][pre] = 100;
             m_scale[i][pre] = 40;
@@ -70,7 +67,6 @@ MDLL::~MDLL()
 {
 }
 
-
 /*!
     \fn MDLL *MDLL::create(int bus, int typ, QObject *parent)
 
@@ -87,9 +83,6 @@ MDLL *MDLL::create(int bus, int typ, QObject *parent)
     Q_UNUSED(typ);
     return new MDLL(bus, parent);
 }
-
-
-
 
 /*!
     \fn MDLL::setThresholds(quint8 threshX, quint8 threshY, quint8 threshA, bool preset)
@@ -156,6 +149,12 @@ void MDLL::setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scale
     }
 }
 
+/*!
+    \fn void MDLL::setDataset(quint8 set, bool preset)
+
+    \param set
+    \param preset
+ */
 void MDLL::setDataset(quint8 set, bool preset)
 {
     if(set > 1)
@@ -174,6 +173,15 @@ void MDLL::setDataset(quint8 set, bool preset)
     }
 }
 
+/*!
+    \fn void MDLL::setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset)
+
+    \param xlo
+    \param xhi
+    \param ylo
+    \param yhi
+    \param preset
+ */
 void MDLL::setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset)
 {
     if(preset)
@@ -198,6 +206,13 @@ void MDLL::setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, b
     }
 }
 
+/*!
+    \fn void MDLL::setEnergyWindow(quint8 elo, quint8 ehi, bool preset)
+
+    \param elo
+    \param ehi
+    \param preset
+ */
 void MDLL::setEnergyWindow(quint8 elo, quint8 ehi, bool preset)
 {
     m_energyWindow[0][preset] = elo;
@@ -215,6 +230,14 @@ void MDLL::setEnergyWindow(quint8 elo, quint8 ehi, bool preset)
     }
 }
 
+/*!
+    \fn void MDLL::setPulser(quint8 pos, quint8 amp, quint8 on, bool preset)
+
+    \param pos
+    \param amp
+    \param on
+    \param preset
+ */
 void MDLL::setPulser(quint8 pos, quint8 amp, quint8 on, bool preset)
 {
     if(preset)
@@ -247,6 +270,12 @@ void MDLL::setPulser(quint8 pos, quint8 amp, quint8 on, bool preset)
     }
 }
 
+/*!
+    \fn quint8 MDLL::getSpectrum(quint8 val)
+
+    \param val 
+    \return the spectrum
+ */
 quint8 MDLL::getSpectrum(quint8 val)
 {
     if(val < 2)

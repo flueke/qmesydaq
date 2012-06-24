@@ -450,7 +450,7 @@ void Mesydaq2::scanPeriph(quint16 id)
 }
 
 /*!
-    \fn Mesydaq2::saveSetup(const QString &name)
+    \fn Mesydaq2::saveSetup(QSettings &settings)
 
     Stores the setup in a file. This function stores INI files in format of
     "MesyDAQ" instead of "QMesyDAQ" using QSettings class (which is not easy
@@ -459,7 +459,7 @@ void Mesydaq2::scanPeriph(quint16 id)
     Note: MesyDAQ INI file format is not used correctly, because the section
 	  names are not unique: imagine you don't have a single MCPD-8 + MPSD-8 ...
 
-    \param name file name
+    \param settings 
     \return true if successfully saved otherwise false
  */
 bool Mesydaq2::saveSetup(QSettings &settings)
@@ -565,7 +565,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 }
 
 /*!
-    \fn Mesydaq2::loadSetup(const QString &name)
+    \fn Mesydaq2::loadSetup(QSettings &settings)
 
     Loads the setup from a file. This function should be able to load
     "MesyDAQ" files and also "QMesyDAQ" files (using QSettings class which is
@@ -574,7 +574,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
     \note MesyDAQ INI file format is not used correctly, because the section
 	  names are not unique: imagine you don't have a single MCPD-8 + MPSD-8 ...
 
-    \param name file name
+    \param settings 
     \return true if successfully loaded otherwise false
  */
 bool Mesydaq2::loadSetup(QSettings &settings)
@@ -1196,39 +1196,74 @@ void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 		m_mcpd[id]->setThreshold(addr, thresh);
 }
 
+/*!
+    \fn void Mesydaq2::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, quint8 threshA)
+
+    \param id
+    \param threshX
+    \param threshY
+    \param threshA
+ */
 void Mesydaq2::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, quint8 threshA)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllThresholds(threshX, threshY, threshA);
 }
 
+/*!
+    \fn void Mesydaq2::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 
+    \param id
+    \param shiftX
+    \param shiftY
+    \param scaleX
+    \param scaleY
+ */
 void Mesydaq2::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllSpectrum(shiftX, shiftY, scaleX, scaleY);
 }
 
+/*!
+     \fn void Mesydaq2::setMdllDataset(quint16 id, quint8 set)
+
+     \param id
+     \param set
+ */
 void Mesydaq2::setMdllDataset(quint16 id, quint8 set)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllDataset(set);
 }
 
+/*!
+    \fn void Mesydaq2::setMdllTimingWindow(quint16 id, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
+
+    \param id
+    \param xlo
+    \param xhi
+    \param ylo
+    \param yhi
+ */
 void Mesydaq2::setMdllTimingWindow(quint16 id, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllTimingWindow(xlo, xhi, ylo, yhi);
 }
 
+/*!
+    \fn void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
+
+    \param id
+    \param elo
+    \param ehi
+ */
 void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllEnergyWindow(elo, ehi);
 }
-
-
-
 
 /*!
     \fn quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
@@ -1266,7 +1301,7 @@ quint8 Mesydaq2::getMdllDataset(quint16 id)
     get one of four timing window borders of the MDLL.
 
     \param id number of the MCPD
-    \param requested value: txlo, txhi, tylo, tyhi (0...3)
+    \param val requested value: txlo, txhi, tylo, tyhi (0...3)
     \return border value
  */
 quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
@@ -1280,7 +1315,7 @@ quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
     get one of two energy window borders of the MDLL.
 
     \param id number of the MCPD
-    \param requested value: elo, ehi (0/1)
+    \param val requested value: elo, ehi (0/1)
     \return border value
  */
 quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
@@ -1294,7 +1329,7 @@ quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
     get one of four spectrum parameters of the MDLL.
 
     \param id number of the MCPD
-    \param requested value: shiftX, shiftY, scaleX, scaleY (0...3)
+    \param val requested value: shiftX, shiftY, scaleX, scaleY (0...3)
     \return spectrum value
  */
 quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
@@ -1308,7 +1343,7 @@ quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
     get one of three CFD thresholds of the MDLL.
 
     \param id number of the MCPD
-    \param requested value: threshX, threshY, threshA (0...2)
+    \param val requested value: threshX, threshY, threshA (0...2)
     \return threshold value
  */
 quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
@@ -1322,7 +1357,7 @@ quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
     get one of three pulser parameters of the MDLL.
 
     \param id number of the MCPD
-    \param requested value: On, Amplitude, Position (0...2)
+    \param val requested value: On, Amplitude, Position (0...2)
     \return pulser parameter
  */
 quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
