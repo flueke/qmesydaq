@@ -27,6 +27,8 @@ Zoomer::Zoomer(QwtPlotCanvas *canvas)
 	setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier);
 	setMousePattern(QwtEventPattern::MouseSelect3, Qt::RightButton);
 
+	setTrackerMode(AlwaysOn);
+
 	setZoomBase(true);
 }
 

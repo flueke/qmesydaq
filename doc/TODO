@@ -16,9 +16,14 @@ O  Forward streaming of the incoming data packages
   The current values of different counters should be display close to the preselection
   values for better comparison.
 
+  Done: JK 2012/06/25
+
 4  Add information about position and intensity when cursor is moving over the plot
   If the cursor is moving over the plot area the position values and and intensity should
   be displayed
+
+  Done: for spectrum like plots 2012/06/25
+        open for 2D plots, due to no idea to get the intensity data
 
 5  Additional plots 
   - Count rate plots (detector, monitor, external signals, ...) over time
@@ -42,6 +47,8 @@ O  Forward streaming of the incoming data packages
   The free disk space on the data partition (for storing the listmode file data) should be
   displayed in user front end.
 
+  Done: JK 2012/06/25
+
 9  Automatic list mode file naming
   In the remote operation mode the list mode file name should be controlled by the control
   software and the user should not be able to change the filename.
@@ -53,6 +60,8 @@ O  Forward streaming of the incoming data packages
   - in 2D histogram
     - maximum/minimum channel and tube
     - counts in a ROI
+
+  Done: counts in ROI, JK 2012/06/25
 
 11 Calibration and re-binning
 
