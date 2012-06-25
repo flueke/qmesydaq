@@ -285,6 +285,12 @@ void ModuleSetup::displaySlot()
 
     quint8 mod = devid->value();
     quint8 id = module->value();
+    int modType = m_theApp->getModuleId(mod, id);
+    qDebug() << mod << " " << id << " modType " << modType;
+    pulsMid->setVisible(modType != TYPE_MSTD16);
+    Ui_ModuleSetup::pos->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
+    Ui_ModuleSetup::amp->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
+
 // gain:
     gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));
 
@@ -310,9 +316,6 @@ void ModuleSetup::displaySlot()
     dstr.sprintf("%3d", m_theApp->getPulsAmp(mod, id));
     pulsAmp->setValue((int)m_theApp->getPulsAmp(mod, id));
 #endif
-    int modType = m_theApp->getModuleId(mod, id);
-    pulsMid->setVisible(modType != TYPE_MSTD16);
-    qDebug() << mod << " " << id << " modType " << modType;
 
 // position
     qDebug() << "pulser Pos " << m_theApp->getPulsPos(mod, id);
