@@ -895,7 +895,9 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 					case MON4ID :
 						++monitorTriggers;
 						++(*m_counter[dataId]);
-//						MSG_DEBUG << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
+#if 0
+						MSG_DEBUG << "counter " << dataId << " : (" << i << " - " << triggers << ')' << m_counter[dataId]->value() << " : " << data;
+#endif
 						break;
 					case TTL1ID :
 					case TTL2ID :
@@ -969,23 +971,31 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 #endif
 				if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
 				{
-//					MSG_INFO << "MSTD-16 event : chan : " << chan << " : pos : " << pos << " : id : " << id;
+#if 0
+					MSG_INFO << "MSTD-16 event : chan : " << chan << " : pos : " << pos << " : id : " << id;
+#endif
 					chan <<= 1;
 					chan += (pos >> 9) & 0x1;
 					amp &= 0x1FF;
 //					if (pos >= 480)
 //						++chan;
-//					MSG_DEBUG << "Put this event into channel : " << chan;
+#if 0
+					MSG_DEBUG << "Put this event into channel : " << chan;
+#endif
 					m_Spectrum[TubeSpectrum]->incVal(chan);
-//					MSG_INFO << "Value of this channel : " << m_Spectrum[TubeSpectrum]->value(chan);
+#if 0
+					MSG_INFO << "Value of this channel : " << m_Spectrum[TubeSpectrum]->value(chan);
+#endif
 				}
 				else if (m_Spectrum[TubeSpectrum])
 					m_Spectrum[TubeSpectrum]->incVal(chan);
 			}
 		}
+#if 0
  		MSG_DEBUG << QObject::tr("# : %1 has %2 trigger events and %3 neutrons").arg(pd.bufferNumber).arg(triggers).arg(neutrons);
 		MSG_DEBUG << QObject::tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pd.bufferNumber)
 					.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);
+#endif
 		m_triggers += triggers;
 		m_neutrons += neutrons;
 #if 0
@@ -1045,7 +1055,13 @@ bool Measurement::getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 	const QChar c('0');
 	quint16 sep1, sep2, sep3, sep4;
 
-	datStream >> sep1 >> sep2 >> sep3 >> sep4;
+//	datStream >> sep1 >> sep2 >> sep3 >> sep4;
+	quint64	sep;
+	datStream >> sep;
+	sep4 = sep & 0xFFFF;
+	sep3 = (sep >>= 16) & 0xFFFF;
+	sep2 = (sep >>= 16) & 0xFFFF;
+	sep1 = (sep >>= 16) & 0xFFFF;
 // check for closing signature:
 // closing separator: sepF sepA sep5 sep0
 	bool ok = !((sep1 == sepF) && (sep2 == sepA) && (sep3 == sep5) && (sep4 == sep0));
@@ -1071,7 +1087,12 @@ bool Measurement::getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 				}
 			else
 				MSG_ERROR << "corrupted file";
-			datStream >> sep1 >> sep2 >> sep3 >> sep4;
+//			datStream >> sep1 >> sep2 >> sep3 >> sep4;
+			datStream >> sep;
+			sep4 = sep & 0xFFFF;
+			sep3 = (sep >>= 16) & 0xFFFF;
+			sep2 = (sep >>= 16) & 0xFFFF;
+			sep1 = (sep >>= 16) & 0xFFFF;
 			// block separator : sep0 sepF sep5 sepA
 			ok = ((sep1 == sep0) && (sep2 == sepF) && (sep3 == sep5) && (sep4 == sepA));
 		}
@@ -1141,30 +1162,34 @@ void Measurement::readListfile(const QString &readfilename)
 	QChar 		c('0');
 	DATA_PACKET 	dataBuf;
 
-	// header separator : sep0 sep5 sepA sepF
+// header separator : sep0 sep5 sepA sepF
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
 	if ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF))
+	{
+		if (getNextBlock(datStream, dataBuf))
+		{
+			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
+			m_counter[TIMERID]->start(tmp / 10000);
+			analyzeBuffer(dataBuf);
+			++blocks;
+			++bcount;
+		}
 		for(; getNextBlock(datStream, dataBuf); ++blocks, ++bcount)
 		{
-			if (!bcount)
-			{
-				quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
-				m_counter[TIMERID]->start(tmp / 10000);
-			}
 // hand over data buffer for processing
 			analyzeBuffer(dataBuf);
 			if(!(bcount % 5000))
 			{
 				if (getROI().isEmpty())
 					setROI(QRectF(0,0, width(), height()));
-				emit draw();
 				QCoreApplication::processEvents();
 			}
-		}	
+		}
+	}
 	datfile.close();
 	MSG_ERROR << "End replay";
-	MSG_NOTICE << "Found " << blocks << " data packages";
-	MSG_NOTICE << QObject::tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
+	MSG_ERROR << "Found " << blocks << " data packages";
+	MSG_ERROR << QObject::tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
 	emit draw();
 	QCoreApplication::processEvents();
 }

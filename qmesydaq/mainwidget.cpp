@@ -682,7 +682,11 @@ void MainWidget::replayListfileSlot()
         clearAllSlot();
         displayTabWidget->setEnabled(true);
         m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
+	m_dispTimer = startTimer(1000);
         m_meas->readListfile(name);
+        if (m_dispTimer)
+            killTimer(m_dispTimer);
+	m_dispTimer = 0;
         startStopButton->setEnabled(true);
     }
 }

@@ -139,9 +139,8 @@ bool Spectrum::setValue(const quint16 bin, const quint64 val)
 bool Spectrum::addValue(const quint16 bin, const quint64 val)
 {
 	if (!checkBin(bin))
-//	MSG_DEBUG << "bin(" << bin << ") > size(" << m_data.size() << ')';
 		return false;
-	
+
 	m_data[bin] += val;
 	m_totalCounts += val;
 	calcMaximumPosition(bin);
