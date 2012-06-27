@@ -36,6 +36,7 @@
 #include <iostream>
 #include "logging.h"
 #include "mdefines.h"
+#include <cctype>
 
 // maximum length of logging data before word wrapping
 //#define MAX_LOGLINE_LENGTH 80
@@ -148,25 +149,25 @@ static QString createMessage(const char *msg, char cLogLevel)
 static void messageToFile(QtMsgType type, const char *msg)
 {
 	char cLogLevel='\0';
-	int iLogLevel;
+	int iLogLevel(100);
 	switch (type)
 	{
 		case QtDebugMsg:
-			iLogLevel=3;
-			if (msg[0]>='0' && msg[0]<='9')
+			iLogLevel = DEBUG;
+			if (isdigit(msg[0])) 
 			{
-				cLogLevel=msg[0];
-				iLogLevel=cLogLevel-'0';
+				cLogLevel = msg[0];
+				iLogLevel = cLogLevel-'0';
 				++msg;
 			}
 			break;
-		case QtWarningMsg:  iLogLevel=2; break;
-		case QtCriticalMsg: iLogLevel=1; break;
-		case QtFatalMsg:    iLogLevel=0; break;
+		case QtWarningMsg:  iLogLevel = WARNING; break;
+		case QtCriticalMsg: iLogLevel = ERROR; break;
+		case QtFatalMsg:    iLogLevel = FATAL; break;
 	}
-	if (iLogLevel<=DEBUGLEVEL)
+	if (iLogLevel <= DEBUGLEVEL)
 	{
-		QString logline=createMessage(msg,cLogLevel);
+		QString logline = createMessage(msg, cLogLevel);
 		std::cerr << logline.toStdString();
 
 		if (g_bUseLogfile)
