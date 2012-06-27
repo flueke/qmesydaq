@@ -1,6 +1,6 @@
-#include "../../lib/mapcorrect.cpp"
-#include "../../lib/mappedhistogram.cpp"
-#include "../../lib/histogram.cpp"
+#include "mapcorrect.cpp"
+#include "mappedhistogram.cpp"
+#include "histogram.cpp"
 
 #include <iostream>
 
@@ -10,6 +10,8 @@ int main(int, char **)
 		iSrcHeight(960),
 		iDstWidth(128),
 		iDstHeight(128);
+
+	quint64	tmpmap[128 * 960];
 
 // generate linear (default) mapping
 	LinearMapCorrection 	m(QSize(iSrcWidth, iSrcHeight), QSize(iDstWidth, iDstHeight));
@@ -32,10 +34,14 @@ int main(int, char **)
 				mh.incVal(i, j);	// ratio is at the moment about 2.4 (2012/05/24)
 				h.incVal(i, j);
 				h2.incVal(i, j);
+				quint32 ind = i * iSrcWidth + j;
+				++tmpmap[ind];
 				++counts;
 			}
 	std::cout << counts << " events mapped" << std::endl;
-
+	std::cout << tmpmap[0] << std::endl;
+	std::cout << tmpmap[1] << std::endl;
+	std::cout << "Mapped Histogram" << std::endl;
 	std::cout << "total counts : " << mh.getTotalCounts() << std::endl;
 	std::cout << "total counts (corrected) : " << mh.getCorrectedTotalCounts() << std::endl;
 
@@ -45,6 +51,11 @@ int main(int, char **)
 	mh.incVal(0, 0);
 	std::cout << "total counts : " << mh.getTotalCounts() << std::endl;
 	std::cout << "value(0,0) " << mh.value(0, 0) << std::endl;
+
+	std::cout << "Histogram" << std::endl;
+	std::cout << "total counts : " << h.getTotalCounts() << std::endl;
+	std::cout << "value(0,0) " << h.value(0, 0) << std::endl;
+	std::cout << "value(0,1) " << h.value(0, 1) << std::endl;
 
 	h.setValue(0, 0, 10);
 

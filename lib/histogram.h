@@ -58,7 +58,7 @@ public:
 	void clear(void);
 
 	//! \return the maximum value of the spectrum
-	quint64 max() {return m_data.size() ? m_data[m_maximumPos] : 0;}
+	quint64 max() {return m_width ? m_data[m_maximumPos] : 0;}
 
 	//! \return the first position of the maximum value of the spectrum
 	quint16 maxpos(void) const {return m_maximumPos;}
@@ -98,7 +98,13 @@ public:
 	 */
 	void resize(const quint16 bins) 
 	{
-		m_data.resize(bins);
+		if (bins == m_width)
+			return;
+		m_data = (quint64 *)realloc(m_data, bins * sizeof(quint64));
+		if (bins > m_width)
+		{
+			memset(m_data + m_width, '\0', (bins - m_width) * sizeof(quint64));
+		}
 		m_width = bins;
 	}
 
@@ -123,8 +129,17 @@ private:
 
 	void calcMaximumPosition(const quint16 bin);
 
+        /**
+            checks whether the bin is inside the histogram or not.
+            If the autoresize is set and the bin isn't inside the size
+	    of the histogram will be resized to the bin number.
+            
+	    \param bin requested bin
+         */
+	bool checkBin(const quint16 bin);
+
 private:
-	QVector<quint64>	m_data;
+	/* QVector< */quint64 /*> */	*m_data;
 
 	quint64			m_maximumPos;
 
@@ -136,11 +151,11 @@ private:
 	quint8 			m_meanPos;
 
 	//! last events
-	QVector<quint16>	m_floatingMean; 
+	quint16			m_floatingMean[256]; 
 
 	bool			m_autoResize;
 
-	quint32			m_width;
+	quint16			m_width;
 };
 
 
@@ -263,10 +278,15 @@ private:
 	QHash<QPoint, int>		m_data1;
 
 	//! all spectra
-	QHash<quint16, Spectrum*>	m_data;
+	Spectrum			**m_data;
 
 	//! the list of all keys for the spectra
 	QList<quint16>			m_dataKeys;
+
+	quint16				m_height;
+
+	//! number of tubes
+	quint16				m_width;
 
 	//! sum spectrum
 	Spectrum			m_sumSpectrum;
@@ -276,9 +296,6 @@ private:
 
 	//! automatic resize of the histogram allowed or not
 	bool				m_autoResize;
-
-	//! number of tubes
-	quint16				m_width;
 
 	//! minimum value in ROI
 	quint64				m_minROI;

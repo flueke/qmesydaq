@@ -35,6 +35,7 @@
  */
 Spectrum::Spectrum(const quint16 bins)
 	: QObject()
+	, m_data(NULL)
 	, m_maximumPos(0)
 	, m_meanCount(0)
 	, m_totalCounts(0)
@@ -42,8 +43,8 @@ Spectrum::Spectrum(const quint16 bins)
 	, m_autoResize(false)
 	, m_width(0)
 {
+	m_width = 0;
 	setWidth(bins);
-	m_floatingMean.resize(256);
 	clear();
 }
 
@@ -62,23 +63,31 @@ Spectrum::~Spectrum()
  */
 bool Spectrum::incVal(const quint16 bin)
 {
-	int size = m_data.size();
-	if (bin >= size && autoResize())
-		resize(size = bin + 1);
-	if (bin < size)
-	{
-		m_data[bin]++;
-		m_totalCounts++;
-		calcMaximumPosition(bin);
-		calcFloatingMean(bin);
+	if (!checkBin(bin))
+		return false;
+
+	quint64 *tmp(m_data + bin);
+	++m_totalCounts;
+	++(*tmp);
+	calcMaximumPosition(bin);
+	calcFloatingMean(bin);
+	return true;
+}
+
+bool Spectrum::checkBin(const quint16 bin)
+{
+	if (bin < m_width)
 		return true;
-	}
-	return false;
+	if (m_autoResize)
+		setWidth(bin + 1);
+	else
+		return false;
+	return bin < m_width;
 }
 
 void Spectrum::calcMaximumPosition(const quint16 bin)
 {
-	if (m_data[bin] > m_data[m_maximumPos])
+	if (*(m_data + bin) > *(m_data + m_maximumPos))
 		m_maximumPos = bin;
 }
 
@@ -90,10 +99,10 @@ void Spectrum::calcFloatingMean(const quint16 bin)
 #	warning TODO mean value determination
 #endif
 //! \todo mean value determination
-	m_floatingMean[m_meanPos] = bin;
-	m_meanPos++;
+	m_floatingMean[m_meanPos & 0xFF] = bin;
+	++m_meanPos;
 	if(m_meanCount < 255)
-		m_meanCount++;
+		++m_meanCount;
 }
 
 /*!
@@ -107,19 +116,15 @@ void Spectrum::calcFloatingMean(const quint16 bin)
  */
 bool Spectrum::setValue(const quint16 bin, const quint64 val)
 {
-	int size = m_data.size();
-	if (bin >= size && autoResize())
-		resize(bin + 1);
-	if (bin < m_data.size())
-	{
-		m_totalCounts -= m_data[bin];
-		m_data[bin] = val;
-		m_totalCounts += val;
-		calcMaximumPosition(bin);
-		calcFloatingMean(bin);
-		return true;
-	}
-	return false;
+	if (!checkBin(bin))
+		return false;
+
+	m_totalCounts -= m_data[bin];
+	m_data[bin] = val;
+	m_totalCounts += val;
+	calcMaximumPosition(bin);
+	calcFloatingMean(bin);
+	return true;
 }
 
 /*!
@@ -133,19 +138,15 @@ bool Spectrum::setValue(const quint16 bin, const quint64 val)
  */
 bool Spectrum::addValue(const quint16 bin, const quint64 val)
 {
-	int size = m_data.size();
-	if (bin >= size && autoResize())
-		resize(bin + 1);
-	if (bin < size)
-	{
-		m_data[bin] += val;
-		m_totalCounts += val;
-		calcMaximumPosition(bin);
-		calcFloatingMean(bin);
-		return true;
-	}
+	if (!checkBin(bin))
 //	MSG_DEBUG << "bin(" << bin << ") > size(" << m_data.size() << ')';
-	return false;
+		return false;
+	
+	m_data[bin] += val;
+	m_totalCounts += val;
+	calcMaximumPosition(bin);
+	calcFloatingMean(bin);
+	return true;
 }
 
 /*!
@@ -155,8 +156,8 @@ bool Spectrum::addValue(const quint16 bin, const quint64 val)
  */
 void Spectrum::clear(void)
 {
-	m_data.fill(0);
-	m_floatingMean.fill(0);
+	memset(m_data, '\0', sizeof(quint64) * m_width);
+	memset(m_floatingMean, '\0', sizeof(m_floatingMean));
 	m_totalCounts = m_maximumPos = m_meanCount = m_meanPos = 0;
 }
 
@@ -198,23 +199,15 @@ float Spectrum::mean(float &s)
  */
 void Spectrum::setWidth(const quint16 w)
 {
-	if (w == width())
+	if (w == m_width)
 		return;
-	else if (w > width())
-	{
-		m_data.resize(w);
-	}
-	else
-	{
-		m_data.resize(w);
-		m_data.squeeze();
-	}
+	resize(w);
 	m_width = w;
 }
 
 quint64 Spectrum::value(const quint16 index)
 {
-	if (index < m_data.size())
+	if (index < m_width)
 		return m_data[index];
 	return 0;
 }
@@ -230,9 +223,11 @@ quint64 Spectrum::value(const quint16 index)
 Histogram::Histogram(const quint16 w, const quint16 h)
 	: QObject()
 	, m_totalCounts(0)
+	, m_data(NULL)
+	, m_height(0)
+	, m_width(0)
 	, m_maximumPos(0)
 {
-	m_data.clear();
 	resize(w, h);
 	clear();
 }
@@ -249,7 +244,7 @@ Histogram::~Histogram()
 */
 quint64 Histogram::max(void) const
 {
-	return m_data.size() ? m_data[m_maximumPos]->max() : 0;
+	return m_height ? m_data[m_maximumPos]->max() : 0;
 }
 
 /*!
@@ -267,40 +262,41 @@ quint64 Histogram::max(void) const
  */
 quint64 Histogram::value(const quint16 chan, const quint16 bin) const
 {
-	if (chan < m_dataKeys.size())
+	if (chan < m_height)
 	{
-		quint16 i = m_dataKeys[chan];
-		return m_data[i]->value(bin);
+//		quint16 i = m_dataKeys[chan];
+		return m_data[chan]->value(bin);
 	}
 	return 0;
 }
 
 bool Histogram::checkChannel(const quint16 chan)
 {
-	if (chan < height())
+	if (chan < m_height)
 		return true;
-	if (autoResize())
+	if (m_autoResize)
 		setHeight(chan + 1);
 	else
 		return false;
-	return chan < height();
+	return chan < m_height;
 }
 
 bool Histogram::checkBin(const quint16 bin)
 {
-	if (bin < width())
+	if (bin < m_width)
 		return true;
-	if (autoResize())
+	if (m_autoResize)
 		setWidth(bin + 1);
 	else
 		return false;
-	return bin < width();
+	return bin < m_width;
 }
 
 void Histogram::calcMaximumPosition(const quint16 chan)
 {
-	if (m_data[chan]->max() > m_data[m_maximumPos]->max())
-		m_maximumPos = chan;
+	if (chan < m_height)
+		if (m_data[chan]->max() > m_data[m_maximumPos]->max())
+			m_maximumPos = chan;
 }
 
 /**
@@ -321,10 +317,10 @@ bool Histogram::incVal(const quint16 chan, const quint16 bin)
 		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
-	m_data[chan]->incVal(bin);
-	calcMaximumPosition(chan);
 // sum spectrum of all channels
 	m_sumSpectrum.incVal(bin);
+	m_data[chan]->incVal(bin);
+	calcMaximumPosition(chan);
 	return true;
 }
 
@@ -375,7 +371,7 @@ bool Histogram::addValue(const quint16 chan, const quint16 bin, const quint64 va
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
 	
-	if (chan < m_dataKeys.size())
+	if (chan < m_height)
 	{
 		quint16 i = m_dataKeys[chan];
 		m_data[i]->addValue(bin, val);
@@ -397,7 +393,6 @@ bool Histogram::addValue(const quint16 chan, const quint16 bin, const quint64 va
 void Histogram::clear(const quint16 channel)
 {
 	m_totalCounts -= m_data[channel]->getTotalCounts();
-	m_data[channel]->clear();
 
 #if defined(_MSC_VER)
 #	pragma message("TODO remove the counts from the sum spectrum and total counts and adjust the new maximum")
@@ -405,6 +400,7 @@ void Histogram::clear(const quint16 channel)
 #	warning TODO remove the counts from the sum spectrum and total counts and adjust the new maximum
 #endif
 //! \todo remove the counts from the sum spectrum and total counts and adjust the new maximum
+	m_data[channel]->clear();
 }
 
 
@@ -415,15 +411,16 @@ void Histogram::clear(const quint16 channel)
  */
 void Histogram::clear(void)
 {
-	foreach (Spectrum *value, m_data)
+	for(int i = 0; i < m_height; ++i)
 	{
+		Spectrum *value = m_data[i];
 		Q_ASSERT_X(value != NULL, "Histogram::clear", "one of the spectra is NULL");
 		value->clear();
 	}
 //	m_data.clear();
 	m_sumSpectrum.clear();
 	m_totalCounts = 0;
-	m_dataKeys = m_data.keys();
+//	m_dataKeys = m_data.keys();
 }
 
 /*!
@@ -465,7 +462,7 @@ quint64 Histogram::getCounts(const QRect &region) const
  */
 Spectrum *Histogram::spectrum(const quint16 channel)
 {
-   	return m_data.contains(channel) ?  m_data[channel] : NULL;
+   	return channel < m_height ?  m_data[channel] : NULL;
 }
 
 /*!
@@ -476,7 +473,7 @@ Spectrum *Histogram::spectrum(const quint16 channel)
  */
 quint64 Histogram::max(const quint16 channel) const
 {
-   	return m_data.contains(channel) ? m_data[channel]->max() : 0;
+   	return channel < m_height ? m_data[channel]->max() : 0;
 }
 
 /*!
@@ -487,7 +484,7 @@ quint64 Histogram::max(const quint16 channel) const
  */
 quint16 Histogram::maxpos(const quint16 channel) const
 {
-   	return m_data.contains(channel) ? m_data[channel]->maxpos() : 0;
+   	return channel < m_height ? m_data[channel]->maxpos() : 0;
 }
 
 /*!
@@ -501,7 +498,7 @@ quint16 Histogram::maxpos(const quint16 channel) const
  */
 void Histogram::getMean(const quint16 chan, float &m, float &s)
 {
-   	if (m_data.contains(chan))
+   	if (chan < m_height)
 	{
 		m = m_data[chan]->mean(s);
 	}
@@ -529,7 +526,7 @@ void Histogram::getMean(float &m, float &s)
 */
 quint16	Histogram::height(void) const 
 {
-	return m_dataKeys.size();
+	return m_height; //m_dataKeys.size();
 }
 
 /*!
@@ -539,22 +536,29 @@ quint16	Histogram::height(void) const
  */
 void Histogram::setHeight(const quint16 h)
 {
-	if (h == height())
+	if (h == m_height)
 		return;
-	else if (h > height())
+	if (h > m_height)
 	{
 		int w = width();
-		for (int i = height(); i < h; ++i)
-			m_data.insert(i, new Spectrum(w));
+		m_data = (Spectrum **)realloc(m_data, h * sizeof(Spectrum *));
+		for (int i = m_height; i < h; ++i)
+			m_data[i] = new Spectrum(w);
 	}
 	else 
 	{
-		for (int i = height(); i >= h; --i)
-			m_data.remove(i);
+		for (int i = m_height; i >= h; --i)
+			delete m_data[i];
+		m_data = (Spectrum **)realloc(m_data, h * sizeof(Spectrum *));
 	}
+#if 0
 	m_dataKeys = m_data.keys();
 	qSort(m_dataKeys);
 	m_maximumPos = m_data.size() ? m_dataKeys.last() : 0;
+	m_height = m_dataKeys.size();
+#endif
+	m_maximumPos = h - 1;
+	m_height = h;
 }
 
 /*!
@@ -566,8 +570,9 @@ void Histogram::setHeight(const quint16 h)
  */
 void Histogram::setWidth(const quint16 w)
 {
-	foreach(Spectrum *s, m_data)
+	for(int i = 0; i < m_height; ++i)
 	{
+		Spectrum *s = m_data[i];
 		Q_ASSERT_X(s != NULL, "Histogram::setWidth", "one of the spectra is NULL");
 		s->setWidth(w);
 	}
@@ -592,8 +597,9 @@ void Histogram::resize(const quint16 w, const quint16 h)
 void Histogram::setAutoResize(const bool resize) 
 {
 	m_autoResize = resize;
-	foreach(Spectrum *s, m_data)
+	for(int i = 0; i < m_height; ++i)
 	{
+		Spectrum *s = m_data[i];
 		Q_ASSERT_X(s != NULL, "Histogram::setAutoResize", "one of the spectra is NULL");
 		s->setAutoResize(resize);
 	}
@@ -610,13 +616,13 @@ QString Histogram::format(void)
 {
 	QString t("");
 
-        for (int i = 0; i < height(); ++i)
+        for (int i = 0; i < m_height; ++i)
                 t += QString("\t%1").arg(i);
         t += "\r\n";
         for (int i = 0; i < width(); i++)
         {
                 t += QString("%1").arg(i);
-                for (int j = 0; j < height(); j++)
+                for (int j = 0; j < m_height; j++)
 		{
                         t += QString("\t%1").arg(value(j, i));
 		}
