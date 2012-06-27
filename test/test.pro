@@ -4,5 +4,5 @@
 
 TEMPLATE 	= subdirs
 TARGET 		= 
-SUBDIRS	 	+= listfile dummy mapping plot loadsetup
+SUBDIRS	 	+= listfile dummy mapping plot loadsetup lstohisto
 
