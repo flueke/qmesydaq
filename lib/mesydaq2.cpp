@@ -1651,7 +1651,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			for(quint16 i = 4; i < pd.bufferLength; i++)
 				m_datStream << pD[i];
 		}
-		m_pDatSender->WriteData(&pd,pd.bufferLength, true);
+		m_pDatSender->WriteData(&pd, pd.bufferLength, true);
 		writeBlockSeparator();
 //		MSG_DEBUG << "------------------";
 		MSG_DEBUG << "buffer : length : " << pd.bufferLength << " type : " << pd.bufferType;

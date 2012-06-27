@@ -27,7 +27,7 @@
 #include "CommandEvent.h"
 #include "LoopObject.h"
 #include "mapcorrect.h"
-
+#include "mappedhistogram.h"
 
 /*!
     constructor

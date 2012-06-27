@@ -26,6 +26,7 @@
 #include "mdefines.h"
 #include "histogram.h"
 #include "mapcorrect.h"
+#include "mappedhistogram.h"
 #include "mesydaq2.h"
 #include "logging.h"
 #if defined(_MSC_VER)

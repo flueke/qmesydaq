@@ -1,4 +1,5 @@
 #include "../../lib/mapcorrect.cpp"
+#include "../../lib/mappedhistogram.cpp"
 #include "../../lib/histogram.cpp"
 
 #include <iostream>
@@ -10,27 +11,9 @@ int main(int, char **)
 		iDstWidth(128),
 		iDstHeight(128);
 
-	MapCorrection 	m;
-
-	m.setNoMap();
-	m.initialize(iSrcWidth, iSrcHeight, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
-	m.setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
-	std::cout << "map is valid " << m.isValid() << std::endl;
 // generate linear (default) mapping
-  	for (int i = 0; i < iDstHeight; ++i)
-	{
-		int iStartY = (iSrcHeight * i) / iDstHeight;
-		int iEndY   = (iSrcHeight * (i + 1)) / iDstHeight;
-		for(int k = iStartY; k < iEndY; ++k)
-			for (int j = 0; j < iDstWidth; ++j)
-			{
-				int iStartX = (iSrcWidth * j) / iDstWidth;
-				int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
-				QPoint pt(j, i);
-				while (iStartX < iEndX)
-			  		m.map(QPoint(iStartX++, k), pt, 1.0);
-			}
-	}
+	LinearMapCorrection 	m(QSize(iSrcWidth, iSrcHeight), QSize(iDstWidth, iDstHeight));
+
 	std::cout << "map is valid " << m.isValid() << std::endl;
 
 	MappedHistogram	mh(&m);
@@ -41,15 +24,17 @@ int main(int, char **)
 
 	std::cout << iSrcWidth << ", " << iSrcHeight << std::endl;
 // ca. 12 million events
+	int counts(0);
 	for (int k = 0; k < 100; ++k)
-	for (quint16 i = 0; i < iSrcWidth; ++i)
-		for (quint16 j = 0; j < iSrcHeight; ++j)
-		{
-			mh.incVal(i, j);	// ratio is at the moment about 2.4 (2012/05/24)
-			h.incVal(i, j);
-			h2.incVal(i, j);
-		}
-	std::cout << "mapped" << std::endl;
+		for (quint16 i = 0; i < iSrcWidth; ++i)
+			for (quint16 j = 0; j < iSrcHeight; ++j)
+			{
+				mh.incVal(i, j);	// ratio is at the moment about 2.4 (2012/05/24)
+				h.incVal(i, j);
+				h2.incVal(i, j);
+				++counts;
+			}
+	std::cout << counts << " events mapped" << std::endl;
 
 	std::cout << "total counts : " << mh.getTotalCounts() << std::endl;
 	std::cout << "total counts (corrected) : " << mh.getCorrectedTotalCounts() << std::endl;

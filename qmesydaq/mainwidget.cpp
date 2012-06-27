@@ -42,6 +42,7 @@
 #include "generalsetup.h"
 #include "modulewizard.h"
 #include "mapcorrect.h"
+#include "mappedhistogram.h"
 #include "modulesetup.h"
 #include "mdllsetup.h"
 #include "mcpdsetup.h"

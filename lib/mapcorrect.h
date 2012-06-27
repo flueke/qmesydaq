@@ -194,100 +194,39 @@ private:
     QVector<float> m_afCorrection;
 };
 
-/**
- * \short represents a histogram of mapped and corrected data
- *
- * \author Lutz Rossa <rossa@helmholtz-berlin.de>
- */
-class LIBQMESYDAQ_EXPORT MappedHistogram : public QObject
+class LIBQMESYDAQ_EXPORT LinearMapCorrection : public MapCorrection
 {
-    Q_OBJECT
 public:
-    MappedHistogram(MapCorrection* pMapCorrection, Histogram* pHistogram = NULL);
-    MappedHistogram(const MappedHistogram& src);
-    MappedHistogram& operator=(const MappedHistogram& src);
+	LinearMapCorrection() 
+		: MapCorrection()
+	{
+	}
 
-    //! destructor
-    ~MappedHistogram() {}
+	LinearMapCorrection(const QSize &srcSize, const QSize &destSize)
+		: MapCorrection(srcSize, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel)
+	{
+		int iDstHeight(destSize.height());
+		int iSrcHeight(srcSize.height());
+		int iDstWidth(destSize.width());
+		int iSrcWidth(srcSize.width());
 
-    /*!
-	set new histogram and possible new mapping (generate a new mapped copy of the source)
+		setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
 
-	\param pMapCorrection pointer to to new mapping data (this class stores the reference only)
-	\param pSrc           pointer to existing source histogram or NULL
-     */
-    void setMapCorrection(MapCorrection* pMapCorrection, Histogram* pSrc = NULL);
-
-    /*!
-	sets the histogram (generate a mapped copy of the source)
-
-	\param pSrc pointer to existing source histogram
-     */
-    void setHistogram(Histogram *pSrc) 
-    { 
-        setMapCorrection(NULL, pSrc); 
-    }
-
-    //! \return sum of all events as uncorrected value
-    quint64 getTotalCounts(void) { return m_ullTotalCounts; }
-
-    //! \return sum of all events after correction
-    quint64 getCorrectedTotalCounts(void);
-
-    //! \return the maximum value of this histogram
-    quint64 max() { return m_iMaxPos>=0 && m_iMaxPos<m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : 0; }
-
-    //! \return the number of the first tube containing the maximum value
-    int maxpos() { return m_iMaxPos; }
-
-    quint64 value(quint16 x, quint16 y);
-
-    //! \return the mapped value as double
-    double floatValue(quint16 x, quint16 y);
-
-    //! \return the height of this histogram
-    quint16 height() { return m_iHeight; }
-
-    //! \return the width of this histogram
-    quint16 width() { return m_iWidth; }
-
-    //! \param chan hardware input channel
-    //! \param bin  position at specified channel
-    //! \brief store an event at position
-    bool incVal(quint16 chan, quint16 bin);
-
-    //! \brief clear this histogram
-    void clear(void);
-
-private:
-    //! width of mapped histogram
-    quint16 m_iWidth;
-
-    //! height of mapped histogram
-    quint16 m_iHeight;
-
-    //! pointer to mapping information
-    MapCorrection* m_pMapCorrection;
-
-    //! mapped histogram data
-    QVector<double> m_adblData;
-
-    //! uncorrected event counter
-    quint64 m_ullTotalCounts;
-
-    //! corrected event counter
-    double m_dblTotalCounts;
-
-    //! array position of maximum value
-    int m_iMaxPos;
-
-#if 0
-    //! remap point using stored orientation
-    void maporientation(int iSrcX, int iSrcY, int& iDstX, int& iDstY);
-
-    //! remap point using stored orientation
-    QPoint maporientation(const QPoint& src);
-#endif
+  		for (int i = 0; i < iDstHeight; ++i)
+		{
+			int iStartY = (iSrcHeight * i) / iDstHeight;
+			int iEndY   = (iSrcHeight * (i + 1)) / iDstHeight;
+			for(int k = iStartY; k < iEndY; ++k)
+				for (int j = 0; j < iDstWidth; ++j)
+				{
+					int iStartX = (iSrcWidth * j) / iDstWidth;
+					int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
+					QPoint pt(j, i);
+					while (iStartX < iEndX)
+			  			map(QPoint(iStartX++, k), pt, 1.0);
+				}
+		}
+	}
 };
 
 #endif /* __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__ */
