@@ -920,7 +920,6 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 // neutron event:
 			else
 			{
-				neutrons++;
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
 				quint8 modChan = (id << 3) + slotId;
 				quint16 chan = modChan + (mod << 6);
@@ -956,6 +955,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 					MSG_WARNING << "GHOST EVENT: SlotID " << slotId << " Mod " << id;
 					continue;
 				}
+				neutrons++;
 				++(*m_counter[EVID]);
 				if (m_Hist[PositionHistogram])
 					m_Hist[PositionHistogram]->incVal(chan, pos);
