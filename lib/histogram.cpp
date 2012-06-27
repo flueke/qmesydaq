@@ -546,7 +546,7 @@ void Histogram::setHeight(const quint16 h)
 	}
 	else 
 	{
-		for (int i = m_height; i >= h; --i)
+		for (int i = m_height - 1; i >= h; --i)
 			delete m_data[i];
 		m_data = (Spectrum **)realloc(m_data, h * sizeof(Spectrum *));
 	}
