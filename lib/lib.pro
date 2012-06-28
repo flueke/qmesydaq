@@ -37,7 +37,6 @@ HEADERS 	+= stdafx.h \
 		   mdefines.h \
 		   measurement.h \
 		   mesydaq2.h \
-		   mesydaq3.h \
 		   mpsd8.h \
 		   mstd16.h \
 		   mcpd2.h \
