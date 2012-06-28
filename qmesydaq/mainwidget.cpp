@@ -264,8 +264,7 @@ void MainWidget::init()
     if (m_meas)
     {
         disconnect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
-        disconnect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
-    	disconnect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
+        disconnect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
         delete m_meas;
     }
     m_meas = NULL;
@@ -285,7 +284,6 @@ void MainWidget::init()
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
 
     connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
-    connect(m_meas, SIGNAL(draw()), this, SLOT(draw()));
     connect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
     displayMcpdSlot(dispMcpd->value());
 #if 0
@@ -1318,6 +1316,8 @@ void MainWidget::draw(void)
         m_dataFrame->setAxisScale(QwtPlot::yRight, 0, 1.0);
         return;
     }
+    if (m_meas->getROI().isEmpty())
+        m_meas->setROI(QRectF(0,0, width(), height()));
     if (dispHistogram->isChecked())
     {
         labelCountsInROI->setText(tr("Counts in ROI"));

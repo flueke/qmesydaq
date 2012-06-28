@@ -965,10 +965,8 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 				if (m_Spectrum[Diffractogram])
 					m_Spectrum[Diffractogram]->incVal(chan);
 #endif
-#if 0
 				if (m_posHistCorrected)
 					m_posHistCorrected->incVal(chan, pos);
-#endif
 				if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
 				{
 #if 0
@@ -1155,7 +1153,7 @@ void Measurement::readListfile(const QString &readfilename)
 	}
 	textStream.seek(seekPos);
 
-	resizeHistogram(0 /* 1024 */, 0 /* 128 */, true, true);
+	resizeHistogram(0, 0, true, true);
 	foreach(MesydaqCounter *c, m_counter)
 		c->reset();
 
@@ -1179,18 +1177,13 @@ void Measurement::readListfile(const QString &readfilename)
 // hand over data buffer for processing
 			analyzeBuffer(dataBuf);
 			if(!(bcount % 5000))
-			{
-				if (getROI().isEmpty())
-					setROI(QRectF(0,0, width(), height()));
 				QCoreApplication::processEvents();
-			}
 		}
 	}
 	datfile.close();
 	MSG_ERROR << "End replay";
 	MSG_ERROR << "Found " << blocks << " data packages";
 	MSG_ERROR << QObject::tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
-	emit draw();
 	QCoreApplication::processEvents();
 }
 

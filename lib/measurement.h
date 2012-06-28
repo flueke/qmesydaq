@@ -350,9 +350,6 @@ signals:
 	//! will be emitted in case of change in respect to the handling of list mode data files
 	void acqListfile(bool);
 
-	//! will be emitted in case of a desired draw of the events
-	void draw();
-	
 protected:
 	void timerEvent(QTimerEvent *event);
 
