@@ -22,7 +22,7 @@ extern Spectrum		*m_diffractogram;
 int main(int argc, char **argv)
 {
 	QCoreApplication app(argc, argv);
-	startLogging("[-v] list_mode_file", "  -v           display version info");
+	startLogging("[-v] histogram_file", "  -v           display version info");
 
 	DEBUGLEVEL = WARNING;
 
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
 		Measurement *meas = new Measurement(new Mesydaq2());
 		
-		meas->readListfile(fileName);
+		meas->readHistograms(fileName);
 
 		Histogram *hp = meas->hist(Measurement::PositionHistogram);
 		Histogram *h = meas->hist(Measurement::CorrectedPositionHistogram);
