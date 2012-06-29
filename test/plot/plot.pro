@@ -18,6 +18,8 @@
  #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ############################################################################
 
+LIBS        	+= -L../../lib 
+
 include (../../qmesydaqconfig.pri)
 
 TEMPLATE 	= app
@@ -43,3 +45,4 @@ HEADERS 	+= data.h \
 CONFIG		+= debug
 
 FORMS		+= plotwidget.ui
+
