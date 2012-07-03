@@ -261,9 +261,8 @@ quint64 Histogram::max(void) const
  */
 quint64 Histogram::value(const quint16 chan, const quint16 bin) const
 {
-	if (chan < m_height)
+	if (chan < m_width)
 	{
-//		quint16 i = m_dataKeys[chan];
 		return m_data[chan]->value(bin);
 	}
 	return 0;
@@ -271,24 +270,24 @@ quint64 Histogram::value(const quint16 chan, const quint16 bin) const
 
 bool Histogram::checkChannel(const quint16 chan)
 {
-	if (chan < m_height)
+	if (chan < m_width)
 		return true;
 	if (m_autoResize)
-		setHeight(chan + 1);
+		setWidth(chan + 1);
 	else
 		return false;
-	return chan < m_height;
+	return chan < m_width;
 }
 
 bool Histogram::checkBin(const quint16 bin)
 {
-	if (bin < m_width)
+	if (bin < m_height)
 		return true;
 	if (m_autoResize)
-		setWidth(bin + 1);
+		setHeight(bin + 1);
 	else
 		return false;
-	return bin < m_width;
+	return bin < m_height;
 }
 
 void Histogram::calcMaximumPosition(const quint16 chan)
@@ -317,7 +316,8 @@ bool Histogram::incVal(const quint16 chan, const quint16 bin)
 // total counts of histogram (like monitor ??)
 	m_totalCounts++;
 // sum spectrum of all channels
-	m_sumSpectrum.incVal(bin);
+	m_ySumSpectrum.incVal(bin);
+	m_xSumSpectrum.incVal(chan);
 	m_data[chan]->incVal(bin);
 	calcMaximumPosition(chan);
 	return true;
@@ -342,11 +342,11 @@ bool Histogram::setValue(const quint16 chan, const quint16 bin, const quint64 va
 		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
+// sum spectrum of all channels
+	m_xSumSpectrum.addValue(chan, val);
+	m_ySumSpectrum.addValue(bin, val);
 	m_data[chan]->setValue(bin, val);
 	calcMaximumPosition(chan);
-// sum spectrum of all channels
-	m_sumSpectrum.addValue(bin, val);
-
 	return true;
 }
 
@@ -369,11 +369,11 @@ bool Histogram::addValue(const quint16 chan, const quint16 bin, const quint64 va
 		return false;
 // total counts of histogram (like monitor ??)
 	m_totalCounts += val;
+// sum spectrum of all channels
+	m_xSumSpectrum.addValue(chan, val);
+	m_ySumSpectrum.addValue(bin, val);
 	m_data[chan]->addValue(bin, val);
 	calcMaximumPosition(chan);
-// sum spectrum of all channels
-	m_sumSpectrum.addValue(bin, val);
-
 	return true;
 }
 
@@ -405,16 +405,15 @@ void Histogram::clear(const quint16 channel)
  */
 void Histogram::clear(void)
 {
-	for(int i = 0; i < m_height; ++i)
+	for(int i = 0; i < m_width; ++i)
 	{
 		Spectrum *value = m_data[i];
 		Q_ASSERT_X(value != NULL, "Histogram::clear", "one of the spectra is NULL");
 		value->clear();
 	}
-//	m_data.clear();
-	m_sumSpectrum.clear();
+	m_xSumSpectrum.clear();
+	m_ySumSpectrum.clear();
 	m_totalCounts = 0;
-//	m_dataKeys = m_data.keys();
 }
 
 /*!
@@ -510,7 +509,7 @@ void Histogram::getMean(const quint16 chan, float &m, float &s)
  */
 void Histogram::getMean(float &m, float &s)
 {
-	m = m_sumSpectrum.mean(s);
+	m = m_xSumSpectrum.mean(s);
 }
 
 /*!
@@ -520,39 +519,7 @@ void Histogram::getMean(float &m, float &s)
 */
 quint16	Histogram::height(void) const 
 {
-	return m_height; //m_dataKeys.size();
-}
-
-/*!
-    \fn void Histogram::setHeight(const quint16 h)
-
-    \param h
- */
-void Histogram::setHeight(const quint16 h)
-{
-	if (h == m_height)
-		return;
-	if (h > m_height)
-	{
-		int w = width();
-		m_data = (Spectrum **)realloc(m_data, h * sizeof(Spectrum *));
-		for (int i = m_height; i < h; ++i)
-			m_data[i] = new Spectrum(w);
-	}
-	else 
-	{
-		for (int i = m_height - 1; i >= h; --i)
-			delete m_data[i];
-		m_data = (Spectrum **)realloc(m_data, h * sizeof(Spectrum *));
-	}
-#if 0
-	m_dataKeys = m_data.keys();
-	qSort(m_dataKeys);
-	m_maximumPos = m_data.size() ? m_dataKeys.last() : 0;
-	m_height = m_dataKeys.size();
-#endif
-	m_maximumPos = h - 1;
-	m_height = h;
+	return m_height; 
 }
 
 /*!
@@ -564,14 +531,40 @@ void Histogram::setHeight(const quint16 h)
  */
 void Histogram::setWidth(const quint16 w)
 {
-	for(int i = 0; i < m_height; ++i)
+	if (w == m_width)
+		return;
+	if (w > m_width)
+	{
+		m_data = (Spectrum **)realloc(m_data, w * sizeof(Spectrum *));
+		for (int i = m_width; i < w; ++i)
+			m_data[i] = new Spectrum(m_height);
+	}
+	else 
+	{
+		for (int i = m_width - 1; i >= w; --i)
+			delete m_data[i];
+		m_data = (Spectrum **)realloc(m_data, w * sizeof(Spectrum *));
+	}
+	m_xSumSpectrum.setWidth(w);
+	m_maximumPos = w - 1;
+	m_width = w;
+}
+
+/*!
+    \fn void Histogram::setHeight(const quint16 h)
+
+    \param h
+ */
+void Histogram::setHeight(const quint16 h)
+{
+	for(int i = 0; i < m_width; ++i)
 	{
 		Spectrum *s = m_data[i];
 		Q_ASSERT_X(s != NULL, "Histogram::setWidth", "one of the spectra is NULL");
-		s->setWidth(w);
+		s->setWidth(h);
 	}
-	m_sumSpectrum.setWidth(w);
-	m_width = w;
+	m_ySumSpectrum.setWidth(h);
+	m_height = h;
 }
 
 /*!
@@ -584,14 +577,14 @@ void Histogram::setWidth(const quint16 w)
  */
 void Histogram::resize(const quint16 w, const quint16 h) 
 {
-	setHeight(h);
 	setWidth(w); 
+	setHeight(h);
 }
 
 void Histogram::setAutoResize(const bool resize) 
 {
 	m_autoResize = resize;
-	for(int i = 0; i < m_height; ++i)
+	for(int i = 0; i < m_width; ++i)
 	{
 		Spectrum *s = m_data[i];
 		Q_ASSERT_X(s != NULL, "Histogram::setAutoResize", "one of the spectra is NULL");

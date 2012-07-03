@@ -10,5 +10,6 @@ SUBDIRS	 	+= listfile \
 		plot \
 		loadsetup \
 		lstohisto \
-		readhisto
+		readhisto \
+		calibration
 

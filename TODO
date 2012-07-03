@@ -22,3 +22,16 @@ JK : 08/30/2011
 JK : 08/30/2011
 	Histogram mapping to the tubes 
 
+
+Histogramme enthalten Summen-Spektren in x- und y-Richtung
+	=> 
+		- Ortsspektrum in x- und y-Richtung bei MDLL
+		- Channel-Summen-Spektrum und Diffraktogramm für MCPD/MPSD*
+	=>
+
+Measurement muß spezifisch für die Modi sein
+	- MDLL
+	- SANS-1
+	- MSTD (PUMA)
+
+Anzeige der MCPD capabilities

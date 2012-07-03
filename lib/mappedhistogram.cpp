@@ -38,8 +38,8 @@
     \param pMapCorrection pointer to to new mapping data (this class stores the reference only)
     \param pHistogram     pointer to existing source histogram or NULL
  */
-MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram /*= NULL*/)
-	: QObject()
+MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram)
+	: Histogram(0, 0)
 	, m_iWidth(0)
 	, m_iHeight(0)
 	, m_pMapCorrection(NULL)
@@ -56,7 +56,7 @@ MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHist
     \param src
  */
 MappedHistogram::MappedHistogram(const MappedHistogram &src)
-	: QObject()
+	: Histogram(src.m_iHeight, src.m_iWidth)
 	, m_iWidth(src.m_iWidth)
 	, m_iHeight(src.m_iHeight)
 	, m_pMapCorrection(src.m_pMapCorrection)
@@ -161,9 +161,9 @@ quint64 MappedHistogram::getCorrectedTotalCounts(void)
 
     \return the counts at a specific position
  */
-quint64 MappedHistogram::value(quint16 x, quint16 y)
+quint64 MappedHistogram::value(quint16 x, quint16 y) const
 {
-	double r = floatValue(x, y);
+	double r = this->floatValue(x, y);
 	if (r > 0.0 && r < 1.0) 	// single event only
 		r = 1.0; 
 	return (quint64)(r + 0.5);
@@ -177,7 +177,7 @@ quint64 MappedHistogram::value(quint16 x, quint16 y)
 
     \return the counts at a specific position
  */
-double MappedHistogram::floatValue(quint16 x, quint16 y)
+double MappedHistogram::floatValue(quint16 x, quint16 y) const
 {
 	register int iPos = m_iWidth * y + x;
 	if (x < m_iWidth && y < m_iHeight && iPos >= 0 && iPos < m_adblData.count())

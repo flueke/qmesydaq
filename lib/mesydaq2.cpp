@@ -351,19 +351,29 @@ void Mesydaq2::writeClosingSignature(void)
 }
 
 /*!
+    \fn QSize Mesydaq2::size(void)
+
+    \return the 'size' of the detector in 'channels'
+ */
+QSize Mesydaq2::size(void)
+{
+	return QSize(width(), height());
+}
+
+/*!
     \fn quint16 Mesydaq2::width()
 
     the maximum number of bins over all modules
 
     \return number of bins
  */
-quint16 Mesydaq2::width(void)
+quint16 Mesydaq2::height(void)
 {
 	quint16 bins(0);
 	foreach(MCPD8 *value, m_mcpd) 
 		if (value->bins() > bins)
 			bins = value->bins();
-	return bins;
+	return bins ? bins : 960;
 }
 
 /*!
@@ -373,7 +383,7 @@ quint16 Mesydaq2::width(void)
 
     \return maximum number of channel
  */
-quint16 Mesydaq2::height(void)
+quint16 Mesydaq2::width(void)
 {
 	QList<quint16> modList;
 	quint16 n(0);
@@ -386,8 +396,7 @@ quint16 Mesydaq2::height(void)
 	qSort(modList);
 	if (!modList.isEmpty())
 		n = modList.last() + 1;
-	MSG_INFO << "Histogram height : " << n;
-	return n;
+	return n ? n : 128;
 }
 
 /*!

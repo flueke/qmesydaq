@@ -20,47 +20,53 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
-#include <QRectF>
 #include <cmath>
 
-class TubeRange : protected QRectF
+class TubeRange  
 {
 public:
 	TubeRange()
-		: QRectF()
+		: m_min(0.0)
+		, m_max(0.0)
 	{
 	}
 
 	TubeRange(qreal min, qreal max)
-		: QRectF(QPointF(0, max), QSizeF(0, max - min))
+		: m_min(min)
+		, m_max(max)
 	{
 	}
 
 	TubeRange(qreal min)
-		: QRectF()
+		: m_min(min)
+		, m_max(min)
 	{
-		setBottom(min);
 	}
 
 	TubeRange(const TubeRange &tr)
-		: QRectF(QPointF(tr.topLeft()), QSizeF(tr.size()))
+		: m_min(tr.m_min)
+		, m_max(tr.m_max)
 	{
 	}
 
 	void setMax(const qreal max)
 	{
-		setTop(max);
+		m_max = max;
 	}
 
 	qreal start(void) const
 	{
-		return bottom();
+		return m_min;
 	}
 
 	qreal height(void) const
 	{
-		return QRectF::height();
+		return m_max - m_min;
 	}
+private:
+	qreal	m_min;
+
+	qreal	m_max;
 };
 
 class TubeCorrection
@@ -70,6 +76,7 @@ public:
 		: m_calibScale(1.0)
 		, m_shift(0)
 		, m_detStart(0)
+		, m_detEnd(0)
 	{
 	}
 
@@ -77,6 +84,7 @@ public:
 	{
 		m_calibScale = detRange.height() / tubeRange.height();
 		m_detStart = detRange.start();
+		m_detEnd = m_detStart + detRange.height();
 		m_shift = tubeRange.start() - m_detStart;
 	}
 
@@ -85,18 +93,20 @@ public:
 		m_calibScale = tc.m_calibScale;
 		m_shift = tc.m_shift;
 		m_detStart = tc.m_detStart;
+		m_detEnd = tc.m_detEnd;
 	}
 
-	quint32 calibrate(const quint32 pos)
+	quint32 calibrate(const qint32 pos)
 	{
 		if (m_calibScale == 1.0)
 			return pos;
-		if (pos > m_detStart)
+		qint32 target = pos - m_shift;
+		if (target >= qint32(m_detStart) && target <= qint32(m_detEnd))
 		{
 			return  quint32(::round(m_calibScale * (pos - m_shift)));
 		}
 		else
-			return 0;
+			return -1;
 	}
 
 private:
@@ -105,6 +115,8 @@ private:
 	qint32	m_shift;
 
 	quint32	m_detStart;
+
+	quint32 m_detEnd;
 };
 
 #endif

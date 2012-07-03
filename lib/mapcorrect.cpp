@@ -440,4 +440,3 @@ void MapCorrection::rotateRight()
     if (bRotateCorrection)
         m_afCorrection = afCorrection;
 }
-

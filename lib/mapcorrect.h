@@ -52,7 +52,7 @@ class LIBQMESYDAQ_EXPORT MapCorrection : public QObject
 public:
     //! orientation of histogram
     //!
-    //! used at class MappedHistogram, but stored here for convenience)
+    //! used at class MappedHistogram, but stored here for convenience
     //!
     enum Orientation {
       OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
@@ -203,7 +203,7 @@ public:
 	}
 
 	LinearMapCorrection(const QSize &srcSize, const QSize &destSize)
-		: MapCorrection(srcSize, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel)
+		: MapCorrection(srcSize, MapCorrection::OrientationDown, MapCorrection::CorrectSourcePixel)
 	{
 		int iDstHeight(destSize.height());
 		int iSrcHeight(srcSize.height());
@@ -222,8 +222,8 @@ public:
 					int iStartX = (iSrcWidth * j) / iDstWidth;
 					int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
 					QPoint pt(j, i);
-					while (iStartX < iEndX)
-			  			map(QPoint(iStartX++, k), pt, 1.0);
+					for (; iStartX < iEndX; ++iStartX)
+			  			map(QPoint(iStartX, k), pt, 1.0);
 				}
 		}
 	}

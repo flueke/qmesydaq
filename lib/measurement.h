@@ -29,12 +29,10 @@
 #include "structures.h"
 #include "mdefines.h"
 #include "mesydaq2.h"
-#include "calibration.h"
 
 class Histogram;
 class Spectrum;
 class MapCorrection;
-class MappedHistogram;
 class Mesydaq2;
 class QTextStream;
 
@@ -58,8 +56,8 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 	Q_PROPERTY(QString m_histfilename READ getHistfilename WRITE setHistfilename)
 	//! stores the default path for histogram files
 	Q_PROPERTY(QString m_histPath READ getHistfilepath WRITE setHistfilepath)
-	//! stores the listmod file name
-	// Q_PROPERTY(QString m_listfilename READ getListfilename WRITE setListfilename)
+	//! stores the calibration file name
+	Q_PROPERTY(QString m_calibrationfilename READ getCalibrationfilename WRITE setCalibrationfilename)
 	//! stores the default path for listmode data files
 	Q_PROPERTY(QString m_listPath READ getListfilepath WRITE setListfilepath)
 	//! stores the default path for configuration files
@@ -169,7 +167,7 @@ public:
 
 	void 	setROI(const QRectF &r);
 
-        QRectF	getROI(void) const;
+        QRect	getROI(void) const;
 
 	/** 
 		gets the value of the defined monitor 1
@@ -251,9 +249,6 @@ public:
 	//! \return the mapping and correction data for position histogram
 	MapCorrection*& posHistMapCorrection() { return m_posHistMapCorrection; }
 
-	//! \return a mapped and corrected position histogram
-	MappedHistogram*& posHistCorrected() { return m_posHistCorrected; }
-
 	void getMean(const HistogramType t, float &, float &);
 	void getMean(const HistogramType t, quint16, float &, float &);
 	void getMean(const SpectrumType t, float &, float &);
@@ -276,6 +271,17 @@ public:
 
 	//! returns the current operation mode
 	Mode mode(void) const {return m_mode;}
+
+// calibration file oriented methods
+	/**
+	 * sets the file name of a calibration data file
+         *
+         * \param name name of the next histogram data file
+         */
+	void setCalibrationfilename(const QString &name);
+
+	//! \return name of the current calibration data file
+	QString getCalibrationfilename(void) const {return m_calibrationfilename;}
 
 // histogram file oriented methods
 	/**
@@ -384,9 +390,6 @@ private:
 	//! mapping and correction data for position histogram
 	MapCorrection   *m_posHistMapCorrection;
 
-	//! position histogram with mapped and corrected data
-	MappedHistogram	*m_posHistCorrected;
-
 	//! time stamp for the start of measurement
 	quint64 	m_starttime_msec;
 	
@@ -453,17 +456,14 @@ private:
 	//! currently used config file
 	QFileInfo 	m_configfile;
 
+	//! currently used calibration file
+	QString		m_calibrationfilename;
+
 	//! number of triggers
 	quint64 	g_triggers;
 
 	//! number of neutrons
 	quint64		m_neutrons;
-
-	QString		m_calibrationfile;
-
-	TubeRange	m_detectorRange;
-
-	QHash<quint32, TubeRange>	m_calibration;
 
 };
 

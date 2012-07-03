@@ -85,6 +85,7 @@ public:
 	{
 		Position = 1,	//!< position data
 		Amplitude,	//!< amplitude data
+		CorrPosition, 	//!< corrected position data
 	};
 
 	/*!

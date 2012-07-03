@@ -34,6 +34,7 @@ class Zoomer;
 class MesydaqPlotSpectrogram;
 class MesydaqSpectrumData;
 class MesydaqHistogramData;
+class Histogram;
 class Mesydaq2;
 class Measurement;
 class CorbaThread;
@@ -199,6 +200,8 @@ private slots:
 
 	void setDisplayMode(int);
 
+	void setHistogramType(int);
+
 private:
 	void setHistogramMode();
 
@@ -240,7 +243,7 @@ private:
 	QwtPlotCurve		*m_diffractogram;
 
 	//! plot diffractogram
-	MesydaqPlotSpectrogram	*m_histogram;
+	MesydaqPlotSpectrogram	*m_spectrogram;
 
 	//! spectrum to be plotted
 	MesydaqSpectrumData	*m_data;
@@ -277,6 +280,9 @@ private:
 
 	//! time object
 	QTime			m_time;
+
+	//! histogram object currently used
+	Histogram		*m_histogram;
 };	
 
 #endif

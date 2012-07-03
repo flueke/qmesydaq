@@ -113,7 +113,7 @@ double MesydaqHistogramData::value(double x, double y) const
 void MesydaqHistogramData::setData(Histogram *data)
 {
 	m_histogram = data;
-	setBoundingRect(QRectF(0.0, 0.0, data ? data->height() : 0.0, data ? data->width() : 0.0));
+	setBoundingRect(QRectF(0.0, 0.0, data ? data->width() : 0.0, data ? data->height() : 0.0));
 }
 
 /*!

@@ -178,33 +178,36 @@ class LIBQMESYDAQ_EXPORT Histogram : public QObject
 public:
 	Histogram(const quint16 channels = CHANNELS, const quint16 bins = LINBINS);
 
-	~Histogram();
+	virtual ~Histogram();
 
-	bool incVal(const quint16 chan, const quint16 bin);
+	virtual bool incVal(const quint16 chan, const quint16 bin);
 
 	bool setValue(const quint16 chan, const quint16 bin, const quint64 val);
 
 	bool addValue(const quint16 chan, const quint16 bin, const quint64 val);
 
-	void clear(void);
+	virtual void clear(void);
 
 	void clear(const quint16 channel);
 
-	quint64 getTotalCounts(void) const;
+	virtual quint64 getTotalCounts(void) const;
 
 	quint64 getCounts(const QRect &r) const;
 
 	Spectrum *spectrum(const quint16 channel);
 
-	//! \return the sum spectrum
-	Spectrum *spectrum(void) {return &m_sumSpectrum;}
+	//! \return the x sum spectrum
+	Spectrum *xSumSpectrum(void) {return &m_xSumSpectrum;}
+
+	//! \return the y sum spectrum
+	Spectrum *ySumSpectrum(void) {return &m_ySumSpectrum;}
 
 	quint64 max(const quint16 channel) const;
 
-	quint64 max(void) const; 
+	virtual quint64 max(void) const; 
 	
 	//! \return the number of the first tube containing the maximum value
-	quint16 maxpos(void) const {return m_maximumPos;}
+	virtual quint16 maxpos(void) const {return m_maximumPos;}
 
 	quint16 maxpos(const quint16 channel) const;
 
@@ -214,14 +217,14 @@ public:
 
 	QString format(void);
 
-	quint64 value(const quint16 x, const quint16 y) const;
+	virtual quint64 value(const quint16 x, const quint16 y) const;
 
-	quint16	height(void) const; 
+	virtual quint16	height(void) const; 
 
 	void setHeight(const quint16 h);
 
 	//! /return the width of the histogram
-	quint16 width(void) const {return m_width;}
+	virtual quint16 width(void) const {return m_width;}
 
 	void setWidth(const quint16);
 
@@ -288,8 +291,11 @@ private:
 	//! number of tubes
 	quint16				m_width;
 
-	//! sum spectrum
-	Spectrum			m_sumSpectrum;
+	//! X sum spectrum
+	Spectrum			m_xSumSpectrum;
+
+	//! Y sum spectrum
+	Spectrum			m_ySumSpectrum;
 
 	//! number of the tube containing the histogram maximum
 	quint16				m_maximumPos;

@@ -42,7 +42,7 @@ class LIBQMESYDAQ_EXPORT MapCorrection;
  *
  * \author Lutz Rossa <rossa@helmholtz-berlin.de>
  */
-class LIBQMESYDAQ_EXPORT MappedHistogram : public QObject
+class LIBQMESYDAQ_EXPORT MappedHistogram : public Histogram
 {
 	Q_OBJECT
 public:
@@ -51,7 +51,7 @@ public:
 	MappedHistogram& operator=(const MappedHistogram& src);
 
 	//! destructor
-	~MappedHistogram() {}
+	virtual ~MappedHistogram() {}
 
 	/*!
 	    set new histogram and possible new mapping (generate a new mapped copy of the source)
@@ -72,38 +72,38 @@ public:
 	}
 
 	//! \return sum of all events as uncorrected value
-	quint64 getTotalCounts(void) { return m_ullTotalCounts; }
+	virtual quint64 getTotalCounts(void) const { return m_ullTotalCounts; }
 
 	//! \return sum of all events after correction
 	quint64 getCorrectedTotalCounts(void);
 
 	//! \return the maximum value of this histogram
-	quint64 max() 
+	virtual quint64 max() const
 	{ 
 		return m_iMaxPos >= 0 && m_iMaxPos < m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : 0; 
 	}
 
 	//! \return the number of the first tube containing the maximum value
-	int maxpos() { return m_iMaxPos; }
+	virtual quint16 maxpos() const { return m_iMaxPos; }
 
-	quint64 value(quint16 x, quint16 y);
+	virtual quint64 value(quint16 x, quint16 y) const;
 
 	//! \return the mapped value as double
-	double floatValue(quint16 x, quint16 y);
+	double floatValue(quint16 x, quint16 y) const;
 
 	//! \return the height of this histogram
-	quint16 height() { return m_iHeight; }
+	virtual quint16 height() const { return m_iHeight; }
 
 	//! \return the width of this histogram
-	quint16 width() { return m_iWidth; }
+	virtual quint16 width() const { return m_iWidth; }
 
 	//! \param chan hardware input channel
 	//! \param bin  position at specified channel
 	//! \brief store an event at position
-	bool incVal(quint16 chan, quint16 bin);
+	virtual bool incVal(quint16 chan, quint16 bin);
 
 	//! \brief clear this histogram
-	void clear(void);
+	virtual void clear(void);
 
 private:
 	//! width of mapped histogram

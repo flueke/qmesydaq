@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QFile>
+#include <QSize>
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
@@ -211,6 +212,8 @@ public:
 	quint16 width(void);
 
 	quint16 height(void);
+
+	QSize size(void);
 
 public slots:
 	//! analysis thread end
