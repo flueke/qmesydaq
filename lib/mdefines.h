@@ -77,6 +77,8 @@
 #define SENDSERIAL 		18
 #define READSERIAL 		19
 #define SCANPERI 		20
+#define GETCAPABILITIES		22
+#define SETCAPABILITIES		23
 
 //
 // internal commands for the MCPD-8
@@ -192,8 +194,9 @@
 #define DEBUG			5
 
 // Module ID's
+#define	TYPE_NOMODULE		0
 #define	TYPE_MPSD8OLD		1
-#define TYPE_MPSD8SADC		102	// 10bit, single ADC, DNS
+#define	TYPE_MPSD8SADC		102	// 10bit, single ADC, DNS
 #define	TYPE_MPSD8		103
 #define	TYPE_MSTD16		104
 #define	TYPE_MPSD8P		105	

@@ -316,7 +316,7 @@ public:
 	virtual QString getType(void) {return tr("-");}
 
 	//! \return the type of the MPSD as number
-	virtual int type(void) {return 0;}
+	virtual int type(void) {return TYPE_NOMODULE;}
 
 	//! \return is the module online or not
 	virtual bool online(void) {return false;}

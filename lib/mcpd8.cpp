@@ -122,20 +122,24 @@ bool MCPD8::init(void)
 			{
 				case TYPE_MPSD8P:
 					cap = capabilities(c);
-					MSG_FATAL << "module : " << c << " capabilities : " << cap;
+					MSG_NOTICE << "module : " << c << " capabilities : " << cap;
 					modus &= cap;
-//					MSG_NOTICE << "modus : " << modus;
-					MSG_FATAL << "modus : " << modus;
 					break;
 				case TYPE_MDLL :
 					break;
+				case TYPE_NOMODULE :
+					break;
+				case TYPE_MPSD8SADC:
+					modus = TP;
+					break;
 				default:
 					modus = P;
+					break;
 			}
 		}
+	MSG_FATAL << "modus : " << modus;
 // Register 103 is the TX mode register
 // set tx capability 
-# warning TODO writeRegister 103 in case of MDLL ?
 	if (m_mdll.isEmpty())
 		writeRegister(103, modus);
 
@@ -277,7 +281,15 @@ bool MCPD8::setId(quint8 mcpdid)
  */
 quint16 MCPD8::capabilities()
 {
-	return readRegister(102);
+	quint16 cap = readRegister(102);
+	if (!cap)
+	{
+		initCmdBuffer(GETCAPABILITIES);
+		finishCmdBuffer(0);
+		if (sendCommand())
+			cap = m_reg;
+	}
+	return cap;
 }
 
 /*!
@@ -835,22 +847,22 @@ bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 {
 	bool errorflag = true;
-	if(source > 7)
+	if (source > 7)
 	{
 		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell #" << source << ". Range exceeded! Max. cell# is 7";
 		errorflag = false;
 	}
-	if(trigger > 7)
+	if (errorflag && trigger > 7)
 	{
 		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell trigger # to " << trigger << ". Range exceeded! Max. trigger# is 7";
 		errorflag = false;
 	}
-	if(compare > 22)
+	if (errorflag && compare > 22)
 	{
 		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell compare value to " << compare << ". Range exceeded! Max. value is 22";
 		errorflag = false;
 	}
-	if(errorflag)
+	if (errorflag)
 	{
 		MSG_NOTICE << "mcpd " << m_id << ": set counter cell " << source << ": trigger # is " << trigger << ", compare value " << compare << '.';
 	
@@ -1492,6 +1504,13 @@ void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
 			case WRITEREGISTER:
 				if (recBuf.cmd & 0x80)
 					MSG_ERROR << "WRITEREGISTER failed";
+				break;
+			case GETCAPABILITIES:
+				if (recBuf.bufferLength - recBuf.headerLength > 0)
+					m_reg = recBuf.data[0];
+				else
+					m_reg = 0xFFF;
+				MSG_ERROR << "GETCAPABILITIES " << m_reg;
 				break;
 			case READREGISTER:
 				for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)

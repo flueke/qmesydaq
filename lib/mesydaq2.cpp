@@ -858,7 +858,20 @@ void Mesydaq2::setTimingwidth(quint8 width)
 #endif
 }
 
+/*!
+    \fn quint16 Mesydaq2::capabilities(quint16 id)
 
+    reads the capabilities of the central module.
+
+    \param id number of the MCPD
+    \return the central module capabilities
+ */
+quint16 Mesydaq2::capabilities(quint16 id)
+{
+	if (m_mcpd.empty())
+		return 0;
+	return m_mcpd[id]->capabilities();
+}
 /*!
     \fn Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 

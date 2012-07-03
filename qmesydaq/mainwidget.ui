@@ -1001,7 +1001,7 @@ Listfile</string>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="capabilities">
                <property name="text">
                 <string>TPA</string>
                </property>

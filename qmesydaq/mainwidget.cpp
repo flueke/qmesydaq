@@ -729,6 +729,17 @@ void MainWidget::displayMpsdSlot(int iModule)
       mod = devid_2->value();
 // firmware version
     firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod), 0, 'f', 2));
+// MCPD capabilities 
+    QString tmp("");
+    quint16 cap = m_theApp->capabilities(mod);
+    if (cap & TPA)
+	tmp = "TPA";
+    else if (cap & TP)
+	tmp = "TP";
+    else if (cap & P)
+	tmp = "P";
+    MSG_ERROR << cap << " " << tmp;
+    capabilities->setText(tmp);
     
 // Status display:
     moduleStatus0->update(m_theApp->getModuleType(mod, 0), m_theApp->getModuleVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));

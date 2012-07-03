@@ -78,6 +78,8 @@ public:
 
 	quint16 readPeriReg(quint16 id, quint16 mod, quint16 reg);
 
+	quint16 capabilities(quint16 id);
+
 // list mode oriented methods
 	/**
 	 * sets the file name of a list mode data file
