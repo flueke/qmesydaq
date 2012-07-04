@@ -22,6 +22,8 @@
 #include <QCoreApplication>
 #include <QStringList>
 #include <QUdpSocket>
+#include <QDir>
+
 #include "measurement.h"
 #include "mdefines.h"
 #include "histogram.h"
@@ -62,11 +64,11 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_runID(0)
 	, m_mode(DataAcquisition)
 	, m_histfilename("")
-	, m_histPath(getenv("HOME"))
-	, m_listPath(getenv("HOME"))
 	, m_calibrationfilename("")
 	, m_neutrons(0)
 {
+	setHistfilepath(getenv("HOME"));
+	setListfilepath(getenv("HOME"));
 	m_Hist[PositionHistogram] = NULL;
 	m_Hist[AmplitudeHistogram] = NULL;
 	m_Hist[CorrectedPositionHistogram] = NULL;
@@ -1208,6 +1210,33 @@ void Measurement::setListFileHeader(const QByteArray& header)
 {
 	if (m_mesydaq)
 		m_mesydaq->setListFileHeader(header);
+}
+
+void Measurement::setConfigfilepath(const QString &path) 
+{
+	QFileInfo fi(path);
+	if (fi.exists() && fi.isDir()) 
+		m_configPath = path;
+	else
+		m_configPath = QDir::currentPath();
+}
+
+void Measurement::setListfilepath(const QString &path) 
+{
+	QFileInfo fi(path);
+	if (fi.exists() && fi.isDir()) 
+		m_listPath = path;
+	else
+		m_listPath = QDir::currentPath();
+}
+
+void Measurement::setHistfilepath(const QString &path) 
+{
+	QFileInfo fi(path);
+	if (fi.exists() && fi.isDir()) 
+		m_histPath = path;
+	else
+		m_histPath = QDir::currentPath();
 }
 
 void Measurement::setHistfilename(const QString &name) 

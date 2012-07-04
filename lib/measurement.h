@@ -289,7 +289,7 @@ public:
 	 *
 	 * \param path to the histogram data files
 	 */
-	void setHistfilepath(const QString &path) {m_histPath = path;}
+	void setHistfilepath(const QString &path); 
 
 	//! \return path to store all histogram data files
 	QString getHistfilepath(void) const {return m_histPath;}
@@ -310,7 +310,7 @@ public:
 	 *
 	 * \param path to the list mode data files
 	 */
-	void setListfilepath(const QString &path) {m_listPath = path;}
+	void setListfilepath(const QString &path);
 
 	//! \return path to store all list mode data files
 	QString getListfilepath(void) const {return m_listPath;}
@@ -321,7 +321,7 @@ public:
 	 *
 	 * \param path to the config files
 	 */
-	void setConfigfilepath(const QString &path) {m_configPath = path;}
+	void setConfigfilepath(const QString &path); 
 
 	//! \return path to store all config files
 	QString getConfigfilepath(void) const {return m_configPath;}
