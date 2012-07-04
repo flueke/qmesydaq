@@ -1385,7 +1385,6 @@ void MainWidget::draw(void)
 
         if (!m_zoomer->zoomRectIndex())
 	{
-	    MSG_ERROR << " w " << m_histogram->width() << " h " << m_histogram->height();
             m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_histogram->width());
             m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_histogram->height());
 	}
@@ -1473,8 +1472,7 @@ void MainWidget::draw(void)
             m_dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
         else if (!m_zoomer->zoomRectIndex())
 	{
-//            m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-            MSG_ERROR << "width " << spec->width();
+//          m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
             m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, spec->width());
 	}
     }
