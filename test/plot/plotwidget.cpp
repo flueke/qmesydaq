@@ -25,6 +25,11 @@
 PlotWidget::PlotWidget(QWidget *parent)
 	: QWidget(parent)
 {
+	setWindowFlags(Qt::Window
+			| Qt::CustomizeWindowHint
+			| Qt::WindowTitleHint
+			| Qt::WindowSystemMenuHint
+			| Qt::WindowMaximizeButtonHint);
 	setupUi(this);
 	displayButtonGroup->setId(radioSpectrum, Plot::Spectrum);
 	displayButtonGroup->setId(radioHistogram, Plot::Histogram);

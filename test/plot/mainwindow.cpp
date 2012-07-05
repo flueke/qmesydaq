@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	m_plotWidget = new PlotWidget(this);
 
-	setCentralWidget(m_plotWidget);
+	m_plotWidget->show();
 
 	m_plot = m_plotWidget->m_plot;
 
