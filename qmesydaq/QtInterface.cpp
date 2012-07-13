@@ -24,7 +24,9 @@
 #include "QtInterface.h"
 #include "LoopObject.h"
 #if defined(_MSC_VER)
-	#include "stdafx.h"
+    #include "stdafx.h"
+#else
+    #include <unistd.h>
 #endif
 
 /*!
@@ -90,31 +92,31 @@ void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
 /*!
     \fn void QtInterface::waitForEvent()
 
-    handles a sleep to wait for an event as a response to a sent action 
+    handles a sleep to wait for an event as a response to a sent action
   */
 void QtInterface::waitForEvent()
 {
-	LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
-	QTime tStart=QTime::currentTime();
-	for (;;)
-	{
-		if (m_eventReceived)
-		{
-			m_eventReceived = false;
-			break;
-		}
-		if (loop)
-			loop->pSleep(1);
-		else
-		{
-			int tDiff = tStart.msecsTo(QTime::currentTime());
-			if (tDiff < 0) 
-				tDiff += 86400000;
-			if (tDiff > 5000)
-				break;
-			usleep(1000);
-		}
-	}
+    LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
+    QTime tStart=QTime::currentTime();
+    for (;;)
+    {
+        if (m_eventReceived)
+        {
+            m_eventReceived = false;
+            break;
+        }
+        if (loop)
+            loop->pSleep(1);
+        else
+        {
+            int tDiff = tStart.msecsTo(QTime::currentTime());
+            if (tDiff < 0)
+                tDiff += 86400000;
+            if (tDiff > 5000)
+                break;
+            usleep(1000);
+        }
+    }
 }
 
 /*!
@@ -126,8 +128,8 @@ void QtInterface::waitForEvent()
 void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
 {
         m_eventReceived = false;
-	postCommand(cmd, args);
-	waitForEvent();
+    postCommand(cmd, args);
+    waitForEvent();
 }
 
 /*!

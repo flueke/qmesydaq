@@ -122,8 +122,8 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       continue;
     }
 
-    // ignore section other than "[DET_]"
-    if (!bDetSection)
+    // ignore section other than "[DET_]" or not a <name>=<value> pair
+    if (!bDetSection || p==NULL)
       continue;
 
     QString item=QString::fromRawData(pStart,p-pStart);
@@ -131,7 +131,7 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     item.remove(QRegExp("[ \t]+$"));
     if (item.isEmpty())
     {
-			MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+      MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
       continue;
     }
     ++p;
@@ -139,15 +139,14 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     QString value=QString::fromRawData(p,pEOL-p);
     value.remove(QRegExp("^[ \t]+"));
     value.remove(QRegExp("[ \t]+$"));
-    ++pEOL;
 
     QStringList tmp(value.split(QRegExp("[, \t]+")));
     if (!item.compare("corr",Qt::CaseInsensitive))
     {
       if (tmp.count()<4)
       {
-	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
-	continue;
+        MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+        continue;
       }
       bCorrE=false;
     }
@@ -155,8 +154,8 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     {
       if (tmp.count()<5)
       {
-	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
-	continue;
+        MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+        continue;
       }
       bCorrE=true;
     }
@@ -170,8 +169,8 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
 
       if (abyIn.isEmpty())
       {
-	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
-	continue;
+        MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+        continue;
       }
 
       memset(&strm,0,sizeof(strm));
@@ -183,9 +182,9 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       i=inflateInit(&strm);
       if (i!=Z_OK)
       {
-	inflateEnd(&strm);
-	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
-	continue;
+        inflateEnd(&strm);
+        MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+        continue;
       }
 
       strm.next_in=(Bytef*)abyIn.constData();
@@ -193,30 +192,30 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
 
       for (j=0;;)
       {
-	if ((j+32)>=iSize) iSize+=32;
-	abyOut.resize(iSize);
-	strm.next_out=(Bytef*)(&(abyOut.data())[j]);
-	strm.avail_out=abyOut.count()-j;
-	i=inflate(&strm,Z_NO_FLUSH);
-	switch (i)
-	{
-	  case Z_NEED_DICT: i=Z_DATA_ERROR;
-	  case Z_DATA_ERROR:
-	  case Z_MEM_ERROR:
-	    break;
-	  default:
-	    j+=iSize-strm.avail_out;
-	    if (strm.avail_out==0)
-	      continue;
-	}
-	abyOut.resize(j);
-	break;
+        if ((j+32)>=iSize) iSize+=32;
+        abyOut.resize(iSize);
+        strm.next_out=(Bytef*)(&(abyOut.data())[j]);
+        strm.avail_out=abyOut.count()-j;
+        i=inflate(&strm,Z_NO_FLUSH);
+        switch (i)
+        {
+          case Z_NEED_DICT: i=Z_DATA_ERROR;
+          case Z_DATA_ERROR:
+          case Z_MEM_ERROR:
+            break;
+          default:
+            j+=iSize-strm.avail_out;
+            if (strm.avail_out==0)
+              continue;
+        }
+        abyOut.resize(j);
+        break;
       }
       inflateEnd(&strm);
       if (i!=Z_OK || abyOut.isEmpty())
       {
-	MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
-	continue;
+        MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+        continue;
       }
 
       tmp.last()=QString::fromLatin1(abyOut.constData(),abyOut.count());
@@ -224,8 +223,8 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     }
     else
     {
-			MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
-			continue;
+      MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
+      continue;
     }
 
     // corr=id skip_first_values first_bin coded_length_array
@@ -261,19 +260,19 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       QString line(tmp.takeFirst());
       for (i=0; i<line.count(); ++i)
       {
-	quint8 v=0;
-	char c=line.at(i).toAscii();
-	if (c>='0' && c<='9') v=c-'0'; else
-	if (c>='A' && c<='Z') v=c-'A'+10; else
-	if (c>='a' && c<='z') v=c-'a'+36;
-	s.m_abyMapData.append(v);
+        quint8 v=0;
+        char c=line.at(i).toAscii();
+        if (c>='0' && c<='9') v=c-'0'; else
+        if (c>='A' && c<='Z') v=c-'A'+10; else
+        if (c>='a' && c<='z') v=c-'a'+36;
+        s.m_abyMapData.append(v);
       }
     }
     else
     {
       // length_array with separators
       while (!tmp.isEmpty())
-	s.m_abyMapData.append(tmp.takeFirst().toInt());
+        s.m_abyMapData.append(tmp.takeFirst().toInt());
     }
 
     int iTubeChannels=s.m_iSkipFirst;
@@ -282,12 +281,12 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
 
     if (iDstHeight<s.m_iTube)
     {
-			MSG_DEBUG << "mapping: increasing height from " << iDstHeight << " to " << s.m_iTube;
+      MSG_DEBUG << "mapping: increasing height from " << iDstHeight << " to " << s.m_iTube;
       iDstHeight=s.m_iTube;
     }
     if (iDstWidth<iTubeChannels)
     {
-			MSG_DEBUG << "mapping: increasing width from " << iDstWidth << " to " << iTubeChannels;
+      MSG_DEBUG << "mapping: increasing width from " << iDstWidth << " to " << iTubeChannels;
       iDstWidth=iTubeChannels;
     }
 
@@ -298,23 +297,22 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       iPos=(iMin+iMax)/2;
       if (aMappings[iPos].m_iTube==s.m_iTube)
       {
-	MSG_DEBUG << "overwriting mapping for tube " << s.m_iTube;
-	aMappings[iPos]=s;
-	bInsert=false;
-	break;
+        MSG_DEBUG << "overwriting mapping for tube " << s.m_iTube;
+        aMappings[iPos]=s;
+        bInsert=false;
+        break;
       }
       if (aMappings[iPos].m_iTube<s.m_iTube)
-	iMax=iPos-1;
+        iMax=iPos-1;
       else
-	iMin=++iPos;
+        iMin=++iPos;
     }
     if (bInsert)
       aMappings.insert(iPos,s);
   }
   if (iSrcWidth>iDstWidth || iSrcHeight>iDstHeight)
   {
-		MSG_ERROR << "mapped size is greater than source:  source=" << iSrcWidth << '*' << iSrcHeight << "  mapped=" << iDstWidth << '*' << iDstHeight;
-    Q_ASSERT(iSrcWidth<=iDstWidth && iSrcHeight<=iDstHeight);
+    MSG_ERROR << "mapped size is greater than source:  source=" << iSrcWidth << '*' << iSrcHeight << "  mapped=" << iDstWidth << '*' << iDstHeight;
     return result;
   }
 
@@ -329,8 +327,8 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
     {
       if (aMappings[j].m_iTube==i)
       {
-	pMap=&aMappings[j];
-	break;
+        pMap=&aMappings[j];
+        break;
       }
     }
     if (pMap!=NULL)
@@ -340,9 +338,9 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       int iDstX=pMap->m_iSkipFirst;
       for (j=0; j<pMap->m_abyMapData.count(); ++j)
       {
-	QPoint pt(iDstX++,i);
-	for (int iCount=pMap->m_abyMapData[j]; iCount>0; --iCount)
-	  result.map(QPoint(iSrcX++,i),pt,pMap->m_fCorrection);
+        QPoint pt(iDstX++,i);
+        for (int iCount=pMap->m_abyMapData[j]; iCount>0; --iCount)
+          result.map(QPoint(iSrcX++,i),pt,pMap->m_fCorrection);
       }
     }
     else
@@ -350,11 +348,11 @@ MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, in
       // generate linear (default) mapping
       for (j=0; j<iDstWidth; ++j)
       {
-	int iStartX=(iSrcWidth*j)/iDstWidth;
-	int iEndX=(iSrcWidth*(j+1))/iDstWidth;
-	QPoint pt(j,i);
-	while (iStartX<iEndX)
-	  result.map(QPoint(iStartX++,i),pt,1.0);
+        int iStartX=(iSrcWidth*j)/iDstWidth;
+        int iEndX=(iSrcWidth*(j+1))/iDstWidth;
+        QPoint pt(j,i);
+        while (iStartX<iEndX)
+          result.map(QPoint(iStartX++,i),pt,1.0);
       }
     }
   }

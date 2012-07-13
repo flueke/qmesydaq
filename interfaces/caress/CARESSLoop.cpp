@@ -63,6 +63,11 @@
 #include <QStringList>
 #include <QMutexLocker>
 #include <QTime>
+#if defined(_MSC_VER)
+    #include "stdafx.h"
+#else
+    #include <unistd.h>
+#endif
 
 // omniORB needs to know the platform as define __??__
 #if defined(__amd64) || defined(__amd64__) || defined(amd64) || defined(__x86_64)
@@ -133,7 +138,7 @@ static const char* g_asDevices[]={"monitor_1","monitor_2","monitor_3","monitor_4
 
 /*!
   \brief CORBA server implementing the "CARESS CORBA device"
-	 (IDL interface CARESS::CORBADevice)
+     (IDL interface CARESS::CORBADevice)
   \class CORBADevice_i
  */
 class CORBADevice_i: public POA_CARESS::CORBADevice, public PortableServer::RefCountServantBase
@@ -308,7 +313,7 @@ void CARESSLoop::runLoop()
     while (m_bDoLoop)
     {
       if (orb->work_pending())
-	orb->perform_work();
+    orb->perform_work();
       usleep(1000);
     }
     orb->destroy();
@@ -439,11 +444,11 @@ CORBADevice_i::~CORBADevice_i()
   \param[in]  kind           kind of initialisation
   \param[in]  id             CARESS id
   \param[in]  config_line    text line from "hardware_modules.dat" file
-			     see head of source file about content of this line
+                 see head of source file about content of this line
   \param[out] module_status  device status
   \note this function calls \c init_module_ex only. Although this may enable
-	exceptions, this implementation uses exceptions for \c get_attribute and
-	\c set_attribute only.
+    exceptions, this implementation uses exceptions for \c get_attribute and
+    \c set_attribute only.
  */
 CARESS::ReturnType CORBADevice_i::init_module(CORBA::Long kind,
                                       CORBA::Long id,
@@ -460,12 +465,12 @@ CARESS::ReturnType CORBADevice_i::init_module(CORBA::Long kind,
   \param[in]  id             CARESS id
   \param[in]  name           CARESS name of this device
   \param[in]  config_line    text line from "hardware_modules.dat" file
-			     see head of source file about content of this line
+                 see head of source file about content of this line
   \param[out] module_status  device status
   \param[out] description    error description or empty string
   \return CARESS::OK = successful \n CARESS::NOT_OK = error
   \note Although this function may enable exceptions, this implementation
-	uses exceptions for \c get_attribute and \c set_attribute only.
+    uses exceptions for \c get_attribute and \c set_attribute only.
  */
 CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
                                       CORBA::Long id,
@@ -478,7 +483,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
   try
   {
     (void)name;
-		MSG_DEBUG << "init(kind=" << kind << ", id=" << id << ", name=" << name << ", config_line=" << config_line << ')';
+        MSG_DEBUG << "init(kind=" << kind << ", id=" << id << ", name=" << name << ", config_line=" << config_line << ')';
     if ((kind!=0/*INIT*/ && kind!=8/*RESET*/) || id<1)
       throw ((const char*)"invalid init kind or id");
 
@@ -493,7 +498,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
     while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
     if      ((i== 7 && strncasecmp(config_line,"monitor",i)==0)       || (i==3 && strncasecmp(config_line,"mon",i)==0) ||
-	     (i== 8 && strncasecmp(config_line,"monitor1",i)==0)      || (i==4 && strncasecmp(config_line,"mon1",i)==0))  iDevice=QMESYDAQ_MON1;
+         (i== 8 && strncasecmp(config_line,"monitor1",i)==0)      || (i==4 && strncasecmp(config_line,"mon1",i)==0))  iDevice=QMESYDAQ_MON1;
     else if ((i== 8 && strncasecmp(config_line,"monitor2",i)==0)      || (i==4 && strncasecmp(config_line,"mon2",i)==0))  iDevice=QMESYDAQ_MON2;
     else if ((i== 8 && strncasecmp(config_line,"monitor3",i)==0)      || (i==4 && strncasecmp(config_line,"mon3",i)==0))  iDevice=QMESYDAQ_MON3;
     else if ((i== 8 && strncasecmp(config_line,"monitor4",i)==0)      || (i==4 && strncasecmp(config_line,"mon4",i)==0))  iDevice=QMESYDAQ_MON4;
@@ -515,158 +520,158 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
     {
       case QMESYDAQ_TIMER:
       {
-	const char* ptr2;
-	char* ptr3;
+    const char* ptr2;
+    char* ptr3;
 
-	// timer scaler/factor
-	ptr2=ptr1;
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	i=ptr1-ptr2;
-	ptr3=(char*)ptr2;
-	m_dblTimerScale=strtod(ptr2,&ptr3);
-	if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_dblTimerScale=DEFAULTTIMEFACTOR;
-	else if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
-	MSG_DEBUG << "init(timer factor " << m_dblTimerScale << ')';
-	break;
+    // timer scaler/factor
+    ptr2=ptr1;
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    i=ptr1-ptr2;
+    ptr3=(char*)ptr2;
+    m_dblTimerScale=strtod(ptr2,&ptr3);
+    if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_dblTimerScale=DEFAULTTIMEFACTOR;
+    else if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
+    MSG_DEBUG << "init(timer factor " << m_dblTimerScale << ')';
+    break;
       }
       case QMESYDAQ_HISTOGRAM:
       {
-	const char* ptr2;
-	char* ptr3;
-	m_lHistogramX=m_lHistogramY=0;
-	// skip next value
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+    const char* ptr2;
+    char* ptr3;
+    m_lHistogramX=m_lHistogramY=0;
+    // skip next value
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
-	// width of scaled histogram
-	while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-	ptr2=ptr1;
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	i=ptr1-ptr2;
-	ptr3=(char*)ptr2;
-	m_lHistogramX=strtol(ptr2,&ptr3,0);
-	if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramX=0;
-	else if (m_lHistogramX==0 && pInterface!=NULL)
-	{
-	  quint16 w=0,h=0;
-	  pInterface->readHistogramSize(w,h);
-	  m_lHistogramX=w;
-	}
-	if (m_lHistogramX<1)
-	{
-	  m_lId[QMESYDAQ_HISTOGRAM]=0;
-	  throw ((const char*)"invalid histogram width");
-	}
-	ptr1=ptr3;
-	while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+    // width of scaled histogram
+    while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+    ptr2=ptr1;
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    i=ptr1-ptr2;
+    ptr3=(char*)ptr2;
+    m_lHistogramX=strtol(ptr2,&ptr3,0);
+    if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramX=0;
+    else if (m_lHistogramX==0 && pInterface!=NULL)
+    {
+      quint16 w=0,h=0;
+      pInterface->readHistogramSize(w,h);
+      m_lHistogramX=w;
+    }
+    if (m_lHistogramX<1)
+    {
+      m_lId[QMESYDAQ_HISTOGRAM]=0;
+      throw ((const char*)"invalid histogram width");
+    }
+    ptr1=ptr3;
+    while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
-	// height of scaled histogram
-	while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-	ptr2=ptr1;
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	i=ptr1-ptr2;
-	ptr3=(char*)ptr2;
-	m_lHistogramY=strtol(ptr2,&ptr3,0);
-	if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramY=0;
-	else if (m_lHistogramY==0 && pInterface!=NULL)
-	{
-	  quint16 w=0,h=0;
-	  pInterface->readHistogramSize(w,h);
-	  m_lHistogramY=h;
-	}
-	if (m_lHistogramY<1)
-	{
-	  m_lId[QMESYDAQ_HISTOGRAM]=0;
-	  throw ((const char*)"invalid histogram height");
-	}
-	if (pInterface!=NULL)
-	  pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
-	MSG_DEBUG << "init(histogram)";
-	break;
+    // height of scaled histogram
+    while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+    ptr2=ptr1;
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    i=ptr1-ptr2;
+    ptr3=(char*)ptr2;
+    m_lHistogramY=strtol(ptr2,&ptr3,0);
+    if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramY=0;
+    else if (m_lHistogramY==0 && pInterface!=NULL)
+    {
+      quint16 w=0,h=0;
+      pInterface->readHistogramSize(w,h);
+      m_lHistogramY=h;
+    }
+    if (m_lHistogramY<1)
+    {
+      m_lId[QMESYDAQ_HISTOGRAM]=0;
+      throw ((const char*)"invalid histogram height");
+    }
+    if (pInterface!=NULL)
+      pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
+    MSG_DEBUG << "init(histogram)";
+    break;
       }
       case QMESYDAQ_DIFFRACTOGRAM:
       {
-	const char* ptr2;
-	char* ptr3;
-	m_lDiffractogramWidth=0;
-	// skip next value
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+    const char* ptr2;
+    char* ptr3;
+    m_lDiffractogramWidth=0;
+    // skip next value
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
-	// width of scaled histogram
-	while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-	ptr2=ptr1;
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	i=ptr1-ptr2;
-	ptr3=(char*)ptr2;
-	m_lDiffractogramWidth=strtol(ptr2,&ptr3,0);
-	if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lDiffractogramWidth=0;
-	else if (m_lDiffractogramWidth==0 && pInterface!=NULL)
-	{
-	  QList<quint64> tmp=pInterface->readDiffractogram();
-	  m_lDiffractogramWidth=tmp.count();
-	}
-	if (m_lDiffractogramWidth<1)
-	{
-	  m_lId[QMESYDAQ_DIFFRACTOGRAM]=0;
-	  throw ((const char*)"invalid diffractogram width");
-	}
-	if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
-	  pInterface->updateMainWidget(m_lDiffractogramWidth,0,-1);
-	MSG_DEBUG << "init(diffractogram)";
-	break;
+    // width of scaled histogram
+    while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+    ptr2=ptr1;
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    i=ptr1-ptr2;
+    ptr3=(char*)ptr2;
+    m_lDiffractogramWidth=strtol(ptr2,&ptr3,0);
+    if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lDiffractogramWidth=0;
+    else if (m_lDiffractogramWidth==0 && pInterface!=NULL)
+    {
+      QList<quint64> tmp=pInterface->readDiffractogram();
+      m_lDiffractogramWidth=tmp.count();
+    }
+    if (m_lDiffractogramWidth<1)
+    {
+      m_lId[QMESYDAQ_DIFFRACTOGRAM]=0;
+      throw ((const char*)"invalid diffractogram width");
+    }
+    if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
+      pInterface->updateMainWidget(m_lDiffractogramWidth,0,-1);
+    MSG_DEBUG << "init(diffractogram)";
+    break;
       }
       case QMESYDAQ_SPECTROGRAM:
       {
-	const char* ptr2;
-	char* ptr3;
-	m_lSpectrogramChannel=-2;
-	m_lSpectrogramWidth=0;
-	// select spectrogram channel
-	while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-	ptr2=ptr1;
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	i=ptr1-ptr2;
-	if (i>=3 && (strncasecmp(ptr2,"all",3)==0 || strncasecmp(ptr2,"sum",3)==0))
-	  m_lSpectrogramChannel=-1;
-	else
-	{
-	  m_lSpectrogramChannel=strtol(ptr2,&ptr3,0);
-	  if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lSpectrogramChannel=-2;
-	}
-	while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+    const char* ptr2;
+    char* ptr3;
+    m_lSpectrogramChannel=-2;
+    m_lSpectrogramWidth=0;
+    // select spectrogram channel
+    while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+    ptr2=ptr1;
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    i=ptr1-ptr2;
+    if (i>=3 && (strncasecmp(ptr2,"all",3)==0 || strncasecmp(ptr2,"sum",3)==0))
+      m_lSpectrogramChannel=-1;
+    else
+    {
+      m_lSpectrogramChannel=strtol(ptr2,&ptr3,0);
+      if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lSpectrogramChannel=-2;
+    }
+    while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
-	// width of scaled spectrogram
-	while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-	ptr2=ptr1;
-	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-	i=ptr1-ptr2;
-	ptr3=(char*)ptr2;
-	m_lSpectrogramWidth=strtol(ptr2,&ptr3,0);
-	if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lSpectrogramWidth=0;
-	else if (m_lSpectrogramWidth==0 && pInterface!=NULL)
-	{
-	  QList<quint64> tmp=pInterface->readSpectrogram(m_lSpectrogramChannel);
-	  m_lSpectrogramWidth=tmp.size();
-	}
-	if (m_lSpectrogramChannel<-1 || m_lSpectrogramWidth<1)
-	{
-	  m_lId[QMESYDAQ_SPECTROGRAM]=0;
-	  throw ((const char*)"invalid spectrogram width");
-	}
-	if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1)
-	  pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-	MSG_DEBUG << "init(spectrogram)";
-	break;
+    // width of scaled spectrogram
+    while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+    ptr2=ptr1;
+    while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+    i=ptr1-ptr2;
+    ptr3=(char*)ptr2;
+    m_lSpectrogramWidth=strtol(ptr2,&ptr3,0);
+    if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lSpectrogramWidth=0;
+    else if (m_lSpectrogramWidth==0 && pInterface!=NULL)
+    {
+      QList<quint64> tmp=pInterface->readSpectrogram(m_lSpectrogramChannel);
+      m_lSpectrogramWidth=tmp.size();
+    }
+    if (m_lSpectrogramChannel<-1 || m_lSpectrogramWidth<1)
+    {
+      m_lId[QMESYDAQ_SPECTROGRAM]=0;
+      throw ((const char*)"invalid spectrogram width");
+    }
+    if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1)
+      pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
+    MSG_DEBUG << "init(spectrogram)";
+    break;
       }
       default:
-	if (iDevice<ARRAY_SIZE(g_asDevices))
-		MSG_DEBUG << "init(counter " << g_asDevices[iDevice] << ')';
-	else
-		MSG_DEBUG << "init(counter " << id << ')';
-	if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1 && m_lId[QMESYDAQ_DIFFRACTOGRAM]<1)
-	  pInterface->updateMainWidget(0,0,-1);
-	break;
+    if (iDevice<ARRAY_SIZE(g_asDevices))
+        MSG_DEBUG << "init(counter " << g_asDevices[iDevice] << ')';
+    else
+        MSG_DEBUG << "init(counter " << id << ')';
+    if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1 && m_lId[QMESYDAQ_DIFFRACTOGRAM]<1)
+      pInterface->updateMainWidget(0,0,-1);
+    break;
     }
     m_lId[iDevice]=id;
     m_lStepNo=0;
@@ -722,20 +727,20 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
     switch (iDevice)
     {
       case QMESYDAQ_HISTOGRAM:
-	if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-	else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-	else pInterface->updateMainWidget(0,0,-1);
-	break;
+    if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
+    else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
+    else pInterface->updateMainWidget(0,0,-1);
+    break;
       case QMESYDAQ_DIFFRACTOGRAM:
-	if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
-	else if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-	else pInterface->updateMainWidget(0,0,-1);
-	break;
+    if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
+    else if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
+    else pInterface->updateMainWidget(0,0,-1);
+    break;
       case QMESYDAQ_SPECTROGRAM:
-	if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
-	else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-	else pInterface->updateMainWidget(0,0,-1);
-	break;
+    if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
+    else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
+    else pInterface->updateMainWidget(0,0,-1);
+    break;
     }
   }
   return CARESS::OK;
@@ -773,21 +778,21 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 
     for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
       if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
-	break;
+    break;
 
     switch (iDevice)
     {
       case QMESYDAQ_HISTOGRAM:
-	pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,run_no);
-	break;
+    pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,run_no);
+    break;
       case QMESYDAQ_SPECTROGRAM:
-	if (m_lId[QMESYDAQ_HISTOGRAM]<1)
-	  pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,run_no);
-	break;
+    if (m_lId[QMESYDAQ_HISTOGRAM]<1)
+      pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,run_no);
+    break;
       case QMESYDAQ_DIFFRACTOGRAM:
-	if (m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
-	  pInterface->updateMainWidget(m_lDiffractogramWidth,0,run_no);
-	break;
+    if (m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
+      pInterface->updateMainWidget(m_lDiffractogramWidth,0,run_no);
+    break;
     }
 
     if (m_iMaster<0 || iDevice==m_iMaster) // no known master or this device is the master
@@ -796,36 +801,36 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
       m_lMesrCount=mesr_count;
       if (kind==0)
       {
-	if (mesr_count==0) ++m_lStepNo;
-	if (m_bListmode && m_sListfile.isEmpty())
-	{
-	  QString sName;
-	  sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lMesrCount);
-	  pInterface->setListFileName(sName);
-	}
+    if (mesr_count==0) ++m_lStepNo;
+    if (m_bListmode && m_sListfile.isEmpty())
+    {
+      QString sName;
+      sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lMesrCount);
+      pInterface->setListFileName(sName);
+    }
       }
       if (pInterface->status()==0)
       {
-	QTime t1;
-	if (kind==1)
-	  pInterface->resume();
-	else
-	  pInterface->start();
-	t1=QTime::currentTime();
-	for (;;)
-	{
-	  int tDiff;
-	  usleep(1000);
-	  if (pInterface->status()!=0) break;
-	  tDiff=t1.msecsTo(QTime::currentTime());
-	  if (tDiff<0) tDiff+=86400000;
-	  if (tDiff>1000) break;
-	}
+    QTime t1;
+    if (kind==1)
+      pInterface->resume();
+    else
+      pInterface->start();
+    t1=QTime::currentTime();
+    for (;;)
+    {
+      int tDiff;
+      usleep(1000);
+      if (pInterface->status()!=0) break;
+      tDiff=t1.msecsTo(QTime::currentTime());
+      if (tDiff<0) tDiff+=86400000;
+      if (tDiff>1000) break;
+    }
       }
       if (iDevice<ARRAY_SIZE(g_asDevices))
-	MSG_DEBUG << "start device " << g_asDevices[iDevice];
+    MSG_DEBUG << "start device " << g_asDevices[iDevice];
       else
-	MSG_DEBUG << "start device " << iDevice;
+    MSG_DEBUG << "start device " << iDevice;
     }
     module_status=ACTIVE;
     return CARESS::OK;
@@ -871,30 +876,30 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
       if (kind==1) m_lStepNo=0;
 
       for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
-	if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
-	  break;
+    if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
+      break;
 
       if (m_iMaster<0 || iDevice>=0) // no master or this device is the master
       {
-	if (pInterface->status()!=0)
-	{
-	  QTime t1;
-	  pInterface->stop();
-	  t1=QTime::currentTime();
-	  for (;;)
-	  {
-	    int tDiff;
-	    usleep(1000);
-	    if (pInterface->status()==0) break;
-	    tDiff=t1.msecsTo(QTime::currentTime());
-	    if (tDiff<0) tDiff+=86400000;
-	    if (tDiff>1000) break;
-	  }
-	}
-	if (iDevice<ARRAY_SIZE(g_asDevices))
-	  MSG_DEBUG << "stop device " << g_asDevices[iDevice];
-	else
-	  MSG_DEBUG << "stop device " << iDevice;
+    if (pInterface->status()!=0)
+    {
+      QTime t1;
+      pInterface->stop();
+      t1=QTime::currentTime();
+      for (;;)
+      {
+        int tDiff;
+        usleep(1000);
+        if (pInterface->status()==0) break;
+        tDiff=t1.msecsTo(QTime::currentTime());
+        if (tDiff<0) tDiff+=86400000;
+        if (tDiff>1000) break;
+      }
+    }
+    if (iDevice<ARRAY_SIZE(g_asDevices))
+      MSG_DEBUG << "stop device " << g_asDevices[iDevice];
+    else
+      MSG_DEBUG << "stop device " << iDevice;
       }
     }
     module_status=DONE;
@@ -967,7 +972,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 
     for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
       if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
-	break;
+    break;
 
     if (iDevice<0)
     {
@@ -981,89 +986,89 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
     {
       case 14: // LOADMASTER
       {
-	int iTmpDev=0;
-	double dblTarget=0.0;
-	bool bOK=false;
+    int iTmpDev=0;
+    double dblTarget=0.0;
+    bool bOK=false;
 
-	m_iMaster=-1;
-	switch (iDevice)
-	{
-	  case QMESYDAQ_MON1:  iTmpDev=M1CT; break;
-	  case QMESYDAQ_MON2:  iTmpDev=M2CT; break;
-	  case QMESYDAQ_MON3:  iTmpDev=M3CT; break;
-	  case QMESYDAQ_MON4:  iTmpDev=M4CT; break;
-	  case QMESYDAQ_TIMER: iTmpDev=TCT;  break;
-	  default: // QMESYDAQ_EVENT, QMESYDAQ_HISTOGRAM, QMESYDAQ_DIFFRACTOGRAM, QMESYDAQ_SPECTROGRAM:
-	    iDevice=QMESYDAQ_EVENT;
-	    iTmpDev=EVCT;
-	    break;
-	}
+    m_iMaster=-1;
+    switch (iDevice)
+    {
+      case QMESYDAQ_MON1:  iTmpDev=M1CT; break;
+      case QMESYDAQ_MON2:  iTmpDev=M2CT; break;
+      case QMESYDAQ_MON3:  iTmpDev=M3CT; break;
+      case QMESYDAQ_MON4:  iTmpDev=M4CT; break;
+      case QMESYDAQ_TIMER: iTmpDev=TCT;  break;
+      default: // QMESYDAQ_EVENT, QMESYDAQ_HISTOGRAM, QMESYDAQ_DIFFRACTOGRAM, QMESYDAQ_SPECTROGRAM:
+        iDevice=QMESYDAQ_EVENT;
+        iTmpDev=EVCT;
+        break;
+    }
 
-	switch (data._d())
-	{
-	  case CARESS::TypeLong:   dblTarget=data.l();   bOK=true; break;
-	  case CARESS::TypeLong64: dblTarget=data.l64(); bOK=true; break;
-	  case CARESS::TypeFloat:  dblTarget=data.f();   bOK=true; break;
-	  case CARESS::TypeDouble: dblTarget=data.d();   bOK=true; break;
-	  case CARESS::TypeArrayByte:
-	    if (data.ab().length()>0) { dblTarget=data.ab()[0]; bOK=true; }
-	    else strcpy(m_szErrorMessage,"got no data");
-	    break;
-	  case CARESS::TypeArrayLong:
-	    if (data.al().length()>0) { dblTarget=data.al()[0]; bOK=true; }
-	    else strcpy(m_szErrorMessage,"got no data");
-	    break;
-	  case CARESS::TypeArrayLong64:
-	    if (data.al64().length()>0) { dblTarget=data.al64()[0]; bOK=true; }
-	    else strcpy(m_szErrorMessage,"got no data");
-	    break;
-	  case CARESS::TypeArrayFloat:
-	    if (data.af().length()>0) { dblTarget=data.af()[0]; bOK=true; }
-	    else strcpy(m_szErrorMessage,"got no data");
-	    break;
-  	  case CARESS::TypeArrayDouble:
-	    if (data.ad().length()>0) { dblTarget=data.ad()[0]; bOK=true; }
-	    else strcpy(m_szErrorMessage,"got no data");
-	    break;
-	  default: strcpy(m_szErrorMessage,"invalid data type"); break;
-	}
+    switch (data._d())
+    {
+      case CARESS::TypeLong:   dblTarget=data.l();   bOK=true; break;
+      case CARESS::TypeLong64: dblTarget=data.l64(); bOK=true; break;
+      case CARESS::TypeFloat:  dblTarget=data.f();   bOK=true; break;
+      case CARESS::TypeDouble: dblTarget=data.d();   bOK=true; break;
+      case CARESS::TypeArrayByte:
+        if (data.ab().length()>0) { dblTarget=data.ab()[0]; bOK=true; }
+        else strcpy(m_szErrorMessage,"got no data");
+        break;
+      case CARESS::TypeArrayLong:
+        if (data.al().length()>0) { dblTarget=data.al()[0]; bOK=true; }
+        else strcpy(m_szErrorMessage,"got no data");
+        break;
+      case CARESS::TypeArrayLong64:
+        if (data.al64().length()>0) { dblTarget=data.al64()[0]; bOK=true; }
+        else strcpy(m_szErrorMessage,"got no data");
+        break;
+      case CARESS::TypeArrayFloat:
+        if (data.af().length()>0) { dblTarget=data.af()[0]; bOK=true; }
+        else strcpy(m_szErrorMessage,"got no data");
+        break;
+      case CARESS::TypeArrayDouble:
+        if (data.ad().length()>0) { dblTarget=data.ad()[0]; bOK=true; }
+        else strcpy(m_szErrorMessage,"got no data");
+        break;
+      default: strcpy(m_szErrorMessage,"invalid data type"); break;
+    }
 
-	if (bOK)
-	{
-	  m_iMaster=iDevice;
-	  if (iDevice==QMESYDAQ_TIMER) dblTarget/=m_dblTimerScale;
-	  pInterface->selectCounter(iTmpDev);
-	  pInterface->setPreSelection(dblTarget);
-	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    MSG_DEBUG << "master device " << g_asDevices[iDevice];
-	  else
-	    MSG_DEBUG << "master device " << iDevice;
-	}
-	else
-	{
-	  MSG_DEBUG << "load - " << (const char*)m_szErrorMessage;
-	  module_status=LOADED;
-	  return CARESS::NOT_OK;
-	}
-	break;
+    if (bOK)
+    {
+      m_iMaster=iDevice;
+      if (iDevice==QMESYDAQ_TIMER) dblTarget/=m_dblTimerScale;
+      pInterface->selectCounter(iTmpDev);
+      pInterface->setPreSelection(dblTarget);
+      if (iDevice<ARRAY_SIZE(g_asDevices))
+        MSG_DEBUG << "master device " << g_asDevices[iDevice];
+      else
+        MSG_DEBUG << "master device " << iDevice;
+    }
+    else
+    {
+      MSG_DEBUG << "load - " << (const char*)m_szErrorMessage;
+      module_status=LOADED;
+      return CARESS::NOT_OK;
+    }
+    break;
       }
       case 15: // LOADSLAVE
-	if (m_iMaster==iDevice)
-	  m_iMaster=-1;
-	if (iDevice<ARRAY_SIZE(g_asDevices))
-	  MSG_DEBUG << "slave device " << g_asDevices[iDevice];
-	else
-	  MSG_DEBUG << "slave device " << iDevice;
-	break;
+    if (m_iMaster==iDevice)
+      m_iMaster=-1;
+    if (iDevice<ARRAY_SIZE(g_asDevices))
+      MSG_DEBUG << "slave device " << g_asDevices[iDevice];
+    else
+      MSG_DEBUG << "slave device " << iDevice;
+    break;
       case 16: // RESETMODULE
-	pInterface->clear();
-	if (iDevice<ARRAY_SIZE(g_asDevices))
-	  MSG_DEBUG << "clear device " << g_asDevices[iDevice];
-	else
-	  MSG_DEBUG << "clear device " << iDevice;
-	break;
+    pInterface->clear();
+    if (iDevice<ARRAY_SIZE(g_asDevices))
+      MSG_DEBUG << "clear device " << g_asDevices[iDevice];
+    else
+      MSG_DEBUG << "clear device " << iDevice;
+    break;
       default: // ignore other load kinds
-	break;
+    break;
     }
 
     module_status=LOADED;
@@ -1130,105 +1135,105 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     while (pStart<pEnd)
     {
       for (p1=p2=pStart; p2<pEnd && *p2!='\r' && *p2!='\n'; ++p2)
-	if (*p2=='=' && p1==pStart)
-	  p1=p2+1;
+    if (*p2=='=' && p1==pStart)
+      p1=p2+1;
 
       int iNameLen=p1-pStart-1;
       if (p1!=p2 && iNameLen==10 && strncasecmp(pStart,"CARESSInfo",10)==0)
       {
-	// extract CARESS revision: CARESS r1537 and later is able to handle 64 bit IEEE numbers
-	long lRevision=strtol(p1,(char**)&p3,10);
-	if (p1<p3 && p3<p2 && (p3-p1)>=4 && lRevision>0 && lRevision<0x7FFFFFFF)
-	{
-	  m_b64Bit[iDevice]=(lRevision>=1537);
-	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    MSG_DEBUG << "use " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
-	  else
-	    MSG_DEBUG << "use " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
-	}
+    // extract CARESS revision: CARESS r1537 and later is able to handle 64 bit IEEE numbers
+    long lRevision=strtol(p1,(char**)&p3,10);
+    if (p1<p3 && p3<p2 && (p3-p1)>=4 && lRevision>0 && lRevision<0x7FFFFFFF)
+    {
+      m_b64Bit[iDevice]=(lRevision>=1537);
+      if (iDevice<ARRAY_SIZE(g_asDevices))
+        MSG_DEBUG << "use " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
+      else
+        MSG_DEBUG << "use " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
+    }
       }
       else if (p1!=p2 && iNameLen>8 && strncasecmp(pStart,"mesydaq_",8)==0)
       {
-	// may be, we found an option to configure
-	iNameLen-=8;
-	pStart+=8;
+    // may be, we found an option to configure
+    iNameLen-=8;
+    pStart+=8;
 
-	// forced use of 32 bit return values
-	if ((iNameLen>=8 && strncasecmp(pStart,"return32",8)==0) ||
-	    (iNameLen>=5  && strncasecmp(pStart,"use32",5)==0) ||
-	    (iNameLen==5  && strncasecmp(pStart,"32bit",5)==0) ||
-	    (iNameLen>=6 && strncasecmp(pStart,"force32",6)==0))
-	{
-	  int iValueLen=p2-p1;
-	  if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
-	      (iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
-	      (iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=false;
-	  else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
-		   (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
-		   (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=true;
-	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
-	  else
-	    MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
-	} else
-	// forced use of 64 bit return values
-	if ((iNameLen>=8 && strncasecmp(pStart,"return64",8)==0) ||
-	    (iNameLen>=5  && strncasecmp(pStart,"use64",5)==0) ||
-	    (iNameLen==5  && strncasecmp(pStart,"64bit",5)==0) ||
-	    (iNameLen>=6 && strncasecmp(pStart,"force64",6)==0))
-	{
-	  int iValueLen=p2-p1;
-	  if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
-	      (iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
-	      (iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=true;
-	  else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
-		   (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
-		   (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=false;
-	  if (iDevice<ARRAY_SIZE(g_asDevices))
-	    MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
-	  else
-	    MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
-	} else
-	// timer scaler/factor
-	if (iDevice==QMESYDAQ_TIMER &&
-	    ((iNameLen>=9 && strncasecmp(pStart,"timescale",9)==0) ||
-	     (iNameLen=10 && strncasecmp(pStart,"timefactor",10)==0)))
-	{
-	  m_dblTimerScale=QString::fromLatin1(p1,p2-p1).toDouble();
-	  if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
-	  MSG_DEBUG << "load time scale/factor " << m_dblTimerScale;
-	} else
-	// list mode
-	if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-	    iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
-	{
-	  int iValueLen=p2-p1;
-	  QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-	  if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
-	      (iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
-	      (iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bListmode=true;
-	  else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
-		   (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
-		   (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bListmode=false;
-	  if (pInterface)
-	    pInterface->setListMode(m_bListmode);
-	  MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
-	} else
-	// list file
-	if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-	    ((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
-	     (iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
-	{
-	  QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-	  m_sListfile=QString::fromLatin1(p1,p2-p1);
-	  m_bListmode=true;
-	  if (pInterface)
-	  {
-	    pInterface->setListFileName(m_sListfile);
-	    pInterface->setListMode(m_bListmode);
-	  }
-	  MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
-	}
+    // forced use of 32 bit return values
+    if ((iNameLen>=8 && strncasecmp(pStart,"return32",8)==0) ||
+        (iNameLen>=5  && strncasecmp(pStart,"use32",5)==0) ||
+        (iNameLen==5  && strncasecmp(pStart,"32bit",5)==0) ||
+        (iNameLen>=6 && strncasecmp(pStart,"force32",6)==0))
+    {
+      int iValueLen=p2-p1;
+      if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+          (iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+          (iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=false;
+      else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+           (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+           (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=true;
+      if (iDevice<ARRAY_SIZE(g_asDevices))
+        MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
+      else
+        MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
+    } else
+    // forced use of 64 bit return values
+    if ((iNameLen>=8 && strncasecmp(pStart,"return64",8)==0) ||
+        (iNameLen>=5  && strncasecmp(pStart,"use64",5)==0) ||
+        (iNameLen==5  && strncasecmp(pStart,"64bit",5)==0) ||
+        (iNameLen>=6 && strncasecmp(pStart,"force64",6)==0))
+    {
+      int iValueLen=p2-p1;
+      if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+          (iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+          (iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=true;
+      else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+           (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+           (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=false;
+      if (iDevice<ARRAY_SIZE(g_asDevices))
+        MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
+      else
+        MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
+    } else
+    // timer scaler/factor
+    if (iDevice==QMESYDAQ_TIMER &&
+        ((iNameLen>=9 && strncasecmp(pStart,"timescale",9)==0) ||
+         (iNameLen=10 && strncasecmp(pStart,"timefactor",10)==0)))
+    {
+      m_dblTimerScale=QString::fromLatin1(p1,p2-p1).toDouble();
+      if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
+      MSG_DEBUG << "load time scale/factor " << m_dblTimerScale;
+    } else
+    // list mode
+    if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+        iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
+    {
+      int iValueLen=p2-p1;
+      QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+      if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+          (iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+          (iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bListmode=true;
+      else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+           (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+           (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bListmode=false;
+      if (pInterface)
+        pInterface->setListMode(m_bListmode);
+      MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
+    } else
+    // list file
+    if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+        ((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
+         (iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
+    {
+      QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+      m_sListfile=QString::fromLatin1(p1,p2-p1);
+      m_bListmode=true;
+      if (pInterface)
+      {
+        pInterface->setListFileName(m_sListfile);
+        pInterface->setListMode(m_bListmode);
+      }
+      MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
+    }
       }
       pStart=p2+1;
     }
@@ -1255,7 +1260,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 
     while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
     if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-	(pStart+8)<pEnd && strncasecmp(pStart,"listmode",8)==0)
+    (pStart+8)<pEnd && strncasecmp(pStart,"listmode",8)==0)
     {
       pStart+=8;
       while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1269,7 +1274,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
       pInterface->setListMode(m_bListmode);
     }
     else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-	     (pStart+8)<pEnd && strncasecmp(pStart,"listfile",8)==0)
+         (pStart+8)<pEnd && strncasecmp(pStart,"listfile",8)==0)
     {
       pStart+=8;
       while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1319,10 +1324,10 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     // data is simple text with unix-end-of-line in variable data.ab()[]
     const char* pStart=(const char*)(&data.ab()[0]);
     CORBA::ULong uLen=data.ab().length();
-		if (iDevice<ARRAY_SIZE(g_asDevices))
-		  MSG_DEBUG << "loadblock(startvalues device " << g_asDevices[iDevice] << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
-		else
-		  MSG_DEBUG << "loadblock(startvalues device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
+        if (iDevice<ARRAY_SIZE(g_asDevices))
+          MSG_DEBUG << "loadblock(startvalues device " << g_asDevices[iDevice] << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
+        else
+          MSG_DEBUG << "loadblock(startvalues device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
 
 #warning "note: CARESS is able to load current positions of selected devices before any measurment step"
     module_status=LOADED;
@@ -1404,13 +1409,13 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
 
     for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
       if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
-	break;
+    break;
 
     if (iDevice<0)
     {
       strcpy(m_szErrorMessage,"invalid device");
       MSG_DEBUG << "read - " << (const char*)m_szErrorMessage;
-			val->l(0);
+            val->l(0);
       data=val._retn();
       module_status=OFF_LINE;
       return CARESS::NOT_OK;
@@ -1424,7 +1429,7 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
       case QMESYDAQ_MON4: dblValue=pInterface->readCounter(M4CT); break;
       case QMESYDAQ_TIMER: dblValue=m_dblTimerScale*pInterface->readCounter(TCT); break;
       default: // QMESYDAQ_EVENT, QMESYDAQ_HISTOGRAM, QMESYDAQ_DIFFRACTOGRAM, QMESYDAQ_SPECTROGRAM
-	dblValue=pInterface->readCounter(EVCT); break;
+    dblValue=pInterface->readCounter(EVCT); break;
     }
     if (m_b64Bit[iDevice])
       val->l64((CORBA::LongLong)dblValue);
@@ -1482,7 +1487,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 
     for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
       if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
-	break;
+    break;
 
     if (iDevice<0)
     {
@@ -1495,67 +1500,71 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
     {
       case QMESYDAQ_HISTOGRAM:
       {
-	quint16 w=0,h=0;
-	pInterface->readHistogramSize(w,h);
-	if (m_lHistogramX==0 && m_lHistogramY==0)
-	  end_channel=((CORBA::Long)w)*((CORBA::Long)h);
-	else
-	  end_channel=m_lHistogramX*m_lHistogramY;
-	m_aullDetectorData=pInterface->readHistogram();
-	m_iDetectorWidth=w;
-	if (m_iDetectorWidth<1)
-	  m_iDetectorWidth=1;
+    quint16 w=0,h=0;
+    pInterface->readHistogramSize(w,h);
+    if (m_lHistogramX==0 && m_lHistogramY==0)
+      end_channel=((CORBA::Long)w)*((CORBA::Long)h);
+    else
+      end_channel=m_lHistogramX*m_lHistogramY;
+    m_aullDetectorData=pInterface->readHistogram();
+    m_iDetectorWidth=w;
+    if (m_iDetectorWidth<1)
+      m_iDetectorWidth=1;
 #ifdef DEBUGBUILD
-	do
-	{
-	  bool bPrintAny=false;
-	  MSG_DEBUG << "read histogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
-	  int iDetectorHeight=m_aullDetectorData.count()/m_iDetectorWidth;
-	  for (int y=0; y<iDetectorHeight; ++y)
-	  {
-	    QString line;
-	    char buffer[16];
-	    int iStart=m_iDetectorWidth*y;
-	    bool bPrint=false;
-	    snprintf(buffer,ARRAY_SIZE(buffer),"%03d ",y);
-	    buffer[ARRAY_SIZE(buffer)-1]='\0';
-	    line+=QString::fromLatin1(buffer);
-	    for (int x=0; x<m_iDetectorWidth; ++x)
-	    {
-	      quint64 z=m_aullDetectorData.value(iStart+x);
-	      if (z!=0) bPrint=true;
-	      snprintf(buffer,ARRAY_SIZE(buffer)," %5Ld",z);
-	      buffer[ARRAY_SIZE(buffer)-1]='\0';
-	      line+=QString::fromLatin1(buffer);
-	    }
-	    if (bPrint)
-	    {
-	      bPrintAny=true;
-	      MSG_DEBUG << line.toLocal8Bit().constData();
-	    }
-	  }
-	  if (!bPrintAny)
-	    MSG_DEBUG << "all values are zero";
-	} while (0);
+    do
+    {
+      bool bPrintAny=false;
+      MSG_DEBUG << "read histogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
+      int iDetectorHeight=m_aullDetectorData.count()/m_iDetectorWidth;
+      for (int y=0; y<iDetectorHeight; ++y)
+      {
+        QString line;
+        char buffer[16];
+        int iStart=m_iDetectorWidth*y;
+        bool bPrint=false;
+        snprintf(buffer,ARRAY_SIZE(buffer),"%03d ",y);
+        buffer[ARRAY_SIZE(buffer)-1]='\0';
+        line+=QString::fromLatin1(buffer);
+        for (int x=0; x<m_iDetectorWidth; ++x)
+        {
+          quint64 z=m_aullDetectorData.value(iStart+x);
+          if (z!=0) bPrint=true;
+          snprintf(buffer,ARRAY_SIZE(buffer)," %5Ld",z);
+          buffer[ARRAY_SIZE(buffer)-1]='\0';
+          line+=QString::fromLatin1(buffer);
+        }
+        if (bPrint)
+        {
+          bPrintAny=true;
+          MSG_DEBUG << line.toLocal8Bit().constData();
+        }
+      }
+      if (!bPrintAny)
+        MSG_DEBUG << "all values are zero";
+    } while (0);
 #endif
-	break;
+    break;
       }
       case QMESYDAQ_DIFFRACTOGRAM:
-	Q_ASSERT(m_iDetectorWidth>0);
-	end_channel=m_iDetectorWidth=m_lDiffractogramWidth;
-	m_aullDetectorData=pInterface->readDiffractogram();
-	MSG_DEBUG << "read diffractogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
-	break;
+#ifdef DEBUGBUILD
+    Q_ASSERT(m_iDetectorWidth>0);
+#endif
+    end_channel=m_iDetectorWidth=m_lDiffractogramWidth;
+    m_aullDetectorData=pInterface->readDiffractogram();
+    MSG_DEBUG << "read diffractogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
+    break;
       case QMESYDAQ_SPECTROGRAM:
-	Q_ASSERT(m_iDetectorWidth>0);
-	end_channel=m_iDetectorWidth=m_lSpectrogramWidth;
-	m_aullDetectorData=pInterface->readSpectrogram(m_lSpectrogramChannel);
-	MSG_DEBUG << "read spectrogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
-	break;
+#ifdef DEBUGBUILD
+    Q_ASSERT(m_iDetectorWidth>0);
+#endif
+    end_channel=m_iDetectorWidth=m_lSpectrogramWidth;
+    m_aullDetectorData=pInterface->readSpectrogram(m_lSpectrogramChannel);
+    MSG_DEBUG << "read spectrogram: width=" << m_iDetectorWidth << " count=" << m_aullDetectorData.count();
+    break;
       default:
-	end_channel=1;
-	MSG_DEBUG << "read other";
-	break;
+    end_channel=1;
+    MSG_DEBUG << "read other";
+    break;
     }
     type=m_b64Bit[iDevice] ? CARESS::TypeLong64 : CARESS::TypeLong;
     return CARESS::OK;
@@ -1572,7 +1581,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
  * histogram readout or read special device data
  ***************************************************************************/
 static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
-				    QList<quint64>& dst, quint32 dstwidth);
+                    QList<quint64>& dst, quint32 dstwidth);
 /*!
   \brief histogram readout or read special device data
   \param[in]   kind                kind of read block
@@ -1612,7 +1621,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 
     for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
       if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
-	break;
+    break;
 
     if (iDevice<0)
     {
@@ -1624,143 +1633,145 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
     }
 
     if (start_channel<1) start_channel=1;
+#ifdef DEBUGBUILD
     Q_ASSERT(m_iDetectorWidth>0);
+#endif
     switch (iDevice)
     {
       case QMESYDAQ_HISTOGRAM:
       {
-	QList<quint64> tmpsrc,tmpdst,dsthistogram;
-	CORBA::Long x,y,lHistoX,lHistoY;
-	int iDetectorHeight=m_aullDetectorData.count()/m_iDetectorWidth;
+    QList<quint64> tmpsrc,tmpdst,dsthistogram;
+    CORBA::Long x,y,lHistoX,lHistoY;
+    int iDetectorHeight=m_aullDetectorData.count()/m_iDetectorWidth;
 
-	lHistoX=m_lHistogramX;
-	lHistoY=m_lHistogramY;
-	if (lHistoX==0 && lHistoY)
-	{
-	  lHistoX=m_iDetectorWidth;
-	  lHistoY=iDetectorHeight;
-	}
-	if (lHistoX<1 || lHistoY<1)
-	{
-	  strcpy(m_szErrorMessage,"invalid histogram size");
-	  MSG_DEBUG << "readblock - " << (const char*)m_szErrorMessage;
-	  val->l(0);
-	  data=val._retn();
-	  return CARESS::NOT_OK;
-	}
-	if (end_channel>lHistoX*lHistoY)
-	  end_channel=lHistoX*lHistoY;
+    lHistoX=m_lHistogramX;
+    lHistoY=m_lHistogramY;
+    if (lHistoX==0 && lHistoY)
+    {
+      lHistoX=m_iDetectorWidth;
+      lHistoY=iDetectorHeight;
+    }
+    if (lHistoX<1 || lHistoY<1)
+    {
+      strcpy(m_szErrorMessage,"invalid histogram size");
+      MSG_DEBUG << "readblock - " << (const char*)m_szErrorMessage;
+      val->l(0);
+      data=val._retn();
+      return CARESS::NOT_OK;
+    }
+    if (end_channel>lHistoX*lHistoY)
+      end_channel=lHistoX*lHistoY;
 
-	// scale histogram to given size
-	if (iDetectorHeight<lHistoY)
-	{
-	  // source is smaller height (grow)
-	  for (y=0; y<iDetectorHeight; ++y)
-	  {
-	    int iStartY=(int)((((double)y)*lHistoY)/iDetectorHeight);
-	    int iEndY=(int)((((double)y+1.0)*lHistoY)/iDetectorHeight);
-	    int iStart=m_iDetectorWidth*y;
-	    tmpsrc.clear();
-	    tmpdst.clear();
-	    for (x=0; x<m_iDetectorWidth; ++x)
-	    {
-	      if (x<m_aullDetectorData.count())
-		tmpsrc.append(m_aullDetectorData.value(iStart+x));
-	      else
-		tmpsrc.append(0ULL);
-	    }
-	    readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
-	    while (iStartY++ < iEndY)
-	      dsthistogram.append(tmpdst);
-	  }
-	}
-	else
-	{
-	  // source is greater or equal height (shrink)
-	  for (y=0; y<lHistoY; ++y)
-	  {
-	    int iStartY=(int)((((double)y)*iDetectorHeight)/lHistoY);
-	    int iEndY=(int)((((double)y+1.0)*iDetectorHeight)/lHistoY);
-	    tmpdst.clear();
-	    while (iStartY<iEndY)
-	    {
-	      int iStart=m_iDetectorWidth * iStartY++;
-	      tmpsrc.clear();
-	      for (x=0; x<m_iDetectorWidth; ++x)
-	      {
-		if (x<m_aullDetectorData.count())
-		  tmpsrc.append(m_aullDetectorData.value(iStart+x));
-		else
-		  tmpsrc.append(0ULL);
-	      }
-	      readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
-	    }
-	    dsthistogram.append(tmpdst);
-	  }
-	}
+    // scale histogram to given size
+    if (iDetectorHeight<lHistoY)
+    {
+      // source is smaller height (grow)
+      for (y=0; y<iDetectorHeight; ++y)
+      {
+        int iStartY=(int)((((double)y)*lHistoY)/iDetectorHeight);
+        int iEndY=(int)((((double)y+1.0)*lHistoY)/iDetectorHeight);
+        int iStart=m_iDetectorWidth*y;
+        tmpsrc.clear();
+        tmpdst.clear();
+        for (x=0; x<m_iDetectorWidth; ++x)
+        {
+          if (x<m_aullDetectorData.count())
+        tmpsrc.append(m_aullDetectorData.value(iStart+x));
+          else
+        tmpsrc.append(0ULL);
+        }
+        readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
+        while (iStartY++ < iEndY)
+          dsthistogram.append(tmpdst);
+      }
+    }
+    else
+    {
+      // source is greater or equal height (shrink)
+      for (y=0; y<lHistoY; ++y)
+      {
+        int iStartY=(int)((((double)y)*iDetectorHeight)/lHistoY);
+        int iEndY=(int)((((double)y+1.0)*iDetectorHeight)/lHistoY);
+        tmpdst.clear();
+        while (iStartY<iEndY)
+        {
+          int iStart=m_iDetectorWidth * iStartY++;
+          tmpsrc.clear();
+          for (x=0; x<m_iDetectorWidth; ++x)
+          {
+        if (x<m_aullDetectorData.count())
+          tmpsrc.append(m_aullDetectorData.value(iStart+x));
+        else
+          tmpsrc.append(0ULL);
+          }
+          readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
+        }
+        dsthistogram.append(tmpdst);
+      }
+    }
 
 #ifdef DEBUGBUILD
-	do
-	{
-	  bool bPrintAny=false;
-	  MSG_DEBUG << "read histogram: width=" << lHistoX << " height=" << lHistoY;
-	  Q_ASSERT((lHistoX*lHistoY)==dsthistogram.count());
-	  for (int y=0; y<lHistoY; ++y)
-	  {
-	    QString line;
-	    char buffer[16];
-	    int iStart=lHistoX*y;
-	    bool bPrint=false;
-	    snprintf(buffer,ARRAY_SIZE(buffer),"%03d ",y);
-	    buffer[ARRAY_SIZE(buffer)-1]='\0';
-	    line+=QString::fromLatin1(buffer);
-	    for (int x=0; x<lHistoX; ++x)
-	    {
-	      quint64 z=dsthistogram.value(iStart+x);
-	      if (z!=0) bPrint=true;
-	      snprintf(buffer,ARRAY_SIZE(buffer)," %5Ld",z);
-	      buffer[ARRAY_SIZE(buffer)-1]='\0';
-	      line+=QString::fromLatin1(buffer);
-	    }
-	    if (bPrint)
-	    {
-	      bPrintAny=true;
-	      MSG_DEBUG << "%s",line.toLocal8Bit().constData();
-	    }
-	  }
-	  if (!bPrintAny)
-	    MSG_DEBUG << "all values are zero";
-	} while (0);
+    do
+    {
+      bool bPrintAny=false;
+      MSG_DEBUG << "read histogram: width=" << lHistoX << " height=" << lHistoY;
+      Q_ASSERT((lHistoX*lHistoY)==dsthistogram.count());
+      for (int y=0; y<lHistoY; ++y)
+      {
+        QString line;
+        char buffer[16];
+        int iStart=lHistoX*y;
+        bool bPrint=false;
+        snprintf(buffer,ARRAY_SIZE(buffer),"%03d ",y);
+        buffer[ARRAY_SIZE(buffer)-1]='\0';
+        line+=QString::fromLatin1(buffer);
+        for (int x=0; x<lHistoX; ++x)
+        {
+          quint64 z=dsthistogram.value(iStart+x);
+          if (z!=0) bPrint=true;
+          snprintf(buffer,ARRAY_SIZE(buffer)," %5Ld",z);
+          buffer[ARRAY_SIZE(buffer)-1]='\0';
+          line+=QString::fromLatin1(buffer);
+        }
+        if (bPrint)
+        {
+          bPrintAny=true;
+          MSG_DEBUG << "%s",line.toLocal8Bit().constData();
+        }
+      }
+      if (!bPrintAny)
+        MSG_DEBUG << "all values are zero";
+    } while (0);
 #endif
-	y=end_channel-start_channel+1;
-	al64->length(y);
-	for (x=0; x<y; ++x)
-	  al64[x]=dsthistogram.value(x+start_channel-1);
-	break;
+    y=end_channel-start_channel+1;
+    al64->length(y);
+    for (x=0; x<y; ++x)
+      al64[x]=dsthistogram.value(x+start_channel-1);
+    break;
       }
 
       case QMESYDAQ_DIFFRACTOGRAM:
       case QMESYDAQ_SPECTROGRAM:
       {
-	QList<quint64> dst;
-	int i,j;
-	i=(iDevice==QMESYDAQ_DIFFRACTOGRAM) ? m_lDiffractogramWidth : m_lSpectrogramWidth;
-	if (i>0)
-	  readblock_module_helper(m_aullDetectorData,m_aullDetectorData.count(),dst,i);
-	else
-	  dst=m_aullDetectorData;
-	if (end_channel>(int)dst.count())
-	  end_channel=dst.size();
-	al64->length(dst.size());
-	j=end_channel-start_channel+1;
-	for (i=0; i<j; ++i)
-	  al64[i]=dst.value(i+start_channel-1);
-	break;
+    QList<quint64> dst;
+    int i,j;
+    i=(iDevice==QMESYDAQ_DIFFRACTOGRAM) ? m_lDiffractogramWidth : m_lSpectrogramWidth;
+    if (i>0)
+      readblock_module_helper(m_aullDetectorData,m_aullDetectorData.count(),dst,i);
+    else
+      dst=m_aullDetectorData;
+    if (end_channel>(int)dst.count())
+      end_channel=dst.size();
+    al64->length(dst.size());
+    j=end_channel-start_channel+1;
+    for (i=0; i<j; ++i)
+      al64[i]=dst.value(i+start_channel-1);
+    break;
       }
 
       default:
-	al64->length(0);
-	break;
+    al64->length(0);
+    break;
     }
     if (m_b64Bit[iDevice])
       val->al64(al64);
@@ -1798,7 +1809,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
   \param[in]     dstwidth  mapped histogram width
  */
 static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
-				    QList<quint64>& dst, quint32 dstwidth)
+                    QList<quint64>& dst, quint32 dstwidth)
 {
   // scale data line to given size
   if (srcwidth<dstwidth)
@@ -1816,16 +1827,16 @@ static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
       // spread source values to destination line (source sum of line and destination sum of line are equal)
       for (; iStartX<iEndX; ++iStartX)
       {
-	quint64 ull=ullValue;
-	if (ullMissing>0)
-	{
-	  ++ull;
-	  --ullMissing;
-	}
-	if (iStartX<dst.size())
-	  dst[iStartX]+=ull;
-	else
-	  dst.append(ull);
+    quint64 ull=ullValue;
+    if (ullMissing>0)
+    {
+      ++ull;
+      --ullMissing;
+    }
+    if (iStartX<dst.size())
+      dst[iStartX]+=ull;
+    else
+      dst.append(ull);
       }
     }
   }
@@ -1838,11 +1849,11 @@ static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
       int iEndX=(int)((((double)x+1.0)*srcwidth)/dstwidth);
       quint64 ullCount=0;
       while (iStartX<iEndX)
-	ullCount+=src.value(iStartX++);
+    ullCount+=src.value(iStartX++);
       if ((int)x<dst.size())
-	dst[x]+=ullCount;
+    dst[x]+=ullCount;
       else
-	dst.append(ullCount);
+    dst.append(ullCount);
     }
   }
 }
@@ -1887,11 +1898,11 @@ CORBA::Boolean CORBADevice_i::is_counting_module(CORBA::Long id)
   {
     if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
     {
-			MSG_DEBUG << "is_counting_module=TRUE";
+            MSG_DEBUG << "is_counting_module=TRUE";
       return 1;
     }
   }
-	MSG_DEBUG << "is_counting_module - unknown device";
+    MSG_DEBUG << "is_counting_module - unknown device";
   return 0;
 }
 
@@ -1954,47 +1965,47 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
     {
       case QMESYDAQ_HISTOGRAM:
       {
-	CARESS::Value_var v=new CARESS::Value;
-	CARESS::ArrayLong_var a=new CARESS::ArrayLong;
-	CORBA::Long x=m_lHistogramX,y=m_lHistogramY;
-	a->length(2);
-	if (x==0 && y==0)
-	{
-	  QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-	  quint16 w,h;
-	  if (!pInterface)
-	    throw CARESS::ErrorDescription("control interface not initialized");
-	  pInterface->readHistogramSize(w,h);
-	  x=w;
-	  y=h;
-	}
-	a[0]=x;
-	a[1]=y;
-	v->al(a);
-	return v._retn();
+    CARESS::Value_var v=new CARESS::Value;
+    CARESS::ArrayLong_var a=new CARESS::ArrayLong;
+    CORBA::Long x=m_lHistogramX,y=m_lHistogramY;
+    a->length(2);
+    if (x==0 && y==0)
+    {
+      QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+      quint16 w,h;
+      if (!pInterface)
+        throw CARESS::ErrorDescription("control interface not initialized");
+      pInterface->readHistogramSize(w,h);
+      x=w;
+      y=h;
+    }
+    a[0]=x;
+    a[1]=y;
+    v->al(a);
+    return v._retn();
       }
       case QMESYDAQ_DIFFRACTOGRAM:
       case QMESYDAQ_SPECTROGRAM:
       {
-	CARESS::Value_var v=new CARESS::Value;
-	CARESS::ArrayLong_var a=new CARESS::ArrayLong;
-	CORBA::Long x;
-	if (iDevice==QMESYDAQ_DIFFRACTOGRAM)
-	  x=m_lDiffractogramWidth;
-	else
-	  x=m_lSpectrogramWidth;
-	a->length(1);
-	if (x==0)
-	{
-	  QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-	  if (!pInterface)
-	    throw CARESS::ErrorDescription("control interface not initialized");
-	  QList<quint64> tmp=pInterface->readDiffractogram();
-	  x=tmp.count();
-	}
-	a[0]=x;
-	v->al(a);
-	return v._retn();
+    CARESS::Value_var v=new CARESS::Value;
+    CARESS::ArrayLong_var a=new CARESS::ArrayLong;
+    CORBA::Long x;
+    if (iDevice==QMESYDAQ_DIFFRACTOGRAM)
+      x=m_lDiffractogramWidth;
+    else
+      x=m_lSpectrogramWidth;
+    a->length(1);
+    if (x==0)
+    {
+      QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+      if (!pInterface)
+        throw CARESS::ErrorDescription("control interface not initialized");
+      QList<quint64> tmp=pInterface->readDiffractogram();
+      x=tmp.count();
+    }
+    a[0]=x;
+    v->al(a);
+    return v._retn();
       }
     }
   }

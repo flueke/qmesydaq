@@ -27,7 +27,9 @@
 #include "mdefines.h"
 #include "logging.h"
 #if defined(_MSC_VER)
-	#include "stdafx.h"
+    #include "stdafx.h"
+#else
+    #include <unistd.h>
 #endif
 
 /**
@@ -40,55 +42,55 @@
  * \param sourceIP IP address for incoming packets
  */
 MCPD2::MCPD2(quint8 id, QObject *parent, QString ip, quint16 port, QString sourceIP)
-	: QObject(parent)
-	, m_network(NULL)
-	, m_txCmdBufNum(0)
-	, m_id(id)
-	, m_ownIpAddress(ip)
-	, m_cmdPort(port)	// original 7000
-	, m_dataPort(7000)
-	, m_master(true)
-	, m_term(true)
-	, m_stream(false)
-	, m_commActive(false)
-	, m_lastBufnum(0)
-	, m_commTimer(NULL)
-	, m_runId(0)
-	, m_daq(false)
-	, m_dataRxd(0)
-	, m_cmdTxd(0)
-	, m_cmdRxd(0)
-	, m_headertime(0)
-	, m_timemsec(0)
-	, m_version(0)
+    : QObject(parent)
+    , m_network(NULL)
+    , m_txCmdBufNum(0)
+    , m_id(id)
+    , m_ownIpAddress(ip)
+    , m_cmdPort(port)	// original 7000
+    , m_dataPort(7000)
+    , m_master(true)
+    , m_term(true)
+    , m_stream(false)
+    , m_commActive(false)
+    , m_lastBufnum(0)
+    , m_commTimer(NULL)
+    , m_runId(0)
+    , m_daq(false)
+    , m_dataRxd(0)
+    , m_cmdTxd(0)
+    , m_cmdRxd(0)
+    , m_headertime(0)
+    , m_timemsec(0)
+    , m_version(0)
 {
-	stdInit();
+    stdInit();
 
-	m_network = NetworkDevice::create(this, sourceIP, port);
-	connect(m_network, SIGNAL(bufferReceived(const MDP_PACKET &)), this, SLOT(analyzeBuffer(const MDP_PACKET &)));
+    m_network = NetworkDevice::create(this, sourceIP, port);
+    connect(m_network, SIGNAL(bufferReceived(const MDP_PACKET &)), this, SLOT(analyzeBuffer(const MDP_PACKET &)));
 
-	m_commTimer = new QTimer(this);
-	connect(m_commTimer, SIGNAL(timeout()), this, SLOT(commTimeout()));
-	m_commTimer->setSingleShot(true);
+    m_commTimer = new QTimer(this);
+    connect(m_commTimer, SIGNAL(timeout()), this, SLOT(commTimeout()));
+    m_commTimer->setSingleShot(true);
 
-	memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
+    memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
 
-	m_mpsd.clear();
+    m_mpsd.clear();
 
 //	setId(m_id);
-	version();
-	readId();
-	init();
+    version();
+    readId();
+    init();
 }
 
 //! destructor
 MCPD2::~MCPD2()
 {
-	m_mpsd.clear();
-	NetworkDevice::destroy(m_network);
-	m_network = NULL;
-	delete m_commTimer;
-	m_commTimer = NULL;
+    m_mpsd.clear();
+    NetworkDevice::destroy(m_network);
+    m_network = NULL;
+    delete m_commTimer;
+    m_commTimer = NULL;
 }
 
 /*!
@@ -100,42 +102,42 @@ MCPD2::~MCPD2()
  */
 bool MCPD2::init(void)
 {
-	int modus = TPA;
+    int modus = TPA;
 
-	quint16 cap = capabilities();
+    quint16 cap = capabilities();
 
-	MSG_NOTICE << "capabilities : " << cap;
+    MSG_NOTICE << "capabilities : " << cap;
 
-	if (m_version < 8.18)
-		modus = TP;
+    if (m_version < 8.18)
+        modus = TP;
 
-	for (quint8 c = 0; c < 8; c++)
-		if (m_mpsd.find(c) != m_mpsd.end())
-		{
-			switch (m_mpsd[c]->getModuleId())
-			{
-				case TYPE_MPSD8P:
-					cap = capabilities(c);
-					MSG_NOTICE << "module : " << c << " capabilities : " << cap;
-					modus &= cap;
-					MSG_NOTICE << "modus : " << modus;
-					break;
-				default:
-					modus = P;
-			}
-		}
+    for (quint8 c = 0; c < 8; c++)
+        if (m_mpsd.find(c) != m_mpsd.end())
+        {
+            switch (m_mpsd[c]->getModuleId())
+            {
+                case TYPE_MPSD8P:
+                    cap = capabilities(c);
+                    MSG_NOTICE << "module : " << c << " capabilities : " << cap;
+                    modus &= cap;
+                    MSG_NOTICE << "modus : " << modus;
+                    break;
+                default:
+                    modus = P;
+            }
+        }
 // Register 103 is the TX mode register
-// set tx capability 
-	writeRegister(103, modus);
+// set tx capability
+    writeRegister(103, modus);
 
-	for(quint8 c = 0; c < 8; c++)
-		if (m_mpsd.find(c) != m_mpsd.end())
-		{
-			if (m_mpsd[c]->getModuleId() == TYPE_MPSD8P)
-				writePeriReg(c, 1, modus);
-			version(c);
-		}
-	return true;
+    for(quint8 c = 0; c < 8; c++)
+        if (m_mpsd.find(c) != m_mpsd.end())
+        {
+            if (m_mpsd[c]->getModuleId() == TYPE_MPSD8P)
+                writePeriReg(c, 1, modus);
+            version(c);
+        }
+    return true;
 }
 
 /*!
@@ -145,12 +147,12 @@ bool MCPD2::init(void)
     \return true if operation was succesful or not
  */
 bool MCPD2::reset(void)
-{	
-	initCmdBuffer(DAQRESET);	
-	finishCmdBuffer(0);
-	bool tmp = sendCommand();
-  	usleep (100000);
-	return tmp;
+{
+    initCmdBuffer(DAQRESET);
+    finishCmdBuffer(0);
+    bool tmp = sendCommand();
+    usleep (100000);
+    return tmp;
 }
 
 /*!
@@ -163,10 +165,10 @@ bool MCPD2::reset(void)
     \see cont
  */
 bool MCPD2::start(void)
-{	 
-	initCmdBuffer(DAQSTART);	
-	finishCmdBuffer(0);
-	return sendCommand(false);
+{
+    initCmdBuffer(DAQSTART);
+    finishCmdBuffer(0);
+    return sendCommand(false);
 }
 
 /*!
@@ -179,10 +181,10 @@ bool MCPD2::start(void)
     \see cont
  */
 bool MCPD2::stop(void)
-{	
-	initCmdBuffer(DAQSTOP);	
-	finishCmdBuffer(0);
-	return sendCommand();
+{
+    initCmdBuffer(DAQSTOP);
+    finishCmdBuffer(0);
+    return sendCommand();
 }
 
 /*!
@@ -195,10 +197,10 @@ bool MCPD2::stop(void)
     \see stop
  */
 bool MCPD2::cont(void)
-{	
-	initCmdBuffer(CONTINUE);	
-	finishCmdBuffer(0);
-	return sendCommand();
+{
+    initCmdBuffer(CONTINUE);
+    finishCmdBuffer(0);
+    return sendCommand();
 }
 
 /*!
@@ -212,10 +214,10 @@ bool MCPD2::cont(void)
  */
 quint8 MCPD2::getModuleId(quint8 addr)
 {
-	if (m_mpsd.contains(addr))
-		return m_mpsd[addr]->getModuleId();
-	else
-		return 0;
+    if (m_mpsd.contains(addr))
+        return m_mpsd[addr]->getModuleId();
+    else
+        return 0;
 }
 
 /*!
@@ -229,28 +231,28 @@ quint8 MCPD2::getModuleId(quint8 addr)
  */
 bool MCPD2::setId(quint8 mcpdid)
 {
-			MSG_NOTICE << "Set id for mcpd-8 #" << m_id << " to " << mcpdid << '.';
-	initCmdBuffer(SETID);
-	m_cmdBuf.data[0] = mcpdid;
-	finishCmdBuffer(1);
-	if (sendCommand())
-	{
-    		m_id = mcpdid;
-		return true;
-	}
-	return false;
+            MSG_NOTICE << "Set id for mcpd-8 #" << m_id << " to " << mcpdid << '.';
+    initCmdBuffer(SETID);
+    m_cmdBuf.data[0] = mcpdid;
+    finishCmdBuffer(1);
+    if (sendCommand())
+    {
+            m_id = mcpdid;
+        return true;
+    }
+    return false;
 }
 
 /*!
     \fn MCPD2::capabilities()
 
-    read out the capabilities register of the MCPD 
+    read out the capabilities register of the MCPD
 
     \return capabilities register of the MCPD
  */
 quint16 MCPD2::capabilities()
 {
-	return readRegister(102);
+    return readRegister(102);
 }
 
 /*!
@@ -263,47 +265,47 @@ quint16 MCPD2::capabilities()
  */
 quint16 MCPD2::capabilities(quint16 mod)
 {
-	if (m_mpsd.find(mod) != m_mpsd.end())
-		return readPeriReg(mod, 0);
-	return 0;
+    if (m_mpsd.find(mod) != m_mpsd.end())
+        return readPeriReg(mod, 0);
+    return 0;
 }
 
 /*!
    \fn float MCPD2::version(void)
-   \return firmware version of the MCPD whereas the integral places represents the major number 
+   \return firmware version of the MCPD whereas the integral places represents the major number
            and the decimal parts the minor number
  */
 float MCPD2::version(void)
 {
-	initCmdBuffer(GETVER);
-	finishCmdBuffer(0);
-	if(sendCommand())
-		return m_version;
-	return -1.0;
+    initCmdBuffer(GETVER);
+    finishCmdBuffer(0);
+    if(sendCommand())
+        return m_version;
+    return -1.0;
 }
 
 /*!
    \fn float MCPD2::version(quint16 mod)
 
-   In the peripheral register 2 is the version of its firmware. The upper byte is the major 
+   In the peripheral register 2 is the version of its firmware. The upper byte is the major
    and the lower byte the minor number
 
    \param mod
-   \return firmware version of the MPSD whereas the integral places represents the major number 
+   \return firmware version of the MPSD whereas the integral places represents the major number
            and the decimal parts the minor number
  */
 float MCPD2::version(quint16 mod)
 {
-	float tmpFloat(0.0);
-	if (m_mpsd.find(mod) != m_mpsd.end())
-	{
-		quint16 tmp = readPeriReg(mod, 2);
-		tmpFloat = ((tmp > 4) & 0xF) * 10 + (tmp & 0xF);
-		tmpFloat /= 100.;
-		tmpFloat += (tmp >> 8);
-	}
-	MSG_INFO << "MPSD (ID " << mod << "): Version number : " << tmpFloat;
-	return tmpFloat;
+    float tmpFloat(0.0);
+    if (m_mpsd.find(mod) != m_mpsd.end())
+    {
+        quint16 tmp = readPeriReg(mod, 2);
+        tmpFloat = ((tmp > 4) & 0xF) * 10 + (tmp & 0xF);
+        tmpFloat /= 100.;
+        tmpFloat += (tmp >> 8);
+    }
+    MSG_INFO << "MPSD (ID " << mod << "): Version number : " << tmpFloat;
+    return tmpFloat;
 }
 
 /*!
@@ -316,11 +318,11 @@ float MCPD2::version(quint16 mod)
  */
 bool MCPD2::readId(void)
 {
-	m_mpsd.clear();
-	initCmdBuffer(READID);
-	m_cmdBuf.data[0] = 2;
-	finishCmdBuffer(1); 
-	return sendCommand();
+    m_mpsd.clear();
+    initCmdBuffer(READID);
+    m_cmdBuf.data[0] = 2;
+    finishCmdBuffer(1);
+    return sendCommand();
 }
 
 /*!
@@ -336,19 +338,19 @@ bool MCPD2::readId(void)
  */
 bool MCPD2::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
-	if (!m_mpsd.size() || m_mpsd.find(addr) == m_mpsd.end())
-		return false;
-	if (chan > 8)
-		chan = 8;
+    if (!m_mpsd.size() || m_mpsd.find(addr) == m_mpsd.end())
+        return false;
+    if (chan > 8)
+        chan = 8;
 
-	m_mpsd[addr]->setGain(chan, gainval, 1);
-	initCmdBuffer(SETGAIN);
-	m_cmdBuf.data[0] = addr;
-	m_cmdBuf.data[1] = chan;
-	m_cmdBuf.data[2] = gainval;
-	MSG_INFO << "set gain to potival: " << m_cmdBuf.data[2];
-	finishCmdBuffer(3);
-	return sendCommand();
+    m_mpsd[addr]->setGain(chan, gainval, 1);
+    initCmdBuffer(SETGAIN);
+    m_cmdBuf.data[0] = addr;
+    m_cmdBuf.data[1] = chan;
+    m_cmdBuf.data[2] = gainval;
+    MSG_INFO << "set gain to potival: " << m_cmdBuf.data[2];
+    finishCmdBuffer(3);
+    return sendCommand();
 }
 
 /*!
@@ -367,13 +369,13 @@ bool MCPD2::setGain(quint16 addr, quint8 chan, quint8 gainval)
  */
 quint8 MCPD2::getGainPoti(quint16 addr,  quint8 chan)
 {
-	if (m_mpsd.find(addr) != m_mpsd.end())
-	{
-		if (chan > 7)
-			chan = 8;
-		return m_mpsd[addr]->getGainpoti(chan, 0);
-	}
-	return 0;
+    if (m_mpsd.find(addr) != m_mpsd.end())
+    {
+        if (chan > 7)
+            chan = 8;
+        return m_mpsd[addr]->getGainpoti(chan, 0);
+    }
+    return 0;
 }
 
 /*!
@@ -392,13 +394,13 @@ quint8 MCPD2::getGainPoti(quint16 addr,  quint8 chan)
  */
 float MCPD2::getGainVal(quint16 addr,  quint8 chan)
 {
-	if (m_mpsd.find(addr) != m_mpsd.end())
-	{
-		if (chan > 7)
-			chan = 8;
-		return m_mpsd[addr]->getGainval(chan, 0);
-	}
-	return 0;
+    if (m_mpsd.find(addr) != m_mpsd.end())
+    {
+        if (chan > 7)
+            chan = 8;
+        return m_mpsd[addr]->getGainval(chan, 0);
+    }
+    return 0;
 }
 
 /*!
@@ -413,9 +415,9 @@ float MCPD2::getGainVal(quint16 addr,  quint8 chan)
  */
 bool MCPD2::setGain(quint16 addr, quint8 chan, float gainval)
 {
-	if (m_mpsd.find(addr) != m_mpsd.end())
-		return setGain(addr, chan, m_mpsd[addr]->calcGainpoti(gainval)); 
-	return false;
+    if (m_mpsd.find(addr) != m_mpsd.end())
+        return setGain(addr, chan, m_mpsd[addr]->calcGainpoti(gainval));
+    return false;
 }
 
 /*!
@@ -430,16 +432,16 @@ bool MCPD2::setGain(quint16 addr, quint8 chan, float gainval)
  */
 bool MCPD2::setThreshold(quint16 addr, quint8 thresh)
 {
-	if (m_mpsd.find(addr) != m_mpsd.end())
-	{
-		m_mpsd[addr]->setThreshold(thresh, 1);
-		initCmdBuffer(DAQSETTHRESH);
-		m_cmdBuf.result = thresh;
-		m_cmdBuf.coll = addr;
-		finishCmdBuffer(0);
-        	return sendCommand();
-	}
-	return false;
+    if (m_mpsd.find(addr) != m_mpsd.end())
+    {
+        m_mpsd[addr]->setThreshold(thresh, 1);
+        initCmdBuffer(DAQSETTHRESH);
+        m_cmdBuf.result = thresh;
+        m_cmdBuf.coll = addr;
+        finishCmdBuffer(0);
+            return sendCommand();
+    }
+    return false;
 }
 
 /*!
@@ -453,9 +455,9 @@ bool MCPD2::setThreshold(quint16 addr, quint8 thresh)
  */
 quint8 MCPD2::getThreshold(quint16 addr)
 {
-	if (m_mpsd.find(addr) != m_mpsd.end())
-		return m_mpsd[addr]->getThreshold(0);
-	return 0;
+    if (m_mpsd.find(addr) != m_mpsd.end())
+        return m_mpsd[addr]->getThreshold(0);
+    return 0;
 }
 
 /*!
@@ -470,28 +472,28 @@ quint8 MCPD2::getThreshold(quint16 addr)
 */
 bool MCPD2::setMode(quint16 addr, bool mode)
 {
-	if (m_mpsd.find(addr) == m_mpsd.end())
-		return false;
-	if (addr > 8)
-		addr = 8;
+    if (m_mpsd.find(addr) == m_mpsd.end())
+        return false;
+    if (addr > 8)
+        addr = 8;
 #if defined(_MSC_VER)
 #	pragma message("TODO common mode handling")
 #else
 #	warning TODO common mode handling
 #endif
 //! \todo common mode handling
-	if (addr == 8)
-	{
-		for (int i = 0; i < 8; ++i)
-			m_mpsd[i]->setMode(mode, 1);
-	}
-	else
-		m_mpsd[addr]->setMode(mode, 1);
-	initCmdBuffer(SETMODE);
-	m_cmdBuf.data[0] = addr;
-	m_cmdBuf.data[1] = mode;
-	finishCmdBuffer(2);
-	return sendCommand();
+    if (addr == 8)
+    {
+        for (int i = 0; i < 8; ++i)
+            m_mpsd[i]->setMode(mode, 1);
+    }
+    else
+        m_mpsd[addr]->setMode(mode, 1);
+    initCmdBuffer(SETMODE);
+    m_cmdBuf.data[0] = addr;
+    m_cmdBuf.data[1] = mode;
+    finishCmdBuffer(2);
+    return sendCommand();
 }
 
 /*!
@@ -505,9 +507,9 @@ bool MCPD2::setMode(quint16 addr, bool mode)
  */
 bool MCPD2::getMode(quint16 addr)
 {
-	if (m_mpsd.find(addr) != m_mpsd.end())
-		return m_mpsd[addr]->getMode(0);
-	return false;
+    if (m_mpsd.find(addr) != m_mpsd.end())
+        return m_mpsd[addr]->getMode(0);
+    return false;
 }
 
 /*!
@@ -526,37 +528,37 @@ bool MCPD2::getMode(quint16 addr)
  */
 bool MCPD2::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool onoff)
 {
-	MSG_INFO << "MCPD2::setPulser(addr = " << addr << ", chan = " << chan << ", pos = " << pos
-					 << ", amp = " << amp << ", onoff = " << onoff << ')';
-	if (m_mpsd.find(addr) == m_mpsd.end())
-		return false;
-	if (addr > 7)
-		addr = 7;
-	if (chan > 8)
-		chan = 8;
-	if (pos > 2)
-		pos = 2;
-	if (chan == 8)
-	{
+    MSG_INFO << "MCPD2::setPulser(addr = " << addr << ", chan = " << chan << ", pos = " << pos
+                     << ", amp = " << amp << ", onoff = " << onoff << ')';
+    if (m_mpsd.find(addr) == m_mpsd.end())
+        return false;
+    if (addr > 7)
+        addr = 7;
+    if (chan > 8)
+        chan = 8;
+    if (pos > 2)
+        pos = 2;
+    if (chan == 8)
+    {
 #if defined(_MSC_VER)
 #	pragma message("TODO common pulser handling")
 #else
 #	warning TODO common pulser handling
 #endif
 //! \todo common pulser handling
-		for (int i = 0; i < 8; ++i)
-			m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
-	}
-	else
-		m_mpsd[addr]->setPulserPoti(chan, pos, amp, onoff, 1);
-	initCmdBuffer(SETPULSER);
-	m_cmdBuf.data[0] = addr;
-	m_cmdBuf.data[1] = chan;
-	m_cmdBuf.data[2] = pos;
-	m_cmdBuf.data[3] = amp;
-	m_cmdBuf.data[4] = onoff;
-	finishCmdBuffer(5);
-	return sendCommand();
+        for (int i = 0; i < 8; ++i)
+            m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
+    }
+    else
+        m_mpsd[addr]->setPulserPoti(chan, pos, amp, onoff, 1);
+    initCmdBuffer(SETPULSER);
+    m_cmdBuf.data[0] = addr;
+    m_cmdBuf.data[1] = chan;
+    m_cmdBuf.data[2] = pos;
+    m_cmdBuf.data[3] = amp;
+    m_cmdBuf.data[4] = onoff;
+    finishCmdBuffer(5);
+    return sendCommand();
 }
 
 /*!
@@ -571,19 +573,19 @@ bool MCPD2::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
  */
 bool MCPD2::setAuxTimer(quint16 tim, quint16 val)
 {
-	MSG_ERROR << "MCPD2::setAuxTimer(" << tim << ", " << val << ')';
-	if(tim > 3)
-		tim = 3;
-	initCmdBuffer(SETAUXTIMER);
-	m_cmdBuf.data[0] = tim;
-	m_cmdBuf.data[1] = val;
-	finishCmdBuffer(2);
-	if(sendCommand())
-	{
-		m_auxTimer[tim] = val;
-		return true;
-	}
-	return false;
+    MSG_ERROR << "MCPD2::setAuxTimer(" << tim << ", " << val << ')';
+    if(tim > 3)
+        tim = 3;
+    initCmdBuffer(SETAUXTIMER);
+    m_cmdBuf.data[0] = tim;
+    m_cmdBuf.data[1] = val;
+    finishCmdBuffer(2);
+    if(sendCommand())
+    {
+        m_auxTimer[tim] = val;
+        return true;
+    }
+    return false;
 }
 
 /*!
@@ -598,40 +600,40 @@ bool MCPD2::setAuxTimer(quint16 tim, quint16 val)
  */
 bool MCPD2::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 {
-	bool errorflag = true;
-	if(source > 7)
-	{
-		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell #" << source << ". Range exceeded! Max. cell# is 7";
-		errorflag = false;
-	}
-	if(trigger > 7)
-	{
-		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell trigger # to " << trigger << ". Range exceeded! Max. trigger# is 7";
-		errorflag = false;
-	}
-	if(compare > 22)
-	{
-		MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell compare value to " << compare << ". Range exceeded! Max. value is 22";
-		errorflag = false;
-	}
-	if(errorflag)
-	{
-		MSG_INFO << "mcpd " << m_id << ": set counter cell " << source << ": trigger # is " << trigger << ", compare value " << compare << '.';
-	
-		initCmdBuffer(SETCELL);
-		m_cmdBuf.data[0] = source;
-		m_cmdBuf.data[1] = trigger;
-		m_cmdBuf.data[2] = compare;
-		finishCmdBuffer(3);
-		if (sendCommand())
-		{
-			m_counterCell[source][0] = trigger;
-			m_counterCell[source][1] = compare;
-		}
-		else
-			errorflag = false;
-	}
-	return errorflag;
+    bool errorflag = true;
+    if(source > 7)
+    {
+        MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell #" << source << ". Range exceeded! Max. cell# is 7";
+        errorflag = false;
+    }
+    if(trigger > 7)
+    {
+        MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell trigger # to " << trigger << ". Range exceeded! Max. trigger# is 7";
+        errorflag = false;
+    }
+    if(compare > 22)
+    {
+        MSG_ERROR << "Error: mcpd " << m_id << ": trying to set counter cell compare value to " << compare << ". Range exceeded! Max. value is 22";
+        errorflag = false;
+    }
+    if(errorflag)
+    {
+        MSG_INFO << "mcpd " << m_id << ": set counter cell " << source << ": trigger # is " << trigger << ", compare value " << compare << '.';
+
+        initCmdBuffer(SETCELL);
+        m_cmdBuf.data[0] = source;
+        m_cmdBuf.data[1] = trigger;
+        m_cmdBuf.data[2] = compare;
+        finishCmdBuffer(3);
+        if (sendCommand())
+        {
+            m_counterCell[source][0] = trigger;
+            m_counterCell[source][1] = compare;
+        }
+        else
+            errorflag = false;
+    }
+    return errorflag;
 }
 
 /*!
@@ -645,10 +647,10 @@ bool MCPD2::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
  */
 void MCPD2::getCounterCell(quint8 cell, quint16 *celldata)
 {
-	if (cell > 7)
-		cell = 7;
-	celldata[0] = m_counterCell[cell][0];
-	celldata[1] = m_counterCell[cell][1];
+    if (cell > 7)
+        cell = 7;
+    celldata[0] = m_counterCell[cell][0];
+    celldata[1] = m_counterCell[cell][1];
 }
 
 
@@ -664,14 +666,14 @@ void MCPD2::getCounterCell(quint8 cell, quint16 *celldata)
  */
 bool MCPD2::setParamSource(quint16 param, quint16 source)
 {
-	if(param > 3 || source > 8)
-		return false;
-	m_paramSource[param] = source;
-	initCmdBuffer(SETPARAM);
-	m_cmdBuf.data[0] = param;
-	m_cmdBuf.data[1] = source;
-	finishCmdBuffer(2);
-	return sendCommand();
+    if(param > 3 || source > 8)
+        return false;
+    m_paramSource[param] = source;
+    initCmdBuffer(SETPARAM);
+    m_cmdBuf.data[0] = param;
+    m_cmdBuf.data[1] = source;
+    finishCmdBuffer(2);
+    return sendCommand();
 }
 
 /*!
@@ -685,7 +687,7 @@ bool MCPD2::setParamSource(quint16 param, quint16 source)
  */
 quint16 MCPD2::getParamSource(quint16 param)
 {
-	return param > 3 ? 0 : m_paramSource[param];
+    return param > 3 ? 0 : m_paramSource[param];
 }
 
 
@@ -712,71 +714,71 @@ bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quin
 // cmd addr [10].[11].[12].[13]
 // if first address byte == 0, or port == 0: don't change!
 
-	memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
+    memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
 
-	initCmdBuffer(SETPROTOCOL);
+    initCmdBuffer(SETPROTOCOL);
 
 // IP address of MCPD-8
-	QHostAddress cmd(addr);
-	quint32 ip = cmd.toIPv4Address();
+    QHostAddress cmd(addr);
+    quint32 ip = cmd.toIPv4Address();
 
-	m_cmdBuf.data[0] = (ip >> 24) & 0xff;
-	m_cmdBuf.data[1] = (ip >> 16) & 0xff;
-	m_cmdBuf.data[2] = (ip >> 8) & 0xff;
-	m_cmdBuf.data[3] = (ip & 0xff);
+    m_cmdBuf.data[0] = (ip >> 24) & 0xff;
+    m_cmdBuf.data[1] = (ip >> 16) & 0xff;
+    m_cmdBuf.data[2] = (ip >> 8) & 0xff;
+    m_cmdBuf.data[3] = (ip & 0xff);
 
 // IP address of data receiver
-	cmd = QHostAddress(datasink);
-	ip = cmd.toIPv4Address();
-	m_cmdBuf.data[4] = (ip >> 24) & 0xff;
-	m_cmdBuf.data[5] = (ip >> 16) & 0xff;
-	m_cmdBuf.data[6] = (ip >> 8) & 0xff;
-	m_cmdBuf.data[7] = ip & 0xff;
-	if (ip > 0x00FFFFFF) 
-	{
-		m_dataIpAddress = datasink;
-		MSG_NOTICE << "mcpd #" << m_id << ": data ip address set to " << m_dataIpAddress;
-	}
+    cmd = QHostAddress(datasink);
+    ip = cmd.toIPv4Address();
+    m_cmdBuf.data[4] = (ip >> 24) & 0xff;
+    m_cmdBuf.data[5] = (ip >> 16) & 0xff;
+    m_cmdBuf.data[6] = (ip >> 8) & 0xff;
+    m_cmdBuf.data[7] = ip & 0xff;
+    if (ip > 0x00FFFFFF)
+    {
+        m_dataIpAddress = datasink;
+        MSG_NOTICE << "mcpd #" << m_id << ": data ip address set to " << m_dataIpAddress;
+    }
 
 // UDP port of command receiver
-	m_cmdBuf.data[8] = cmdport;
-	if (cmdport > 0)
-	{
-		m_cmdPort = cmdport;
-		MSG_NOTICE << "mcpd #" << m_id << ": cmd port set to " << m_cmdPort;
-	}
+    m_cmdBuf.data[8] = cmdport;
+    if (cmdport > 0)
+    {
+        m_cmdPort = cmdport;
+        MSG_NOTICE << "mcpd #" << m_id << ": cmd port set to " << m_cmdPort;
+    }
 
 // UDP port of data receiver
-	m_cmdBuf.data[9] = dataport;
-	if (dataport > 0)
-	{
-		m_dataPort = dataport;
-		MSG_NOTICE << "mcpd #" << m_id << ": data port set to " << m_dataPort;
-	}
+    m_cmdBuf.data[9] = dataport;
+    if (dataport > 0)
+    {
+        m_dataPort = dataport;
+        MSG_NOTICE << "mcpd #" << m_id << ": data port set to " << m_dataPort;
+    }
 
 // IP address of command receiver
-	cmd = QHostAddress(cmdsink);
-	ip = cmd.toIPv4Address();
-	m_cmdBuf.data[10] = (ip >> 24) & 0xff;
-	m_cmdBuf.data[11] = (ip >> 16) & 0xff;
-	m_cmdBuf.data[12] = (ip >> 8) & 0xff;
-	m_cmdBuf.data[13] = ip & 0xff;
-	if (ip > 0x00FFFFFF) 
-	{
-		m_cmdIpAddress = cmdsink;
-		MSG_NOTICE << "mcpd #" << m_id << ": cmd ip address set to " << m_cmdIpAddress;
-	}
-	finishCmdBuffer(14);
-	if (sendCommand())
-	{
-		if (ip > 0x00FFFFFF) 
-		{
-			m_ownIpAddress = addr;
-			MSG_NOTICE << "mcpd #" << m_id << ": ip address set to " << m_ownIpAddress;
-		}
-		return true;
-	}
-	return false;
+    cmd = QHostAddress(cmdsink);
+    ip = cmd.toIPv4Address();
+    m_cmdBuf.data[10] = (ip >> 24) & 0xff;
+    m_cmdBuf.data[11] = (ip >> 16) & 0xff;
+    m_cmdBuf.data[12] = (ip >> 8) & 0xff;
+    m_cmdBuf.data[13] = ip & 0xff;
+    if (ip > 0x00FFFFFF)
+    {
+        m_cmdIpAddress = cmdsink;
+        MSG_NOTICE << "mcpd #" << m_id << ": cmd ip address set to " << m_cmdIpAddress;
+    }
+    finishCmdBuffer(14);
+    if (sendCommand())
+    {
+        if (ip > 0x00FFFFFF)
+        {
+            m_ownIpAddress = addr;
+            MSG_NOTICE << "mcpd #" << m_id << ": ip address set to " << m_ownIpAddress;
+        }
+        return true;
+    }
+    return false;
 }
 
 /*!
@@ -787,26 +789,26 @@ bool MCPD2::setProtocol(const QString& addr, const QString& datasink, const quin
  */
 void MCPD2::getProtocol(quint16 * addr)
 {
-	quint32 cmdIP = QHostAddress(m_cmdIpAddress).toIPv4Address();
-	quint32 ownIP = QHostAddress(m_ownIpAddress).toIPv4Address();
-	quint32 dataIP = QHostAddress(m_dataIpAddress).toIPv4Address();
+    quint32 cmdIP = QHostAddress(m_cmdIpAddress).toIPv4Address();
+    quint32 ownIP = QHostAddress(m_ownIpAddress).toIPv4Address();
+    quint32 dataIP = QHostAddress(m_dataIpAddress).toIPv4Address();
 
-	for(quint8 c = 0; c < 4; c++)
-	{
-		quint8 shift = ((3 - c) * 8);
-		addr[c] = (cmdIP >> shift) & 0xFF;
-		addr[c + 4] = (dataIP >> shift) & 0xFF;
-		addr[c + 10] = (ownIP >> shift) & 0xFF;
-	}
-	addr[8] = m_cmdPort;
-	addr[9] = m_dataPort;
+    for(quint8 c = 0; c < 4; c++)
+    {
+        quint8 shift = ((3 - c) * 8);
+        addr[c] = (cmdIP >> shift) & 0xFF;
+        addr[c + 4] = (dataIP >> shift) & 0xFF;
+        addr[c + 10] = (ownIP >> shift) & 0xFF;
+    }
+    addr[8] = m_cmdPort;
+    addr[9] = m_dataPort;
 }
 
 /*!
     \fn MCPD2::setDac(quint16 dac, quint16 val)
     \todo this function has to be implemented
 
-    the MCPD has a analogue output which may be set by programmer 
+    the MCPD has a analogue output which may be set by programmer
 
     \param dac
     \param val
@@ -814,7 +816,7 @@ void MCPD2::getProtocol(quint16 * addr)
  */
 bool MCPD2::setDac(quint16 /* dac */, quint16 /* val */)
 {
-	return true;
+    return true;
 }
 
 /*!
@@ -826,7 +828,7 @@ bool MCPD2::setDac(quint16 /* dac */, quint16 /* val */)
  */
 bool MCPD2::sendSerialString(QString /* str*/)
 {
-	return true;
+    return true;
 }
 
 /*!
@@ -840,24 +842,24 @@ bool MCPD2::sendSerialString(QString /* str*/)
  */
 bool MCPD2::setRunId(quint16 runid)
 {
-	if(m_master)
-	{
-    		m_runId = runid;
-		initCmdBuffer(SETRUNID);
-		m_cmdBuf.data[0] = m_runId;
-		finishCmdBuffer(1);
-		MSG_ERROR << "mcpd " << m_id << ": set run ID to " << m_runId;
-		return sendCommand();
-  	}
-	MSG_ERROR << "Error: trying to set run ID on mcpd " << m_id << " - not master!";
-	return false;
+    if(m_master)
+    {
+            m_runId = runid;
+        initCmdBuffer(SETRUNID);
+        m_cmdBuf.data[0] = m_runId;
+        finishCmdBuffer(1);
+        MSG_ERROR << "mcpd " << m_id << ": set run ID to " << m_runId;
+        return sendCommand();
+    }
+    MSG_ERROR << "Error: trying to set run ID on mcpd " << m_id << " - not master!";
+    return false;
 }
 
 /*!
     \fn MCPD2::setParameter(quint16 param, quint64 val)
 
     sets a parameter param to a new value
-  
+
     \param param parameter number
     \param val new value
     \return true if operation was succesful or not
@@ -865,10 +867,10 @@ bool MCPD2::setRunId(quint16 runid)
  */
 bool MCPD2::setParameter(quint16 param, quint64 val)
 {
-	if(param > 3)
-		return false;
-	m_parameter[param] = val;
-	return true;
+    if(param > 3)
+        return false;
+    m_parameter[param] = val;
+    return true;
 }
 
 /*!
@@ -882,7 +884,7 @@ bool MCPD2::setParameter(quint16 param, quint64 val)
  */
 quint64 MCPD2::getParameter(quint16 param)
 {
-	return param > 3 ?  0 : m_parameter[param];
+    return param > 3 ?  0 : m_parameter[param];
 }
 
 /*!
@@ -896,7 +898,7 @@ quint64 MCPD2::getParameter(quint16 param)
  */
 quint16 MCPD2::getAuxTimer(quint16 timer)
 {
-	return timer > 3 ? 0 : m_auxTimer[timer];
+    return timer > 3 ? 0 : m_auxTimer[timer];
 }
 
 /*!
@@ -904,26 +906,26 @@ quint16 MCPD2::getAuxTimer(quint16 timer)
  */
 void MCPD2::stdInit(void)
 {
-	quint8 c;
-    
-	for(c = 0; c < 4; c++)
-	{
-		m_counterCell[c][0] = 7; 
-		m_counterCell[c][1] = 22; 
-	}
-	
-	for(c = 4; c < 7; c++)
-	{
-		m_counterCell[c][0] = 0; 
-		m_counterCell[c][1] = 0; 
-	}
+    quint8 c;
 
-	for(c = 0; c < 4; c++)
-	{
-		m_auxTimer[c] = 0;
-		m_paramSource[c] = c;
-		m_parameter[c] = c;
-	} 
+    for(c = 0; c < 4; c++)
+    {
+        m_counterCell[c][0] = 7;
+        m_counterCell[c][1] = 22;
+    }
+
+    for(c = 4; c < 7; c++)
+    {
+        m_counterCell[c][0] = 0;
+        m_counterCell[c][1] = 0;
+    }
+
+    for(c = 0; c < 4; c++)
+    {
+        m_auxTimer[c] = 0;
+        m_paramSource[c] = c;
+        m_parameter[c] = c;
+    }
 }
 
 /*!
@@ -931,13 +933,13 @@ void MCPD2::stdInit(void)
 
     ????
 
-    \param strm ????	
+    \param strm ????
     \return true if operation was succesful or not
     \see getStream
  */
 bool MCPD2::setStream(quint16 strm)
 {
-	m_stream = bool(strm);
+    m_stream = bool(strm);
 #if defined(_MSC_VER)
 #	pragma message("TODO MCPD2::setStream(quint16 strm)")
 #else
@@ -945,14 +947,14 @@ bool MCPD2::setStream(quint16 strm)
 #endif
 //! \todo implement me
 #if 0
-	unsigned short id = (unsigned short) deviceId->value();	
-	initCmdBuffer(QUIET);	
-	m_cmdBuf.data[0] = strm;
-	finishCmdBuffer(1);
-	MSG_WARNING << "Set stream " << strm;
-	return sendCommand();
+    unsigned short id = (unsigned short) deviceId->value();
+    initCmdBuffer(QUIET);
+    m_cmdBuf.data[0] = strm;
+    finishCmdBuffer(1);
+    MSG_WARNING << "Set stream " << strm;
+    return sendCommand();
 #endif
-	return true;
+    return true;
 }
 
 #if 0
@@ -962,7 +964,7 @@ bool MCPD2::setStream(quint16 strm)
 bool MCPD2::serialize(QDataStream /* ds */)
 {
     /// @todo implement me
-	return false;
+    return false;
 }
 
 #endif
@@ -970,42 +972,42 @@ bool MCPD2::serialize(QDataStream /* ds */)
 // general buffer preparations:
 void MCPD2::initCmdBuffer(quint8 cmd)
 {
-  	memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
-	m_cmdBuf.cmd = cmd;
+    memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
+    m_cmdBuf.cmd = cmd;
 #if 0
-	m_cmdBuf.sender = 0;
-	m_cmdBuf.cpu = 0;
-	m_cmdBuf.headerlength = 0;
-	m_cmdBuf.packet = 0;
+    m_cmdBuf.sender = 0;
+    m_cmdBuf.cpu = 0;
+    m_cmdBuf.headerlength = 0;
+    m_cmdBuf.packet = 0;
 #endif
 }
 
 void MCPD2::finishCmdBuffer(quint16)
 {
-	m_cmdBuf.hchksm = calcChksum(m_cmdBuf);
+    m_cmdBuf.hchksm = calcChksum(m_cmdBuf);
 }
 
 int MCPD2::sendCommand(bool wait)
 {
-	if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
-	{
+    if(m_network->sendBuffer(m_ownIpAddress, m_cmdBuf))
+    {
 #if defined(_MSC_VER)
 #	pragma message("TODO	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() \") : \" << m_cmdBuf.bufferNumber << \". sent cmd: \" << m_cmdBuf.cmd << \" to id: \" << m_cmdBuf.deviceId;")
 #else
 #	warning TODO	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() ") : " << m_cmdBuf.bufferNumber << ". sent cmd: " << m_cmdBuf.cmd << " to id: " << m_cmdBuf.deviceId;
 #endif
-		communicate(wait);
-		if (wait)
-		{
-			m_commTimer->start(500);
-			MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer started";
+        communicate(wait);
+        if (wait)
+        {
+            m_commTimer->start(500);
+            MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer started";
 // wait for answer
-			while(isBusy())
-				qApp->processEvents();
-		}
-		m_cmdTxd++;
-	}
-	return 1;
+            while(isBusy())
+                qApp->processEvents();
+        }
+        m_cmdTxd++;
+    }
+    return 1;
 }
 
 /*!
@@ -1013,48 +1015,48 @@ int MCPD2::sendCommand(bool wait)
  */
 quint8 MCPD2::calcChksum(const MDP_PACKET2 &buffer)
 {
-	const quint8 *cmdBuf = reinterpret_cast<const quint8 *>(&buffer);
-	quint8 chksum = buffer.hchksm;
+    const quint8 *cmdBuf = reinterpret_cast<const quint8 *>(&buffer);
+    quint8 chksum = buffer.hchksm;
 
-	for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 7; i++)
                 chksum ^= cmdBuf[i];
-	return chksum;
+    return chksum;
 }
 
 /*!
     \fn MCPD2::analyzeBuffer(const MDP_PACKET &recBuf)
-	
+
     analyze the data package coming from the MCPD-8
 
     \param recBuf data package
  */
 void MCPD2::analyzeBuffer(const MDP_PACKET &recBuf)
 {
-	if (recBuf.deviceId != m_id)
-		return;
+    if (recBuf.deviceId != m_id)
+        return;
 
-	quint16 diff = recBuf.bufferNumber - m_lastBufnum;
-	if(diff > 1 && recBuf.bufferNumber > 0 && m_lastBufnum != 255)
-		MSG_ERROR << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ')' << m_id << " : Lost " << diff << " Buffers: current: "
-							<< recBuf.bufferNumber << ", last " << m_lastBufnum;
-	m_lastBufnum = recBuf.bufferNumber;
+    quint16 diff = recBuf.bufferNumber - m_lastBufnum;
+    if(diff > 1 && recBuf.bufferNumber > 0 && m_lastBufnum != 255)
+        MSG_ERROR << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ')' << m_id << " : Lost " << diff << " Buffers: current: "
+                            << recBuf.bufferNumber << ", last " << m_lastBufnum;
+    m_lastBufnum = recBuf.bufferNumber;
 
-	if(recBuf.bufferType & CMDBUFTYPE)
-	{
-		communicate(false);
-		m_commTimer->stop();
+    if(recBuf.bufferType & CMDBUFTYPE)
+    {
+        communicate(false);
+        m_commTimer->stop();
 //	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer stopped";
-	
-		++m_cmdRxd;
+
+        ++m_cmdRxd;
 //	MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : id " << recBuf.deviceId;
 
-		m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
-		m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
+        m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
+        m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
 
 //	MSG_DEBUG << tr("MCPD2::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd);
-		
-		MPSD8	*ptrMPSD;
-		quint16 chksum = recBuf.headerChksum;
+
+        MPSD8	*ptrMPSD;
+        quint16 chksum = recBuf.headerChksum;
 #if defined(_MSC_VER)
 #	pragma message("if (chksum != calcChksum(recBuf))")
 #	pragma message("MSG_INFO << \"cmd packet (cmd = \" << recBuf.cmd << \", size = \" << recBuf.bufferLength")
@@ -1064,202 +1066,202 @@ void MCPD2::analyzeBuffer(const MDP_PACKET &recBuf)
 #	warning TODO		MSG_INFO << "cmd packet (cmd = " << recBuf.cmd << ", size = " << recBuf.bufferLength
 #	warning TODO			<< ") is not valid (CHKSUM error) " << chksum << " != (expected)" << calcChksum(recBuf);
 #endif
-		switch(recBuf.cmd)
-		{
-			case RESET:
-				MSG_ERROR << "not handled command : RESET";
-				break;
-			case START:
-				m_daq = true;
-				emit startedDaq();
-				break;
-			case STOP:
-				m_daq = false;
-				emit stoppedDaq();
-				break;
-			case CONTINUE:
-				m_daq = true;
-				emit continuedDaq();
-				break;
-			case SETID:
-				if (recBuf.cmd & 0x80)
-					MSG_ERROR << "SETID : failed";
-				else
-					MSG_NOTICE << "SETID = " << recBuf.data[0];
-				break;
-			case SETPROTOCOL:
-				// extract ip and eth addresses in case of "this pc"
-				break;
-			case SETTIMING:
-				if (recBuf.cmd & 0x80)
-					MSG_ERROR << "SETTIMING : failed";
-				else
-					MSG_INFO << "SETTIMING : master " << recBuf.data[0] << " terminate " << recBuf.data[1];
-				break;
-			case SETCLOCK:
-				MSG_ERROR << "not handled command : SETCLOCK";
-				break;
-			case SETCELL:
-				if (recBuf.cmd & 0x80)
-					MSG_ERROR << "SETCELL : failed";
-				else
-					MSG_INFO << ": SETCELL";
-				break;
-			case SETAUXTIMER:
-				if (recBuf.data[2] != m_auxTimer[recBuf.data[1]])
-				{
-					MSG_ERROR << "Error setting auxiliary timer, tim " << recBuf.data[1] << ", is: "
-										<< recBuf.data[2] << ", should be " << m_auxTimer[recBuf.data[1]];
-				}
-				break;
-			case SETPARAM:
-				if (recBuf.cmd & 0x80)
-					MSG_ERROR << "SETPARAM : failed";
-				else
-					MSG_INFO << "SETPARAM";
-				break;
-			case GETPARAM:
-				MSG_ERROR << "not handled command : GETPARAM";
-				break;
-			case SETGAIN: // extract the set gain values: 
-				if(recBuf.bufferLength == 21) // set common gain
-				{
-					for(quint8 c = 0; c < 8; c++)
-					{
-						ptrMPSD = m_mpsd[recBuf.data[0]];
-						if(recBuf.data[2 + c] != ptrMPSD->getGainpoti(c, 1))
-						{
-							MSG_ERROR << "Error setting gain, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", chan "
-												<< c << " is: " << recBuf.data[2+c] << ", should be: " << ptrMPSD->getGainpoti(c, 1);
-							// set back to received value
-							ptrMPSD->setGain(8, (quint8)recBuf.data[c + 2], 0);
-						}
-					}
-					ptrMPSD->setGain(8, (quint8)recBuf.data[2], 0);
-				}
-				else// set one channel
-				{
-					ptrMPSD = m_mpsd[recBuf.data[0]];
-					if(recBuf.data[2] != ptrMPSD->getGainpoti(recBuf.data[1], 1))
-					{
-						MSG_ERROR << "Error setting gain, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", chan "
-											<< recBuf.data[1] << " is: " << recBuf.data[2] << ", should be: " << ptrMPSD->getGainpoti(recBuf.data[1], 1);
-						// set back to received value
-					}
-					ptrMPSD->setGain(recBuf.data[1], (quint8)recBuf.data[2], 0);
-				}
-				break;
-			case SETTHRESH: // extract the set thresh value:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
-				if (recBuf.data[1] != ptrMPSD->getThreshold(1))
-				{
-					MSG_ERROR << "Error setting threshold, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", is: "
-										<< recBuf.data[1] << ", should be: " << ptrMPSD->getThreshold(1);
-				}
-				ptrMPSD->setThreshold(recBuf.data[1], 0);
-				break;
-			case SETPULSER:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
-				if(recBuf.data[3] != ptrMPSD->getPulsPoti(1))
-				{
-					MSG_ERROR << "Error setting pulspoti, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", is: "
-										<< recBuf.data[3] << ", should be: " << ptrMPSD->getPulsPoti(1);
-				}
-				ptrMPSD->setPulserPoti(recBuf.data[1], recBuf.data[2], recBuf.data[3], recBuf.data[4], 0);
-				break;
-			case SETMODE: // extract the set mode:
-				m_mpsd[recBuf.data[0]]->setMode(recBuf.data[1] == 1, 0);
-				break;
-			case SETDAC:
-				MSG_ERROR << "not handled command : SETDAC";
-				break;
-			case SENDSERIAL:
-				MSG_ERROR << "not handled command : SENDSERIAL";
-				break;
-			case READSERIAL:
-				MSG_ERROR << "not handled command : READSERIAL";
-				break;
-			case SCANPERI:
-				MSG_ERROR << "not handled command : SCANPERI";
-				break;
-			case WRITEFPGA:
-				if (recBuf.cmd & 0x80)
-					MSG_ERROR << "WRITEFPGA : failed";
-				break;
-			case WRITEREGISTER:
-				if (recBuf.cmd & 0x80)
-					MSG_ERROR << "WRITEREGISTER failed";
-				break;
-			case READREGISTER:
-				for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)
-					MSG_DEBUG << "READREGISTER : " << i << " = " << recBuf.data[i];
-				m_reg = recBuf.data[0];	
-				MSG_INFO << "READREGISTER : " << m_reg << ' ' << recBuf.bufferLength;
-				break;
-			case READFPGA:
-				MSG_ERROR << "not handled command : READFPGA";
-				break;
-			case SETPOTI:
-				MSG_ERROR << "not handled command : SETPOTI";
-				break;
-			case GETPOTI:
-				MSG_ERROR << "not handled command : GETPOTI";
-				break;
-			case READID: // extract the retrieved MPSD-8 IDs:
+        switch(recBuf.cmd)
+        {
+            case RESET:
+                MSG_ERROR << "not handled command : RESET";
+                break;
+            case START:
+                m_daq = true;
+                emit startedDaq();
+                break;
+            case STOP:
+                m_daq = false;
+                emit stoppedDaq();
+                break;
+            case CONTINUE:
+                m_daq = true;
+                emit continuedDaq();
+                break;
+            case SETID:
+                if (recBuf.cmd & 0x80)
+                    MSG_ERROR << "SETID : failed";
+                else
+                    MSG_NOTICE << "SETID = " << recBuf.data[0];
+                break;
+            case SETPROTOCOL:
+                // extract ip and eth addresses in case of "this pc"
+                break;
+            case SETTIMING:
+                if (recBuf.cmd & 0x80)
+                    MSG_ERROR << "SETTIMING : failed";
+                else
+                    MSG_INFO << "SETTIMING : master " << recBuf.data[0] << " terminate " << recBuf.data[1];
+                break;
+            case SETCLOCK:
+                MSG_ERROR << "not handled command : SETCLOCK";
+                break;
+            case SETCELL:
+                if (recBuf.cmd & 0x80)
+                    MSG_ERROR << "SETCELL : failed";
+                else
+                    MSG_INFO << ": SETCELL";
+                break;
+            case SETAUXTIMER:
+                if (recBuf.data[2] != m_auxTimer[recBuf.data[1]])
+                {
+                    MSG_ERROR << "Error setting auxiliary timer, tim " << recBuf.data[1] << ", is: "
+                                        << recBuf.data[2] << ", should be " << m_auxTimer[recBuf.data[1]];
+                }
+                break;
+            case SETPARAM:
+                if (recBuf.cmd & 0x80)
+                    MSG_ERROR << "SETPARAM : failed";
+                else
+                    MSG_INFO << "SETPARAM";
+                break;
+            case GETPARAM:
+                MSG_ERROR << "not handled command : GETPARAM";
+                break;
+            case SETGAIN: // extract the set gain values:
+                if(recBuf.bufferLength == 21) // set common gain
+                {
+                    for(quint8 c = 0; c < 8; c++)
+                    {
+                        ptrMPSD = m_mpsd[recBuf.data[0]];
+                        if(recBuf.data[2 + c] != ptrMPSD->getGainpoti(c, 1))
+                        {
+                            MSG_ERROR << "Error setting gain, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", chan "
+                                                << c << " is: " << recBuf.data[2+c] << ", should be: " << ptrMPSD->getGainpoti(c, 1);
+                            // set back to received value
+                            ptrMPSD->setGain(8, (quint8)recBuf.data[c + 2], 0);
+                        }
+                    }
+                    ptrMPSD->setGain(8, (quint8)recBuf.data[2], 0);
+                }
+                else// set one channel
+                {
+                    ptrMPSD = m_mpsd[recBuf.data[0]];
+                    if(recBuf.data[2] != ptrMPSD->getGainpoti(recBuf.data[1], 1))
+                    {
+                        MSG_ERROR << "Error setting gain, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", chan "
+                                            << recBuf.data[1] << " is: " << recBuf.data[2] << ", should be: " << ptrMPSD->getGainpoti(recBuf.data[1], 1);
+                        // set back to received value
+                    }
+                    ptrMPSD->setGain(recBuf.data[1], (quint8)recBuf.data[2], 0);
+                }
+                break;
+            case SETTHRESH: // extract the set thresh value:
+                ptrMPSD = m_mpsd[recBuf.data[0]];
+                if (recBuf.data[1] != ptrMPSD->getThreshold(1))
+                {
+                    MSG_ERROR << "Error setting threshold, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", is: "
+                                        << recBuf.data[1] << ", should be: " << ptrMPSD->getThreshold(1);
+                }
+                ptrMPSD->setThreshold(recBuf.data[1], 0);
+                break;
+            case SETPULSER:
+                ptrMPSD = m_mpsd[recBuf.data[0]];
+                if(recBuf.data[3] != ptrMPSD->getPulsPoti(1))
+                {
+                    MSG_ERROR << "Error setting pulspoti, mod " << (8 * recBuf.deviceId + recBuf.data[0]) << ", is: "
+                                        << recBuf.data[3] << ", should be: " << ptrMPSD->getPulsPoti(1);
+                }
+                ptrMPSD->setPulserPoti(recBuf.data[1], recBuf.data[2], recBuf.data[3], recBuf.data[4], 0);
+                break;
+            case SETMODE: // extract the set mode:
+                m_mpsd[recBuf.data[0]]->setMode(recBuf.data[1] == 1, 0);
+                break;
+            case SETDAC:
+                MSG_ERROR << "not handled command : SETDAC";
+                break;
+            case SENDSERIAL:
+                MSG_ERROR << "not handled command : SENDSERIAL";
+                break;
+            case READSERIAL:
+                MSG_ERROR << "not handled command : READSERIAL";
+                break;
+            case SCANPERI:
+                MSG_ERROR << "not handled command : SCANPERI";
+                break;
+            case WRITEFPGA:
+                if (recBuf.cmd & 0x80)
+                    MSG_ERROR << "WRITEFPGA : failed";
+                break;
+            case WRITEREGISTER:
+                if (recBuf.cmd & 0x80)
+                    MSG_ERROR << "WRITEREGISTER failed";
+                break;
+            case READREGISTER:
+                for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)
+                    MSG_DEBUG << "READREGISTER : " << i << " = " << recBuf.data[i];
+                m_reg = recBuf.data[0];
+                MSG_INFO << "READREGISTER : " << m_reg << ' ' << recBuf.bufferLength;
+                break;
+            case READFPGA:
+                MSG_ERROR << "not handled command : READFPGA";
+                break;
+            case SETPOTI:
+                MSG_ERROR << "not handled command : SETPOTI";
+                break;
+            case GETPOTI:
+                MSG_ERROR << "not handled command : GETPOTI";
+                break;
+            case READID: // extract the retrieved MPSD-8 IDs:
 #if defined(_MSC_VER)
 #	pragma message("TODO if the configuration has changed")
 #else
 #	warning TODO if the configuration has changed
 #endif
 //! \todo if the configuration has changed
-				for(quint8 c = 0; c < 8; c++)
-				{
-					MSG_ERROR << "module ID : " << recBuf.data[c];
-					if (m_mpsd.find(c) == m_mpsd.end())
-					{
-						m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
-					}
-				}
-				MSG_DEBUG << "READID finished";
-				break;
-			case DATAREQUEST:
-				MSG_ERROR << "not handled command : DATAREQUEST";
-				break;
-			case QUIET:
-				MSG_ERROR << "not handled command : QUIET";
-				break;
-			case GETVER:
-				m_version = recBuf.data[1];
-				while (m_version > 1)
-					m_version /= 10.;
-				m_version += recBuf.data[0];
-				MSG_DEBUG << "Modul (ID  " << m_id << "): Version number : " << m_version;
-				break;
-			case READPERIREG:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
-				m_periReg = recBuf.data[2];
-				MSG_DEBUG << "READPERIREG " << recBuf.data[0] << " : " << recBuf.data[1] << " = " << m_periReg;
-				break;
-			case WRITEPERIREG:
-				ptrMPSD = m_mpsd[recBuf.data[0]];
-				if(recBuf.data[2] != ptrMPSD->getInternalreg(recBuf.data[1], 1))
-				{
-					MSG_ERROR << "Error setting internal mpsd-register, mod " << (8 * recBuf.deviceId + recBuf.data[0])
-										<< ", is: " << recBuf.data[3] << ", should be: " << ptrMPSD->getPulsPoti(1);
-				}
-				ptrMPSD->setInternalreg(recBuf.data[1], recBuf.data[2], 0);			
-				break;
-			default:
-				MSG_ERROR << "not handled command : " << recBuf.cmd;
-				break;
-		}
-	}
-	else
-	{
-		++m_dataRxd;
+                for(quint8 c = 0; c < 8; c++)
+                {
+                    MSG_ERROR << "module ID : " << recBuf.data[c];
+                    if (m_mpsd.find(c) == m_mpsd.end())
+                    {
+                        m_mpsd[c] = MPSD8::create(c, recBuf.data[c], this);
+                    }
+                }
+                MSG_DEBUG << "READID finished";
+                break;
+            case DATAREQUEST:
+                MSG_ERROR << "not handled command : DATAREQUEST";
+                break;
+            case QUIET:
+                MSG_ERROR << "not handled command : QUIET";
+                break;
+            case GETVER:
+                m_version = recBuf.data[1];
+                while (m_version > 1)
+                    m_version /= 10.;
+                m_version += recBuf.data[0];
+                MSG_DEBUG << "Modul (ID  " << m_id << "): Version number : " << m_version;
+                break;
+            case READPERIREG:
+                ptrMPSD = m_mpsd[recBuf.data[0]];
+                m_periReg = recBuf.data[2];
+                MSG_DEBUG << "READPERIREG " << recBuf.data[0] << " : " << recBuf.data[1] << " = " << m_periReg;
+                break;
+            case WRITEPERIREG:
+                ptrMPSD = m_mpsd[recBuf.data[0]];
+                if(recBuf.data[2] != ptrMPSD->getInternalreg(recBuf.data[1], 1))
+                {
+                    MSG_ERROR << "Error setting internal mpsd-register, mod " << (8 * recBuf.deviceId + recBuf.data[0])
+                                        << ", is: " << recBuf.data[3] << ", should be: " << ptrMPSD->getPulsPoti(1);
+                }
+                ptrMPSD->setInternalreg(recBuf.data[1], recBuf.data[2], 0);
+                break;
+            default:
+                MSG_ERROR << "not handled command : " << recBuf.cmd;
+                break;
+        }
+    }
+    else
+    {
+        ++m_dataRxd;
 //		MSG_DEBUG << "ID " << m_id << " : emit analyzeBuffer(recBuf)";
-		emit analyzeDataBuffer((DATA_PACKET&)(recBuf));
-	}
+        emit analyzeDataBuffer((DATA_PACKET&)(recBuf));
+    }
 }
 
 /*!
@@ -1267,8 +1269,8 @@ void MCPD2::analyzeBuffer(const MDP_PACKET &recBuf)
  */
 void MCPD2::commTimeout()
 {
-	communicate(false);
-	MSG_ERROR << "timeout while waiting for cmd " << m_cmdBuf.cmd << " answer from ID: " << m_id;
+    communicate(false);
+    MSG_ERROR << "timeout while waiting for cmd " << m_cmdBuf.cmd << " answer from ID: " << m_id;
 }
 
 /*!
@@ -1283,13 +1285,13 @@ void MCPD2::commTimeout()
  */
 quint16 MCPD2::readPeriReg(quint16 mod, quint16 reg)
 {
-	initCmdBuffer(READPERIREG);
-	m_cmdBuf.data[0] = mod;
-	m_cmdBuf.data[1] = reg;
-	finishCmdBuffer(2);
-	if (sendCommand())
-		return m_periReg;
-	return 0xFFFF;
+    initCmdBuffer(READPERIREG);
+    m_cmdBuf.data[0] = mod;
+    m_cmdBuf.data[1] = reg;
+    finishCmdBuffer(2);
+    if (sendCommand())
+        return m_periReg;
+    return 0xFFFF;
 }
 
 /*!
@@ -1305,13 +1307,13 @@ quint16 MCPD2::readPeriReg(quint16 mod, quint16 reg)
  */
 bool MCPD2::writePeriReg(quint16 mod, quint16 reg, quint16 val)
 {
-	m_mpsd[mod]->setInternalreg(reg, val, 1);
-	initCmdBuffer(WRITEPERIREG);
-	m_cmdBuf.data[0] = mod;
-	m_cmdBuf.data[1] = reg;
-	m_cmdBuf.data[2] = val;
-	finishCmdBuffer(3);
-	return sendCommand();
+    m_mpsd[mod]->setInternalreg(reg, val, 1);
+    initCmdBuffer(WRITEPERIREG);
+    m_cmdBuf.data[0] = mod;
+    m_cmdBuf.data[1] = reg;
+    m_cmdBuf.data[2] = val;
+    finishCmdBuffer(3);
+    return sendCommand();
 }
 
 /*!
@@ -1326,17 +1328,17 @@ bool MCPD2::writePeriReg(quint16 mod, quint16 reg, quint16 val)
  */
 bool MCPD2::writeRegister(quint16 reg, quint16 val)
 {
-	initCmdBuffer(WRITEREGISTER);
-	m_cmdBuf.data[0] = 1;
-	m_cmdBuf.data[1] = reg;
-	m_cmdBuf.data[2] = val;
-	finishCmdBuffer(3);
-	return sendCommand();
+    initCmdBuffer(WRITEREGISTER);
+    m_cmdBuf.data[0] = 1;
+    m_cmdBuf.data[1] = reg;
+    m_cmdBuf.data[2] = val;
+    finishCmdBuffer(3);
+    return sendCommand();
 }
 
 /*!
     \fn  MCPD2::readRegister(quint16 reg)
-    reads the content of a register 
+    reads the content of a register
 
     \param reg number of the register
     \return content of the register
@@ -1344,31 +1346,31 @@ bool MCPD2::writeRegister(quint16 reg, quint16 val)
  */
 quint16 MCPD2::readRegister(quint16 reg)
 {
-	initCmdBuffer(READREGISTER);
-	m_cmdBuf.data[0] = 1;
-	m_cmdBuf.data[1] = reg;
-	finishCmdBuffer(2);
-	if (sendCommand())
-		return m_reg;
-	return 0xFFFF;
+    initCmdBuffer(READREGISTER);
+    m_cmdBuf.data[0] = 1;
+    m_cmdBuf.data[1] = reg;
+    finishCmdBuffer(2);
+    if (sendCommand())
+        return m_reg;
+    return 0xFFFF;
 }
 
 /*!
     \fn MCPD2::setMasterClock(quint64 val)
 
     sets the master clock to a new value
-   
+
     \param val new clock value
     \return true if operation was succesful or not
  */
 bool MCPD2::setMasterClock(quint64 val)
 {
-	initCmdBuffer(SETCLOCK);
-	m_cmdBuf.data[0] = val & 0xFFFF;
-	m_cmdBuf.data[1] = (val >> 16) & 0xFFFF;
-	m_cmdBuf.data[2] = (val >> 32) & 0xFFFF;
-	finishCmdBuffer(3);
-	return sendCommand();
+    initCmdBuffer(SETCLOCK);
+    m_cmdBuf.data[0] = val & 0xFFFF;
+    m_cmdBuf.data[1] = (val >> 16) & 0xFFFF;
+    m_cmdBuf.data[2] = (val >> 32) & 0xFFFF;
+    finishCmdBuffer(3);
+    return sendCommand();
 }
 
 /*!
@@ -1382,17 +1384,17 @@ bool MCPD2::setMasterClock(quint64 val)
  */
 bool MCPD2::setTimingSetup(bool master, bool term)
 {
-	initCmdBuffer(SETTIMING);
-	m_cmdBuf.data[0] = master;
-	m_cmdBuf.data[1] = term;
-	finishCmdBuffer(2);
-	if (sendCommand())
-	{
-		m_master = master;
-		m_term = term;
-		return true;
-	}
-	return false;
+    initCmdBuffer(SETTIMING);
+    m_cmdBuf.data[0] = master;
+    m_cmdBuf.data[1] = term;
+    finishCmdBuffer(2);
+    if (sendCommand())
+    {
+        m_master = master;
+        m_term = term;
+        return true;
+    }
+    return false;
 }
 
 /*!
@@ -1405,24 +1407,24 @@ bool MCPD2::setTimingSetup(bool master, bool term)
  */
 bool MCPD2::isPulserOn(quint8 addr)
 {
-	if (m_mpsd.find(addr) == m_mpsd.end())
-		return false;
-	if (getModuleId(addr) && m_mpsd[addr]->isPulserOn())
-		return true;
-	return false;
+    if (m_mpsd.find(addr) == m_mpsd.end())
+        return false;
+    if (getModuleId(addr) && m_mpsd[addr]->isPulserOn())
+        return true;
+    return false;
 }
 
-/*! 
+/*!
     \fn MCPD2::isPulserOn()
 
     \return true if one of the connected modules has a switched on pulser
  */
 bool MCPD2::isPulserOn()
 {
-	for (quint8 i = 0; i < 8; ++i)
-		if (isPulserOn(i))
-			return true;
-	return false;
+    for (quint8 i = 0; i < 8; ++i)
+        if (isPulserOn(i))
+            return true;
+    return false;
 }
 
 /*!
@@ -1438,9 +1440,9 @@ bool MCPD2::isPulserOn()
  */
 quint8	MCPD2::getPulsPos(quint8 addr, bool preset)
 {
-	if (m_mpsd.find(addr) == m_mpsd.end())
-		return -1;
-	return m_mpsd[addr]->getPulsPos(preset);
+    if (m_mpsd.find(addr) == m_mpsd.end())
+        return -1;
+    return m_mpsd[addr]->getPulsPos(preset);
 }
 
 /*!
@@ -1457,10 +1459,10 @@ quint8	MCPD2::getPulsPos(quint8 addr, bool preset)
  */
 quint8	MCPD2::getPulsAmp(quint8 addr, bool preset)
 {
-	if (m_mpsd.find(addr) == m_mpsd.end())
-		return -1;
-	return m_mpsd[addr]->getPulsAmp(preset);
-} 
+    if (m_mpsd.find(addr) == m_mpsd.end())
+        return -1;
+    return m_mpsd[addr]->getPulsAmp(preset);
+}
 
 /*!
     \fn	MCPD2::getPulsChan(quint8 addr, bool preset)
@@ -1476,21 +1478,21 @@ quint8	MCPD2::getPulsAmp(quint8 addr, bool preset)
  */
 quint8	MCPD2::getPulsChan(quint8 addr, bool preset)
 {
-	if (m_mpsd.find(addr) == m_mpsd.end())
-		return -1;
-	return m_mpsd[addr]->getPulsChan(preset);
-} 
+    if (m_mpsd.find(addr) == m_mpsd.end())
+        return -1;
+    return m_mpsd[addr]->getPulsChan(preset);
+}
 
 /*!
     \fn MCPD2::initModule(quint8 id)
-    
+
     initializes a Module:
-	- sets threshold
-	- sets pulser
-	- sets mode
-	- writes peripheral registers
-	- ...
-    
+    - sets threshold
+    - sets pulser
+    - sets mode
+    - writes peripheral registers
+    - ...
+
     \param id number of the MPSD
  */
 void MCPD2::initModule(quint8 id)
@@ -1503,33 +1505,33 @@ void MCPD2::initModule(quint8 id)
 
 //! \todo gain initialization
 #if 0
-	quint8 	start = 8,
-		stop = 9;
-	
-	// gains:
-	if(!myMpsd[id]->comGain())
-	{
-		// iterate through all channels
-		start = 0;
-		stop = 8;
-	}
-	for (quint8 c = start; c < stop; ++c)
-		m_mcpd[id]->setGain(c, myMpsd[id]->getGainpoti(c, 1));
+    quint8 	start = 8,
+        stop = 9;
+
+    // gains:
+    if(!myMpsd[id]->comGain())
+    {
+        // iterate through all channels
+        start = 0;
+        stop = 8;
+    }
+    for (quint8 c = start; c < stop; ++c)
+        m_mcpd[id]->setGain(c, myMpsd[id]->getGainpoti(c, 1));
 #endif
-	
+
 // threshold:
-	setThreshold(id, getThreshold(id));
+    setThreshold(id, getThreshold(id));
 
 // pulser
-	setPulser(id, 0, 2, 50, false);
+    setPulser(id, 0, 2, 50, false);
 
 // mode
-	setMode(id, false);
-	
+    setMode(id, false);
+
 // now set tx capabilities, if id == 105
-	if(getModuleId(id) == 105)
-	{
-		// write register 1
-		writePeriReg(id, 1, 4);
-	}
+    if(getModuleId(id) == 105)
+    {
+        // write register 1
+        writePeriReg(id, 1, 4);
+    }
 }

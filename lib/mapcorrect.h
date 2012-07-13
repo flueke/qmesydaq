@@ -51,9 +51,6 @@ class LIBQMESYDAQ_EXPORT MapCorrection : public QObject
 
 public:
     //! orientation of histogram
-    //!
-    //! used at class MappedHistogram, but stored here for convenience
-    //!
     enum Orientation {
       OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
       OrientationDown,    //!< channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
@@ -72,7 +69,7 @@ public:
     };
 
     //! default constructor
-    MapCorrection() 
+    MapCorrection()
       : QObject()
       , m_bNoMapping(false)
       , m_iOrientation(MapCorrection::OrientationUp)
@@ -84,7 +81,7 @@ public:
 
     MapCorrection& operator=(const MapCorrection& src);
 
-    /*! 
+    /*!
         constructor
 
         \param size
@@ -93,16 +90,16 @@ public:
      */
     MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
         : QObject()
-    { 
-        initialize(size.width(), size.height(), iOrientation, iCorrection); 
+    {
+        initialize(size.width(), size.height(), iOrientation, iCorrection);
     }
 
     //! destructor
-    ~MapCorrection() 
+    ~MapCorrection()
     {
     }
 
-    //! \return whether no mapping 
+    //! \return whether no mapping
     bool isNoMap() const { return m_bNoMapping; }
 
     bool isValid() const;
@@ -111,7 +108,7 @@ public:
 
     void initialize(int iWidth, int iHeight, enum Orientation iOrientation, enum CorrectionType iCorrection);
 
-    /*! 
+    /*!
         initialize mapping
 
         \param size
@@ -119,8 +116,8 @@ public:
         \param iCorrection
      */
     void initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-    { 
-	initialize(size.width(),size.height(),iOrientation,iCorrection); 
+    {
+        initialize(size.width(),size.height(),iOrientation,iCorrection);
     }
 
     void setMappedRect(const QRect& mapRect);
@@ -129,12 +126,12 @@ public:
 
     bool map(const QRect& src, const QPoint& dst, float dblCorrection);
 
-    //! \return the correction map 
+    //! \return the correction map
     const QRect& getMapRect() const { return m_mapRect; }
-    
+
     bool getMap(const QPoint& src, QPoint& dst, float& dblCorrection) const;
 
-    /*! 
+    /*!
         read mapping
 
         \param iSrcX
@@ -146,13 +143,13 @@ public:
         \return true if mapping was successful
     */
     bool getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const
-    { 
-	QPoint 	s(iSrcX, iSrcY),
-		d; 
-        bool r = getMap(s,d,dblCorrection); 
-        iDstX = d.x(); 
-        iDstY = d.y(); 
-        return r; 
+    {
+    QPoint 	s(iSrcX, iSrcY),
+        d;
+        bool r = getMap(s,d,dblCorrection);
+        iDstX = d.x();
+        iDstY = d.y();
+        return r;
     }
 
     void mirrorVertical();
@@ -164,11 +161,11 @@ public:
     void rotateRight();
 
     //! \return an empty mapping
-    static MapCorrection noMap() 
-    { 
-	MapCorrection r; 
-	r.m_bNoMapping = true; 
-	return r; 
+    static MapCorrection noMap()
+    {
+        MapCorrection r;
+        r.m_bNoMapping = true;
+        return r;
     }
 
 private:
@@ -190,43 +187,43 @@ private:
     //! mapping information
     QVector<QPoint> m_aptMap;
 
-    //! intensity correction 
+    //! intensity correction
     QVector<float> m_afCorrection;
 };
 
 class LIBQMESYDAQ_EXPORT LinearMapCorrection : public MapCorrection
 {
 public:
-	LinearMapCorrection() 
-		: MapCorrection()
-	{
-	}
+    LinearMapCorrection()
+        : MapCorrection()
+    {
+    }
 
-	LinearMapCorrection(const QSize &srcSize, const QSize &destSize)
-		: MapCorrection(srcSize, MapCorrection::OrientationDown, MapCorrection::CorrectSourcePixel)
-	{
-		int iDstHeight(destSize.height());
-		int iSrcHeight(srcSize.height());
-		int iDstWidth(destSize.width());
-		int iSrcWidth(srcSize.width());
+    LinearMapCorrection(const QSize &srcSize, const QSize &destSize)
+        : MapCorrection(srcSize, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel)
+    {
+        int iDstHeight(destSize.height());
+        int iSrcHeight(srcSize.height());
+        int iDstWidth(destSize.width());
+        int iSrcWidth(srcSize.width());
 
-		setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
+        setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
 
-  		for (int i = 0; i < iDstHeight; ++i)
-		{
-			int iStartY = (iSrcHeight * i) / iDstHeight;
-			int iEndY   = (iSrcHeight * (i + 1)) / iDstHeight;
-			for(int k = iStartY; k < iEndY; ++k)
-				for (int j = 0; j < iDstWidth; ++j)
-				{
-					int iStartX = (iSrcWidth * j) / iDstWidth;
-					int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
-					QPoint pt(j, i);
-					for (; iStartX < iEndX; ++iStartX)
-			  			map(QPoint(iStartX, k), pt, 1.0);
-				}
-		}
-	}
+        for (int i = 0; i < iDstHeight; ++i)
+        {
+            int iStartY = (iSrcHeight * i) / iDstHeight;
+            int iEndY   = (iSrcHeight * (i + 1)) / iDstHeight;
+            for(int k = iStartY; k < iEndY; ++k)
+                for (int j = 0; j < iDstWidth; ++j)
+                {
+                    int iStartX = (iSrcWidth * j) / iDstWidth;
+                    int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
+                    QPoint pt(j, i);
+                    for (; iStartX < iEndX; ++iStartX)
+                        map(QPoint(iStartX, k), pt, 1.0);
+                }
+        }
+    }
 };
 
 #endif /* __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__ */

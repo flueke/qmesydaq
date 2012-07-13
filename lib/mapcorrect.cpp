@@ -33,7 +33,7 @@
 /***************************************************************************
  * histogram mapping and correction data
  ***************************************************************************/
-/*! 
+/*!
     copy constructor
 
     \param src source mapping
@@ -68,31 +68,31 @@ MapCorrection& MapCorrection::operator=(const MapCorrection& src)
 //! \return true if mapping was initialized
 bool MapCorrection::isValid() const
 {
-    if (m_bNoMapping) 
+    if (m_bNoMapping)
         return true;
-    if (!m_rect.isValid() || !m_mapRect.isValid() || m_aptMap.isEmpty()) 
+    if (!m_rect.isValid() || !m_mapRect.isValid() || m_aptMap.isEmpty())
         return false;
 
     int iCount = m_rect.width() * m_rect.height();
 
-    if (iCount != m_aptMap.count()) 
+    if (iCount != m_aptMap.count())
         return false;
     switch (m_iCorrection)
     {
-        case MapCorrection::CorrectSourcePixel: 
-	     break;
-        case MapCorrection::CorrectMappedPixel: 
-             iCount = m_mapRect.width() * m_mapRect.height(); 
-             break;
-        default: 
-             return false;
+        case MapCorrection::CorrectSourcePixel:
+            break;
+        case MapCorrection::CorrectMappedPixel:
+            iCount = m_mapRect.width() * m_mapRect.height();
+            break;
+        default:
+            return false;
     }
     return (iCount == m_afCorrection.count());
 }
 
 /*!
     clear mapping
- */ 
+ */
 void MapCorrection::setNoMap()
 {
     m_bNoMapping = true;
@@ -104,7 +104,7 @@ void MapCorrection::setNoMap()
     m_afCorrection.clear();
 }
 
-/*! 
+/*!
     initialize mapping
 
     \param iSrcWidth    maximum width of source positions
@@ -124,20 +124,24 @@ void MapCorrection::initialize(int iSrcWidth, int iSrcHeight, MapCorrection::Ori
         case MapCorrection::OrientationDown:
         case MapCorrection::OrientationLeft:
         case MapCorrection::OrientationRight:
+        case MapCorrection::OrientationUpRev:
+        case MapCorrection::OrientationDownRev:
+        case MapCorrection::OrientationLeftRev:
+        case MapCorrection::OrientationRightRev:
             break;
-       default: 
+        default:
             return;
     }
 
     switch (iCorrection)
     {
-         case MapCorrection::CorrectSourcePixel:
-             m_afCorrection.resize(iCount);
-             break;
-         case MapCorrection::CorrectMappedPixel:
-             break;
-         default: 
-             return;
+        case MapCorrection::CorrectSourcePixel:
+            m_afCorrection.resize(iCount);
+            break;
+        case MapCorrection::CorrectMappedPixel:
+            break;
+        default:
+            return;
     }
 
     QPoint nowhere(-1, -1);
@@ -153,26 +157,25 @@ void MapCorrection::initialize(int iSrcWidth, int iSrcHeight, MapCorrection::Ori
     m_iCorrection = iCorrection;
 }
 
-/*! 
+/*!
     set region of mapped data
 
     \param mapRect rectangle of mapped data
  */
 void MapCorrection::setMappedRect(const QRect &mapRect)
 {
-    m_bNoMapping = false;
     m_mapRect = mapRect;
-    if (m_iCorrection == MapCorrection::CorrectMappedPixel)
+    if (!m_bNoMapping && m_iCorrection == MapCorrection::CorrectMappedPixel)
     {
         int iCount = mapRect.width() * mapRect.height();
-         m_afCorrection.clear();
-         m_afCorrection.resize(iCount);
-         for (int i = 0; i < iCount; ++i)
-              m_afCorrection[i] = 1.0;
+        m_afCorrection.clear();
+        m_afCorrection.resize(iCount);
+        for (int i = 0; i < iCount; ++i)
+            m_afCorrection[i] = 1.0;
     }
 }
 
-/*! 
+/*!
     store a single mapping
 
     \param src
@@ -193,7 +196,7 @@ bool MapCorrection::map(const QPoint &src, const QPoint &dst, float fCorrection)
     p->setY(dst.y());
     if (m_iCorrection == MapCorrection::CorrectMappedPixel)
     {
-	iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
+        iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
         if (iPos < 0 || iPos >= m_afCorrection.count())
             return false;
     }
@@ -201,7 +204,7 @@ bool MapCorrection::map(const QPoint &src, const QPoint &dst, float fCorrection)
     return true;
 }
 
-/*! 
+/*!
     store a region mapping
 
     \param src
@@ -209,7 +212,7 @@ bool MapCorrection::map(const QPoint &src, const QPoint &dst, float fCorrection)
     \param fCorrection
 
     \return true if mapping was successful
- */   
+ */
 bool MapCorrection::map(const QRect& src, const QPoint& dst, float fCorrection)
 {
     m_bNoMapping = false;
@@ -219,26 +222,27 @@ bool MapCorrection::map(const QRect& src, const QPoint& dst, float fCorrection)
     for (int y = src.top(); y <= src.bottom(); ++y)
     {
         int iStart = y * m_rect.width();
+        bool bLastY=(y==src.bottom());
         for (int x = src.left(); x <= src.right(); ++x)
         {
             QPoint *p = &m_aptMap[iStart+x];
             p->setX(dst.x());
             p->setY(dst.y());
             if (m_iCorrection == MapCorrection::CorrectSourcePixel)
-	        m_afCorrection[iStart + x] = fCorrection;
+                m_afCorrection[iStart + x] = fCorrection;
         }
     }
     if (m_iCorrection == MapCorrection::CorrectMappedPixel)
     {
-	int iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
-	if (iPos < 0 || iPos >= m_afCorrection.count())
+        int iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
+        if (iPos < 0 || iPos >= m_afCorrection.count())
             return false;
         m_afCorrection[iPos] = fCorrection;
     }
     return true;
 }
 
-/*! 
+/*!
     read mapping
 
     \param src
@@ -249,23 +253,72 @@ bool MapCorrection::map(const QRect& src, const QPoint& dst, float fCorrection)
  */
 bool MapCorrection::getMap(const QPoint &src, QPoint &dst, float &fCorrection) const
 {
+    int iPos = 0;
+    const QPoint *p;
+
+    if (m_bNoMapping)
+        p = &src;
+    else
+    {
+        if (!m_rect.contains(src))
+            return false;
+        iPos = src.y() * m_rect.width() + src.x();
+        p = &m_aptMap[iPos];
+    }
+
+    if (m_mapRect.isValid())
+    {
+        switch (m_iOrientation)
+        {
+            default: //MapCorrection::OrientationUp: // channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+                dst.setX(p->x());
+                dst.setY(p->y());
+                break;
+            case MapCorrection::OrientationDownRev:  // channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+                dst.setX(p->x());
+                dst.setY(m_mapRect.bottom() - p->y());
+                break;
+            case MapCorrection::OrientationDown:     // channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
+                dst.setX(m_mapRect.right() - p->x());
+                dst.setY(m_mapRect.bottom() - p->y());
+                break;
+            case MapCorrection::OrientationUpRev:    // channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
+                dst.setX(m_mapRect.right() - p->x());
+                dst.setY(p->y());
+                break;
+            case MapCorrection::OrientationLeft:     // channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
+                dst.setX(p->y());
+                dst.setY(p->x());
+                break;
+            case MapCorrection::OrientationRightRev: // channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
+                dst.setX(p->y());
+                dst.setY(m_mapRect.right() - p->x());
+                break;
+            case MapCorrection::OrientationRight:    // channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
+                dst.setX(m_mapRect.bottom() - p->y());
+                dst.setY(m_mapRect.right() - p->x());
+                break;
+            case MapCorrection::OrientationLeftRev:  // channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
+                dst.setX(m_mapRect.bottom() - p->y());
+                dst.setY(p->x());
+                break;
+        }
+    }
+    else
+        dst = *p;
+
     if (m_bNoMapping)
     {
-        dst = src;
         fCorrection = 1.0;
         return true;
     }
-    if (!m_rect.contains(src))
-        return false;
-    int iPos = src.y() * m_rect.width() + src.x();
-    const QPoint *p = &m_aptMap[iPos];
-    dst.setX(p->x());
-    dst.setY(p->y());
+
     if (!m_mapRect.contains(dst))
         return false;
+
     if (m_iCorrection == MapCorrection::CorrectMappedPixel)
     {
-	iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
+        iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
         if (iPos < 0 || iPos >= m_afCorrection.count())
             return false;
     }
@@ -278,7 +331,7 @@ bool MapCorrection::getMap(const QPoint &src, QPoint &dst, float &fCorrection) c
  */
 void MapCorrection::mirrorVertical()
 {
-    if (m_bNoMapping) 
+    if (m_bNoMapping)
         return;
 
     int iWidth = m_rect.width();
@@ -294,12 +347,12 @@ void MapCorrection::mirrorVertical()
             QPoint pt(m_aptMap[iYPos1 + x]);
             m_aptMap[iYPos1 + x] = m_aptMap[iYPos2 + x];
             m_aptMap[iYPos2 + x] = pt;
-           if (m_iCorrection == MapCorrection::CorrectSourcePixel)
-           {
-	       float fCorrection(m_afCorrection[iYPos1 + x]);
-	       m_afCorrection[iYPos1 + x] = m_afCorrection[iYPos2 + x];
-	       m_afCorrection[iYPos2 + x] = fCorrection;
-           }
+            if (m_iCorrection == MapCorrection::CorrectSourcePixel)
+            {
+                float fCorrection(m_afCorrection[iYPos1 + x]);
+                m_afCorrection[iYPos1 + x] = m_afCorrection[iYPos2 + x];
+                m_afCorrection[iYPos2 + x] = fCorrection;
+            }
         }
     }
 }
@@ -309,7 +362,7 @@ void MapCorrection::mirrorVertical()
  */
 void MapCorrection::mirrorHorizontal()
 {
-    if (m_bNoMapping) 
+    if (m_bNoMapping)
         return;
 
     int iWidth = m_rect.width() - 1;
@@ -326,9 +379,9 @@ void MapCorrection::mirrorHorizontal()
             m_aptMap[iYPos + iWidth - x] = pt;
             if (m_iCorrection == MapCorrection::CorrectSourcePixel)
             {
-	        float fCorrection(m_afCorrection[iYPos + x]);
-	        m_afCorrection[iYPos + x] = m_afCorrection[iYPos + iWidth - x];
-	        m_afCorrection[iYPos + iWidth - x] = fCorrection;
+                float fCorrection(m_afCorrection[iYPos + x]);
+                m_afCorrection[iYPos + x] = m_afCorrection[iYPos + iWidth - x];
+                m_afCorrection[iYPos + iWidth - x] = fCorrection;
             }
         }
     }
@@ -337,21 +390,21 @@ void MapCorrection::mirrorHorizontal()
 /*!
  rotate mapping data counter clockwise
  \verbatim
- example (3*4 block):				| x  y	      x  y
-					      --+------      ------
-    6 |			6 |		      A | 1  2	      4  2
-    5 | J-K-L		5 |		      B | 2  2	      4  3
-    4 | G-H-I     ===>	4 | L-I-F-C	      C | 3  2	===>  4  4
-    3 | D-E-F     ===>	3 | K-H-E-B	      D | 1  3	===>  3  2
-    2 | A-B-C     ===>	2 | J-G-D-A	      ...
-    1 |			1 |		      J | 1  5	===>  1  2
-      +----------	  +----------	      K | 2  5	      1  3
-    0   1 2 3 4 5      0    1 2 3 4 5	      L | 3  5	      1  4
+ example (3*4 block):                | x  y      x  y
+                                   --+------    ------
+    6 |            6 |             A | 1  2      4  2
+    5 | J-K-L      5 |             B | 2  2      4  3
+    4 | G-H-I ===> 4 | L-I-F-C     C | 3  2 ===> 4  4
+    3 | D-E-F ===> 3 | K-H-E-B     D | 1  3 ===> 3  2
+    2 | A-B-C ===> 2 | J-G-D-A     ...
+    1 |            1 |             J | 1  5 ===> 1  2
+      +---------     +---------    K | 2  5      1  3
+    0   1 2 3 4    0   1 2 3 4     L | 3  5      1  4
  \endverbatim
 */
 void MapCorrection::rotateLeft()
 {
-    if (m_bNoMapping) 
+    if (m_bNoMapping)
         return;
 
     int iSrcW = m_rect.width();
@@ -374,10 +427,10 @@ void MapCorrection::rotateLeft()
         {
             QPoint *p = &m_aptMap[iYPos + x];
             QPoint dst;
-	    dst.setX(iMapL + iMapH-1 + iMapT - p->y());
-	    dst.setY(iMapT + p->x() - iMapL);
+            dst.setX(iMapL + iMapH-1 + iMapT - p->y());
+            dst.setY(iMapT + p->x() - iMapL);
             if (bRotateCorrection)
-		afCorrection[(dst.y() - iMapT) * iMapH + (dst.x() - iMapL)] = m_afCorrection[p->y() * iMapW + p->x()];
+                afCorrection[(dst.y() - iMapT) * iMapH + (dst.x() - iMapL)] = m_afCorrection[p->y() * iMapW + p->x()];
             *p = dst;
         }
     }
@@ -391,21 +444,21 @@ void MapCorrection::rotateLeft()
     rotate mapping data clockwise
 
  \verbatim
- example (3*4 block):				| x  y	      x  y
-					      --+------      ------
-    6 |			6 |		      A | 1  2	      1  4
-    5 | J-K-L		5 |		      B | 2  2	      1  3
-    4 | G-H-I     ===>	4 | A-D-G-J	      C | 3  2	===>  1  2
-    3 | D-E-F     ===>	3 | B-E-H-K	      D | 1  3	===>  2  4
-    2 | A-B-C     ===>	2 | C-F-I-L	      ...
-    1 |			1 |		      J | 1  5	===>  4  4
-      +----------	  +----------	      K | 2  5        4  3
-    0   1 2 3 4 5      0    1 2 3 4 5	      L | 3  5        4  2
+ example (3*4 block):                | x  y      x  y
+                                   --+------    ------
+    6 |            6 |             A | 1  2      1  4
+    5 | J-K-L      5 |             B | 2  2      1  3
+    4 | G-H-I ===> 4 | A-D-G-J     C | 3  2 ===> 1  2
+    3 | D-E-F ===> 3 | B-E-H-K     D | 1  3 ===> 2  4
+    2 | A-B-C ===> 2 | C-F-I-L     ...
+    1 |            1 |             J | 1  5 ===> 4  4
+      +---------     +---------    K | 2  5      4  3
+    0   1 2 3 4    0   1 2 3 4     L | 3  5      4  2
  \endverbatim
 */
 void MapCorrection::rotateRight()
 {
-    if (m_bNoMapping) 
+    if (m_bNoMapping)
         return;
 
     int iSrcW = m_rect.width();
@@ -428,12 +481,12 @@ void MapCorrection::rotateRight()
         {
             QPoint *p = &m_aptMap[iYPos + x];
             QPoint dst;
-	    dst.setX(iMapL + p->y() - iMapT);
-	    dst.setY(iMapT + iMapW-1 + iMapL - p->x());
+            dst.setX(iMapL + p->y() - iMapT);
+            dst.setY(iMapT + iMapW-1 + iMapL - p->x());
             if (bRotateCorrection)
-		afCorrection[(dst.y() - iMapT) * iMapH + (dst.x() - iMapL)] = m_afCorrection[p->y() * iMapW + p->x()];
-	    *p = dst;
-    }
+                afCorrection[(dst.y() - iMapT) * iMapH + (dst.x() - iMapL)] = m_afCorrection[p->y() * iMapW + p->x()];
+            *p = dst;
+        }
     }
     m_mapRect.setWidth(iMapH);
     m_mapRect.setHeight(iMapW);
