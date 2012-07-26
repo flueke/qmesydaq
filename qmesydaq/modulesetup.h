@@ -63,6 +63,24 @@ private slots:
 
 	void displaySlot();
 
+	void setHistogram1(bool);
+	void setHistogram2(bool);
+	void setHistogram3(bool);
+	void setHistogram4(bool);
+	void setHistogram5(bool);
+	void setHistogram6(bool);
+	void setHistogram7(bool);
+	void setHistogram8(bool);
+
+	void setActive1(bool);
+	void setActive2(bool);
+	void setActive3(bool);
+	void setActive4(bool);
+	void setActive5(bool);
+	void setActive6(bool);
+	void setActive7(bool);
+	void setActive8(bool);
+
 private:
 	//! The MesyDaq objext
 	Mesydaq2	*m_theApp;

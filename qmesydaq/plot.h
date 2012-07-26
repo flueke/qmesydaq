@@ -71,6 +71,7 @@ public:
 		Spectrum,	//!< spectra
 		Histogram,	//!< histogram
 		Diffractogram, 	//!< diffractogram
+		SingleSpectrum,	//!< MSTD-16 spectrum
 	};
 
 	//! how should the y scale be displayed

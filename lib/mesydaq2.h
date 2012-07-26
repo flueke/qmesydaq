@@ -57,12 +57,16 @@ public:
 	virtual ~Mesydaq2();
 
 	void setActive(quint16, quint16, bool);
+
+	void setActive(quint16, quint16, quint8, bool);
 	
 	bool active(quint16, quint16, quint16);
 
 	bool active(quint16, quint16);
 
 	void setHistogram(quint16, quint16, bool);
+
+	void setHistogram(quint16, quint16, quint8, bool);
 
 	bool histogram(quint16, quint16, quint16);
 

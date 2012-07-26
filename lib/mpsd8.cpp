@@ -441,9 +441,9 @@ bool MPSD8::histogram()
  */
 bool MPSD8::active(quint16 chan)
 {
-	if (chan > 7)
-		return false;
-	return m_active[chan];
+	if (chan < 8)
+		return m_active[chan];
+	return false;
 }
 
 /*!
@@ -454,9 +454,9 @@ bool MPSD8::active(quint16 chan)
  */
 bool MPSD8::histogram(quint16 chan)
 {
-	if (chan > 7)
-		return false;
-	return m_histogram[chan];
+	if (chan < 8)
+		return m_histogram[chan];
+	return false;
 }
 
 /*!

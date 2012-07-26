@@ -103,6 +103,8 @@ public:
 		XSpectrum,
 		YSpectrum,
 		EnergySpectrum,
+		SingleTubeSpectrum,	// for MSTD-16
+		NoSpectrum,		// Do not change this entry, this must be the last entry
 	};
 
 	//! Defines the DAQ status
@@ -385,7 +387,7 @@ private:
 	Histogram	*m_Hist[3];
 
 	//! time spectrum
-	Spectrum	*m_Spectrum[3];
+	Spectrum	*m_Spectrum[NoSpectrum];
 
 	//! mapping and correction data for position histogram
 	MapCorrection   *m_posHistMapCorrection;

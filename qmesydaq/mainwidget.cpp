@@ -77,6 +77,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_histogram(NULL)
 {
     setupUi(this);
+#ifndef USE_CARESS
+    statusTab->removeTab(statusTab->indexOf(statusCARESSTab));
+#endif
 
     m_time = QTime(QTime::currentTime());
     realTimeLabel->setHidden(true);
@@ -104,6 +107,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     displayModeButtonGroup->setId(dispSpectra, Plot::Spectrum);
     displayModeButtonGroup->setId(dispHistogram, Plot::Histogram);
     displayModeButtonGroup->setId(dispDiffractogram, Plot::Diffractogram);
+    displayModeButtonGroup->setId(dispMstdSpectrum, Plot::SingleSpectrum);
 
     versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
 
@@ -1270,6 +1274,7 @@ void MainWidget::setDisplayMode(int val)
 
 	switch (val)
 	{
+		case Plot::SingleSpectrum:
 		case Plot::Spectrum:
 			setSpectraMode();
 			break;
@@ -1321,7 +1326,7 @@ void MainWidget::setSpectraMode(void)
     m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
     m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channel"));
     m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-    MSG_ERROR << "height : " << m_meas->height();
+//  MSG_ERROR << "height : " << m_meas->height();
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_histogram ? m_histogram->height() : 1.0);
     m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
 //  m_picker->setTrackerPen(QColor(Qt::black));
@@ -1398,6 +1403,18 @@ void MainWidget::draw(void)
         if (!m_zoomer->zoomRectIndex())
             m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, spec->width());
         countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
+    }
+    else if (dispMstdSpectrum->isChecked())
+    {
+        labelCountsInROI->setText(tr("Counts"));
+        for (int i = 1; i < 8; ++i)
+            m_curve[i]->detach();
+        Spectrum *spec = m_meas->spectrum(Measurement::SingleTubeSpectrum); 
+        m_data->setData(spec);
+        if (!m_zoomer->zoomRectIndex())
+            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, spec->width());
+        countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
+        m_curve[0]->setData(*m_data);
     }
     else
     {
@@ -2034,7 +2051,7 @@ void MainWidget::customEvent(QEvent *e)
  */
 void MainWidget::moduleHistogramSlot(quint8 id, bool set)
 {
-//  MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
+    MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
     m_theApp->setHistogram(devid_2->value(), id, set);
 }
 

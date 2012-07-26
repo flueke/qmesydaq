@@ -75,6 +75,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	m_Spectrum[TimeSpectrum] = NULL;
 	m_Spectrum[Diffractogram] = NULL;
 	m_Spectrum[TubeSpectrum] = NULL;
+	m_Spectrum[SingleTubeSpectrum] = NULL;
 
     	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
     	setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
@@ -124,6 +125,7 @@ quint16 Measurement::width(void) const
  */
 void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 {
+	MSG_ERROR << __PRETTY_FUNCTION__ << "(" << w << ", " << h << ", " << clr << ", " << resize << ")";
 	m_height = h;
 	m_width = w;
 
@@ -149,6 +151,10 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 	m_Spectrum[TimeSpectrum] = NULL;
 	m_Spectrum[Diffractogram] = m_Hist[PositionHistogram]->xSumSpectrum();
 	m_Spectrum[TubeSpectrum] = m_Hist[PositionHistogram]->ySumSpectrum();
+	if (m_Spectrum[SingleTubeSpectrum])
+		m_Spectrum[SingleTubeSpectrum]->resize(16);
+	else
+		m_Spectrum[SingleTubeSpectrum] = new Spectrum(16);
 }
 
 /*!
@@ -174,6 +180,10 @@ void Measurement::destroyHistogram(void)
 	if (m_Spectrum[TimeSpectrum])
 		delete m_Spectrum[TimeSpectrum];
 	m_Spectrum[TimeSpectrum] = NULL;
+
+	if (m_Spectrum[SingleTubeSpectrum])
+		delete m_Spectrum[SingleTubeSpectrum];
+	m_Spectrum[SingleTubeSpectrum] = NULL;
 #if 0
 	if (m_Spectrum[Diffractogram])
 		delete m_Spectrum[Diffractogram];
@@ -559,6 +569,8 @@ void Measurement::clearAllHist(void)
 		m_Hist[CorrectedPositionHistogram]->clear();	
 	if (m_Spectrum[TimeSpectrum])
 		m_Spectrum[TimeSpectrum]->clear();
+	if (m_Spectrum[SingleTubeSpectrum])
+		m_Spectrum[SingleTubeSpectrum]->clear();
 #if 0
 	if (m_Spectrum[Diffractogram])
 		m_Spectrum[Diffractogram]->clear();
@@ -630,6 +642,10 @@ Spectrum *Measurement::spectrum(const SpectrumType t)
 		case TubeSpectrum :
 			if (m_Spectrum[TubeSpectrum]->width() > 0)
 				return m_Spectrum[TubeSpectrum];
+			break;
+		case SingleTubeSpectrum :
+			if (m_Spectrum[SingleTubeSpectrum] && m_Spectrum[SingleTubeSpectrum]->width() > 0)
+				return m_Spectrum[SingleTubeSpectrum];
 			break;
 		case Diffractogram :
 #if 0
@@ -884,51 +900,50 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
-				if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
+				if (m_mesydaq->histogram(mod, id, chan))
 				{
-					amp >>= 2;
-					pos >>= 2;
-				}
+					if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
+					{
+						amp >>= 2;
+						pos >>= 2;
+					}
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
 // BUG is reported
-				if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0)
-				{
-					MSG_WARNING << "GHOST EVENT: SlotID " << slotId << " Mod " << id;
-					continue;
+					if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0)
+					{
+						MSG_WARNING << "GHOST EVENT: SlotID " << slotId << " Mod " << id;
+						continue;
+					}
+					neutrons++;
+					++(*m_counter[EVID]);
+					if (m_Hist[PositionHistogram])
+						m_Hist[PositionHistogram]->incVal(chan, pos);
+					if (m_Hist[AmplitudeHistogram])
+						m_Hist[AmplitudeHistogram]->incVal(chan, amp);
+					if (m_Hist[CorrectedPositionHistogram])
+						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
+					if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
+					{
+#if 0
+						MSG_INFO << "MSTD-16 event : chan : " << chan << " : pos : " << pos << " : id : " << id;
+#endif
+						chan <<= 1;			// each tube has two channels
+						chan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+#warning TODO left/right
+						amp &= 0x1FF;			// in MSB of amp is the information left/right
+#if 0
+						MSG_DEBUG << "Put this event into channel : " << chan;
+#endif
+						if (m_Spectrum[SingleTubeSpectrum])
+							m_Spectrum[SingleTubeSpectrum]->incVal(chan);
+#if 0
+						MSG_INFO << "Value of this channel : " << m_Spectrum[SingleTubeSpectrum]->value(chan);
+#endif
+					}
 				}
-				neutrons++;
-				++(*m_counter[EVID]);
-				if (m_Hist[PositionHistogram])
-					m_Hist[PositionHistogram]->incVal(chan, pos);
-				if (m_Hist[AmplitudeHistogram])
-					m_Hist[AmplitudeHistogram]->incVal(chan, amp);
-				if (m_Hist[CorrectedPositionHistogram])
-					m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
-#if 0
-				if (m_Spectrum[Diffractogram])
-					m_Spectrum[Diffractogram]->incVal(chan);
-#endif
-				if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
-				{
-#if 0
-					MSG_INFO << "MSTD-16 event : chan : " << chan << " : pos : " << pos << " : id : " << id;
-#endif
-					chan <<= 1;
-					chan += (pos >> 9) & 0x1;
-					amp &= 0x1FF;
-//					if (pos >= 480)
-//						++chan;
-#if 0
-					MSG_DEBUG << "Put this event into channel : " << chan;
-#endif
-//					m_Spectrum[TubeSpectrum]->incVal(chan);
-#if 0
-					MSG_INFO << "Value of this channel : " << m_Spectrum[TubeSpectrum]->value(chan);
-#endif
-				}
-//				else if (m_Spectrum[TubeSpectrum])
-//					m_Spectrum[TubeSpectrum]->incVal(chan);
+				else
+					MSG_INFO << "Neutron for an inactive channel " << mod << " " << id << " " << chan; 
 			}
 		}
 #if 0

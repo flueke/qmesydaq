@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>943</width>
-    <height>638</height>
+    <height>694</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -236,7 +236,7 @@ Listfile</string>
                <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">linlogButtonGroup</string>
+               <string>linlogButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -246,7 +246,7 @@ Listfile</string>
                <string>log</string>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">linlogButtonGroup</string>
+               <string>linlogButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -271,7 +271,7 @@ Listfile</string>
                <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">posampButtonGroup</string>
+               <string>posampButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -284,7 +284,7 @@ Listfile</string>
                <string/>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">posampButtonGroup</string>
+               <string>posampButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -294,7 +294,7 @@ Listfile</string>
                <string>Calib. Pos</string>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">posampButtonGroup</string>
+               <string>posampButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -479,17 +479,7 @@ Listfile</string>
                <bool>false</bool>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">displayModeButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="2" column="0" colspan="2">
-             <widget class="QRadioButton" name="dispDiffractogram">
-              <property name="text">
-               <string>Diffractogram</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">displayModeButtonGroup</string>
+               <string>displayModeButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -505,7 +495,27 @@ Listfile</string>
                <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
-               <string notr="true">displayModeButtonGroup</string>
+               <string>displayModeButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QRadioButton" name="dispMstdSpectrum">
+              <property name="text">
+               <string>Single Spectrum</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string>displayModeButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QRadioButton" name="dispDiffractogram">
+              <property name="text">
+               <string>Diffractogram</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string>displayModeButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -783,7 +793,7 @@ Listfile</string>
            </size>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="statusMeasTab">
            <attribute name="title">

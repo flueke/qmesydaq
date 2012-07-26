@@ -536,8 +536,10 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 				for (int k = 0; k < 8; ++k)
 				{
 					settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
+					MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->active(j, k);
 					settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
 					settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
+					MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
 				}
 				settings.endGroup();
 			}
@@ -1725,7 +1727,7 @@ bool Mesydaq2::active(quint16 mid, quint16 id)
 }
 
 /*!
-    \fn bool Mesydaq2::histogram(quint16, quint16, quint16 chan)
+    \fn bool Mesydaq2::histogram(quint16 mid, quint16 id, quint16 chan)
     \param mid MCPD id
     \param id MPSD id
     \param chan channel id
@@ -1733,9 +1735,10 @@ bool Mesydaq2::active(quint16 mid, quint16 id)
  */
 bool Mesydaq2::histogram(quint16 mid, quint16 id, quint16 chan)
 {
+	bool result(false);
 	if (m_mcpd.contains(mid))
-		return m_mcpd[mid]->histogram(id, chan);
-	return false;
+		result = m_mcpd[mid]->histogram(id, chan);
+	return result;
 }
 
 /*!
@@ -1765,14 +1768,42 @@ void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, bool set)
 }
 
 /*!
-    \fn void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool set)
+    \fn void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, quint8 channel, bool set)
 
     \param mcpd
     \param mpsd
+    \param channel
     \param set
  */
-void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool set)
+void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, quint8 channel, bool set)
 {
 	if (m_mcpd.contains(mcpd))
-		m_mcpd[mcpd]->setHistogram(mpsd, set);
+		m_mcpd[mcpd]->setActive(mpsd, channel, set);
+}
+
+/*!
+    \fn void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool hist)
+
+    \param mcpd
+    \param mpsd
+    \param hist
+ */
+void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool hist)
+{
+	if (m_mcpd.contains(mcpd))
+		m_mcpd[mcpd]->setHistogram(mpsd, hist);
+}
+
+/*!
+    \fn void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool hist)
+
+    \param mcpd
+    \param mpsd
+    \param channel
+    \param hist
+ */
+void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool hist)
+{
+	if (m_mcpd.contains(mcpd))
+		m_mcpd[mcpd]->setHistogram(mpsd, channel, hist);
 }
