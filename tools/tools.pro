@@ -26,7 +26,8 @@ SUBDIRS		+= qmsetip \
 		qmmaster \
 		qmdump \
 		qmfire \
-		fixlmfile
+		fixlmfile \
+		mstd16
 
 TARGET = 	
 DEPENDPATH 	+= ../lib 
