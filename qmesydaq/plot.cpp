@@ -33,12 +33,11 @@
 #include "data.h"
 #include "zoomer.h"
 
-#include <QDebug>
-
 SpectrumCurve:: SpectrumCurve()
 	: QwtPlotCurve("")
 {
         setStyle(QwtPlotCurve::Steps);
+        setCurveAttribute(QwtPlotCurve::Inverted, true);
         setRenderHint(QwtPlotItem::RenderAntialiased);
 }
 
@@ -46,6 +45,7 @@ SpectrumCurve::SpectrumCurve(const QPen &p, const QString &s)
 	: QwtPlotCurve(s)
 {
         setStyle(QwtPlotCurve::Steps);
+        setCurveAttribute(QwtPlotCurve::Inverted, true);
         setRenderHint(QwtPlotItem::RenderAntialiased);
 	setPen(p);
 }

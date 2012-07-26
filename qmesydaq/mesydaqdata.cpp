@@ -43,7 +43,7 @@ QwtData *MesydaqSpectrumData::copy() const
 size_t MesydaqSpectrumData::size() const
 {
 	if (m_spectrum) 
-		return m_spectrum->width();
+		return m_spectrum->width() + 1;
 	else
 		return 0;
 }
@@ -57,7 +57,13 @@ double MesydaqSpectrumData::y(size_t i) const
 {
 	double tmp = 0.0;
 	if (m_spectrum)
-		tmp = m_spectrum->value(i);
+	{
+// Doubles the last point to get a horizontal line too at the right end
+		if (i < m_spectrum->width())
+			tmp = m_spectrum->value(i);
+		else if (i == m_spectrum->width())
+			tmp = m_spectrum->value(m_spectrum->width() - 1);
+	}
 	if (tmp == 0.0)
 		tmp = 0.1;
 	return tmp;
