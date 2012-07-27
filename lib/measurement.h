@@ -73,52 +73,46 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 
 public:
 	//! Defines the current mode values of a measurement 
-        //! - DataAcquistion - data will be taken from the hardware
-        //! - ReplayListFile - data will be taken from a list mode file
-        //! - HistogramLoad - data will be taken from a histogram file
 	enum Mode {
-		DataAcquisition = 0,
-		ReplayListFile,
-		HistogramLoad,
+		DataAcquisition = 0, 	//!< data will be taken from the hardware
+		ReplayListFile,		//!< data will be taken from a list mode file
+		HistogramLoad,		//!< data will be taken from a histogram file
 	};
 
 	//! Defines the histogram type
-	//! - PositionHistogram - raw position histogram
-	//! - AmplitudeHistogram - raw amplitude histogram
-	//! - CorrectedPositionHistogram - corrected position histogram
 	enum HistogramType {
-		PositionHistogram = 0,
-		AmplitudeHistogram,
-		CorrectedPositionHistogram,
+		PositionHistogram = 0,		//!< raw position histogram
+		AmplitudeHistogram,		//!< raw amplitude histogram
+		CorrectedPositionHistogram,	//!< corrected position histogram
 	};
 
 	//! Defines the spectrum type
-	//! - TimeSpectrum - ???
-	//! - Diffractogram - spectrum over all vertical rows
-        //! - TubeSpectrum - spectrum along a tube 
+        
 	enum SpectrumType {
-		TimeSpectrum = 0,
-		Diffractogram,
-		TubeSpectrum,
-		XSpectrum,
-		YSpectrum,
-		EnergySpectrum,
-		SingleTubeSpectrum,	// for MSTD-16
-		NoSpectrum,		// Do not change this entry, this must be the last entry
+		TimeSpectrum = 0,	//!< ???
+		Diffractogram,		//!< spectrum over all vertical rows
+		TubeSpectrum,		//!< spectrum along a tube 
+		XSpectrum,		//!< ???
+		YSpectrum,		//!< ???
+		EnergySpectrum,		//!< ???
+		SingleTubeSpectrum,	//!< for MSTD-16
+		NoSpectrum,		//!< Do not change this entry, this must be the last entry
 	};
 
 	//! Defines the DAQ status
-	//! - Idle - no acquistion 
-	//! - Running - data acquisition is running
-	//! - Started - data acquisition is requested to run
-	//! - Stopped - data acquisition is requested to stop
 	enum Status {
-		Idle = IDLE,
-		Running,
-		Started,
-		Stopped,
+		Idle = IDLE,	//!< no acquistion 
+		Running,	//!< data acquisition is running
+		Started,	//!< data acquisition is requested to run
+		Stopped,	//!< data acquisition is requested to stop
 	};
 
+	//! Defines the setup type
+	enum Setup {
+		Mpsd = 0,	//!< MPSD in standard configuration in a 2D arrangement
+		Mdll,		//!< MDLL connected
+		Mstd,		//!< MSTD-16 
+	};	
 
 public:
 	Measurement(Mesydaq2 *mesy, QObject *parent = 0);
@@ -176,42 +170,60 @@ public:
 		\todo monitor mapping configuration
 		\return counter value for the monitor 1 
 	 */
-	quint64	mon1() const {return m_counter[MON1ID]->value();}
+	quint64	mon1() const 
+	{
+		return m_counter[MON1ID]->value();
+	}
 
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon2() const {return m_counter[MON2ID]->value();}
+	quint64	mon2() const 
+	{
+		return m_counter[MON2ID]->value();
+	}
 	
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon3() const {return m_counter[MON3ID]->value();}
+	quint64	mon3() const 
+	{
+		return m_counter[MON3ID]->value();
+	}
 	
 	/** 
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2 
 	 */
-	quint64	mon4() const {return m_counter[MON4ID]->value();}
+	quint64	mon4() const 
+	{
+		return m_counter[MON4ID]->value();
+	}
 	
 	/** 
 		gets the value of the defined event counter
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	events() const {return m_counter[EVID]->value();}
+	quint64	events() const 
+	{
+		return m_counter[EVID]->value();
+	}
 
 	/** 
 		gets the value of the timer
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	timer() const {return m_counter[TIMERID]->value();}
+	quint64	timer() const 
+	{
+		return m_counter[TIMERID]->value();
+	}
 
 	/** 
 		gets the number of all events in the selected ROI
@@ -221,7 +233,10 @@ public:
 	quint64 eventsInROI(const HistogramType t);
 
 	//! \return time of the last header read from interface
-	quint64 getHeadertime(void) const {return m_headertime;}
+	quint64 getHeadertime(void) const 
+	{
+		return m_headertime;
+	}
 
 	void writeHistograms(const QString &name);
 
@@ -240,7 +255,10 @@ public:
 	    \param t type of the requested histogram
             \return a histogram
 	 */
-	Histogram *hist(const HistogramType t) const {return m_Hist[t];}
+	Histogram *hist(const HistogramType t) const 
+	{
+		return m_Hist[t];
+	}
 
 	/**
 	  \param t type of the requested spectrum
@@ -260,7 +278,10 @@ public:
 
 // run ID oriented methods
 	//! \return the current run ID
-	quint16 runId(void) const { return m_runID; }
+	quint16 runId(void) const 
+	{ 
+		return m_runID; 
+	}
 
 	/*!
             sets the runid for the measurement
@@ -272,7 +293,10 @@ public:
 	}
 
 	//! returns the current operation mode
-	Mode mode(void) const {return m_mode;}
+	Mode mode(void) const 
+	{
+		return m_mode;
+	}
 
 // calibration file oriented methods
 	/**
@@ -283,7 +307,10 @@ public:
 	void setCalibrationfilename(const QString &name);
 
 	//! \return name of the current calibration data file
-	QString getCalibrationfilename(void) const {return m_calibrationfilename;}
+	QString getCalibrationfilename(void) const 
+	{
+		return m_calibrationfilename;
+	}
 
 // histogram file oriented methods
 	/**
@@ -294,7 +321,10 @@ public:
 	void setHistfilepath(const QString &path); 
 
 	//! \return path to store all histogram data files
-	QString getHistfilepath(void) const {return m_histPath;}
+	QString getHistfilepath(void) const 
+	{
+		return m_histPath;
+	}
 
 	/**
 	 * sets the file name of a histogram data file
@@ -304,7 +334,10 @@ public:
 	void setHistfilename(const QString &name);
 
 	//! \return name of the current histogram data file
-	QString getHistfilename(void) const {return m_histfilename;}
+	QString getHistfilename(void) const 
+	{
+		return m_histfilename;
+	}
 
 // list mode oriented methods
 	/**
@@ -315,7 +348,10 @@ public:
 	void setListfilepath(const QString &path);
 
 	//! \return path to store all list mode data files
-	QString getListfilepath(void) const {return m_listPath;}
+	QString getListfilepath(void) const 
+	{
+		return m_listPath;
+	}
 
 // configuration file oriented methods
 	/**
@@ -326,7 +362,10 @@ public:
 	void setConfigfilepath(const QString &path); 
 
 	//! \return path to store all config files
-	QString getConfigfilepath(void) const {return m_configPath;}
+	QString getConfigfilepath(void) const 
+	{
+		return m_configPath;
+	}
 
 	/**
 	 * sets the config file name
@@ -467,6 +506,7 @@ private:
 	//! number of neutrons
 	quint64		m_neutrons;
 
+	Setup		m_setup;
 };
 
 #endif

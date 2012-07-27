@@ -66,6 +66,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_histfilename("")
 	, m_calibrationfilename("")
 	, m_neutrons(0)
+	, m_setup(Mpsd)
 {
 	setHistfilepath(getenv("HOME"));
 	setListfilepath(getenv("HOME"));
