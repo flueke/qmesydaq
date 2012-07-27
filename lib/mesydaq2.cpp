@@ -42,13 +42,13 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_listfilename("")
 	, m_timingwidth(1)
 {
-	Q_ASSERT(parent==NULL);
+	Q_ASSERT(parent == NULL);
 	MSG_NOTICE << "running on Qt %1" << qVersion();
 	if (QMetaType::type("DATA_PACKET")==0)
 		qRegisterMetaType<DATA_PACKET>();
-	m_pThread=new QThread;
+	m_pThread = new QThread;
 	moveToThread(m_pThread);
-	connect(m_pThread,SIGNAL(finished()),this,SLOT(threadExit()),Qt::DirectConnection);
+	connect(m_pThread, SIGNAL(finished()), this, SLOT(threadExit()), Qt::DirectConnection);
 	m_pThread->start(QThread::HighestPriority);
 	m_pDatSender = new DataRepeater;
 }
@@ -455,7 +455,7 @@ bool Mesydaq2::isPulserOn(quint16 id, quint8 addr)
 void Mesydaq2::scanPeriph(quint16 id)
 {
 	if (m_mcpd.contains(id))
-		m_mcpd[id]->readId();
+		m_mcpd[id]->scanPeriph();
 }
 
 /*!

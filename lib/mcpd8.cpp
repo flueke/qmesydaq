@@ -63,7 +63,8 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
     , m_cmdRxd(0)
     , m_headertime(0)
     , m_timemsec(0)
-    , m_version(0)
+    , m_version(-1.0)
+    , m_capabilities(0)
 {
     stdInit();
     m_network = NetworkDevice::create(NULL, sourceIP, port);
@@ -80,7 +81,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
 
 //	setId(m_id);
     version();
-    readId();
+    scanPeriph();
     init();
 }
 
@@ -139,13 +140,13 @@ bool MCPD8::init(void)
                     break;
             }
         }
-    MSG_FATAL << "modus : " << modus;
+    MSG_DEBUG << "modus : " << modus;
 // Register 103 is the TX mode register
 // set tx capability
     if (m_mdll.isEmpty())
         writeRegister(103, modus);
 
-    for(quint8 c = 0; c < 8; c++)
+    for(quint16 c = 0; c < 8; c++)
         if (m_mpsd.find(c) != m_mpsd.end())
         {
             if (m_mpsd[c]->getModuleId() == TYPE_MPSD8P)
@@ -283,15 +284,7 @@ bool MCPD8::setId(quint8 mcpdid)
  */
 quint16 MCPD8::capabilities()
 {
-    quint16 cap = readRegister(102);
-    if (!cap)
-    {
-        initCmdBuffer(GETCAPABILITIES);
-        finishCmdBuffer(0);
-        if (sendCommand())
-            cap = m_reg;
-    }
-    return cap;
+    return m_capabilities;
 }
 
 /*!
@@ -305,22 +298,18 @@ quint16 MCPD8::capabilities()
 quint16 MCPD8::capabilities(quint16 mod)
 {
     if (m_mpsd.find(mod) != m_mpsd.end())
-        return readPeriReg(mod, 0);
+        return m_mpsd[mod]->capabilities();
     return 0;
 }
 
 /*!
-   \fn float MCPD8::version(void)
-   \return firmware version of the MCPD whereas the integral places represents the major number
+    \fn float MCPD8::version(void)
+    \return firmware version of the MCPD whereas the integral places represents the major number
            and the decimal parts the minor number
  */
 float MCPD8::version(void)
 {
-    initCmdBuffer(GETVER);
-    finishCmdBuffer(0);
-    if(sendCommand())
-        return m_version;
-    return -1.0;
+    return m_version;
 }
 
 /*!
@@ -340,13 +329,7 @@ float MCPD8::version(quint16 mod)
 {
     float tmpFloat(0.0);
     if (m_mpsd.find(mod) != m_mpsd.end())
-    {
-        quint16 tmp = readPeriReg(mod, 2);
-        tmpFloat = ((tmp > 4) & 0xF) * 10 + (tmp & 0xF);
-        tmpFloat /= 100.;
-        tmpFloat += (tmp >> 8);
-    }
-    MSG_INFO << "Module (ID " << mod << "): Version number : " << QString("%1").arg(tmpFloat, 0, 'f', 2);
+        tmpFloat = m_mpsd[mod]->version();
     return tmpFloat;
 }
 
@@ -360,11 +343,55 @@ float MCPD8::version(quint16 mod)
  */
 bool MCPD8::readId(void)
 {
-//	m_mpsd.clear();
     initCmdBuffer(READID);
     m_cmdBuf.data[0] = 2;
     finishCmdBuffer(1);
     return sendCommand();
+}
+
+/*!
+    \fn MCPD8::scanPeriph(void)
+
+    scans the peripherial module (all connected MPSD-8/8+ and MSTD-16) and their properties 
+
+    \return true if operation was succesful or not
+    \see getModuleId, readId
+ */
+bool MCPD8::scanPeriph(void)
+{
+// get MCPD version
+    initCmdBuffer(GETVER);
+    finishCmdBuffer(0);
+    if(!sendCommand())
+        m_version = -1.0;
+
+// check the MCPD capabilities
+    m_capabilities = readRegister(102);
+    if (!m_capabilities)
+    {
+        initCmdBuffer(GETCAPABILITIES);
+        finishCmdBuffer(0);
+        if (sendCommand())
+            m_capabilities = m_reg;
+    }
+// check the peripherial modules
+    if (readId())
+    {
+        // get the Version for each connected module
+        for(int mod = 0; mod < 8; ++mod)
+            if (m_mpsd.find(mod) != m_mpsd.end())
+            {
+                quint16 tmp = readPeriReg(mod, 2);
+                float tmpFloat = ((tmp > 4) & 0xF) /* * 10 */ + (tmp & 0xF);
+                tmpFloat /= 100.;
+                tmpFloat += (tmp >> 8);
+                m_mpsd[mod]->setVersion(tmpFloat);
+                MSG_INFO << "Module (ID " << mod << "): Version number : " << QString("%1").arg(tmpFloat, 0, 'f', 2);
+        	m_mpsd[mod]->setCapabilities(readPeriReg(mod, 0));
+            }
+        return true;
+    }
+    return false;
 }
 
 /*!

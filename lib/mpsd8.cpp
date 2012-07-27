@@ -41,6 +41,8 @@ MPSD8::MPSD8(quint8 id, QObject *parent)
 	, m_p2(1.0)
 #endif
 	, m_busNum(id)
+	, m_version(-1.0)
+	, m_capabilities(0)
 {
 	for(int i = 0; i < 8; ++i)
 	{

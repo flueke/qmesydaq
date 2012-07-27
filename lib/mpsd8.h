@@ -224,6 +224,22 @@ public:
 	//! returns the number of the bus 
 	quint8 busNumber(void) {return m_busNum;} 
 
+// version related methods
+        //! return version as float value major.minor
+	float	version(void) const {return m_version;}
+
+        //! sets the version as float value major.minor
+	//! \param val
+        void	setVersion(const float val) {m_version = val;}
+
+// capabilities related methods
+        //! return capabilities 
+	quint16	capabilities(void) const {return m_capabilities;}
+
+        //! sets the capabilities 
+	//! \param val
+        void	setCapabilities(const quint16 val) {m_capabilities = val;}
+
 protected:
 	virtual float	calcGainval(quint8 ga);
 	virtual quint8	calcPulsPoti(quint8 val, float gv);
@@ -283,6 +299,10 @@ private:
 	bool		m_active[8];
 
 	bool		m_histogram[8];
+
+        float		m_version;
+
+	quint16		m_capabilities;
 };
 
 /**

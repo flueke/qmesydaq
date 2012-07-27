@@ -90,6 +90,8 @@ public:
 
 	bool readId(void);
 
+	bool scanPeriph(void);
+
 	//! \return the ID of this MCPD
 	quint8 getId(void) { return m_id; }
 
@@ -227,7 +229,7 @@ public:
 
 	bool setStream(quint16 strm);
 
-	quint16 capabilities();
+	quint16 capabilities(void);
 
 	quint16 capabilities(quint16 mod);
 
@@ -425,6 +427,9 @@ private:
 
 	//! last peripheral register value
 	quint16		m_periReg;
+
+	//! capabilities
+	quint16		m_capabilities;
 };
 
 #endif
