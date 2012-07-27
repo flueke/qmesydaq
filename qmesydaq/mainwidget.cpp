@@ -176,16 +176,10 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_histData = new MesydaqHistogramData();
     m_spectrogram->setData(*m_histData);
 
-    scanPeriSlot(false);
-    dispFiledata();
-
     m_printer = new QPrinter;
     m_printer->setOrientation(QPrinter::Landscape);
     m_printer->setDocName("PlotCurves");
     m_printer->setCreator("QMesyDAQ Version: " VERSION);
-
-// display refresh timer
-//  m_dispTimer = startTimer(1000);
 
 #if 0
     init();
@@ -205,9 +199,9 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     monitor3Preset->setLabel(tr("Monitor 3"));
     monitor4Preset->setLabel(tr("Monitor 4"));
 
+    selectUserMode(User);
     setDisplayMode(Plot::Histogram);
     draw();
-    selectUserMode(User);
 }
 
 //! destructor
@@ -287,7 +281,6 @@ void MainWidget::init()
     displayTabWidget->setDisabled(true);
     statusMeasTab->setDisabled(true);
     statusModuleTab->setDisabled(true);
-    displayMpsdSlot();
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
 
     connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
@@ -382,7 +375,7 @@ void MainWidget::statusTabChanged(int )
 {
     if (statusTab->currentWidget() == statusModuleTab)
     {
-        scanPeri->animateClick();
+        scanPeriSlot(false);
     }
     else
         updateDisplay();
@@ -803,7 +796,7 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     init();
     m_meas->loadSetup(sFilename);
     configfilename->setText(m_meas->getConfigfilename());
-		acquireFile->setChecked(m_meas->acqListfile());
+    acquireFile->setChecked(m_meas->acqListfile());
 
     QSettings settings(m_meas->getConfigfilename());
     settings.beginGroup("MESYDAQ");

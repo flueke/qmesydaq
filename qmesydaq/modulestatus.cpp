@@ -57,6 +57,7 @@ void ModuleStatus::update(const QString &type, const float version, const bool o
     moduleStatus->setText(online ? tr("online") : tr(""));
     checkHistogramBox->setChecked(histogram);
     checkActiveBox->setVisible(online);
+    checkActiveBox->setEnabled(online);
     checkActiveBox->setChecked(online & active);
     m_online = online;
 }
@@ -91,6 +92,8 @@ void ModuleStatus::setId(const quint8 id)
  */
 void ModuleStatus::histogramSlot(bool val)
 {
+    checkActiveBox->setVisible(m_online);
+    checkActiveBox->setEnabled(m_online);
     emit histogram(m_id, val);
 }
 
