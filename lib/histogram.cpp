@@ -631,8 +631,8 @@ void Histogram::calcMinMaxInROI(const QRectF &r)
 	m_minROI = max();
 	m_maxROI = 0;
 // no idea why, but Qwt seems to define height as width and vice versa
-	int right = ceil(r.left() + r.height()); 
-	int top = ceil(r.top() + r.width());
+	int right = ceil(r.left() + r.width()); 
+	int top = ceil(r.top() + r.height());
 	for (int j = floor(r.top()); j <= top; ++j)
 		for (int i = floor(r.left()); i <= right; ++i)
 		{
