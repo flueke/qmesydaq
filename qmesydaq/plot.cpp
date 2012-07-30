@@ -59,7 +59,7 @@ Plot::Plot(QWidget *parent)
 	, m_linColorMap(NULL)
 	, m_logColorMap(NULL)
 	, m_mode(None)
-	, m_linlog(false)
+	, m_linlog(Linear)
 {
 	m_linColorMap = new StdLinColorMap();
 	m_logColorMap = new StdLogColorMap();
@@ -89,6 +89,8 @@ Plot::Plot(QWidget *parent)
 
 	m_histogram = new QwtPlotSpectrogram("histogram");
 	m_histogram->setColorMap(*m_linColorMap);
+
+	setLinLog(Linear);
 }
 
 void Plot::setSpectrumData(SpectrumData *data)
@@ -109,19 +111,35 @@ void Plot::setHistogramData(HistogramData *data)
 	}
 }
 
-void Plot::setLinLog(const bool log)
+void Plot::setLinLog(const enum Scale log)
 {
 	m_linlog = log;
 	switch (m_mode)
 	{
 		case Histogram :
-			m_histogram->setColorMap(m_linlog ? *m_logColorMap : *m_linColorMap);
+			switch (m_linlog)
+			{
+				case Logarithmic :
+					m_histogram->setColorMap(*m_logColorMap);
+					break;
+				case Linear :
+				default:
+					m_histogram->setColorMap(*m_linColorMap);
+					break;
+			}
 			break;
+		case Diffractogram:
 		case Spectrum :
-			if (m_linlog)
-            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
-			else 
-            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+			switch (m_linlog)
+			{
+				case Logarithmic:
+            				setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+					break;
+				case Linear :
+				default:
+            				setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+					break;
+			}
 			break;
 		default :
 			break;

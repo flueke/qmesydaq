@@ -129,7 +129,7 @@ public slots:
 	 *
 	 * \param log if true set the logarithmic plot 
 	 */
-	void 	setLinLog(const bool log);
+	void 	setLinLog(const enum Scale log);
 
 	/*!
 	 * replot the widget
@@ -165,7 +165,7 @@ private:
 	enum Mode		m_mode;
 
 	//! lin/log scaling
-	bool			m_linlog;
+	enum Scale		m_linlog;
 };
 
 #endif
