@@ -28,11 +28,14 @@ class QwtPlotCurve;
 class QwtPlotSpectrogram;
 class QwtLinearColorMap;
 class QwtScaleWidget;
+class QResizeEvent;
 
 class Zoomer;
 
 class SpectrumData;
 class HistogramData;
+class MesydaqHistogramData;
+class MesydaqSpectrumData;
 
 /**
  * \short The curve to display a spectrum 
@@ -89,6 +92,13 @@ public:
 		CorrPosition, 	//!< corrected position data
 	};
 
+	//! 
+	enum Ratio
+	{	
+		Free = 0,	//!< user may modify ration between x and y
+		Fixed,		//!< user may only modify the size not the ratio
+	};
+
 	/*!
 	 * Constructor
 	 *
@@ -117,11 +127,25 @@ public:
 	void setSpectrumData(SpectrumData *data);
 
 	/*!
+	 * sets the data for the spectrum data
+	 *
+	 * \param data spectrum data
+	 */
+	void setSpectrumData(MesydaqSpectrumData *data);
+
+	/*!
 	 * Sets the data for the histogram data
 	 *
 	 * \param data histogram data
 	 */
 	void setHistogramData(HistogramData *);
+
+	/*!
+	 * Sets the data for the histogram data
+	 *
+	 * \param data histogram data
+	 */
+	void setHistogramData(MesydaqHistogramData *);
 
 public slots:
 	/*!
@@ -136,6 +160,26 @@ public slots:
 	 */
 	void	replot(void);
 
+private slots:
+	/*!
+	 * callback if the zoomer has changed
+	 * 
+	 * \param rect zoom area
+	 */
+	void zoomed(const QwtDoubleRect &rect);
+
+protected:
+	void resizeEvent(QResizeEvent *e);
+
+	int heightForWidth(int w) const;
+private:
+	/*!
+	 * installs the zoomer new (due to the internals of Qwt)
+	 * 
+	 * \param c color of the zoomer
+	 */
+	void setZoomer(const QColor &c);
+
 private:
 	//! the zoomer object
 	Zoomer 			*m_zoomer;
@@ -143,14 +187,14 @@ private:
 	//! the curves 
 	QwtPlotCurve 		*m_curve[8];
 
+	//! the x sum curve of the histogram
+	QwtPlotCurve		*m_xSumCurve;
+
+	//! the y sum curve of the histogram
+	QwtPlotCurve		*m_ySumCurve;
+
 	//! the histogram
 	QwtPlotSpectrogram	*m_histogram;
-
-	//! data for the spectrum
-	SpectrumData		*m_spectrumData;
-	
-	//! data for the histogram
-	HistogramData		*m_histogramData;
 
 	//! color map for the linear scaling
 	QwtLinearColorMap	*m_linColorMap;

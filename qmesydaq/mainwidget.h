@@ -24,10 +24,8 @@
 #include <QColor>
 #include <QTime>
 #include "ui_mainwidget.h"
+#include "plot.h"
 
-class QwtPlotCurve;
-class QwtPlotPicker;
-class QwtLinearColorMap;
 class QTimer;
 
 class Zoomer;
@@ -174,8 +172,6 @@ private slots:
 
 	void checkListfilename(bool);
 
-	void linlogSlot(int);
-
 	void applyThreshSlot();
 
 	void writeHistSlot();
@@ -203,14 +199,6 @@ private slots:
 	void setHistogramType(int);
 
 private:
-	void setHistogramMode();
-
-	void setSpectraMode();
-
-	void setDiffractogramMode();
-
-	void	setZoomer(const QColor & = QColor(Qt::black));
-
 	void 	dispFiledata(void);
 
 	void 	timerEvent(QTimerEvent *event);
@@ -236,15 +224,6 @@ private:
 	//! upper limit of the threshold
 	ulong 			m_dispHiThresh;
 
-	//! plot curve
-	QwtPlotCurve		*m_curve[8];
-
-	//! diffractogram curve
-	QwtPlotCurve		*m_diffractogram;
-
-	//! plot diffractogram
-	MesydaqPlotSpectrogram	*m_spectrogram;
-
 	//! spectrum to be plotted
 	MesydaqSpectrumData	*m_data;
 
@@ -269,20 +248,15 @@ private:
 	//! the printer
 	QPrinter		*m_printer;
 
-	//! ????
-	QwtPlotPicker		*m_picker;
-
-	//! the color map for the linear scaled plots
-	QwtLinearColorMap 	*m_linColorMap;
-
-	//! the color map for the logarithmic scaled plots
-	QwtLinearColorMap 	*m_logColorMap;
-
 	//! time object
 	QTime			m_time;
 
 	//! histogram object currently used
 	Histogram		*m_histogram;
+
+	Plot::Mode		m_mode;
+
+	Plot 			*m_dataFrame;
 };	
 
 #endif

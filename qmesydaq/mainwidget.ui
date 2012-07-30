@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>943</width>
-    <height>694</height>
+    <width>792</width>
+    <height>684</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -26,34 +26,333 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QFrame" name="mainFrame">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="QTabWidget" name="displayTabWidget">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_1">
-        <item row="0" column="0">
-         <widget class="QwtPlot" name="m_dataFrame">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="cursor">
-           <cursorShape>CrossCursor</cursorShape>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QWidget" name="tab1">
+        <attribute name="title">
+         <string>Display</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="3">
+          <widget class="QGroupBox" name="logGroup">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="lin">
+              <property name="text">
+               <string>&amp;lin</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string>linlogButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="log">
+              <property name="text">
+               <string>log</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string>linlogButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="3">
+          <widget class="QGroupBox" name="dispGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="dispSpectra">
+              <property name="text">
+               <string>Spectra</string>
+              </property>
+              <property name="shortcut">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">displayModeButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QRadioButton" name="dispDiffractogram">
+              <property name="text">
+               <string>Diffractogram</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">displayModeButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="dispHistogram">
+              <property name="text">
+               <string>Histogram</string>
+              </property>
+              <property name="shortcut">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">displayModeButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QGroupBox" name="posAmpGroup">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="dispAllPos">
+              <property name="text">
+               <string>Pos</string>
+              </property>
+              <property name="shortcut">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string>posampButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="dispAllAmpl">
+              <property name="text">
+               <string>Ampl</string>
+              </property>
+              <property name="shortcut">
+               <string/>
+              </property>
+              <attribute name="buttonGroup">
+               <string>posampButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QRadioButton" name="dispAllCorrectedPos">
+              <property name="text">
+               <string>Calib. Pos</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string>posampButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QRadioButton" name="specialBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>delta-t</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="dispAll">
+           <property name="text">
+            <string>Sum spectra</string>
+           </property>
+           <property name="shortcut">
+            <string/>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="textLabel1_4_2_3_4_2">
+             <property name="text">
+              <string>MCPD</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="MCPDSpinBox" name="dispMcpd">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="maximum">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="1">
+          <layout class="QHBoxLayout">
+           <item>
+            <widget class="QLabel" name="textLabel1_4_2_3_4_2_2">
+             <property name="text">
+              <string>Module</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ModuleSpinBox" name="dispMpsd">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="wrapping">
+              <bool>true</bool>
+             </property>
+             <property name="maximum">
+              <number>7</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="2">
+          <layout class="QHBoxLayout">
+           <item>
+            <widget class="QLabel" name="textLabel1_4_2_3_4_2_2_2">
+             <property name="text">
+              <string>Channel</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ChannelSpinBox" name="dispChan">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="wrapping">
+              <bool>true</bool>
+             </property>
+             <property name="maximum">
+              <number>7</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="2">
+          <widget class="QCheckBox" name="dispAllChannels">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>All Channels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="4">
+          <widget class="QPushButton" name="clearAll">
+           <property name="text">
+            <string>clear all</string>
+           </property>
+           <property name="shortcut">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab2">
+        <attribute name="title">
+         <string>Thresholds</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="loLim">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="textLabel1_6">
+           <property name="text">
+            <string>low</string>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="textLabel1_6_2">
+           <property name="text">
+            <string>hi</string>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="hiLim">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>1000000000</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QPushButton" name="applyDispThreshButton">
+           <property name="text">
+            <string>apply</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QCheckBox" name="useThresh">
+           <property name="text">
+            <string>Thresholds</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
      <item>
@@ -166,19 +465,6 @@ Listfile</string>
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
          <widget class="QLabel" name="labelCountsInROI">
           <property name="enabled">
            <bool>true</bool>
@@ -208,385 +494,6 @@ Listfile</string>
      <property name="rightMargin">
       <number>15</number>
      </property>
-     <item>
-      <widget class="QTabWidget" name="displayTabWidget">
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tab1">
-        <attribute name="title">
-         <string>Display</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="1" column="0">
-          <widget class="QGroupBox" name="logGroup">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="title">
-            <string/>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="lin">
-              <property name="text">
-               <string>&amp;lin</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <attribute name="buttonGroup">
-               <string>linlogButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="log">
-              <property name="text">
-               <string>log</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string>linlogButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="QGroupBox" name="posAmpGroup">
-           <property name="title">
-            <string/>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="dispAllPos">
-              <property name="text">
-               <string>Pos</string>
-              </property>
-              <property name="shortcut">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <attribute name="buttonGroup">
-               <string>posampButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="dispAllAmpl">
-              <property name="text">
-               <string>Ampl</string>
-              </property>
-              <property name="shortcut">
-               <string/>
-              </property>
-              <attribute name="buttonGroup">
-               <string>posampButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QRadioButton" name="dispAllCorrectedPos">
-              <property name="text">
-               <string>Calib. Pos</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string>posampButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QCheckBox" name="dispAll">
-           <property name="text">
-            <string>Sum spectra</string>
-           </property>
-           <property name="shortcut">
-            <string/>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QPushButton" name="clearAll">
-           <property name="text">
-            <string>clear all</string>
-           </property>
-           <property name="shortcut">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="textLabel1_4_2_3_4_2">
-             <property name="text">
-              <string>MCPD</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="MCPDSpinBox" name="dispMcpd">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximum">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="3" column="2">
-          <widget class="QPushButton" name="clearMcpd">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>clear</string>
-           </property>
-           <property name="shortcut">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0" colspan="2">
-          <layout class="QHBoxLayout">
-           <item>
-            <widget class="QLabel" name="textLabel1_4_2_3_4_2_2">
-             <property name="text">
-              <string>Module</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ModuleSpinBox" name="dispMpsd">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="wrapping">
-              <bool>true</bool>
-             </property>
-             <property name="maximum">
-              <number>7</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="4" column="2">
-          <widget class="QPushButton" name="clearMpsd">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>clear</string>
-           </property>
-           <property name="shortcut">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="2">
-          <layout class="QHBoxLayout">
-           <item>
-            <widget class="QLabel" name="textLabel1_4_2_3_4_2_2_2">
-             <property name="text">
-              <string>Channel</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ChannelSpinBox" name="dispChan">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="wrapping">
-              <bool>true</bool>
-             </property>
-             <property name="maximum">
-              <number>7</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="6" column="2">
-          <widget class="QPushButton" name="clearChan">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>clear</string>
-           </property>
-           <property name="shortcut">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QCheckBox" name="specialBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>delta-t</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0" colspan="2">
-          <widget class="QCheckBox" name="dispAllChannels">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>All Channels</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="3">
-          <widget class="QGroupBox" name="dispGroup">
-           <property name="title">
-            <string/>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="dispSpectra">
-              <property name="text">
-               <string>Spectra</string>
-              </property>
-              <property name="shortcut">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="dispHistogram">
-              <property name="text">
-               <string>Histogram</string>
-              </property>
-              <property name="shortcut">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QRadioButton" name="dispMstdSpectrum">
-              <property name="text">
-               <string>Single Spectrum</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QRadioButton" name="dispDiffractogram">
-              <property name="text">
-               <string>Diffractogram</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab2">
-        <attribute name="title">
-         <string>Thresholds</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_6">
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="loLim">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="textLabel1_6">
-           <property name="text">
-            <string>low</string>
-           </property>
-           <property name="wordWrap">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="textLabel1_6_2">
-           <property name="text">
-            <string>hi</string>
-           </property>
-           <property name="wordWrap">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="hiLim">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>1000000000</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QPushButton" name="applyDispThreshButton">
-           <property name="text">
-            <string>apply</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QCheckBox" name="useThresh">
-           <property name="text">
-            <string>Thresholds</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </item>
      <item>
       <widget class="QGroupBox" name="statusGroupBox">
        <property name="title">
@@ -1402,15 +1309,6 @@ Listfile</string>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
-   <slots>
-    <slot>setLinLog(const bool)</slot>
-    <slot>replot(void)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>ModuleSpinBox</class>
    <extends>QSpinBox</extends>
    <header>ModuleSpinBox.h</header>
@@ -1426,11 +1324,6 @@ Listfile</string>
    <slots>
     <signal>changeModule(int)</signal>
    </slots>
-  </customwidget>
-  <customwidget>
-   <class>Plot</class>
-   <extends>QwtPlot</extends>
-   <header>plot.h</header>
   </customwidget>
   <customwidget>
    <class>MCPDSpinBox</class>
@@ -1472,198 +1365,6 @@ Listfile</string>
  <resources/>
  <connections>
   <connection>
-   <sender>applyDispThreshButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWidget</receiver>
-   <slot>applyThreshSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>77</x>
-     <y>284</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clearAll</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWidget</receiver>
-   <slot>clearAllSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>197</x>
-     <y>466</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clearChan</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWidget</receiver>
-   <slot>clearChanSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>197</x>
-     <y>589</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clearMcpd</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWidget</receiver>
-   <slot>clearMcpdSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>197</x>
-     <y>498</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clearMpsd</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWidget</receiver>
-   <slot>clearMpsdSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>197</x>
-     <y>530</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>specialBox</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>39</x>
-     <y>605</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>clearChan</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>589</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>clearMpsd</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>530</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>clearMcpd</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>498</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dispChan</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>111</x>
-     <y>587</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dispMpsd</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>58</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>111</x>
-     <y>528</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>specialBox</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>39</x>
-     <y>605</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>startStopButton</sender>
    <signal>clicked(bool)</signal>
    <receiver>MainWidget</receiver>
@@ -1676,134 +1377,6 @@ Listfile</string>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useThresh</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWidget</receiver>
-   <slot>applyThreshSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>77</x>
-     <y>267</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useThresh</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>hiLim</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>77</x>
-     <y>267</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>98</x>
-     <y>277</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useThresh</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>loLim</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>77</x>
-     <y>267</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>98</x>
-     <y>272</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>clearMcpd</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>100</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>197</x>
-     <y>498</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dispMcpd</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>72</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>111</x>
-     <y>496</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dispAllChannels</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>100</x>
-     <y>463</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>88</x>
-     <y>551</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAllChannels</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dispChan</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>88</x>
-     <y>551</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>111</x>
-     <y>587</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispSpectra</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dispAll</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>297</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>98</x>
-     <y>463</y>
     </hint>
    </hints>
   </connection>
@@ -2028,22 +1601,6 @@ Listfile</string>
     <hint type="destinationlabel">
      <x>0</x>
      <y>216</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>linlogButtonGroup</sender>
-   <signal>buttonClicked(int)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>linlogSlot(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>471</x>
-     <y>318</y>
     </hint>
    </hints>
   </connection>
@@ -2464,86 +2021,6 @@ Listfile</string>
    </hints>
   </connection>
   <connection>
-   <sender>dispAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>66</x>
-     <y>454</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>471</x>
-     <y>318</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispChan</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>88</x>
-     <y>578</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>471</x>
-     <y>318</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispMcpd</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>88</x>
-     <y>487</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>471</x>
-     <y>318</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispMpsd</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>88</x>
-     <y>519</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>471</x>
-     <y>318</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dispAllChannels</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>66</x>
-     <y>548</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>471</x>
-     <y>318</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>MainWidget</sender>
    <signal>redraw()</signal>
    <receiver>MainWidget</receiver>
@@ -2608,18 +2085,210 @@ Listfile</string>
    </hints>
   </connection>
   <connection>
-   <sender>dispChan</sender>
-   <signal>changeModule(int)</signal>
-   <receiver>dispMpsd</receiver>
-   <slot>steps(int)</slot>
+   <sender>clearAll</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWidget</receiver>
+   <slot>clearAllSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>88</x>
-     <y>578</y>
+     <x>197</x>
+     <y>466</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>applyDispThreshButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWidget</receiver>
+   <slot>applyThreshSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispChan</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>111</x>
+     <y>587</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispMpsd</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>111</x>
+     <y>528</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useThresh</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWidget</receiver>
+   <slot>applyThreshSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispMcpd</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>72</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>111</x>
+     <y>496</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useThresh</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>loLim</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>98</x>
+     <y>272</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useThresh</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>hiLim</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>98</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispSpectra</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispAll</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>106</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>98</x>
+     <y>463</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispAllChannels</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>463</y>
     </hint>
     <hint type="destinationlabel">
      <x>88</x>
-     <y>519</y>
+     <y>551</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAllChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dispChan</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>551</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>111</x>
+     <y>587</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispMcpd</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>454</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
     </hint>
    </hints>
   </connection>
@@ -2636,6 +2305,70 @@ Listfile</string>
     <hint type="destinationlabel">
      <x>88</x>
      <y>487</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispAllChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>548</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispChan</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>578</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispMpsd</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>draw()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>519</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>471</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dispChan</sender>
+   <signal>changeModule(int)</signal>
+   <receiver>dispMpsd</receiver>
+   <slot>steps(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>578</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>88</x>
+     <y>519</y>
     </hint>
    </hints>
   </connection>

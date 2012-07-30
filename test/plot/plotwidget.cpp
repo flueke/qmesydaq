@@ -34,6 +34,9 @@ PlotWidget::PlotWidget(QWidget *parent)
 	displayButtonGroup->setId(radioSpectrum, Plot::Spectrum);
 	displayButtonGroup->setId(radioHistogram, Plot::Histogram);
 	displayButtonGroup->setId(radioDiffractogram, Plot::Diffractogram);
+
+	linlogButtonGroup->setId(radioLinear, Plot::Linear);
+	linlogButtonGroup->setId(radioLogarithmic, Plot::Logarithmic);
 }
 
 void PlotWidget::setLinLog(bool val)

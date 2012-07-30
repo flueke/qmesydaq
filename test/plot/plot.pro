@@ -24,8 +24,8 @@ include (../../qmesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= plot
-DEPENDPATH 	+= . ../../qmesydaq
-INCLUDEPATH 	+= . ../../qmesydaq
+DEPENDPATH 	+= . ../../qmesydaq ../../lib
+INCLUDEPATH 	+= . ../../qmesydaq ../../lib
 
 SOURCES 	+= main.cpp \
 		plot.cpp \

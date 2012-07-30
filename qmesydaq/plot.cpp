@@ -31,7 +31,12 @@
 
 #include "colormaps.h"
 #include "data.h"
+#include "mesydaqdata.h"
 #include "zoomer.h"
+
+#include "logging.h"
+
+#include <QResizeEvent>
 
 SpectrumCurve:: SpectrumCurve()
 	: QwtPlotCurve("")
@@ -54,13 +59,17 @@ Plot::Plot(QWidget *parent)
 	: QwtPlot(parent)
 	, m_zoomer(NULL)
 	, m_histogram(NULL)
-	, m_spectrumData(NULL)
-	, m_histogramData(NULL)
 	, m_linColorMap(NULL)
 	, m_logColorMap(NULL)
 	, m_mode(None)
 	, m_linlog(Linear)
 {
+	setWindowFlags(Qt::Window
+			| Qt::CustomizeWindowHint
+			| Qt::WindowTitleHint
+			| Qt::WindowSystemMenuHint
+			| Qt::WindowMaximizeButtonHint);
+
 	m_linColorMap = new StdLinColorMap();
 	m_logColorMap = new StdLogColorMap();
 
@@ -73,6 +82,7 @@ Plot::Plot(QWidget *parent)
 
 	plotLayout()->setAlignCanvasToScales(true);
 
+// Standard colors for the curves
 	QPen p[] = {	QPen(Qt::red)
 			, QPen(Qt::black)
 			, QPen(Qt::green)
@@ -87,18 +97,39 @@ Plot::Plot(QWidget *parent)
 	for (int i = 0; i < 8; ++i)
 		m_curve[i] = new SpectrumCurve(p[i], QString("spectrum_%1").arg(i));
 
-	m_histogram = new QwtPlotSpectrogram("histogram");
+	m_xSumCurve = new SpectrumCurve(QPen(Qt::black), QString("x sum"));
+	m_ySumCurve = new SpectrumCurve(QPen(Qt::black), QString("y sum"));
 
-        setDisplayMode(Histogram);
+	setDisplayMode(Histogram);
 	setLinLog(Linear);
+	resize(480, 480);
 }
 
 void Plot::setSpectrumData(SpectrumData *data)
 {
 	if (data)
 	{
-		m_spectrumData = data;
-		m_curve[0]->setData(*m_spectrumData);
+		m_curve[0]->setData(*data);
+		if (m_zoomer && !m_zoomer->zoomRectIndex())
+		{
+			QwtDoubleRect r = m_curve[0]->boundingRect();
+			setAxisScale(QwtPlot::xBottom, 0, r.width());
+		}
+		replot();
+	}
+}
+
+void Plot::setSpectrumData(MesydaqSpectrumData *data)
+{
+	if (data)
+	{
+		m_curve[0]->setData(*data);
+		if (m_zoomer && !m_zoomer->zoomRectIndex())
+		{
+			QwtDoubleRect r = m_curve[0]->boundingRect();
+			setAxisScale(QwtPlot::xBottom, 0, r.width());
+		}
+		replot();
 	}
 }
 
@@ -106,8 +137,29 @@ void Plot::setHistogramData(HistogramData *data)
 {
 	if (data)
 	{
-		m_histogramData = data;
-		m_histogram->setData(*m_histogramData);
+		m_histogram->setData(*data);
+		if (m_zoomer && !m_zoomer->zoomRectIndex())
+		{
+			QwtDoubleRect r = m_histogram->boundingRect();
+			setAxisScale(QwtPlot::xBottom, 0, r.width());
+			setAxisScale(QwtPlot::yLeft, 0, r.height());
+		}
+		replot();
+	}
+}
+
+void Plot::setHistogramData(MesydaqHistogramData *data)
+{
+	if (data)
+	{
+		m_histogram->setData(*data);
+		if (m_zoomer && !m_zoomer->zoomRectIndex())
+		{
+			QwtDoubleRect r = m_histogram->boundingRect();
+			setAxisScale(QwtPlot::xBottom, 0, r.width());
+			setAxisScale(QwtPlot::yLeft, 0, r.height());
+		}
+		replot();
 	}
 }
 
@@ -155,6 +207,8 @@ void Plot::setDisplayMode(const Mode &m)
 	for (int i = 0; i < 8; ++i)
 		m_curve[i]->detach();
 	m_histogram->detach();
+
+	QColor 	c(QColor(Qt::black));
 	switch (m_mode)
 	{
 		case Diffractogram:
@@ -204,16 +258,15 @@ void Plot::setDisplayMode(const Mode &m)
 			setAxisTitle(QwtPlot::xBottom, "tube");
 			setAxisTitle(QwtPlot::yLeft, "channel");
 			m_histogram->attach(this);
+			c = QColor(Qt::white);
 			break;
 		default:
 			break;
 	}
 	setAxisAutoScale(QwtPlot::xBottom);
 	setAxisAutoScale(QwtPlot::yLeft);
-	if (m_zoomer)
-		delete m_zoomer;
-	m_zoomer = new Zoomer(canvas());
 	replot();
+	setZoomer(c);
 }
 
 void Plot::replot(void) 
@@ -231,5 +284,64 @@ void Plot::replot(void)
 			break;
 	}
 	QwtPlot::replot();
+}
+
+void Plot::setZoomer(const QColor &c)
+{
+	MSG_ERROR << __PRETTY_FUNCTION__;
+	if (m_zoomer)
+	{
+//		disconnect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+		disconnect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+		delete m_zoomer;
+	}
+	m_zoomer = new Zoomer(canvas());
+        m_zoomer->setColor(c);
+
+//	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+	MSG_ERROR << __PRETTY_FUNCTION__ << " " << m_zoomer->zoomBase();
+}
+
+void Plot::zoomed(const QwtDoubleRect &rect)
+{
+	if (m_zoomer && !m_zoomer->zoomRectIndex())
+   	{
+		QwtDoubleRect r;
+        	switch(m_mode)
+		{
+			default : 
+            			setAxisAutoScale(QwtPlot::yLeft);
+				r = m_curve[0]->boundingRect();
+            			setAxisScale(QwtPlot::xBottom, 0, r.width());
+				break;
+			case Histogram :
+				r = m_histogram->boundingRect();
+            			setAxisScale(QwtPlot::xBottom, 0, r.width());
+            			setAxisScale(QwtPlot::yLeft, 0, r.height());
+				break;
+        	}
+	}
+	replot(); 
+}
+
+void Plot::resizeEvent(QResizeEvent *e)
+{
+	QSize s = e->size();
+	QwtPlot::resizeEvent(e);
+	if (e->isAccepted())
+	{
+//		QSize cs = canvas()->size();
+//		MSG_ERROR << __PRETTY_FUNCTION__ << " " << cs;
+//		s = QSize((2 * s.width() - cs.width()), (2 * s.height() - cs.height()));
+//		MSG_ERROR << __PRETTY_FUNCTION__ << " new size" << s;
+//		QwtPlot::resize(s);
+	}
+}
+
+int Plot::heightForWidth(int w) const
+{
+	MSG_ERROR << __PRETTY_FUNCTION__ << " " << w << " " << canvas()->size();
+	return -1;
 }
 
