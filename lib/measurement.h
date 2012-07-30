@@ -381,7 +381,14 @@ public:
 
 	bool saveSetup(const QString &name);
 
+	Setup setupType(void) const 
+	{
+		return m_setup;
+	}
 
+	void setSetupType(const Setup val);
+	
+	
 public slots:
 	void analyzeBuffer(const DATA_PACKET &pd);
 

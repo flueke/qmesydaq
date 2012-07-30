@@ -1285,6 +1285,11 @@ QString Measurement::getConfigfilename(void) const
 		return QString("");
 }
 
+void Measurement::setSetupType(const Setup val)
+{
+	m_setup = val;
+}
+
 /*!
     \fn bool Measurement::loadSetup(const QString &name)
 
@@ -1347,6 +1352,34 @@ bool Measurement::loadSetup(const QString &name)
 	readCalibration(sz);
 
 	storeLastFile();
+
+	setSetupType(Mpsd);
+
+	QList<int> mcpdList = m_mesydaq->mcpdId();
+	for (int i = 0; i < mcpdList.size(); ++i)
+	{
+		int mod = mcpdList.at(i);
+		for (int j = 0; j < 8; ++j)
+			switch (m_mesydaq->getModuleId(mod, j))
+			{
+				case TYPE_MSTD16 :  
+					if (m_mesydaq->active(mod, j))
+						setSetupType(Mstd);
+					break;
+				case TYPE_MDLL :
+					if (m_mesydaq->active(mod, j))
+						setSetupType(Mdll);
+				break;
+			}
+		
+	}
+	if (m_setup == Mstd)
+	{
+		if (m_Spectrum[SingleTubeSpectrum])
+			m_Spectrum[SingleTubeSpectrum]->resize(16);
+		else
+			m_Spectrum[SingleTubeSpectrum] = new Spectrum(16);
+	}
 	return true;
 }
 

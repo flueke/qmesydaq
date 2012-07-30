@@ -23,6 +23,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QSvgGenerator>
+#include <QCoreApplication>
 #include <qwt_plot_curve.h>
 #include <qwt_scale_widget.h>
 #include <qwt_scale_engine.h>
@@ -779,6 +780,13 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     displayTabWidget->setDisabled(mcpdList.empty());
     statusMeasTab->setDisabled(mcpdList.empty());
     statusModuleTab->setDisabled(mcpdList.empty());
+    dispMstdSpectrum->setVisible(m_meas->setupType() == Measurement::Mstd);
+    dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
+    if (m_meas->setupType() == Measurement::Mstd)
+    {
+    	dispMstdSpectrum->setChecked(true);
+    	setDisplayMode(Plot::SingleSpectrum);
+    }
     emit redraw();
 }
 
@@ -1685,17 +1693,18 @@ void MainWidget::customEvent(QEvent *e)
         switch(cmd)
 	{
             case CommandEvent::C_START:
-                clearAll->click();
+                clearAll->animateClick();
+                QCoreApplication::processEvents();
             case CommandEvent::C_RESUME:
                 if (!startStopButton->isChecked())
-                    startStopButton->animateClick();
+                    startStopButton->click();
                 break;
             case CommandEvent::C_STOP:
                 if (startStopButton->isChecked())
-            	    startStopButton->animateClick();
+                    startStopButton->click();
                 break;
             case CommandEvent::C_CLEAR:
-                clearAll->click();
+                clearAll->animateClick();
                 break;
             case CommandEvent::C_PRESELECTION:
                 if(interface)
@@ -1735,10 +1744,18 @@ void MainWidget::customEvent(QEvent *e)
                 if (interface)
                 {
                     QList<QVariant> retVal;
-                    Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-                    retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
-                    retVal << tmpHistogram->width(); 	// width  (should be equal to number of MPSD inputs)
-//                  retVal << (m_meas->width() + 1);    // height (should be 960)
+                    if (m_meas->setupType() == Measurement::Mstd)
+                    {
+                        Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
+                        retVal << tmpSpectrum->width();
+                        retVal << 1;
+                    }
+                    {
+                        Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+                        retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
+                        retVal << tmpHistogram->width(); 	// width  (should be equal to number of MPSD inputs)
+//                      retVal << (m_meas->width() + 1);    // height (should be 960)
+                    }
                     interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM_SIZE, retVal);
                 }
                 break;
@@ -1747,19 +1764,32 @@ void MainWidget::customEvent(QEvent *e)
                 {
                     QList<QVariant> retVal;
                     QList<quint64>* tmpData = new QList<quint64>();
-                    Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-                    if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
+                    if (m_meas->setupType() == Measurement::Mstd)
                     {
-                        // CARESS has it's x=0:y=0 position at top left corner
-                        for (int y = tmpHistogram->width() - 1; y >= 0; --y)
-                            for (int x = 0; x < tmpHistogram->height(); ++x)
-                                tmpData->append(tmpHistogram->value(x, y));
+                        Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
+                        if (tmpSpectrum->width() > 0)
+                        {
+                            for (int x = 0; x < tmpSpectrum->width(); ++x)
+                                retVal << tmpSpectrum->value(x);
+                        }
+                        interface->postCommandToInterface(CommandEvent::C_READ_SPECTROGRAM, retVal);
                     }
                     else
-                        tmpData->append(m_meas->events());
+                    {
+                        Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+                        if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
+                        {
+                            // CARESS has it's x=0:y=0 position at top left corner
+                            for (int y = tmpHistogram->width() - 1; y >= 0; --y)
+                                for (int x = 0; x < tmpHistogram->height(); ++x)
+                                    tmpData->append(tmpHistogram->value(x, y));
+                        }
+                        else
+                            tmpData->append(m_meas->events());
 										// hack to transfer a QList<quint64> to QtInterface without to copy it
-                    retVal << ((quint64)tmpData);
-                    interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM, retVal);
+                        retVal << ((quint64)tmpData);
+                        interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM, retVal);
+                    }
                 }
                 break;
             case CommandEvent::C_READ_SPECTROGRAM:

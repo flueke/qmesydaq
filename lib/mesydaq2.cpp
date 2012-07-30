@@ -526,49 +526,54 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		// Module part
 		for (int j = 0; j < 8; ++j)
 		{
-//			if (value->getModuleId(j))
+			QString moduleName;
+			switch (value->getModuleId(j))
 			{
-				QString moduleName = QString("MODULE-%1").arg(8 * i + j);
+				case TYPE_NOMODULE :
+					break;
+				default:
+					moduleName = QString("MODULE-%1").arg(8 * i + j);
 				
-				settings.beginGroup(moduleName);
-				settings.setValue("id", i * 8 + j);
-				settings.setValue("threshold", value->getThreshold(j));
-				for (int k = 0; k < 8; ++k)
-				{
-					settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
-					MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->active(j, k);
-					settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
-					settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
-					MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
-				}
-				settings.endGroup();
+					settings.beginGroup(moduleName);
+					settings.setValue("id", i * 8 + j);
+					settings.setValue("threshold", value->getThreshold(j));
+					for (int k = 0; k < 8; ++k)
+					{
+						settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
+						MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->active(j, k);
+						settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
+						settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
+						MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
+					}
+					settings.endGroup();
+					break;
+				case TYPE_MDLL: 
+					settings.beginGroup("MDLL");
+					settings.setValue("id", 0);
+
+					settings.setValue("threshX", value->getMdllThreshold(0));
+					settings.setValue("threshY", value->getMdllThreshold(1));
+					settings.setValue("threshA", value->getMdllThreshold(2));
+
+					settings.setValue("shiftX", value->getMdllSpectrum(0));
+					settings.setValue("shiftY", value->getMdllSpectrum(1));
+					settings.setValue("scaleX", value->getMdllSpectrum(2));
+					settings.setValue("scaleY", value->getMdllSpectrum(3));
+
+					settings.setValue("tWinXLo", value->getMdllTimingWindow(0));
+					settings.setValue("tWinXHi", value->getMdllTimingWindow(1));
+					settings.setValue("tWinYLo", value->getMdllTimingWindow(2));
+					settings.setValue("tWinYHi", value->getMdllTimingWindow(3));
+
+					settings.setValue("eWinLo", value->getMdllEnergyWindow(0));
+					settings.setValue("eWinHi", value->getMdllEnergyWindow(1));
+
+					settings.setValue("dataSet", value->getMdllDataset());
+
+					settings.endGroup();
+					break;
 			}
 		}
-
-		// MDLL part
-		settings.beginGroup("MDLL");
-		settings.setValue("id", 0);
-
-		settings.setValue("threshX", value->getMdllThreshold(0));
-		settings.setValue("threshY", value->getMdllThreshold(1));
-		settings.setValue("threshA", value->getMdllThreshold(2));
-
-		settings.setValue("shiftX", value->getMdllSpectrum(0));
-		settings.setValue("shiftY", value->getMdllSpectrum(1));
-		settings.setValue("scaleX", value->getMdllSpectrum(2));
-		settings.setValue("scaleY", value->getMdllSpectrum(3));
-
-		settings.setValue("tWinXLo", value->getMdllTimingWindow(0));
-		settings.setValue("tWinXHi", value->getMdllTimingWindow(1));
-		settings.setValue("tWinYLo", value->getMdllTimingWindow(2));
-		settings.setValue("tWinYHi", value->getMdllTimingWindow(3));
-
-		settings.setValue("eWinLo", value->getMdllEnergyWindow(0));
-		settings.setValue("eWinHi", value->getMdllEnergyWindow(1));
-
-		settings.setValue("dataSet", value->getMdllDataset());
-
-		settings.endGroup();
 
 		++i;
 	}
@@ -687,36 +692,39 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			continue;
 		}
 		int iMCPDId = iId / 8;
-
 		int j = iId % 8;
+		quint8 	gains[8],
+			threshold;
+		bool 	comgain(true);
 
-		if (getModuleId(iMCPDId, j) != TYPE_MDLL)
+		switch (getModuleId(iMCPDId, j)) 
 		{
-			quint8 	gains[8],
-				threshold;
-			bool 	comgain(true);
-
-			for (int k = 0; k < 8; ++k)
-			{
-				gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
-				m_mcpd[iMCPDId]->setActive(j, k, settings.value(QString("active%1").arg(k), "true").toBool());
-				m_mcpd[iMCPDId]->setHistogram(j, k, settings.value(QString("histogram%1").arg(k), "true").toBool());
-			}
-
-			threshold = settings.value("threshold", "22").toUInt();
-
-			for (int k = 0; k < 8; ++k)
-				if (gains[0] != gains[k])
-	  			{
-	    				comgain = false;
-					break;
-				}
-			if (comgain)
-				setGain(iMCPDId, j, 8, gains[0]);
-			else
+			case TYPE_MDLL :
+			case TYPE_NOMODULE :
+				break;
+			default:
 				for (int k = 0; k < 8; ++k)
-					setGain(iMCPDId, j, k, gains[k]);
-			setThreshold(iMCPDId, j, threshold);
+				{
+					gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
+					setActive(iMCPDId, j, k, settings.value(QString("active%1").arg(k), "true").toBool());
+					setHistogram(iMCPDId, j, k, settings.value(QString("histogram%1").arg(k), "true").toBool());
+				}
+
+				threshold = settings.value("threshold", "22").toUInt();
+
+				for (int k = 0; k < 8; ++k)
+					if (gains[0] != gains[k])
+	  				{
+	    					comgain = false;
+						break;
+					}
+				if (comgain)
+					setGain(iMCPDId, j, 8, gains[0]);
+				else
+					for (int k = 0; k < 8; ++k)
+						setGain(iMCPDId, j, k, gains[k]);
+				setThreshold(iMCPDId, j, threshold);
+				break;
 		}
 		settings.endGroup();
 	}
