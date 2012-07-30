@@ -64,11 +64,13 @@ Plot::Plot(QWidget *parent)
 	, m_mode(None)
 	, m_linlog(Linear)
 {
+#if 0
 	setWindowFlags(Qt::Window
 			| Qt::CustomizeWindowHint
 			| Qt::WindowTitleHint
 			| Qt::WindowSystemMenuHint
 			| Qt::WindowMaximizeButtonHint);
+#endif
 
 	m_linColorMap = new StdLinColorMap();
 	m_logColorMap = new StdLogColorMap();
@@ -102,9 +104,11 @@ Plot::Plot(QWidget *parent)
 	m_xSumCurve = new SpectrumCurve(QPen(Qt::black), QString("x sum"));
 	m_ySumCurve = new SpectrumCurve(QPen(Qt::black), QString("y sum"));
 
-	setDisplayMode(Histogram);
+        setDisplayMode(Histogram);
 	setLinLog(Linear);
+#if 0
 	resize(480, 480);
+#endif
 }
 
 void Plot::setSpectrumData(SpectrumData *data)
