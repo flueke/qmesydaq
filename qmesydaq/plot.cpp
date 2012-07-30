@@ -64,14 +64,6 @@ Plot::Plot(QWidget *parent)
 	, m_mode(None)
 	, m_linlog(Linear)
 {
-#if 0
-	setWindowFlags(Qt::Window
-			| Qt::CustomizeWindowHint
-			| Qt::WindowTitleHint
-			| Qt::WindowSystemMenuHint
-			| Qt::WindowMaximizeButtonHint);
-#endif
-
 	m_linColorMap = new StdLinColorMap();
 	m_logColorMap = new StdLogColorMap();
 
@@ -106,37 +98,38 @@ Plot::Plot(QWidget *parent)
 
         setDisplayMode(Histogram);
 	setLinLog(Linear);
-#if 0
-	resize(480, 480);
-#endif
 }
 
-void Plot::setSpectrumData(SpectrumData *data)
+void Plot::setSpectrumData(SpectrumData *data, int curve)
 {
 	if (data)
 	{
-		m_curve[0]->setData(*data);
+		m_curve[curve]->setData(*data);
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
-			QwtDoubleRect r = m_curve[0]->boundingRect();
+			QwtDoubleRect r = m_curve[curve]->boundingRect();
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 		}
 		replot();
 	}
+	else
+		m_curve[curve]->detach();
 }
 
-void Plot::setSpectrumData(MesydaqSpectrumData *data)
+void Plot::setSpectrumData(MesydaqSpectrumData *data, int curve)
 {
 	if (data)
 	{
-		m_curve[0]->setData(*data);
+		m_curve[curve]->setData(*data);
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
-			QwtDoubleRect r = m_curve[0]->boundingRect();
+			QwtDoubleRect r = m_curve[curve]->boundingRect();
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 		}
 		replot();
 	}
+	else
+		m_curve[curve]->detach();
 }
 
 void Plot::setHistogramData(HistogramData *data)
@@ -190,6 +183,7 @@ void Plot::setLinLog(const enum Scale log)
 			}
 			break;
 		case Diffractogram:
+		case SingleSpectrum:
 		case Spectrum :
 			switch (m_linlog)
 			{
@@ -228,6 +222,22 @@ void Plot::setDisplayMode(const Mode &m)
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 					break;
 				case Linear :
+					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+					break;
+			}
+			setAxisTitle(QwtPlot::xBottom, "tube");
+			setAxisTitle(QwtPlot::yLeft, "counts");
+			m_curve[0]->attach(this);
+			break;
+		case SingleSpectrum:
+			enableAxis(QwtPlot::yRight, false);
+			switch (m_linlog)
+			{
+				case Logarithmic :
+					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+					break;
+				case Linear :
+				default:
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 					break;
 			}

@@ -81,6 +81,14 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #endif
 
     m_dataFrame = new Plot(this);
+    m_dataFrame->setWindowFlags(Qt::Window
+			| Qt::CustomizeWindowHint
+			| Qt::WindowTitleHint
+			| Qt::WindowSystemMenuHint
+			| Qt::WindowMaximizeButtonHint);
+    m_dataFrame->move(0, 0);
+    m_dataFrame->resize(800, 800);
+
     m_dataFrame->setObjectName(QString::fromUtf8("m_dataFrame"));
     QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
     sizePolicy1.setHorizontalStretch(0);
@@ -1315,54 +1323,19 @@ void MainWidget::draw(void)
             spec = m_meas->spectrum(Measurement::Diffractogram); 
             m_data->setData(spec);
 	    m_dataFrame->setSpectrumData(m_data);
-
-#if 0 // HEAD
-        if (!m_zoomer->zoomRectIndex())
-	{
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_histogram->width());
-            m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_histogram->height());
-	}
-    }
-    else if (dispDiffractogram->isChecked())
-    {
-        labelCountsInROI->setText(tr("Counts"));
-        Spectrum *spec = m_meas->spectrum(Measurement::Diffractogram); 
-        m_data->setData(spec);
-        m_diffractogram->setData(*m_data);
-        if (!m_zoomer->zoomRectIndex())
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, spec->width());
-        countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
-    }
-    else if (dispMstdSpectrum->isChecked())
-    {
-        labelCountsInROI->setText(tr("Counts"));
-        for (int i = 1; i < 8; ++i)
-            m_curve[i]->detach();
-        Spectrum *spec = m_meas->spectrum(Measurement::SingleTubeSpectrum); 
-        m_data->setData(spec);
-        if (!m_zoomer->zoomRectIndex())
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, spec->width());
-        countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
-        m_curve[0]->setData(*m_data);
-    }
-    else
-    {
-        Spectrum *spec(NULL);
-        if(dispAll->isChecked())
-        {
-#else
-#endif // 8646917... Create a separate window for the data plot.
             labelCountsInROI->setText(tr("Counts"));
             countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
-
+            break;
+        case Plot::SingleSpectrum :
+            spec = m_meas->spectrum(Measurement::SingleTubeSpectrum); 
+            m_data->setData(spec);
+	    m_dataFrame->setSpectrumData(m_data);
+            labelCountsInROI->setText(tr("Counts"));
+            countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
             break;
         case Plot::Spectrum :
             if(dispAll->isChecked())
             {
-#if 0
-                for (int i = 1; i < 8; ++i)
-                    m_curve[i]->detach();
-#endif
                 if (dispAllPos->isChecked())
                     spec = m_meas->data(Measurement::PositionHistogram);
                 else if (dispAllAmpl->isChecked())
@@ -1376,15 +1349,9 @@ void MainWidget::draw(void)
             }
             else
             {
-#if 0
-                for (int i = 1; i < 8; ++i)
-                {
-                    if (!dispAllChannels->isChecked())
-                        m_curve[i]->detach();
-                    else
-                        m_curve[i]->attach(m_dataFrame);
-                }
-#endif
+                if (!dispAllChannels->isChecked())
+                    for (int i = 1; i < 8; ++i)
+	        	m_dataFrame->setSpectrumData((SpectrumData *)NULL, i);
                 if (specialBox->isChecked())
                 {
 		    spec = m_meas->spectrum(Measurement::TimeSpectrum);

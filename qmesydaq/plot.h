@@ -124,14 +124,14 @@ public:
 	 *
 	 * \param data spectrum data
 	 */
-	void setSpectrumData(SpectrumData *data);
+	void setSpectrumData(SpectrumData *data, int curve = 0);
 
 	/*!
 	 * sets the data for the spectrum data
 	 *
 	 * \param data spectrum data
 	 */
-	void setSpectrumData(MesydaqSpectrumData *data);
+	void setSpectrumData(MesydaqSpectrumData *data, int curve = 0);
 
 	/*!
 	 * Sets the data for the histogram data
