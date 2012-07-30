@@ -1405,6 +1405,10 @@ Listfile</string>
    <class>QwtPlot</class>
    <extends>QFrame</extends>
    <header>qwt_plot.h</header>
+   <slots>
+    <slot>setLinLog(const bool)</slot>
+    <slot>replot(void)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>ModuleSpinBox</class>
@@ -1422,6 +1426,11 @@ Listfile</string>
    <slots>
     <signal>changeModule(int)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>Plot</class>
+   <extends>QwtPlot</extends>
+   <header>plot.h</header>
   </customwidget>
   <customwidget>
    <class>MCPDSpinBox</class>
