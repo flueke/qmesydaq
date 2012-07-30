@@ -39,6 +39,6 @@ PlotWidget::PlotWidget(QWidget *parent)
 void PlotWidget::setLinLog(bool val)
 {
 	qDebug() << __PRETTY_FUNCTION__;
-	m_plot->setLinLog(val);
+	m_plot->setLinLog(Plot::Scale(val));
 }
 

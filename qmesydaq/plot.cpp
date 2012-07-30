@@ -88,8 +88,8 @@ Plot::Plot(QWidget *parent)
 		m_curve[i] = new SpectrumCurve(p[i], QString("spectrum_%1").arg(i));
 
 	m_histogram = new QwtPlotSpectrogram("histogram");
-	m_histogram->setColorMap(*m_linColorMap);
 
+        setDisplayMode(Histogram);
 	setLinLog(Linear);
 }
 
@@ -152,26 +152,57 @@ void Plot::setDisplayMode(const Mode &m)
 	if (m_mode ==  m)
 		return;
 	m_mode = m;
-	m_curve[0]->detach();
+	for (int i = 0; i < 8; ++i)
+		m_curve[i]->detach();
 	m_histogram->detach();
 	switch (m_mode)
 	{
+		case Diffractogram:
+			enableAxis(QwtPlot::yRight, false);
+			switch(m_linlog)
+			{
+				case Logarithmic :
+					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+					break;
+				case Linear :
+					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+					break;
+			}
+			setAxisTitle(QwtPlot::xBottom, "tube");
+			setAxisTitle(QwtPlot::yLeft, "counts");
+			m_curve[0]->attach(this);
+			break;
 		case Spectrum:
 			enableAxis(QwtPlot::yRight, false);
-			if (m_linlog)
-            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
-			else 
-            			setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
-			setAxisTitle(xBottom, "channel");
-			setAxisTitle(yLeft, "counts");
+			switch (m_linlog)
+			{
+				case Logarithmic :
+					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+					break;
+				case Linear :
+				default:
+					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+					break;
+			}
+			setAxisTitle(QwtPlot::xBottom, "channel");
+			setAxisTitle(QwtPlot::yLeft, "counts");
 			m_curve[0]->attach(this);
 			break;
 		case Histogram:
 			enableAxis(QwtPlot::yRight);
             		setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
-			m_histogram->setColorMap(m_linlog ? *m_logColorMap : *m_linColorMap);
-			setAxisTitle(xBottom, "tube");
-			setAxisTitle(yLeft, "channel");
+			switch (m_linlog)
+			{
+				case Logarithmic :
+					m_histogram->setColorMap(*m_logColorMap);
+					break;
+				case Linear :
+				default:
+					m_histogram->setColorMap(*m_linColorMap);
+					break;
+			}
+			setAxisTitle(QwtPlot::xBottom, "tube");
+			setAxisTitle(QwtPlot::yLeft, "channel");
 			m_histogram->attach(this);
 			break;
 		default:
