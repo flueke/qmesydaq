@@ -30,5 +30,22 @@ TARGET =
 DEPENDPATH 	+= . lib qmesydaq
 INCLUDEPATH 	+= . qmesydaq lib
 
-DISTFILES	+= AUTHOR COPYING qmesydaq.desktop
+DISTFILES	+= AUTHORS \
+		COPYING \
+		qmesydaq.desktop \
+		qmesydaqconfig.pri
+
+dox.target = doc
+dox.commands = doxygen Doxyfile; \
+    test -d doxydoc/html/images || mkdir doxydoc/html/images; \
+    cp documentation/images/* doxydoc/html/images
+dox.depends = 
+
+QMAKE_EXTRA_TARGETS += dox
+
+package.target	= dist
+package.commands = for i in $${SUBDIRS} ; do echo \$i; done && touch qmesydaq-$${VERSION}.tar.gz
+package.depends = $${DISTFILES}
+
+QMAKE_EXTRA_TARGETS += package
 

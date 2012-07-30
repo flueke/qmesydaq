@@ -92,6 +92,16 @@
               </attribute>
              </widget>
             </item>
+            <item row="3" column="0">
+             <widget class="QRadioButton" name="dispMstdSpectrum">
+              <property name="text">
+               <string>Single Spectrum</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string>displayModeButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
             <item row="2" column="0" colspan="2">
              <widget class="QRadioButton" name="dispDiffractogram">
               <property name="text">

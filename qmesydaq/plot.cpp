@@ -97,6 +97,8 @@ Plot::Plot(QWidget *parent)
 	for (int i = 0; i < 8; ++i)
 		m_curve[i] = new SpectrumCurve(p[i], QString("spectrum_%1").arg(i));
 
+	m_histogram = new QwtPlotSpectrogram("histogram");
+
 	m_xSumCurve = new SpectrumCurve(QPen(Qt::black), QString("x sum"));
 	m_ySumCurve = new SpectrumCurve(QPen(Qt::black), QString("y sum"));
 
@@ -158,6 +160,9 @@ void Plot::setHistogramData(MesydaqHistogramData *data)
 			QwtDoubleRect r = m_histogram->boundingRect();
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 			setAxisScale(QwtPlot::yLeft, 0, r.height());
+			QwtDoubleInterval iv = data->range();
+			// MSG_ERROR << iv.minValue() << ", " << iv.maxValue();
+			setAxisScale(QwtPlot::yRight, iv.minValue(), iv.maxValue());
 		}
 		replot();
 	}
@@ -303,7 +308,7 @@ void Plot::setZoomer(const QColor &c)
 	MSG_ERROR << __PRETTY_FUNCTION__ << " " << m_zoomer->zoomBase();
 }
 
-void Plot::zoomed(const QwtDoubleRect &rect)
+void Plot::zoomed(const QwtDoubleRect & /* rect */)
 {
 	if (m_zoomer && !m_zoomer->zoomRectIndex())
    	{
@@ -331,9 +336,9 @@ void Plot::resizeEvent(QResizeEvent *e)
 	QwtPlot::resizeEvent(e);
 	if (e->isAccepted())
 	{
-//		QSize cs = canvas()->size();
+		QSize cs = canvas()->size();
 //		MSG_ERROR << __PRETTY_FUNCTION__ << " " << cs;
-//		s = QSize((2 * s.width() - cs.width()), (2 * s.height() - cs.height()));
+		s = QSize((2 * s.width() - cs.width()), (2 * s.height() - cs.height()));
 //		MSG_ERROR << __PRETTY_FUNCTION__ << " new size" << s;
 //		QwtPlot::resize(s);
 	}

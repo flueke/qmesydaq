@@ -584,7 +584,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 void MainWidget::clearAllSlot()
 {
     m_meas->clearAllHist();
-    m_meas->setROI(QRectF(0,0,0,0));
+    m_meas->setROI(QRectF(0, 0, 0, 0));
     m_meas->setHistfilename("");
     if (m_zoomer) 
         m_zoomer->setZoomBase();
@@ -1290,7 +1290,7 @@ void MainWidget::draw(void)
         return;
     }
     if (m_meas->getROI().isEmpty())
-        m_meas->setROI(QRectF(0,0, width(), height()));
+        m_meas->setROI(QRectF(0, 0, width(), height()));
     Spectrum *spec(NULL);
     switch (m_mode)
     {
