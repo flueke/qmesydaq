@@ -53,7 +53,7 @@
                <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
-               <string>linlogButtonGroup</string>
+               <string notr="true">linlogButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -63,7 +63,7 @@
                <string>log</string>
               </property>
               <attribute name="buttonGroup">
-               <string>linlogButtonGroup</string>
+               <string notr="true">linlogButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -88,7 +88,7 @@
                <bool>false</bool>
               </property>
               <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
+               <string notr="true">displayModeButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -98,7 +98,7 @@
                <string>Single Spectrum</string>
               </property>
               <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
+               <string notr="true">displayModeButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -108,7 +108,7 @@
                <string>Diffractogram</string>
               </property>
               <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
+               <string notr="true">displayModeButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -124,7 +124,7 @@
                <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
-               <string>displayModeButtonGroup</string>
+               <string notr="true">displayModeButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -149,7 +149,7 @@
                <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
-               <string>posampButtonGroup</string>
+               <string notr="true">posampButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -162,7 +162,7 @@
                <string/>
               </property>
               <attribute name="buttonGroup">
-               <string>posampButtonGroup</string>
+               <string notr="true">posampButtonGroup</string>
               </attribute>
              </widget>
             </item>
@@ -172,7 +172,7 @@
                <string>Calib. Pos</string>
               </property>
               <attribute name="buttonGroup">
-               <string>posampButtonGroup</string>
+               <string notr="true">posampButtonGroup</string>
               </attribute>
              </widget>
             </item>
