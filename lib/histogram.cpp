@@ -603,13 +603,13 @@ QString Histogram::format(void)
 {
 	QString t("");
 
-        for (int i = 0; i < m_height; ++i)
+        for (int i = 0; i < m_width; ++i)
                 t += QString("\t%1").arg(i);
         t += "\r\n";
-        for (int i = 0; i < width(); i++)
+        for (int i = 0; i < height(); i++)
         {
                 t += QString("%1").arg(i);
-                for (int j = 0; j < m_height; j++)
+                for (int j = 0; j < m_width; j++)
 		{
                         t += QString("\t%1").arg(value(j, i));
 		}
