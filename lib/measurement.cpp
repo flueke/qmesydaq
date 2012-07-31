@@ -901,7 +901,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
-				if (m_mode == ReplayListFile || m_mesydaq->histogram(mod, id, chan))
+				if (m_mode == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
 					if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
 					{
@@ -944,7 +944,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 					}
 				}
 				else
-					MSG_INFO << "Neutron for an inactive channel " << mod << " " << id << " " << chan; 
+					MSG_WARNING << "Neutron for an inactive channel " << mod << " " << id << " " << modChan; 
 			}
 		}
 #if 0
