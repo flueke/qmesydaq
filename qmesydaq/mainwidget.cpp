@@ -1721,8 +1721,8 @@ void MainWidget::customEvent(QEvent *e)
                     }
                     {
                         Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-                        retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
                         retVal << tmpHistogram->width(); 	// width  (should be equal to number of MPSD inputs)
+                        retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
 //                      retVal << (m_meas->width() + 1);    // height (should be 960)
                     }
                     interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM_SIZE, retVal);
@@ -1749,8 +1749,8 @@ void MainWidget::customEvent(QEvent *e)
                         if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
                         {
                             // CARESS has it's x=0:y=0 position at top left corner
-                            for (int y = tmpHistogram->width() - 1; y >= 0; --y)
-                                for (int x = 0; x < tmpHistogram->height(); ++x)
+                            for (int y = tmpHistogram->height() - 1; y >= 0; --y)
+                                for (int x = 0; x < tmpHistogram->width(); ++x)
                                     tmpData->append(tmpHistogram->value(x, y));
                         }
                         else
