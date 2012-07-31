@@ -307,19 +307,18 @@ void Plot::replot(void)
 
 void Plot::setZoomer(const QColor &c)
 {
-	MSG_ERROR << __PRETTY_FUNCTION__;
 	if (m_zoomer)
 	{
-//		disconnect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+		disconnect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
 		disconnect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
 		delete m_zoomer;
 	}
+	replot();
 	m_zoomer = new Zoomer(canvas());
         m_zoomer->setColor(c);
 
-//	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
 	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
-	MSG_ERROR << __PRETTY_FUNCTION__ << " " << m_zoomer->zoomBase();
 }
 
 void Plot::zoomed(const QwtDoubleRect & /* rect */)
@@ -342,6 +341,17 @@ void Plot::zoomed(const QwtDoubleRect & /* rect */)
         	}
 	}
 	replot(); 
+}
+
+/*!
+    \fn void Plot::zoomAreaSelected(const QwtDoubleRect &)
+
+    callback for the zoomer area 
+*/
+void Plot::zoomAreaSelected(const QwtDoubleRect &)
+{
+	if (m_zoomer && !m_zoomer->zoomRectIndex())
+		m_zoomer->setZoomBase();
 }
 
 void Plot::resizeEvent(QResizeEvent *e)

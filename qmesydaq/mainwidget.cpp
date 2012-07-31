@@ -286,17 +286,7 @@ void MainWidget::allPulserOff(void)
     m_theApp->allPulserOff();
 }
 
-/*!
-    \fn void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
-
-    callback for the zoomer area 
-*/
-void MainWidget::zoomAreaSelected(const QwtDoubleRect &)
-{
-    if (m_zoomer && !m_zoomer->zoomRectIndex())
-        m_zoomer->setZoomBase();
-}
-
+#if 0
 /*!
     \fn void MainWidget::zoomed(const QwtDoubleRect &rect)
 
@@ -337,6 +327,7 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
     if (!m_dispTimer)
 	emit redraw();
 }
+#endif
 
 /*!
     \fn void MainWidget::statusTabChanged(int )

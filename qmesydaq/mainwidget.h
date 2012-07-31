@@ -182,10 +182,6 @@ private slots:
 
 	void draw(void);
 
-	void zoomAreaSelected(const QwtDoubleRect &);
-
-	void zoomed(const QwtDoubleRect &);
-
 	void closeEvent(QCloseEvent *);
 
 	void moduleHistogramSlot(quint8, bool);
