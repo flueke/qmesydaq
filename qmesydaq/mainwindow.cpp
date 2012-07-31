@@ -69,8 +69,8 @@ MainWindow::~MainWindow()
 void MainWindow::restoreSettings()
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
-	QPoint pos = settings.value("pos", QPoint(200, 0)).toPoint();
-	QSize size = settings.value("size", QSize(1280, 980)).toSize();
+	QPoint pos = settings.value("pos", QPoint(100, 0)).toPoint();
+	QSize size = settings.value("size", QSize(1024, 768)).toSize();
 	setGeometry(QRect(pos, size));
 }
 
@@ -78,7 +78,9 @@ void MainWindow::saveSettings()
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.setValue("pos", pos());
-	settings.setValue("size", m_main->frameSize());
+	QSize s = size();
+	QSize fs = frameSize();
+	settings.setValue("size", QSize(s.width(), fs.height()));
 	settings.setValue("config/lastrunid", m_mesy->runId());
 }
 
@@ -90,6 +92,7 @@ void MainWindow::saveSettings()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	saveSettings();
+        m_main->closeEvent(event);
 	event->accept();
 }
 

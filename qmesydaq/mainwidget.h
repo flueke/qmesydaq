@@ -62,6 +62,7 @@ public:
 
 	void selectUserMode(int);
 
+	void 	closeEvent(QCloseEvent *);
 signals:
 	//! will be emitted in case of start of data acquisition
 	void	started(bool);
@@ -181,8 +182,6 @@ private slots:
 	void loadCalibrationSlot();
 
 	void draw(void);
-
-	void closeEvent(QCloseEvent *);
 
 	void moduleHistogramSlot(quint8, bool);
 
