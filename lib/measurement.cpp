@@ -901,7 +901,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
-				if (m_mesydaq->histogram(mod, id, chan))
+				if (m_mode == ReplayListFile || m_mesydaq->histogram(mod, id, chan))
 				{
 					if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
 					{
