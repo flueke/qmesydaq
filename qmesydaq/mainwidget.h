@@ -193,6 +193,8 @@ private slots:
 
 	void setHistogramType(int);
 
+	void setLinLog(int);
+
 private:
 	void 	dispFiledata(void);
 

@@ -101,7 +101,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->setSizePolicy(sizePolicy1);
     m_dataFrame->setCursor(QCursor(Qt::CrossCursor));
 
-    QObject::connect(linlogButtonGroup, SIGNAL(buttonClicked(int)), m_dataFrame, SLOT(setLinLog(const int)));
+    QObject::connect(linlogButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(setLinLog(int)));
     m_dataFrame->show();
 
     m_time = QTime(QTime::currentTime());
@@ -1163,21 +1163,34 @@ void MainWidget::mpsdCheck(int mod)
  */
 void MainWidget::setHistogramType(int val)
 {
-	switch (val)
-	{
-		case Measurement::PositionHistogram :
-		case Measurement::AmplitudeHistogram:
-		case Measurement::CorrectedPositionHistogram:
-			{
-        			m_histogram = m_meas->hist(Measurement::HistogramType(val));
-        			m_histData->setData(m_histogram);
-				m_dataFrame->setHistogramData(m_histData);
-			}
-			break;
-		default :
-			break;
-	}
-	emit redraw();
+    switch (val)
+    {
+        case Measurement::PositionHistogram :
+        case Measurement::AmplitudeHistogram:
+        case Measurement::CorrectedPositionHistogram:
+            {
+                m_histogram = m_meas->hist(Measurement::HistogramType(val));
+                m_histData->setData(m_histogram);
+                m_dataFrame->setHistogramData(m_histData);
+            }
+            break;
+        default :
+            break;
+    }
+    emit redraw();
+}
+
+/*!
+    \fn void MainWidget::setLinlog(int val)
+
+    sets the lin/log scaling
+
+    \param val new scaling mode
+ */
+void MainWidget::setLinLog(int val)
+{
+    m_dataFrame->setLinLog(Plot::Scale(val));
+    emit redraw();
 }
 
 /*!
@@ -1189,103 +1202,9 @@ void MainWidget::setHistogramType(int val)
  */
 void MainWidget::setDisplayMode(int val)
 {
-#if 0 // HEAD
-	m_diffractogram->detach();
-	for (int i = 0; i < 8; ++i)
-		m_curve[i]->detach();
-        m_spectrogram->detach();
-
-	switch (val)
-	{
-		case Plot::SingleSpectrum:
-		case Plot::Spectrum:
-			setSpectraMode();
-			break;
-		case Plot::Histogram:
-			setHistogramMode();
-			break;
-		case Plot::Diffractogram:
-			setDiffractogramMode();
-			break;
-		default:
-			break;
-	}
-}
-
-/*!
-    \fn void MainWidget::setHistogramMode(void)
-
-    sets the histogram mode
-*/
-void MainWidget::setHistogramMode(void)
-{
-        m_dataFrame->enableAxis(QwtPlot::yRight, true);
-        m_spectrogram->setDisplayMode(QwtPlotSpectrogram::ImageMode, true);
-//      m_spectrogram->setDefaultContourPen(histo ? QPen() : QPen(Qt::NoPen));
-	
-        if (log->isChecked())
-            m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
-        m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
-        m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("channel"));
-        m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_histogram ? m_histogram->height() : 1.0);
-        m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_histogram ? m_histogram->width() : 1.0);
-        m_dataFrame->setAxisAutoScale(QwtPlot::xBottom);
-//	m_picker->setTrackerPen(QColor(Qt::white));
-
-        m_spectrogram->attach(m_dataFrame);
-	m_dataFrame->replot();
-	setZoomer(QColor(Qt::white));
-}
-
-/*!
-    \fn void MainWidget::setSpectraMode(void)
-
-    sets the spectrum mode
-*/
-void MainWidget::setSpectraMode(void)
-{
-    m_dataFrame->enableAxis(QwtPlot::yRight, false);
-        
-    m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
-    m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("channel"));
-    m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-//  MSG_ERROR << "height : " << m_meas->height();
-    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_histogram ? m_histogram->height() : 1.0);
-    m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-//  m_picker->setTrackerPen(QColor(Qt::black));
-
-    for (int i = 0; i < 8; ++i)
-        m_curve[i]->attach(m_dataFrame);
-    m_dataFrame->replot();
-    setZoomer(QColor(Qt::black));
-    emit draw();
-}
-
-/*!
-    \fn void MainWidget::setDiffractogramMode(void)
-
-    sets the diffractogram mode
-*/
-void MainWidget::setDiffractogramMode(void)
-{
-    m_dataFrame->enableAxis(QwtPlot::yRight, false);
-        
-    m_dataFrame->setAxisScaleEngine(QwtPlot::yLeft, log->isChecked() ? (QwtScaleEngine *)new QwtLog10ScaleEngine : (QwtScaleEngine *)new QwtLinearScaleEngine);
-    m_dataFrame->setAxisTitle(QwtPlot::xBottom, tr("tube"));
-    m_dataFrame->setAxisTitle(QwtPlot::yLeft, tr("counts"));
-    m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_histogram ? m_histogram->width() : 1.0);
-    m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-//  m_picker->setTrackerPen(QColor(Qt::black));
-
-    m_diffractogram->attach(m_dataFrame);
-    m_dataFrame->replot();
-    setZoomer(QColor(Qt::black));
-    emit draw();
-#else 
-	m_mode = Plot::Mode(val);
-	m_dataFrame->setDisplayMode(m_mode);
-	emit redraw();
-#endif // 8646917... Create a separate window for the data plot.
+    m_mode = Plot::Mode(val);
+    m_dataFrame->setDisplayMode(m_mode);
+    emit redraw();
 }
 
 /*!
