@@ -308,7 +308,7 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
               h;
         rect.getRect(&x, &y, &w, &h);
 
-        m_meas->setROI(QRectF(x, y, h, w));
+        m_meas->setROI(QRectF(x, y, w, h));
         emit redraw();
     }
 }
