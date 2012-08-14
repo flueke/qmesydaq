@@ -118,6 +118,10 @@ private:
         QMesyDAQDetectorInterface	*m_interface;
 
 	std::string			m_listFilename;
+
+	std::string			m_histFilename;
+
+	std::string			m_binnedFilename;
 };
 
 #endif // MESY_D_A_Q_DETECTOR_DETECTOR_H

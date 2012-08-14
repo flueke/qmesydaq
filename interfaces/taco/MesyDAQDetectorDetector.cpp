@@ -64,7 +64,8 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE END
 
 	addResource("lastlistfile", D_STRING_TYPE, "name of the last/currently used list mode data file");
-	addResource("lasthistfile", D_STRING_TYPE, "name of the last/currently used histogram datat file");
+	addResource("lasthistfile", D_STRING_TYPE, "name of the last/currently used histogram data file");
+	addResource("lastbinnedfile", D_STRING_TYPE, "name of the last/currently used histogram data (binned) file");
 
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.

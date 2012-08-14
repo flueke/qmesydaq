@@ -141,6 +141,8 @@ void MesyDAQ::Detector::Detector::v_Init(void) throw (::TACO::Exception)
 	try
 	{
 		Server::deviceUpdate("lastlistfile");
+		Server::deviceUpdate("lasthistfile");
+		Server::deviceUpdate("lastbinnedfile");
 	}
 	catch (const ::TACO::Exception &e)
 	{
@@ -179,6 +181,42 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
                 {
                         throw "could not update 'lastlistfile' " >> e;
                 }
+        if (resourceUpdateRequest("lasthistfile"))
+                try
+                {
+                        m_histFilename = queryResource<std::string>("lasthistfile");
+			if (m_histFilename == "")
+				m_histFilename = "tacohistfile00000.mtxt";
+			if (!m_interface)
+        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+                        m_interface->setHistogramFileName(m_histFilename.c_str());
+                }
+                catch (::TACO::Exception &e)
+                {
+                        throw "could not update 'lasthistfile' " >> e;
+                }
+        if (resourceUpdateRequest("lastbinnedfile"))
+                try
+                {
+                        m_histFilename = queryResource<std::string>("lasthistfile");
+			if (m_histFilename == "")
+				m_histFilename = "tacohistfile00000.mtxt";
+			if (!m_interface)
+        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+                        m_interface->setHistogramFileName(m_histFilename.c_str());
+#if 0
+                        m_binnedFilename = queryResource<std::string>("lastbinnedfile");
+			if (m_binnedFilename == "")
+				m_binnedFilename = "tacobinnedfile00000.mtxt";
+			if (!m_interface)
+        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+                        m_interface->setBinnedFileName(m_binnedFilename.c_str());
+#endif
+                }
+                catch (::TACO::Exception &e)
+                {
+                        throw "could not update 'lastbinnedfile' " >> e;
+                }
 }
 
 void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Exception)
@@ -193,6 +231,33 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
                 catch (TACO::Exception &e)
                 {
                         throw "Could not query resource 'lastlistfile' " >> e;
+                }
+        if (resourceQueryRequest("lasthistfile"))
+                try
+                {
+			if (m_interface->getHistogramFileName().isEmpty())
+				m_interface->setHistogramFileName(m_histFilename.c_str());
+                        updateResource<std::string>("lasthistfile", m_interface->getHistogramFileName().toStdString());
+                }
+                catch (TACO::Exception &e)
+                {
+                        throw "Could not query resource 'lasthistfile' " >> e;
+                }
+        if (resourceQueryRequest("lastbinnedfile"))
+                try
+                {
+			if (m_interface->getHistogramFileName().isEmpty())
+				m_interface->setHistogramFileName(m_histFilename.c_str());
+                        updateResource<std::string>("lasthistfile", m_interface->getHistogramFileName().toStdString());
+#if 0
+			if (m_interface->getBinnedFileName().isEmpty())
+				m_interface->setBinnedFileName(m_binnedFilename.c_str());
+                        updateResource<std::string>("lastbinnedfile", m_interface->getBinnedFileName().toStdString());
+#endif
+                }
+                catch (TACO::Exception &e)
+                {
+                        throw "Could not query resource 'lastbinnedfile' " >> e;
                 }
 
         TACO::Server::deviceQueryResource();
