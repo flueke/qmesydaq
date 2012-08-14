@@ -321,7 +321,7 @@ void Plot::setZoomer(const QColor &c)
 	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
 }
 
-void Plot::zoomed(const QwtDoubleRect & /* rect */)
+void Plot::zoomed(const QwtDoubleRect &rect)
 {
 	if (m_zoomer && !m_zoomer->zoomRectIndex())
    	{
@@ -341,6 +341,7 @@ void Plot::zoomed(const QwtDoubleRect & /* rect */)
         	}
 	}
 	replot(); 
+        emit(zoom(rect));
 }
 
 /*!

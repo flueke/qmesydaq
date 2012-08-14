@@ -122,6 +122,8 @@ public slots:
 
 	void	m4ResetSlot();
 
+	void	zoomed(const QwtDoubleRect &rect);
+
 protected:
         void    customEvent(QEvent *);
 

@@ -170,6 +170,9 @@ private slots:
 
 	void zoomAreaSelected(const QwtDoubleRect &);
 
+signals:
+	void zoom(const QwtDoubleRect &rect);
+
 protected:
 	void resizeEvent(QResizeEvent *e);
 

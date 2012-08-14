@@ -102,6 +102,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->setCursor(QCursor(Qt::CrossCursor));
 
     QObject::connect(linlogButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(setLinLog(int)));
+    QObject::connect(m_dataFrame, SIGNAL(zoom(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
     m_dataFrame->show();
 
     m_time = QTime(QTime::currentTime());
@@ -290,7 +291,6 @@ void MainWidget::allPulserOff(void)
     m_theApp->allPulserOff();
 }
 
-#if 0
 /*!
     \fn void MainWidget::zoomed(const QwtDoubleRect &rect)
 
@@ -300,25 +300,18 @@ void MainWidget::allPulserOff(void)
 */
 void MainWidget::zoomed(const QwtDoubleRect &rect)
 {
-    if (m_zoomer && rect == m_zoomer->zoomBase())
+    if (m_meas)
     {
-        if (m_meas)
-            m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
-    }
-    else
-    {
-	qreal 	x, 
-	    	y,
-	    	w, 
-	    	h;
-	rect.getRect(&x, &y, &w, &h);
+        qreal x, 
+              y,
+              w, 
+              h;
+        rect.getRect(&x, &y, &w, &h);
 
-        if (m_meas)
-            m_meas->setROI(QRectF(x, y, h, w));
+        m_meas->setROI(QRectF(x, y, h, w));
+        emit redraw();
     }
-    emit redraw();
 }
-#endif
 
 /*!
     \fn void MainWidget::statusTabChanged(int )
