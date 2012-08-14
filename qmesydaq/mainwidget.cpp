@@ -302,18 +302,6 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
 {
     if (m_zoomer && rect == m_zoomer->zoomBase())
     {
-#if 0
-        if (!dispHistogram->isChecked())
-        {
-            m_dataFrame->setAxisAutoScale(QwtPlot::yLeft);
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas ? m_meas->width() : 1.0);
-        }
-        else
-        {
-            m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas ? m_meas->width() : 1.0);
-            m_dataFrame->setAxisScale(QwtPlot::yLeft, 0, m_meas ? m_meas->height() : 1.0);
-        }
-#endif
         if (m_meas)
             m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
     }
@@ -328,8 +316,7 @@ void MainWidget::zoomed(const QwtDoubleRect &rect)
         if (m_meas)
             m_meas->setROI(QRectF(x, y, h, w));
     }
-    if (!m_dispTimer)
-	emit redraw();
+    emit redraw();
 }
 #endif
 
@@ -1204,6 +1191,29 @@ void MainWidget::setDisplayMode(int val)
 {
     m_mode = Plot::Mode(val);
     m_dataFrame->setDisplayMode(m_mode);
+    switch(m_mode)
+    {
+        case Plot::Spectrum:	
+            dispAll->setEnabled(true);
+            if (!dispAll->isChecked())
+            {
+                 dispMcpd->setEnabled(true);
+                 dispMpsd->setEnabled(true);
+                 dispChan->setEnabled(true);
+                 dispAllChannels->setEnabled(true);
+            }
+            break;
+        case Plot::Histogram:
+        case Plot::Diffractogram: 
+        case Plot::SingleSpectrum:
+            dispAll->setEnabled(false);
+            dispMcpd->setEnabled(false);
+            dispMpsd->setEnabled(false);
+            dispChan->setEnabled(false);
+            dispAllChannels->setEnabled(false);
+        default:
+            break;
+    }
     emit redraw();
 }
 
@@ -1581,11 +1591,16 @@ void MainWidget::customEvent(QEvent *e)
         switch(cmd)
 	{
             case CommandEvent::C_START:
+#if 0
                 clearAll->animateClick();
                 QCoreApplication::processEvents();
+#endif
             case CommandEvent::C_RESUME:
                 if (!startStopButton->isChecked())
+                {
                     startStopButton->click();
+                    QCoreApplication::processEvents();
+                }
                 break;
             case CommandEvent::C_STOP:
                 if (startStopButton->isChecked())
