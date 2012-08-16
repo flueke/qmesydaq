@@ -67,11 +67,14 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 	addResource("lasthistfile", D_STRING_TYPE, "name of the last/currently used histogram data file");
 	addResource("lastbinnedfile", D_STRING_TYPE, "name of the last/currently used histogram data (binned) file");
 
+        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+        if (app)
+		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 	try
 	{
-		v_Init();
+		deviceInit();
 		if (Server::deviceState() != ::TACO::State::INIT)
 			setDeviceState(::TACO::State::DEVICE_NORMAL);
 		logStream->noticeStream() << GetClassName() << " : " << deviceName() << " : init complete." << log4cpp::eol;
@@ -82,9 +85,6 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 		Server::setDeviceState(DEVON_NOT_REACHED);
 	}
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE END
-        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-        if (app)
-		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 }
 
 MesyDAQ::Detector::Detector::~Detector() throw ()

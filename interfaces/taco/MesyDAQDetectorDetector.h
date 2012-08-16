@@ -107,12 +107,12 @@ private:
 
 	static void tacoRead( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
-	void v_Init(void) throw (::TACO::Exception);
+	void deviceInit(void) throw (::TACO::Exception);
 
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
 
 private:
-	std::string incNumber();
+	std::string incNumber(const std::string &);
 
 private:
         QMesyDAQDetectorInterface	*m_interface;

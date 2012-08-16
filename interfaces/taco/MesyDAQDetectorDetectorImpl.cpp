@@ -45,9 +45,12 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 
-	m_listFilename = incNumber();
+	m_listFilename = incNumber(m_listFilename);
 	updateResource<std::string>("lastlistfile", m_listFilename);
     	m_interface->setListFileName(m_listFilename.c_str());
+	m_histFilename = incNumber(m_histFilename);
+	updateResource<std::string>("lasthistfile", m_histFilename);
+    	m_interface->setHistogramFileName(m_histFilename.c_str());
 	m_interface->start();
 }
 
@@ -135,19 +138,18 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 	return tmp;
 }
 
-void MesyDAQ::Detector::Detector::v_Init(void) throw (::TACO::Exception)
+void MesyDAQ::Detector::Detector::deviceInit(void) throw (::TACO::Exception)
 {
 	// Please implement this for the startup
 	try
 	{
 		Server::deviceUpdate("lastlistfile");
 		Server::deviceUpdate("lasthistfile");
-		Server::deviceUpdate("lastbinnedfile");
 	}
 	catch (const ::TACO::Exception &e)
 	{
 //		setDeviceState(::TACO::State::FAULT);
-//		throw e;
+		throw e;
 	}
 }
 
@@ -176,12 +178,13 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 			if (!m_interface)
         			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
                         m_interface->setListFileName(m_listFilename.c_str());
+			logStream->errorStream() << "LIST FILE " << m_listFilename << log4cpp::eol;
                 }
                 catch (::TACO::Exception &e)
                 {
                         throw "could not update 'lastlistfile' " >> e;
                 }
-        if (resourceUpdateRequest("lasthistfile"))
+        if (resourceUpdateRequest("lasthistfile")) 
                 try
                 {
                         m_histFilename = queryResource<std::string>("lasthistfile");
@@ -190,32 +193,30 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 			if (!m_interface)
         			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
                         m_interface->setHistogramFileName(m_histFilename.c_str());
+			m_binnedFilename = m_histFilename;
+			updateResource<std::string>("lastbinnedfile", m_binnedFilename);
+			logStream->errorStream() << "HISTOGRAM FILE " << m_histFilename << log4cpp::eol;
                 }
                 catch (::TACO::Exception &e)
                 {
                         throw "could not update 'lasthistfile' " >> e;
                 }
-        if (resourceUpdateRequest("lastbinnedfile"))
+        if (resourceUpdateRequest("lastbinnedfile")) 
                 try
                 {
-                        m_histFilename = queryResource<std::string>("lasthistfile");
-			if (m_histFilename == "")
-				m_histFilename = "tacohistfile00000.mtxt";
-			if (!m_interface)
-        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-                        m_interface->setHistogramFileName(m_histFilename.c_str());
-#if 0
                         m_binnedFilename = queryResource<std::string>("lastbinnedfile");
 			if (m_binnedFilename == "")
-				m_binnedFilename = "tacobinnedfile00000.mtxt";
+				m_binnedFilename = "tacohistfile00000.mtxt";
 			if (!m_interface)
         			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-                        m_interface->setBinnedFileName(m_binnedFilename.c_str());
-#endif
+                        m_interface->setHistogramFileName(m_binnedFilename.c_str());
+			m_histFilename = m_binnedFilename;
+			updateResource<std::string>("lasthistfile", m_histFilename);
+			logStream->errorStream() << "BINNED FILE " << m_histFilename << log4cpp::eol;
                 }
                 catch (::TACO::Exception &e)
                 {
-                        throw "could not update 'lastbinnedfile' " >> e;
+                        throw "could not update 'lasthistfile' " >> e;
                 }
 }
 
@@ -232,40 +233,25 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
                 {
                         throw "Could not query resource 'lastlistfile' " >> e;
                 }
-        if (resourceQueryRequest("lasthistfile"))
+        if (resourceQueryRequest("lasthistfile") || resourceQueryRequest("lastbinnedfile"))
                 try
                 {
 			if (m_interface->getHistogramFileName().isEmpty())
 				m_interface->setHistogramFileName(m_histFilename.c_str());
                         updateResource<std::string>("lasthistfile", m_interface->getHistogramFileName().toStdString());
+                        updateResource<std::string>("lastbinnedfile", m_interface->getHistogramFileName().toStdString());
                 }
                 catch (TACO::Exception &e)
                 {
                         throw "Could not query resource 'lasthistfile' " >> e;
                 }
-        if (resourceQueryRequest("lastbinnedfile"))
-                try
-                {
-			if (m_interface->getHistogramFileName().isEmpty())
-				m_interface->setHistogramFileName(m_histFilename.c_str());
-                        updateResource<std::string>("lasthistfile", m_interface->getHistogramFileName().toStdString());
-#if 0
-			if (m_interface->getBinnedFileName().isEmpty())
-				m_interface->setBinnedFileName(m_binnedFilename.c_str());
-                        updateResource<std::string>("lastbinnedfile", m_interface->getBinnedFileName().toStdString());
-#endif
-                }
-                catch (TACO::Exception &e)
-                {
-                        throw "Could not query resource 'lastbinnedfile' " >> e;
-                }
 
         TACO::Server::deviceQueryResource();
 }
 
-std::string MesyDAQ::Detector::Detector::incNumber()
+std::string MesyDAQ::Detector::Detector::incNumber(const std::string &val)
 {
-	std::string tmpString = m_listFilename;
+	std::string tmpString = val;
 	std::string baseName = basename(const_cast<char *>(tmpString.c_str()));
 	std::string::size_type pos = baseName.rfind(".");
 	std::string ext("");
