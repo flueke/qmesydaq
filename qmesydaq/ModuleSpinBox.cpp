@@ -45,10 +45,13 @@ void ModuleSpinBox::setModuleList(QList<int> modules)
 	m_modList = modules; 
 	if (!m_modList.empty())
 	{
+		setEnabled(true);
 		setValue(m_modList.at(0));
 		qSort(m_modList);
 		setRange(m_modList.first(), m_modList.last());
 	}
+	else
+		setDisabled(true);
 }
 
 /*!
