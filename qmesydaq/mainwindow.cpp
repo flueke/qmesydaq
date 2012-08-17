@@ -71,6 +71,8 @@ void MainWindow::restoreSettings()
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	QPoint pos = settings.value("pos", QPoint(100, 0)).toPoint();
 	QSize size = settings.value("size", QSize(1024, 768)).toSize();
+	quint16 lastrunid = settings.value("config/lastrunid", 0).toUInt();
+	m_mesy->setRunId(lastrunid);
 	setGeometry(QRect(pos, size));
 }
 
