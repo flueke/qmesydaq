@@ -52,12 +52,12 @@ class LIBQMESYDAQ_EXPORT MapCorrection : public QObject
 public:
     //! orientation of histogram
     enum Orientation {
-      OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+      OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
       OrientationDown,    //!< channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
       OrientationLeft,    //!< channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
       OrientationRight,   //!< channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
       OrientationUpRev,   //!< channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
-      OrientationDownRev, //!< channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+      OrientationDownRev, //!< channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
       OrientationLeftRev, //!< channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
       OrientationRightRev //!< channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
     };
