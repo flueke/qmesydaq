@@ -109,3 +109,7 @@ interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERF
 count(interfaces, 2) {
 	error(you may either use TACO, TCP, _or_ CARESS or nothing as remote interface)
 }
+
+UI_DIR		= .ui
+MOC_DIR		= .moc
+OBJECTS_DIR	= .obj
