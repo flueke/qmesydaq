@@ -1,4 +1,4 @@
-VERSION 	= 0.1.0
+VERSION 	= 0.1.1
 
 include( ../../qmesydaqconfig.pri )
 
@@ -9,12 +9,7 @@ INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
 
 LIBS		+= -L../../lib $${CARESSLIBS}
 
-contains(CONFIG, bit64) {
-target.path	= /usr/local/lib64
-}
-else {
-target.path	= /usr/local/lib
-}
+target.path	= $${TARGETLIBPATH}
 
 DISTFILES       += corbadevice.idl
 QMAKE_DISTCLEAN += corbadevice.h corbadeviceSK.cpp

@@ -1,4 +1,4 @@
-VERSION 	= 0.0.1
+VERSION 	= 0.0.2
 
 include( ../../qmesydaqconfig.pri )
 
@@ -11,12 +11,7 @@ LIBS		+= -L../../lib $${TACOLIBS}
 
 QT		+= network
 
-contains(CONFIG, bit64) {
-target.path	= /usr/local/lib64
-}
-else {
-target.path	= /usr/local/lib
-}
+target.path	= $${TARGETLIBPATH}
 
 # Input
 HEADERS 	+= remoteserver.h \

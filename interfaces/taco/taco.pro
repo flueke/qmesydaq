@@ -1,4 +1,4 @@
-VERSION 	= 1.0.1
+VERSION 	= 1.0.2
 
 include( ../../qmesydaqconfig.pri )
 
@@ -9,12 +9,7 @@ INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
 
 LIBS		+= -L../../lib $${TACOLIBS}
 
-contains(CONFIG, bit64) {
-target.path	= /usr/local/lib64
-}
-else {
-target.path	= /usr/local/lib
-}
+target.path	= $${TARGETLIBPATH}
 
 # Input
 HEADERS 	+= MesyDAQDetectorDetector.h \

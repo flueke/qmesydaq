@@ -19,12 +19,13 @@
 ############################################################################
 
 isEmpty(VERSION) {
-VERSION 	= 0.0.3 
+VERSION 	= 0.0.4 
 }
 SVNVERSION	= $$system(svnversion .)
 DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target
+TARGETPATH	= /usr/local
 
 #
 # emtpy
@@ -32,9 +33,9 @@ INSTALLS	= target
 # CARESS	work as CARESS server
 # TCP		work as TCP server
 #
-INTERFACE	=
+INTERFACE	= 
 
-target.path	= /usr/local
+target.path	= $${TARGETPATH}
 
 #
 # for 64 bit machines add bit64
@@ -58,9 +59,11 @@ exists($${QMESYDAQCONFIG}) {
 contains(CONFIG, bit64) {
 	DEFINES	+= HAVE_BIT64
 	QWTLIBS	= -L$${QWT_ROOT}/lib64
+	TARGETLIBPATH = $${TARGETPATH}/lib
 }
 else {
 	QWTLIBS	= -L$${QWT_ROOT}/lib
+	TARGETLIBPATH = $${TARGETPATH}/lib
 }
 
 QWTLIBS		+= -l$${QWTLIB}
