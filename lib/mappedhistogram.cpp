@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
- *   Copyright (C) 2011 by Lutz Rossa <rossa@helmholtz-berlin.de>          *
+ *   Copyright (C) 2011-2012 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -85,10 +85,10 @@ MappedHistogram& MappedHistogram::operator=(const MappedHistogram &src)
 	return *this;
 }
 
-// OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+// OrientationUp:       channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
 // OrientationUpRev:    channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
 // OrientationDown:     channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
-// OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+// OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
 // OrientationLeft:     channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
 // OrientationLeftRev:  channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
 // OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
