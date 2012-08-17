@@ -19,13 +19,12 @@
 ############################################################################
 
 isEmpty(VERSION) {
-VERSION 	= 0.0.4 
+	VERSION	= 0.0.4 
 }
 SVNVERSION	= $$system(svnversion .)
 DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target
-TARGETPATH	= /usr/local
 
 #
 # emtpy
@@ -33,9 +32,7 @@ TARGETPATH	= /usr/local
 # CARESS	work as CARESS server
 # TCP		work as TCP server
 #
-INTERFACE	= 
-
-target.path	= $${TARGETPATH}
+# INTERFACE	= 
 
 #
 # for 64 bit machines add bit64
@@ -45,31 +42,51 @@ CONFIG		+= debug
 # QMAKE_CXXFLAGS	+= -fstack-check
 # QMAKE_LFLAGS	+= --stack=0x1000000
 
-QWT_ROOT 	= /usr/local/qwt-5.2.1
-QWTLIB		= qwt-qt4
-
 # additional debug messages for QMesyDAQDetectorInterface and CARESS interface
-#DEFINES         += DEBUGBUILD
+# DEFINES         += DEBUGBUILD
 
 QMESYDAQCONFIG = qmesydaqconfig_$$system(hostname -s).pri
 exists($${QMESYDAQCONFIG}) {
-  include($${QMESYDAQCONFIG})
+	include($${QMESYDAQCONFIG})
 }
+
+isEmpty(TARGETPATH) {
+	TARGETPATH	= /usr/local
+}
+
+isEmpty(QWT_ROOT) {
+	QWT_ROOT 	= /usr/local/qwt-5.2.1
+}
+
+isEmpty(QWTINCLUDE) {
+	QWTINCLUDE	= /usr/include/qwt-qt4
+}
+
+isEmpty(QWTLIB) {
+	QWTLIB		= qwt-qt4
+}
+
+target.path	= $${TARGETPATH}
 
 contains(CONFIG, bit64) {
 	DEFINES	+= HAVE_BIT64
-	QWTLIBS	= -L$${QWT_ROOT}/lib64
-	TARGETLIBPATH = $${TARGETPATH}/lib
+	isEmpty(QWTLIBS) {
+		QWTLIBS	= $${QWT_ROOT}/lib64
+	}
+	TARGETLIBPATH = $${TARGETPATH}/lib64
 }
 else {
-	QWTLIBS	= -L$${QWT_ROOT}/lib
+	isEmpty(QWTLIBS) {
+		QWTLIBS	= $${QWT_ROOT}/lib
+	}
 	TARGETLIBPATH = $${TARGETPATH}/lib
 }
 
-QWTLIBS		+= -l$${QWTLIB}
+QWTLIBS		= -L$${QWTLIBS} -l$${QWTLIB}
+QWTINCLUDES 	= $${QWTINCLUDE}
 
-INCLUDEPATH 	+= /usr/include/qwt-qt4
-DEPENDPATH  	+= /usr/include/qwt-qt4
+INCLUDEPATH 	+= $${QWTINCLUDES}
+DEPENDPATH  	+= $${QWTINCLUDES}
 LIBS        	+= $${QWTLIBS} -L../lib -lmesydaq
 
 contains(INTERFACE, TACO) {
@@ -86,7 +103,7 @@ contains(INTERFACE, TACO) {
 	TACOLIBS	+= -lTACOExtensions -ltaco++ -llog4taco -llog4cpp
 	INCLUDEPATH 	+= $${TACO_ROOT}/include
 	DEPENDPATH  	+= $${TACO_ROOT}/include
-	message(build the TACO remote interface)
+	message("build the TACO remote interface")
 }
 
 contains(INTERFACE, CARESS) {
@@ -102,12 +119,14 @@ contains(INTERFACE, CARESS) {
 #	INCLUDEPATH	+= $${OMNIORB_ROOT}/include
 #	CARESSLIBS	+= -L$${OMNIORB_ROOT}/lib
 	CARESSLIBS	= -lomniDynamic4 -lomniORB4 -lomnithread -lz
-	message(build the CARESS remote interface)
+	message("build the CARESS remote interface")
 }
 
 interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP")
-count(interfaces, 2) {
-	error(you may either use TACO, TCP, _or_ CARESS or nothing as remote interface)
+!count(interfaces, 0) {
+        !count(interfaces, 1) {
+		error("you may either use TACO, TCP, _or_ CARESS or nothing as remote interface")
+	}
 }
 
 UI_DIR		= .ui

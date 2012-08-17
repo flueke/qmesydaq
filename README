@@ -1,0 +1,33 @@
+The system specific configuration should be done in a file named:
+
+qmesydaqconfig_`hostname -s`.pri
+
+You can create this file via:
+
+# touch qmesydaqconfig_`hostname -s`.pri
+
+Then you may edit this file and fill the following entries
+
+If you don't want to have a remote interface let the following entry
+empty like
+
+INTERFACE	=
+
+allowed values ar TACO, CARESS, or TCP
+INTERFACE	= TACO 
+
+if you have a 64 bit machine add the following line
+CONFIG		+= bit64
+
+if you have the Qwt library build from sources set the value to the 
+installation path
+QWT_ROOT 	= /usr/local/qwt5
+
+where are the header files of the Qwt library
+QWTINCLUDE	= $${QWT_ROOT}/include
+
+where are the library files of the Qwt library
+QWTLIBS		= $${QWT_ROOT}/lib
+
+what is the name of the Qwt library
+QWTLIB		= qwt-qt4
