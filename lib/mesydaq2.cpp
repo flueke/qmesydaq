@@ -1324,7 +1324,9 @@ quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
  */
 quint8 Mesydaq2::getMdllDataset(quint16 id)
 {
-	return m_mcpd[id]->getMdllDataset();
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMdllDataset();
+	return 0;
 }
 
 /*!
@@ -1338,7 +1340,9 @@ quint8 Mesydaq2::getMdllDataset(quint16 id)
  */
 quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
 {
-	return m_mcpd[id]->getMdllTimingWindow(val);
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMdllTimingWindow(val);
+	return 0;
 }
 
 /*!
@@ -1352,7 +1356,9 @@ quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
  */
 quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
 {
-	return m_mcpd[id]->getMdllEnergyWindow(val);
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMdllEnergyWindow(val);
+	return 0;
 }
 
 /*!
@@ -1366,7 +1372,9 @@ quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
  */
 quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
 {
-	return m_mcpd[id]->getMdllSpectrum(val);
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMdllSpectrum(val);
+	return 0;
 }
 
 /*!
@@ -1380,7 +1388,9 @@ quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
  */
 quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
 {
-	return m_mcpd[id]->getMdllThreshold(val);
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMdllThreshold(val);
+	return 0;
 }
 
 /*!
@@ -1394,7 +1404,9 @@ quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
  */
 quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
 {
-	return m_mcpd[id]->getMdllPulser(val);
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getMdllPulser(val);
+	return 0;
 }
 
 /*!
