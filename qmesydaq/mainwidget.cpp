@@ -30,7 +30,6 @@
 
 #include "plot.h"
 #include "colormaps.h"
-#include "zoomer.h"
 #include "mainwidget.h"
 #include "mdefines.h"
 #include "measurement.h"
@@ -71,7 +70,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_histData(NULL)
     , m_meas(NULL)
     , m_dispTimer(0)
-    , m_zoomer(NULL)
     , m_controlInt(NULL)
     , m_histogram(NULL)
 {
@@ -570,8 +568,6 @@ void MainWidget::clearAllSlot()
     m_meas->clearAllHist();
     m_meas->setROI(QRectF(0, 0, 0, 0));
     m_meas->setHistfilename("");
-    if (m_zoomer) 
-        m_zoomer->setZoomBase();
     m_meas->clearCounter(TIMERID);
     m_meas->clearCounter(EVID);
     m_meas->clearCounter(MON1ID);
@@ -799,6 +795,7 @@ void MainWidget::applyThreshSlot()
         m_dispHiThresh = hiLim->text().toUInt(&ok, 0);
         m_dispLoThresh = loLim->text().toUInt(&ok, 0);
     }
+    emit redraw();
 }
 
 /*!
@@ -1313,10 +1310,6 @@ void MainWidget::draw(void)
 // reduce data in case of threshold settings:
             if (m_dispThresh)
                 m_dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
-            else if (m_zoomer && !m_zoomer->zoomRectIndex())
-	    {
-                m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, spec->width());
-	    }
             break;
         default:
             break;

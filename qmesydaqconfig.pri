@@ -40,7 +40,7 @@ target.path	= $${TARGETPATH}
 #
 # for 64 bit machines add bit64
 #
-CONFIG		+= debug
+CONFIG		+= debug 
 
 # QMAKE_CXXFLAGS	+= -fstack-check
 # QMAKE_LFLAGS	+= --stack=0x1000000
@@ -83,7 +83,7 @@ contains(INTERFACE, TACO) {
 	else {
 		TACOLIBS	= -L$${TACO_ROOT}/lib
 	}
-	TACOLIBS	+= -ltaco++ -llog4taco -llog4cpp -lTACOExtensions
+	TACOLIBS	+= -lTACOExtensions -ltaco++ -llog4taco -llog4cpp
 	INCLUDEPATH 	+= $${TACO_ROOT}/include
 	DEPENDPATH  	+= $${TACO_ROOT}/include
 	message(build the TACO remote interface)

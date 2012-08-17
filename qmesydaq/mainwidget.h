@@ -235,9 +235,6 @@ private:
 	//! display timer ID
 	int 			m_dispTimer;
 
-	//! zoomer
-	Zoomer			*m_zoomer;
-
 	//! ???
 	CorbaThread		*m_ct;
 
