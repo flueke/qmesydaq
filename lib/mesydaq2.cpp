@@ -1011,7 +1011,8 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
  */
 void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, quint16 dataPort, const QString &cmdIP, quint16 cmdPort)
 {
-	m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
+	if (m_mcpd.contains(id))
+		m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }	
 
 /*!
