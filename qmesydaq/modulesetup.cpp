@@ -35,7 +35,11 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 {
     setupUi(this);
 
-    devid->setMCPDList(m_theApp->mcpdId());
+    QList<int> mcpdList = m_theApp->mcpdId();
+    bool noModule = mcpdList.isEmpty();
+    tabWidget->setDisabled(noModule);
+
+    devid->setMCPDList(mcpdList);
     module->setModuleList(m_theApp->mpsdId(devid->value()));
 
     QObject::connect(checkChannel1Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram1(bool))); 

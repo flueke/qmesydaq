@@ -33,14 +33,18 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 	, m_theApp(mesy)
 {
     setupUi(this);
+
+    QList<int> mcpdList = m_theApp->mcpdId();
+    bool noModule = mcpdList.isEmpty();
+    tabWidget->setDisabled(noModule);
+
     cellCompare->setDisabled(true);
     connect(cellTrigger, SIGNAL(currentIndexChanged(int)), this, SLOT(cellTriggerChangedSlot(int)));
-//    listfilepath->setText(mesy->getListfilepath());
+//  listfilepath->setText(mesy->getListfilepath());
 
     dataIPAddress->setText("192.168.168.005");
     cmdIPAddress->setText("192.168.168.005");
 
-    QList<int> mcpdList = m_theApp->mcpdId();
     mcpdId->setMCPDList(mcpdList);
     displayAuxTimerSlot(1);
 }

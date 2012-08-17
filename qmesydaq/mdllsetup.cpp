@@ -36,7 +36,11 @@ MdllSetup::MdllSetup(Mesydaq2 *mesy, QWidget *parent)
 {
     setupUi(this);
 
-    devid->setMCPDList(m_theApp->mcpdId());
+    QList<int> mcpdList = m_theApp->mcpdId();
+    bool noModule = mcpdList.isEmpty();
+    tabWidget->setDisabled(noModule);
+
+    devid->setMCPDList(mcpdList);
     displaySlot(devid->value());
 }
 
