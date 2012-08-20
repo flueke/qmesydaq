@@ -27,14 +27,25 @@
 
 #include <QHash>
 
+/**
+ * \short this object represents user defined histogram mapping and correction data
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class LIBQMESYDAQ_EXPORT UserMapCorrection : public MapCorrection
 {
 public:
+	//! default constructor
 	UserMapCorrection()
 		: MapCorrection()
 	{
 	}
 
+	/**
+	 * constructor
+	 *
+	 * \param fName file name
+	 */
 	UserMapCorrection(const QString &fName);
 
 private:
