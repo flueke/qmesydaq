@@ -2185,6 +2185,8 @@ void MCPD8::setActive(quint16 id, quint16 chan, bool act)
 bool MCPD8::active(void)
 {
     bool result(false);
+    if(m_mdll.find(0) != m_mdll.end())
+            return true;
     foreach(MPSD8 *it, m_mpsd)
     {
         Q_ASSERT_X(it != NULL, "MCPD8::active", "one of the MPSD's is NULL");
@@ -2217,6 +2219,8 @@ bool MCPD8::histogram(void)
  */
 bool MCPD8::active(quint16 id)
 {
+    if(m_mdll.find(0) != m_mdll.end())
+            return true;
     if (m_mpsd.contains(id))
         return m_mpsd[id]->active();
     return false;
@@ -2231,6 +2235,8 @@ bool MCPD8::active(quint16 id)
  */
 bool MCPD8::active(quint16 id, quint16 chan)
 {
+    if(m_mdll.find(0) != m_mdll.end())
+            return true;
     if (m_mpsd.contains(id))
         return m_mpsd[id]->active(chan);
     return false;
