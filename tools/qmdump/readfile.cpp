@@ -140,6 +140,8 @@ void analyzeBuffer(const DATA_PACKET &pd)
 #if 0
 				++(*m_counter[EVID]);
 #endif
+				if (pos > 959)
+					MSG_ERROR << "POSITION > 960 " << pos; 
 				if (m_posHist)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
