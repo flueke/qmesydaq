@@ -87,8 +87,9 @@ bool Spectrum::checkBin(const quint16 bin)
 
 void Spectrum::calcMaximumPosition(const quint16 bin)
 {
-	if (*(m_data + bin) > *(m_data + m_maximumPos))
-		m_maximumPos = bin;
+	if (bin < m_width)
+		if (*(m_data + bin) > *(m_data + m_maximumPos))
+			m_maximumPos = bin;
 }
 
 void Spectrum::calcFloatingMean(const quint16 bin)
@@ -204,6 +205,21 @@ void Spectrum::setWidth(const quint16 w)
 	m_width = w;
 }
 
+void Spectrum::resize(const quint16 bins) 
+{
+	if (bins == m_width)
+		return;
+	m_data = (quint64 *)realloc(m_data, bins * sizeof(quint64));
+	if (bins > 0)
+	{
+		if (bins > m_width)
+			memset(m_data + m_width, '\0', (bins - m_width) * sizeof(quint64));
+	}
+	else 
+		m_data = NULL;
+	m_width = bins;
+}
+
 quint64 Spectrum::value(const quint16 index)
 {
 	if (index < m_width)
@@ -243,7 +259,9 @@ Histogram::~Histogram()
 */
 quint64 Histogram::max(void) const
 {
-	return m_height ? m_data[m_maximumPos]->max() : 0;
+        if (m_maximumPos < m_width)
+		return m_height ? m_data[m_maximumPos]->max() : 0;
+	return 0;
 }
 
 /*!
@@ -414,6 +432,7 @@ void Histogram::clear(void)
 	m_xSumSpectrum.clear();
 	m_ySumSpectrum.clear();
 	m_totalCounts = 0;
+	m_maximumPos = 0;
 }
 
 /*!
@@ -544,6 +563,8 @@ void Histogram::setWidth(const quint16 w)
 		for (int i = m_width - 1; i >= w; --i)
 			delete m_data[i];
 		m_data = (Spectrum **)realloc(m_data, w * sizeof(Spectrum *));
+		if (w == 0)
+			m_data = NULL;
 	}
 	m_xSumSpectrum.setWidth(w);
 	m_maximumPos = w - 1;

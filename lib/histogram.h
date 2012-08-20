@@ -96,17 +96,7 @@ public:
 	 *
 	 * \param  bins new size of the spectrum
 	 */
-	void resize(const quint16 bins) 
-	{
-		if (bins == m_width)
-			return;
-		m_data = (quint64 *)realloc(m_data, bins * sizeof(quint64));
-		if (bins > m_width)
-		{
-			memset(m_data + m_width, '\0', (bins - m_width) * sizeof(quint64));
-		}
-		m_width = bins;
-	}
+	void resize(const quint16 bins);
 
 	/*!
     	 * The histogram will be formatted
@@ -182,9 +172,9 @@ public:
 
 	virtual bool incVal(const quint16 chan, const quint16 bin);
 
-	bool setValue(const quint16 chan, const quint16 bin, const quint64 val);
+	virtual bool setValue(const quint16 chan, const quint16 bin, const quint64 val);
 
-	bool addValue(const quint16 chan, const quint16 bin, const quint64 val);
+	virtual bool addValue(const quint16 chan, const quint16 bin, const quint64 val);
 
 	virtual void clear(void);
 
