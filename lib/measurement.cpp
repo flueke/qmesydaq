@@ -738,7 +738,14 @@ void Measurement::readHistograms(const QString &name)
 						fillHistogram(t, m_Hist[AmplitudeHistogram]);
 				}
 			}	
-			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
+			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), 
+					m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
+			{
+				for (int x = 0; x < m_Hist[PositionHistogram]->width(); ++x)
+					for (int y = 0; y < m_Hist[PositionHistogram]->height(); ++y)
+						m_Hist[CorrectedPositionHistogram]->setValue(x, y, m_Hist[PositionHistogram]->value(x, y));
+				// create the mapped histogram
+			}
 			setROI(QRectF(0,0, width(), height()));
 		}
 		f.close();
@@ -758,9 +765,16 @@ void Measurement::readCalibration(const QString &name)
 		delete m_posHistMapCorrection;
 	if (m_calibrationfilename.isEmpty())
 	{
+		MSG_ERROR << "Linear Map correction";
+#warning TODO the size of the corrected map 
+#if 0
 		m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(128, 128));
+#else
+		m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(m_width, m_height), MapCorrection::OrientationDownRev);
+#endif
 		return;
 	}
+	MSG_ERROR << "User map correction from file " << m_calibrationfilename;
 	m_posHistMapCorrection = new UserMapCorrection(m_calibrationfilename);
 }
 
@@ -901,6 +915,11 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
+				if (pos > 959)
+				{
+					// MSG_ERROR << "POSITION > 959 " << pos;
+					continue;
+				}
 				if (m_mode == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
 					if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
@@ -1092,7 +1111,9 @@ void Measurement::readListfile(const QString &readfilename)
 	datStream.setDevice(&datfile);
 	textStream.setDevice(&datfile);
 
-	m_neutrons = m_triggers = 0;
+	m_packages = 0;
+	m_triggers = 0;
+	m_neutrons = 0;
 
 	quint32 blocks(0),
 		bcount(0);
@@ -1107,8 +1128,12 @@ void Measurement::readListfile(const QString &readfilename)
 			break;
 	}
 	textStream.seek(seekPos);
-
+#warning TODO dynamic resizing of the mapped histogram 
+#if 0
 	resizeHistogram(0, 0, true, true);
+#else
+	resizeHistogram(128, 960, true, true);
+#endif
 	foreach(MesydaqCounter *c, m_counter)
 		c->reset();
 
@@ -1120,6 +1145,13 @@ void Measurement::readListfile(const QString &readfilename)
 	if ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF))
 	{
 		MSG_ERROR << m_Hist[PositionHistogram]->width();
+#if 0
+		m_starttime_msec = m_mesydaq->time();
+		foreach (MesydaqCounter *c, m_counter)
+			c->start(m_starttime_msec);
+		setROI(QRectF(0,0, m_mesydaq->width(), m_mesydaq->height()));
+#endif
+
 		if (getNextBlock(datStream, dataBuf))
 		{
 			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
@@ -1141,7 +1173,8 @@ void Measurement::readListfile(const QString &readfilename)
 	MSG_ERROR << "End replay";
 	MSG_ERROR << "Found " << blocks << " data packages";
 	MSG_ERROR << QObject::tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
-	resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
+	resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), 
+			m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 	QCoreApplication::processEvents();
 }
 
@@ -1440,4 +1473,9 @@ void Measurement::storeLastFile(void)
         QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
 	settings.setValue("lastconfigfile", getConfigfilename());
 	settings.sync();
+}
+
+Histogram *Measurement::hist(const HistogramType t) const
+{
+	return m_Hist[t];
 }

@@ -255,10 +255,7 @@ public:
 	    \param t type of the requested histogram
             \return a histogram
 	 */
-	Histogram *hist(const HistogramType t) const 
-	{
-		return m_Hist[t];
-	}
+	Histogram *hist(const HistogramType t) const;
 
 	/**
 	  \param t type of the requested spectrum
@@ -381,11 +378,17 @@ public:
 
 	bool saveSetup(const QString &name);
 
+        //! returns the current setup type of the configuration
 	Setup setupType(void) const 
 	{
 		return m_setup;
 	}
 
+	/**
+         * sets the setup type of the found configuration
+	 *
+	 * \param val setup type
+	 */
 	void setSetupType(const Setup val);
 	
 	
