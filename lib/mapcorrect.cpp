@@ -270,11 +270,11 @@ bool MapCorrection::getMap(const QPoint &src, QPoint &dst, float &fCorrection) c
     {
         switch (m_iOrientation)
         {
-            default: //MapCorrection::OrientationUp: // channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+            default: //MapCorrection::OrientationUp: // channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
                 dst.setX(p->x());
                 dst.setY(p->y());
                 break;
-            case MapCorrection::OrientationDownRev:  // channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+            case MapCorrection::OrientationDownRev:  // channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
                 dst.setX(p->x());
                 dst.setY(m_mapRect.bottom() - p->y());
                 break;

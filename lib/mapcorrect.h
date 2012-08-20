@@ -50,30 +50,34 @@ class LIBQMESYDAQ_EXPORT MapCorrection : public QObject
     Q_PROPERTY(bool m_bNoMapping READ isNoMap)
 
 public:
-    //! orientation of histogram
+    /** 
+     * orientation of histogram
+     *
+     * OrientatationUp means the origin at 0, 0 is in the left bottom corner
+     */ 
     enum Orientation {
-      OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
-      OrientationDown,    //!< channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
-      OrientationLeft,    //!< channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
-      OrientationRight,   //!< channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
-      OrientationUpRev,   //!< channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
-      OrientationDownRev, //!< channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
-      OrientationLeftRev, //!< channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
-      OrientationRightRev //!< channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
+        OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
+        OrientationDown,    //!< rotation 180 deg channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
+        OrientationLeft,    //!< rotation 90 deg ccw channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
+        OrientationRight,   //!< rotation 90 deg cw channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
+        OrientationUpRev,   //!< mirror channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
+        OrientationDownRev, //!< rotation 180 deg and mirror channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
+        OrientationLeftRev, //!< rotation 90 deg ccw and mirror channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
+        OrientationRightRev //!< rotation 90 deg cw and mirror channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
     };
 
     //! select which pixel should be hold a correction factor: source or mapped pixel
     enum CorrectionType {
-      CorrectSourcePixel = 0, //!< use correction factor before position mapping
-      CorrectMappedPixel      //!< use correction factor after position mapping
+        CorrectSourcePixel = 0, //!< use correction factor before position mapping
+        CorrectMappedPixel      //!< use correction factor after position mapping
     };
 
     //! default constructor
     MapCorrection()
-      : QObject()
-      , m_bNoMapping(false)
-      , m_iOrientation(MapCorrection::OrientationUp)
-      , m_iCorrection(MapCorrection::CorrectSourcePixel)
+        : QObject()
+        , m_bNoMapping(false)
+        , m_iOrientation(MapCorrection::OrientationUp)
+        , m_iCorrection(MapCorrection::CorrectSourcePixel)
     {
     }
 
@@ -144,8 +148,8 @@ public:
     */
     bool getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const
     {
-    QPoint 	s(iSrcX, iSrcY),
-        d;
+        QPoint 	s(iSrcX, iSrcY),
+                d;
         bool r = getMap(s,d,dblCorrection);
         iDstX = d.x();
         iDstY = d.y();
@@ -191,16 +195,29 @@ private:
     QVector<float> m_afCorrection;
 };
 
+/**
+ * \short this object represents simple linear histogram mapping and correction data
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
 class LIBQMESYDAQ_EXPORT LinearMapCorrection : public MapCorrection
 {
 public:
+    //! default constructor
     LinearMapCorrection()
         : MapCorrection()
     {
     }
-
-    LinearMapCorrection(const QSize &srcSize, const QSize &destSize)
-        : MapCorrection(srcSize, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel)
+  
+    /**
+     * constructor
+     *
+     * \param srcSize
+     * \param destSize
+     * \param iOrientation
+     */
+    LinearMapCorrection(const QSize &srcSize, const QSize &destSize, const enum Orientation iOrientation = MapCorrection::OrientationUp)
+        : MapCorrection(srcSize, iOrientation, MapCorrection::CorrectSourcePixel)
     {
         int iDstHeight(destSize.height());
         int iSrcHeight(srcSize.height());
