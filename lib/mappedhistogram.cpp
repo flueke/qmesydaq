@@ -32,6 +32,8 @@
 
 #include "mapcorrect.h"
 
+#include "logging.h"
+
 /*!
     constructor: store mapping and possible create histogram (generate a new mapped copy of the source)
 
@@ -185,10 +187,10 @@ double MappedHistogram::floatValue(quint16 x, quint16 y) const
 	return 0.0;
 }
 
-// OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+// OrientationUp:       channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
 // OrientationUpRev:    channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
 // OrientationDown:     channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
-// OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+// OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
 // OrientationLeft:     channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
 // OrientationLeftRev:  channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
 // OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
@@ -220,6 +222,39 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 	return bOK;
 }
 
+bool MappedHistogram::setValue(const quint16 chan, const quint16 bin, const quint64 val)
+{
+	bool bOK(false);
+	if (m_pMapCorrection != NULL)
+	{
+		int iDstX(-1);
+		int iDstY(-1);
+		float fCorrection(0.0);
+		if (m_pMapCorrection->getMap(chan, bin, iDstX, iDstY, fCorrection))
+		{
+//			MSG_ERROR << __FUNCTION__ << " " << chan << ", " << bin << " -> " << iDstX << ", " << iDstY << " " << fCorrection;
+			int iPos(m_iWidth * iDstY + iDstX);
+			if (iDstX >= 0 && iDstX < m_iWidth && iDstY >= 0 && iDstY < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
+			{
+				m_ullTotalCounts += val;
+				m_adblData[iPos] = val * fCorrection;
+				m_dblTotalCounts += val * fCorrection;
+				if (m_iMaxPos < 0) 
+					m_iMaxPos = iPos; 
+				else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
+					m_iMaxPos = iPos;
+				bOK = true;
+			}
+		}
+	}
+	return bOK;
+}
+
+bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quint64 val)
+{
+	return false;
+}
+
 void MappedHistogram::clear(void)
 {
 	for (int i = 0; i<m_adblData.count(); ++i)
@@ -230,10 +265,10 @@ void MappedHistogram::clear(void)
 }
 
 #if 0
-// OrientationUp:       channel --> X [left=0 ... right], bin --> Y [botton=0 ... top]
+// OrientationUp:       channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
 // OrientationUpRev:    channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
 // OrientationDown:     channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
-// OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [botton=0 ... top]
+// OrientationDownRev:  channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
 // OrientationLeft:     channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
 // OrientationLeftRev:  channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
 // OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]

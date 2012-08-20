@@ -102,6 +102,10 @@ public:
 	//! \brief store an event at position
 	virtual bool incVal(quint16 chan, quint16 bin);
 
+	virtual bool setValue(const quint16 chan, const quint16 bin, const quint64 val);
+
+	virtual bool addValue(const quint16 chan, const quint16 bin, const quint64 val);
+
 	//! \brief clear this histogram
 	virtual void clear(void);
 
