@@ -92,7 +92,7 @@ public:
 		CorrPosition, 	//!< corrected position data
 	};
 
-	//! 
+	//! display the plot area in a fixed ratio or not
 	enum Ratio
 	{	
 		Free = 0,	//!< user may modify ration between x and y
@@ -123,6 +123,7 @@ public:
 	 * sets the data for the spectrum data
 	 *
 	 * \param data spectrum data
+	 * \param curve the number of the curve which data should be set
 	 */
 	void setSpectrumData(SpectrumData *data, int curve = 0);
 
@@ -130,6 +131,7 @@ public:
 	 * sets the data for the spectrum data
 	 *
 	 * \param data spectrum data
+	 * \param curve the number of the curve which data should be set
 	 */
 	void setSpectrumData(MesydaqSpectrumData *data, int curve = 0);
 
@@ -171,11 +173,14 @@ private slots:
 	void zoomAreaSelected(const QwtDoubleRect &);
 
 signals:
+	//! this signal will be emitted if the user has zoomed in or out
 	void zoom(const QwtDoubleRect &rect);
 
 protected:
+	//! overwrites the default implementation
 	void resizeEvent(QResizeEvent *e);
 
+	//! overwrites the default implementation
 	int heightForWidth(int w) const;
 private:
 	/*!

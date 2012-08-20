@@ -629,7 +629,12 @@ void MainWidget::replayListfileSlot()
         startStopButton->setDisabled(true);
         clearAllSlot();
         displayTabWidget->setEnabled(true);
+#warning TODO dynamic resizing of mapped histograms
+#if 0
         m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
+#else
+        m_meas->setROI(QRectF(0, 0, 0, 0)); 
+#endif
 	m_dispTimer = startTimer(1000);
         m_meas->readListfile(name);
         if (m_dispTimer)
@@ -820,12 +825,14 @@ void MainWidget::drawOpData()
     }
     else
     {
-        if(specialBox->isChecked())
-            m_meas->getMean(Measurement::TimeSpectrum, mean, sigma);
-        else if(dispAllPos->isChecked())
+        if(dispAllPos->isChecked())
             m_meas->getMean(Measurement::PositionHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
-        else
+        else if (dispAllAmpl->isChecked())
             m_meas->getMean(Measurement::AmplitudeHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
+	else if (dispAllCorrectedPos->isChecked())
+            m_meas->getMean(Measurement::CorrectedPositionHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
+        else if(specialBox->isChecked())
+            m_meas->getMean(Measurement::TimeSpectrum, mean, sigma);
     }
     meanText->setText(tr("%1").arg(mean, 3, 'f', 1));
     sigmaText->setText(tr("%1").arg(sigma, 3, 'f', 1));
@@ -1158,7 +1165,7 @@ void MainWidget::setHistogramType(int val)
 }
 
 /*!
-    \fn void MainWidget::setLinlog(int val)
+    \fn void MainWidget::setLinLog(int val)
 
     sets the lin/log scaling
 

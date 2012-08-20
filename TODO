@@ -1,3 +1,10 @@
+- JK 08/17/2012
+  Read a configuration file and use this information to replay a list file
+  => better configuration of the display (size)
+
+- JK 08/17/2012
+  Check for corrected histogram in replay mode
+
 - Counts in ROI for spectra view
 	solved: JK 05/25/2012
 
@@ -15,11 +22,11 @@ list mode data files:
 		whether the data are position or amplitude !!!!!
 	- 
 
-JK : 08/30/2011
+- JK : 08/30/2011
 	Resize histogram if the setup of the modules has changed
 		- scanPeriSlot ???
 
-JK : 08/30/2011
+- JK : 08/30/2011
 	Histogram mapping to the tubes 
 
 
