@@ -31,3 +31,9 @@ QWTLIBS		= $${QWT_ROOT}/lib
 
 what is the name of the Qwt library
 QWTLIB		= qwt-qt4
+
+
+Build a distribution
+
+QMAKEFEATURES=`pwd`  qmake -recursive
+make edist

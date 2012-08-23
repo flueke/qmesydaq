@@ -16,12 +16,11 @@ INSTALLS	= target
 
 target.path	= $${TARGETLIBPATH}
 
-CONFIG		+= debug
-
 QT 		+= core network
 
 # Input
 HEADERS 	+= stdafx.h \
+		   libqmesydaq_global.h \
 		   counter.h \
 		   datarepeater.h \
 		   histogram.h \
