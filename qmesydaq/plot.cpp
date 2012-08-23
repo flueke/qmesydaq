@@ -375,3 +375,13 @@ int Plot::heightForWidth(int w) const
 	return -1;
 }
 
+void Plot::print(QPaintDevice &printer, const QwtPlotPrintFilter &filter)
+{
+	QPen pen = m_curve[0]->pen();
+	pen.setWidth(1);
+	m_curve[0]->setPen(pen);
+	QwtPlot::print(printer, filter);
+	pen.setWidth(0);
+	m_curve[0]->setPen(pen);
+}
+

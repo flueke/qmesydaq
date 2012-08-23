@@ -51,6 +51,8 @@
 	#include "stdafx.h"
 #endif
 
+#include "revision.h"
+
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
 
@@ -131,7 +133,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     displayModeButtonGroup->setId(dispDiffractogram, Plot::Diffractogram);
     displayModeButtonGroup->setId(dispMstdSpectrum, Plot::SingleSpectrum);
 
-    versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
+    versionLabel->setText("QMesyDAQ " REVISION "\n" __DATE__);
 
     connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
     connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
@@ -641,6 +643,7 @@ void MainWidget::replayListfileSlot()
             killTimer(m_dispTimer);
 	m_dispTimer = 0;
         startStopButton->setEnabled(true);
+	emit redraw();
     }
 }
 
@@ -1342,7 +1345,7 @@ void MainWidget::exportPDF()
         m_printer->setOutputFileName(fileName);
         QwtPlotPrintFilter filter;
         filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
-        print(m_printer, filter);
+        m_dataFrame->print(*m_printer, filter);
     }
 }
 
@@ -1492,7 +1495,7 @@ void MainWidget::printPlot(void)
 #if QWT_VERSION < 0x060000
         QwtPlotPrintFilter filter;
         filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
-        print(m_printer, filter);
+        m_dataFrame->print(*m_printer, filter);
 #else
 
         QwtPlotRenderer renderer;
@@ -1503,26 +1506,6 @@ void MainWidget::printPlot(void)
         renderer.renderTo(this, printer);
 #endif
     }
-}
-
-/*!
-    \fn void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
-
-    callback to print the plot window
-
-    \param printer the printer object
-    \param filter filter object
-*/
-void MainWidget::print(QPrinter *printer, QwtPlotPrintFilter &filter)
-{
-#if 0
-    QPen pen = m_curve[0]->pen();
-    pen.setWidth(1);
-    m_curve[0]->setPen(pen);
-    m_dataFrame->print(*printer, filter);
-    pen.setWidth(0);
-    m_curve[0]->setPen(pen);
-#endif
 }
 
 /*!

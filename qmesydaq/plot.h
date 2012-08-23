@@ -149,6 +149,17 @@ public:
 	 */
 	void setHistogramData(MesydaqHistogramData *);
 
+	/*!
+    	 * callback to print the plot window
+	 *
+    	 * \param printer the printer object
+	 * \param filter filter object
+	*/
+#if QWT_VERSION < 0x060000
+	void print(QPaintDevice &printer, const QwtPlotPrintFilter &filter = QwtPlotPrintFilter());
+#endif
+
+
 public slots:
 	/*!
 	 * Sets the lin/log scaling

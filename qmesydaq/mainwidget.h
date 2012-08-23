@@ -130,10 +130,6 @@ protected:
 //	void 	paintEvent(QPaintEvent *);
 
 private:
-#if QWT_VERSION < 0x060000
-	void	print(QPrinter *, QwtPlotPrintFilter &);
-#endif
-
 	void 	updateDisplay(void);
 
 	void 	drawOpData();
