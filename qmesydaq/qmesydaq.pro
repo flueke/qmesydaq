@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.7.0
+VERSION		= 0.7.2
 
 include(../qmesydaqconfig.pri)
 
@@ -126,4 +126,18 @@ contains(INTERFACE, CARESS) {
 INCLUDEPATH	+= diskspace
 DEPENDPATH	+= diskspace
 
-LIBS += -lboost_filesystem-mt -lboost_system-mt
+LIBS 		+= -lboost_filesystem-mt -lboost_system-mt
+
+PRE_TARGETDEPS 	+= revision.h
+
+QMAKE_EXTRA_TARGETS	+= revtarget
+revtarget.target 	= revision.h
+revtarget.commands 	= @echo \"updating file $$revtarget.target\"; \
+  			echo \"/* generated file \(do not edit\) */\\n\" \
+    			\"$${LITERAL_HASH}ifndef REVISION_H\\n\" \
+    			\"$${LITERAL_HASH}define REVISION_H\\n\" \
+    			\"$${LITERAL_HASH}define REVISION \\\"$${VERSION}\(`svnversion -n $$PWD`)\\\"\\n\" \
+    			\"$${LITERAL_HASH}endif\" > $$revtarget.target
+revtarget.depends 	= $$SOURCES $$HEADERS $$FORMS qmesydaq.pro
+QMAKE_DISTCLEAN 	+= $$revtarget.target
+
