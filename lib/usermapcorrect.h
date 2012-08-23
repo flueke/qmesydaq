@@ -48,6 +48,21 @@ public:
 	 */
 	UserMapCorrection(const QString &fName);
 
+	/**
+	 * loads a correction file
+         * Depending on the extensions it tries to use different types of reading
+	 * If the extension is mcal it uses the loadCalFile otherwise the loadLUTFile
+	 *
+	 * \param fName file name
+	 * \return true if the reading was successful otherwise false
+	 */
+	bool loadCorrectionFile(const QString &fName);
+
+private:
+	bool loadCalFile(const QString &fName);
+
+	bool loadLUTFile(const QString &fName);
+
 private:
 	TubeRange		m_detector;
 

@@ -29,9 +29,23 @@
 
 UserMapCorrection::UserMapCorrection(const QString &fName)
 {
-	if (fName.isEmpty())
-		return;
+	loadCorrectionFile(fName);
+}
 
+bool UserMapCorrection::loadCorrectionFile(const QString &fName)
+{
+	if (fName.isEmpty())
+		return false;
+	if (fName.indexOf(".mcal") > 0)
+		return loadCalFile(fName);
+	else if (fName.indexOf(".txt") > 0)
+		return loadLUTFile(fName);
+	else
+		return false;
+}
+
+bool UserMapCorrection::loadCalFile(const QString &fName)
+{
 	QFile f;
 	f.setFileName(fName);
 	if (f.open(QIODevice::ReadOnly))
@@ -64,15 +78,15 @@ UserMapCorrection::UserMapCorrection(const QString &fName)
 			iSrcHeight = list[1].toUInt();
 		}
 
-		initialize(iSrcWidth, iSrcHeight, OrientationDown, CorrectSourcePixel);
+		initialize(iSrcWidth, iSrcHeight, OrientationDownRev, CorrectSourcePixel);
 
 		tmp = t.readLine();
 // 3rd line contains detector limits (min max)
 		list = tmp.split(QRegExp("\\s+"));
 		if (list.size() > 1)
 		{
-			qreal min = list[0].toUInt(),
-			max = list[1].toUInt();
+			qreal 	min = list[0].toUInt(),
+				max = list[1].toUInt();
 			if (min < max)
 				m_detector = TubeRange(min, max);
 		}
@@ -138,5 +152,84 @@ UserMapCorrection::UserMapCorrection(const QString &fName)
 				}
 			}
 		}
+		return true;
 	}
+	return false;
 }
+
+bool UserMapCorrection::loadLUTFile(const QString &fName)
+{
+	MSG_NOTICE << "load correction file " << fName;
+	QFile f;
+	f.setFileName(fName);
+	if (f.open(QIODevice::ReadOnly))
+	{
+		QTextStream t(&f);
+		QString tmp;
+#if 0
+		do
+		{
+			tmp = t.readLine();
+			MSG_ERROR << tmp;
+		}while (tmp.startsWith("#"));
+#endif
+		int iDstHeight(128);
+		int iDstWidth(128);
+		int iSrcHeight(960);
+		int iSrcWidth(128);
+
+		initialize(iSrcWidth, iSrcHeight, OrientationDownRev, CorrectSourcePixel);
+
+		setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
+
+		int row;
+		QPoint nullPt(0, 0);
+
+		for (int i = 0; !t.atEnd(); ++i)
+		{
+			tmp = t.readLine();
+			QStringList list = tmp.split(QRegExp("\\s+"));
+			switch (i)
+			{
+				case 0 :
+					if (list.at(0) != "mesydaq")
+						return false;
+					break;
+				case 1 :
+					if (list.at(0) != "position")
+						return false;
+					break;
+				case 2 :
+					if (list.at(0) != "bin")
+						return false;
+					break;
+				default:
+					row = list.at(0).toInt();
+					int col = 0;
+					for (int j = 1; j < list.size() - 1; j += 2, ++col)
+					{
+						int y = list.at(j).toInt() - 1;
+						if (y < 0)
+						{
+							if (!map(QPoint(col, row), nullPt, 0.0))
+							{
+								MSG_FATAL << QPoint(col, row) << " " << y << " NULL failed";
+							}
+						}
+						else
+						{
+							float correction(list.at(j + 1).toFloat());
+			  				if (!map(QPoint(col, row), QPoint(col, y), correction))
+							{
+								MSG_FATAL << "failed";
+							}
+						}
+					}
+					break;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+

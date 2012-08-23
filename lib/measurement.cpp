@@ -696,6 +696,11 @@ void Measurement::writeHistograms(const QString &name)
 			t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns" << '\r' << '\n';
     			t << m_Hist[AmplitudeHistogram]->format() << '\r' << '\n';
 		}
+		if (m_Hist[CorrectedPositionHistogram])
+		{
+			t << "corrected position data: 1 row title (8 x 8 detectors), position data in columns" << '\r' << '\n';
+    			t << m_Hist[CorrectedPositionHistogram]->format() << '\r' << '\n';
+		}
 		f.close();
 	}
 }
@@ -740,12 +745,8 @@ void Measurement::readHistograms(const QString &name)
 			}	
 			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), 
 					m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
-			{
-				for (int x = 0; x < m_Hist[PositionHistogram]->width(); ++x)
-					for (int y = 0; y < m_Hist[PositionHistogram]->height(); ++y)
-						m_Hist[CorrectedPositionHistogram]->setValue(x, y, m_Hist[PositionHistogram]->value(x, y));
-				// create the mapped histogram
-			}
+			// create the mapped histogram
+			reinterpret_cast<MappedHistogram *>(m_Hist[CorrectedPositionHistogram])->setHistogram(m_Hist[PositionHistogram]);
 			setROI(QRectF(0,0, width(), height()));
 		}
 		f.close();
@@ -1298,7 +1299,7 @@ void Measurement::setHistfilename(const QString &name)
 void Measurement::setCalibrationfilename(const QString &name) 
 {
 	m_calibrationfilename = name;
-	if(!m_calibrationfilename.isEmpty() && m_calibrationfilename.indexOf(".mcal") == -1)
+	if(!m_calibrationfilename.isEmpty() && m_calibrationfilename.indexOf(".mcal") == -1 && m_calibrationfilename.indexOf(".txt") == -1)
 		m_calibrationfilename.append(".mcal");
 }
      
@@ -1376,13 +1377,13 @@ bool Measurement::loadSetup(const QString &name)
 			DEBUGLEVEL = DEBUG;
 	}
 //	m_acquireListfile = settings.value("listmode", "true").toBool();
-	settings.endGroup();
-
-	m_mesydaq->loadSetup(settings);
-
 	sz = settings.value("calibrationfile", "").toString();
 
 	readCalibration(sz);
+
+	settings.endGroup();
+
+	m_mesydaq->loadSetup(settings);
 
 	storeLastFile();
 

@@ -903,7 +903,7 @@ void MainWidget::loadHistSlot()
 */
 void MainWidget::loadCalibrationSlot()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Load Calibration File ..."), m_meas->getConfigfilepath(), "mesydaq calibration files (*.mcal);;all files (*.*)");
+    QString name = QFileDialog::getOpenFileName(this, tr("Load Calibration File ..."), m_meas->getConfigfilepath(), "mesydaq calibration files(*.mcal *.txt);;all files (*.*)");
     if(!name.isEmpty())
     {
         m_meas->readCalibration(name);

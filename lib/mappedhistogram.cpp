@@ -108,43 +108,21 @@ void MappedHistogram::setMapCorrection(MapCorrection *pMapCorrection, Histogram 
 	{
         	const QRect &mapRect = pMapCorrection->getMapRect();
         	m_pMapCorrection = pMapCorrection;
-        	m_iWidth = mapRect.width();
-        	m_iHeight = mapRect.height();
+        	m_width = m_iWidth = mapRect.width();
+        	m_height = m_iHeight = mapRect.height();
 	}
-	else if (pSrc != NULL) 
+	else if (m_pMapCorrection == NULL && pSrc != NULL) 
 	{
-        	m_iWidth = pSrc->width();
-        	m_iHeight = pSrc->height();
+        	m_width = m_iWidth = pSrc->width();
+        	m_height = m_iHeight = pSrc->height();
 	}
 	m_adblData.resize(m_iWidth * m_iHeight);
 	if (pSrc == NULL)
         	return;
+	clear();
 	for (int ys = 0; ys < pSrc->height(); ++ys)
-	{
         	for (int xs = 0; xs < pSrc->width(); ++xs)
-        	{
-			QPoint src(xs, ys);
-			QPoint dst(-1, -1);
-			float fCorrection = 0.0;
-			if (!m_pMapCorrection->getMap(src, dst, fCorrection)) 
-				continue;
-			int xd = dst.x();
-			int yd = dst.y();
-			if (xd < 0 || yd < 0) 
-				continue;
-
-			quint64 ull = pSrc->value(xs, ys);
-			double dbl = ((double)ull) * fCorrection;
-			int iPos = yd * m_iWidth + xd;
-			m_adblData[iPos] += dbl;
-			m_ullTotalCounts += ull;
-			m_dblTotalCounts += dbl;
-			if (m_iMaxPos < 0) 
-				m_iMaxPos = iPos; 
-			else if (m_adblData[iPos] > m_adblData[m_iMaxPos]) 
-				m_iMaxPos = iPos;
-        	}
-	}
+			addValue(xs, ys, pSrc->value(xs, ys));
 }
 
 quint64 MappedHistogram::getCorrectedTotalCounts(void)
@@ -181,7 +159,7 @@ quint64 MappedHistogram::value(quint16 x, quint16 y) const
  */
 double MappedHistogram::floatValue(quint16 x, quint16 y) const
 {
-	register int iPos = m_iWidth * y + x;
+	register int iPos = y * m_iWidth + x;
 	if (x < m_iWidth && y < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
 		return m_adblData[iPos];
 	return 0.0;
@@ -205,44 +183,45 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 		float fCorrection(0.0);
 		if (m_pMapCorrection->getMap(channel, bin, iDstX, iDstY, fCorrection))
 		{
-			int iPos(m_iWidth * iDstY + iDstX);
-			if (iDstX >= 0 && iDstX < m_iWidth && iDstY >= 0 && iDstY < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
+			if (fCorrection > 0.0)
 			{
-				++m_ullTotalCounts;
-				m_adblData[iPos] += fCorrection;
-				m_dblTotalCounts += fCorrection;
-				if (m_iMaxPos < 0) 
-					m_iMaxPos = iPos; 
-				else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
-					m_iMaxPos = iPos;
-				bOK = true;
-			}
-		}
-	}
-	return bOK;
-}
+				int iPos(m_iWidth * iDstY + iDstX);
+				if (iDstX >= 0 && iDstX < m_iWidth &&  iDstY >= 0 && iDstY < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
+				{
+					++m_ullTotalCounts;
+					m_dblTotalCounts += 1.0;
 
-bool MappedHistogram::setValue(const quint16 chan, const quint16 bin, const quint64 val)
-{
-	bool bOK(false);
-	if (m_pMapCorrection != NULL)
-	{
-		int iDstX(-1);
-		int iDstY(-1);
-		float fCorrection(0.0);
-		if (m_pMapCorrection->getMap(chan, bin, iDstX, iDstY, fCorrection))
-		{
-//			MSG_ERROR << __FUNCTION__ << " " << chan << ", " << bin << " -> " << iDstX << ", " << iDstY << " " << fCorrection;
-			int iPos(m_iWidth * iDstY + iDstX);
-			if (iDstX >= 0 && iDstX < m_iWidth && iDstY >= 0 && iDstY < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
-			{
-				m_ullTotalCounts += val;
-				m_adblData[iPos] = val * fCorrection;
-				m_dblTotalCounts += val * fCorrection;
-				if (m_iMaxPos < 0) 
-					m_iMaxPos = iPos; 
-				else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
-					m_iMaxPos = iPos;
+					m_adblData[iPos] += fCorrection;
+					if (m_iMaxPos < 0) 
+						m_iMaxPos = iPos; 
+					else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
+						m_iMaxPos = iPos;
+					switch (m_pMapCorrection->orientation()) 
+					{
+#warning TODO the change of the iPos value for the unhandled cases
+						case MapCorrection::OrientationLeft:
+						case MapCorrection::OrientationLeftRev:
+						case MapCorrection::OrientationRight:
+						case MapCorrection::OrientationRightRev:
+						case MapCorrection::OrientationUpRev:
+						case MapCorrection::OrientationDown:
+							break;
+						default: 
+							++iDstY;
+							break;
+						case MapCorrection::OrientationDownRev:
+							--iDstY;
+							break;
+					}
+
+					iPos = m_iWidth * iDstY + iDstX;
+					if (iPos >= 0 && iDstY < m_iHeight && iPos < m_adblData.count())
+					{
+						m_adblData[iPos] += 1 - fCorrection;
+						if (m_adblData[iPos] > m_adblData[m_iMaxPos])
+							m_iMaxPos = iPos;
+					}
+				}
 				bOK = true;
 			}
 		}
@@ -252,7 +231,57 @@ bool MappedHistogram::setValue(const quint16 chan, const quint16 bin, const quin
 
 bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quint64 val)
 {
-	return false;
+	bool bOK(false);
+	if (m_pMapCorrection != NULL)
+	{
+		int iDstX(-1);
+		int iDstY(-1);
+		float fCorrection(0.0);
+		if (m_pMapCorrection->getMap(chan, bin, iDstX, iDstY, fCorrection))
+		{
+			if (fCorrection > 0.0)
+			{
+				int iPos(m_iWidth * iDstY + iDstX);
+				if (iDstX >= 0 && iDstX < m_iWidth && iDstY >= 0 && iDstY < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
+				{
+					m_ullTotalCounts += val;
+					m_dblTotalCounts += val;
+					m_adblData[iPos] += val * fCorrection;
+					if (m_iMaxPos < 0) 
+						m_iMaxPos = iPos; 
+					else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
+						m_iMaxPos = iPos;
+
+					switch (m_pMapCorrection->orientation()) 
+					{
+#warning TODO the change of the iPos value for the unhandled cases
+						case MapCorrection::OrientationLeft:
+						case MapCorrection::OrientationLeftRev:
+						case MapCorrection::OrientationRight:
+						case MapCorrection::OrientationRightRev:
+						case MapCorrection::OrientationUpRev:
+						case MapCorrection::OrientationDown:
+							break;
+						default: 
+							++iDstY;
+							break;
+						case MapCorrection::OrientationDownRev:
+							--iDstY;
+							break;
+					}
+
+					iPos = m_iWidth * iDstY + iDstX;
+					if (iPos >= 0 && iDstY < m_iHeight && iPos < m_adblData.count())
+					{
+						m_adblData[iPos] += val * (1 - fCorrection);
+						if (m_adblData[iPos] > m_adblData[m_iMaxPos])
+							m_iMaxPos = iPos;
+					}				
+				}
+			}
+		}
+	}
+	return bOK;
 }
 
 void MappedHistogram::clear(void)

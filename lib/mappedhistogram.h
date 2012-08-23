@@ -46,7 +46,7 @@ class LIBQMESYDAQ_EXPORT MappedHistogram : public Histogram
 {
 	Q_OBJECT
 public:
-	MappedHistogram(MapCorrection* pMapCorrection, Histogram* pHistogram = NULL);
+	MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram = NULL);
 	MappedHistogram(const MappedHistogram& src);
 	MappedHistogram& operator=(const MappedHistogram& src);
 
@@ -59,7 +59,7 @@ public:
 	    \param pMapCorrection pointer to to new mapping data (this class stores the reference only)
 	    \param pSrc           pointer to existing source histogram or NULL
         */
-	void setMapCorrection(MapCorrection* pMapCorrection, Histogram* pSrc = NULL);
+	void setMapCorrection(MapCorrection *pMapCorrection, Histogram *pSrc = NULL);
 
 	/*!
 	    sets the histogram (generate a mapped copy of the source)
@@ -101,8 +101,6 @@ public:
 	//! \param bin  position at specified channel
 	//! \brief store an event at position
 	virtual bool incVal(quint16 chan, quint16 bin);
-
-	virtual bool setValue(const quint16 chan, const quint16 bin, const quint64 val);
 
 	virtual bool addValue(const quint16 chan, const quint16 bin, const quint64 val);
 

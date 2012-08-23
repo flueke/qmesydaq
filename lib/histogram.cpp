@@ -474,7 +474,10 @@ quint64 Histogram::getCounts(const QRect &region) const
  */
 Spectrum *Histogram::spectrum(const quint16 channel)
 {
-   	return channel < m_height ?  m_data[channel] : NULL;
+   	if (channel < m_height && m_data && m_data[channel])
+   		return m_data[channel];
+	else 
+		return NULL;
 }
 
 /*!
@@ -485,7 +488,10 @@ Spectrum *Histogram::spectrum(const quint16 channel)
  */
 quint64 Histogram::max(const quint16 channel) const
 {
-   	return channel < m_height ? m_data[channel]->max() : 0;
+   	if (channel < m_height && m_data && m_data[channel])
+   		return m_data[channel]->max();
+	else
+		return 0;
 }
 
 /*!
@@ -496,7 +502,10 @@ quint64 Histogram::max(const quint16 channel) const
  */
 quint16 Histogram::maxpos(const quint16 channel) const
 {
-   	return channel < m_height ? m_data[channel]->maxpos() : 0;
+   	if (channel < m_height && m_data && m_data[channel])
+		return m_data[channel]->maxpos();
+	else 
+		return 0;
 }
 
 /*!
@@ -510,7 +519,7 @@ quint16 Histogram::maxpos(const quint16 channel) const
  */
 void Histogram::getMean(const quint16 chan, float &m, float &s)
 {
-   	if (chan < m_height)
+   	if (chan < m_height && m_data && m_data[chan])
 	{
 		m = m_data[chan]->mean(s);
 	}
@@ -624,13 +633,13 @@ QString Histogram::format(void)
 {
 	QString t("");
 
-        for (int i = 0; i < m_width; ++i)
+        for (int i = 0; i < width(); ++i)
                 t += QString("\t%1").arg(i);
         t += "\r\n";
         for (int i = 0; i < height(); i++)
         {
                 t += QString("%1").arg(i);
-                for (int j = 0; j < m_width; j++)
+                for (int j = 0; j < width(); j++)
 		{
                         t += QString("\t%1").arg(value(j, i));
 		}

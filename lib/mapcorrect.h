@@ -172,6 +172,12 @@ public:
         return r;
     }
 
+    //! \return the orientation of the mapping
+    enum Orientation orientation(void)
+    {
+        return m_iOrientation;
+    }
+
 private:
     //! do not apply mapping
     bool m_bNoMapping;

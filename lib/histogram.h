@@ -276,11 +276,14 @@ private:
 	//! the list of all keys for the spectra
 	QList<quint16>			m_dataKeys;
 
+protected:
+	//! length of the tube
 	quint16				m_height;
 
 	//! number of tubes
 	quint16				m_width;
 
+private:
 	//! X sum spectrum
 	Spectrum			m_xSumSpectrum;
 
