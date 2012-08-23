@@ -3,7 +3,7 @@ Accepted:
 O  Forward streaming of the incoming data packages
   The incoming data should be streamed via an UDP port additionally and optional
 
-1  File header in measurement header
+1  File header in measurement file header
   The list mode files should contain an extended header (in INI format)
   see: http://en.wikipedia.org/wiki/INI_file
   Problem: Playback of such files requires a parsing of the header
@@ -64,8 +64,10 @@ O  Forward streaming of the incoming data packages
   Done: counts in ROI, JK 2012/06/25
 
 11 Calibration and re-binning
+  Done: re-binning, JK 2012/08/23
 
 12 MDLL integration
+  Done: JK,GM 2012/08/23
 
 13 TOF mode
   - Chopper signal comes from external source and all events coming are considered as event
