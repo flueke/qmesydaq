@@ -23,5 +23,5 @@ LIBS        	+= -L../../lib -lmesydaq
 
 INSTALLS        = target
 
-target.path     = /usr/local/bin
+target.path     = $${TARGETPATH}/bin
 

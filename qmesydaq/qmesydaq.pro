@@ -31,7 +31,7 @@ SUBDIRS		+= diskspace
 
 INSTALLS	= target
 
-target.path	= /usr/local/bin
+target.path	= $${TARGETPATH}/bin
 
 QT 		+= network svg
 
