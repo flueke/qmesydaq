@@ -35,6 +35,11 @@
 class DiskSpace
 {
 public:
+	/**
+ 	 * constructor
+	 *
+	 * \param p path to the directory
+	 */
 	DiskSpace(const QString &p)
 		: m_path(p.toStdString())
 	{
@@ -47,6 +52,7 @@ public:
 	}
 #endif
 
+	//! \returns the current path
 	std::string path(void)
 	{
 		return m_path.string();
@@ -59,48 +65,61 @@ public:
 	}
 #endif
 
+	/**
+	 * sets the path
+	 *
+	 * \param p new path
+	 */
 	void setPath(const QString &p)
 	{
 		m_path = p.toStdString();
 	}
 
+	//! returns the number of free bytes
 	unsigned long long freeBytes(void)
 	{
 		boost::filesystem::space_info spi = boost::filesystem::space(m_path);
 		return spi.free;
 	}
 
+	//! returns the number of free space in kB 
 	unsigned long long freeKB(void)
 	{
 		return freeBytes() / 1024;
 	}
 
+        //! returns the number of free space in MB
 	unsigned long long freeMB(void)
 	{
 		return freeKB() / 1024;
 	}
 
+	//! returns the number of free space in GB
 	unsigned long long freeGB(void)
 	{
 		return freeMB() / 1024;
 	}
 
+	//! returns the number of available bytes
 	unsigned long long availableBytes(void)
 	{
 		boost::filesystem::space_info spi = boost::filesystem::space(m_path);
 		return spi.available;
 	}
 
+	//! returns the number of available space in kB
 	unsigned long long availableKB(void)
 	{
 		return availableBytes() / 1024;
 	}
 
+	//! returns the number of available space in MB
 	unsigned long long availableMB(void)
 	{
 		return availableKB() / 1024;
 	}
 
+	//! returns the number of available space in MB
 	unsigned long long availableGB(void)
 	{
 		return availableMB() /  1024;
