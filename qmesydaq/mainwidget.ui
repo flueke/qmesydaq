@@ -137,10 +137,10 @@
             <string/>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QRadioButton" name="dispAllPos">
               <property name="text">
-               <string>Pos</string>
+               <string>Position (raw)</string>
               </property>
               <property name="shortcut">
                <string/>
@@ -153,10 +153,10 @@
               </attribute>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="3" column="0">
              <widget class="QRadioButton" name="dispAllAmpl">
               <property name="text">
-               <string>Ampl</string>
+               <string>Amplitude (raw)</string>
               </property>
               <property name="shortcut">
                <string/>
@@ -166,17 +166,7 @@
               </attribute>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QRadioButton" name="dispAllCorrectedPos">
-              <property name="text">
-               <string>Calib. Pos</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">posampButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="3" column="0">
+            <item row="5" column="0">
              <widget class="QRadioButton" name="specialBox">
               <property name="enabled">
                <bool>false</bool>
@@ -184,6 +174,16 @@
               <property name="text">
                <string>delta-t</string>
               </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="dispAllCorrectedPos">
+              <property name="text">
+               <string>Position</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">posampButtonGroup</string>
+              </attribute>
              </widget>
             </item>
            </layout>
