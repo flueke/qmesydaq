@@ -18,3 +18,5 @@ SOURCES 	+= main.cpp \
 HEADERS		+= hist.h
 
 LIBS        	+= -L../../lib -lmesydaq
+
+INSTALLS	=

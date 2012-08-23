@@ -37,4 +37,4 @@ CONFIG		+= debug
 
 FORMS		+= 
 
-target.path	= /usr/local/bin
+INSTALLS	=

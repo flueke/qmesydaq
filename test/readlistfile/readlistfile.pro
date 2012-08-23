@@ -7,18 +7,20 @@ VERSION		= 1.0.0
 include(../../qmesydaqconfig.pri)
 
 TEMPLATE 	= app
-TARGET 		= loadsetup
+TARGET 		= readlistfile
 
 QT		+= core network
 
 CONFIG		+= debug
 
+CXXFLAGS	+= -p
+
 DEPENDPATH 	+= ../../lib .
 INCLUDEPATH 	+= ../../lib .
 
 # Input
-SOURCES 	+= main.cpp
+SOURCES 	+= main.cpp 
 
 LIBS        	+= -L../../lib -lmesydaq
 
-INSTALLS	=
+INSTALLS	= 

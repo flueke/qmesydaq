@@ -11,5 +11,6 @@ SUBDIRS	 	+= listfile \
 		loadsetup \
 		lstohisto \
 		readhisto \
-		calibration
+		calibration \
+		readlistfile
 

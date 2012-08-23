@@ -46,4 +46,4 @@ CONFIG		+= debug
 
 FORMS		+= plotwidget.ui
 
-target.path	= /usr/local/bin
+INSTALLS	=

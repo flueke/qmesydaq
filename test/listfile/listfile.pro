@@ -15,3 +15,5 @@ CONFIG		+= debug
 SOURCES 	+= main.cpp
 
 LIBS        	+= -L../../lib -lmesydaq
+
+INSTALLS	=
