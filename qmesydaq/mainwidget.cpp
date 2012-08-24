@@ -1164,7 +1164,7 @@ void MainWidget::setHistogramType(int val)
         default :
             break;
     }
-    emit redraw();
+//  emit redraw();
 }
 
 /*!
@@ -1177,7 +1177,7 @@ void MainWidget::setHistogramType(int val)
 void MainWidget::setLinLog(int val)
 {
     m_dataFrame->setLinLog(Plot::Scale(val));
-    emit redraw();
+//  emit redraw();
 }
 
 /*!

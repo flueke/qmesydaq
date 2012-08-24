@@ -59,13 +59,15 @@ Plot::Plot(QWidget *parent)
 	: QwtPlot(parent)
 	, m_zoomer(NULL)
 	, m_histogram(NULL)
-	, m_linColorMap(NULL)
-	, m_logColorMap(NULL)
+	, m_colorMap(NULL)
 	, m_mode(None)
 	, m_linlog(Linear)
 {
-	m_linColorMap = new StdLinColorMap();
-	m_logColorMap = new StdLogColorMap();
+#if 1
+	m_colorMap = new JetColorMap();
+#else
+	m_colorMap = new StdColorMap();
+#endif
 
 	m_rightAxis = axisWidget(QwtPlot::yRight);
 	m_rightAxis->setTitle("counts");
@@ -174,11 +176,15 @@ void Plot::setLinLog(const enum Scale log)
 			switch (m_linlog)
 			{
 				case Logarithmic :
-					m_histogram->setColorMap(*m_logColorMap);
+            				setAxisScaleEngine(QwtPlot::yRight, new QwtLog10ScaleEngine);
+					m_colorMap->setLogarithmicScaling();
+					m_histogram->setColorMap(*m_colorMap);
 					break;
 				case Linear :
 				default:
-					m_histogram->setColorMap(*m_linColorMap);
+            				setAxisScaleEngine(QwtPlot::yRight, new QwtLinearScaleEngine);
+					m_colorMap->setLinearScaling();
+					m_histogram->setColorMap(*m_colorMap);
 					break;
 			}
 			break;
@@ -267,11 +273,15 @@ void Plot::setDisplayMode(const Mode &m)
 			switch (m_linlog)
 			{
 				case Logarithmic :
-					m_histogram->setColorMap(*m_logColorMap);
+            				setAxisScaleEngine(QwtPlot::yRight, new QwtLog10ScaleEngine);
+					m_colorMap->setLogarithmicScaling();
+					m_histogram->setColorMap(*m_colorMap);
 					break;
 				case Linear :
 				default:
-					m_histogram->setColorMap(*m_linColorMap);
+            				setAxisScaleEngine(QwtPlot::yRight, new QwtLinearScaleEngine);
+					m_colorMap->setLinearScaling();
+					m_histogram->setColorMap(*m_colorMap);
 					break;
 			}
 			setAxisTitle(QwtPlot::xBottom, "tube");
@@ -295,6 +305,8 @@ void Plot::replot(void)
 		case Histogram:
 			{
 				QwtDoubleInterval r = m_histogram->data().range();
+				if (m_linlog && r.minValue() < 1)
+					r.setMinValue(1.0);
 				m_rightAxis->setColorMap(r, m_histogram->colorMap());
 				setAxisScale(QwtPlot::yRight, r.minValue(), r.maxValue());
 			}

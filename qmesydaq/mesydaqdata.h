@@ -138,7 +138,7 @@ public:
 	}
 
 protected:
-	virtual QImage renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area) const;
+	QImage renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area) const;
 };
 
 #endif

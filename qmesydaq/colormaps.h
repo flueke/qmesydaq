@@ -24,27 +24,77 @@
 #include <qwt_color_map.h>
 
 /**
- * \short The standard color map for linear scaling 
+ * \short base class for all color maps used in qmesydaq
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class StdLinColorMap : public QwtLinearColorMap
+class MesydaqColorMap : public QwtLinearColorMap
 {
 public:
 	//! constructor
-	StdLinColorMap();
+	MesydaqColorMap();
+
+	/**
+	 * Map a value into a color
+	 *
+	 * \param interval Valid interval for values
+	 * \param value	Value
+	 *
+	 * \return Color corresponding to value
+	 * 
+	 * \warning This method is slow for Indexed color maps. If it is necessary 
+	 * 	    to map many values, its better to get the color table once and 
+	 *	    find the color using colorIndex(). 
+	 */
+	virtual QColor color(const QwtDoubleInterval &, double value) const; 
+
+	/**
+	 * Map a value of a given interval into a rgb value
+	 *
+	 * \param interval Range for all values
+	 * \param value Value to map into a rgb value 
+	 *
+	 * \return Color corresponding to value
+	 */
+	virtual QRgb rgb(const QwtDoubleInterval &, double value) const;
+
+	//! Clone the color map. 
+	virtual QwtColorMap *copy () const;
+
+	//! sets the colormap to linear scaling mode
+	void setLinearScaling(void);
+
+	//! sets the colormap to logarithmic scaling mode
+	void setLogarithmicScaling(void);
+
+private:
+	bool m_log;
 };
 
 /**
- * \short The standard color map for logarithmic scaling 
+ * \short The standard color map for scaling 
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class StdLogColorMap : public QwtLinearColorMap
+class StdColorMap : public MesydaqColorMap
 {
 public:
 	//! constructor
-	StdLogColorMap();
+	StdColorMap();
+};
+
+/**
+ * \short The 'Jet' color map for scaling. 
+ *
+ * The colors are taken from the matplotlib 'jet' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class JetColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	JetColorMap();
 };
 
 #endif

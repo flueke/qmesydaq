@@ -20,9 +20,74 @@
 
 #include "colormaps.h"
 
-StdLinColorMap :: StdLinColorMap()
-	: QwtLinearColorMap(Qt::darkBlue, Qt::darkRed)
+#include "logging.h"
+
+#include <cmath>
+
+MesydaqColorMap::MesydaqColorMap()
+	: QwtLinearColorMap()
+	, m_log(false)
 {
+}
+
+void MesydaqColorMap::setLinearScaling(void)
+{
+	m_log = false;
+}
+
+void MesydaqColorMap::setLogarithmicScaling(void)
+{
+	m_log = true;
+}
+
+QColor MesydaqColorMap::color(const QwtDoubleInterval &interval, double value) const 
+{
+	if (m_log)
+	{
+		QwtDoubleInterval iv(interval);
+		if (iv.minValue() < 1.0)
+			iv.setMinValue(1.0);
+
+		double 	minLog = ::log10(iv.minValue()),
+			maxLog = ::log10(iv.maxValue()),
+			valLog = ::log10(value);
+
+		return QwtLinearColorMap::color(QwtDoubleInterval(minLog, maxLog), valLog);
+	}
+	else
+		return QwtLinearColorMap::color(interval, value);
+}
+
+QRgb MesydaqColorMap::rgb(const QwtDoubleInterval &interval, double value) const
+{
+	if (m_log)
+	{
+		QwtDoubleInterval iv(interval);
+		if (iv.minValue() < 1.0)
+			iv.setMinValue(1.0);
+
+		double 	minLog = ::log10(iv.minValue()),
+			maxLog = ::log10(iv.maxValue()),
+			valLog = ::log10(value);
+
+		return QwtLinearColorMap::rgb(QwtDoubleInterval(minLog, maxLog), valLog);
+	}
+	else
+		return QwtLinearColorMap::rgb(interval, value);
+}
+
+QwtColorMap *MesydaqColorMap::copy() const
+{
+	MesydaqColorMap *map = new MesydaqColorMap();
+	*map = *this;
+	map->m_log = this->m_log;
+	return map;
+}
+
+StdColorMap::StdColorMap()
+	: MesydaqColorMap() 
+{
+	setColorInterval(Qt::darkBlue, Qt::darkRed);
 	addColorStop(0.143, Qt::blue);
 	addColorStop(0.286, Qt::darkCyan);
 	addColorStop(0.429, Qt::cyan);
@@ -31,14 +96,19 @@ StdLinColorMap :: StdLinColorMap()
 	addColorStop(0.858, Qt::red);
 }
 
-StdLogColorMap::StdLogColorMap()
-	: QwtLinearColorMap(Qt::darkBlue, Qt::darkRed)
+JetColorMap::JetColorMap()
+	: MesydaqColorMap()
 {
-	addColorStop(0.139, Qt::blue);
-	addColorStop(0.193, Qt::darkCyan);
-	addColorStop(0.269, Qt::cyan);
-	addColorStop(0.373, Qt::green);
-	addColorStop(0.519, Qt::yellow);
-	addColorStop(0.721, Qt::red);
+	setColorInterval(QColor(0, 0, 127), QColor(127, 0, 0));
+	addColorStop(0.110, QColor(0, 0, 255));	
+	addColorStop(0.125, QColor(0, 0, 255));	
+	addColorStop(0.340, QColor(0, 221, 255));	
+	addColorStop(0.350, QColor(0, 229, 246));	
+	addColorStop(0.375, QColor(4, 255, 226));	
+	addColorStop(0.640, QColor(237, 255, 8));	
+	addColorStop(0.650, QColor(246, 245, 0));	
+	addColorStop(0.660, QColor(255, 236, 0));	
+	addColorStop(0.890, QColor(255, 18, 0));	
+	addColorStop(0.910, QColor(226, 0, 0));	
 }
 

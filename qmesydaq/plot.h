@@ -26,7 +26,6 @@
 
 class QwtPlotCurve;
 class QwtPlotSpectrogram;
-class QwtLinearColorMap;
 class QwtScaleWidget;
 class QResizeEvent;
 
@@ -36,6 +35,7 @@ class SpectrumData;
 class HistogramData;
 class MesydaqHistogramData;
 class MesydaqSpectrumData;
+class MesydaqColorMap;
 
 /**
  * \short The curve to display a spectrum 
@@ -217,11 +217,8 @@ private:
 	//! the histogram
 	QwtPlotSpectrogram	*m_histogram;
 
-	//! color map for the linear scaling
-	QwtLinearColorMap	*m_linColorMap;
-
-	//! color map for the logarithmic scaling
-	QwtLinearColorMap	*m_logColorMap;
+	//! color map for the  scaling
+	MesydaqColorMap		*m_colorMap;
 
 	//! the right axis 
 	QwtScaleWidget		*m_rightAxis;
