@@ -97,4 +97,32 @@ public:
 	JetColorMap();
 };
 
+/**
+ * \short The 'Hot' color map for scaling. 
+ *
+ * The colors are taken from the matplotlib 'hot' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class HotColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	HotColorMap();
+};
+
+/**
+ * \short The 'Hsv' color map for scaling. 
+ *
+ * The colors are taken from the matplotlib 'hsv' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class HsvColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	HsvColorMap();
+};
+
 #endif

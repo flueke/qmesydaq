@@ -112,3 +112,25 @@ JetColorMap::JetColorMap()
 	addColorStop(0.910, QColor(226, 0, 0));	
 }
 
+HotColorMap::HotColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(10, 0, 0), QColor(255, 255, 255));
+	addColorStop(0.365079, QColor(255, 0, 0));
+	addColorStop(0.746032, QColor(255, 255, 0));
+}
+
+HsvColorMap::HsvColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(255, 0, 0), QColor(255, 0, 23));
+	addColorStop(0.158730, QColor(255, 239, 0));
+	addColorStop(0.174603, QColor(247, 255, 0));
+	addColorStop(0.333333, QColor(7, 255, 0));
+	addColorStop(0.349206, QColor(0, 255, 15));
+	addColorStop(0.507937, QColor(0, 255, 255));
+	addColorStop(0.666667, QColor(0, 15, 255));
+	addColorStop(0.682540, QColor(7, 0, 255));
+	addColorStop(0.841270, QColor(247, 0, 255));
+	addColorStop(0.857143, QColor(255, 0, 239));
+}
