@@ -18,6 +18,8 @@
  #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ############################################################################
 
+VERSION		= 1.0.1
+
 LIBS        	+= -L../../lib 
 
 include (../../qmesydaqconfig.pri)
@@ -28,10 +30,12 @@ DEPENDPATH 	+= . ../../qmesydaq ../../lib
 INCLUDEPATH 	+= . ../../qmesydaq ../../lib
 
 SOURCES 	+= main.cpp \
-		mainwindow.cpp \
+		selectcolorbox.cpp \
+		colorwidget.cpp \
 		colormaps.cpp
 
-HEADERS 	+= mainwindow.h \
+HEADERS 	+= selectcolorbox.h \
+		colorwidget.h \
 		colormaps.h
 
 CONFIG		+= debug

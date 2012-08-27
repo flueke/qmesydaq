@@ -24,29 +24,18 @@
 #include <QWidget>
 
 class QwtScaleWidget;
+class QButtonGroup;
 
-class MainWindow: public QWidget
+class SelectScalingBox: public QWidget
 {
 	Q_OBJECT
 public:
-	MainWindow(QWidget * = NULL);
+	SelectScalingBox(QWidget * = NULL);
 
 private slots:
 
 private:
-	QwtScaleWidget	*m_stdScale;
-
-	QwtScaleWidget	*m_jetScale;
-
-	QwtScaleWidget	*m_hotScale;
-
-	QwtScaleWidget	*m_hsvScale;
-
-	QwtScaleWidget	*m_springScale;
-
-	QwtScaleWidget	*m_summerScale;
-
-	QwtScaleWidget	*m_winterScale;
+	QButtonGroup	*m_box;
 
 };
 
