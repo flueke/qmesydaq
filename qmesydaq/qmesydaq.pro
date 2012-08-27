@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.8.1
+VERSION		= 0.8.2
 
 include(../qmesydaqconfig.pri)
 
@@ -64,7 +64,8 @@ HEADERS 	+= mainwidget.h \
 		passworddialog.h \
 		plot.h \
 		zoomer.h \
-		colormaps.h
+		colormaps.h \
+		colorwidget.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -106,7 +107,8 @@ SOURCES 	+= main.cpp \
 		mainwidget.cpp \
 		plot.cpp \
 		zoomer.cpp \
-		colormaps.cpp
+		colormaps.cpp \
+		colorwidget.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
