@@ -86,7 +86,7 @@ public:
 /**
  * \short The 'Jet' color map for scaling. 
  *
- * The colors are taken from the matplotlib 'jet' colormap
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'jet' colormap
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
@@ -100,7 +100,7 @@ public:
 /**
  * \short The 'Hot' color map for scaling. 
  *
- * The colors are taken from the matplotlib 'hot' colormap
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'hot' colormap
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
@@ -114,7 +114,7 @@ public:
 /**
  * \short The 'Hsv' color map for scaling. 
  *
- * The colors are taken from the matplotlib 'hsv' colormap
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'hsv' colormap
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
@@ -125,4 +125,131 @@ public:
 	HsvColorMap();
 };
 
+/**
+ * \short The 'Spring' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'spring' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class SpringColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	SpringColorMap();
+};
+
+/**
+ * \short The 'Summer' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'summer' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class SummerColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	SummerColorMap();
+};
+
+/**
+ * \short The 'Autumn' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'autumn' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class AutumnColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	AutumnColorMap();
+};
+
+/**
+ * \short The 'Winter' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'winter' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class WinterColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	WinterColorMap();
+};
+
+/**
+ * \short The 'Bone' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'bone' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class BoneColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	BoneColorMap();
+};
+
+/**
+ * \short The 'Cool' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'cool' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class CoolColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	CoolColorMap();
+};
+
+/**
+ * \short The 'Copper' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'copper' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class CopperColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	CopperColorMap();
+};
+
+/**
+ * \short The 'Gray' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'gray' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class GrayColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	GrayColorMap();
+};
+
+/**
+ * \short The 'Spectral' color map for scaling. 
+ *
+ * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'spectral' colormap
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class SpectralColorMap : public MesydaqColorMap
+{
+public:
+	//! constructor
+	SpectralColorMap();
+};
+
 #endif
+

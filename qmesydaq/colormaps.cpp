@@ -134,3 +134,78 @@ HsvColorMap::HsvColorMap()
 	addColorStop(0.841270, QColor(247, 0, 255));
 	addColorStop(0.857143, QColor(255, 0, 239));
 }
+
+SpringColorMap::SpringColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(255, 0, 255), QColor(255, 255, 0));
+}
+
+SummerColorMap::SummerColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(0, 127, 104), QColor(255, 255, 104));
+}
+
+AutumnColorMap::AutumnColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(255, 0, 0), QColor(255, 255, 0));
+}
+
+WinterColorMap::WinterColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(0, 0, 255), QColor(0, 255, 127));
+}
+
+BoneColorMap::BoneColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(0, 0, 255), QColor(255, 255, 255));
+	addColorStop(0.365079, QColor(124, 81, 113));
+	addColorStop(0.746032, QColor(166, 198, 195));
+}
+
+CoolColorMap::CoolColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(0, 255, 255), QColor(255, 0, 255));
+}
+
+CopperColorMap::CopperColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(0, 0, 0), QColor(255, 199, 126));
+	addColorStop(0.809524, QColor(255, 161, 102));
+}
+
+GrayColorMap::GrayColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(0, 0, 0), QColor(255, 255, 255));
+}
+
+SpectralColorMap::SpectralColorMap()
+	: MesydaqColorMap()
+{
+	setColorInterval(QColor(0, 0, 0), QColor(204, 204, 204));
+	addColorStop(0.05, QColor(119, 0, 35));
+	addColorStop(0.1, QColor(0, 0, 170));
+	addColorStop(0.15, QColor(0, 0, 221));
+	addColorStop(0.25, QColor(0, 119, 221));
+	addColorStop(0.3, QColor(0, 153, 221));
+	addColorStop(0.35, QColor(0, 170, 170));
+	addColorStop(0.4, QColor(0, 170, 135));
+	addColorStop(0.45, QColor(0, 153, 0));
+	addColorStop(0.5, QColor(0, 186, 0));
+	addColorStop(0.55, QColor(0, 221, 0));
+	addColorStop(0.6, QColor(0, 255, 0));
+	addColorStop(0.65, QColor(186, 255, 0));
+	addColorStop(0.7, QColor(237, 237, 0));
+	addColorStop(0.75, QColor(255, 204, 0));
+	addColorStop(0.8, QColor(255, 153, 0));
+	addColorStop(0.85, QColor(255, 0, 0));
+	addColorStop(0.9, QColor(221, 0, 0));
+	addColorStop(0.95, QColor(204, 0, 0));
+}

@@ -15,5 +15,6 @@ SUBDIRS	 	+= listfile \
 		lstohisto \
 		readhisto \
 		calibration \
-		readlistfile
+		readlistfile \
+		colormaps
 
