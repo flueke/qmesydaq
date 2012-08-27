@@ -372,6 +372,23 @@ void MainWidget::startStopSlot(bool checked)
             killTimer(m_dispTimer);
         m_dispTimer = 0;
         startStopButton->setText("Start");
+
+        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+        if(app)
+        {
+            QMesyDAQDetectorInterface *interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
+            if (interface)
+            {
+                QString name = interface->getHistogramFileName();
+                if (!name.isEmpty())
+                {
+                    name = m_meas->getHistfilepath() + "/" + name;
+                    if (name.indexOf(".mtxt") == -1)
+                        name.append(".mtxt");
+                    m_meas->writeHistograms(name);
+                }
+            }
+        }
         emit redraw();
     }
     emit started(checked);
@@ -436,12 +453,11 @@ void MainWidget::checkListfilename(bool checked)
 {
     if (checked)
     {
-        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-        QMesyDAQDetectorInterface *interface;
         QString name(QString::null); 
+        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
         if(app)
         {
-            interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
+            QMesyDAQDetectorInterface *interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
             if (interface)
                 name = interface->getListFileName();
         }
