@@ -150,6 +150,13 @@ public:
 	void setHistogramData(MesydaqHistogramData *);
 
 	/*!
+	 * Sets the colormap for the histogram data mode
+	 *
+	 * \param map color map
+	 */
+	void setColorMap(MesydaqColorMap *map);
+
+	/*!
     	 * callback to print the plot window
 	 *
     	 * \param printer the printer object

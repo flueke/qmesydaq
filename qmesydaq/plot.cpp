@@ -63,19 +63,7 @@ Plot::Plot(QWidget *parent)
 	, m_mode(None)
 	, m_linlog(Linear)
 {
-#if 1
-#if 1
-	m_colorMap = new JetColorMap();
-#else
-#if 0
-	m_colorMap = new HotColorMap();
-#else
-	m_colorMap = new HsvColorMap();
-#endif
-#endif
-#else
-	m_colorMap = new StdColorMap();
-#endif
+	setColorMap(new JetColorMap());
 
 	m_rightAxis = axisWidget(QwtPlot::yRight);
 	m_rightAxis->setTitle("counts");
@@ -405,3 +393,7 @@ void Plot::print(QPaintDevice &printer, const QwtPlotPrintFilter &filter)
 	m_curve[0]->setPen(pen);
 }
 
+void Plot::setColorMap(MesydaqColorMap *map)
+{
+	m_colorMap = map;
+}
