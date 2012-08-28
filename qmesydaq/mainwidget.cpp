@@ -92,7 +92,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->resize(settings.value("size", QSize(600, 600)).toSize());
     settings.endGroup();
 
-
     m_dataFrame->setObjectName(QString::fromUtf8("m_dataFrame"));
     QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
     sizePolicy1.setHorizontalStretch(0);
@@ -530,7 +529,6 @@ void MainWidget::updateDisplay(void)
 
     monitor4Preset->setValue(m_meas->mon4());
     monitor4Preset->setRate(m_meas->getRate(MON4ID));
-
 
     lcdRunID->display(m_meas->runId());
     dispFiledata();
