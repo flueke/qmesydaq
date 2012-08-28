@@ -247,6 +247,7 @@ void Measurement::setCurrentTime(quint64 msecs)
     		m_meastime_msec = msecs - m_starttime_msec;
 		for (quint8 i = 0; i < TIMERID; ++i)
 			m_counter[i]->setTime(m_meastime_msec);
+		m_counter[TIMERID]->setTime(m_headertime / 10000);
 	}
 }
 
@@ -833,14 +834,8 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 	quint64 tim;
 	quint16 mod = pd.deviceId;
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
-	if (m_starttime_msec > (m_headertime / 10000))
-	{
-		MSG_FATAL << "OLD PACKAGE " << (m_headertime / 10000) << " < " << m_starttime_msec;
-		return;
-	}
 		
-	// setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
-	m_counter[TIMERID]->setTime(m_headertime / 10000);
+	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 	m_runID = pd.runID;
 
 	m_packages++;

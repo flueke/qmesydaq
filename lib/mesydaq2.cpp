@@ -40,6 +40,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_acquireListfile(false)
 	, m_listfilename("")
 	, m_timingwidth(1)
+	, m_starttime_msec(0)
 {
 	Q_ASSERT(parent == NULL);
 	MSG_NOTICE << "running on Qt %1" << qVersion();
@@ -925,13 +926,14 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
  */
 void Mesydaq2::start(void)
 {
-		MSG_NOTICE << "remote start";
+	MSG_NOTICE << "remote start";
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->start();
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->start();
+	m_starttime_msec = time();
 	emit statusChanged("STARTED");
 }
 
@@ -942,7 +944,7 @@ void Mesydaq2::start(void)
  */
 void Mesydaq2::stop(void)
 {
-		MSG_NOTICE << "remote stop";
+	MSG_NOTICE << "remote stop";
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->stop();
@@ -1651,6 +1653,14 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
 	if (m_daq == RUNNING)
 	{
+
+		quint64 headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
+		if (m_starttime_msec > (headertime / 10000))
+		{
+			MSG_FATAL << "OLD PACKAGE " << (headertime / 10000) << " < " << m_starttime_msec;
+			return;
+		}
+		
 		quint16 mod = pd.deviceId;
 		m_runID = pd.runID;
 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;

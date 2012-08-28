@@ -333,6 +333,9 @@ private:
 //	int 		m_checkTimer;
 
 	QByteArray 	m_datHeader;
+
+	//! time stamp for the start of measurement
+	quint64 	m_starttime_msec;
 };
 
 
