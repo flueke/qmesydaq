@@ -277,7 +277,7 @@ public:
 	//! \return the current run ID
 	quint16 runId(void) const 
 	{ 
-		return m_runID; 
+		return m_mesydaq->runId(); 
 	}
 
 	/*!
