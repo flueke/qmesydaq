@@ -833,7 +833,13 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 	quint64 tim;
 	quint16 mod = pd.deviceId;
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
-	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
+	if (m_starttime_msec > (m_headertime / 10000))
+	{
+		MSG_FATAL << "OLD PACKAGE " << (m_headertime / 10000) << " < " << m_starttime_msec;
+		return;
+	}
+		
+	// setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 	m_counter[TIMERID]->setTime(m_headertime / 10000);
 	m_runID = pd.runID;
 
