@@ -684,6 +684,13 @@ void Measurement::writeHistograms(const QString &name)
 	if (f.open(QIODevice::WriteOnly)) 
 	{    // file opened successfully
 		QTextStream t( &f );        // use a text stream
+		//
+		// write the monitor, events, and timer values after a '#' char
+		// 
+		for (quint8 i = MON1ID; i <= MON4ID; ++i)
+			t << "# monitor " << (i + 1) << " = " << m_counter[i]->value() << '\r' << '\n';
+		t << "# events = " << m_counter[EVID]->value() << '\r' << '\n';
+		t << "# timer = " << m_counter[TIMERID]->value() << " ms" << '\r' << '\n';
 		// Title
 		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
 		t.flush();
@@ -725,8 +732,12 @@ void Measurement::readHistograms(const QString &name)
 		m_mode = HistogramLoad;
 // use a text stream
 		QTextStream t(&f);
-// Title
 		QStringList list = t.readLine().split(QRegExp("\\s+"));
+// if there are some comment lines which should contain only the monitor, event, and timer values
+// ignore them at the moment
+		while (list.size() > 0 && list[0] == "#")
+			list = t.readLine().split(QRegExp("\\s+"));
+// Title
 		if (list.size() >= 3 && list[0] == "mesydaq" && list[1] == "Histogram" && list[2] == "File")
 		{
 			setHistfilename(name);
