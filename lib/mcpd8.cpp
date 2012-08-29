@@ -1364,7 +1364,7 @@ void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
 {
     if (recBuf.deviceId != m_id)
     {
-//		MSG_FATAL << "deviceId : " << recBuf.deviceId << " <-> " << m_id;
+//      MSG_FATAL << "deviceId : " << recBuf.deviceId << " <-> " << m_id;
         return;
     }
 
@@ -1378,15 +1378,15 @@ void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
     {
         communicate(false);
         m_commTimer->stop();
-//		MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer stopped";
+//      MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer stopped";
 
         ++m_cmdRxd;
-//		MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : id " << recBuf.deviceId;
+//      MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : id " << recBuf.deviceId;
 
         m_headertime = recBuf.time[0] + (quint64(recBuf.time[1]) << 16) + (quint64(recBuf.time[2]) << 32);
         m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
 
-//		MSG_DEBUG << tr("MCPD8::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd);
+//      MSG_DEBUG << tr("MCPD8::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(recBuf.bufferType, 0, 16).arg(recBuf.cmd);
 
         MPSD8	*ptrMPSD;
         MDLL    *ptrMDLL;
@@ -1782,7 +1782,7 @@ void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
     else
     {
         ++m_dataRxd;
-//		MSG_DEBUG << tr("ID " << m_id << " : emit analyzeBuffer(recBuf)";
+//      MSG_DEBUG << tr("ID " << m_id << " : emit analyzeBuffer(recBuf)";
         emit analyzeDataBuffer((DATA_PACKET &)recBuf);
     }
 }

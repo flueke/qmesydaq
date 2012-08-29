@@ -210,8 +210,6 @@ void Mesydaq2::startedDaq(void)
 		writeListfileHeader();
 		writeHeaderSeparator();
 	}
-	m_daq = RUNNING;
-	emit statusChanged("RUNNING");
 	MSG_ERROR << "daq started";
 }
 
@@ -229,8 +227,6 @@ void Mesydaq2::stoppedDaq(void)
 	writeClosingSignature();
 	if(m_acquireListfile && m_datfile.isOpen())
 		m_datfile.close();
-	m_daq = IDLE;
-	emit statusChanged("IDLE");
 	MSG_DEBUG << "daq stopped";
 }
 
@@ -933,6 +929,8 @@ void Mesydaq2::start(void)
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->start();
+	m_daq = RUNNING;
+//	emit statusChanged("RUNNING");
 	m_starttime_msec = time();
 	emit statusChanged("STARTED");
 }
@@ -945,6 +943,8 @@ void Mesydaq2::start(void)
 void Mesydaq2::stop(void)
 {
 	MSG_NOTICE << "remote stop";
+	m_daq = IDLE;
+	emit statusChanged("IDLE");
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->stop();
@@ -1657,7 +1657,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		quint64 headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 		if (m_starttime_msec > (headertime / 10000))
 		{
-			MSG_FATAL << "OLD PACKAGE " << (headertime / 10000) << " < " << m_starttime_msec;
+			MSG_FATAL << "OLD PACKAGE : " << (headertime / 10000) << " < " << m_starttime_msec;
 			return;
 		}
 		
@@ -1725,6 +1725,8 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 			emit analyzeDataBuffer(pd);
 		}
 	}
+	else
+		MSG_DEBUG << "DROP DATA PACKET";
 }
 
 /*!
