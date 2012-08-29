@@ -399,6 +399,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_pObject = (QObject*)args[0].toULongLong();
 					m_eventReceived = true;
 					break;
+				case CommandEvent::C_GET_RUNID:
+					m_runid = args[0].toUInt();
+					m_eventReceived = true;
+					break;
 				default:
 					break;
 			}
@@ -422,7 +426,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 
 void QMesyDAQDetectorInterface::setRunID(const quint32 runid)
 {
-        postCommand(CommandEvent::C_SET_RUNID,QList<QVariant>() << runid);
+        postCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid);
 }
 
 quint32 QMesyDAQDetectorInterface::getRunID(void)
