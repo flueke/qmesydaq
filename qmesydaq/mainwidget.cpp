@@ -1761,6 +1761,13 @@ void MainWidget::customEvent(QEvent *e)
                     interface->postCommandToInterface(CommandEvent::C_MAPPEDHISTOGRAM,QList<QVariant>() << ((quint64)pHist));
                 }
                 break;
+            case CommandEvent::C_GET_RUNID:
+                if (interface)
+                {
+                    quint32 tmp = m_meas->runId();
+                    interface->postCommandToInterface(CommandEvent::C_GET_RUNID, QList<QVariant>() << (tmp));
+                }
+                break;
             default :
                 break;
         }
@@ -1769,6 +1776,13 @@ void MainWidget::customEvent(QEvent *e)
 	{
             switch(cmd)
             {
+                case CommandEvent::C_SET_RUNID:
+                    if (interface)
+                    {
+                        int id(args[0].toInt());
+			m_meas->setRunId(id);
+                    }
+                    break;
                 case CommandEvent::C_READ_COUNTER:
                     if (interface)
                     {

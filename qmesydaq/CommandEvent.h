@@ -57,7 +57,9 @@ public:
 		C_MAPCORRECTION,
 		C_MAPPEDHISTOGRAM,
 		C_UPDATEMAINWIDGET,
-		C_QUIT
+		C_QUIT,
+		C_SET_RUNID,
+		C_GET_RUNID,
         };
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());

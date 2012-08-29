@@ -44,6 +44,7 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS END
 
         , m_interface(NULL)
+	, m_runid(0)
 
 	/* , MyFirstBaseClass(), MySecondBaseClass(), ... */
 {
@@ -66,6 +67,7 @@ MesyDAQ::Detector::Detector::Detector( const std::string& name, DevLong& error) 
 	addResource("lastlistfile", D_STRING_TYPE, "name of the last/currently used list mode data file");
 	addResource("lasthistfile", D_STRING_TYPE, "name of the last/currently used histogram data file");
 	addResource("lastbinnedfile", D_STRING_TYPE, "name of the last/currently used histogram data (binned) file");
+	addResource("runid", D_ULONG_TYPE, "name of the last/currently used histogram data (binned) file");
 
         MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
         if (app)

@@ -419,3 +419,19 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 		}
 	}
 }
+
+void QMesyDAQDetectorInterface::setRunID(const quint32 runid)
+{
+        postCommand(CommandEvent::C_SET_RUNID,QList<QVariant>() << runid);
+}
+
+quint32 QMesyDAQDetectorInterface::getRunID(void)
+{
+	quint32 r(0.0);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_GET_RUNID);
+	r = m_runid;
+	m_mutex.unlock();
+	return r;
+}
+

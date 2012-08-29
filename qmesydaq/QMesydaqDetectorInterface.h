@@ -93,6 +93,16 @@ public:
 	void updateMainWidget(int iWidth, int iHeight, int iRunNo);
 	void updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo);
 
+	/*!
+	 * Sets the run ID
+	 *
+	 * \param runid
+	 */
+	void setRunID(const quint32 runid);
+
+	//! returns the current runid
+	quint32 getRunID(void);
+
 protected:
 	void customEvent(QEvent *);
 
@@ -128,6 +138,9 @@ private:
 
 	//! name of the current histogram file
 	QString 		m_histFileName;
+
+	//! current run ID
+	quint32			m_runid;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H

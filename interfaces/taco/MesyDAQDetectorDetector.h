@@ -122,6 +122,8 @@ private:
 	std::string			m_histFilename;
 
 	std::string			m_binnedFilename;
+
+	DevULong			m_runid;
 };
 
 #endif // MESY_D_A_Q_DETECTOR_DETECTOR_H

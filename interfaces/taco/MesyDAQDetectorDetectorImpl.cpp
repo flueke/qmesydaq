@@ -169,6 +169,19 @@ DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception
 
 void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 {
+        if (resourceUpdateRequest("runid"))
+                try
+                {
+                        m_listFilename = queryResource<DevULong>("runid");
+			if (!m_interface)
+        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+                        m_interface->setRunID(m_runid);
+			logStream->errorStream() << "RUN ID " << m_runid << log4cpp::eol;
+                }
+                catch (::TACO::Exception &e)
+                {
+                        throw "could not update 'runid' " >> e;
+                }
         if (resourceUpdateRequest("lastlistfile"))
                 try
                 {
@@ -222,6 +235,15 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 
 void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Exception)
 {
+        if (resourceQueryRequest("runid"))
+                try
+                {
+                        updateResource<DevULong>("runid", m_interface->getRunID());
+                }
+                catch (TACO::Exception &e)
+                {
+                        throw "Could not query resource 'runid' " >> e;
+                }
         if (resourceQueryRequest("lastlistfile"))
                 try
                 {
