@@ -114,6 +114,8 @@ private:
 private:
 	std::string incNumber(const std::string &);
 
+	std::string runNumber(const std::string &val);
+
 private:
         QMesyDAQDetectorInterface	*m_interface;
 

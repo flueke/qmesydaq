@@ -44,11 +44,18 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-
+#if 0
 	m_listFilename = incNumber(m_listFilename);
+#else
+	m_listFilename = runNumber(m_listFilename);
+#endif
 	updateResource<std::string>("lastlistfile", m_listFilename);
     	m_interface->setListFileName(m_listFilename.c_str());
+#if 0
 	m_histFilename = incNumber(m_histFilename);
+#else
+	m_histFilename = runNumber(m_histFilename);
+#endif
 	updateResource<std::string>("lasthistfile", m_histFilename);
     	m_interface->setHistogramFileName(m_histFilename.c_str());
 	m_interface->start();
@@ -292,6 +299,41 @@ std::string MesyDAQ::Detector::Detector::incNumber(const std::string &val)
         		baseName.erase(baseName.length() - 5);
 	}
 	std::string tmp = ::TACO::numberToString(++currIndex, 5);
+	pos = tmpString.find(baseName);
+	pos += baseName.length();
+	tmpString.erase(pos);
+	for (int i = tmp.length(); i < 5; ++i)
+        	tmpString += '0';
+	tmpString += tmp;
+	tmpString += ext;
+	return tmpString;
+}
+
+std::string MesyDAQ::Detector::Detector::runNumber(const std::string &val)
+{
+	std::string tmpString = val;
+	std::string baseName = basename(const_cast<char *>(tmpString.c_str()));
+	std::string::size_type pos = baseName.rfind(".");
+	std::string ext("");
+	if (pos == std::string::npos)
+		ext = ".mdat";
+	else
+	{
+		ext = baseName.substr(pos);
+		baseName.erase(pos);
+	}
+	DevLong currIndex(0);
+	if (baseName.length() > 5)
+	{
+		currIndex = strtol(baseName.substr(baseName.length() - 5).c_str(), NULL, 10);
+		if (currIndex)
+        		baseName.erase(baseName.length() - 5);
+	}
+	if (m_interface)
+	{
+		currIndex = m_interface->getRunID();
+	}
+	std::string tmp = ::TACO::numberToString(currIndex, 5);
 	pos = tmpString.find(baseName);
 	pos += baseName.length();
 	tmpString.erase(pos);
