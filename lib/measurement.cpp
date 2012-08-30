@@ -1111,7 +1111,7 @@ void Measurement::readListfile(const QString &readfilename)
 		return; 
 
 	m_mode = ReplayListFile;
-	m_status = Running;
+	m_status = Started;
 
 	MSG_ERROR << "Start replay";
 	QTextStream textStream;
