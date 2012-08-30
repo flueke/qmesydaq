@@ -51,7 +51,8 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 
 	//! stores the current mode of the measurement
 	Q_PROPERTY(Mode m_mode READ mode)
-
+	//! stores the current state of the measurement
+	Q_PROPERTY(Status m_status READ status)
 	//! stores the histogram file name
 	Q_PROPERTY(QString m_histfilename READ getHistfilename WRITE setHistfilename)
 	//! stores the default path for histogram files
@@ -294,6 +295,12 @@ public:
 	{
 		return m_mode;
 	}
+	
+	//! returns the current operation state
+	Status status(void) const
+	{
+		return m_status;
+	}
 
 // calibration file oriented methods
 	/**
@@ -460,7 +467,7 @@ private:
 	quint64 	m_meastime_msec;
 
 	//! current state of measurement
-	quint8 		m_status;
+	Status 		m_status;
 
 	//! are we only or not
 	bool 		m_online;

@@ -103,14 +103,14 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 
 quint16 Measurement::height(void) const
 {
-	if (m_mode == ReplayListFile)
+	if (mode() == ReplayListFile)
 		return qMax(m_Hist[AmplitudeHistogram]->height(), m_Hist[PositionHistogram]->height());
 	return m_height;
 }
 
 quint16 Measurement::width(void) const
 {
-	if (m_mode == ReplayListFile)
+	if (mode() == ReplayListFile)
 		return qMax(m_Hist[AmplitudeHistogram]->width(), m_Hist[PositionHistogram]->width());
 	return m_width;
 }
@@ -242,7 +242,7 @@ void Measurement::timerEvent(QTimerEvent *event)
  */
 void Measurement::setCurrentTime(quint64 msecs)
 {
-	if(m_status == Started)
+	if(status() == Started)
 	{
     		m_meastime_msec = msecs - m_starttime_msec;
 		for (quint8 i = 0; i < TIMERID; ++i)
@@ -296,7 +296,7 @@ void Measurement::start()
  */
 void Measurement::requestStop()
 {
-	if (m_status == Started)
+	if (status() == Started)
 	{
 		m_status = Stopped;
 		emit stopSignal(false);
@@ -311,9 +311,9 @@ void Measurement::requestStop()
  */
 void Measurement::stop()
 {
-	if (m_status != Idle)
+	if (status() != Idle)
 	{ 
-		if (m_status == Started)
+		if (status() == Started)
 			m_mesydaq->stop(); 
 		quint64 time = m_mesydaq->time();
 		foreach (MesydaqCounter *c, m_counter)
@@ -355,7 +355,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 		else
    			m_counter[cNum]->set(val);
 // is counter master and is limit reached?
-		if(m_counter[cNum]->isStopped() && m_status != Stopped)
+		if(m_counter[cNum]->isStopped() && status() != Stopped)
 		{
 			MSG_NOTICE << "stop on counter " << cNum << ", value: " << m_counter[cNum]->value() << ", preset: " << m_counter[cNum]->limit();
 			m_status = Stopped;
@@ -858,7 +858,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 //
 // status Idle is for replaying files
 // 
-		for(quint32 counter = 0, i = 0; i < datalen && (m_status == Started || m_status == Idle); ++i, counter += 3)
+		for(quint32 counter = 0, i = 0; i < datalen && (status() == Started || status() == Idle); ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
 			tim <<= 16;
@@ -933,7 +933,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 					// MSG_ERROR << "POSITION > 959 " << pos;
 					continue;
 				}
-				if (m_mode == ReplayListFile || m_mesydaq->active(mod, id, slotId))
+				if (mode() == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
 					if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
 					{
@@ -1105,24 +1105,22 @@ bool Measurement::getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 */
 void Measurement::readListfile(const QString &readfilename)
 {
-	if (m_status == Started)
-	{
-		stop();
-		QCoreApplication::processEvents();
-	}
+	QFile datfile;
+	datfile.setFileName(readfilename);
+	if (!datfile.open(QIODevice::ReadOnly))
+		return; 
+
 	m_mode = ReplayListFile;
+	m_status = Running;
 
 	MSG_ERROR << "Start replay";
-	QDataStream datStream;
 	QTextStream textStream;
-	QFile datfile;
+	QDataStream datStream;
 	QString str;
 	quint16 sep1, sep2, sep3, sep4;
-    
+
 	setListfilename(readfilename);
 	setHistfilename("");
-	datfile.setFileName(readfilename);
-	datfile.open(QIODevice::ReadOnly);
 	datStream.setDevice(&datfile);
 	textStream.setDevice(&datfile);
 
@@ -1192,6 +1190,7 @@ void Measurement::readListfile(const QString &readfilename)
 	resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), 
 			m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 	QCoreApplication::processEvents();
+	m_status = Idle;
 }
 
 /*!
