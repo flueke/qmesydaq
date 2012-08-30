@@ -63,6 +63,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_triggers(0)
 	, m_mode(DataAcquisition)
 	, m_histfilename("")
+	, m_listfilename("") 
 	, m_calibrationfilename("")
 	, m_neutrons(0)
 	, m_setup(Mpsd)
@@ -724,6 +725,7 @@ void Measurement::readHistograms(const QString &name)
 	if(name.isEmpty())
 		return;
 
+        setListfilename("");
 	QFile f;
 	f.setFileName(name);
 	if (f.open(QIODevice::ReadOnly)) 
@@ -1117,6 +1119,8 @@ void Measurement::readListfile(const QString &readfilename)
 	QString str;
 	quint16 sep1, sep2, sep3, sep4;
     
+	setListfilename(readfilename);
+	setHistfilename("");
 	datfile.setFileName(readfilename);
 	datfile.open(QIODevice::ReadOnly);
 	datStream.setDevice(&datfile);
@@ -1170,6 +1174,7 @@ void Measurement::readListfile(const QString &readfilename)
 			analyzeBuffer(dataBuf);
 			++blocks;
 			++bcount;
+			MSG_ERROR << "Run ID " << dataBuf.runID;
 		}
 		for(; getNextBlock(datStream, dataBuf); ++blocks, ++bcount)
 		{
@@ -1297,6 +1302,13 @@ void Measurement::setHistfilepath(const QString &path)
 		m_histPath = path;
 	else
 		m_histPath = QDir::currentPath();
+}
+
+void Measurement::setListfilename(const QString &name)
+{
+	m_listfilename = name;
+	if(!m_listfilename.isEmpty() && m_listfilename.indexOf(".mdat") == -1)
+		m_listfilename.append(".mdat");
 }
 
 void Measurement::setHistfilename(const QString &name) 

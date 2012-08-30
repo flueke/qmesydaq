@@ -337,14 +337,14 @@ void MainWidget::statusTabChanged(int )
 */
 void MainWidget::startStopSlot(bool checked)
 {
-    if(checked)
+    if (checked)
     {
         m_meas->setHistfilename("");
         checkListfilename(acquireFile->isChecked());
         // get timing binwidth
         // m_theApp->setTimingwidth(timingBox->value());
 
-        // get latest preset entry
+        // get latest preset entries
         if(m_meas->isMaster(TIMERID))
             m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
         if(m_meas->isMaster(EVID))
@@ -656,7 +656,8 @@ void MainWidget::replayListfileSlot()
         if (m_dispTimer)
             killTimer(m_dispTimer);
 	m_dispTimer = 0;
-        startStopButton->setEnabled(true);
+    	startStopButton->setDisabled(m_theApp->mcpdId().empty());
+//      startStopButton->setEnabled(true);
 	emit redraw();
     }
 }
@@ -877,6 +878,10 @@ void MainWidget::dispFiledata(void)
         calibrationFilename->setText("-");
     else
         calibrationFilename->setText(m_meas->getCalibrationfilename());
+    if (!m_meas || m_meas->getListfilename().isEmpty())
+        listFilename->setText("-");
+    else
+        listFilename->setText(m_meas->getListfilename());
 }
 
 /*!

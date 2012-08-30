@@ -350,6 +350,18 @@ public:
 		return m_listPath;
 	}
 
+	/**
+	 * sets the path for the list mode data files
+	 *
+	 * \param path to the list mode data files
+	 */
+	void setListfilename(const QString &name);
+
+	QString getListfilename(void) const
+	{
+		return m_listfilename;
+	}
+
 // configuration file oriented methods
 	/**
 	 * sets the path for the config files
