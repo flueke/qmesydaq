@@ -174,7 +174,7 @@ public:
 	void setRunId(quint16 runid);
 
 	//! \return the current run ID number
-	quint16 runId() {return m_runID;}
+	quint16 runId(); 
 
 	quint64 receivedData(); 
 
@@ -320,8 +320,6 @@ private:
 
 	quint8		m_daq;
 
-	quint16		m_runID;
-    
 	bool		m_acquireListfile;
 	QString		m_listfilename;
 

@@ -1144,13 +1144,13 @@ bool MCPD8::sendSerialString(QString /* str*/)
  */
 bool MCPD8::setRunId(quint16 runid)
 {
-    m_runId = runid;
     if(m_master)
     {
         initCmdBuffer(SETRUNID);
         m_cmdBuf.data[0] = runid;
         finishCmdBuffer(1);
         MSG_NOTICE << "mcpd " << m_id << ": set run ID to " << runid;
+        m_runId = runid;
         return sendCommand();
     }
     MSG_ERROR << "Error: trying to set run ID on mcpd " << m_id << " - not master!";

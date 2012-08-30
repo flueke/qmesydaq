@@ -61,7 +61,6 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_onlineTimer(0)
 	, m_packages(0)
 	, m_triggers(0)
-	, m_runID(0)
 	, m_mode(DataAcquisition)
 	, m_histfilename("")
 	, m_calibrationfilename("")
@@ -847,7 +846,6 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 		
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
-	m_runID = pd.runID;
 
 	m_packages++;
 	if(pd.bufferType < 0x0003)

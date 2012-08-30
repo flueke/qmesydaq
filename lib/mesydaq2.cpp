@@ -36,7 +36,6 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	: QObject(parent)
 	, m_pThread(NULL)
 	, m_daq(IDLE)
-	, m_runID(0)
 	, m_acquireListfile(false)
 	, m_listfilename("")
 	, m_timingwidth(1)
@@ -1624,6 +1623,13 @@ quint8 Mesydaq2::getThreshold(quint16 id, quint8 addr)
 	return 0;
 }
 
+quint16 Mesydaq2::runId(void) 
+{
+	foreach (MCPD8* value, m_mcpd)
+		if (value->isMaster())
+			return value->getRunId(); 
+	return 0;
+}
 /*!
     \fn Mesydaq2::setRunId(quint16 runid)
 
@@ -1635,11 +1641,10 @@ quint8 Mesydaq2::getThreshold(quint16 id, quint8 addr)
  */
 void Mesydaq2::setRunId(quint16 runid)
 {
+	MSG_NOTICE << "Mesydaq2::setRunId(" << runid << ')';
 	foreach (MCPD8* value, m_mcpd)
 		if (value->isMaster())
 			value->setRunId(runid); 
-	m_runID = runid;
-	MSG_NOTICE << "Mesydaq2::setRunId(" << m_runID << ')';
 }
 
 /*!
@@ -1662,7 +1667,7 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 		}
 		
 		quint16 mod = pd.deviceId;
-		m_runID = pd.runID;
+//		m_runID = pd.runID;
 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
 		for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
 		{

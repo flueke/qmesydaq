@@ -23,28 +23,28 @@
 #include <QMetaType>
 #include <QSharedDataPointer>
 
+//! data packet structure as Share data object (multi threading preparation)
 struct SD_MPD_PACKET_DATA : public QSharedData
 {
-	//! length of the buffer
-	quint16 bufferLength;
-	//! the buffer type
-	quint16 bufferType;
-	//! the length of the buffer header
-	quint16 headerLength;
-	//! number of the packet 
-	quint16 bufferNumber;
-	//! the command number
-	quint16 cmd;
-	//! the device state
-	quint8 	deviceStatus;
-	//! the id of the device
-	quint8 	deviceId;
-	//! device time
-	quint16 time[3];
-	//! check sum of the header
-	quint16 headerChksum;
-	//! the data, length of the data = length of the buffer - length of the header
-	quint16 data[750];
+	quint16 bufferLength;	//!< length of the buffer
+	
+	quint16 bufferType;	//!< the buffer type
+	
+	quint16 headerLength;	//!< the length of the buffer header
+	
+	quint16 bufferNumber;	//!< number of the packet 
+	
+	quint16 cmd;		//!< the command number
+	
+	quint8 	deviceStatus;	//!< the device state
+	
+	quint8 	deviceId;	//!< the id of the device
+	
+	quint16 time[3];	//!< device time
+	
+	quint16 headerChksum;	//!< check sum of the header
+	
+	quint16 data[750];	//!< the data, length of the data = length of the buffer - length of the header
 };
 
 Q_DECLARE_METATYPE(SD_MPD_PACKET_DATA);
@@ -52,53 +52,50 @@ Q_DECLARE_METATYPE(SD_MPD_PACKET_DATA);
 //! command packet structure
 struct MDP_PACKET
 {
-	//! length of the buffer
-	quint16 bufferLength;
-	//! the buffer type
-	quint16 bufferType;
-	//! the length of the buffer header
-	quint16 headerLength;
-	//! number of the packet 
-	quint16 bufferNumber;
-	//! the command number
-	quint16 cmd;
-	//! the device state
-	quint8 	deviceStatus;
-	//! the id of the device
-	quint8 	deviceId;
-	//! device time
-	quint16 time[3];
-	//! check sum of the header
-	quint16 headerChksum;
-	//! the data, length of the data = length of the buffer - length of the header
-	quint16 data[750];
+	quint16 bufferLength;	//!< length of the buffer
+	
+	quint16 bufferType;	//!< the buffer type
+	
+	quint16 headerLength;	//!< the length of the buffer header
+	
+	quint16 bufferNumber;	//!< number of the packet 
+	
+	quint16 cmd;		//!< the command number
+	
+	quint8 	deviceStatus;	//!< the device state
+	
+	quint8 	deviceId;	//!< the id of the device
+	
+	quint16 time[3];	//!< device time
+	
+	quint16 headerChksum;	//!< check sum of the header
+	
+	quint16 data[750];	//!< the data, length of the data = length of the buffer - length of the header
 };
 Q_DECLARE_METATYPE(MDP_PACKET)
 
 //! data packet structure
 struct DATA_PACKET
 {
-	//! length of the buffer
-	quint16 bufferLength;
-	//! the buffer type
-	quint16 bufferType;
-	//! the length of the buffer header
-	quint16 headerLength;
-	//! number of the packet 
-	quint16 bufferNumber;
-	//! the command number
-	//! the run ID
-	quint16 runID; // cmd;
-	//! the device state
-	quint8  deviceStatus;
-	//! device time
-	quint8  deviceId;
-	//! device time
-	quint16 time[3];
-	//! the values of the parameters (belong to the header)
-	quint16 param[4][3];
-	//! the events, length of the data = length of the buffer - length of the header
-	quint16 data[750];
+	quint16 bufferLength;	//!< length of the buffer
+	
+	quint16 bufferType;	//!< the buffer type
+	
+	quint16 headerLength;	//!< the length of the buffer header
+	
+	quint16 bufferNumber;	//!< number of the packet 
+	
+	quint16 runID; 		//!< the run ID
+	
+	quint8  deviceStatus;	//!< the device state
+	
+	quint8  deviceId;	//!< device time
+	
+	quint16 time[3];	//!< device time
+	
+	quint16 param[4][3];	//!< the values of the parameters (belong to the header)
+	
+	quint16 data[750];	//!< the events, length of the data = length of the buffer - length of the header
 };
 Q_DECLARE_METATYPE(DATA_PACKET)
 
@@ -134,6 +131,7 @@ typedef struct NeutronEvent
 	quint32	timestamp	: 19;
 } NEUTRON;
 
+#if 0
 //! structure for MDLL settings
 typedef struct _MDLL_SETTINGS 
 {
@@ -185,28 +183,31 @@ typedef struct _MDLL_SETTINGS
 	quint16 auxTimer[4];
 	quint8 paramSource[4];
 } *P_MDLL_SETTING, MDLL_SETTING;
+#endif
 
+#if 0
 //! structure for networksettings of MDLL
 typedef struct _MDLL_ADDRESS_SET
 {
-	quint8 ip0;
-	quint8 ip1;
-	quint8 ip2;
-	quint8 ip3;
+	quint8 ip0;	//!<
+	quint8 ip1;	//!<
+	quint8 ip2;	//!<
+	quint8 ip3;	//!<
     
-	quint8 dip0;
+	quint8 dip0;	//!<
 	quint8 dip1;
-	quint8 dip2;
-	quint8 dip3;
+	quint8 dip2;	//!<
+	quint8 dip3;	//!<
     
-	quint8 cudp;
-	quint8 dudp;
+	quint8 cudp;	//!<
+	quint8 dudp;	//!<
     
-	quint8 cip0;
-	quint8 cip1;
-	quint8 cip2;
-	quint8 cip3;
+	quint8 cip0;	//!<
+	quint8 cip1;	//!<
+	quint8 cip2;	//!<
+	quint8 cip3;	//!<
 } *P_MDLL_ADRESS_SET, MDLL_ADDRESS_SET;
+#endif
 
 #define CMDBUFTYPE		0x8000
 #define TRIGGEREVENTTYPE	0x8000

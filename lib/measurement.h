@@ -480,9 +480,6 @@ private:
 	//! contains the number of received trigger events
 	quint64		m_triggers;
 
-	//! stores the current run ID 
-	quint16		m_runID;
-
 	quint16		m_width;
 
 	quint16		m_height;
