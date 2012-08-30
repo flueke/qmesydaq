@@ -74,6 +74,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_dispTimer(0)
     , m_controlInt(NULL)
     , m_histogram(NULL)
+    , m_histoType(Measurement::PositionHistogram)
 {
     setupUi(this);
 #ifndef USE_CARESS
@@ -1169,6 +1170,8 @@ void MainWidget::mpsdCheck(int mod)
  */
 void MainWidget::setHistogramType(int val)
 {
+    m_histoType = Measurement::HistogramType(val);
+#if 0
     switch (val)
     {
         case Measurement::PositionHistogram :
@@ -1183,6 +1186,7 @@ void MainWidget::setHistogramType(int val)
         default :
             break;
     }
+#endif
     emit redraw();
 }
 
@@ -1250,16 +1254,16 @@ void MainWidget::draw(void)
     if (m_meas->getROI().isEmpty())
         m_meas->setROI(QRectF(0, 0, width(), height()));
     Spectrum *spec(NULL);
+    Histogram *histogram(NULL);
     switch (m_mode)
     {
         case Plot::Histogram :
-	    m_histogram->calcMinMaxInROI(m_meas->getROI());
-            m_histData->setData(m_histogram);
+            histogram = m_meas->hist(Measurement::HistogramType(m_histoType));
+	    histogram->calcMinMaxInROI(m_meas->getROI());
+            m_histData->setData(histogram);
 	    m_dataFrame->setHistogramData(m_histData);
-
             labelCountsInROI->setText(tr("Counts in ROI"));
-            countsInROI->setText(tr("%1").arg(m_histogram->getCounts(m_meas->getROI())));
-
+            countsInROI->setText(tr("%1").arg(histogram->getCounts(m_meas->getROI())));
             break;
         case Plot::Diffractogram :
             spec = m_meas->spectrum(Measurement::Diffractogram); 

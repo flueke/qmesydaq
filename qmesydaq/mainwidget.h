@@ -25,6 +25,7 @@
 #include <QTime>
 #include "ui_mainwidget.h"
 #include "plot.h"
+#include "measurement.h"
 
 class QTimer;
 
@@ -34,7 +35,6 @@ class MesydaqSpectrumData;
 class MesydaqHistogramData;
 class Histogram;
 class Mesydaq2;
-class Measurement;
 class CorbaThread;
 class ControlInterface;
 
@@ -63,6 +63,9 @@ public:
 	void selectUserMode(int);
 
 	void 	closeEvent(QCloseEvent *);
+
+	void 	updateDisplay(void);
+
 signals:
 	//! will be emitted in case of start of data acquisition
 	void	started(bool);
@@ -130,8 +133,6 @@ protected:
 //	void 	paintEvent(QPaintEvent *);
 
 private:
-	void 	updateDisplay(void);
-
 	void 	drawOpData();
 
 	void 	updatePresets(void);
@@ -249,6 +250,8 @@ private:
 	Plot::Mode		m_mode;
 
 	Plot 			*m_dataFrame;
+
+	Measurement::HistogramType	m_histoType;
 };	
 
 #endif
