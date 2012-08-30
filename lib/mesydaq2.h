@@ -334,6 +334,9 @@ private:
 
 	//! time stamp for the start of measurement
 	quint64 	m_starttime_msec;
+
+	//! current run ID
+	quint16		m_runId;
 };
 
 
