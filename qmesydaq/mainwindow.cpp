@@ -56,7 +56,14 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionAddMCPD, SIGNAL(triggered()), m_main, SLOT(addMCPD()));
 	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
+	connect(m_main, SIGNAL(started(bool)), actionLoad_Histogram_File, SLOT(setDisabled(bool)));
+	connect(m_main, SIGNAL(started(bool)), actionLoad_Calibration_File, SLOT(setDisabled(bool)));
+	connect(m_main, SIGNAL(started(bool)), action_Load_Config_File, SLOT(setDisabled(bool)));
+	connect(m_main, SIGNAL(started(bool)), actionNewSetup, SLOT(setDisabled(bool)));
+	connect(m_main, SIGNAL(started(bool)), actionSetupMCPD, SLOT(setDisabled(bool)));
+	connect(m_main, SIGNAL(started(bool)), actionAddMCPD, SLOT(setDisabled(bool)));
 
 	restoreSettings();
 }
