@@ -21,7 +21,7 @@
 
 VERSION 	= 0.1.1
 
-include( ../../qmesydaqconfig.pri )
+include( ../../mesydaqconfig.pri )
 
 TEMPLATE 	= lib
 TARGET 		= caressInterface

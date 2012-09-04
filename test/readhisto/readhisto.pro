@@ -20,7 +20,7 @@
 
 VERSION		= 1.0.0
 
-include (../../qmesydaqconfig.pri)
+include (../../mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= readhisto

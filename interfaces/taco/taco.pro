@@ -20,7 +20,7 @@
 
 VERSION 	= 1.2.0
 
-include( ../../qmesydaqconfig.pri )
+include( ../../mesydaqconfig.pri )
 
 TEMPLATE 	= lib
 TARGET 		= tacoInterface

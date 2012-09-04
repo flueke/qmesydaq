@@ -20,7 +20,7 @@
 
 VERSION 	= 0.0.2
 
-include( ../../qmesydaqconfig.pri )
+include( ../../mesydaqconfig.pri )
 
 TEMPLATE 	= lib
 TARGET 		= tcpInterface

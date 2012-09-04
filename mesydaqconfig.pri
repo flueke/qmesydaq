@@ -45,7 +45,7 @@ CONFIG		+= debug
 # additional debug messages for QMesyDAQDetectorInterface and CARESS interface
 # DEFINES         += DEBUGBUILD
 
-QMESYDAQCONFIG = qmesydaqconfig_$$system(hostname -s).pri
+QMESYDAQCONFIG = mesydaqconfig_$$system(hostname -s).pri
 exists($${QMESYDAQCONFIG}) {
 	include($${QMESYDAQCONFIG})
 }

@@ -20,7 +20,7 @@
 
 LIBS        	+= -L../../lib 
 
-include (../../qmesydaqconfig.pri)
+include (../../mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= plot

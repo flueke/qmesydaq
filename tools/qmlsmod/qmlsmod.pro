@@ -4,7 +4,7 @@
 
 VERSION		= 1.0.2
 
-include(../../qmesydaqconfig.pri)
+include(../../mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= qmlsmod

@@ -20,7 +20,7 @@
 
 VERSION		= 0.11.1
 
-include(../qmesydaqconfig.pri)
+include(../mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= qmesydaq
