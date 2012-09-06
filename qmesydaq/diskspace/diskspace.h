@@ -78,8 +78,15 @@ public:
 	//! returns the number of free bytes
 	unsigned long long freeBytes(void)
 	{
-		boost::filesystem::space_info spi = boost::filesystem::space(m_path);
-		return spi.free;
+		try
+		{
+			boost::filesystem::space_info spi = boost::filesystem::space(m_path);
+			return spi.free;
+		}
+		catch (const boost::filesystem::basic_filesystem_error<boost::filesystem::path> &e)
+		{
+		}
+		return 0;
 	}
 
 	//! returns the number of free space in kB 
@@ -103,8 +110,15 @@ public:
 	//! returns the number of available bytes
 	unsigned long long availableBytes(void)
 	{
-		boost::filesystem::space_info spi = boost::filesystem::space(m_path);
-		return spi.available;
+		try
+		{
+			boost::filesystem::space_info spi = boost::filesystem::space(m_path);
+			return spi.available;
+		}
+		catch (const boost::filesystem::basic_filesystem_error<boost::filesystem::path> &e)
+		{
+		}
+		return 0;
 	}
 
 	//! returns the number of available space in kB
