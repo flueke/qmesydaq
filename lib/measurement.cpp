@@ -28,6 +28,7 @@
 #include "mdefines.h"
 #include "histogram.h"
 #include "usermapcorrect.h"
+#include "mdllcorrect.h"
 #include "mappedhistogram.h"
 #include "mesydaq2.h"
 #include "logging.h"
@@ -780,13 +781,21 @@ void Measurement::readCalibration(const QString &name)
 		delete m_posHistMapCorrection;
 	if (m_calibrationfilename.isEmpty())
 	{
-		MSG_ERROR << "Linear Map correction";
+		switch (setupType()) 
+		{
+			case Mdll:
+				m_posHistMapCorrection = new MdllMapCorrection(QSize(480, 480/* m_width, m_height */));
+				break;
+			default:
+				MSG_ERROR << "Linear Map correction";
 #warning TODO the size of the corrected map 
 #if 0
-		m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(128, 128));
+				m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(128, 128));
 #else
-		m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(m_width, m_height), MapCorrection::OrientationDownRev);
+				m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(m_width, m_height), MapCorrection::OrientationDownRev);
 #endif
+				break;
+		}
 		return;
 	}
 	MSG_ERROR << "User map correction from file " << m_calibrationfilename;
