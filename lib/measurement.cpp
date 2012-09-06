@@ -684,6 +684,7 @@ void Measurement::writeHistograms(const QString &name)
 	if (f.open(QIODevice::WriteOnly)) 
 	{    // file opened successfully
 		QTextStream t( &f );        // use a text stream
+		t << "# filename = " << name;
 		//
 		// write the monitor, events, and timer values after a '#' char
 		// 
