@@ -83,7 +83,11 @@ public:
 			boost::filesystem::space_info spi = boost::filesystem::space(m_path);
 			return spi.free;
 		}
+#if BOOST_FILESYSTEM_VERSION == 2
 		catch (const boost::filesystem::basic_filesystem_error<boost::filesystem::path> &e)
+#else 
+		catch ( ... )
+#endif
 		{
 		}
 		return 0;
@@ -115,7 +119,11 @@ public:
 			boost::filesystem::space_info spi = boost::filesystem::space(m_path);
 			return spi.available;
 		}
+#if BOOST_FILESYSTEM_VERSION == 2
 		catch (const boost::filesystem::basic_filesystem_error<boost::filesystem::path> &e)
+#else
+		catch ( ... )
+#endif
 		{
 		}
 		return 0;
