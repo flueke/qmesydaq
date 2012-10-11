@@ -19,14 +19,15 @@
 ############################################################################
 
 VERSION		= 0.11.1
+SRCBASE		= ..
 
-include(../mesydaqconfig.pri)
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= qmesydaq
 
-DEPENDPATH 	+= . ../lib ../test/plot
-INCLUDEPATH 	+= . ../lib .. ../test/plot
+DEPENDPATH 	+= . $${SRCBASE}/test/plot
+INCLUDEPATH 	+= . $${SRCBASE} $${SRCBASE}/test/plot
 
 SUBDIRS		+= diskspace
 
@@ -114,15 +115,15 @@ DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
 
 contains(INTERFACE, TACO) {
-	DEPENDPATH	+= ../interfaces/taco
-	INCLUDEPATH	+= ../interfaces/taco
-	LIBS		+= -L../interfaces/taco -ltacoInterface $${LIBS} $${TACOLIBS}
+	DEPENDPATH	+= $${SRCBASE}/interfaces/taco
+	INCLUDEPATH	+= $${SRCBASE}/interfaces/taco
+	LIBS		+= -L$${SRCBASE}/interfaces/taco -ltacoInterface $${LIBS} $${TACOLIBS}
 }
 
 contains(INTERFACE, CARESS) {
-	DEPENDPATH	+= ../interfaces/caress
-	INCLUDEPATH	+= ../interfaces/caress
-	LIBS		+= -L../interfaces/caress -lcaressInterface $${LIBS}
+	DEPENDPATH	+= $${SRCBASE}/interfaces/caress
+	INCLUDEPATH	+= $${SRCBASE}/interfaces/caress
+	LIBS		+= -L$${SRCBASE}/interfaces/caress -lcaressInterface $${LIBS}
 }
 
 INCLUDEPATH	+= diskspace
@@ -142,4 +143,3 @@ revtarget.commands 	= @echo \"updating file $$revtarget.target\"; \
     			\"$${LITERAL_HASH}endif\" > $$revtarget.target
 revtarget.depends 	= $$SOURCES $$HEADERS $$FORMS qmesydaq.pro
 QMAKE_DISTCLEAN 	+= $$revtarget.target
-

@@ -1134,7 +1134,7 @@ bool MCPD8::sendSerialString(QString /* str*/)
 }
 
 /*!
-    \fn MCPD8::setRunId(quint16 runid)
+    \fn MCPD8::setRunId(quint32 runid)
 
     sets the run ID of the measurement
 
@@ -1142,14 +1142,14 @@ bool MCPD8::sendSerialString(QString /* str*/)
     \return true if operation was succesful or not
     \see getRunId
  */
-bool MCPD8::setRunId(quint16 runid)
+bool MCPD8::setRunId(quint32 runid)
 {
     if(m_master)
     {
         initCmdBuffer(SETRUNID);
-        m_cmdBuf.data[0] = runid;
+        m_cmdBuf.data[0] = (quint16)(runid & 0xFFFF);
         finishCmdBuffer(1);
-        MSG_NOTICE << "mcpd " << m_id << ": set run ID to " << runid;
+        MSG_NOTICE << "mcpd " << m_id << ": set run ID to " << m_cmdBuf.data[0];
         m_runId = runid;
         return sendCommand();
     }
@@ -1331,6 +1331,7 @@ int MCPD8::sendCommand(void)
 // wait for answer
         while(isBusy())
             qApp->processEvents();
+        m_commTimer->stop();
         m_cmdTxd++;
     }
     return 1;
@@ -1376,8 +1377,8 @@ void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
 
     if(recBuf.bufferType & CMDBUFTYPE)
     {
-        communicate(false);
         m_commTimer->stop();
+        communicate(false);
 //      MSG_DEBUG << m_network->ip().toLocal8Bit().constData() << '(' << m_network->port() << ") : timer stopped";
 
         ++m_cmdRxd;

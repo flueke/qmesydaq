@@ -276,7 +276,7 @@ public:
 
 // run ID oriented methods
 	//! \return the current run ID
-	quint16 runId(void) const 
+	quint32 runId(void) const
 	{ 
 		return m_mesydaq->runId(); 
 	}
@@ -285,9 +285,21 @@ public:
             sets the runid for the measurement
             \param runid
 	 */
-	void setRunId(const quint16 runid)
+	void setRunId(const quint32 runid)
 	{
 		m_mesydaq->setRunId(runid);
+	}
+
+	//! \return selection, if run id should incremented automatically
+	bool getAutoIncRunId() const
+	{
+		return m_mesydaq->getAutoIncRunId();
+	}
+
+	//! select, if run id should incremented automatically
+	void setAutoIncRunId(bool b)
+	{
+		m_mesydaq->setAutoIncRunId(b);
 	}
 
 	//! returns the current operation mode

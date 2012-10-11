@@ -3,8 +3,9 @@
 ######################################################################
 
 VERSION		= 1.15.0
+SRCBASE		= ..
 
-include(../mesydaqconfig.pri)
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= lib
 TARGET 		= mesydaq

@@ -171,10 +171,14 @@ public:
 
 	quint64 getParameter(quint16 mod, quint16 param);
 
-	void setRunId(quint16 runid);
+	void setRunId(quint32 runid);
 
 	//! \return the current run ID number
-	quint16 runId(); 
+	quint32 runId();
+
+	//! \return selection, if run id should incremented automatically
+	bool getAutoIncRunId() const { return m_bAutoIncRunId; }
+	void setAutoIncRunId(bool b) { m_bAutoIncRunId=b; }
 
 	quint64 receivedData(); 
 
@@ -336,7 +340,8 @@ private:
 	quint64 	m_starttime_msec;
 
 	//! current run ID
-	quint16		m_runId;
+	quint32		m_runId;
+	bool			m_bAutoIncRunId;
 };
 
 

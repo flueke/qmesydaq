@@ -40,6 +40,8 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_listfilename("")
 	, m_timingwidth(1)
 	, m_starttime_msec(0)
+	, m_runId(0)
+	, m_bAutoIncRunId(true)
 {
 	Q_ASSERT(parent == NULL);
 	MSG_NOTICE << "running on Qt %1" << qVersion();
@@ -1623,7 +1625,7 @@ quint8 Mesydaq2::getThreshold(quint16 id, quint8 addr)
 	return 0;
 }
 
-quint16 Mesydaq2::runId(void) 
+quint32 Mesydaq2::runId(void)
 {
 	return m_runId;
 #if 0
@@ -1635,7 +1637,7 @@ quint16 Mesydaq2::runId(void)
 #endif
 }
 /*!
-    \fn Mesydaq2::setRunId(quint16 runid)
+    \fn Mesydaq2::setRunId(quint32 runid)
 
     sets the run ID of the measurement
 
@@ -1643,7 +1645,7 @@ quint16 Mesydaq2::runId(void)
     \return true if operation was succesful or not
     \see getRunId
  */
-void Mesydaq2::setRunId(quint16 runid)
+void Mesydaq2::setRunId(quint32 runid)
 {
 	MSG_NOTICE << "Mesydaq2::setRunId(" << runid << ')';
 	m_runId = runid;

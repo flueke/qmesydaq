@@ -3,8 +3,9 @@
 ######################################################################
 
 VERSION		= 1.0.1
+SRCBASE		= ../..
 
-include(../../mesydaqconfig.pri)
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= qmdump
@@ -13,14 +14,12 @@ QT		+= core network
 
 CONFIG		+= debug
 
-DEPENDPATH 	+= ../../lib .
-INCLUDEPATH 	+= ../../lib .
+DEPENDPATH 	+= .
+INCLUDEPATH 	+= .
 
 # Input
 SOURCES 	+= main.cpp \
 		   readfile.cpp
-
-LIBS        	+= -L../../lib -lmesydaq
 
 INSTALLS        = target
 

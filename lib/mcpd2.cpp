@@ -832,7 +832,7 @@ bool MCPD2::sendSerialString(QString /* str*/)
 }
 
 /*!
-    \fn MCPD2::setRunId(quint16 runid)
+    \fn MCPD2::setRunId(quint32 runid)
 
     sets the run ID of the measurement
 
@@ -840,15 +840,16 @@ bool MCPD2::sendSerialString(QString /* str*/)
     \return true if operation was succesful or not
     \see getRunId
  */
-bool MCPD2::setRunId(quint16 runid)
+bool MCPD2::setRunId(quint32 runid)
 {
     if(m_master)
     {
-            m_runId = runid;
+        m_runId = runid;
         initCmdBuffer(SETRUNID);
-        m_cmdBuf.data[0] = m_runId;
+        m_cmdBuf.data[0] = (quint8)(m_runId & 0xFF);
+        m_cmdBuf.data[1] = (quint8)((m_runId>>8) & 0xFF);
         finishCmdBuffer(1);
-        MSG_ERROR << "mcpd " << m_id << ": set run ID to " << m_runId;
+        MSG_ERROR << "mcpd " << m_id << ": set run ID to " << (quint16)(runid & 0xFFFF);
         return sendCommand();
     }
     MSG_ERROR << "Error: trying to set run ID on mcpd " << m_id << " - not master!";

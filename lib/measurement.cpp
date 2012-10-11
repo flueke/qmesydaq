@@ -83,6 +83,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
     	setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
 
 	setRunId(settings.value("config/lastrunid", "0").toUInt());
+	setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
 
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(const DATA_PACKET &)), this, SLOT(analyzeBuffer(const DATA_PACKET &)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
@@ -276,7 +277,8 @@ void Measurement::start()
 	m_packages = 0;
 	m_triggers = 0;
 	m_neutrons = 0;
-	m_mesydaq->setRunId(m_mesydaq->runId() + 1);
+	if (m_mesydaq->getAutoIncRunId())
+		m_mesydaq->setRunId(m_mesydaq->runId() + 1);
 	m_mesydaq->start();
 	m_status = Started;
 	m_starttime_msec = m_mesydaq->time();

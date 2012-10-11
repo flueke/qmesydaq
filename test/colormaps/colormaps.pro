@@ -19,15 +19,14 @@
 ############################################################################
 
 VERSION		= 1.0.1
+SRCBASE		= ../..
 
-LIBS        	+= -L../../lib 
-
-include (../../mesydaqconfig.pri)
+include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= colormaps
-DEPENDPATH 	+= . ../../qmesydaq ../../lib
-INCLUDEPATH 	+= . ../../qmesydaq ../../lib
+DEPENDPATH 	+= . $${SRCBASE}/qmesydaq
+INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq
 
 SOURCES 	+= main.cpp \
 		selectcolorbox.cpp \

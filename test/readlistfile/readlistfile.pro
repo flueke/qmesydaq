@@ -3,8 +3,9 @@
 ######################################################################
 
 VERSION		= 1.0.0
+SRCBASE		= ../..
 
-include(../../mesydaqconfig.pri)
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= readlistfile
@@ -15,12 +16,10 @@ CONFIG		+= debug
 
 CXXFLAGS	+= -p
 
-DEPENDPATH 	+= ../../lib .
-INCLUDEPATH 	+= ../../lib .
+DEPENDPATH 	+= .
+INCLUDEPATH 	+= .
 
 # Input
 SOURCES 	+= main.cpp 
-
-LIBS        	+= -L../../lib -lmesydaq
 
 INSTALLS	= 

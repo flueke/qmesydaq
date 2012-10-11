@@ -21,6 +21,10 @@
 isEmpty(VERSION) {
 	VERSION	= 0.0.4 
 }
+isEmpty(SRCBASE) {
+	SRCBASE = .
+}
+
 SVNVERSION	= $$system(svnversion .)
 DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
 
@@ -85,9 +89,9 @@ else {
 QWTLIBS		= -L$${QWTLIBS} -l$${QWTLIB}
 QWTINCLUDES 	= $${QWTINCLUDE}
 
-INCLUDEPATH 	+= $${QWTINCLUDES}
+INCLUDEPATH 	+= $${QWTINCLUDES} $${SRCBASE}/lib
 DEPENDPATH  	+= $${QWTINCLUDES}
-LIBS        	+= $${QWTLIBS} -L../lib -lmesydaq
+LIBS        	+= $${QWTLIBS} -L$${SRCBASE}/lib -lmesydaq
 
 contains(INTERFACE, TACO) {
 	DEFINES		+= HAVE_CONFIG_H 

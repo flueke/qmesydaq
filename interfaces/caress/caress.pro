@@ -20,15 +20,16 @@
 ############################################################################
 
 VERSION 	= 0.1.1
+SRCBASE		= ../..
 
-include( ../../mesydaqconfig.pri )
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= lib
 TARGET 		= caressInterface
-DEPENDPATH 	+= . .. ../.. ../../qmesydaq ../../lib
-INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
+DEPENDPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
+INCLUDEPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
 
-LIBS		+= -L../../lib $${CARESSLIBS}
+LIBS		+= $${CARESSLIBS}
 
 target.path	= $${TARGETLIBPATH}
 

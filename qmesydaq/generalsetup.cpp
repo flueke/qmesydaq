@@ -38,6 +38,7 @@ GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
     histfilepath->setText(m_meas->getHistfilepath());
     listfilepath->setText(m_meas->getListfilepath());
     runId->setValue(m_meas->runId());
+    runIdAuto->setChecked(m_meas->getAutoIncRunId());
 }
 
 /*!
@@ -83,5 +84,15 @@ void GeneralSetup::selectHistpathSlot()
  */
 void GeneralSetup::setRunIdSlot()
 {
-	m_meas->setRunId(runId->value());
+    m_meas->setRunId(runId->value());
+}
+
+/*!
+ *   \fn GeneralSetup::selectAutoIncRunIdSlot
+ *
+ *   callback to select auto increment for run id
+ */
+void GeneralSetup::selectAutoIncRunIdSlot()
+{
+    m_meas->setAutoIncRunId(runIdAuto->isChecked());
 }

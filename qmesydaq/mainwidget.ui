@@ -92,10 +92,16 @@
               </attribute>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QRadioButton" name="dispMstdSpectrum">
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="dispHistogram">
               <property name="text">
-               <string>Single Spectrum</string>
+               <string>Histogram</string>
+              </property>
+              <property name="shortcut">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">displayModeButtonGroup</string>
@@ -107,21 +113,27 @@
               <property name="text">
                <string>Diffractogram</string>
               </property>
+              <property name="shortcut">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
               <attribute name="buttonGroup">
                <string notr="true">displayModeButtonGroup</string>
               </attribute>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="dispHistogram">
+            <item row="3" column="0">
+             <widget class="QRadioButton" name="dispMstdSpectrum">
               <property name="text">
-               <string>Histogram</string>
+               <string>Single Spectrum</string>
               </property>
               <property name="shortcut">
                <string/>
               </property>
               <property name="checked">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">displayModeButtonGroup</string>
@@ -205,7 +217,7 @@
          <item row="3" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
-            <widget class="QLabel" name="textLabel1_4_2_3_4_2">
+            <widget class="QLabel" name="textLabel1">
              <property name="text">
               <string>MCPD</string>
              </property>
@@ -229,7 +241,7 @@
          <item row="3" column="1">
           <layout class="QHBoxLayout">
            <item>
-            <widget class="QLabel" name="textLabel1_4_2_3_4_2_2">
+            <widget class="QLabel" name="textLabel2">
              <property name="text">
               <string>Module</string>
              </property>
@@ -256,7 +268,7 @@
          <item row="3" column="2">
           <layout class="QHBoxLayout">
            <item>
-            <widget class="QLabel" name="textLabel1_4_2_3_4_2_2_2">
+            <widget class="QLabel" name="textLabel3">
              <property name="text">
               <string>Channel</string>
              </property>
@@ -318,7 +330,7 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="textLabel1_6">
+          <widget class="QLabel" name="textLabel4">
            <property name="text">
             <string>low</string>
            </property>
@@ -328,7 +340,7 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="textLabel1_6_2">
+          <widget class="QLabel" name="textLabel5">
            <property name="text">
             <string>hi</string>
            </property>
@@ -554,10 +566,10 @@ Listfile</string>
                 <bool>false</bool>
                </property>
                <property name="numDigits">
-                <number>8</number>
+                <number>10</number>
                </property>
                <property name="digitCount">
-                <number>8</number>
+                <number>10</number>
                </property>
                <property name="segmentStyle">
                 <enum>QLCDNumber::Flat</enum>
@@ -574,7 +586,7 @@ Listfile</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_16">
              <item row="1" column="0">
-              <widget class="QLabel" name="textLabel1_3">
+              <widget class="QLabel" name="textLabel6">
                <property name="text">
                 <string>P0:</string>
                </property>
@@ -584,7 +596,7 @@ Listfile</string>
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="textLabel1_3_3">
+              <widget class="QLabel" name="textLabel7">
                <property name="text">
                 <string>P1:</string>
                </property>
@@ -594,7 +606,7 @@ Listfile</string>
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="textLabel1_3_4">
+              <widget class="QLabel" name="textLabel8">
                <property name="text">
                 <string>P2:</string>
                </property>
@@ -604,7 +616,7 @@ Listfile</string>
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QLabel" name="textLabel1_3_5">
+              <widget class="QLabel" name="textLabel9">
                <property name="text">
                 <string>P3:</string>
                </property>
@@ -677,7 +689,7 @@ Listfile</string>
               </widget>
              </item>
              <item row="5" column="0">
-              <widget class="QLabel" name="textLabel1_2_3_2">
+              <widget class="QLabel" name="textLabel10">
                <property name="text">
                 <string>Header time:</string>
                </property>
@@ -687,7 +699,7 @@ Listfile</string>
               </widget>
              </item>
              <item row="0" column="0" colspan="2">
-              <widget class="QLabel" name="textLabel1_3_6">
+              <widget class="QLabel" name="textLabel11">
                <property name="text">
                 <string>MCPD-ID:</string>
                </property>
@@ -718,7 +730,7 @@ Listfile</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_7">
             <item row="0" column="0">
-             <widget class="QLabel" name="textLabel1_2_3_2_3">
+             <widget class="QLabel" name="textLabel12">
               <property name="text">
                <string>Timer [h:m:s]:</string>
               </property>
@@ -813,7 +825,7 @@ Listfile</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="0" column="0">
-                <widget class="QLabel" name="textLabel1_8">
+                <widget class="QLabel" name="textLabel13">
                  <property name="text">
                   <string>Binwidth [bits]
 1 bit = 100 ns</string>
@@ -905,7 +917,7 @@ Listfile</string>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="QLabel" name="textLabel1_4_2_4">
+              <widget class="QLabel" name="textLabel14">
                <property name="text">
                 <string>MCPD ID</string>
                </property>
@@ -961,7 +973,7 @@ Listfile</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_10">
             <item row="1" column="0">
-             <widget class="QLabel" name="textLabel1_2_3">
+             <widget class="QLabel" name="textLabel15">
               <property name="text">
                <string>cmd buffers reveived:</string>
               </property>
@@ -971,7 +983,7 @@ Listfile</string>
              </widget>
             </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="textLabel1_2">
+             <widget class="QLabel" name="textLabel16">
               <property name="text">
                <string>cmd buffers transmitted:</string>
               </property>
@@ -1007,7 +1019,7 @@ Listfile</string>
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="textLabel1_2_2">
+             <widget class="QLabel" name="textLabel17">
               <property name="text">
                <string>data buffers received:</string>
               </property>
@@ -1053,7 +1065,7 @@ Listfile</string>
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QLabel" name="textLabel2_2_2">
+                <widget class="QLabel" name="textLabel18">
                  <property name="text">
                   <string>Currently loaded:</string>
                  </property>
@@ -1095,7 +1107,7 @@ Listfile</string>
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QLabel" name="textLabel2_2">
+                <widget class="QLabel" name="textLabel19">
                  <property name="text">
                   <string>Currently loaded:</string>
                  </property>
@@ -1147,7 +1159,7 @@ Listfile</string>
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QLabel" name="textLabel2_2">
+                <widget class="QLabel" name="textLabel20">
                  <property name="text">
                   <string>Currently loaded:</string>
                  </property>
@@ -1212,7 +1224,7 @@ Listfile</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_14">
             <item row="0" column="0">
-             <widget class="QLabel" name="textLabel1_12">
+             <widget class="QLabel" name="textLabel21">
               <property name="text">
                <string>height:</string>
               </property>
@@ -1222,7 +1234,7 @@ Listfile</string>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="textLabel1_12_2">
+             <widget class="QLabel" name="textLabel22">
               <property name="text">
                <string>width:</string>
               </property>
@@ -1232,7 +1244,7 @@ Listfile</string>
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="textLabel1_12_2_2">
+             <widget class="QLabel" name="textLabel23">
               <property name="text">
                <string>run#</string>
               </property>
@@ -1307,7 +1319,7 @@ Listfile</string>
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QLabel" name="textLabel1_5_3">
+            <widget class="QLabel" name="textLabel24">
              <property name="text">
               <string>Sigma:</string>
              </property>
@@ -1317,7 +1329,7 @@ Listfile</string>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QLabel" name="textLabel1_5">
+            <widget class="QLabel" name="textLabel25">
              <property name="text">
               <string>Sliding Mean:</string>
              </property>

@@ -18,7 +18,9 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-include( ../mesydaqconfig.pri )
+SRCBASE		= ..
+
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= subdirs
 
@@ -32,6 +34,3 @@ SUBDIRS		+= qmsetip \
 		mstd16
 
 TARGET = 	
-DEPENDPATH 	+= ../lib 
-INCLUDEPATH 	+= ../lib
-

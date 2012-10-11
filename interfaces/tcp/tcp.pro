@@ -19,15 +19,16 @@
 ############################################################################
 
 VERSION 	= 0.0.2
+SRCBASE		= ../..
 
-include( ../../mesydaqconfig.pri )
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= lib
 TARGET 		= tcpInterface
-DEPENDPATH 	+= . .. ../.. ../../qmesydaq ../../lib
-INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
+DEPENDPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
+INCLUDEPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
 
-LIBS		+= -L../../lib $${TACOLIBS}
+LIBS		+= $${TACOLIBS}
 
 QT		+= network
 

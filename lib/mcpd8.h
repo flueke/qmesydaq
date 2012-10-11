@@ -246,7 +246,7 @@ public:
 	//! \return the current time of the MCPD in msec
 	quint64 time(void) {return m_timemsec;}
 
-	bool setRunId(quint16 runid);
+	bool setRunId(quint32 runid);
 
 	/**
 	 * gets the current set run ID
@@ -254,7 +254,7 @@ public:
 	 * \return run ID
 	 * \see setRunId
 	 */
-	quint16 getRunId(void) {return m_runId;}
+	quint32 getRunId(void) {return m_runId;}
 
 	/**
 	 * gets the address of the MCPD module
@@ -393,7 +393,7 @@ private:
 	QTimer 		*m_commTimer;
 
 	//! current run ID
-	quint16 	m_runId;
+	quint32 	m_runId;
 
 	//! DAQ started?
 	bool		m_daq;

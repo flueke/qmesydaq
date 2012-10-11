@@ -531,7 +531,7 @@ void MainWidget::updateDisplay(void)
     monitor4Preset->setValue(m_meas->mon4());
     monitor4Preset->setRate(m_meas->getRate(MON4ID));
 
-    lcdRunID->display(m_meas->runId());
+    lcdRunID->display((int)m_meas->runId());
     dispFiledata();
 }
 
@@ -1499,6 +1499,7 @@ void MainWidget::setupGeneral()
         m_meas->setHistfilepath(d.histFilePath());
         m_meas->setConfigfilepath(d.configFilePath());
         m_meas->setRunId(d.lastRunId());
+        m_meas->setAutoIncRunId(d.getAutoIncRunId());
     }
 }
 
@@ -1734,7 +1735,7 @@ void MainWidget::customEvent(QEvent *e)
                     if (!args.isEmpty())
                     {
                         MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
-                    	
+
                         MapCorrection *pNewMap = dynamic_cast<MapCorrection*>((QObject*)args[0].toULongLong());
                         if (pNewMap != NULL)
                         {

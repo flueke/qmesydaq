@@ -19,15 +19,14 @@
 ############################################################################
 
 VERSION		= 1.0.0
+SRCBASE		= ../..
 
-include (../../mesydaqconfig.pri)
+include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= readhisto
-DEPENDPATH 	+= . ../../lib
-INCLUDEPATH 	+= . ../../lib
-
-LIBS		+= -L../../lib -lmesydaq
+DEPENDPATH 	+= .
+INCLUDEPATH 	+= .
 
 SOURCES 	+= main.cpp 
 

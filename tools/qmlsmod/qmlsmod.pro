@@ -3,8 +3,9 @@
 ######################################################################
 
 VERSION		= 1.0.2
+SRCBASE		= ../..
 
-include(../../mesydaqconfig.pri)
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= qmlsmod
@@ -13,13 +14,11 @@ QT		+= core network
 
 CONFIG		+= debug
 
-DEPENDPATH 	+= ../../lib .
-INCLUDEPATH 	+= ../../lib .
+DEPENDPATH 	+= .
+INCLUDEPATH 	+= .
 
 # Input
 SOURCES 	+= main.cpp
-
-LIBS        	+= -L../../lib -lmesydaq
 
 INSTALLS        = target
 

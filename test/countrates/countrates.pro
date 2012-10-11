@@ -7,7 +7,9 @@
 # modify it under the terms of the Qwt License, Version 1.0
 ###################################################################
 
-include( ../../mesydaqconfig.pri )
+SRCBASE=../..
+
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TARGET       	= countrates
 

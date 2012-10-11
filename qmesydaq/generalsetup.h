@@ -47,14 +47,17 @@ public:
 	//! \return the path for the histogram data file
 	QString histFilePath(void) {return histfilepath->text();}
 
-        //! \return the last run ID 
-	quint16 lastRunId(void)  {return runId->value();}
+	//! \return the last run ID
+	quint32 lastRunId(void)  {return runId->value();}
+
+	//! \return auto increment run id selection
+	bool getAutoIncRunId(void)  {return runIdAuto->isChecked();}
 
 	/*!
 	    set the last run id
             \param val
          */
-	void setLastRunId(const quint16 val) {runId->setValue(val);}
+  void setLastRunId(const quint32 val) {runId->setValue(val);}
 
 private slots:
 	void selectConfigpathSlot();
@@ -64,6 +67,8 @@ private slots:
 	void selectListpathSlot();
 
 	void setRunIdSlot();
+
+	void selectAutoIncRunIdSlot();
 
 private:
 	//! store the measurement object

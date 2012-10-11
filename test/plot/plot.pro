@@ -18,14 +18,14 @@
  #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ############################################################################
 
-LIBS        	+= -L../../lib 
+SRCBASE		= ../..
 
-include (../../mesydaqconfig.pri)
+include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= plot
-DEPENDPATH 	+= . ../../qmesydaq ../../lib
-INCLUDEPATH 	+= . ../../qmesydaq ../../lib
+DEPENDPATH 	+= . $${SRCBASE}/qmesydaq
+INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq
 
 SOURCES 	+= main.cpp \
 		plot.cpp \

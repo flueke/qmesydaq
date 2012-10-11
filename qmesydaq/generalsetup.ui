@@ -97,9 +97,6 @@
         <property name="toolTip">
          <string>RUN ID will be transmitted in every data buffer header</string>
         </property>
-        <property name="maximum">
-         <number>65535</number>
-        </property>
        </widget>
       </item>
       <item row="0" column="1">
@@ -241,11 +238,18 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>runIdAuto</sender>
+   <signal>clicked()</signal>
+   <receiver>GeneralSetup</receiver>
+   <slot>selectAutoIncRunIdSlot()</slot>
+  </connection>
  </connections>
  <slots>
   <slot>selectListpathSlot()</slot>
   <slot>selectConfigpathSlot()</slot>
   <slot>selectHistpathSlot()</slot>
   <slot>setRunIdSlot()</slot>
+  <slot>selectAutoIncRunIdSlot()</slot>
  </slots>
 </ui>

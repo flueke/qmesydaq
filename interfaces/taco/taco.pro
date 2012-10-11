@@ -19,15 +19,16 @@
 ############################################################################
 
 VERSION 	= 1.2.0
+SRCBASE		= ../..
 
-include( ../../mesydaqconfig.pri )
+include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= lib
 TARGET 		= tacoInterface
-DEPENDPATH 	+= . .. ../.. ../../qmesydaq ../../lib
-INCLUDEPATH 	+= . .. ../.. ../../qmesydaq ../../lib
+DEPENDPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
+INCLUDEPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
 
-LIBS		+= -L../../lib $${TACOLIBS}
+LIBS		+= $${TACOLIBS}
 
 target.path	= $${TARGETLIBPATH}
 
