@@ -44,14 +44,14 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 
 	if (!m_interface)
         	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-#if 0
+#if 1
 	m_listFilename = incNumber(m_listFilename);
 #else
 	m_listFilename = runNumber(m_listFilename);
 #endif
 	updateResource<std::string>("lastlistfile", m_listFilename);
     	m_interface->setListFileName(m_listFilename.c_str());
-#if 0
+#if 1
 	m_histFilename = incNumber(m_histFilename);
 #else
 	m_histFilename = runNumber(m_histFilename);
