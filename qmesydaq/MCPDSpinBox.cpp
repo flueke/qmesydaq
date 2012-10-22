@@ -49,6 +49,7 @@ void MCPDSpinBox::setMCPDList(QList<int> modules)
 		setRange(m_mcpdList.first(), m_mcpdList.last());
 		setValue(m_mcpdList.at(0));
 	}
+	else
 		setDisabled(true);
 }
 
