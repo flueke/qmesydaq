@@ -24,8 +24,8 @@ include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= plot
-DEPENDPATH 	+= . $${SRCBASE}/qmesydaq
-INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq
+DEPENDPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
+INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
 
 SOURCES 	+= main.cpp \
 		plot.cpp \
