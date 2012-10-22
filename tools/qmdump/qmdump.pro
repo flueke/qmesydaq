@@ -14,9 +14,10 @@ QT		+= core network
 
 CONFIG		+= debug
 
-DEPENDPATH 	+= .
-INCLUDEPATH 	+= .
+DEPENDPATH 	+= . $${SRCBASE}/lib
+INCLUDEPATH 	+= . $${SRCBASE}/lib
 
+LIBS		+= 
 # Input
 SOURCES 	+= main.cpp \
 		   readfile.cpp
