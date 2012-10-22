@@ -25,8 +25,8 @@ include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= colormaps
-DEPENDPATH 	+= . $${SRCBASE}/qmesydaq
-INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq
+DEPENDPATH 	+= . $${SRCBASE}/qmesydaq 
+INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
 
 SOURCES 	+= main.cpp \
 		selectcolorbox.cpp \
