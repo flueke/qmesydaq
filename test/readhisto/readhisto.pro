@@ -25,8 +25,10 @@ include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= readhisto
-DEPENDPATH 	+= .
-INCLUDEPATH 	+= .
+DEPENDPATH 	+= . $${SRCBASE}/lib
+INCLUDEPATH 	+= . $${SRCBASE}/lib
+
+LIBS		+= -L$${SRCBASE}/lib -lmesydaq
 
 SOURCES 	+= main.cpp 
 
