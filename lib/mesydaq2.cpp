@@ -358,7 +358,7 @@ QSize Mesydaq2::size(void)
 }
 
 /*!
-    \fn quint16 Mesydaq2::width()
+    \fn quint16 Mesydaq2::height()
 
     the maximum number of bins over all modules
 
@@ -374,7 +374,7 @@ quint16 Mesydaq2::height(void)
 }
 
 /*!
-    \fn quint16 Mesydaq2::height()
+    \fn quint16 Mesydaq2::width()
 
     the maximum number of channel over all modules
 
