@@ -1,0 +1,97 @@
+/*!
+ \page list_mode_format Listmode data format
+
+ \section general_listmode_file_format General file format
+
+Incoming data from MCPD modules will usually written to disk directly
+in listmode format. This is the native data format arriving from Ethernet. It
+allows an offline replay/reconstruction/processing of data once they are taken.
+
+The listmode file may vary from setup to setup, but a general structure can
+be given:
+
+<table>
+<tr>
+<td>
+<b>File header</b> <br>
+ASCII format <br>
+variable length <br>
+lenght given in header <br>
+carries administrational data <br>
+</td>
+</tr>
+<tr>
+<td>
+<b>Header separator</b> <br>
+Binary format <br>
+fixed length: 4 &times; 16 bit words = 8 Bytes <br>
+fixed signature: 0x0000 0x5555 0xAAAA 0xFFFF <br>
+may be used for integrity check, file reconstruction
+</td>
+</tr>
+<tr>
+<td>
+<b>Data block</b> <br>
+binary format <br>
+image of data buffer header plus trailing data like described in \ref data_buffers.
+</td>
+</tr>
+<tr>
+<td>
+<b>Data block separator</b> <br>
+binary format <br>
+fixed length: 4 &times; 16 bit words = 8 Bytes <br>
+fixed signature: 0x0000 0xFFFF 0x5555 0xAAAA <br>
+may be used for integrity check, file reconstruction
+</td>
+</tr>
+<tr>
+<td>
+<b>Trailing data blocks</b>
+</td>
+</tr>
+<tr>
+<td>
+<b>Trailing data block separators</b>
+</td>
+</tr>
+<tr>
+<td>
+&sdot;&sdot;&sdot;
+</td>
+</tr>
+<tr>
+<td>
+<b>Closing signature</b> <br>
+binary format <br>
+fixed length: 4 &times; 16 bit words = 8 Bytes <br>
+fixed signature: 0xRFFF 0xAAAA 0x5555 0xAAAA <br>
+may be used for integrity check
+</td>
+</tr>
+</table>
+
+During data taking only incoming event data will be written to file. Command
+answers will be processed but not written to file.
+
+\subsection listmode_file_header_format Listmode file header format
+
+Details of the the file header will vary from system to system, depending on
+number and contents of additional information that is to be written to the file.
+
+In any case, the header will begin with an ASCII line:
+\code
+mesytec psd listmode data
+\endcode
+followed by a line:
+\code
+header length: nnnnn lines
+\endcode
+
+This allows any data processing software to skip the variable ASCII header part
+of the listmode file without knowing about the detailed structure.
+
+Beginning with line nnnnn + 1, the binary part of the listmode file starts with
+the header separator.
+
+ */

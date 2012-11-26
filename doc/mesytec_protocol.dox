@@ -1,0 +1,398 @@
+/*!
+  \page mesytec_protocol mesytec protocol
+
+  \tableofcontents
+
+The communication between DAQ/control computers and the central modules MCPD is
+based on the standardized UDP/IP protocol family.
+
+There are 2 principle kinds of communication in a PSD/DLL system:
+- the MCPD modules receive and answer command buffers. Usually commands are
+emitted by a single control PC. Each command is echoed to the commanding
+computer, delivering a command response and a status description as well as
+a variable amount of information.
+- During the data acquisition the MCPD modules will emit data packages
+autonomously. The address of the recipient is set up during the initialisation
+process of the system. Thus it is possible to send data packages and command
+answers to different recipients.
+
+For experiments with high data rates, it might be useful to have data taking
+distributed on more than one PC.
+
+Both types of communication packets are wrapped in UDP packets.
+
+Using UDP communication allows efficient data transmission without too much protocol
+overhead. But it has to be remembered that there's no intrinsic protection against
+packet loss (like in TCP e.g.). Thus some simple control mechanisms have been
+implemented into the mesytec protocol in order to achieve sufficient data security.
+
+\section data_buffers Data buffers
+
+During data acquisition the MCPD modules transmit a continuous stream of event
+buffers.
+
+Each event buffer consists of a buffer header (21 &times; 16 bit = 42 Bytes) and a
+variable number of events. Each event has a lenght of 48 bits = 6 Bytes.
+
+The total length of an event buffer varies between 42 Bytes (header only) up to
+1500 Bytes (limited by unfragmented Ethernet frame length).
+
+<b>Buffer structure:</b><br/>
+(in 16 bit words):
+
+<table>
+<tr> <td> Buffer length (in 16 bit words) Word 0 </td> </tr>
+<tr> <td> Buffer type </td> </tr>
+<tr> <td> Header length (in 16 bit words) </td> </tr>
+<tr> <td> Buffer number </td> </tr>
+<tr> <td> Run ID</td> </tr>
+<tr> <td> MCPD ID</td> <td> Status </td> </tr>
+<tr> <td> Header timestamp low word</td> </tr>
+<tr> <td> Header timestamp middle word</td> </tr>
+<tr> <td> Header timestamp high word</td> </tr>
+<tr> <td> Parameter \b 0 low word</td> </tr>
+<tr> <td> Parameter \b 0 middle word</td> </tr>
+<tr> <td> Parameter \b 0 high word</td> </tr>
+<tr> <td> Parameter \b 1 low word</td> </tr>
+<tr> <td> Parameter \b 1 middle word</td> </tr>
+<tr> <td> Parameter \b 1 high word</td> </tr>
+<tr> <td> Parameter \b 2 low word</td> </tr>
+<tr> <td> Parameter \b 2 middle word</td> </tr>
+<tr> <td> Parameter \b 2 high word</td> </tr>
+<tr> <td> Parameter \b 3 low word</td> </tr>
+<tr> <td> Parameter \b 3 middle word</td> </tr>
+<tr> <td> Parameter \b 3 high word Word 20</td> </tr>
+<tr> <td/> </tr>
+<tr> <td> Event \b 0 low word Word 21</td> </tr>
+<tr> <td> Event \b 0 middle word</td> </tr>
+<tr> <td> Event \b 0 high word </td> </tr>
+<tr> <td> &sdot; </td> </tr>
+<tr> <td> &sdot; </td> </tr>
+<tr> <td> &sdot; </td> </tr>
+<tr> <td> Event \b n low word </td> </tr>
+<tr> <td> Event \b n middle word</td> </tr>
+<tr> <td> Event \b n high word Word 20 + 3 &times; (n + 1) (must be identical with buffer length - 1)</td> </tr>
+</table>
+
+\subsection header_data_dictionary Header data dictionary
+
+<table>
+<tr>
+<td> <b>Buffer length:</b> </td>
+<td>Total length in multiple of 16 bit words, stretching from "buffer type"
+to the last data word.
+</td>
+</tr>
+<tr>
+<td> <b>Buffer type:</b> </td>
+<td> 16 bit type descriptor <br>
+Bits 0 .. 14 carry a version information <br>
+Bit 15 = 0 : data buffer <br>
+Bit 15 = 1 : command buffer <br>
+</td>
+</tr>
+<tr>
+<td> <b>Header length:</b> </td>
+<td> Length of header information in 16 bit words </td>
+</tr>
+<tr> 
+<td> <b>Buffer number:</b> </td>
+<td> Simple 16 bit counter for data buffers. Incremented automatically
+by MCPD to allow loss monitoring.
+</td>
+</tr>
+<tr> 
+<td> <b>Run ID:</b> </td>
+<td>Simple 16 bit run counter, set by software, to allow integrity control
+</td>
+</tr>
+<tr> 
+<td> <b>MCPD ID:</b> </td>
+<td>8 bit ID of sending MCPD module, to be assigned during hardware initialisation.
+</td>
+</tr>
+<tr> 
+<td> <b>Status:</b> </td>
+<td> 8 bit wide field for sync and start/stop status of sending MCDP <br>
+currently only bits 0, 1 are used: <br>
+bit 0: 1 = DAQ running, 0 = DAQ stopped <br>
+bit 1: 1 = sync OK, 0 = sync error <br>
+</td>
+</tr>
+<tr> 
+<td> <b>Header timestamp:</b> </td>
+<td>
+48 bits current status of the synchronized system timer (100 ns time resolution)<br>
+Represents the value of the system timer at the moment of the buffer opening.<br>
+All events in a buffer carry a positive 19 bit offset timing information relative
+to this header timestamp.
+</td>
+</tr>
+<tr> 
+<td> <b>Parameter 0 .. 3:</b> </td>
+<td>
+MCPD allows the transmission of selected counter and/or input values with each
+buffer. So the parameter 0 .. 3 represent the values of the selected counters or
+inputs at the moment of buffer opening (t = header timestamp)<br>
+Also the digital input status and ADC values can be mapped here \ref {}.
+</td>
+</tr>
+<tr> 
+<td> <b>Event 0 .. n:</b> </td>
+<td>
+(n + 1) &times; 48 bits events information<br>
+The event structure is explained in detail \ref event_structure below.
+</td>
+</tr>
+</table>
+
+\subsection event_structure Event structure
+
+Each event has a fixed 48 bit length. The content differs according to the event
+ID which is given in the MSB (Bit 47) of the structure.
+- ID = 0: Neutron data event
+- ID = 1: Trigger data event
+
+\subsubsection neutron_data_event Neutron data events (ID = 0)
+
+Each neutron event has the following structure:
+<table>
+<tr>
+<td>ID (1 bit) = \b 0 </td>
+<td>ModID (3 bit) </td>
+<td>SlotID (5 bit) </td>
+<td>Amplitude (10 bit) </td>
+<td>Position (10 bit) </td>
+<td>Timestamp (19 bit) </td>
+</tr>
+</table>
+
+\paragraph neutron_event_description Description
+
+- ID: ID = 0 signalling a "neutron" event, resulting from a detector event at a 
+periphal module like MPSD.
+
+1 bit
+
+\note (Monitor counter events e.g., that of course also are "neutron" events are
+generated at the MCPD , don't carry a position information and are therefore
+regarded as "other" events in this context)
+
+- ModID : Module ID of the MPSD, determind by the serial bus number (bus input at
+the MCPD)
+
+3 bit
+
+- SlotID : channel (slot) number in the MPSD module:<br>
+0 .. 7 for MPSD
+0 .. 15 for MSTD-16 module
+bit 4 (MSB) is currently not used
+
+5 bit
+
+- Amplitude : amplitude (energy) of the neutron event
+
+10 bit
+
+- Position : position of the neutron event in the detector tube
+
+10 bit
+
+- Timestamp : timing offset of the corresponding header timestamp <br>
+event time = header timestamp + event timestamp
+
+19 bit
+
+\paragraph address_reconstruction Address reconstruction
+
+The complete, two dimensional address of a neutron event consists of max. 16 + 10 bit
+and is composed by the following partial information
+
+<b>Channel (= individual detector tube): </b>
+
+<table>
+<tr>
+<td> Bit 15 .. 8 </td> <td> Bit 7 .. 5 </td> <td> Bit 4 .. 0 </td>
+</tr>
+<tr>
+<td>MCPD-ID </td> <td> ModID </td> <td>SlotID</td>
+</tr>
+</table>
+
+\note A system using only MPSD can reduce the address length further:
+- ModID has only 3 valid bits
+- MCPD-ID normally doesn't use the full 8 bit range (but is due to users
+ definition!)
+\par
+So a reduced calculated address format for a system using 4 MCPD and a total
+maximum of 4 (MCPD) &times; 8 (MPSD) &times; 8 (Detectors) = 256 detectors
+could look like this:
+<table>
+<tr>
+<td>Bit 7 .. 6 </td> <td> Bit 5 .. 3 </td> <td> Bit 2 .. 0 </td>
+</tr>
+<tr>
+<td>MCPD-ID</td> <td>ModID </td> <td> SlotID </td>
+</tr>
+</table>
+
+<b>Position (= event position on identified tube): </b>
+
+Data: 10 bit position data along detector tube. 
+No calculation needed (but possibly calibration against physical data ... )
+
+\subsubsection trigger_data_event Trigger data events (ID = 1)
+
+Several trigger sources (counters, timers, digital inputs, ... ) can initiate a
+data taking event. Triggered by levels or defined overflows of the trigger sources
+data are taken from the data sources and written to an event structure. Possible
+trigger and data sources are timers, counters, digital inputs, and ADC values.
+\see {}
+
+Each trigger event has the following structure:
+<table>
+<tr>
+<td>ID (1 bit) = \b 1 </td>
+<td>TrigID (3 bit) </td>
+<td>DataID (4 bit) </td>
+<td>Data (21 bit) </td>
+<td>Timestamp (19 bit) </td>
+</tr>
+</table>
+
+\paragraph trigger_event_description Description
+
+- ID: ID = 1 signalling a "not neutron" event (= generated centrally in MCPD)
+possible trigger sources are
+- Counters
+- Timers 
+- Digital inputs
+- ADC values
+
+1 bit
+- TrigID : Trigger ID characterizing the event trigger source
+- 1 .. 4 : Timer 1 .. 4
+- 5 : rear TTL input 1
+- 6 : rear TTL input 2
+- 7 : compare register
+
+3 bit
+- DataID : Data ID characterizing the data source.<br>
+Data taking was initiated by the trigger source identified in TrigID, at the
+time "header timestamp + event timestamp"
+- 0 .. 3 : Monitor/Chopper input 1 .. 4
+- 4 : rear TTL input 1
+- 5 : rear TTL input 2
+- 6 : ADC 1
+- 7 : ADC 2
+- Data : Counter, Timer, or ADC value of the identified data source
+
+21 bit (depending on source not necessarily all valid)
+- Timestamp: timing offset to the corresponding header timestamp<br>
+event time = header timestamp + event timestamp
+
+19 bit
+
+\section command_buffers Command buffers
+
+Each command buffer consists of a buffer header (10 &times; 16 bits = 40 Bytes) 
+and a trailing data block of variable length. The contents of the data block 
+depends on the individual commands.
+
+The total length of a command buffer varies between 40 Bytes (header only) and
+up to 1500 Bytes (limited by unfragmented Ethernet frame length, padding Bytes
+to keep Ethernet minimum buffer sizes must be added).
+
+<b>Buffer structure:</b><br/>
+(in 16 bit words):
+
+<table>
+<tr> <td> Buffer length (in 16 bit words) Word 0 </td> </tr>
+<tr> <td> Buffer type </td> </tr>
+<tr> <td> Header length </td> </tr>
+<tr> <td> Buffer number </td> </tr>
+<tr> <td> Cmd </td> </tr>
+<tr> <td> MCPD-ID </td> <td> Status </td> </tr>
+<tr> <td> Header timestamp low word</td> </tr>
+<tr> <td> Header timestamp middle word</td> </tr>
+<tr> <td> Header timestamp high word Word 8</td> </tr>
+<tr> <td> Command checksum Word 9</td> </tr>
+<tr> <td/> </tr>
+<tr> <td> Data \b 0 Word 10</td> </tr>
+<tr> <td> Data \b 1 </td> </tr>
+<tr> <td> Data \b 2 </td> </tr>
+<tr> <td> &sdot; </td> </tr>
+<tr> <td> &sdot; </td> </tr>
+<tr> <td> &sdot; </td> </tr>
+<tr> <td> Data \b n Word (buffer length - 1)</td> </tr>
+</table>
+
+\subsection header_command_dictionary Header command dictionary
+
+Use and meaning of the header data varies depending on sender. While MCPD fills
+in all data, some of them my be left uninitialized when sending a data block
+from a control PC to a MCPD.
+
+<table>
+<tr>
+<td> <b>Buffer length:</b> </td>
+<td>Total length in multiple of 16 bit words, spans from "buffer type"
+to the last data word. Only counts useful data words. Padding bytes added to
+fulfill minimum Ethernet buffer size will not be counted.
+</td>
+</tr>
+<tr>
+<td> <b>Buffer type:</b> </td>
+<td>16 bit descriptor<br>
+Bits 0 .. 14 carry a version information and may be left blank in buffers sent 
+by control PC.<br>
+Bit 15 = 0 : data buffer<br>
+Bit 15 = 1 : command buffer
+</td>
+</tr>
+<tr>
+<td> <b>Header length:</b> </td>
+<td> Length of the header in 16 bit words </td>
+</tr>
+<tr>
+<td> <b>Buffer number:</b> </td>
+<td>Simple 16 bit counter to allow loss monitoring.<br>
+Separate counters for data and cmd buffers.<br>
+A control software could increment with each command issued.<br>
+MCPD will increment its own  counter with each command answered.
+</td>
+</tr>
+<tr>
+<td> <b>Cmd:</b> </td>
+<td>16 bit value representing the command that is issued/answered in this
+buffer. Please see \ref {} for a detailed description of the individual commands.
+</td>
+</tr>
+<tr>
+<td> <b>MCPD-ID:</b> </td>
+<td>ID of the addressed/sending MCPD module, to be assigned during the hardware
+initialization.
+</td>
+</tr>
+<tr>
+<td> <b>Status:</b> </td>
+<td>8 bit wide field for sync and start/stop status. Can be left blank in buffers
+sent by control PC.
+</td>
+</tr>
+<tr>
+<td> <b>Header timestamp:</b> </td>
+<td>48 bits synchronized system timer (100 ns binning), generated shortly before
+Ethernet transmission. It allows to have a time log of command communication.<br>
+Can be left in buffers sent by the control PC.
+</td>
+</tr>
+<tr>
+<td> <b>Command checksum:</b> </td>
+<td>16 bit XOR checksum covering all words from "Buffer type" (Word 0) to last 
+data word (Word buffer length - 1).
+\warning Set the checksum field to <b>0 (zero)</b> before calculation.
+</td>
+</tr>
+</table>
+*/

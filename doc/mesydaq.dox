@@ -1,55 +1,21 @@
 /*!
   \mainpage QMesyDAQ 
 
-  \tableofcontents
+  \subpage system_description
 
-  \section general General
- 
-  \subsection overview Overview
-  QMesyDAQ is the main user interface to the PSD/MDLL readout system.
+  \subpage mesytec_protocol
 
-  It is a Qt - application (mainly developped and tested on Linux) that gives
-  the user the total remote control over the readout system.
+  \subpage data_format_description
 
-  This includes:
-     - system setup
-	- network settings
-	- module search
-	- module initialisation
-     - peripheral controls
-	- gains
-	- thresholds
-     - test pulser
-	- position 
-	- amplitude
-     - readout modes
-	- position
-	- amplitude
-	- energy
-     - data acquisition
-	- start
-	- stop
-	- continue
-     - live data display
-        - histogram
-        - several spectra
-        - binned histogram
-     - data storage
-	- histograms
-	- list mode files
-	- setups
-     - remote control interfaces
-	- TACO
-	- CARESS
-	- TCP
-     
+  \subpage functional_descriptions 
 
-  \subsection hard_and_software_requirements Hard- and sofware requirements
-*/
+  \subpage application_consideration 
 
-/*!
-  \page related_pages Related Pages
+  \subpage command_reference
 
-  
+  \subpage usermanual 
 
+  \subpage api
+
+  \subpage list_mode_format
  */

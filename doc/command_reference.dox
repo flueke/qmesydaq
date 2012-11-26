@@ -1,0 +1,414 @@
+/*!
+ \page command_reference Command reference
+ 
+ \tableofcontents
+
+ \section general_command_format General command format
+
+The layout of the \ref command_buffers "structure of a command buffer" is 
+identical for all commands.
+
+In the following, only data from word 10 on (data 0) are considered and 
+displayed. The given command number has to be entered in the header field
+"Cmd" (Word 4).
+
+Each command buffer has a trailing 0xFFFF as a last word which indicates
+the end of the relevant data.
+
+ \subsection command_answer Command answer
+
+Every command buffer will be answered by MCPD. Set values instead of requested
+values will be inserted into the appropriate fields. 
+
+\note
+  If a command fails in the MCPD the header field "Cmd" will contain the 
+  command number and the bit 15 (MSB) is set to "1".
+
+\section command_description Command description 
+
+\subsection cmd_0 Reset
+
+<table>
+<tr> <th>Reset </th> <th> Cmd = 0 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Running DAQ will be stopped.<br>
+All counters and timers will be reset to 0.<br>
+Neutron and trigger events will be filled into data buffers.<br>
+<b>Reset signal is propagated over the sync line. Thus it is not necessary to
+send a reset signal to each individual MCPD. MCPD not set as master will refuse
+command</b>
+
+\subsection cmd_1 Start DAQ
+
+<table>
+<tr> <th>Start DAQ </th> <th> Cmd = 1 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+"Start DAQ" starts the data acquisition system.<br>
+All timers (master timer + auxiliary timers) start/continue running.<br>
+Neutron and trigger events will be filled into data buffers.<br>
+<b>Start signal is propagated over the sync line. Thus it is not necessary to
+send a start signal to each individual MCPD. MCPD not set as master will refuse
+command</b>
+
+\subsection cmd_2 Stop DAQ
+
+<table>
+<tr> <th>Stop DAQ </th> <th> Cmd = 2 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+"Stop DAQ" stops the data acquisition system.<br>
+All timers (master timer + auxiliary timers) stop running.<br>
+<b>Stop signal is propagated over the sync line. Thus it is not necessary to
+send a stop signal to each individual MCPD. MCPD not set as master will refuse
+command</b>
+
+\subsection cmd_3 Continue DAQ
+
+<table>
+<tr> <th>Continue DAQ </th> <th> Cmd = 3 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+"Continue DAQ" restart the data acquisition system.<br>
+All timers (master timer + auxiliary timers) continue running.<br>
+Neutron and trigger events will be filled into data buffers.<br>
+<b>Continue signal is propagated over the sync line. Thus it is not necessary to
+send a continue signal to each individual MCPD. MCPD not set as master will refuse
+command</b>
+
+\subsection cmd_4 Set MCPD ID
+
+<table>
+<tr> <th>Set MCPD ID </th> <th> Cmd = 4 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> ID </td> </tr>
+<tr> <td> 11 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Each MCPD in a setup is given an individual ID number (8 bit). The ID is part of
+the header of every data/command packet the MCPD emits. Thus data can be assigned
+to a defined part of the readout system during data processing.<br>
+It is in the responsibility of the user (or front end programmer) to keep IDs
+unique throughout the readout system.
+
+<b>Answer buffer:</b>
+
+<table>
+<tr> <th>Set MCPD ID (Answer)</th> <th> Cmd = 4 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> ID </td> </tr>
+<tr> <td> 11 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+\subsection cmd_5 Set protocol parameters 
+
+<table>
+<tr> <th>Set Protocol parameters </th> <th> Cmd = 5 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> MCPD IP 0 (e.g. 192)</td> </tr>
+<tr> <td> 11 </td> <td> MCPD IP 1 (e.g. 168)</td> </tr>
+<tr> <td> 12 </td> <td> MCPD IP 2 (e.g. 168)</td> </tr>
+<tr> <td> 13 </td> <td> MCPD IP 3 (e.g. 121)</td> </tr>
+<tr> <td> 14 </td> <td> Data sink IP 0 </td> </tr>
+<tr> <td> 15 </td> <td> Data sink IP 1 </td> </tr>
+<tr> <td> 16 </td> <td> Data sink IP 2 </td> </tr>
+<tr> <td> 17 </td> <td> Data sink IP 3 </td> </tr>
+<tr> <td> 18 </td> <td> Command UDP port </td> </tr>
+<tr> <td> 19 </td> <td> Data UDP port </td> </tr>
+<tr> <td> 20 </td> <td> Command PC IP 0 </td> </tr>
+<tr> <td> 21 </td> <td> Command PC IP 1 </td> </tr>
+<tr> <td> 22 </td> <td> Command PC IP 2 </td> </tr>
+<tr> <td> 23 </td> <td> Command PC IP 3 </td> </tr>
+<tr> <td> 24 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+<b>MCPD IP</b>
+
+The IP address of the MCPD can be remotely changed. A hardware button on the CPU
+module of the MCPD allows a reset to the factory address 192.168.168.121 (This
+address is also mentioned as an example above to explain byte order). MCPD IP
+address will not be modified if MCPD IP 0 (Word 10) is set to 0 (zero).
+
+<b>Data sink IP</b>
+
+Also the destination IP address for data packages can be set individually (If
+no address is set: the address of the command PC is used automatically).<br>
+Address will not be modified if "Data sink IP 0" (Word 14) is set to 0 (zero).
+If "Data sink IP 0" as well as "Data sink IP 1" are set to 0 (zero) the address of
+the PC sending this command will be used automatically from out of the IP
+protocol. This allows to set the address to the sending PC without knowing
+its address explicitly.
+
+<b>Command PC IP</b>
+
+This allows to set a defined address for the PC that wil send the commands.
+No other PC will then be able to take control over the system unless the new
+address is published by the current command PC.<br>
+Address will not be modified if "Command PC IP 0" (Word 20) is set to 0 (zero).
+If "Command PC IP 0" as well as "Command PC IP 1" are set to 0 (zero), the address
+of the PC sending this command will be used automatically from out of the IP
+protocol. This allows to set the address to the sending PC without knowing its
+address explicitly.
+
+<b>UDP ports</b>
+
+MCPD is able to use individually set UDP port numbers, possibly different ones
+for commands and data. No change if fields are set to 0 (zero).
+
+The following table gives an overview of the possible settings:
+
+<table>
+<tr> <th> Field(s) </th> <th> Value </th> <th> Meaning </th> </tr>
+<tr> <td> MCPD IP 0 </td> <td> 0 </td> <td> Do not change the MCPD IP address</td> </tr>
+<tr> <td> </td> <td> > 0 </td> <td> Set MCPD IP address to values in word 10 .. 13</td> </tr>
+<tr> <td> </td> <td> </td> <td> </td> </tr>
+<tr> <td> Data sink IP 0</td> <td> 0 </td> <td> Do not change data sink IP address </td> </tr>
+<tr> <td> </td> <td> > 0 </td> <td> Set data sink IP address to values in word 14 .. 17</td> </tr>
+<tr> <td> Data sink IP 0 \e and Data sink IP 1</td> <td> 0 </td> <td> set data sink IP to address of command sending PC</td> </tr>
+<tr> <td> </td> <td> </td> <td> </td> </tr>
+<tr> <td> Command PC IP 0</td> <td> 0 </td> <td> Do not change command PC IP</td> </tr>
+<tr> <td> </td> <td> > 0 </td> <td> set command PC IP address to values in word 20 .. 23 </td> </tr>
+<tr> <td> Command PC IP 0 \e Command PC IP 1 </td> <td> 0 </td> <td> Set command PC IP address to address of command sending PC</td> </tr>
+<tr> <td> </td> <td> </td> <td> </td> </tr>
+<tr> <td> UDP port</td> <td> 0 </td> <td> Do not modify </td> </tr>
+<tr> <td> </td> <td> > 0 </td> <td> Set to given value</td> </tr>
+</table>
+
+\subsection cmd_6 Set MCPD timing setup
+
+<table>
+<tr> <th>Set MCPD timing setup </th> <th> Cmd = 6 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> Timing/Sync Master (0: MCPD is slave, 1: MCPD is master) </td> </tr>
+<tr> <td> 11 </td> <td> Sync bus termination (0: on, 1: off) </td> </tr>
+<tr> <td> 12 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Sets timing properties:
+ - Please make sure that only one MCPD is set to sync master!
+ - Sync bus has to be terminated at both ends - master is terminated automatically, 
+   last slave on bus has to be terminated.
+
+\subsection cmd_7 Set MCPD master clock
+
+<table>
+<tr> <th>Set MCPD master clock </th> <th> Cmd = 7 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> Master clock, bits 0 .. 15 </td> </tr>
+<tr> <td> 11 </td> <td> Master clock, bits 16 .. 31 </td> </tr>
+<tr> <td> 12 </td> <td> Master clock, bits 32 .. 48 </td> </tr>
+<tr> <td> 13 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Master clock can be set to any value if desired. Normally, a reset is initiated
+before a new run and all counters ares set to 0 (zero) during this reset 
+automatically.<br>
+Only if another run start time than zero is desired, this registers must be set.
+
+\subsection cmd_8 Set run ID
+
+<table>
+<tr> <th>Set run ID </th> <th> Cmd = 8 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> Run ID</td> </tr>
+<tr> <td> 11 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Set value for the header field "Run ID". Can be set to any desired value.<br>
+<b>The master MCDP distributes its "Run ID" over the sync bus. Thus it's only
+necessary to the run ID at the master module</b>
+
+
+\subsection cmd_9 Counter, ADC, timer, and parameter settings
+
+<table>
+<tr> <th>Set Counter/ADC cells </th> <th> Cmd = 9 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> 
+<td> Cell#:<br>
+0 .. 3: monitor/chopper inputs 1 .. 4<br>
+4 .. 5: digital backpanel inputs 1 .. 2<br>
+6 .. 7: ADC 1 .. 2</td> </tr>
+<tr> <td> 11 </td> <td> Trigger source:<br>
+0: no trigger<br>
+1 .. 4: trigger on auxiliary timer 1 .. 4<br>
+5 .. 6: trigger on rising edge at backpanel input 1 .. 2<br>
+7: trigger from compare register (only for counter cells) </td> </tr>
+<tr> <td> 12 </td> <td> Compare register, numerical value n:<br>
+0 .. 20: trigger on bit n = 1<br>
+21: trigger on counter overflow<br>
+22: trigger on rising edge of input (can be left 0 for ADC cells) </td> </tr>
+<tr> <td> 13 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+This command configures the given counter cell:
+
+One of 6 possible counter cells is addressed. The value of the according 21 bit
+counter is transmitted as a trigger event when triggered.
+
+Trigger source can be one of the digital inputs, on of the 4 auxiliary timers
+or a special compare register. 
+\note The compare register does not do a full compare but it checks for a "1"
+      at the given bit position, allowing for triggers at multiples of 2.
+
+Counter cells are intended to generate repeated trigger events. They can be
+used e.g. for a continuous monitoring of counter values and ADC inputs.
+
+Choosing the rising signal edge as trigger sources enables to generate a
+(fully timestamped) event w.g. for each chopper signal and allows precise chopper 
+timing calculation.
+
+\subsection cmd_10 Set auxiliary timer
+
+<table>
+<tr> <th>Set run ID </th> <th> Cmd = 10 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> Timer # (0 .. 3) </td> </tr>
+<tr> <td> 11 </td> <td> Capture register (0 .. 65536)<br>
+time base in 10 &mu;s, allowing for intervals from 10 &mu;s to 655.36 ms </td> </tr>
+<tr> <td> 12 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Auxiliary timer compare register ist set to the given values. An identical compare
+generates a trigger signal (that might be use in one of the counter/ADC cells) and
+resets the counter to 0 (zero). Thus 4 independent triggers with periods between
+10 &mu;s and 655.36 ms are possible.
+
+\subsection cmd_11 Set parameter source
+
+<table>
+<tr> <th>Set run ID </th> <th> Cmd = 11 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> Parameter (0 .. 3) </td> </tr>
+<tr> <td> 11 </td> <td> Source:<br>
+0 .. 3: Monitor/Chopper inputs 1 .. 4<br>
+4 .. 5: backend TTL inputs<br>
+6: combination of all digital inputs and both ADC values<br>
+7: event counter<br>
+8: master clock </td> </tr>
+<tr> <td> 12 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Defines the counter source for the given parameter. While 0 .. 5 are real counters,
+6 delivers a combination of the current status of all defined inputs, and 7 .. 8 
+get copies of the current value of the event counter or master clock.
+
+All 4 parameter values are transmitted with every data buffer, delivering a 
+continuous monitoring information.
+
+\subsection cmd_12 Get all parameters
+
+<table>
+<tr> <th>Get all parameters </th> <th> Cmd = 12 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Requests all available parameter information.
+
+<b>Answer</b>
+
+<table>
+<tr> <th>Get all parameters (Answer) </th> <th> Cmd = 12 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> ADC 1 (12 valid bits) </td> </tr>
+<tr> <td> 11 </td> <td> ADC 2 (12 valid bits) </td> </tr>
+<tr> <td> 12 </td> <td> DAC 1 (12 valid bits) </td> </tr>
+<tr> <td> 13 </td> <td> DAC 2 (12 valid bits) </td> </tr>
+<tr> <td> 14 </td> <td> TTL outputs (2 bits) </td> </tr>
+<tr> <td> 15 </td> <td> TTL inputs (6 bits) </td> </tr>
+<tr> <td> 16 </td> <td> Event counter low word </td> </tr>
+<tr> <td> 17 </td> <td> Event counter middle word </td> </tr>
+<tr> <td> 18 </td> <td> Event counter high word </td> </tr>
+<tr> <td> 19 </td> <td> Parameter 0 low word </td> </tr>
+<tr> <td> 20 </td> <td> Paraneter 0 middle word </td> </tr>
+<tr> <td> 21 </td> <td> Parameter 0 high word </td> </tr>
+<tr> <td> 22 </td> <td> Parameter 1 low word </td> </tr>
+<tr> <td> 23 </td> <td> Paraneter 1 middle word </td> </tr>
+<tr> <td> 24 </td> <td> Parameter 1 high word </td> </tr>
+<tr> <td> 25 </td> <td> Parameter 2 low word </td> </tr>
+<tr> <td> 26 </td> <td> Paraneter 2 middle word </td> </tr>
+<tr> <td> 27 </td> <td> Parameter 2 high word </td> </tr>
+<tr> <td> 28 </td> <td> Parameter 3 low word </td> </tr>
+<tr> <td> 29 </td> <td> Paraneter 3 middle word </td> </tr>
+<tr> <td> 30 </td> <td> Parameter 3 high word </td> </tr>
+<tr> <td> 31 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Gathers the given information.
+
+\subsection cmd_13 Set MPSD gain
+
+<table>
+<tr> <th>Set MPSD gain </th> <th> Cmd = 13 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> MPSD device number (0 .. 7) </td> </tr>
+<tr> <td> 11 </td> <td> Channel within MPSD (0 .. 7, 8 = all) </td> </tr>
+<tr> <td> 12 </td> <td> Gain value (0 .. 255) </td> </tr>
+<tr> <td> 13 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Each channel gain can be set individually. To facilitate a quick setup, using
+channel number 8 will write the same gain value to all channel of the addressed
+MPSD module.
+
+\subsection cmd_14 Set MPSD threshold
+
+<table>
+<tr> <th>Set MPSD threshold </th> <th> Cmd = 14 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> MPSD device number (0 .. 7) </td> </tr>
+<tr> <td> 11 </td> <td> Threshold value (0 .. 255) </td> </tr>
+<tr> <td> 13 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+Each peripheral module MPSD has one common lower threshold for its window
+discriminator. An 8 bit value is used to set the lower discriminator 
+threshold.
+
+\subsection cmd_15 Set MPSD pulser
+
+<table>
+<tr> <th>Set MPSD pulser </th> <th> Cmd = 15 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> MPSD device number (0 .. 7) </td> </tr>
+<tr> <td> 11 </td> <td> Channel within MPSD (0 .. 7, 8 = all) </td> </tr>
+<tr> <td> 12 </td> <td> Position within channel (0: left, 1: right, 2: middle) </td> </tr>
+<tr> <td> 13 </td> <td> Pulser amplitude value (0 .. 255) </td> </tr>
+<tr> <td> 14 </td> <td> Pulser on/off (0: off, 1: on) </td> </tr>
+<tr> <td> 15 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+A builtin test pulser is useful to check electronics performance without the 
+need of "real" neutron events. The pulser can be set to 3 positions (left, 
+middle, and right) in a PSD channel. Furthermore, the pulser amplitude can 
+be controlled and pulser function can be switched on/off. 
+\warning Be sure to switch off all pulsers before starting neutron recording!
+
+\subsection cmd_16 Set MPSD mode
+
+<table>
+<tr> <th>Set MPSD mode </th> <th> Cmd = 16 </th> </tr>
+<tr> <td> Word </td> <td> Content </td> </tr>
+<tr> <td> 10 </td> <td> MPSD device number (0 .. 7, 8 = all) </td> </tr>
+<tr> <td> 11 </td> <td> Mode (0: position, 1: amplitude) </td> </tr>
+<tr> <td> 12 </td> <td> 0xFFFF </td> </tr>
+</table>
+
+MPSD can be run in two modes:
+ - Position mode transmits a 10 bit position information.
+ - Amplitude (energy) mode transmits a 10 bit signal amplitude information.
+
+New versions of MPSD are capable transmitting position and amplitude date
+simultaneously.
+
+*/
