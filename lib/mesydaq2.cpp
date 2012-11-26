@@ -924,14 +924,17 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 void Mesydaq2::start(void)
 {
 	MSG_NOTICE << "remote start";
+#if 0
+// start the slaves first
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->start();
+#endif
+// start the masters
 	foreach(MCPD8 *it, m_mcpd)
-		if (it->isMaster())
+//		if (it->isMaster())
 			it->start();
 	m_daq = RUNNING;
-//	emit statusChanged("RUNNING");
 	m_starttime_msec = time();
 	emit statusChanged("STARTED");
 }
@@ -946,12 +949,16 @@ void Mesydaq2::stop(void)
 	MSG_NOTICE << "remote stop";
 	m_daq = IDLE;
 	emit statusChanged("IDLE");
+// Stop the masters first
 	foreach(MCPD8 *it, m_mcpd)
-		if (it->isMaster())
+//		if (it->isMaster())
 			it->stop();
+#if 0
+// Stop the slaves
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->stop();
+#endif
 	emit statusChanged("STOPPED");
 }
 
@@ -963,11 +970,15 @@ void Mesydaq2::stop(void)
 void Mesydaq2::cont(void)
 {
 	MSG_NOTICE << "remote cont";
+#if 0
+// continue the slaves first
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->cont();
+#endif
+// continue the masters
 	foreach(MCPD8 *it, m_mcpd)
-		if (it->isMaster())
+//		if (it->isMaster())
 			it->cont();
 	emit statusChanged("STARTED");
 }
@@ -981,6 +992,9 @@ void Mesydaq2::cont(void)
  */
 void Mesydaq2::reset(void)
 {
+	MSG_NOTICE << "remote reset";
+	foreach(MCPD8 *it, m_mcpd)
+		it->reset();
 }
 
 /*!

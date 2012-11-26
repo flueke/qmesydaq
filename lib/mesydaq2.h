@@ -122,9 +122,6 @@ public:
 	//! \returns the number of the first MCPD
 	qint16 firstMcpd(void);
 
-	//! \return if data acquisition started or not
-	quint8 isDaq(void) {return m_daq;}
-
 	bool isPulserOn();
 	
 	bool isPulserOn(quint16 mod);

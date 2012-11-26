@@ -57,7 +57,6 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
     , m_lastBufnum(0)
     , m_commTimer(NULL)
     , m_runId(0)
-    , m_daq(false)
     , m_dataRxd(0)
     , m_cmdTxd(0)
     , m_cmdRxd(0)
@@ -164,9 +163,13 @@ bool MCPD8::init(void)
  */
 bool MCPD8::reset(void)
 {
-    initCmdBuffer(RESET);
-    finishCmdBuffer(0);
-    return sendCommand();
+    if (isMaster())
+    {
+        initCmdBuffer(RESET);
+        finishCmdBuffer(0);
+        return sendCommand();
+    }
+    return true;
 }
 
 /*!
@@ -180,9 +183,13 @@ bool MCPD8::reset(void)
  */
 bool MCPD8::start(void)
 {
-    initCmdBuffer(START);
-    finishCmdBuffer(0);
-    return sendCommand();
+    if (isMaster())
+    {
+        initCmdBuffer(START);
+        finishCmdBuffer(0);
+        return sendCommand();
+    }
+    return true;
 }
 
 /*!
@@ -196,9 +203,13 @@ bool MCPD8::start(void)
  */
 bool MCPD8::stop(void)
 {
-    initCmdBuffer(STOP);
-    finishCmdBuffer(0);
-    return sendCommand();
+    if (isMaster())
+    {
+        initCmdBuffer(STOP);
+        finishCmdBuffer(0);
+        return sendCommand();
+    }
+    return true;
 }
 
 /*!
@@ -212,9 +223,12 @@ bool MCPD8::stop(void)
  */
 bool MCPD8::cont(void)
 {
-    initCmdBuffer(CONTINUE);
-    finishCmdBuffer(0);
-    return sendCommand();
+    if (isMaster())
+    {
+        initCmdBuffer(CONTINUE);
+        finishCmdBuffer(0);
+        return sendCommand();
+    }
 }
 
 /*!
@@ -1402,15 +1416,12 @@ void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
                 MSG_ERROR << "not handled command : RESET";
                 break;
             case START:
-                m_daq = true;
                 emit startedDaq();
                 break;
             case STOP:
-                m_daq = false;
                 emit stoppedDaq();
                 break;
             case CONTINUE:
-                m_daq = true;
                 emit continuedDaq();
                 break;
             case SETID:

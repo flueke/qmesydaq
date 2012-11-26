@@ -395,9 +395,6 @@ private:
 	//! current run ID
 	quint32 	m_runId;
 
-	//! DAQ started?
-	bool		m_daq;
-
 	//! counter for the received data packets
 	quint32		m_dataRxd;
 
