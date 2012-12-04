@@ -338,6 +338,7 @@ private:
 
 	//! current run ID
 	quint32		m_runId;
+
 	bool		m_bAutoIncRunId;
 };
 
