@@ -25,8 +25,8 @@ isEmpty(SRCBASE) {
 	SRCBASE = .
 }
 
-SVNVERSION	= $$system(svnversion .)
-DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${SVNVERSION}\\)\\\" HAVE_CONFIG_H
+GITVERSION	= $$system(git describe)
+DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${GITVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target
 

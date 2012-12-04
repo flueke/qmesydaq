@@ -33,7 +33,7 @@ INCLUDEPATH 	+= . qmesydaq lib
 DISTFILES	+= AUTHORS \
 		COPYING \
 		qmesydaq.desktop \
-		qmesydaqconfig.pri \
+		mesydaqconfig.pri \
 		config.h
 
 dox.target = doc
@@ -45,7 +45,8 @@ dox.depends =
 QMAKE_EXTRA_TARGETS += dox
 
 package.target	= dist
-package.commands = for i in $${SUBDIRS} ; do echo $${LITERAL_DOLLAR}$${LITERAL_DOLLAR}i; done && touch qmesydaq-$${VERSION}.tar.gz
+package.commands = git archive --prefix=qmesydaq-$${VERSION}/ --format=tar HEAD | gzip  > qmesydaq-$${VERSION}.tar.gz || \
+	 echo \"dist is currently only enable for git checkouts\"; for i in $${SUBDIRS} ; do echo $${LITERAL_DOLLAR}$${LITERAL_DOLLAR}i; done && touch qmesydaq-$${VERSION}.tar.gz 
 package.depends = $${DISTFILES}
 
 QMAKE_EXTRA_TARGETS += package

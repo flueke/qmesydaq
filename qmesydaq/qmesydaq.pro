@@ -139,7 +139,7 @@ revtarget.commands 	= @echo \"updating file $$revtarget.target\"; \
   			/bin/echo -e \"/* generated file \(do not edit\) */\\n\" \
     			\"$${LITERAL_HASH}ifndef REVISION_H\\n\" \
     			\"$${LITERAL_HASH}define REVISION_H\\n\" \
-    			\"$${LITERAL_HASH}define REVISION \\\"$${VERSION}\(`svnversion -n $$PWD`)\\\"\\n\" \
+    			\"$${LITERAL_HASH}define REVISION \\\"$${VERSION}\(`git describe`)\\\"\\n\" \
     			\"$${LITERAL_HASH}endif\" > $$revtarget.target
 revtarget.depends 	= $$SOURCES $$HEADERS $$FORMS qmesydaq.pro
 QMAKE_DISTCLEAN 	+= $$revtarget.target
