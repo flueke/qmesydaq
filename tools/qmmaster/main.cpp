@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 	qDebug() << QObject::tr("%2 : MCPD : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(id);
 	qDebug() << QObject::tr("Set master %1, terminate : %2").arg(master).arg(term);
 
-	m->setTimingSetup(master, term);
+	m->setTimingSetup(master, term, false);
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 

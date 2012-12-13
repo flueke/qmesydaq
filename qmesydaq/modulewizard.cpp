@@ -81,3 +81,12 @@ bool ModuleWizard::terminate(void)
     return field("terminate").toBool();
 }
 
+/*!
+    \fn bool ModuleWizard::externsync(void)
+
+    \return the checkstate of the extern sync checkbox
+ */
+bool ModuleWizard::externsync(void)
+{
+    return field("externsync").toBool();
+}

@@ -62,6 +62,8 @@ public:
 public slots:
 	void	runningState(bool);
 
+        void	updateStatusBar(void);
+
 signals:
 	//! load configuration file
 	void	loadConfiguration(const QString& sFilename);
@@ -100,6 +102,8 @@ private:
 	StatusBarEntry	*m_pulserStatus;
 
 	StatusBarEntry	*m_mode;
+
+	StatusBarEntry	*m_sync;
 };
 
 #endif // _MAINWINDOW_H

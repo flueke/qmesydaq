@@ -62,6 +62,11 @@ private slots:
 
 	void cellTriggerChangedSlot(int);
 
+	void setSyncSlot(bool);
+
+signals:
+        void sync(bool);
+
 private:
 	//! stores the Mesydaq object
 	Mesydaq2 *m_theApp;

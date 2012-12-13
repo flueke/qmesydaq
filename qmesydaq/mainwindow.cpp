@@ -25,6 +25,7 @@
 #include "passworddialog.h"
 #include "mesydaq2.h"
 #include "StatusBarEntry.h"
+#include "logging.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -71,12 +72,23 @@ MainWindow::MainWindow(QWidget *parent)
 	m_daqStatus = new StatusBarEntry("DAQ stopped");
 	m_pulserStatus = new StatusBarEntry("Pulser off");
 	m_mode = new StatusBarEntry("Position Mode");
+	m_sync = new StatusBarEntry("Internal");
 
+	statusBar()->addPermanentWidget(m_sync);
 	statusBar()->addPermanentWidget(m_daqStatus);
 	statusBar()->addPermanentWidget(m_pulserStatus);
 	statusBar()->addPermanentWidget(m_mode);
 
 	restoreSettings();
+}
+
+void MainWindow::updateStatusBar()
+{
+	QList<int> list = m_mesy->mcpdId();
+        MSG_ERROR << "MCPD " << list.size();
+	for (int i = 0; i < list.size(); ++i) 
+     		if (m_mesy->isExtsynced(list.at(i)))
+			m_sync->setText("External");
 }
 
 MainWindow::~MainWindow()

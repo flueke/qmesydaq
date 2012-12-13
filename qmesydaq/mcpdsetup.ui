@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>779</width>
-    <height>360</height>
+    <width>774</width>
+    <height>281</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,50 +61,97 @@
            <property name="title">
             <string>Master / Termination</string>
            </property>
-           <layout class="QGridLayout" name="_8">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="master">
-              <property name="text">
-               <string>Master</string>
-              </property>
-              <property name="shortcut">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QPushButton" name="resetTimer">
-              <property name="toolTip">
-               <string>reset master clock</string>
-              </property>
-              <property name="text">
-               <string>&amp;Reset Timer</string>
-              </property>
-              <property name="shortcut">
-               <string>Alt+R</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="terminate">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>&amp;terminate</string>
-              </property>
-              <property name="shortcut">
-               <string>Alt+T</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QCheckBox" name="master">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>66</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;define MCPD as master (only one in chain!)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Master</string>
+            </property>
+            <property name="shortcut">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="resetTimer">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>110</y>
+              <width>98</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>reset master clock</string>
+            </property>
+            <property name="text">
+             <string>&amp;Reset Timer</string>
+            </property>
+            <property name="shortcut">
+             <string>Alt+R</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="terminate">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>50</y>
+              <width>85</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;terminate sync bus (automatically for master, manually for last slave in chain)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>&amp;terminate</string>
+            </property>
+            <property name="shortcut">
+             <string>Alt+T</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="extsync">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>80</y>
+              <width>85</width>
+              <height>21</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;enable external sync&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>ext. sync</string>
+            </property>
+            <property name="shortcut">
+             <string>Alt+T</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -310,7 +357,7 @@
        <item row="0" column="1" colspan="2">
         <widget class="QGroupBox" name="groupBox9">
          <property name="toolTip">
-          <string/>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trigger cell configuration panel&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="title">
           <string>Additional event counter configuration</string>
@@ -795,32 +842,16 @@ parameters</string>
   <connection>
    <sender>master</sender>
    <signal>toggled(bool)</signal>
-   <receiver>terminate</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>164</x>
-     <y>223</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>164</x>
-     <y>248</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>master</sender>
-   <signal>toggled(bool)</signal>
    <receiver>resetTimer</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>223</y>
+     <x>88</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
-     <x>164</x>
-     <y>285</y>
+     <x>120</x>
+     <y>309</y>
     </hint>
    </hints>
   </connection>
@@ -831,12 +862,12 @@ parameters</string>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>223</y>
+     <x>88</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
-     <x>164</x>
-     <y>248</y>
+     <x>107</x>
+     <y>247</y>
     </hint>
    </hints>
   </connection>
@@ -847,8 +878,8 @@ parameters</string>
    <slot>setTimingSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>223</y>
+     <x>88</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -863,8 +894,8 @@ parameters</string>
    <slot>resetTimerSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>285</y>
+     <x>120</x>
+     <y>309</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -911,8 +942,8 @@ parameters</string>
    <slot>setMcpdIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>44</x>
-     <y>209</y>
+     <x>48</x>
+     <y>58</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -927,8 +958,8 @@ parameters</string>
    <slot>setIpUdpSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>257</y>
+     <x>79</x>
+     <y>56</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -943,8 +974,8 @@ parameters</string>
    <slot>setTimingSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>164</x>
-     <y>248</y>
+     <x>107</x>
+     <y>247</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -975,8 +1006,8 @@ parameters</string>
    <slot>displayParameterSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>552</x>
-     <y>232</y>
+     <x>545</x>
+     <y>245</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -991,8 +1022,8 @@ parameters</string>
    <slot>displayCounterCellSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>321</x>
-     <y>118</y>
+     <x>311</x>
+     <y>131</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1007,8 +1038,8 @@ parameters</string>
    <slot>displayMCPDSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
-     <y>111</y>
+     <x>154</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1023,8 +1054,8 @@ parameters</string>
    <slot>displayAuxTimerSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>276</x>
-     <y>232</y>
+     <x>261</x>
+     <y>245</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1064,6 +1095,38 @@ parameters</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>master</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>extsync</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>56</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>extsync</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MCPDSetup</receiver>
+   <slot>setTimingSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>65</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>395</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>sendAuxSlot()</slot>
@@ -1078,5 +1141,6 @@ parameters</string>
   <slot>displayAuxTimerSlot(int)</slot>
   <slot>displayCounterCellSlot(int)</slot>
   <slot></slot>
+  <slot>setSyncSlot(bool)</slot>
  </slots>
 </ui>

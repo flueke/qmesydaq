@@ -214,6 +214,8 @@ public:
 
 	bool isMaster(quint16 mod);
 
+	bool isExtsynced(quint16 mod);
+
 	bool isTerminated(quint16 mod);
 
 	quint16 width(void);
@@ -244,7 +246,7 @@ public slots:
 
 	void setMasterClock(quint16 mod, quint64);
 
-	void setTimingSetup(quint16 mod, bool master, bool term);
+	void setTimingSetup(quint16 mod, bool master, bool term, bool extsync);
 
 	void setId(quint16 mod, quint8 mcpdid);
 

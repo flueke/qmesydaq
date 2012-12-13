@@ -47,6 +47,7 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 
     mcpdId->setMCPDList(mcpdList);
     displayAuxTimerSlot(1);
+    displayMCPDSlot(-1);
 }
 
 /*!
@@ -92,7 +93,7 @@ void MCPDSetup::sendAuxSlot()
 void MCPDSetup::resetTimerSlot()
 {
     quint16 id = mcpdId->value();
-		MSG_NOTICE << "reset timer";
+    MSG_NOTICE << "reset timer";
     m_theApp->setMasterClock(id, 0LL);
 }
 
@@ -105,8 +106,10 @@ void MCPDSetup::setTimingSlot()
 {
     quint16 id = mcpdId->value();
     resetTimer->setEnabled(master->isChecked());
-		MSG_NOTICE << "set timing";
-    m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked());
+    MSG_NOTICE << "set timing";
+    m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked(), extsync->isChecked());
+    if (master->isChecked())
+        emit sync(extsync->isChecked());
 }
 
 /*!
@@ -151,10 +154,11 @@ void MCPDSetup::displayMCPDSlot(int id)
         id = mcpdId->value();
 
 // store the current termination value it will be change if switch from master to slave
-    bool term = m_theApp->isTerminated(id);
     master->setChecked(m_theApp->isMaster(id));
     if (!master->isChecked())
-        terminate->setChecked(term);
+        terminate->setChecked(m_theApp->isTerminated(id));
+    else
+        extsync->setChecked(m_theApp->isExtsynced(id));
 
     displayCounterCellSlot(-1);
     displayParameterSlot(-1);
@@ -217,5 +221,19 @@ void MCPDSetup::displayAuxTimerSlot(int id)
  */
 void MCPDSetup::cellTriggerChangedSlot(int index)
 {
-	cellCompare->setEnabled(index);
+    cellCompare->setEnabled(index);
+}
+
+/*!
+    \fn void MCPDSetup::setSyncSlot(bool master)
+
+    callback for the master change
+
+    \deprecated
+ */
+void MCPDSetup::setSyncSlot(bool master)
+{
+    extsync->setEnabled(master);
+    if(!master)
+        extsync->setChecked(false);
 }

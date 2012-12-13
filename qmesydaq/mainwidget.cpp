@@ -1422,7 +1422,7 @@ void MainWidget::addMCPD(void)
 //	m_theApp->addMCPD(d.id(), d.ip());
 	QMetaObject::invokeMethod(m_theApp, "addMCPD", Qt::BlockingQueuedConnection, Q_ARG(quint16, d.id()), Q_ARG(QString, d.ip()));
 	init();
-	m_theApp->setTimingSetup(d.id(), d.master(), d.terminate());
+	m_theApp->setTimingSetup(d.id(), d.master(), d.terminate(), d.externsync());
     }
 }
 

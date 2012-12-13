@@ -148,16 +148,20 @@ int main(int argc, char **argv)
 		app.setLoopEventReceiver(mainWin.centralWidget());
 		QObject::connect(loop, SIGNAL(terminated()), mainWin.centralWidget(), SLOT(quitContinue()));
 	}
+	app.processEvents();
 	if (szLoadConfiguration.isNull())
 	{
 		// get last configuration file name
 		QSettings settings(QSettings::IniFormat, QSettings::UserScope, app.organizationName(), app.applicationName());
 		szLoadConfiguration = settings.value("lastconfigfile", "mesycfg.mcfg").toString();
 	}
+	app.processEvents();
 
 	// load configuration
 	if (!szLoadConfiguration.isEmpty())
 		mainWin.doLoadConfiguration(szLoadConfiguration);
+
+	mainWin.updateStatusBar();
 
 	app.processEvents();
 	splash.finish(&mainWin);

@@ -52,6 +52,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
     , m_dataPort(port)	// original 7000
     , m_master(true)
     , m_term(true)
+    , m_extsync(false)
     , m_stream(false)
     , m_commActive(false)
     , m_lastBufnum(0)
@@ -163,7 +164,7 @@ bool MCPD8::init(void)
  */
 bool MCPD8::reset(void)
 {
-    if (isMaster())
+    if (isMaster() || (version() < 9.5))
     {
         initCmdBuffer(RESET);
         finishCmdBuffer(0);
@@ -183,7 +184,7 @@ bool MCPD8::reset(void)
  */
 bool MCPD8::start(void)
 {
-    if (isMaster())
+    if (isMaster() || (version() < 9.5))
     {
         initCmdBuffer(START);
         finishCmdBuffer(0);
@@ -203,7 +204,7 @@ bool MCPD8::start(void)
  */
 bool MCPD8::stop(void)
 {
-    if (isMaster())
+    if (isMaster() || (version() < 9.5))
     {
         initCmdBuffer(STOP);
         finishCmdBuffer(0);
@@ -223,12 +224,13 @@ bool MCPD8::stop(void)
  */
 bool MCPD8::cont(void)
 {
-    if (isMaster())
+    if (isMaster() || (version() < 9.5))
     {
         initCmdBuffer(CONTINUE);
         finishCmdBuffer(0);
         return sendCommand();
     }
+    return true;
 }
 
 /*!
@@ -1909,26 +1911,42 @@ bool MCPD8::setMasterClock(quint64 val)
 }
 
 /*!
-    \fn MCPD8::setTimingSetup(bool master, bool term)
+    \fn MCPD8::setTimingSetup(bool master, bool term, bool extsync)
 
     sets the communication parameters between the MCPD's
 
     \param master is this MCPD master or not
     \param term should the MCPD synchronization bus terminated or not
+    \param extsync is external sync enabled (only master)
     \return true if operation was succesful or not
  */
-bool MCPD8::setTimingSetup(bool master, bool term)
+bool MCPD8::setTimingSetup(bool master, bool term, bool extsync)
 {
+    MSG_NOTICE << "mcpd " << m_id << ": set timing setup : master =" << master << ", terminate = " << term << ", external sync " << extsync;
     if (master)
+    {
         term = true;
+        if (extsync)
+        {
+#define MONITOR3	2
+#define NOTRIGGER	0
+            setCounterCell(MONITOR3, NOTRIGGER, 0);
+        }
+    }
     initCmdBuffer(SETTIMING);
+#if 0
     m_cmdBuf.data[0] = master;
+#else
+// This enables the external sync capability
+    m_cmdBuf.data[0] = master + 2 * extsync;
+#endif
     m_cmdBuf.data[1] = term;
     finishCmdBuffer(2);
     if (sendCommand())
     {
         m_master = master;
         m_term = term;
+        m_extsync = extsync;
         return true;
     }
     return false;

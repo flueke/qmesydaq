@@ -100,13 +100,16 @@ public:
 	void getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const;
 	void getProtocol(quint16 *addr);
 
-	bool setTimingSetup(bool master, bool term);
+	bool setTimingSetup(bool master, bool term, bool extsync);
 
 	//! \return whether this MCPD is configured as master or not
 	bool isMaster(void) {return m_master;}
 
 	//! \return whether this MCPD is terminated on the synchronization bus or not
 	bool isTerminated(void) {return isMaster() ? true : m_term;}
+
+	//! \return whether this MCPD has enabled external sync
+	bool isExtsynced(void) {return m_extsync;}
 
 	bool setMasterClock(quint64);
 
@@ -372,6 +375,9 @@ private:
 	//! is this MCPD terminated on sync bus or not
 	bool 		m_term;
 	
+	//! is this MCPD external sync enabled or not
+	bool 		m_extsync;
+
 	//! 8 counter cells, trig source in [0], compare reg in [1]
 	quint8 		m_counterCell[8][2];
 

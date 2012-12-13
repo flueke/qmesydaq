@@ -23,7 +23,7 @@
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>90</y>
+     <y>80</y>
      <width>73</width>
      <height>18</height>
     </rect>
@@ -45,6 +45,22 @@
     <string>Terminate</string>
    </property>
   </widget>
+  <widget class="QCheckBox" name="externsyncCheckBox">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>220</y>
+     <width>171</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>External Synchronisation</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>
@@ -61,6 +77,22 @@
     <hint type="destinationlabel">
      <x>115</x>
      <y>158</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>masterCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>externsyncCheckBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>227</y>
     </hint>
    </hints>
   </connection>

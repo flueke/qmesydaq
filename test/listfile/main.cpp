@@ -24,12 +24,12 @@ int main(int argc, char **argv)
 
 	mesy->stop();
 
-	mesy->setTimingSetup(0, true, true);
+	mesy->setTimingSetup(0, true, true, false);
 	mesy->setGain(0, 0, 8, float(1.0));
 	mesy->setThreshold(0, 0, quint16(20));
 	mesy->setPulser(0, 0, 0, MIDDLE, 50, true);
 
-	mesy->setTimingSetup(1, false, true);
+	mesy->setTimingSetup(1, false, true, false);
 	mesy->setGain(1, 7, 8, float(1.0));
 	mesy->setThreshold(1, 7, quint16(20));
 	mesy->setPulser(1, 7, 0, MIDDLE, 50, true);

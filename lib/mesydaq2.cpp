@@ -150,6 +150,18 @@ bool Mesydaq2::isMaster(quint16 mod)
 }
 
 /*!
+    \fn Mesydaq2::isExtsynced(quint16 mod)
+    \param mod number of the MCPD
+    \return is the MCPD external sync allowed or not
+*/
+bool Mesydaq2::isExtsynced(quint16 mod)
+{
+	if (!m_mcpd.contains(mod))
+		return false;
+	return m_mcpd[mod]->isExtsynced();
+}
+
+/*!
     \fn Mesydaq2::isTerminated(quint16 mod)
     \param mod number of the MCPD
     \return is the MCPD terminated or not 
@@ -504,6 +516,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		}
 		settings.setValue("master", value->isMaster() ? "true" : "false");
 		settings.setValue("terminate", value->isTerminated() ? "true" : "false");
+		settings.setValue("extsync", value->isExtsynced() ? "true" : "false");
 //		settings.setValue("active", value->active() ? "true" : "false");
 //		settings.setValue("histogram", value->histogram() ? "true" : "false");
 
@@ -571,7 +584,6 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 					break;
 			}
 		}
-
 		++i;
 	}
 	return true;
@@ -672,7 +684,8 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			setCounterCell(iId, j, cells[0], cells[1]);
 		}
 		
-		setTimingSetup(iId, settings.value("master", "true").toBool(), settings.value("terminate", "true").toBool());
+		setTimingSetup(iId, settings.value("master", "true").toBool(), settings.value("terminate", "true").toBool(),
+				settings.value("extsync", "false").toBool());
 		
 		settings.endGroup();
 	}
@@ -916,15 +929,13 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 void Mesydaq2::start(void)
 {
 	MSG_NOTICE << "remote start";
-#if 0
 // start the slaves first
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->start();
-#endif
 // start the masters
 	foreach(MCPD8 *it, m_mcpd)
-//		if (it->isMaster())
+		if (it->isMaster())
 			it->start();
 	m_daq = RUNNING;
 	m_starttime_msec = time();
@@ -942,14 +953,12 @@ void Mesydaq2::stop(void)
 	emit statusChanged("STOPPED");
 // Stop the masters first
 	foreach(MCPD8 *it, m_mcpd)
-//		if (it->isMaster())
+		if (it->isMaster())
 			it->stop();
-#if 0
 // Stop the slaves
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->stop();
-#endif
 	m_daq = IDLE;
 	emit statusChanged("IDLE");
 }
@@ -962,15 +971,13 @@ void Mesydaq2::stop(void)
 void Mesydaq2::cont(void)
 {
 	MSG_NOTICE << "remote cont";
-#if 0
 // continue the slaves first
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->cont();
-#endif
 // continue the masters
 	foreach(MCPD8 *it, m_mcpd)
-//		if (it->isMaster())
+		if (it->isMaster())
 			it->cont();
 	emit statusChanged("STARTED");
 }
@@ -1142,18 +1149,19 @@ void Mesydaq2::setMasterClock(quint16 id, quint64 val)
 }
 
 /*!
-    \fn Mesydaq2::setTimingSetup(quint16 id, bool master, bool term)
+    \fn Mesydaq2::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
 
     sets the communication parameters between the MCPD's
 
     \param id number of the MCPD
     \param master is this MCPD master or not
     \param term should the MCPD synchronization bus terminated or not
+    \param extsync is external synchronization bus enabled or not (omly master)
  */
-void Mesydaq2::setTimingSetup(quint16 id, bool master, bool term)
+void Mesydaq2::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
 {
 	if (m_mcpd.contains(id))
-		m_mcpd[id]->setTimingSetup(master, term);
+		m_mcpd[id]->setTimingSetup(master, term, extsync);
 }
 
 /*!

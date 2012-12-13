@@ -31,7 +31,8 @@ ModuleMasterPage::ModuleMasterPage(QWidget *parent)
 	setupUi(this);
 
 	registerField("master", masterCheckBox);
-	registerField("terminate", terminateCheckBox); 
+	registerField("terminate", terminateCheckBox);
+	registerField("externsync", externsyncCheckBox);
 
 	connect(masterCheckBox, SIGNAL(toggled(bool)), this, SLOT(valueChanged(bool)));
 	setFinalPage(true);
@@ -49,4 +50,6 @@ void ModuleMasterPage::valueChanged(bool val)
 {
 	if (val)
 		terminateCheckBox->setChecked(true);
+	else
+		externsyncCheckBox->setChecked(false);
 }

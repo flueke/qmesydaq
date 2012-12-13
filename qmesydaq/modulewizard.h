@@ -46,6 +46,8 @@ public:
 
 	bool terminate(void);
 
+	bool externsync(void);
+
 protected:
 	void accept();
 };
