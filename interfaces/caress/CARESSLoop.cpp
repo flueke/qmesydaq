@@ -855,8 +855,8 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
  * stop measurment
  ***************************************************************************/
 CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
-											  CORBA::Long id,
-											  CORBA::Long& module_status)
+						CORBA::Long id,
+						CORBA::Long& module_status)
 {
 	QMutexLocker lock(&m_mutex);
 	MSG_DEBUG << "stop(all=" << (const char*)(((kind>>31)&1)?"yes":"no") << ", kind=" << (kind&0x7FFFFFFF) << ", id=" << id << ')';
@@ -926,11 +926,11 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
   \note this function call is ignored
  */
 CARESS::ReturnType CORBADevice_i::drive_module(CORBA::Long kind,
-											   CORBA::Long id,
-											   const CARESS::Value& data,
-											   CORBA::Long& calculated_timeout,
-											   CORBA::Boolean& delay,
-											   CORBA::Long& module_status)
+						CORBA::Long id,
+						const CARESS::Value& data,
+						CORBA::Long& calculated_timeout,
+						CORBA::Boolean& delay,
+						CORBA::Long& module_status)
 {
 	QMutexLocker lock(&m_mutex);
 	(void) kind;
@@ -953,9 +953,9 @@ CARESS::ReturnType CORBADevice_i::drive_module(CORBA::Long kind,
   \param[out]    module_status       current device status
  */
 CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
-											  CORBA::Long id,
-											  const CARESS::Value& data,
-											  CORBA::Long& module_status)
+						CORBA::Long id,
+						const CARESS::Value& data,
+						CORBA::Long& module_status)
 {
 	QMutexLocker lock(&m_mutex);
 	MSG_DEBUG << "load(kind=" << kind << ", id=" << id << ')';
@@ -964,6 +964,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 	{
 		QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 		int iDevice;
+		int iTmpDev(0);
 
 		if (!pInterface)
 		{
@@ -988,10 +989,30 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 		switch (kind)
 		{
 			case 14: // LOADMASTER
+			case 15: // LOADSLAVE
+				switch (iDevice)
+				{
+				case QMESYDAQ_MON1:  iTmpDev=M1CT; break;
+				case QMESYDAQ_MON2:  iTmpDev=M2CT; break;
+				case QMESYDAQ_MON3:  iTmpDev=M3CT; break;
+				case QMESYDAQ_MON4:  iTmpDev=M4CT; break;
+				case QMESYDAQ_TIMER: iTmpDev=TCT;  break;
+				default: // QMESYDAQ_EVENT, QMESYDAQ_HISTOGRAM, QMESYDAQ_DIFFRACTOGRAM, QMESYDAQ_SPECTROGRAM:
+					iDevice=QMESYDAQ_EVENT;
+					iTmpDev=EVCT;
+					break;
+			}
+				break;
+			default:
+				break;
+		}
+
+		switch (kind)
+		{
+			case 14: // LOADMASTER
 			{
-				int iTmpDev=0;
-				double dblTarget=0.0;
-				bool bOK=false;
+				double dblTarget(0.0);
+				bool bOK(false);
 
 				m_iMaster=-1;
 				switch (iDevice)
@@ -1040,8 +1061,8 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 				{
 					m_iMaster=iDevice;
 					if (iDevice==QMESYDAQ_TIMER) dblTarget/=m_dblTimerScale;
-					pInterface->selectCounter(iTmpDev);
-					pInterface->setPreSelection(dblTarget);
+					pInterface->selectCounter(iTmpDev,true,dblTarget);
+					// pInterface->setPreSelection(dblTarget);
 					if (iDevice<ARRAY_SIZE(g_asDevices))
 						MSG_DEBUG << "master device " << g_asDevices[iDevice];
 					else
@@ -1058,6 +1079,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 			case 15: // LOADSLAVE
 				if (m_iMaster==iDevice)
 					m_iMaster=-1;
+				pInterface->selectCounter(iTmpDev,false);
 				if (iDevice<ARRAY_SIZE(g_asDevices))
 					MSG_DEBUG << "slave device " << g_asDevices[iDevice];
 				else

@@ -1904,6 +1904,92 @@ void MainWidget::customEvent(QEvent *e)
                 case CommandEvent::C_SELECT_COUNTER:
                     {
                         bool bEnabled(true);
+                        if (args.count() > 1 && args[1].canConvert(QVariant::Bool))
+                            bEnabled = args[1].toBool();
+                        switch (args[0].toInt())
+                        {
+                            case M1CT:
+                                monitor1Preset->setChecked(bEnabled);
+                                break;
+                            case M2CT:
+                                monitor2Preset->setChecked(bEnabled);
+                                break;
+                            case M3CT:
+                                monitor3Preset->setChecked(bEnabled);
+                                break;
+                            case M4CT:
+                                monitor4Preset->setChecked(bEnabled);
+                                break;
+                            case EVCT:
+                                eventsPreset->setChecked(bEnabled);
+                                break;
+                            case TCT:
+                                timerPreset->setChecked(bEnabled);
+                                break;
+                        }
+                        if (args.count() > 2 && args[2].canConvert(QVariant::Double))
+                        {
+                            double dblPreset = args[2].toDouble();
+                            switch (args[0].toInt())
+                            {
+                                case M1CT:
+                                    monitor1Preset->setPresetValue(dblPreset);
+                                    m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
+                                    break;
+                                case M2CT:
+                                    monitor2Preset->setPresetValue(dblPreset);
+                                    m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
+                                    break;
+                                case M3CT:
+                                    monitor3Preset->setPresetValue(dblPreset);
+                                    m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
+                                    break;
+                                case M4CT:
+                                    monitor4Preset->setPresetValue(dblPreset);
+                                    m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
+                                    break;
+                                case EVCT:
+                                    eventsPreset->setPresetValue(dblPreset);
+                                    m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
+                                    break;
+                                case TCT:
+                                    timerPreset->setPresetValue(dblPreset);
+                                    m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
+                                    break;
+                            }
+                        }
+                        break;
+                    }
+/*
+                case CommandEvent::C_SET_PRESELECTION:
+                    if (timerPreset->isChecked())
+                    {
+                        timerPreset->setPresetValue(args[0].toDouble());
+                        m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
+                    }
+                    else if (eventsPreset->isChecked())
+                    {
+                        eventsPreset->setPresetValue(args[0].toInt());
+                        m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
+                    }
+                    else if (monitor1Preset->isChecked())
+                    {
+                        monitor1Preset->setPresetValue(args[0].toInt());
+                        m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
+                    }
+                    else if (monitor2Preset->isChecked())
+                    {
+                        monitor2Preset->setPresetValue(args[0].toInt());
+                        m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
+                    }
+                    else if (monitor3Preset->isChecked())
+                    {
+                        monitor3Preset->setPresetValue(args[0].toInt());
+                        m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
+                    }
+                    else if (monitor4Preset->isChecked())
+                    {
+                        bool bEnabled(true);
 			bool setPreset(false);
                         double dblPreset(0);
                         if (args.count() > 1 && args[1].canConvert(QVariant::Bool))
@@ -1968,6 +2054,7 @@ void MainWidget::customEvent(QEvent *e)
                         }
                         break;
                     }
+*/
                 case CommandEvent::C_SET_PRESELECTION:
 		    {
 			double dblPreset = args[0].toDouble();
