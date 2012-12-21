@@ -30,6 +30,7 @@
 class MainWidget;
 class Mesydaq2;
 class QCloseEvent;
+class StatusBarEntry;
 
 /**
  * \short Application Main Window
@@ -57,6 +58,9 @@ public:
 	 * \param sFilename name of the file
 	 */
 	void	doLoadConfiguration(const QString &sFilename) { emit loadConfiguration(sFilename); }
+
+public slots:
+	void	runningState(bool);
 
 signals:
 	//! load configuration file
@@ -90,6 +94,12 @@ private:
 
 	//! the MesyDaq object
 	Mesydaq2	*m_mesy;
+
+	StatusBarEntry	*m_daqStatus;
+
+	StatusBarEntry	*m_pulserStatus;
+
+	StatusBarEntry	*m_mode;
 };
 
 #endif // _MAINWINDOW_H

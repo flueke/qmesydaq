@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.12.0
+VERSION		= 0.12.1
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -46,6 +46,7 @@ HEADERS 	+= mainwidget.h \
 		ModuleSpinBox.h \
 		MCPDSpinBox.h \
 		ChannelSpinBox.h \
+		StatusBarEntry.h \
 		LoopObject.h \
 		QMesydaqDetectorInterface.h \
 		CommandEvent.h \
@@ -81,6 +82,7 @@ FORMS 		+= mainwidget.ui \
 		channelhistogramsetup.ui \
                 modulesetup.ui \
                 mdllsetup.ui \
+		statusbarentry.ui \
 		passworddialog.ui
 
 SOURCES 	+= main.cpp \

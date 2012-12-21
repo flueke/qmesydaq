@@ -18,11 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <QCloseEvent>
+#include <QStatusBar>
 #include "MultipleLoopApplication.h"
 #include "mainwindow.h"
 #include "mainwidget.h"
 #include "passworddialog.h"
 #include "mesydaq2.h"
+#include "StatusBarEntry.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -64,6 +66,15 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(m_main, SIGNAL(started(bool)), actionNewSetup, SLOT(setDisabled(bool)));
 	connect(m_main, SIGNAL(started(bool)), actionSetupMCPD, SLOT(setDisabled(bool)));
 	connect(m_main, SIGNAL(started(bool)), actionAddMCPD, SLOT(setDisabled(bool)));
+	connect(m_main, SIGNAL(started(bool)), this, SLOT(runningState(bool)));
+
+	m_daqStatus = new StatusBarEntry("DAQ stopped");
+	m_pulserStatus = new StatusBarEntry("Pulser off");
+	m_mode = new StatusBarEntry("Position Mode");
+
+	statusBar()->addPermanentWidget(m_daqStatus);
+	statusBar()->addPermanentWidget(m_pulserStatus);
+	statusBar()->addPermanentWidget(m_mode);
 
 	restoreSettings();
 }
@@ -158,4 +169,17 @@ bool MainWindow::checkPasswd(const QString &section)
 		}
 	}
 	return passwd == usertyped;
+}
+
+/*!
+     displays the running state
+
+     \param started indicates a started measurement or idle
+ */
+void MainWindow::runningState(bool started)
+{
+	if (started)
+		m_daqStatus->setText("DAQ started");
+	else
+		m_daqStatus->setText("DAQ stopped");
 }
