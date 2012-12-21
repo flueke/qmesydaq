@@ -205,33 +205,6 @@
     <string>MDLL</string>
    </property>
   </action>
-  <action name="actionExpert">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Expert</string>
-   </property>
-  </action>
-  <action name="actionUser">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>User</string>
-   </property>
-  </action>
-  <action name="actionSuperUser">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Superuser</string>
-   </property>
-  </action>
   <action name="actionLoad_Calibration_File">
    <property name="text">
     <string>Load &amp;Calibration File ...</string>
