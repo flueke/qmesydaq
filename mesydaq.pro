@@ -18,6 +18,8 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
+VERSION		= 0.9.0
+
 include (mesydaqconfig.pri)
 
 TEMPLATE 	= subdirs

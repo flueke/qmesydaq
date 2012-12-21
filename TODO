@@ -1,3 +1,8 @@
+- JK 09/11/2012
+  Stop data acquisition during program start up, after initialisation of
+  all modules.
+  => More reliable results.
+
 - JK 08/17/2012
   Read a configuration file and use this information to replay a list file
   => better configuration of the display (size)

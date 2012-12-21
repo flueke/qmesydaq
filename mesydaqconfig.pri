@@ -25,7 +25,7 @@ isEmpty(SRCBASE) {
 	SRCBASE = .
 }
 
-GITVERSION	= $$system(git describe)
+GITVERSION	= $$system(git describe --always)
 DEFINES		+= VERSION=\\\"$${VERSION}\\(r$${GITVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target

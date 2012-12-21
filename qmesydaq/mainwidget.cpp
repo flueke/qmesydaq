@@ -82,6 +82,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #endif
 
     m_dataFrame = new Plot(this);
+    m_dataFrame->setWindowTitle(tr("QMesyDAQ - plot window"));
     m_dataFrame->setWindowFlags(Qt::Window
 			| Qt::CustomizeWindowHint
 			| Qt::WindowTitleHint
@@ -219,6 +220,7 @@ void MainWidget::about()
 		   + tr("</ul></p>")
 #endif
                    + tr("<p>It is published under GPL (GNU General Public License) <tt><a href=\"http://www.gnu.org/licenses/gpl.html\">http://www.gnu.org/licenses/gpl.html</a></tt></p>")
+		   + tr("The data plot window is based in part on the work of the <a href=\"http://qwt.sf.net\">Qwt project</a>")
                    + tr("<p>Version : <b>%1</b></p>").arg(VERSION);
 
     QMessageBox msgBox(this);

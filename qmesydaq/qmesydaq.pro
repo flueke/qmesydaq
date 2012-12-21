@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.11.1
+VERSION		= 0.12.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -136,10 +136,10 @@ PRE_TARGETDEPS 	+= revision.h
 QMAKE_EXTRA_TARGETS	+= revtarget
 revtarget.target 	= revision.h
 revtarget.commands 	= @echo \"updating file $$revtarget.target\"; \
-  			/bin/echo -e \"/* generated file \(do not edit\) */\\n\" \
-    			\"$${LITERAL_HASH}ifndef REVISION_H\\n\" \
-    			\"$${LITERAL_HASH}define REVISION_H\\n\" \
-    			\"$${LITERAL_HASH}define REVISION \\\"$${VERSION}\(`git describe`)\\\"\\n\" \
-    			\"$${LITERAL_HASH}endif\" > $$revtarget.target
+			/bin/echo -e \"/* generated file \(do not edit\) */\\n\" \
+			\"$${LITERAL_HASH}ifndef REVISION_H\\n\" \
+			\"$${LITERAL_HASH}define REVISION_H\\n\" \
+			\"$${LITERAL_HASH}define REVISION \\\"$${VERSION}\(`git describe --always`)\\\"\\n\" \
+			\"$${LITERAL_HASH}endif\" > $$revtarget.target
 revtarget.depends 	= $$SOURCES $$HEADERS $$FORMS qmesydaq.pro
 QMAKE_DISTCLEAN 	+= $$revtarget.target

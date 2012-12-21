@@ -325,7 +325,7 @@ void Measurement::stop()
 		if (m_triggers)
 		{
 			for(int i = 0; i < m_counter.size(); ++i)
-				MSG_NOTICE << "Counter " << i << " gots " << m_counter[i]->value() << " events";
+				MSG_NOTICE << "Counter " << i << " got " << m_counter[i]->value() << " events";
 		}
 	}
 	m_status = Idle;

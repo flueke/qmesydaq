@@ -947,8 +947,7 @@ void Mesydaq2::start(void)
 void Mesydaq2::stop(void)
 {
 	MSG_NOTICE << "remote stop";
-	m_daq = IDLE;
-	emit statusChanged("IDLE");
+	emit statusChanged("STOPPED");
 // Stop the masters first
 	foreach(MCPD8 *it, m_mcpd)
 //		if (it->isMaster())
@@ -959,7 +958,8 @@ void Mesydaq2::stop(void)
 		if (!it->isMaster())
 			it->stop();
 #endif
-	emit statusChanged("STOPPED");
+	m_daq = IDLE;
+	emit statusChanged("IDLE");
 }
 
 /*!
