@@ -42,6 +42,7 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
 	, m_height(0)
 	, m_pObject(NULL)
 	, m_status(0)
+	, m_autoIncRunNumber(false)
 {
 }
 
@@ -231,7 +232,6 @@ void QMesyDAQDetectorInterface::setMappingCorrection(const MapCorrection& map)
 	{
 		if (pMap != NULL)
 		{
-			delete pMap;
 			pMap = NULL;
 			postCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
 		}
@@ -288,6 +288,19 @@ void QMesyDAQDetectorInterface::setListMode(bool bEnable)
 	postCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable);
 }
 
+/*!
+    return, if listmode is enabled or not
+
+    \return is listmode enabled
+ */
+bool QMesyDAQDetectorInterface::getListMode()
+{
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_GET_LISTMODE);
+	m_mutex.unlock();
+	return m_autoIncRunNumber;
+}
+
 void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength)
 {
 	m_mutex.lock();
@@ -341,7 +354,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 		{
 			switch(cmd)
 			{
-                                case CommandEvent::C_PRESELECTION:
+				case CommandEvent::C_PRESELECTION:
 					m_preSelection = args[0].toDouble();
 					m_eventReceived = true;
 					break;
@@ -401,6 +414,14 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					break;
 				case CommandEvent::C_GET_RUNID:
 					m_runid = args[0].toUInt();
+					if (args.size() > 1)
+						m_autoIncRunNumber = args[1].toBool();
+					else
+						m_autoIncRunNumber = true;
+					m_eventReceived = true;
+					break;
+				case CommandEvent::C_GET_LISTMODE:
+					m_autoIncRunNumber = args[0].toBool();
 					m_eventReceived = true;
 					break;
 				default:
@@ -426,16 +447,22 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 
 void QMesyDAQDetectorInterface::setRunID(const quint32 runid)
 {
-        postCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid);
+	postCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid);
 }
 
-quint32 QMesyDAQDetectorInterface::getRunID(void)
+void QMesyDAQDetectorInterface::setRunID(const quint32 runid, bool bAutoIncrement)
+{
+	postCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid << bAutoIncrement);
+}
+
+quint32 QMesyDAQDetectorInterface::getRunID(bool *pbAutoIncrement)
 {
 	quint32 r(0.0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_GET_RUNID);
 	r = m_runid;
+	if (pbAutoIncrement)
+		*pbAutoIncrement = m_autoIncRunNumber;
 	m_mutex.unlock();
 	return r;
 }
-

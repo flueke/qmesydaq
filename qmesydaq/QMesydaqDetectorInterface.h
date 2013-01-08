@@ -77,6 +77,7 @@ public:
 	void setMappingCorrection(const MapCorrection& map);
 	const MappedHistogram* getMappedHistogram();
 
+	bool getListMode();
 	void setListMode(bool bEnable);
 
 	//! \return name of the list mode data file
@@ -99,9 +100,10 @@ public:
 	 * \param runid
 	 */
 	void setRunID(const quint32 runid);
+	void setRunID(const quint32 runid, bool bAutoIncrement);
 
 	//! returns the current runid
-	quint32 getRunID(void);
+	quint32 getRunID(bool *pbAutoIncrement = NULL);
 
 protected:
 	void customEvent(QEvent *);
@@ -141,6 +143,9 @@ private:
 
 	//! current run ID
 	quint32			m_runid;
+
+	//! is listmode enabled / auto increment run number
+	bool			m_autoIncRunNumber;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H

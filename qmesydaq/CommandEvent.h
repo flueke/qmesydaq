@@ -60,7 +60,8 @@ public:
 		C_QUIT,
 		C_SET_RUNID,
 		C_GET_RUNID,
-        };
+		C_GET_LISTMODE,
+	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());
 

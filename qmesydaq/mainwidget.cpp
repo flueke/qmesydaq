@@ -1737,8 +1737,12 @@ void MainWidget::customEvent(QEvent *e)
                     if (!args.isEmpty())
                     {
                         MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
-
-                        MapCorrection *pNewMap = dynamic_cast<MapCorrection*>((QObject*)args[0].toULongLong());
+                        MapCorrection *pNewMap = dynamic_cast<MapCorrection *>((QObject*)args[0].toULongLong());
+                        if (pNewMap == NULL)
+                        {
+                            QSize size(m_meas->width(),m_meas->height());
+                            pNewMap = new LinearMapCorrection(size, size, MapCorrection::OrientationDownRev);
+                        }
                         if (pNewMap != NULL)
                         {
                             // new mapping and correction data
@@ -1762,8 +1766,10 @@ void MainWidget::customEvent(QEvent *e)
                         }
                     }
                     else
+                    {
                         // query for current mapping and correction data
-                        interface->postCommandToInterface(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
+                        interface->postCommandToInterface(CommandEvent::C_MAPCORRECTION, QList<QVariant>() << ((quint64)pMap));
+                    }
                 }
                 break;
             case CommandEvent::C_MAPPEDHISTOGRAM: // mapped and corrected position histogram
@@ -1777,7 +1783,15 @@ void MainWidget::customEvent(QEvent *e)
                 if (interface)
                 {
                     quint32 tmp = m_meas->runId();
-                    interface->postCommandToInterface(CommandEvent::C_GET_RUNID, QList<QVariant>() << (tmp));
+                    bool b = m_meas->getAutoIncRunId();
+                    interface->postCommandToInterface(CommandEvent::C_GET_RUNID, QList<QVariant>() << (tmp) << b);
+                }
+                break;
+            case CommandEvent::C_GET_LISTMODE:
+                if (interface)
+                {
+                    bool tmp = acquireFile->isChecked();
+                    interface->postCommandToInterface(CommandEvent::C_GET_LISTMODE, QList<QVariant>() << (tmp));
                 }
                 break;
             default :
@@ -1792,7 +1806,9 @@ void MainWidget::customEvent(QEvent *e)
                     if (interface)
                     {
                         int id(args[0].toInt());
-			m_meas->setRunId(id);
+                        m_meas->setRunId(id);
+                        if (args.size() > 1)
+                          m_meas->setAutoIncRunId(args[1].toBool());
                     }
                     break;
                 case CommandEvent::C_READ_COUNTER:

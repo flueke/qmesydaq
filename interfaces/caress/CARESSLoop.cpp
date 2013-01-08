@@ -185,6 +185,7 @@ protected:
   bool    m_bListmode;           //!< true, if QMesyDAQ should acquire a list file
   QString m_sListfile;           //!< list file name
   double  m_dblTimerScale;       //!< override for DEFAULTTIMEFACTOR
+  long    m_lSourceChannels;     //!< used for mapping: number of MPSD-or-something channels
 
   long    m_lId[QMESYDAQ_MAXDEVICES];    //!< CARESS ids of internal devices
   bool    m_b64Bit[QMESYDAQ_MAXDEVICES]; //!< 64-bit mode for internal devices
@@ -427,7 +428,7 @@ CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
   m_theApp(pApp), m_lHistogramX(0), m_lHistogramY(0), m_lDiffractogramWidth(0),
   m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
   m_lRunNo(0), m_lStepNo(0), m_lMesrCount(-1), m_bListmode(false),
-  m_dblTimerScale(DEFAULTTIMEFACTOR), m_iMaster(-1), m_iDetectorWidth(0)
+  m_dblTimerScale(DEFAULTTIMEFACTOR), m_lSourceChannels(-1), m_iMaster(-1), m_iDetectorWidth(0)
 {
   memset(&m_lId[0],0,sizeof(m_lId));
   memset(&m_b64Bit[0],0,sizeof(m_b64Bit));
@@ -526,7 +527,6 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
         // timer scaler/factor
         ptr2=ptr1;
         while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-        i=ptr1-ptr2;
         ptr3=(char*)ptr2;
         m_dblTimerScale=strtod(ptr2,&ptr3);
         if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_dblTimerScale=DEFAULTTIMEFACTOR;
@@ -547,7 +547,6 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
         while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
         ptr2=ptr1;
         while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-        i=ptr1-ptr2;
         ptr3=(char*)ptr2;
         m_lHistogramX=strtol(ptr2,&ptr3,0);
         if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramX=0;
@@ -569,7 +568,6 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
         while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
         ptr2=ptr1;
         while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-        i=ptr1-ptr2;
         ptr3=(char*)ptr2;
         m_lHistogramY=strtol(ptr2,&ptr3,0);
         if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramY=0;
@@ -584,6 +582,17 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
           m_lId[QMESYDAQ_HISTOGRAM]=0;
           throw ((const char*)"invalid histogram height");
         }
+
+        // number of source channels for mapping of scaled histogram
+        ptr1=ptr3;
+        while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+        while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+        ptr2=ptr1;
+        while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+        ptr3=(char*)ptr2;
+        m_lSourceChannels=strtol(ptr2,&ptr3,0);
+        if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lSourceChannels=-1;
+
         if (pInterface!=NULL)
           pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
         MSG_DEBUG << "init(histogram)";
@@ -602,7 +611,6 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
         while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
         ptr2=ptr1;
         while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-        i=ptr1-ptr2;
         ptr3=(char*)ptr2;
         m_lDiffractogramWidth=strtol(ptr2,&ptr3,0);
         if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lDiffractogramWidth=0;
@@ -616,6 +624,17 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
           m_lId[QMESYDAQ_DIFFRACTOGRAM]=0;
           throw ((const char*)"invalid diffractogram width");
         }
+
+        // number of source channels for mapping of scaled histogram
+        ptr1=ptr3;
+        while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+        while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+        ptr2=ptr1;
+        while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+        ptr3=(char*)ptr2;
+        m_lSourceChannels=strtol(ptr2,&ptr3,0);
+        if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lSourceChannels=-1;
+
         if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
           pInterface->updateMainWidget(m_lDiffractogramWidth,0,-1);
         MSG_DEBUG << "init(diffractogram)";
@@ -645,7 +664,6 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
         while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
         ptr2=ptr1;
         while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-        i=ptr1-ptr2;
         ptr3=(char*)ptr2;
         m_lSpectrogramWidth=strtol(ptr2,&ptr3,0);
         if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lSpectrogramWidth=0;
@@ -659,6 +677,17 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
           m_lId[QMESYDAQ_SPECTROGRAM]=0;
           throw ((const char*)"invalid spectrogram width");
         }
+
+        // number of source channels for mapping of scaled histogram
+        ptr1=ptr3;
+        while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+        while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
+        ptr2=ptr1;
+        while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+        ptr3=(char*)ptr2;
+        m_lSourceChannels=strtol(ptr2,&ptr3,0);
+        if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lSourceChannels=-1;
+
         if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1)
           pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
         MSG_DEBUG << "init(spectrogram)";
@@ -799,7 +828,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
     {
       m_lRunNo=run_no;
       m_lMesrCount=mesr_count;
-      pInterface->setRunID(m_lRunNo);
+      pInterface->setRunID(m_lRunNo,false);
       if (kind==0)
       {
         if (mesr_count==0) ++m_lStepNo;
@@ -1340,7 +1369,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
   {
     // load special mapping and correction data
     QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-    quint16 w,h;
+    quint16 w=(quint16)m_lSourceChannels,h=960;
     const unsigned char* pData=&data.ab()[0];
     CORBA::ULong uLength=data.ab().length();
 
@@ -1357,7 +1386,23 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
     else
       MSG_DEBUG << "loadblock(binary device " << id << ") - " << uLength << " bytes of binary data";
 
-    pInterface->readHistogramSize(w,h);
+    if (m_lSourceChannels<=0 || m_lSourceChannels>=65536)
+    {
+      bool bListMode=pInterface->getListMode();
+      quint32 uRun=pInterface->getRunID();
+      if (bListMode)
+        pInterface->setListMode(false);
+      pInterface->setRunID(uRun,false);
+      pInterface->start();
+      sleep(1);
+      pInterface->stop();
+      pInterface->setRunID(uRun,false);
+      pInterface->readHistogramSize(w,h);
+      if (bListMode)
+        pInterface->setListMode(bListMode);
+      m_lSourceChannels=w;
+    }
+
     pInterface->setMappingCorrection(parseCaressMapCorrection((const char*) \
                                                               pData,uLength,w>m_lHistogramX?w:m_lHistogramX,h,m_lHistogramX,m_lHistogramY));
     pInterface->setListFileHeader(pData,(int)uLength);
