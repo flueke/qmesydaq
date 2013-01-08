@@ -986,7 +986,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 					}
 				}
 				else
-					MSG_WARNING << "Neutron for an inactive channel " << mod << " " << id << " " << modChan; 
+					MSG_WARNING << "Neutron for an inactive channel " << mod << " " << id << " " << modChan;
 			}
 		}
 #if 0

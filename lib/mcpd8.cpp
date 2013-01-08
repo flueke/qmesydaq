@@ -2120,6 +2120,8 @@ void MCPD8::setHistogram(bool hist)
         Q_ASSERT_X(it != NULL, "MCPD8::setHistogram", "one of the MPSD's is NULL");
         it->setHistogram(hist);
     }
+    if (!hist)
+        setActive(false);
 }
 
 /*!
@@ -2133,6 +2135,8 @@ void MCPD8::setHistogram(quint16 id, bool hist)
 {
     if (m_mpsd.contains(id))
         m_mpsd[id]->setHistogram(hist);
+    if (!hist)
+        setActive(id, false);
 }
 
 /*!
@@ -2147,7 +2151,7 @@ void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
     if (m_mpsd.contains(id))
         m_mpsd[id]->setHistogram(chan, hist);
     if (!hist)
-        setActive(false);
+        setActive(id, chan, false);
 }
 
 /*!

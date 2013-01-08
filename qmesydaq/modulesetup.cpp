@@ -42,37 +42,37 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
     devid->setMCPDList(mcpdList);
     module->setModuleList(m_theApp->mpsdId(devid->value()));
 
-    QObject::connect(checkChannel1Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram1(bool))); 
     checkChannel1Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 0));
     checkChannel1Use->setChecked(m_theApp->active(devid->value(), module->value(), 0));
+    QObject::connect(checkChannel1Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram1(bool)));
 
-    QObject::connect(checkChannel2Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram2(bool))); 
     checkChannel2Use->setChecked(m_theApp->active(devid->value(), module->value(), 1));
     checkChannel2Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 1));
+    QObject::connect(checkChannel2Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram2(bool)));
 
-    QObject::connect(checkChannel3Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram3(bool))); 
     checkChannel3Use->setChecked(m_theApp->active(devid->value(), module->value(), 2));
     checkChannel3Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 2));
+    QObject::connect(checkChannel3Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram3(bool)));
 
-    QObject::connect(checkChannel4Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram4(bool))); 
     checkChannel4Use->setChecked(m_theApp->active(devid->value(), module->value(), 3));
     checkChannel4Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 3));
+    QObject::connect(checkChannel4Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram4(bool)));
 
-    QObject::connect(checkChannel5Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram5(bool))); 
     checkChannel5Use->setChecked(m_theApp->active(devid->value(), module->value(), 4));
     checkChannel5Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 4));
+    QObject::connect(checkChannel5Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram5(bool)));
 
-    QObject::connect(checkChannel6Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram6(bool))); 
     checkChannel6Use->setChecked(m_theApp->active(devid->value(), module->value(), 5));
     checkChannel6Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 5));
+    QObject::connect(checkChannel6Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram6(bool)));
 
-    QObject::connect(checkChannel7Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram7(bool))); 
     checkChannel7Use->setChecked(m_theApp->active(devid->value(), module->value(), 6));
     checkChannel7Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 6));
+    QObject::connect(checkChannel7Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram7(bool)));
 
-    QObject::connect(checkChannel8Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram8(bool))); 
     checkChannel8Use->setChecked(m_theApp->active(devid->value(), module->value(), 7));
     checkChannel8Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 7));
+    QObject::connect(checkChannel8Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram8(bool)));
 
     channelLabel->setHidden(comgain->isChecked());
     channel->setHidden(comgain->isChecked());

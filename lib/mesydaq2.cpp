@@ -795,14 +795,6 @@ bool Mesydaq2::loadSetup(QSettings &settings)
  */
 void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 {
-#if defined(_MSC_VER)
-#	pragma message("TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))")
-#	pragma message("cInt->caressTask();")
-#else
-#	warning TODO if(cInt->caressTaskPending() && (!cInt->asyncTaskPending()))
-#	warning TODO 		cInt->caressTask();
-#endif
-//! \todo CARESS binding and checks for the hardware
 #if 0
 	if (event->timerId() == m_checkTimer)	
 		checkMcpd(0);
