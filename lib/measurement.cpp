@@ -71,16 +71,13 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 {
 	setHistfilepath(getenv("HOME"));
 	setListfilepath(getenv("HOME"));
-	m_Hist[PositionHistogram] = NULL;
-	m_Hist[AmplitudeHistogram] = NULL;
-	m_Hist[CorrectedPositionHistogram] = NULL;
-	m_Spectrum[TimeSpectrum] = NULL;
-	m_Spectrum[Diffractogram] = NULL;
-	m_Spectrum[TubeSpectrum] = NULL;
-	m_Spectrum[SingleTubeSpectrum] = NULL;
+	for (int i = 0; i < sizeof(m_Hist) / sizeof(Histogram *); ++i)
+		m_Hist[i] = NULL;
+	for (int i = 0; i < sizeof(m_Spectrum) / sizeof(Histogram *); ++i)
+		m_Spectrum[i] = NULL;
 
-    	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
-    	setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	setConfigfilepath(settings.value("config/configfilepath", getenv("HOME")).toString());
 
 	setRunId(settings.value("config/lastrunid", "0").toUInt());
 	setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
@@ -162,7 +159,7 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 
 /*!
     \fn Measurement::destroyHistogram(void)
- 
+
     This method deletes all existing histograms, spectra, ... .
     It also initializes all pointer to NULL.
  */
@@ -571,7 +568,7 @@ void Measurement::clearAllHist(void)
 	if (m_Hist[AmplitudeHistogram])
 		m_Hist[AmplitudeHistogram]->clear();
 	if (m_Hist[CorrectedPositionHistogram])
-		m_Hist[CorrectedPositionHistogram]->clear();	
+		m_Hist[CorrectedPositionHistogram]->clear();
 	if (m_Spectrum[TimeSpectrum])
 		m_Spectrum[TimeSpectrum]->clear();
 	if (m_Spectrum[SingleTubeSpectrum])
@@ -598,7 +595,7 @@ void Measurement::clearChanHist(quint16 chan)
 	if (m_Hist[AmplitudeHistogram])
 		m_Hist[AmplitudeHistogram]->clear(chan);
 	if (m_Hist[CorrectedPositionHistogram])
-		m_Hist[CorrectedPositionHistogram]->clear(chan);	
+		m_Hist[CorrectedPositionHistogram]->clear(chan);
 }
 
 /*!
