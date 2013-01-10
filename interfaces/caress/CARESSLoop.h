@@ -33,19 +33,19 @@ class QtInterface;
  */
 class CARESSLoop : public LoopObject
 {
-  Q_OBJECT
+	Q_OBJECT
 public:
-  CARESSLoop(QStringList argList, QtInterface *interface = 0);
+	CARESSLoop(QStringList argList, QtInterface *interface = 0);
 
 protected:
-  void runLoop();
+	void runLoop();
 
 private slots:
-  void shutdownLoop() { m_bDoLoop=false; }
+	void shutdownLoop() { m_bDoLoop=false; }
 
 private:
-  bool        m_bDoLoop;     //!< flag to detect exit of QMesyDAQ
-  QStringList m_asArguments; //!< command line arguments of QMesyDAQ
+	bool        m_bDoLoop;     //!< flag to detect exit of QMesyDAQ
+	QStringList m_asArguments; //!< command line arguments of QMesyDAQ
 };
 
 #endif // CARESSLOOP_H

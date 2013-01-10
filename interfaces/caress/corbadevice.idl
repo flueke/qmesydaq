@@ -156,174 +156,174 @@ loadoffset = yes
 //! \namespace CARESS the namespace CARESS is used for the CARESS system used at HZB
 module CARESS
 {
-  //! \enum ReturnType
-  //! \brief result value for most interface functions in CORBADevice
-  enum ReturnType { OK, NOT_OK };
+	//! \enum ReturnType
+	//! \brief result value for most interface functions in CORBADevice
+	enum ReturnType { OK, NOT_OK };
 
-  //! \brief ArrayLong an array of 32 bit signed integers
-  typedef sequence<long>      ArrayLong;
+	//! \brief ArrayLong an array of 32 bit signed integers
+	typedef sequence<long>      ArrayLong;
 
-  //! \brief ArrayLong an array of 32 bit IEEE floating point numbers
-  typedef sequence<float>     ArrayFloat;
+	//! \brief ArrayLong an array of 32 bit IEEE floating point numbers
+	typedef sequence<float>     ArrayFloat;
 
-  //! \brief ArrayLong an array of 8 bit unsigned integers or ASCII strings
-  typedef sequence<octet>     ArrayByte;
+	//! \brief ArrayLong an array of 8 bit unsigned integers or ASCII strings
+	typedef sequence<octet>     ArrayByte;
 
-  //! \brief ArrayLong an array of union Value for complex data descriptions
-  typedef sequence<any>       ArrayComplex;
+	//! \brief ArrayLong an array of union Value for complex data descriptions
+	typedef sequence<any>       ArrayComplex;
 
-  //! \brief ArrayLong an array of 64 bit signed integers
-  typedef sequence<long long> ArrayLong64;
+	//! \brief ArrayLong an array of 64 bit signed integers
+	typedef sequence<long long> ArrayLong64;
 
-  //! \brief ArrayLong an array of 64 bit IEEE floating point numbers
-  typedef sequence<double>    ArrayDouble;
+	//! \brief ArrayLong an array of 64 bit IEEE floating point numbers
+	typedef sequence<double>    ArrayDouble;
 
-  /*!
-      DataType type description (not all types are allowed in all functions)
+	/*!
+		DataType type description (not all types are allowed in all functions)
 
-      \li \c TypeArrayByte and \c ArrayByte are usable with \c loadblock_module only
-      \li \c typeString is is usable with \c get_attribute and \c set_attribute only
-      \li \c TypeComplex transfer one/more value group(s) {module_id, status, data type, count, value_array[]}
-	  with types CHARTYPE/STRINGTYPE,REALTYPE,DOUBLETYPE,LONGINTEGER,INT64TYPE
-      \enum DataType
-   */
-  enum DataType { TypeLong, TypeFloat,
-                  TypeArrayLong, TypeArrayFloat, TypeArrayByte,
-                  TypeString, TypeComplex,
-                  TypeLong64, TypeDouble, TypeArrayLong64, TypeArrayDouble };
+		\li \c TypeArrayByte and \c ArrayByte are usable with \c loadblock_module only
+		\li \c typeString is is usable with \c get_attribute and \c set_attribute only
+		\li \c TypeComplex transfer one/more value group(s) {module_id, status, data type, count, value_array[]}
+			   with types CHARTYPE/STRINGTYPE,REALTYPE,DOUBLETYPE,LONGINTEGER,INT64TYPE
+		\enum DataType
+	*/
+	enum DataType { TypeLong, TypeFloat,
+					TypeArrayLong, TypeArrayFloat, TypeArrayByte,
+					TypeString, TypeComplex,
+					TypeLong64, TypeDouble, TypeArrayLong64, TypeArrayDouble };
 
-  //! \brief union Value stores data for calling and returning interface functions
-  //! \union Value
-  union Value switch(DataType)
-  {
-    case TypeLong:        long         l;
-    case TypeFloat:       float        f;
-    case TypeArrayLong:   ArrayLong    al;
-    case TypeArrayFloat:  ArrayFloat   af;
-    case TypeArrayByte:   ArrayByte    ab; // loadblock_module, {s,g}et_attribute only
-    case TypeString:      string       s;  // {s,g}et_attribute only
-    case TypeComplex:     ArrayComplex c;
-    case TypeLong64:      long long    l64;
-    case TypeDouble:      double       d;
-    case TypeArrayLong64: ArrayLong64  al64;
-    case TypeArrayDouble: ArrayDouble  ad;
-  };
+	//! \brief union Value stores data for calling and returning interface functions
+	//! \union Value
+	union Value switch(DataType)
+	{
+		case TypeLong:        long         l;
+		case TypeFloat:       float        f;
+		case TypeArrayLong:   ArrayLong    al;
+		case TypeArrayFloat:  ArrayFloat   af;
+		case TypeArrayByte:   ArrayByte    ab; // loadblock_module, {s,g}et_attribute only
+		case TypeString:      string       s;  // {s,g}et_attribute only
+		case TypeComplex:     ArrayComplex c;
+		case TypeLong64:      long long    l64;
+		case TypeDouble:      double       d;
+		case TypeArrayLong64: ArrayLong64  al64;
+		case TypeArrayDouble: ArrayDouble  ad;
+	};
 
-  //! \brief ErrorDescription detailed text description of an error
-  exception ErrorDescription
-  {
-    string description;
-  };
+	//! \brief ErrorDescription detailed text description of an error
+	exception ErrorDescription
+	{
+		string description;
+	};
 
-  //! \brief CORBADevice interface for a generic CORBA device for CARESS
-  //! \interface CORBADevice
-  interface CORBADevice
-  {
-    /*!
-      \anchor init_module
-      \brief init module (call \ref init_module or \ref init_module_ex, but never both)
-      \li allocate resources
-      \li initialize device (see 'kind')
-      \li ...
-      \param[in] kind           0 = normal init \n
+	//! \brief CORBADevice interface for a generic CORBA device for CARESS
+	//! \interface CORBADevice
+	interface CORBADevice
+	{
+		/*!
+			\anchor init_module
+			\brief init module (call \ref init_module or \ref init_module_ex, but never both)
+			\li allocate resources
+			\li initialize device (see 'kind')
+			\li ...
+			\param[in] kind           0 = normal init \n
 				set \c ONLINE/OFFLINE-state in module_status \n
 				if \c ONLINE, return \c OK else \c NOT_OK
-      \param[in] id             unique device ID given by CARESS
-      \param[in] config_line    configuration line from 'hardware_modules_*.dat'
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[in] config_line    configuration line from 'hardware_modules_*.dat'
+			\param[out] module_status current device status \n
 				1 = \c ONLINE (device is usable) \n
 				0 = \c OFFLINE (device is \em NOT usable)
-      \return                   result of this function \n
+			\return                   result of this function \n
 				\c OK = device was found and initialized \n
 				\c NOT_OK = device not found / error
-      \note
-	     function "\ref init_module" disables use of exceptions;
-	     function "\ref init_module_ex" enables exceptions for other functions:
-	     in case of errors, they may throw an exception with details
-	     instead of a return value of NOT_OK
-    */
-    ReturnType init_module(in long kind, in long id, in string config_line,
-                           out long module_status);
+		\note
+			function "\ref init_module" disables use of exceptions;
+			function "\ref init_module_ex" enables exceptions for other functions:
+			in case of errors, they may throw an exception with details
+			instead of a return value of NOT_OK
+		*/
+		ReturnType init_module(in long kind, in long id, in string config_line,
+							   out long module_status);
 
-    /*!
-      \anchor init_module_ex
-      \brief init module (call \ref init_module or \ref init_module_ex, but never both)
-      \li allocate resources
-      \li initialize device (see 'kind')
-      \li ...
-      \param[in] kind           0 = normal init \n
+		/*!
+			\anchor init_module_ex
+			\brief init module (call \ref init_module or \ref init_module_ex, but never both)
+			\li allocate resources
+			\li initialize device (see 'kind')
+			\li ...
+			\param[in] kind           0 = normal init \n
 				set \c ONLINE/OFFLINE-state in module_status \n
 				if \c ONLINE, return \c OK else \c NOT_OK
-      \param[in] id             unique device ID given by CARESS
-      \param[in] name           CARESS device name (only "init_module_ex")
-      \param[in] config_line    configuration line from 'hardware_modules_*.dat'
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[in] name           CARESS device name (only "init_module_ex")
+			\param[in] config_line    configuration line from 'hardware_modules_*.dat'
+			\param[out] module_status current device status \n
 				1 = \c ONLINE (device is usable) \n
 				0 = \c OFFLINE (device is \em NOT usable)
-      \param[out] errordesc     description text with error details (only "init_module_ex")
-      \return                   result of this function \n
+			\param[out] errordesc     description text with error details (only "init_module_ex")
+			\return                   result of this function \n
 				\c OK = device was found and initialized \n
 				\c NOT_OK = device not found / error
-      \note
-	     function \ref init_module disables use of exceptions;
-	     function \ref init_module_ex enables exceptions for other functions:
-	     in case of errors, they may throw an exception with details
-	     instead of a return value of NOT_OK
-    */
-    ReturnType init_module_ex(in long kind, in long id, in string name, in string config_line,
-                              out long module_status, out string errordesc);
+			\note
+				function \ref init_module disables use of exceptions;
+				function \ref init_module_ex enables exceptions for other functions:
+				in case of errors, they may throw an exception with details
+				instead of a return value of NOT_OK
+		*/
+		ReturnType init_module_ex(in long kind, in long id, in string name, in string config_line,
+								  out long module_status, out string errordesc);
 
 
-    /*!
-       \anchor release_module
-       \brief release module
-       \li release resources
-       \param[in] kind     ignore this parameter
-       \param[in] id       unique device ID given by CARESS
-       \return result of this function (\c OK / \c NOT_OK)
-       \note
-	     initialisation with \ref init_module_ex enables exceptions and in case
-	     of an error, this function may throw an exception with details
-     */
-    ReturnType release_module(in long kind, in long id)
-               raises(ErrorDescription);
+		/*!
+			\anchor release_module
+			\brief release module
+			\li release resources
+			\param[in] kind     ignore this parameter
+			\param[in] id       unique device ID given by CARESS
+			\return result of this function (\c OK / \c NOT_OK)
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType release_module(in long kind, in long id)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor start_module
-      \brief start module for measurement
-      \li start module at beginning of data acquisition
-      \li called from CARESS-internal 'start_module'
-      \param[in] kind           type of start \n
+		/*!
+			\anchor start_module
+			\brief start module for measurement
+			\li start module at beginning of data acquisition
+			\li called from CARESS-internal 'start_module'
+			\param[in] kind           type of start \n
 				0 = normal start (start of measurement) \n
 				1 = \c START_CONT (re-start or continue measurement)
-      \param[in] id             unique device ID given by CARESS
-      \param[in] run_no         data file number
-      \param[in] mesr_count     current resolution/detector position step \n
+			\param[in] id             unique device ID given by CARESS
+			\param[in] run_no         data file number
+			\param[in] mesr_count     current resolution/detector position step \n
 				(valid only with \c kind \c == \c START_CONT)
-      \param[out] module_status current device status \n
+			\param[out] module_status current device status \n
 				1 = \c NOT_ACTIVE \n
 				2 = \c ACTIVE \n
 				3 = \c DONE
-      \return result of this function \n
-	      \c OK = device was started \n
-	      \c NOT_OK = an error occured
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType start_module(in long kind, in long id, in long run_no,
-                            in long mesr_count, out long module_status)
-               raises(ErrorDescription);
+			\return result of this function \n
+				\c OK = device was started \n
+				\c NOT_OK = an error occured
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType start_module(in long kind, in long id, in long run_no,
+								in long mesr_count, out long module_status)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor stop_module
-      \brief stop module
-      \li called from CARESS-internal 'stop_module' and 'stop_all'
-      \param[in] kind           type of stop \n
+		/*!
+			\anchor stop_module
+			\brief stop module
+			\li called from CARESS-internal 'stop_module' and 'stop_all'
+			\param[in] kind           type of stop \n
 				<b>bit 31:</b> \n
 				0 = \c stop_module (normal devices) \n
 				1 = \c stop_all (emergency stop) \n
@@ -332,30 +332,30 @@ module CARESS
 				1 = stop measurement (acquisition: only on end of measurement) \n
 				11 = \c KEEPACTION (motors: normal stop) \n
 				12 = \c STOPACTION (motors: emergency stop)
-      \param[in] id             unique device ID given by CARESS
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[out] module_status current device status \n
 				1 = \c NOT_ACTIVE \n
 				2 = \c ACTIVE \n
 				3 = \c DONE
-      \return result of this function \n
-	      \c OK = device was started \n
-	      \c NOT_OK = an error occured
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType stop_module(in long kind, in long id, out long module_status)
-               raises(ErrorDescription);
+			\return result of this function \n
+				\c OK = device was started \n
+				\c NOT_OK = an error occured
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType stop_module(in long kind, in long id, out long module_status)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor drive_module
-      \brief give device a new set point
-      \li start move/drive one module to target position
-      \li this call should be non-blocking: return module_status \c ACTIVE when started; CARESS will
-	  call \ref read_module and this device should set module_status to \c DONE when finished
-      \param[in] kind           type of drive \n
+		/*!
+			\anchor drive_module
+			\brief give device a new set point
+			\li start move/drive one module to target position
+			\li this call should be non-blocking: return module_status \c ACTIVE when started; CARESS will
+				call \ref read_module and this device should set module_status to \c DONE when finished
+			\param[in] kind           type of drive \n
 				0 = normal drive (start move to target positon) \n
 				1 = special drive to \n
 				&nbsp;&nbsp;&nbsp;&nbsp;Max (data == 1) \n
@@ -364,37 +364,37 @@ module CARESS
 				&nbsp;&nbsp;&nbsp;&nbsp;fine reference (ST180 only: data == 4) \n
 				2 = set digital output bits, bits set in data are a bit mask for bits to set \n
 				3 = clear digital output bits, bits set in data are a bit mask for bits to clear
-      \param[in] id             unique device ID given by CARESS
-      \param[in] data           new target position / set point (see kind) \n
-      \param[in,out] calculated_timeout add timeout value in seconds for this device
-      \param[out] delay         set flag, if this device must be delayed (e.g. multiplexed motors and an other motor is active)
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[in] data           new target position / set point (see kind) \n
+			\param[in,out] calculated_timeout add timeout value in seconds for this device
+			\param[out] delay         set flag, if this device must be delayed (e.g. multiplexed motors and an other motor is active)
+			\param[out] module_status current device status \n
 				1 = \c NOT_ACTIVE \n
 				2 = \c ACTIVE (return \c OK, module started) \n
 				&nbsp;&nbsp;&nbsp;&nbsp; \c MANUAL_MODE (return \c NOT_OK, module error) \n
 				3 = \c DONE (return OK, target position already reached) \n
 				5 = \c ACTIVE1 \n
 				6 = \c COMBA_ACTIVE (multiplexed device \c ACTIVE)
-      \return result of this function \n
-	      \c OK = device was started, already finished or delayed \n
-	      \c NOT_OK = an error occured
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType drive_module(in long kind, in long id, in Value data,
-                            inout long calculated_timeout, out boolean delay,
-                            out long module_status)
-               raises(ErrorDescription);
+			\return result of this function \n
+				\c OK = device was started, already finished or delayed \n
+				\c NOT_OK = an error occured
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType drive_module(in long kind, in long id, in Value data,
+								inout long calculated_timeout, out boolean delay,
+								out long module_status)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor load_module
-      \brief load data into module
-      \li load one module with target value
-      \li reset/clear/... module (e.g. counters)
-      \param[in] kind           kind of load \n
+		/*!
+			\anchor load_module
+			\brief load data into module
+			\li load one module with target value
+			\li reset/clear/... module (e.g. counters)
+			\param[in] kind           kind of load \n
 				0 = normal load store value from 'data') \n
 				14 = \c LOADMASTER (load preset counter with preset value) \n
 				15 = \c LOADSLAVE (prepare a slave counter, histogram for counting) \n
@@ -402,86 +402,86 @@ module CARESS
 				18 = \c SPECIALLOAD (load special info into hardware) \n
 				19 = \c LOAD_PERM_INFO (load permantent moving info) \n
 				21 = \c LOAD_OFFSET (load CARESS offset, see "loadoffset")
-      \param[in] id             unique device ID given by CARESS
-      \param[in] data           load this data (see 'kind') \n
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[in] data           load this data (see 'kind') \n
+			\param[out] module_status current device status \n
 				1 = \c NOT_ACTIVE \n
 				3 = \c DONE \n
 				4 = \c LOADED
-      \return result of this function \n
-	      \c OK = data was loaded or ignored \n
-	      \c NOT_OK = an error occured
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType load_module(in long kind, in long id, in Value data,
-                           out long module_status)
-               raises(ErrorDescription);
+			\return result of this function \n
+				\c OK = data was loaded or ignored \n
+				\c NOT_OK = an error occured
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType load_module(in long kind, in long id, in Value data,
+							   out long module_status)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor loadblock_module
-      \brief load block data into module
-      \li <tt>kind==0</tt> and <tt>data type==CHARTYPE</tt> \n
-	  load configuration information for this generic CORBA device;
-	  it contains only the section content (without white space) for this
-	  device; see head of this file for a file description
-	  ("start_channel"==1, "end_channel"==size of data)
-      \li <tt>kind==2</tt> and <tt>data type==CHARTYPE</tt> \n
-	  load names and values of this CARESS devices before start of measurement
-	  e.g. for "startvalues=TTHS,OMGS" this text will be loaded:\n
-	  &nbsp;&nbsp;&nbsp;&nbsp;<tt>TTHS=-43.59</tt>\n
-	  &nbsp;&nbsp;&nbsp;&nbsp;<tt>OMGS=10</tt>
-      \li <tt>kind==5</tt> and <tt>data type==CHARTYPE</tt> \n
-	  load text from CARESS command "loadtext"
-      \li <tt>kind==7</tt> and <tt>data type==CHARTYPE</tt> \n
-	  load additional information before start of measurement, which contains
-	  data of specified CARESS commands, e.g. <tt>startcommands=RELA,SPEC,MM1</tt>
-      \li <tt>kind==18</tt> and <tt>data type==CHARTYPE</tt> \n
-	  load a user defined device specific file as bulk data
-	  (e.g. complex data, special extensions, hacks, ...) \n
-	  this file has to \n
-	  * be exist and a regular file, \n
-	  * have a minimum file size of 1 byte, \n
-	  * have a maximum file size of 16 MB (16777216 bytes) \n
-	  otherwise it will be ignored without any error message
-	  ("start_channel"==1, "end_channel"==size of data)
-      \param[in] kind           kind of load \n
+		/*!
+			\anchor loadblock_module
+			\brief load block data into module
+			\li <tt>kind==0</tt> and <tt>data type==CHARTYPE</tt> \n
+				load configuration information for this generic CORBA device;
+				it contains only the section content (without white space) for this
+				device; see head of this file for a file description
+				("start_channel"==1, "end_channel"==size of data)
+			\li <tt>kind==2</tt> and <tt>data type==CHARTYPE</tt> \n
+				load names and values of this CARESS devices before start of measurement
+				e.g. for "startvalues=TTHS,OMGS" this text will be loaded:\n
+				&nbsp;&nbsp;&nbsp;&nbsp;<tt>TTHS=-43.59</tt>\n
+				&nbsp;&nbsp;&nbsp;&nbsp;<tt>OMGS=10</tt>
+			\li <tt>kind==5</tt> and <tt>data type==CHARTYPE</tt> \n
+				load text from CARESS command "loadtext"
+			\li <tt>kind==7</tt> and <tt>data type==CHARTYPE</tt> \n
+				load additional information before start of measurement, which contains
+				data of specified CARESS commands, e.g. <tt>startcommands=RELA,SPEC,MM1</tt>
+			\li <tt>kind==18</tt> and <tt>data type==CHARTYPE</tt> \n
+				load a user defined device specific file as bulk data
+				(e.g. complex data, special extensions, hacks, ...) \n
+				this file has to \n
+				* be exist and a regular file, \n
+				* have a minimum file size of 1 byte, \n
+				* have a maximum file size of 16 MB (16777216 bytes) \n
+				otherwise it will be ignored without any error message
+				("start_channel"==1, "end_channel"==size of data)
+			\param[in] kind           kind of load \n
 				0 = normal load (device section from configuration file "corbadevice.dat" for this device) \n
 				2 = \c LOADACTION (load names and values of other CARESS devices before start of measurements) \n
 				5 = \c GENERATION (text from "loadtext" command) \n
 				7 = \c SETACTION (load additional command information) \n
 				18 = \c SPECIALLOAD (content of a file specified with item "loadfile" in file "corbadevice.dat" or "loadfile" command)
-      \param[in] id             unique device ID given by CARESS
-      \param[in] start_channel  first channel to load (starts with 1)
-      \param[in] end_channel    last channel to load (starts with 1)
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[in] start_channel  first channel to load (starts with 1)
+			\param[in] end_channel    last channel to load (starts with 1)
+			\param[out] module_status current device status \n
 				1 = \c NOT_ACTIVE \n
 				3 = \c DONE \n
 				4 = \c LOADED
-      \param[in] data           load this data (see 'kind') \n
-      \return result of this function \n
-	      \c OK = data was loaded or ignored \n
-	      \c NOT_OK = an error occured
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType loadblock_module(in long kind, in long id, in long start_channel,
-                                in long end_channel, out long module_status,
-                                in Value data)
-               raises(ErrorDescription);
+			\param[in] data           load this data (see 'kind') \n
+			\return result of this function \n
+				\c OK = data was loaded or ignored \n
+				\c NOT_OK = an error occured
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType loadblock_module(in long kind, in long id, in long start_channel,
+									in long end_channel, out long module_status,
+									in Value data)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor read_module
-      \brief read current value and status from module
-      \li read info from module (single value)
-      \li exceptions: temperature controllers, choppers/flipper, special devices (see remarks)
-      \param[in] kind           kind of read \n
+		/*!
+			\anchor read_module
+			\brief read current value and status from module
+			\li read info from module (single value)
+			\li exceptions: temperature controllers, choppers/flipper, special devices (see remarks)
+			\param[in] kind           kind of read \n
 				<b>bit 31:</b> \n
 				0 = read_module \n
 				1 = read_allmodules \n
@@ -491,175 +491,175 @@ module CARESS
 				2 = \c READ_FORCED (read all devices)
 				3 = \c READ_STATUS (read limit and reference switches)
 				4 = \c hwb_server only: (READ_NAMELIST read device names)
-      \param[in] id             unique device ID given by CARESS
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[out] module_status current device status \n
 				1 = \c NOT_ACTIVE \n
 				2 = \c ACTIVE \n
 				3 = \c DONE \n
 				4 = \c LOADED \n
 				5 = \c ACTIVE1 \n
 				6 = \c COMBO_ACTIVE
-      \param[out] data          current or cached value (see 'kind') \n
-      \return result of this function \n
-	      \c OK = successful or ignored \n
-	      \c NOT_OK = an error occured
-      \remarks
-	    values depend on CARESS device IDs (parameter 'id'). \n
-	    Common devices give a single value (32bit-int or 32bit-float).
-	    Such devices are motors, counters, power supplies, digital
-	    multimeters, digital in/out modules, ... \n
-	    Special devices are temperature controllers and chopper/flippers.
-	    Such devices give an array of device specifc values. \n \n
-	    example for temperature controllers with id=15/TEMP which give 5..9 float values: \n
-	    <table>
-	      <tr><td>\b index</td><td>\b descrition</td><td>\b comment</td></tr>
-	      <tr><td>[0]</td><td>set temp</td><td>(set  point/target value)</td></tr>
-	      <tr><td>[1]</td><td>regu temp</td><td>(actual value)</td></tr>
-	      <tr><td>[2]</td><td>sample temp</td><td>(reference value)</td></tr>
-	      <tr><td>[3]</td><td>mean sample temp</td><td>(average)</td></tr>
-	      <tr><td>[4]</td><td>deviation of sample temp</td><td>&nbsp;</td></tr>
-	      <tr><td>[5]</td><td>2nd sample temp</td><td>(optional)</td></tr>
-	      <tr><td>[6]</td><td>3rd sample temp</td><td>(optional)</td></tr>
-	      <tr><td>[7]</td><td>4th sample temp</td><td>(optional)</td></tr>
-	      <tr><td>[8]</td><td>5th sample temp</td><td>(optional)</td></tr>
-	    </table>
+			\param[out] data          current or cached value (see 'kind') \n
+			\return result of this function \n
+				\c OK = successful or ignored \n
+				\c NOT_OK = an error occured
+			\remarks
+				values depend on CARESS device IDs (parameter 'id'). \n
+				Common devices give a single value (32bit-int or 32bit-float).
+				Such devices are motors, counters, power supplies, digital
+				multimeters, digital in/out modules, ... \n
+				Special devices are temperature controllers and chopper/flippers.
+				Such devices give an array of device specifc values. \n \n
+				example for temperature controllers with id=15/TEMP which give 5..9 float values: \n
+				<table>
+				<tr><td>\b index</td><td>\b descrition</td><td>\b comment</td></tr>
+				<tr><td>[0]</td><td>set temp</td><td>(set  point/target value)</td></tr>
+				<tr><td>[1]</td><td>regu temp</td><td>(actual value)</td></tr>
+				<tr><td>[2]</td><td>sample temp</td><td>(reference value)</td></tr>
+				<tr><td>[3]</td><td>mean sample temp</td><td>(average)</td></tr>
+				<tr><td>[4]</td><td>deviation of sample temp</td><td>&nbsp;</td></tr>
+				<tr><td>[5]</td><td>2nd sample temp</td><td>(optional)</td></tr>
+				<tr><td>[6]</td><td>3rd sample temp</td><td>(optional)</td></tr>
+				<tr><td>[7]</td><td>4th sample temp</td><td>(optional)</td></tr>
+				<tr><td>[8]</td><td>5th sample temp</td><td>(optional)</td></tr>
+				</table>
 
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType read_module(in long kind, in long id, out long module_status, out Value data)
-               raises(ErrorDescription);
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType read_module(in long kind, in long id, out long module_status, out Value data)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor readblock_params
-      \brief read data type of block data for later call of \ref readblock_module
-      \li allowed types (from DataType): TypeArrayLong, TypeArrayFloat
-      \li used for special devices, many devices do not need to change data in "inout" parameters, but they are allowed to change (e.g. check and prepare histogram readout)
-      \param[in] kind           kind of read block \n
+		/*!
+			\anchor readblock_params
+			\brief read data type of block data for later call of \ref readblock_module
+			\li allowed types (from DataType): TypeArrayLong, TypeArrayFloat
+			\li used for special devices, many devices do not need to change data in "inout" parameters, but they are allowed to change (e.g. check and prepare histogram readout)
+			\param[in] kind           kind of read block \n
 				0 = \c READBLOCK_NORMAL (normal read) \n
 				1 = ( \c READBLOCK_SINGLE, DAU only: read only single detector) \n
 				2 = ( \c READBLOCK_MULTI, DAU only: read only multi detector) \n
 				3 = \c READBLOCK_NOSNAPSHOT (handle it like <tt>kind==0</tt>)
-      \param[in] id             unique device ID given by CARESS
-      \param[in,out] start_channel first channel to load (starts with 1, do not extend range, coerce only to match maximum range)
-      \param[in,out] end_channel   last channel to load (starts with 1, do not extend range, coerce only to match maximum range)
-      \param[in,out] type          data type of current value (\c TypeArrayLong or \c TypeArrayFloat)
-      \return result of this function \n
-	      \c OK = successful \n
-	      \c NOT_OK = an error occured
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType readblock_params(in long kind, in long id, inout long start_channel,
-                                inout long end_channel, inout DataType type)
-               raises(ErrorDescription);
+			\param[in] id             unique device ID given by CARESS
+			\param[in,out] start_channel first channel to load (starts with 1, do not extend range, coerce only to match maximum range)
+			\param[in,out] end_channel   last channel to load (starts with 1, do not extend range, coerce only to match maximum range)
+			\param[in,out] type          data type of current value (\c TypeArrayLong or \c TypeArrayFloat)
+			\return result of this function \n
+				\c OK = successful \n
+				\c NOT_OK = an error occured
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType readblock_params(in long kind, in long id, inout long start_channel,
+									inout long end_channel, inout DataType type)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor readblock_module
-      \brief read block data after previous call to \ref readblock_params
-      \li read bulk data (e.g. histogram)
-      \li allowed types (from DataType): TypeArrayLong, TypeArrayFloat
-      \param[in] kind           kind of read block \n
+		/*!
+			\anchor readblock_module
+			\brief read block data after previous call to \ref readblock_params
+			\li read bulk data (e.g. histogram)
+			\li allowed types (from DataType): TypeArrayLong, TypeArrayFloat
+			\param[in] kind           kind of read block \n
 				0 = \c READBLOCK_NORMAL (normal read) \n
 				1 = ( \c READBLOCK_SINGLE, DAU only: read only single detector) \n
 				2 = ( \c READBLOCK_MULTI, DAU only: read only multi detector) \n
 				3 = \c READBLOCK_NOSNAPSHOT (handle it like <tt>kind==0</tt>)
-      \param[in] id             unique device ID given by CARESS
-      \param[in,out] start_channel first channel to load (starts with 1, do not extend range, coerce only to match maximum range)
-      \param[in,out] end_channel   last channel to load (starts with 1, do not extend range, coerce only to match maximum range)
-      \param[out] module_status current device status \n
+			\param[in] id             unique device ID given by CARESS
+			\param[in,out] start_channel first channel to load (starts with 1, do not extend range, coerce only to match maximum range)
+			\param[in,out] end_channel   last channel to load (starts with 1, do not extend range, coerce only to match maximum range)
+			\param[out] module_status current device status \n
 				1 = \c NOT_ACTIVE \n
 				2 = \c ACTIVE \n
 				3 = \c DONE \n
 				4 = \c LOADED \n
 				5 = \c ACTIVE1 \n
 				6 = \c COMBO_ACTIVE
-      \param[out] data          block data
-      \return result of this function \n
-	      \c OK = successful or device skipped \n
-	      \c NOT_OK = an error occured
-      \note
-	    initialisation with \ref init_module_ex enables exceptions and in case
-	    of an error, this function may throw an exception with details
-    */
-    ReturnType readblock_module(in long kind, in long id, in long start_channel,
-                                in long end_channel, out long module_status,
-                                out Value data)
-               raises(ErrorDescription);
+			\param[out] data          block data
+			\return result of this function \n
+				\c OK = successful or device skipped \n
+				\c NOT_OK = an error occured
+			\note
+				initialisation with \ref init_module_ex enables exceptions and in case
+				of an error, this function may throw an exception with details
+		*/
+		ReturnType readblock_module(in long kind, in long id, in long start_channel,
+									in long end_channel, out long module_status,
+									out Value data)
+				   raises(ErrorDescription);
 
 
 
-    /*!
-      \anchor is_readable_module
-      \brief constant attribute: \c TRUE, if CARESS can call \ref read_module or \ref readblock_params / \ref readblock_module
-      \param[in] id unique device ID given by CARESS
-      \return result of this function
-     */
-    boolean is_readable_module(in long id);
+		/*!
+			\anchor is_readable_module
+			\brief constant attribute: \c TRUE, if CARESS can call \ref read_module or \ref readblock_params / \ref readblock_module
+			\param[in] id unique device ID given by CARESS
+			\return result of this function
+		*/
+		boolean is_readable_module(in long id);
 
-    /*!
-      \anchor is_drivable_module
-      \brief constant attribute: \c TRUE, if device is movable and CARESS can call \ref drive_module
-      \param[in] id unique device ID given by CARESS
-      \return result of this function
-     */
-    boolean is_drivable_module(in long id);
+		/*!
+			\anchor is_drivable_module
+			\brief constant attribute: \c TRUE, if device is movable and CARESS can call \ref drive_module
+			\param[in] id unique device ID given by CARESS
+			\return result of this function
+		*/
+		boolean is_drivable_module(in long id);
 
-    /*!
-      \anchor is_counting_module
-      \brief constant attribute: \c TRUE, if device is counting, e.g. simple counter or histogram
-      \param[in] id unique device ID given by CARESS
-      \return result of this function
-     */
-    boolean is_counting_module(in long id);
+		/*!
+			\anchor is_counting_module
+			\brief constant attribute: \c TRUE, if device is counting, e.g. simple counter or histogram
+			\param[in] id unique device ID given by CARESS
+			\return result of this function
+		*/
+		boolean is_counting_module(in long id);
 
-    /*!
-      \anchor is_status_module
-      \brief constant attribute: \c TRUE, if device is digital I/O and provides a single value of TypeLong only (with special CARESS treatment)
-      \param[in] id unique device ID given by CARESS
-      \return result of this function
-     */
-    boolean is_status_module(in long id);
+		/*!
+			\anchor is_status_module
+			\brief constant attribute: \c TRUE, if device is digital I/O and provides a single value of TypeLong only (with special CARESS treatment)
+			\param[in] id unique device ID given by CARESS
+			\return result of this function
+		*/
+		boolean is_status_module(in long id);
 
-    /*!
-      \anchor needs_reference_module
-      \brief constant attribute: \c TRUE, if device has no fixed offset nor an absolute encoder nor somethings else and position is zero after \ref init_module or \ref init_module_ex
-      \param[in] id unique device ID given by CARESS
-      \return result of this function
-     */
-    boolean needs_reference_module(in long id);
+		/*!
+			\anchor needs_reference_module
+			\brief constant attribute: \c TRUE, if device has no fixed offset nor an absolute encoder nor somethings else and position is zero after \ref init_module or \ref init_module_ex
+			\param[in] id unique device ID given by CARESS
+			\return result of this function
+		*/
+		boolean needs_reference_module(in long id);
 
-    /*!
-      \anchor get_attribute
-      \brief CARESS extension to read device specific attributes / data without changing this interface
-      \param[in] id unique device ID given by CARESS
-      \param[in] name name of attribute or data to read
-      \return read data or exception
-      \note
-	    This function may throw exceptions in any case. It has no other error handling and was introduced
-	    together with the function \ref init_module_ex.
-     */
-    Value get_attribute(in long id, in string name) raises(ErrorDescription);
+		/*!
+			\anchor get_attribute
+			\brief CARESS extension to read device specific attributes / data without changing this interface
+			\param[in] id unique device ID given by CARESS
+			\param[in] name name of attribute or data to read
+			\return read data or exception
+			\note
+			This function may throw exceptions in any case. It has no other error handling and was introduced
+			together with the function \ref init_module_ex.
+		*/
+		Value get_attribute(in long id, in string name) raises(ErrorDescription);
 
-    /*!
-      \anchor set_attribute
-      \brief CARESS extension to write device specific attributes / data without changing this interface
-      \param[in] id unique device ID given by CARESS
-      \param[in] name name of attribute or data to read
-      \param[in] data data which should be written into device
-      \return void or exception
-      \note
-	    This function may throw exceptions in any case. It has no other error handling and was introduced
-	    together with the function \ref init_module_ex.
-     */
-    void  set_attribute(in long id, in string name, in Value data) raises(ErrorDescription);
-  }; // interface CORBADevice
+		/*!
+			\anchor set_attribute
+			\brief CARESS extension to write device specific attributes / data without changing this interface
+			\param[in] id unique device ID given by CARESS
+			\param[in] name name of attribute or data to read
+			\param[in] data data which should be written into device
+			\return void or exception
+			\note
+			This function may throw exceptions in any case. It has no other error handling and was introduced
+			together with the function \ref init_module_ex.
+		*/
+		void  set_attribute(in long id, in string name, in Value data) raises(ErrorDescription);
+	}; // interface CORBADevice
 }; // module CARESS
 
 #endif /* __CORBADEVICE_IDL__E0DFEC78_0BD9_4167_BB3F_B473670709AB__ */
