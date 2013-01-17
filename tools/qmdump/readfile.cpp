@@ -114,10 +114,13 @@ void analyzeBuffer(const DATA_PACKET &pd)
 // y position (10 bit) is at MPSD "Amplitude" data
 // amplitude (8 bit) is at MPSD "chan" data
 //
+//					MSG_DEBUG << QString("id: %1 slotId: %2").arg(id).arg(slotId);
+					chan = (id << 5) + slotId;
 					quint16 val = chan;
 					chan = pos;
 					pos = amp;
 					amp = val;
+					MSG_ERROR << QString("chan: %1 pos: %2 ampl: %3").arg(chan).arg(pos).arg(amp);
 				}
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits

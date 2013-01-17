@@ -930,6 +930,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 // y position (10 bit) is at MPSD "Amplitude" data
 // amplitude (8 bit) is at MPSD "chan" data
 //
+					chan = (id << 5) + slotId;
 					quint16 val = chan;
 					chan = amp;
 					amp = val;
