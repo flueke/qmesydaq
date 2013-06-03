@@ -49,10 +49,11 @@ int main(int argc, char **argv)
 	}
 
 	MCPD8 *m = new MCPD8(id, NULL, ip);
-	qDebug() << QObject::tr("%2 : MCPD : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(id);
+	qDebug() << QObject::tr("%2 : MCPD : %1 (id=%3), cap: %4").arg(m->version()).arg(m->ip()).arg(id).arg(m->capabilities());
 
 	for (int i = 0; i < 8; ++i)
-		qDebug() << QObject::tr("module %1 (%4): %2 %3").arg(i + 1).arg(m->getModuleId(i)).arg(m->version(i), 0, 'f', 2).arg(m->getModuleType(i));
+		qDebug() << QObject::tr("module %1 (%4): id: %2, version: %3, capabilities: %5").arg(i + 1).arg(m->getModuleId(i)).
+			arg(m->version(i), 0, 'f', 2).arg(m->getModuleType(i)).arg(m->capabilities(i));
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
