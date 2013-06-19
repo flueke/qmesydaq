@@ -204,6 +204,10 @@ public:
 
 	void initModule(quint8 id);
 
+	quint16 getTxMode();
+
+	quint16 getTxMode(quint8 id);
+
 // commands: MCPD-8 ports
 	bool setDac(quint16 dac, quint16 val);
 

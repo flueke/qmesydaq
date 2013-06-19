@@ -2362,3 +2362,13 @@ quint8 MCPD8::numModules(void)
     }
     return n;
 }
+
+quint16 MCPD8::getTxMode()
+{
+	return readRegister(103);
+}
+
+quint16 MCPD8::getTxMode(quint8 mod)
+{
+	return readPeriReg(mod, 1);
+}
