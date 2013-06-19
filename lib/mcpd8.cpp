@@ -149,8 +149,15 @@ bool MCPD8::init(void)
     for(quint16 c = 0; c < 8; c++)
         if (m_mpsd.find(c) != m_mpsd.end())
         {
-            if (m_mpsd[c]->getModuleId() == TYPE_MPSD8P)
-                writePeriReg(c, 1, modus);
+            switch (m_mpsd[c]->getModuleId())
+	    {
+		case TYPE_MPSD8P:
+//		case TYPE_MPSD8:
+		case TYPE_MPSD8SADC:
+			writePeriReg(c, 1, modus);
+		default:
+			break;
+	    }
             version(c);
         }
     return true;
