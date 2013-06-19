@@ -67,7 +67,8 @@ int main(int argc, char **argv)
 	qDebug() << QObject::tr("%2 module : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(id);
 	qDebug() << QObject::tr("new IP address : %1").arg(toIP);
 
-	m->setProtocol(toIP);
+	m->setProtocol(toIP);		// set first the IP address
+	m->setProtocol("0.0.0.0", "0.0.0.0", 54321);	// set the data and cmd sink to this PC
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
