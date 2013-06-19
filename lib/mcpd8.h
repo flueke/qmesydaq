@@ -437,6 +437,9 @@ private:
 
 	//! capabilities
 	quint16		m_capabilities;
+
+	//! Tx mode
+	quint16		m_txMode;
 };
 
 #endif

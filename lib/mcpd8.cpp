@@ -65,6 +65,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
     , m_timemsec(0)
     , m_version(-1.0)
     , m_capabilities(0)
+    , m_txMode(0)
 {
     stdInit();
     m_network = NetworkDevice::create(NULL, sourceIP, port);
@@ -140,11 +141,12 @@ bool MCPD8::init(void)
                     break;
             }
         }
-    MSG_DEBUG << "modus : " << modus;
+    MSG_NOTICE << "setting modus : " << modus;
 // Register 103 is the TX mode register
 // set tx capability
     if (m_mdll.isEmpty())
         writeRegister(103, modus);
+    MSG_NOTICE << "using modus : " << getTxMode();
 
     for(quint16 c = 0; c < 8; c++)
         if (m_mpsd.find(c) != m_mpsd.end())
@@ -307,6 +309,14 @@ bool MCPD8::setId(quint8 mcpdid)
  */
 quint16 MCPD8::capabilities()
 {
+    readRegister(102);
+    if (!m_capabilities)
+    {
+        initCmdBuffer(GETCAPABILITIES);
+        finishCmdBuffer(0);
+        if (sendCommand())
+            return m_capabilities;
+    }
     return m_capabilities;
 }
 
@@ -389,14 +399,7 @@ bool MCPD8::scanPeriph(void)
         m_version = -1.0;
 
 // check the MCPD capabilities
-    m_capabilities = readRegister(102);
-    if (!m_capabilities)
-    {
-        initCmdBuffer(GETCAPABILITIES);
-        finishCmdBuffer(0);
-        if (sendCommand())
-            m_capabilities = m_reg;
-    }
+    m_capabilities = capabilities();
 // check the peripherial modules
     if (readId())
     {
@@ -1556,17 +1559,23 @@ void MCPD8::analyzeBuffer(const MDP_PACKET &recBuf)
                     MSG_ERROR << "WRITEREGISTER failed";
                 break;
             case GETCAPABILITIES:
-                if (recBuf.bufferLength - recBuf.headerLength > 0)
-                    m_reg = recBuf.data[0];
+                if (recBuf.bufferLength - recBuf.headerLength > 1)
+                {
+                    m_capabilities = recBuf.data[0];
+                    m_txMode = recBuf.data[1];
+                }
                 else
+                {
+                    m_capabilities = m_txMode = 0;
                     m_reg = 0xFFF;
+                }
                 MSG_ERROR << "GETCAPABILITIES " << m_reg;
                 break;
             case READREGISTER:
                 for (int i = 0; i < (recBuf.bufferLength - recBuf.headerLength); ++i)
-                    MSG_DEBUG << "READREGISTER : " << i << " = " << recBuf.data[i];
+                    MSG_FATAL << "READREGISTER : " << i << " = " << recBuf.data[i];
                 m_reg = recBuf.data[0];
-                MSG_INFO << "READREGISTER : " << m_reg << ' ' << recBuf.bufferLength;
+                MSG_FATAL << "READREGISTER : " << m_reg << ' ' << recBuf.bufferLength;
                 break;
             case READFPGA:
                 MSG_ERROR << "not handled command : READFPGA";
@@ -2372,7 +2381,15 @@ quint8 MCPD8::numModules(void)
 
 quint16 MCPD8::getTxMode()
 {
-	return readRegister(103);
+    readRegister(103);
+    if (!m_txMode)
+    {
+         initCmdBuffer(GETCAPABILITIES);
+         finishCmdBuffer(0);
+         if (sendCommand())
+             return m_txMode;
+    }
+    return m_txMode;
 }
 
 quint16 MCPD8::getTxMode(quint8 mod)
