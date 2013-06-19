@@ -100,30 +100,30 @@ static QString createMessage(const char *msg, char cLogLevel)
 		retStr.append(':');
 	}
 
-  QString qmsg(msg);
-  QStringList list = qmsg.split(" ",QString::SkipEmptyParts);
-  QString part("");
-  bool first = true;
-  foreach (QString word, list)
-  {
-    if (word.size()+part.size()<MAX_LOGLINE_LENGTH)
-    {
-      part.append(word + " ");
-    }
-    else
-    {
-      part.append("\r\n");
-      if (first)
-        retStr.insert(MAX_LOGLINE_LENGTH,part);
-      else
-        retStr.insert(retStr.size()+MAX_LOGLINE_LENGTH,part);
-      part = word + " ";
-      first = false;
-    }
-  }
-  if (first)
+	QString qmsg(msg);
+	QStringList list = qmsg.split(" ",QString::SkipEmptyParts);
+	QString part("");
+	bool first = true;
+	foreach (QString word, list)
+	{
+		if (word.size()+part.size()<MAX_LOGLINE_LENGTH)
+		{
+			part.append(word + " ");
+		}
+		else
+		{
+			part.append("\r\n");
+			if (first)
+				retStr.insert(MAX_LOGLINE_LENGTH,part);
+			else
+				retStr.insert(retStr.size()+MAX_LOGLINE_LENGTH,part);
+			part = word + " ";
+			first = false;
+		}
+	}
+	if (first)
 		retStr.insert(24,part);
-  else
+	else
 		retStr.insert(retStr.size()+24,part);
 #else /* !defined(MAX_LOGLINE_LENGTH) || MAX_LOGLINE_LENGTH<40 */
 		retStr.insert(24,msg);
