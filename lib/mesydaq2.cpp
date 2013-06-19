@@ -651,7 +651,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		if (data == QHostAddress::Any || data == QHostAddress::AnyIPv6)
 		{
 			dataIP = "0.0.0.0";
-			dataPort = 0;
+//			dataPort = 0;
 		}
 		if (port == dataPort)
 			dataPort = 0;
@@ -1682,7 +1682,6 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 {
 	if (m_daq == RUNNING)
 	{
-
 		quint64 headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 		if (m_starttime_msec > (headertime / 10000))
 		{
