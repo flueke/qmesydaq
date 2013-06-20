@@ -109,7 +109,7 @@ DevVoid MesyDAQ::IO::Counter::setMode(const DevLong input) throw (::TACO::Except
 DevLong MesyDAQ::IO::Counter::mode() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Counter::mode()" << log4cpp::eol;
-	DevLong tmp;
+	DevLong tmp(::IO::MODE_NORMAL);
 	try
 	{
 		if (!m_interface)
@@ -125,7 +125,7 @@ DevLong MesyDAQ::IO::Counter::mode() throw (::TACO::Exception)
 DevDouble MesyDAQ::IO::Counter::timeBase() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Counter::timeBase()" << log4cpp::eol;
-	DevDouble tmp(1.0);
+	DevDouble tmp(::IO::TIME_BASE_NONE);
 	try
 	{
 		if (!m_interface)
@@ -145,6 +145,8 @@ DevVoid MesyDAQ::IO::Counter::setTimeBase(const DevDouble input) throw (::TACO::
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (input != ::IO::TIME_BASE_NONE)
+			throw TACO::Exception( TACO::Error::RUNTIME_ERROR, "invalid time base");
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -159,6 +161,7 @@ DevVoid MesyDAQ::IO::Counter::enableMaster(const bool input) throw (::TACO::Exce
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->selectCounter(m_channel, input, preselection());
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -169,11 +172,12 @@ DevVoid MesyDAQ::IO::Counter::enableMaster(const bool input) throw (::TACO::Exce
 bool MesyDAQ::IO::Counter::isMaster() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Counter::isMaster()" << log4cpp::eol;
-	bool tmp;
+	bool tmp(false);
 	try
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		tmp = m_interface->counterSelected(m_channel);
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -185,7 +189,7 @@ bool MesyDAQ::IO::Counter::isMaster() throw (::TACO::Exception)
 DevULong MesyDAQ::IO::Counter::read() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Counter::read()" << log4cpp::eol;
-	DevULong tmp;
+	DevULong tmp(0);
 	try
 	{
 		if (!m_interface)
@@ -202,11 +206,12 @@ DevULong MesyDAQ::IO::Counter::read() throw (::TACO::Exception)
 DevULong MesyDAQ::IO::Counter::preselection() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Counter::preselection()" << log4cpp::eol;
-	DevULong tmp;
+	DevULong tmp(0.0);
 	try
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		tmp = m_interface->preSelection(m_channel);
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -222,6 +227,7 @@ DevVoid MesyDAQ::IO::Counter::setPreselection(const DevULong input) throw (::TAC
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->setPreSelection(m_channel, input);
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -272,7 +278,7 @@ void MesyDAQ::IO::Counter::deviceUpdate(void) throw (::TACO::Exception)
                 try
                 {
                         DevULong tmp = queryResource<DevULong>("channel");
-			if (tmp < 0 || tmp > 4)
+			if (tmp > 4)
 				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "channel must be [0..3] for monitor/choppers or 4 for events");
                         m_channel = tmp;
                 }

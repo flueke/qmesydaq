@@ -61,6 +61,7 @@ public:
 		C_SET_RUNID,
 		C_GET_RUNID,
 		C_GET_LISTMODE,
+		C_COUNTER_SELECTED,
 	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());

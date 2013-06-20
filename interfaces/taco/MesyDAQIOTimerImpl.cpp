@@ -73,6 +73,7 @@ DevVoid MesyDAQ::IO::Timer::setPreselection(const DevDouble input) throw (::TACO
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->setPreSelection(TCT, input);
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -111,11 +112,12 @@ DevVoid MesyDAQ::IO::Timer::clear() throw (::TACO::Exception)
 DevDouble MesyDAQ::IO::Timer::preselection() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Timer::preselection()" << log4cpp::eol;
-	DevDouble tmp;
+	DevDouble tmp(0.0);
 	try
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		tmp = m_interface->preSelection(TCT);
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -141,7 +143,7 @@ DevVoid MesyDAQ::IO::Timer::setMode(const DevLong input) throw (::TACO::Exceptio
 DevLong MesyDAQ::IO::Timer::mode() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Timer::mode()" << log4cpp::eol;
-	DevLong tmp;
+	DevLong tmp(::IO::MODE_NORMAL);
 	try
 	{
 		if (!m_interface)
@@ -161,6 +163,7 @@ DevVoid MesyDAQ::IO::Timer::enableMaster(const bool input) throw (::TACO::Except
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->selectCounter(TCT, input, preselection());
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -171,11 +174,12 @@ DevVoid MesyDAQ::IO::Timer::enableMaster(const bool input) throw (::TACO::Except
 bool MesyDAQ::IO::Timer::isMaster() throw (::TACO::Exception)
 {
 	logStream->infoStream() << "MesyDAQ::IO::Timer::isMaster()" << log4cpp::eol;
-	bool tmp;
+	bool tmp(false);
 	try
 	{
 		if (!m_interface)
         		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		tmp = m_interface->counterSelected(TCT);
 	}
 	catch (::TACO::Exception &e)
 	{

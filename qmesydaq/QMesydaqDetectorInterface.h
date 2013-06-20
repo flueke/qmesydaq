@@ -64,13 +64,19 @@ public:
 	void clear();
 	void resume();
 	double readCounter(int id);
-	void selectCounter(int id);
+	void selectCounter(int id, bool bEnable = true);
+	void selectCounter(int id, bool bEnable, double dblTarget);
+	bool counterSelected(int id);
+
 	void setPreSelection(double);
+	void setPreSelection(int id, double);
 	double preSelection();
+	double preSelection(int id);
+
 	void readHistogramSize(quint16& width, quint16& height);
 	QList<quint64> readHistogram();
 	QList<quint64> readDiffractogram();
-	QList<quint64> readSpectrogram(int iSpectrogram=-1);
+	QList<quint64> readSpectrogram(int iSpectrogram = -1);
         int status();
 
 	const MapCorrection* getMappingCorrection();

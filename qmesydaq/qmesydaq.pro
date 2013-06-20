@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION		= 0.13.1
+VERSION		= 0.13.2
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -119,7 +119,7 @@ DISTFILES	+= images/mesytec.jpg \
 contains(INTERFACE, TACO) {
 	DEPENDPATH	+= $${SRCBASE}/interfaces/taco
 	INCLUDEPATH	+= $${SRCBASE}/interfaces/taco
-	LIBS		+= -L$${SRCBASE}/interfaces/taco -ltacoInterface $${LIBS} $${TACOLIBS}
+	LIBS		+= -L$${SRCBASE}/interfaces/taco -ltacoInterface $${TACOLIBS} $${LIBS}
 }
 
 contains(INTERFACE, CARESS) {

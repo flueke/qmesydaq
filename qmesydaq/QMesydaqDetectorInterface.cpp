@@ -99,10 +99,33 @@ double QMesyDAQDetectorInterface::readCounter(int id)
     selects a counter for setting of preselection
 
     \param id counter number
+    \param bEnable en-/disable counter
  */
-void QMesyDAQDetectorInterface::selectCounter(int id)
+void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable)
 {
-	postCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id);
+	postCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable);
+}
+
+bool QMesyDAQDetectorInterface::counterSelected(int id)
+{
+	bool r(false);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_COUNTER_SELECTED, QList<QVariant>() << id);
+	r = m_counter;
+	m_mutex.unlock();
+	return r;
+}
+
+/*!
+    selects a counter for setting of preselection
+
+    \param id counter number
+    \param bEnable en-/disable counter
+    \param dblTarget preselection value
+ */
+void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable, double dblTarget)
+{
+	postCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable << dblTarget);
 }
 
 /*!
@@ -112,7 +135,18 @@ void QMesyDAQDetectorInterface::selectCounter(int id)
  */
 void QMesyDAQDetectorInterface::setPreSelection(double value)
 {
-        postCommand(CommandEvent::C_SET_PRESELECTION,QList<QVariant>() << value);
+        postCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value);
+}
+
+/*!
+    sets the preselection of the counter id
+
+    \param id id of the counter
+    \param value preselection
+ */
+void QMesyDAQDetectorInterface::setPreSelection(int id, double value)
+{
+        postCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value << id);
 }
 
 /*!
@@ -125,6 +159,22 @@ double QMesyDAQDetectorInterface::preSelection()
 	double r(0.0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_PRESELECTION);
+	r = m_preSelection;
+	m_mutex.unlock();
+	return r;
+}
+
+/*!
+    returns the preselection of the selected counter
+
+    \param id counter id
+    \return the preselection value of the preset counter
+ */
+double QMesyDAQDetectorInterface::preSelection(int id)
+{
+	double r(0.0);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_PRESELECTION, QList<QVariant>() << id);
 	r = m_preSelection;
 	m_mutex.unlock();
 	return r;
@@ -424,6 +474,9 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_autoIncRunNumber = args[0].toBool();
 					m_eventReceived = true;
 					break;
+				case CommandEvent::C_COUNTER_SELECTED:
+					m_counter = args[0].toUInt();
+					m_eventReceived = true;
 				default:
 					break;
 			}
