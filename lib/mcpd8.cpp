@@ -193,7 +193,7 @@ bool MCPD8::reset(void)
  */
 bool MCPD8::start(void)
 {
-//  if (isMaster() || (version() < 9.5))
+    if (isMaster() || (version() < 9.6))
     {
         initCmdBuffer(START);
         finishCmdBuffer(0);
@@ -213,7 +213,7 @@ bool MCPD8::start(void)
  */
 bool MCPD8::stop(void)
 {
-    if (isMaster() || (version() < 9.5))
+    if (isMaster() || (version() < 9.6))
     {
         initCmdBuffer(STOP);
         finishCmdBuffer(0);
