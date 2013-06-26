@@ -51,7 +51,7 @@ NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 po
     for (int i = 0; i < m_networks.size(); ++i)
     {
         tmp = m_networks.at(i);
-                if (tmp->ip() == source && tmp->port() == port)
+        if (tmp->ip() == source && tmp->port() == port)
         {
             m_inUse[i]++;
             m_mutex.unlock();
@@ -80,7 +80,7 @@ void NetworkDevice::destroy(NetworkDevice *nd)
     for (int i = m_networks.size() - 1; i >= 0; --i)
     {
         NetworkDevice *tmp = m_networks.at(i);
-                if (tmp->ip() == nd->ip() && tmp->port() == nd->port())
+        if (tmp->ip() == nd->ip() && tmp->port() == nd->port())
         {
             Q_ASSERT(m_inUse[i] > 0);
             m_inUse[i]--;
@@ -188,11 +188,11 @@ int NetworkDevice::createSocket(void)
             m_notifyNet->setEnabled(false);
             connect (m_notifyNet, SIGNAL (activated(int)), this, SLOT (readSocketData()));
             m_notifyNet->setEnabled(true);
-            m_bFlag=true;
+            m_bFlag = true;
             return m_sock->socketDescriptor();
         }
     }
-    m_bFlag=true;
+    m_bFlag = true;
     return -1;
 }
 
@@ -238,18 +238,23 @@ void NetworkDevice::readSocketData(void)
 // read socket data into receive buffer and notify
     if (m_sock->hasPendingDatagrams())
     {
-        MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : NetworkDevice::readSocketData()";
+//      MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : NetworkDevice::readSocketData()";
         qint64 maxsize = m_sock->pendingDatagramSize();
-        memset(&m_recBuf, 0, sizeof(m_recBuf));
-        qint64 len = m_sock->readDatagram((char *)&m_recBuf, maxsize);
-        if (len != -1)
+        if (maxsize > 0)
         {
-            MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : ID = " << m_recBuf.deviceId << " read datagram : " << len << " from " << maxsize << " bytes";
-            MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read nr : " << m_recBuf.bufferNumber << " cmd : " << m_recBuf.cmd << " status " << m_recBuf.deviceStatus;
-            quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
-            MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read time : " << tim;
+            memset(&m_recBuf, 0, sizeof(m_recBuf));
+//          QHostAddress fromAddress;
+//          quint16	 fromPort;
+            qint64 len = m_sock->readDatagram((char *)&m_recBuf, maxsize /*, &fromAddress, &fromPort */);
+            if (len != -1)
+            {
+//              MSG_DEBUG << fromAddress.toString().toLocal8Bit().constData() << '(' << fromPort << ") : ID = " << m_recBuf.deviceId << " read datagram : " << len << " from " << maxsize << " bytes";
+//              MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read nr : " << m_recBuf.bufferNumber << " cmd : " << m_recBuf.cmd << " status " << m_recBuf.deviceStatus;
+//              quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
+//              MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read time : " << tim;
 
-            emit bufferReceived(m_recBuf);
+                emit bufferReceived(m_recBuf);
+            }
         }
     }
 }
