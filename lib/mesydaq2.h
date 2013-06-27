@@ -233,6 +233,8 @@ public slots:
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
 
 	void setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP = QString("0.0.0.0"), quint16 dataPort = 0, const QString &cmdIP = QString("0.0.0.0"), quint16 cmdPort = 0);
+
+	void getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const;
 	
 	void setMode(const quint16 id, quint8 addr, bool mode);
 

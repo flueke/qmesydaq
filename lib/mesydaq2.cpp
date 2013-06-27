@@ -1031,6 +1031,25 @@ void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QStrin
 }	
 
 /*!
+    \fn void Mesydaq2::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const
+
+    gets the configured parameters from the MCPD with the ID id.
+
+    \param id number of the MCPD
+    \param mcpdIP new IP address of the module
+    \param dataIP IP address to which data packets should be send (if 0.0.0.0 the sender will be receive them)
+    \param dataPort port number for data packets (if 0 the port number won't be changed)
+    \param cmdIP IP address to which cmd answer packets should be send (if 0.0.0.0 the sender will be receive them)
+    \param cmdPort port number for cmd answer packets (if 0 the port number won't be changed)
+    \see setProtocol
+ */
+void Mesydaq2::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const
+{
+	if (m_mcpd.contains(id))
+		 m_mcpd[id]->getProtocol(mcpdIP, cmdIP, cmdPort, dataIP, dataPort);
+}
+
+/*!
     \fn Mesydaq2::getMode(const quint16 id, quint8 addr)
 
     get the mode: amplitude or position
