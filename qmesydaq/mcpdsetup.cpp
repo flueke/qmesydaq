@@ -246,13 +246,29 @@ void MCPDSetup::setSyncSlot(bool master)
 
     callback for the module number change
 
-    \param number of the modNr
+    \param modNr number of the module
 
  */
 void MCPDSetup::setModule(int modNr)
 {
     QList<int> mcpdList = m_theApp->mcpdId();
 
-    int mcpd = mcpdList[modNr];
+    int id = mcpdList[modNr - 1];
 
+    QString mcpdIP,
+            dataIP,
+            cmdIP;
+    quint16 dataPort,
+            cmdPort;
+
+    m_theApp->getProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
+    MSG_DEBUG << QString("%1 %2(%3) %4(%5)").arg(mcpdIP).arg(dataIP).arg(dataPort).arg(cmdIP).arg(cmdPort);
+
+    mcpdIPAddress->setText(mcpdIP);
+    if (!dataIP.isEmpty())
+        dataIPAddress->setText(dataIP);
+    if (!cmdIP.isEmpty())
+        cmdIPAddress->setText(cmdIP);
+
+    deviceId->setValue(id);
 }
