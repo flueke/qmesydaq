@@ -64,6 +64,8 @@ private slots:
 
 	void setSyncSlot(bool);
 
+	void setModule(int = -1);
+
 signals:
         void sync(bool);
 

@@ -46,6 +46,9 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
     cmdIPAddress->setText("192.168.168.005");
 
     mcpdId->setMCPDList(mcpdList);
+    moduleNr->setMaximum(mcpdList.size());
+    if (!noModule)
+	    moduleNr->setMinimum(1);
     displayAuxTimerSlot(1);
     displayMCPDSlot(-1);
 }
@@ -236,4 +239,20 @@ void MCPDSetup::setSyncSlot(bool master)
     extsync->setEnabled(master);
     if(!master)
         extsync->setChecked(false);
+}
+
+/*!
+    \fn void MCPDSetup::setModule(int modNr)
+
+    callback for the module number change
+
+    \param number of the modNr
+
+ */
+void MCPDSetup::setModule(int modNr)
+{
+    QList<int> mcpdList = m_theApp->mcpdId();
+
+    int mcpd = mcpdList[modNr];
+
 }

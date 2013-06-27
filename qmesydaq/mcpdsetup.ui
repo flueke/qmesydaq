@@ -634,22 +634,15 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox29">
+        <widget class="QGroupBox" name="groupBox29_2">
          <property name="title">
-          <string>MCPD-8 ID</string>
+          <string>Module</string>
          </property>
-         <layout class="QGridLayout" name="_7">
+         <layout class="QGridLayout" name="_8">
           <item row="0" column="0">
-           <widget class="MCPDSpinBox" name="deviceId">
+           <widget class="QSpinBox" name="moduleNr">
             <property name="maximum">
              <number>255</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="setID">
-            <property name="text">
-             <string>set ID</string>
             </property>
            </widget>
           </item>
@@ -662,6 +655,16 @@
           <string>IP / UDP settings</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="3" column="0">
+           <widget class="QLabel" name="textLabel1_3_2_2_2">
+            <property name="text">
+             <string>&lt;b&gt;Cmd pc&lt;/b&gt;</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="textLabel1_3_2">
             <property name="text">
@@ -682,20 +685,10 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="textLabel1_3_2_2_2">
-            <property name="text">
-             <string>&lt;b&gt;Cmd pc&lt;/b&gt;</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="2">
            <widget class="QLabel" name="textLabel1_3_3_2_2">
             <property name="text">
-             <string>ip address</string>
+             <string>IP address</string>
             </property>
             <property name="wordWrap">
              <bool>false</bool>
@@ -806,6 +799,29 @@ parameters</string>
          </layout>
         </widget>
        </item>
+       <item row="0" column="2">
+        <widget class="QGroupBox" name="groupBox29">
+         <property name="title">
+          <string>MCPD-8 ID</string>
+         </property>
+         <layout class="QGridLayout" name="_7">
+          <item row="0" column="0">
+           <widget class="MCPDSpinBox" name="deviceId">
+            <property name="maximum">
+             <number>255</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="setID">
+            <property name="text">
+             <string>set ID</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -847,11 +863,11 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>88</x>
-     <y>217</y>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
      <x>120</x>
-     <y>309</y>
+     <y>270</y>
     </hint>
    </hints>
   </connection>
@@ -863,11 +879,11 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>88</x>
-     <y>217</y>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
      <x>107</x>
-     <y>247</y>
+     <y>208</y>
     </hint>
    </hints>
   </connection>
@@ -879,7 +895,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>88</x>
-     <y>217</y>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -895,7 +911,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>120</x>
-     <y>309</y>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -910,8 +926,8 @@ parameters</string>
    <slot>sendAuxSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>412</x>
-     <y>277</y>
+     <x>398</x>
+     <y>229</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -926,8 +942,8 @@ parameters</string>
    <slot>sendParamSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>747</x>
-     <y>278</y>
+     <x>754</x>
+     <y>230</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -942,8 +958,8 @@ parameters</string>
    <slot>setMcpdIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>48</x>
-     <y>58</y>
+     <x>691</x>
+     <y>191</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -958,8 +974,8 @@ parameters</string>
    <slot>setIpUdpSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>56</y>
+     <x>131</x>
+     <y>231</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -975,7 +991,7 @@ parameters</string>
    <hints>
     <hint type="sourcelabel">
      <x>107</x>
-     <y>247</y>
+     <y>208</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -990,8 +1006,8 @@ parameters</string>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>315</x>
-     <y>350</y>
+     <x>319</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel">
      <x>306</x>
@@ -1006,8 +1022,8 @@ parameters</string>
    <slot>displayParameterSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>545</x>
-     <y>245</y>
+     <x>536</x>
+     <y>200</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1022,8 +1038,8 @@ parameters</string>
    <slot>displayCounterCellSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>311</x>
-     <y>131</y>
+     <x>316</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1038,8 +1054,8 @@ parameters</string>
    <slot>displayMCPDSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>154</x>
-     <y>113</y>
+     <x>160</x>
+     <y>94</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1054,8 +1070,8 @@ parameters</string>
    <slot>displayAuxTimerSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>261</x>
-     <y>245</y>
+     <x>260</x>
+     <y>200</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1070,8 +1086,8 @@ parameters</string>
    <slot>displayMCPDSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>458</x>
-     <y>313</y>
+     <x>462</x>
+     <y>247</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1086,8 +1102,8 @@ parameters</string>
    <slot>sendCellSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>579</x>
-     <y>154</y>
+     <x>596</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1102,12 +1118,12 @@ parameters</string>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>56</x>
-     <y>206</y>
+     <x>65</x>
+     <y>178</y>
     </hint>
     <hint type="destinationlabel">
-     <x>195</x>
-     <y>359</y>
+     <x>107</x>
+     <y>238</y>
     </hint>
    </hints>
   </connection>
@@ -1118,12 +1134,28 @@ parameters</string>
    <slot>setTimingSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>65</x>
-     <y>267</y>
+     <x>74</x>
+     <y>238</y>
     </hint>
     <hint type="destinationlabel">
      <x>395</x>
      <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moduleNr</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MCPDSetup</receiver>
+   <slot>setModule(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>44</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
@@ -1140,6 +1172,7 @@ parameters</string>
   <slot>displayParameterSlot(int)</slot>
   <slot>displayAuxTimerSlot(int)</slot>
   <slot>displayCounterCellSlot(int)</slot>
+  <slot>setModule(int)</slot>
   <slot></slot>
   <slot>setSyncSlot(bool)</slot>
  </slots>
