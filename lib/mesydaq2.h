@@ -224,6 +224,9 @@ public:
 
 	QSize size(void);
 
+	//! Helper function which returns the version number string
+	QString libVersion(void) const;
+
 public slots:
 	//! analysis thread end
 	void threadExit(void);

@@ -221,7 +221,8 @@ void MainWidget::about()
 #endif
                    + tr("<p>It is published under GPL (GNU General Public License) <tt><a href=\"http://www.gnu.org/licenses/gpl.html\">http://www.gnu.org/licenses/gpl.html</a></tt></p>")
 		   + tr("The data plot window is based in part on the work of the <a href=\"http://qwt.sf.net\">Qwt project</a>")
-                   + tr("<p>Version : <b>%1</b></p>").arg(VERSION);
+                   + tr("<p>Version : <b>%1</b></p>").arg(VERSION)
+		   + tr("<p>Library Version : <b>%1</b></p>").arg(m_theApp->libVersion());
 
     QMessageBox msgBox(this);
     msgBox.setText(text);

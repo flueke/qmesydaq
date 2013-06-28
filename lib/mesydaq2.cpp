@@ -1886,3 +1886,8 @@ void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool his
 	if (m_mcpd.contains(mcpd))
 		m_mcpd[mcpd]->setHistogram(mpsd, channel, hist);
 }
+
+QString Mesydaq2::libVersion(void) const
+{
+	return QString(VERSION);
+}
