@@ -76,7 +76,6 @@
     <addaction name="actionGeneral"/>
     <addaction name="menuMCPD"/>
     <addaction name="actionModule"/>
-    <addaction name="actionMdll"/>
     <addaction name="separator"/>
     <addaction name="menuMode"/>
    </widget>
@@ -198,11 +197,6 @@
   <action name="actionAddMCPD">
    <property name="text">
     <string>Add</string>
-   </property>
-  </action>
-  <action name="actionMdll">
-   <property name="text">
-    <string>MDLL</string>
    </property>
   </action>
   <action name="actionLoad_Calibration_File">

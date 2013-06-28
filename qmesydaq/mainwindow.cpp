@@ -53,7 +53,6 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionExport_SVG, SIGNAL(triggered()), m_main, SLOT(exportSVG()));
 	connect(actionGeneral, SIGNAL(triggered()), m_main, SLOT(setupGeneral()));
 	connect(actionModule, SIGNAL(triggered()), m_main, SLOT(setupModule()));
-	connect(actionMdll, SIGNAL(triggered()), m_main, SLOT(setupMdll()));
 	connect(actionNewSetup, SIGNAL(triggered()), m_main, SLOT(newSetupSlot()));
 	connect(actionSetupMCPD, SIGNAL(triggered()), m_main, SLOT(setupMCPD()));
 	connect(actionAddMCPD, SIGNAL(triggered()), m_main, SLOT(addMCPD()));

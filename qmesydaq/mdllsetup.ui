@@ -517,7 +517,7 @@ Range of timing delay, scales spectrum</string>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
-       <string>Test Pulser</string>
+       <string>Pulser</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_10">
        <item row="0" column="0">

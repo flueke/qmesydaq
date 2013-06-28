@@ -801,6 +801,13 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     statusModuleTab->setDisabled(mcpdList.empty());
     dispMstdSpectrum->setVisible(m_meas->setupType() == Measurement::Mstd);
     dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
+    moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll);
+    moduleStatus2->setHidden(m_meas->setupType() == Measurement::Mdll);
+    moduleStatus3->setHidden(m_meas->setupType() == Measurement::Mdll);
+    moduleStatus4->setHidden(m_meas->setupType() == Measurement::Mdll);
+    moduleStatus5->setHidden(m_meas->setupType() == Measurement::Mdll);
+    moduleStatus6->setHidden(m_meas->setupType() == Measurement::Mdll);
+    moduleStatus7->setHidden(m_meas->setupType() == Measurement::Mdll);
     if (m_meas->setupType() == Measurement::Mstd)
     {
     	dispMstdSpectrum->setChecked(true);
@@ -1470,8 +1477,16 @@ void MainWidget::setupModule(quint8 id)
 */
 void MainWidget::setupModule(void)
 {
-    ModuleSetup d(m_theApp, this);
-    d.exec();
+    if (m_meas->setupType() != Measurement::Mdll)
+    {
+        ModuleSetup d(m_theApp, this);
+        d.exec();
+    }
+    else
+    {
+        MdllSetup d(m_theApp, this);
+        d.exec();
+    }
 }
 
 /*!
@@ -1486,17 +1501,6 @@ void MainWidget::setupMdll(quint8 id)
     Q_UNUSED(id);
     MdllSetup d(m_theApp, this);
 //  d.setMCPD(devid_2->value());
-    d.exec();
-}
-
-/*!
-    \fn void MainWidget::setupMdll()
-
-    opens the dialog to handle the MPSD Module setup
-*/
-void MainWidget::setupMdll(void)
-{
-    MdllSetup d(m_theApp, this);
     d.exec();
 }
 

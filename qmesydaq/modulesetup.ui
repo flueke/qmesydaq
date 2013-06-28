@@ -59,8 +59,181 @@
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
+     <widget class="QWidget" name="tabModeGainThreshold">
+      <attribute name="title">
+       <string>Mode/Gain/Threshold</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="modeGroup">
+         <property name="title">
+          <string>Mode</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_18">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="pos">
+            <property name="text">
+             <string>Position</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="amp">
+            <property name="text">
+             <string>Amplitude</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBox13">
+         <property name="title">
+          <string>Amplifiers, Discriminator</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QLabel" name="textLabel1_4_2_3_2">
+            <property name="text">
+             <string>Gain</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="comgain">
+            <property name="text">
+             <string>common</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <layout class="QHBoxLayout" name="channelLayout">
+            <item>
+             <widget class="QLabel" name="channelLabel">
+              <property name="text">
+               <string>Channel</string>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="channel">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="maximum">
+               <number>7</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="textLabel1_4_2_3_3_3">
+            <property name="text">
+             <string>Gain (0...255)</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QLineEdit" name="gain">
+            <property name="text">
+             <string>1</string>
+            </property>
+            <property name="cursorPosition">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="6">
+           <widget class="QPushButton" name="setGain">
+            <property name="text">
+             <string>set gain</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QLabel" name="textLabel1_4_2_3_3">
+            <property name="text">
+             <string>Threshold</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>95</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="3">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>95</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="4">
+           <widget class="QLabel" name="textLabel1_4_2_3_3_2">
+            <property name="text">
+             <string>Threshold</string>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="5">
+           <widget class="QLineEdit" name="threshold">
+            <property name="text">
+             <string>20</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="6">
+           <widget class="QPushButton" name="setThreshold">
+            <property name="text">
+             <string>set &amp;threshold</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabHistgram">
       <attribute name="title">
        <string>Histogram</string>
@@ -429,179 +602,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabModeGainThreshold">
-      <attribute name="title">
-       <string>Mode/Gain/Threshold</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="modeGroup">
-         <property name="title">
-          <string>Mode</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_18">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="pos">
-            <property name="text">
-             <string>Position</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="amp">
-            <property name="text">
-             <string>Amplitude</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QGroupBox" name="groupBox13">
-         <property name="title">
-          <string>Amplifiers, Discriminator</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
-           <widget class="QLabel" name="textLabel1_4_2_3_2">
-            <property name="text">
-             <string>Gain</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QCheckBox" name="comgain">
-            <property name="text">
-             <string>common</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <layout class="QHBoxLayout" name="channelLayout">
-            <item>
-             <widget class="QLabel" name="channelLabel">
-              <property name="text">
-               <string>Channel</string>
-              </property>
-              <property name="wordWrap">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="channel">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="maximum">
-               <number>7</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="0" column="4">
-           <widget class="QLabel" name="textLabel1_4_2_3_3_3">
-            <property name="text">
-             <string>Gain (0...255)</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QLineEdit" name="gain">
-            <property name="text">
-             <string>1</string>
-            </property>
-            <property name="cursorPosition">
-             <number>0</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="6">
-           <widget class="QPushButton" name="setGain">
-            <property name="text">
-             <string>set gain</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QLabel" name="textLabel1_4_2_3_3">
-            <property name="text">
-             <string>Threshold</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>95</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="3">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>95</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="4">
-           <widget class="QLabel" name="textLabel1_4_2_3_3_2">
-            <property name="text">
-             <string>Threshold</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="5">
-           <widget class="QLineEdit" name="threshold">
-            <property name="text">
-             <string>20</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="6">
-           <widget class="QPushButton" name="setThreshold">
-            <property name="text">
-             <string>set &amp;threshold</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tabPulser">
       <attribute name="title">
        <string>Pulser</string>
@@ -618,7 +618,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
-               <widget class="QPushButton" name="pulserButton">
+               <widget class="QCheckBox" name="pulserButton">
                 <property name="toolTip">
                  <string>toggle pulser on/off</string>
                 </property>
@@ -1003,22 +1003,6 @@
    <hints>
     <hint type="sourcelabel">
      <x>44</x>
-     <y>109</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pulserButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ModuleSetup</receiver>
-   <slot>setPulserSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>32</x>
      <y>109</y>
     </hint>
     <hint type="destinationlabel">
