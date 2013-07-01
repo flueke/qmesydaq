@@ -132,7 +132,7 @@ void MCPDSetup::setMcpdIdSlot()
  */
 void MCPDSetup::setIpUdpSlot()
 {
-    quint16 id =  mcpdId->value();
+    quint16 id =  deviceId->value();
     QString mcpdIP = modifyIp->isChecked() ? mcpdIPAddress->text() : "0.0.0.0",
     cmdIP = !cmdThisPc->isChecked() ? cmdIPAddress->text() : "0.0.0.0",
     dataIP = !dataThisPc->isChecked() ? dataIPAddress->text() : "0.0.0.0";
