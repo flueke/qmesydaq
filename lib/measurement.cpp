@@ -1280,10 +1280,10 @@ quint64 Measurement::eventsInROI(const HistogramType t)
 	return tmp;
 }
 
-void Measurement::setListFileHeader(const QByteArray& header)
+void Measurement::setListFileHeader(const QByteArray& header, bool bInsertHeaderLength)
 {
 	if (m_mesydaq)
-		m_mesydaq->setListFileHeader(header);
+		m_mesydaq->setListFileHeader(header, bInsertHeaderLength);
 }
 
 void Measurement::setConfigfilepath(const QString &path) 

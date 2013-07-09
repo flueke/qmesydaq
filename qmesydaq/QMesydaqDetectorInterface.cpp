@@ -351,10 +351,10 @@ bool QMesyDAQDetectorInterface::getListMode()
 	return m_autoIncRunNumber;
 }
 
-void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength)
+void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength, bool bInsertHeaderLength)
 {
 	m_mutex.lock();
-	postRequestCommand(CommandEvent::C_SET_LISTHEADER,QList<QVariant>() << ((quint64)pData) << iLength);
+	postRequestCommand(CommandEvent::C_SET_LISTHEADER,QList<QVariant>() << ((quint64)pData) << iLength << bInsertHeaderLength);
 	m_mutex.unlock();
 }
 

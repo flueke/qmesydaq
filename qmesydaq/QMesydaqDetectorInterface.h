@@ -91,7 +91,7 @@ public:
         void setListFileName(const QString name);
 
 	//! \brief store header for list mode file
-	void setListFileHeader(const void* pData, int iLength);
+	void setListFileHeader(const void* pData, int iLength, bool bInsertHeaderLength);
 
 	//! \return name of the histogram data file
         QString getHistogramFileName(void) const {return m_histFileName;}

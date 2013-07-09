@@ -103,8 +103,7 @@ public:
 
 	void writeHeaderSeparator(void);
 
-	//! \brief store header for list mode file
-	void setListFileHeader(const QByteArray& header) { m_datHeader=header; }
+	void setListFileHeader(const QByteArray& header, bool bInsertHeaderLength);
 
 	//! \return header for list mode file
 	const QByteArray& getListFileHeader() const { return m_datHeader; }
@@ -339,6 +338,7 @@ private:
 //	int 		m_checkTimer;
 
 	QByteArray 	m_datHeader;
+	bool		m_bInsertHeaderLength;
 
 	//! time stamp for the start of measurement
 	quint64 	m_starttime_msec;

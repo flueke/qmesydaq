@@ -1409,7 +1409,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			pParser=new CaressMapCorrectionDefault();
 		pInterface->setMappingCorrection(pParser->parseCaressMapCorrection((const char*) \
 			pData,uLength,w>m_lHistogramX?w:m_lHistogramX,h,m_lHistogramX,m_lHistogramY));
-		pInterface->setListFileHeader(pData,(int)uLength /* ,bInsertHeaderLength */);
+		pInterface->setListFileHeader(pData,(int)uLength,bInsertHeaderLength);
 		delete pParser;
 		module_status=LOADED;
 		return CARESS::OK;

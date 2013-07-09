@@ -39,6 +39,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_acquireListfile(false)
 	, m_listfilename("")
 	, m_timingwidth(1)
+	, m_bInsertHeaderLength(true)
 	, m_starttime_msec(0)
 	, m_runId(0)
 	, m_bAutoIncRunId(true)
@@ -284,23 +285,25 @@ void Mesydaq2::writeListfileHeader(void)
 	}
 	else
 	{
-		QByteArray header1;
-		QByteArray header2(m_datHeader);
+		QByteArray header1("");
 		QByteArray lengthinfo;
 
-		if (!header2.endsWith('\n'))
-			header2.append('\n');
-		header1.append("DATA = ");
-		int iLen = header1.count() + header2.count();
-		for (;;)
+		if (m_bInsertHeaderLength)
 		{
-			lengthinfo = QString("%1\n").arg(iLen).toLatin1();
-			if ((header1.count() + header2.count() + lengthinfo.count()) >= iLen)
-				break;
-			++iLen;
+			QByteArray header2(m_datHeader);
+			if (!header2.endsWith('\n'))
+				header2.append('\n');
+			header1.append("DATA = ");
+
+			for (int iLen = header0.count() + header2.count();
+				(header1.count() + header2.count() + lengthinfo.count()) > iLen;
+				++iLen)
+				lengthinfo = QString("%1\n").arg(iLen).toLatin1();
+			header1.append(lengthinfo);
+			header1.append(header2);
 		}
-		header1.append(lengthinfo);
-		header1.append(header2);
+		else
+			header1 = m_datHeader;
 		if (m_datfile.isOpen())
 			m_datfile.write(header1);
 		m_pDatSender->WriteData(header1);
@@ -1890,4 +1893,15 @@ void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool his
 QString Mesydaq2::libVersion(void) const
 {
 	return QString(VERSION);
+}
+
+/*! \brief store header for list mode file
+ *
+ * \param header the complete header text
+ * \param bInsertHeaderLength add the length of the header or not in the header itself
+ */
+void Mesydaq2::setListFileHeader(const QByteArray& header, bool bInsertHeaderLength)
+{
+	m_datHeader = header;
+	m_bInsertHeaderLength = bInsertHeaderLength;
 }

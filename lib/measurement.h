@@ -272,7 +272,7 @@ public:
 	void getMean(const SpectrumType t, float &, float &);
 
 	//! \brief store header for list mode file
-	void setListFileHeader(const QByteArray& header);
+	void setListFileHeader(const QByteArray& header, bool bInsertHeaderLength);
 
 // run ID oriented methods
 	//! \return the current run ID

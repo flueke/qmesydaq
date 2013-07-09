@@ -2045,10 +2045,13 @@ void MainWidget::customEvent(QEvent *e)
                 case CommandEvent::C_SET_LISTHEADER:
                     if (interface)
                     {
-			QByteArray header((const char*)args[0].toULongLong(),args[1].toInt());
-			m_meas->setListFileHeader(header);
+			QByteArray header((const char*)args[0].toULongLong(), args[1].toInt());
+			bool bInsertHeaderLength(true);
+			if (args.size() > 2 && args[2].canConvert(QVariant::Bool))
+				bInsertHeaderLength = args[2].toBool();
+			m_meas->setListFileHeader(header, bInsertHeaderLength);
 			interface->postCommandToInterface(CommandEvent::C_SET_LISTHEADER);
-		    }
+                    }
 		    break;
 		case CommandEvent::C_UPDATEMAINWIDGET:
 		    if (args.count() >= 3)
