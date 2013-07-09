@@ -1944,9 +1944,9 @@ bool MCPD8::setTimingSetup(bool master, bool term, bool extsync)
         term = true;
         if (extsync)
         {
-#define MONITOR3	2
+#define MONITOR4	3
 #define NOTRIGGER	0
-            setCounterCell(MONITOR3, NOTRIGGER, 0);
+            setCounterCell(MONITOR4, NOTRIGGER, 0);
         }
     }
     initCmdBuffer(SETTIMING);
