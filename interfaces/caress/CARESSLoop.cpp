@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2008,2011 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2008-2013 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *   Copyright (C) 2009-2010 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -135,6 +135,7 @@ enum {
 	QMESYDAQ_MAXDEVICES
 };
 static const char* g_asDevices[]={"monitor_1","monitor_2","monitor_3","monitor_4","event_counter","timer","histogram","diffractogram"};
+static bool init_module_parse_long(const char** pPtr, long* plResult);
 
 /*!
   \brief CORBA server implementing the "CARESS CORBA device"
@@ -174,6 +175,7 @@ private:
 	QMutex  m_mutex;
 
 protected:
+	QString m_sInstrument;         //!< name of instrument
 	long    m_lHistogramX;         //!< width of histogram
 	long    m_lHistogramY;         //!< height of histogram
 	long    m_lDiffractogramWidth; //!< width of diffractogram
@@ -194,6 +196,8 @@ protected:
 	char    m_szErrorMessage[64];          //!< last error message text
 	QList<quint64> m_aullDetectorData;     //!< last histogram/diffractogram/spectrogram
 	int            m_iDetectorWidth;       //!< last width of histogram/diffractogram/spectrogram
+
+	MapCorrection  m_mapHistogram; //!< different histogram mapping for CARESS
 };
 
 /***************************************************************************
@@ -425,8 +429,8 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
   \param[in] pApp reference to QMesyDAQ application
  */
 CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
-	m_theApp(pApp), m_lHistogramX(0), m_lHistogramY(0), m_lDiffractogramWidth(0),
-	m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
+	m_theApp(pApp), m_sInstrument(""), m_lHistogramX(0), m_lHistogramY(0),
+	m_lDiffractogramWidth(0), m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
 	m_lRunNo(0), m_lStepNo(0), m_lMesrCount(-1), m_bListmode(false),
 	m_dblTimerScale(DEFAULTTIMEFACTOR), m_lSourceChannels(-1), m_iMaster(-1), m_iDetectorWidth(0)
 {
@@ -536,20 +540,15 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 			}
 			case QMESYDAQ_HISTOGRAM:
 			{
-				const char* ptr2;
-				char* ptr3;
+				m_sInstrument.clear();
+				m_mapHistogram.setNoMap();
 				m_lHistogramX=m_lHistogramY=0;
 				// skip next value
 				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
 				// width of scaled histogram
-				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-				ptr2=ptr1;
-				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				ptr3=(char*)ptr2;
-				m_lHistogramX=strtol(ptr2,&ptr3,0);
-				if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramX=0;
+				if (!init_module_parse_long(&ptr1,&m_lHistogramX))
+					m_lHistogramX=0;
 				else if (m_lHistogramX==0 && pInterface!=NULL)
 				{
 					quint16 w=0,h=0;
@@ -561,16 +560,10 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lId[QMESYDAQ_HISTOGRAM]=0;
 					throw ((const char*)"invalid histogram width");
 				}
-				ptr1=ptr3;
-				while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
 				// height of scaled histogram
-				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-				ptr2=ptr1;
-				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				ptr3=(char*)ptr2;
-				m_lHistogramY=strtol(ptr2,&ptr3,0);
-				if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lHistogramY=0;
+				if (!init_module_parse_long(&ptr1,&m_lHistogramY))
+					m_lHistogramY=0;
 				else if (m_lHistogramY==0 && pInterface!=NULL)
 				{
 					quint16 w=0,h=0;
@@ -584,14 +577,8 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 				}
 
 				// number of source channels for mapping of scaled histogram
-				ptr1=ptr3;
-				while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
-				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-				ptr2=ptr1;
-				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				ptr3=(char*)ptr2;
-				m_lSourceChannels=strtol(ptr2,&ptr3,0);
-				if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lSourceChannels=-1;
+				if (!init_module_parse_long(&ptr1,&m_lSourceChannels))
+					m_lSourceChannels=-1;
 
 				if (pInterface!=NULL)
 					pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
@@ -600,20 +587,15 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 			}
 			case QMESYDAQ_DIFFRACTOGRAM:
 			{
-				const char* ptr2;
-				char* ptr3;
+				m_sInstrument.clear();
+				m_mapHistogram.setNoMap();
 				m_lDiffractogramWidth=0;
 				// skip next value
 				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
 				// width of scaled histogram
-				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-				ptr2=ptr1;
-				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				ptr3=(char*)ptr2;
-				m_lDiffractogramWidth=strtol(ptr2,&ptr3,0);
-				if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lDiffractogramWidth=0;
+				if (!init_module_parse_long(&ptr1,&m_lDiffractogramWidth))
+					m_lDiffractogramWidth=0;
 				else if (m_lDiffractogramWidth==0 && pInterface!=NULL)
 				{
 					QList<quint64> tmp=pInterface->readDiffractogram();
@@ -626,14 +608,8 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 				}
 
 				// number of source channels for mapping of scaled histogram
-				ptr1=ptr3;
-				while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
-				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-				ptr2=ptr1;
-				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				ptr3=(char*)ptr2;
-				m_lSourceChannels=strtol(ptr2,&ptr3,0);
-				if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lSourceChannels=-1;
+				if (!init_module_parse_long(&ptr1,&m_lSourceChannels))
+					m_lSourceChannels=-1;
 
 				if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
 					pInterface->updateMainWidget(m_lDiffractogramWidth,0,-1);
@@ -644,6 +620,8 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 			{
 				const char* ptr2;
 				char* ptr3;
+				m_sInstrument.clear();
+				m_mapHistogram.setNoMap();
 				m_lSpectrogramChannel=-2;
 				m_lSpectrogramWidth=0;
 				// select spectrogram channel
@@ -658,15 +636,10 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lSpectrogramChannel=strtol(ptr2,&ptr3,0);
 					if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lSpectrogramChannel=-2;
 				}
-				while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
 				// width of scaled spectrogram
-				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-				ptr2=ptr1;
-				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				ptr3=(char*)ptr2;
-				m_lSpectrogramWidth=strtol(ptr2,&ptr3,0);
-				if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t')) m_lSpectrogramWidth=0;
+				if (!init_module_parse_long(&ptr1,&m_lSpectrogramWidth))
+					m_lSpectrogramWidth=0;
 				else if (m_lSpectrogramWidth==0 && pInterface!=NULL)
 				{
 					QList<quint64> tmp=pInterface->readSpectrogram(m_lSpectrogramChannel);
@@ -679,14 +652,8 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 				}
 
 				// number of source channels for mapping of scaled histogram
-				ptr1=ptr3;
-				while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
-				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
-				ptr2=ptr1;
-				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
-				ptr3=(char*)ptr2;
-				m_lSourceChannels=strtol(ptr2,&ptr3,0);
-				if (ptr3==NULL || ptr2>=ptr3 || (ptr3[0]!=' ' && ptr3[0]!='\t' && ptr3[0]!='\0')) m_lSourceChannels=-1;
+				if (!init_module_parse_long(&ptr1,&m_lSourceChannels))
+					m_lSourceChannels=-1;
 
 				if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1)
 					pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
@@ -759,16 +726,22 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 				if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
 				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
 				else pInterface->updateMainWidget(0,0,-1);
+				m_sInstrument.clear();
+				m_mapHistogram.setNoMap();
 				break;
 			case QMESYDAQ_DIFFRACTOGRAM:
 				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
 				else if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
 				else pInterface->updateMainWidget(0,0,-1);
+				m_sInstrument.clear();
+				m_mapHistogram.setNoMap();
 				break;
 			case QMESYDAQ_SPECTROGRAM:
 				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
 				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
 				else pInterface->updateMainWidget(0,0,-1);
+				m_sInstrument.clear();
+				m_mapHistogram.setNoMap();
 				break;
 		}
 	}
@@ -835,7 +808,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 				if (m_bListmode && m_sListfile.isEmpty())
 				{
 					QString sName;
-					sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lMesrCount);
+					sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lStepNo);
 					pInterface->setListFileName(sName);
 				}
 			}
@@ -1181,6 +1154,16 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					else
 						MSG_DEBUG << "use " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
 				}
+				while (p3[0]!=',' && p3[0]!='\0') ++p3;
+				m_sInstrument.clear();
+				m_mapHistogram.setNoMap();
+				if (p3[0]!='\0')
+				{
+					// store CARESS instrument name
+					p1=++p3;
+					while (p3[0]!=',' && p3[0]!='\0') ++p3;
+					m_sInstrument=QString::fromLatin1(p1,p3-p1).trimmed().toUpper();
+				}
 			}
 			else if (p1!=p2 && iNameLen>8 && strncasecmp(pStart,"mesydaq_",8)==0)
 			{
@@ -1304,9 +1287,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			pInterface->setListMode(m_bListmode);
 		}
 		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-				 (pStart+8)<pEnd && strncasecmp(pStart,"listfile",8)==0)
+				 (((pStart+8)<pEnd && strncasecmp(pStart,"listfile",8)==0) || ((pStart+12)<pEnd && strncasecmp(pStart,"listmodefile",12)==0)))
 		{
-			pStart+=8;
+			pStart+=(strncasecmp(pStart+4,"m",1)==0) ? 12 : 8;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
 			if (pStart<pEnd && pStart[0]=='=') ++pStart;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1386,6 +1369,10 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		else
 			MSG_DEBUG << "loadblock(binary device " << id << ") - " << uLength << " bytes of binary data";
 
+		// ignore NUL byte at the end
+		if (uLength>0 && pData[uLength-1]==0)
+			--uLength;
+
 		if (m_lSourceChannels<=0 || m_lSourceChannels>=65536)
 		{
 			bool bListMode=pInterface->getListMode();
@@ -1403,9 +1390,27 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			m_lSourceChannels=w;
 		}
 
-		pInterface->setMappingCorrection(parseCaressMapCorrection((const char*) \
-																  pData,uLength,w>m_lHistogramX?w:m_lHistogramX,h,m_lHistogramX,m_lHistogramY));
-		pInterface->setListFileHeader(pData,(int)uLength);
+		CaressMapCorrection* pParser=NULL; // use default type
+		bool bInsertHeaderLength=true;
+		m_mapHistogram.setNoMap();
+		if (m_sInstrument.compare("V4",Qt::CaseInsensitive)==0)
+		{
+			pParser=new CaressMapCorrectionV4(true);
+			m_mapHistogram=pParser->parseCaressMapCorrection((const char*) \
+				pData,uLength,w>m_lHistogramX?w:m_lHistogramX,h,m_lHistogramX,m_lHistogramY);
+			QRect mapRect=m_mapHistogram.getMapRect();
+			if (mapRect.width()!=m_lHistogramX || mapRect.height()!=m_lHistogramY)
+				m_mapHistogram.setNoMap();
+			delete pParser;
+			pParser=new CaressMapCorrectionV4(false);
+			bInsertHeaderLength=false;
+		}
+		if (pParser==NULL)
+			pParser=new CaressMapCorrectionDefault();
+		pInterface->setMappingCorrection(pParser->parseCaressMapCorrection((const char*) \
+			pData,uLength,w>m_lHistogramX?w:m_lHistogramX,h,m_lHistogramX,m_lHistogramY));
+		pInterface->setListFileHeader(pData,(int)uLength /* ,bInsertHeaderLength */);
+		delete pParser;
 		module_status=LOADED;
 		return CARESS::OK;
 	}
@@ -1708,8 +1713,25 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 				if (end_channel>lHistoX*lHistoY)
 					end_channel=lHistoX*lHistoY;
 
-				// scale histogram to given size
-				if (iDetectorHeight<lHistoY)
+				if (m_mapHistogram.isValid() && !m_mapHistogram.isNoMap())
+				{
+					// use given mapping
+					dsthistogram.reserve(lHistoX*lHistoY);
+					for (x=lHistoX*lHistoY; x>0; --x)
+						dsthistogram.append(0ULL);
+					for (y=0; y<iDetectorHeight; ++y)
+					{
+						for (x=0; x<m_iDetectorWidth; ++x)
+						{
+							int iDstX=-1,iDstY=-1;
+							float fCorrection=1.0;
+							if (m_mapHistogram.getMap((int)x,(int)y,iDstX,iDstY,fCorrection))
+								if (iDstX>=0 && iDstX<lHistoX && iDstY>=0 && iDstY<lHistoY)
+									dsthistogram[iDstY*lHistoX+iDstX]=m_aullDetectorData[y*m_iDetectorWidth+x]*fCorrection;
+						}
+					}
+				}
+				else if (iDetectorHeight<lHistoY) // scale histogram to given size
 				{
 					// source is smaller height (grow)
 					for (y=0; y<iDetectorHeight; ++y)
@@ -2083,4 +2105,36 @@ void CORBADevice_i::set_attribute(CORBA::Long id, const char* name, const CARESS
 	(void)data;
 	MSG_ERROR << "set_attribute(id=" << id << ", name=" << name << ')';
 	throw CARESS::ErrorDescription("not implemented");
+}
+
+
+/*!
+ * \brief parse a long value from string an move pointer
+ * \param [inout] pPtr     pointer to next value
+ * \param [out]   plResult value
+ * \return true, if successful
+ */
+/***************************************************************************
+ * parse long value from string and move pointer
+ * (parsing of config_line from hardware_modules.dat)
+ ***************************************************************************/
+static bool init_module_parse_long(const char** pPtr, long* plResult)
+{
+	const char* ptr1=*pPtr;
+	const char* ptr2;
+	char* ptr3;
+	bool bResult=false;
+	while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
+	while (ptr1[0]=='0' && ptr1[1]>='0' && ptr1[1]<='9') ++ptr1;
+	ptr2=ptr1;
+	while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
+	ptr3=(char*)ptr2;
+	*plResult=strtol(ptr2,&ptr3,0);
+	if (ptr3!=NULL && ptr2<ptr3 && (ptr3[0]==' ' || ptr3[0]=='\t' || ptr3[0]=='\0'))
+	{
+		bResult=true;
+		ptr1=ptr3;
+	}
+	*pPtr=ptr1;
+	return bResult;
 }
