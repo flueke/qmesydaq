@@ -71,9 +71,9 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 {
 	setHistfilepath(getenv("HOME"));
 	setListfilepath(getenv("HOME"));
-	for (int i = 0; i < sizeof(m_Hist) / sizeof(Histogram *); ++i)
+	for (int i = 0; i < int(sizeof(m_Hist) / sizeof(Histogram *)); ++i)
 		m_Hist[i] = NULL;
-	for (int i = 0; i < sizeof(m_Spectrum) / sizeof(Histogram *); ++i)
+	for (int i = 0; i < int(sizeof(m_Spectrum) / sizeof(Histogram *)); ++i)
 		m_Spectrum[i] = NULL;
 
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
@@ -1124,15 +1124,12 @@ void Measurement::readListfile(const QString &readfilename)
 	m_status = Started;
 
 	MSG_ERROR << "Start replay";
-	QTextStream textStream;
 	QDataStream datStream;
-	QString str;
 	quint16 sep1, sep2, sep3, sep4;
 
 	setListfilename(readfilename);
 	setHistfilename("");
 	datStream.setDevice(&datfile);
-	textStream.setDevice(&datfile);
 
 	m_packages = 0;
 	m_triggers = 0;
@@ -1140,17 +1137,74 @@ void Measurement::readListfile(const QString &readfilename)
 
 	quint32 blocks(0),
 		bcount(0);
-	qint64  seekPos(0);
+	qint64  seekPos(-1);
 
-	for(;;)
+	const int blocksize(64 * 1024); // 64KB
+	QByteArray header;
+	for (;;) // search for start of sequence magic
 	{
-		str = textStream.readLine();
-		seekPos += str.size() + 1;
-		MSG_DEBUG << str;
-		if (str.startsWith("header length:"))
+		QByteArray d;
+		d.resize(blocksize);
+		int i = datStream.readRawData(d.data(), blocksize);
+		if (i > 0)
+		{
+			d.resize(i);
+			header += d;
+		}
+		if (header.size() < int(4 * sizeof(sep0)))
+		{
+			if (i < blocksize)
+				break;
+			continue;
+		}
+		for (i = 0; i < header.size(); ++i)
+		{
+			const quint16* p = reinterpret_cast<const quint16*>(header.constData() + i);
+			if (p[0] == sep0 && p[1] == sep5 && p[2] == sepA && p[3] == sepF)
+				break;
+		}
+		if (i >= header.size())
+		{
+			i = header.size() - (4 * sizeof(sep0) - 1);
+			if (i <= 0)
+				break;
+			header.remove(0, i);
+			seekPos += i;
+			if (seekPos >= 1048576) // stop at 1MB searching for header
+				break;
+		}
+		else
+		{
+			seekPos += i;
 			break;
+		}
 	}
-	textStream.seek(seekPos);
+	header.clear();
+
+	if (seekPos < 0)
+	{
+		// header magic failed, use the old way
+		QTextStream textStream;
+		QString str;
+		seekPos = 0;
+		textStream.setDevice(&datfile);
+		textStream.seek(seekPos);
+		for (;;)
+		{
+			str = textStream.readLine();
+			seekPos += str.size()+1;
+			MSG_DEBUG << str;
+			if (str.startsWith("header length: "))
+				break;
+		}
+		textStream.seek(seekPos);
+	}
+	else
+	{
+		seekPos++;
+		datfile.seek(seekPos);
+		datStream.setDevice(&datfile);
+	}
 #warning TODO dynamic resizing of the mapped histogram 
 #if 0
 	resizeHistogram(0, 0, true, true);
