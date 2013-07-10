@@ -295,7 +295,7 @@ void Mesydaq2::writeListfileHeader(void)
 				header2.append('\n');
 			header1.append("DATA = ");
 
-			for (int iLen = header0.count() + header2.count();
+			for (int iLen = header1.count() + header2.count();
 				(header1.count() + header2.count() + lengthinfo.count()) > iLen;
 				++iLen)
 				lengthinfo = QString("%1\n").arg(iLen).toLatin1();
