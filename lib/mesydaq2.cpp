@@ -261,10 +261,14 @@ void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szH
 {
 	if (m_mcpd.contains(byId))
 		return;
-	m_mcpd[byId] = new MCPD8(byId, szMcpdIp, wPort, szHostIp);
-	connect(m_mcpd[byId], SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
-	connect(m_mcpd[byId], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
-	connect(m_mcpd[byId], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
+	MCPD8 *tmp = new MCPD8(byId, szMcpdIp, wPort, szHostIp);
+	if (tmp)
+	{
+		connect(tmp, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+		connect(tmp, SIGNAL(startedDaq()), this, SLOT(startedDaq()));
+		connect(tmp, SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
+		m_mcpd.insert(byId, tmp);
+	}
 }
 
 /*!
@@ -693,7 +697,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 				}
 				setCounterCell(iId, j, cells[0], cells[1]);
 			}
-		
+
 			setTimingSetup(iId, settings.value("master", "true").toBool(), settings.value("terminate", "true").toBool(),
 				settings.value("extsync", "false").toBool());
 		
@@ -1784,7 +1788,8 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					var <<= 16;
 					var |= dp->param[i][2 - j];
 				}
-				m_mcpd[mod]->setParameter(i, var);
+				if (m_mcpd.contains(mod))
+					m_mcpd[mod]->setParameter(i, var);
 			}
 			emit analyzeDataBuffer(pPacket);
 		}
