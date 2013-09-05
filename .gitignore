@@ -9,6 +9,7 @@ revision.h
 lib*.so
 lib*.so.*
 mesydaqconfig_*.pri
+mesydaq.pro.user
 qrc_*.cpp
 
 qmesydaq/qmesydaq
@@ -34,3 +35,5 @@ tools/qmmaster/qmmaster
 tools/qmsetid/qmsetid
 tools/qmsetip/qmsetip
 
+interfaces/caress/corbadevice.h
+interfaces/caress/corbadeviceSK.cpp
