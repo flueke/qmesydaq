@@ -182,7 +182,7 @@ protected:
 	long    m_lSpectrogramChannel; //!< selected spectrogram channel
 	long    m_lSpectrogramWidth;   //!< width of spectrogram
 	long    m_lRunNo;              //!< current/last CARESS run number
-	long    m_lStepNo;             //!< current/last CARESS measurment step
+	long    m_lStepNo;             //!< current/last CARESS measurement step
 	long    m_lMesrCount;          //!< current/last CARESS resolution step (not used)
 	bool    m_bListmode;           //!< true, if QMesyDAQ should acquire a list file
 	QString m_sListfile;           //!< list file name
@@ -749,8 +749,8 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 }
 
 /*!
-  \brief start new measurment (-step)
-  \param[in]  kind           kind of start to distinguish between new step or measurment
+  \brief start new measurement (-step)
+  \param[in]  kind           kind of start to distinguish between new step or measurement
   \param[in]  id             CARESS id
   \param[in]  run_no         CARESS run number
   \param[in]  mesr_count     CARESS resolution step (not used)
@@ -846,13 +846,13 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 }
 
 /*!
-  \brief stop measurment
-  \param[in]  kind           kind of stop to distinguish between pause or measurment end
+  \brief stop measurement
+  \param[in]  kind           kind of stop to distinguish between pause or measurement end
   \param[in]  id             CARESS id
   \param[out] module_status  current device status
  */
 /***************************************************************************
- * stop measurment
+ * stop measurement
  ***************************************************************************/
 CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 						CORBA::Long id,
@@ -874,7 +874,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 			return CARESS::NOT_OK;
 		}
 
-		if (kind==0/*PAUSE*/ || kind==1/*END-OF-MEASURMENT*/)
+		if (kind==0/*PAUSE*/ || kind==1/*END-OF-MEASUREMENT*/)
 		{
 			if (kind==1) m_lStepNo=0;
 
@@ -1347,7 +1347,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		else
 			MSG_DEBUG << "loadblock(startcommands device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
 
-		// TODO: CARESS is able to load selected command structures before any measurment step
+		// TODO: CARESS is able to load selected command structures before any measurement step
 		module_status=LOADED;
 		return CARESS::OK;
 	}
@@ -1364,7 +1364,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		else
 			MSG_DEBUG << "loadblock(startvalues device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
 
-		// TODO: CARESS is able to load current positions of selected devices before any measurment step
+		// TODO: CARESS is able to load current positions of selected devices before any measurement step
 		module_status=LOADED;
 		return CARESS::OK;
 	}
