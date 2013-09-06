@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	m[0]->setThreshold(0, 20);
 	m[0]->setPulser(0, 0, MIDDLE, 50, true);
 #else
-	mesy = new Mesydaq2(NULL);
+	mesy = new Mesydaq2();
 
 	qDebug() << QObject::tr("module 1 : %1").arg(mesy->getFirmware(0));
 	qDebug() << QObject::tr("module 2 : %1").arg(mesy->getFirmware(1));

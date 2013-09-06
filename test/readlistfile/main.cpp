@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
 	MSG_ERROR << QObject::tr("Read file : %1 ").arg(fileName);
 
-	Mesydaq2	m_mesy(NULL);
+	Mesydaq2	m_mesy;
 	Measurement 	m_meas(&m_mesy, NULL);
         m_meas.readListfile(fileName);
 

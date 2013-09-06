@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 {
 	QString settingsFile("/home/jkrueger/data/mno.mcfg");
 
-//	Mesydaq2 *mesy = new Mesydaq2(NULL);
+//	Mesydaq2 *mesy = new Mesydaq2();
 //	mesy->loadSetup("/home/jkrueger/data/ghi.mcfg");
 
 	if (argc > 1)

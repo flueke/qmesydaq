@@ -26,15 +26,12 @@
 #include "logging.h"
 
 /*!
-    \fn Mesydaq2::Mesydaq2(QObject *parent)
+    \fn Mesydaq2::Mesydaq2()
 
     constructor
-
-    \param parent Qt parent object
 */
-Mesydaq2::Mesydaq2(QObject *parent)
-	: QObject(parent)
-	, m_pThread(NULL)
+Mesydaq2::Mesydaq2()
+    : m_pThread(NULL)
 	, m_daq(IDLE)
 	, m_acquireListfile(false)
 	, m_listfilename("")
@@ -44,7 +41,6 @@ Mesydaq2::Mesydaq2(QObject *parent)
 	, m_runId(0)
 	, m_bAutoIncRunId(true)
 {
-	Q_ASSERT(parent == NULL);
 	MSG_NOTICE << "running on Qt %1" << qVersion();
 	qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
 	m_pThread = new QThread;
@@ -244,20 +240,20 @@ void Mesydaq2::stoppedDaq(void)
 }
 
 /*!
-    \fn Mesydaq2::addMCPD(quint16 byId, QString szMcpdId, quint16 wPort, QString szHostIp)
+    \fn Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szHostIp)
 
     'adds' another MCPD to this class
 
     \param byId     the ID of the MCPD
-    \param szMcpdId the IP address of the MCPD
+    \param szMcpdIp the IP address of the MCPD
     \param wPort    the port number to send data and cmds
     \param szHostIp IP address to get data and cmd answers back
 */
-void Mesydaq2::addMCPD(quint16 byId, QString szMcpdId, quint16 wPort, QString szHostIp)
+void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szHostIp)
 {
 	if (m_mcpd.contains(byId))
 		return;
-	m_mcpd[byId] = new MCPD8(byId, szMcpdId, wPort, szHostIp);
+	m_mcpd[byId] = new MCPD8(byId, szMcpdIp, wPort, szHostIp);
 	connect(m_mcpd[byId], SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
 	connect(m_mcpd[byId], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 	connect(m_mcpd[byId], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
@@ -665,7 +661,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 					  Q_ARG(quint16, iId), Q_ARG(QString, IP),
 					  Q_ARG(quint16, port > 0 ? port : cmdPort), Q_ARG(QString, cmdIP));
 #endif
-		if (dynamic_cast<MCPD *>(m_mcpd[iId])!=NULL && m_mcpd[iId]->isInitialized())
+		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized())
 		{
 //			setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
 			for (int j = 0; j < 4; ++j)
@@ -716,7 +712,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			threshold;
 		bool 	comgain(true);
 
-		if (dynamic_cast<MCPD *>(m_mcpd[iId])!=NULL && m_mcpd[iId]->isInitialized())
+		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized())
 			switch (getModuleId(iMCPDId, j))
 			{
 				case TYPE_MDLL :
@@ -765,7 +761,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 //		int j = iId % 8;
 
-		if (dynamic_cast<MCPD *>(m_mcpd[iId])!=NULL && m_mcpd[iId]->isInitialized() &&
+		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized() &&
 		    getModuleId(iMCPDId, 0) == TYPE_MDLL)
 		{
 			quint8 	thresh[3], 

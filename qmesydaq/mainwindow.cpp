@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 	setupUi(this);
 	setWindowTitle("QMesyDAQ " + QString(VERSION) + " " __DATE__);
 
-	m_mesy = new Mesydaq2(NULL);
+	m_mesy = new Mesydaq2();
 	m_main = new MainWidget(m_mesy, this);
 	setCentralWidget(m_main);
 
