@@ -41,9 +41,9 @@ class LIBQMESYDAQ_EXPORT MCPD8 : public QObject
 	Q_OBJECT
 
 public:
-	MCPD8(quint8, QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+	MCPD8(quint8 byId, QObject *parent = 0, QString szMcpdId = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = "0.0.0.0");
 
-	~MCPD8();
+	virtual ~MCPD8();
 
         //! \return whether the whole MCPD should integrated into the histogram
 	bool histogram(void); 

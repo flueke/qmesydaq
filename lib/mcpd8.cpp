@@ -32,20 +32,20 @@
 /**
  * constructor
  *
- * \param id ID of the MCPD
+ * \param byId ID of the MCPD
  * \param parent Qt parent object
- * \param ip source IP address
- * \param port source port
- * \param sourceIP IP address for incoming packets
+ * \param szMcpdId source IP address
+ * \param wPort source port
+ * \param szHostIp IP address for incoming packets
  */
-MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourceIP)
+MCPD8::MCPD8(quint8 byId, QObject *parent, QString szMcpdId, quint16 wPort, QString szHostIp)
     : QObject(parent)
     , m_network(NULL)
     , m_txCmdBufNum(0)
-    , m_id(id)
-    , m_ownIpAddress(ip)
-    , m_cmdPort(port)	// original 7000
-    , m_dataPort(port)	// original 7000
+    , m_id(byId)
+    , m_ownIpAddress(szMcpdId)
+    , m_cmdPort(wPort)   // original 7000
+    , m_dataPort(wPort)  // original 7000
     , m_master(true)
     , m_term(true)
     , m_extsync(false)
@@ -64,7 +64,7 @@ MCPD8::MCPD8(quint8 id, QObject *parent, QString ip, quint16 port, QString sourc
     , m_txMode(0)
 {
     stdInit();
-    m_network = NetworkDevice::create(NULL, sourceIP, port);
+    m_network = NetworkDevice::create(NULL, szHostIp, wPort);
     connect(m_network, SIGNAL(bufferReceived(const MDP_PACKET &)), this, SLOT(analyzeBuffer(const MDP_PACKET &)));
 
     m_commTimer = new QTimer(this);

@@ -40,9 +40,9 @@ class LIBQMESYDAQ_EXPORT MCPD2 : public QObject
 {
 Q_OBJECT
 public:
-	MCPD2(quint8, QObject *parent = 0, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+	MCPD2(quint8 byId, QObject *parent = 0, QString szMcpdId = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = "0.0.0.0");
 
-	~MCPD2();
+	virtual ~MCPD2();
 
 // commands of the MPCD-8
 // commands: DAQ commands
@@ -233,7 +233,7 @@ signals:
 	void analyzeDataBuffer(DATA_PACKET pd);
 
 private:
-	void communicate(bool yesno) {m_commActive = yesno;}
+	void communicate(bool yesno) {m_bCommActive = yesno;}
 
 	void initCmdBuffer(quint8);
 
@@ -247,7 +247,7 @@ private:
 
 	void stdInit(void);
 
-	bool isBusy(void) {return m_commActive;}
+	bool isBusy(void) {return m_bCommActive;}
 
 private:
 	//! communication device
@@ -292,7 +292,7 @@ private:
 	
 	bool 		m_stream;
 	quint64 	m_parameter[4];
-	bool 		m_commActive;
+	bool		m_bCommActive;
 
 	MDP_PACKET2	m_cmdBuf;
 
