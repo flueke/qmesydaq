@@ -20,9 +20,7 @@
 
 #include "histogram.h"
 #include "logging.h"
-#ifdef _MSC_VER
-#	include "stdafx.h"
-#endif
+#include "stdafx.h"
 #include <cmath>
 #include <algorithm>
 

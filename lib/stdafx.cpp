@@ -1,10 +1,9 @@
 #include "stdafx.h"
 
 #if defined(_MSC_VER)
-
 #include <QMutex>
 
-int round(double value)
+Q_EXTERN_C int round(double value)
 {
 	if (value > 0)
 		value += 0.5;
@@ -12,13 +11,13 @@ int round(double value)
 		value -= 0.5;
 	return (int)value;
 }
-void sleep(unsigned int s)
+Q_EXTERN_C void sleep(unsigned int s)
 {
 	QMutex tmpMutex;
 	tmpMutex.lock();
 	tmpMutex.tryLock(s*1000);
 }
-void usleep(unsigned int us)
+Q_EXTERN_C void usleep(unsigned int us)
 {
 	QMutex tmpMutex;
 	tmpMutex.lock();

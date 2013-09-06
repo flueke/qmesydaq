@@ -47,9 +47,7 @@
 #include "mdllsetup.h"
 #include "mcpdsetup.h"
 #include "logging.h"
-#if defined(_MSC_VER)
-	#include "stdafx.h"
-#endif
+#include "stdafx.h"
 
 #include "revision.h"
 

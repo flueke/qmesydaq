@@ -2,8 +2,8 @@
 #define LIB_QMESYDAQ_STDAFX
 
 //QT Includes
-//#include <QCoreApplication>
-//#include <QtCore>
+#include <QCoreApplication>
+#include <QtCore>
 //#include <QtNetwork>
 
 //C++ Includes
@@ -16,10 +16,12 @@
 
 #if defined(_MSC_VER)
 //Functions
-	int round(double value);
+Q_EXTERN_C int round(double value);
 //POSIX Functions
-	void sleep(unsigned int s);
-	void usleep(unsigned int us);
+Q_EXTERN_C void sleep(unsigned int s);
+Q_EXTERN_C void usleep(unsigned int us);
+#else
+#include <unistd.h>
 #endif
 
 #endif //LIB_QMESYDAQ_STDAFX

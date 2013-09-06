@@ -23,11 +23,7 @@
 #include "networkdevice.h"
 #include "mdefines.h"
 #include "logging.h"
-#if defined(_MSC_VER)
-    #include "stdafx.h"
-#else
-    #include <unistd.h>
-#endif
+#include "stdafx.h"
 
 QMutex			NetworkDevice::m_mutex(QMutex::Recursive);
 QList<NetworkDevice*> 	NetworkDevice::m_networks;

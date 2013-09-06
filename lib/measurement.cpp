@@ -32,9 +32,7 @@
 #include "mappedhistogram.h"
 #include "mesydaq2.h"
 #include "logging.h"
-#if defined(_MSC_VER)
-	#include "stdafx.h"
-#endif
+#include "stdafx.h"
 
 #include <cmath>
 #include <algorithm>
