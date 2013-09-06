@@ -266,3 +266,41 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 		}
 	}
 }
+
+//! generate a displayable hex dump of given memory area (max. 16KB)
+QByteArray HexDump(const void* pData, int iLength)
+{
+    QByteArray dst;
+    const unsigned char* p=(const unsigned char*)pData;
+    if (iLength > 16384)
+        iLength = 16384; // max. 16KB
+    for (int i = 0; i < iLength; i += 16)
+    {
+        QString szLine;
+        szLine.sprintf("%04x  ",i);
+        for (int j = 0; j < 16; ++j)
+        {
+            QString szTmp;
+            if (j == 8)
+                szLine += "- ";
+            if ((i + j) < iLength)
+                szTmp.sprintf("%02x ",p[i + j]);
+            else
+                szTmp = "   ";
+            szLine += szTmp;
+        }
+        szLine += " ";
+        for (int j = 0; j < 16 && (i + j) < iLength; ++j)
+        {
+            unsigned char c = p[i + j];
+            if (c < ' ' || c > '~')
+               c = '.';
+            if (j == 8)
+               szLine += " - ";
+            szLine += c;
+        }
+        dst += szLine;
+        dst += "\n";
+    }
+    return dst;
+}

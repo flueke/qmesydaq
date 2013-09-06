@@ -50,4 +50,6 @@ extern int DEBUGLEVEL;
 // start logging (parse command line parameters from QCoreApplication)
 void LIBQMESYDAQ_EXPORT startLogging(const char* szShortUsage, const char* szLongUsage);
 
+QByteArray LIBQMESYDAQ_EXPORT HexDump(const void* pData, int iLength);
+
 #endif /* __LOGGING_H__6D7BA1B3_11A3_4533_B63D_C7416EEDF845__ */
