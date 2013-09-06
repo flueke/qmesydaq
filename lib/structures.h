@@ -21,33 +21,8 @@
 #define STRUCTURES_H
 
 #include <QMetaType>
+#include <QSharedData>
 #include <QSharedDataPointer>
-
-//! data packet structure as Share data object (multi threading preparation)
-struct SD_MPD_PACKET_DATA : public QSharedData
-{
-	quint16 bufferLength;	//!< length of the buffer
-	
-	quint16 bufferType;	//!< the buffer type
-	
-	quint16 headerLength;	//!< the length of the buffer header
-	
-	quint16 bufferNumber;	//!< number of the packet 
-	
-	quint16 cmd;		//!< the command number
-	
-	quint8 	deviceStatus;	//!< the device state
-	
-	quint8 	deviceId;	//!< the id of the device
-	
-	quint16 time[3];	//!< device time
-	
-	quint16 headerChksum;	//!< check sum of the header
-	
-	quint16 data[750];	//!< the data, length of the data = length of the buffer - length of the header
-};
-
-Q_DECLARE_METATYPE(SD_MPD_PACKET_DATA);
 
 //! command packet structure
 struct MDP_PACKET
@@ -72,7 +47,6 @@ struct MDP_PACKET
 	
 	quint16 data[750];	//!< the data, length of the data = length of the buffer - length of the header
 };
-Q_DECLARE_METATYPE(MDP_PACKET)
 
 //! data packet structure
 struct DATA_PACKET
@@ -97,7 +71,55 @@ struct DATA_PACKET
 	
 	quint16 data[750];	//!< the events, length of the data = length of the buffer - length of the header
 };
+
+//! command packet structure to MCPD-2 ?
+struct MDP_PACKET2
+{
+	quint8 sender;
+	quint8 cmd;
+	quint8 cpu;
+	quint8 headerlength;
+	quint16 packet;
+	quint8 headerversion;
+	quint8 hchksm;
+	quint8 result;
+	quint8 coll;
+	quint8 bad;
+	quint8 noini;
+	quint16 star;
+	quint16 isr;
+	quint16 evct_hi;
+	quint16 evct_lo;
+	quint16 mon1_hi;
+	quint16 mon1_lo;
+	quint16 mon2_hi;
+	quint16 mon2_lo;
+	quint16 rback0;
+	quint16 rback1;
+	quint16 rback2;
+	quint16 bufcount;
+	quint16 timer_hi;
+	quint16 timer_lo;
+	quint8 ver_hi;
+	quint8 ver_lo;
+	quint8 data[1024];
+};
+
+// Q_DECLARE_METATYPE(SD_MPD_PACKET_DATA);
+Q_DECLARE_METATYPE(MDP_PACKET)
 Q_DECLARE_METATYPE(DATA_PACKET)
+
+//! command/data packet structure as shared data object (multi threading preparation)
+struct SD_PACKET : public QSharedData
+{
+	union
+	{
+		MDP_PACKET  mdp;
+		MDP_PACKET2 mdp2;
+		DATA_PACKET dp;
+	};
+};
+Q_DECLARE_METATYPE(SD_PACKET)
 
 //! trigger event structure
 typedef struct TriggerEvent
@@ -226,38 +248,6 @@ const char YSIZE = 128;
 const char TSIZE = 128;
 
 // structures of upd/mdp communications
-typedef struct _MDP_PACKET2
-{
-	quint8	sender;
-	quint8	cmd;
-	quint8	cpu;
-	quint8	headerlength;
-	quint16 packet;
-	quint8	headerversion;
-	quint8	hchksm;
-	quint8	result;
-	quint8	coll;
-	quint8	bad;
-	quint8	noini;
-	quint16 star;
-	quint16 isr;
-	quint16 evct_hi;
-	quint16 evct_lo;
-	quint16 mon1_hi;
-	quint16 mon1_lo;
-	quint16 mon2_hi;
-	quint16 mon2_lo;
-	quint16 rback0;
-	quint16 rback1;
-	quint16 rback2;
-	quint16 bufcount;
-	quint16 timer_hi;
-	quint16 timer_lo;
-	quint8	ver_hi;
-	quint8	ver_lo;
-	quint8	data[1024];
-} MDP_PACKET2, *PMDP_PACKET2;
-
 typedef struct _PRESET_PACKET
 {
 	quint8	sender;

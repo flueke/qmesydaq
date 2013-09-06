@@ -425,7 +425,7 @@ public:
 	
 	
 public slots:
-	void analyzeBuffer(const DATA_PACKET &pd);
+	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 	void calcRates();
 

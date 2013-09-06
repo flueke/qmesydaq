@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 				id = args.at(i).toInt();
 	}
 
-	MCPD8 *m = new MCPD8(id, NULL, ip);
+	MCPD8 *m = new MCPD8(id, ip);
 
 	QTextStream cout(stderr);
 	cout << QObject::tr("%2 : MCPD : %1 (id=%3), cap: %4: TX mode: %5\n").arg(m->version()).arg(m->ip()).arg(id).arg(m->capabilities()).arg(m->getTxMode());

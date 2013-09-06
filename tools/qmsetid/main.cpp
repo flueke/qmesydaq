@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 		fromId = 0;
 	}
 
-	MCPD8 *m = new MCPD8(fromId, NULL, toIP);
+	MCPD8 *m = new MCPD8(fromId, toIP);
 
 	qDebug() << QObject::tr("%2 MCPD : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(fromId);
 	qDebug() << QObject::tr("new id : %1").arg(id);

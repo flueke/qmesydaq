@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009-2012 by Jens Kr�ger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2013 by Lutz Rossa <rossa@helmholtz-berlin.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,13 +21,8 @@
 #ifndef MCPD8_H
 #define MCPD8_H
 
-#include <QObject>
-#include <QMap>
+#include "mcpd.h"
 
-#include "libqmesydaq_global.h"
-#include "structures.h"
-
-class NetworkDevice;
 class MPSD8;
 class MDLL;
 class QTimer;
@@ -34,16 +30,18 @@ class QTimer;
 /**
  * \short representation of MCPD-8 central module
  *
- * \author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Gregor Montermann <g.montermann@mesytec.com>, Lutz Rossa <rossa@helmholtz-berlin.de>
  */
-class LIBQMESYDAQ_EXPORT MCPD8 : public QObject
+class LIBQMESYDAQ_EXPORT MCPD8 : public MCPD
 {
 	Q_OBJECT
 
 public:
-	MCPD8(quint8 byId, QObject *parent = 0, QString szMcpdId = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = "0.0.0.0");
+	MCPD8(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = QString::null);
 
 	virtual ~MCPD8();
+
+	virtual bool isInitialized() const;
 
         //! \return whether the whole MCPD should integrated into the histogram
 	bool histogram(void); 
@@ -95,7 +93,7 @@ public:
 	//! \return the ID of this MCPD
 	quint8 getId(void) { return m_id; }
 
-	bool setProtocol(const QString& addr, const QString& datasink = QString("0.0.0.0"), const quint16 dataport = 0, const QString& cmdsink = QString("0.0.0.0"), const quint16 cmdport = 0);
+	bool setProtocol(const QString& addr, const QString& datasink = QString::null, const quint16 dataport = 0, const QString& cmdsink = QString::null, const quint16 cmdport = 0);
 
 	void getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const;
 	void getProtocol(quint16 *addr);
@@ -263,20 +261,6 @@ public:
 	 */
 	quint32 getRunId(void) {return m_runId;}
 
-	/**
-	 * gets the address of the MCPD module
-	 *
-	 * \return IP address of the MCPD
-	 */
-	QString ip(void) {return m_ownIpAddress;}
-
-	/**
-	 * gets the command port of the MCPD
-	 *
-	 * \return port number of the command port
-	 */
-	quint16 port(void) {return m_cmdPort;}
-
 	quint16 bins();
 
         /**
@@ -295,11 +279,11 @@ public:
 
 public slots:
 	//! analyse network packet
-	void analyzeBuffer(const MDP_PACKET &pd);
+	virtual bool analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 private slots:
 	//! callback for the communication timer to detect a timeout
-	void commTimeout(void);
+	// void commTimeout(void);
 
 signals:
 	//! this will be emitted if the MCPD-8 was started 
@@ -316,14 +300,14 @@ signals:
 	 *
 	 * \param pd data packet
 	 */
-	void analyzeDataBuffer(DATA_PACKET &pd);
+	void analyzeDataBuffer(QSharedDataPointer<SD_PACKET> pd);
 
 protected:
 	void initCmdBuffer(quint16);
 
 	void finishCmdBuffer(quint16 buflen);
 
-	int sendCommand(void);
+	bool sendCommand(bool bCheckAnswer);
 	
         /*!
             fills the buffer on index with the value
@@ -337,15 +321,11 @@ protected:
 	}
 
 private:
-	void communicate(bool yesno) {m_commActive = yesno;}
-
 	quint16 calcChksum(const MDP_PACKET &buffer);
 
-	int sendCommand(quint16 *buffer);
+	quint16 calcChksum(const QSharedDataPointer<SD_PACKET> &buffer);
 
 	void stdInit(void);
-
-	bool isBusy(void) {return m_commActive;}
 
 private:
 	//! communication device
@@ -360,22 +340,10 @@ private:
 // communication params
 	//! IP address of the module
 	QString 	m_ownIpAddress;
-
-	//! IP address for sending the commands
-	QString 	m_cmdIpAddress;
-
-	//! Port for commands
-	quint16 	m_cmdPort;
-
-	//! IP address for sending the data
-	QString 	m_dataIpAddress;
-
-	//! Port for the data
-	quint16 	m_dataPort;
 	
 	//! is this MCPD master on sync bus or not
-	bool 		m_master;
-	
+	bool		m_master;
+
 	//! is this MCPD terminated on sync bus or not
 	bool 		m_term;
 	
@@ -388,13 +356,18 @@ private:
 	//! four auxiliary timers, capture values
 	quint16 	m_auxTimer[4];
 
+	bool		m_stream;
+	quint64		m_parameter[4];
+	volatile enum {
+		SEND,
+		RECV,
+		RECV_INVALID,
+	}		m_iCommActive;
+
+
 	//! four parameters (transmitted in buffer header), 9 possible sources
 	quint8 		m_paramSource[4];
 	
-	bool 		m_stream;
-	quint64 	m_parameter[4];
-	bool 		m_commActive;
-
 	MDP_PACKET      m_cmdBuf;
 
 	//! last buffer number
@@ -440,6 +413,8 @@ private:
 
 	//! Tx mode
 	quint16		m_txMode;
+	//! READID data
+	quint16		m_awReadId[8];
 };
 
 #endif

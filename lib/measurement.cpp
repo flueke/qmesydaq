@@ -80,7 +80,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	setRunId(settings.value("config/lastrunid", "0").toUInt());
 	setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
 
-	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(const DATA_PACKET &)), this, SLOT(analyzeBuffer(const DATA_PACKET &)));
+	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	for (quint8 i = 0; i < TIMERID; ++i)
 	{
@@ -284,7 +284,7 @@ void Measurement::start()
 		c->start(m_starttime_msec);
 		MSG_INFO<< "counter " << *c << " value : " << c->value() << " limit : " << c->limit();
 	}
-	setROI(QRectF(0,0, m_mesydaq->width(), m_mesydaq->height()));
+	setROI(QRectF(0, 0, m_mesydaq->width(), m_mesydaq->height()));
 }
 
 /*!
@@ -759,7 +759,7 @@ void Measurement::readHistograms(const QString &name)
 					m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 			// create the mapped histogram
 			reinterpret_cast<MappedHistogram *>(m_Hist[CorrectedPositionHistogram])->setHistogram(m_Hist[PositionHistogram]);
-			setROI(QRectF(0,0, width(), height()));
+			setROI(QRectF(0, 0, width(), height()));
 		}
 		f.close();
 	}
@@ -835,13 +835,13 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 }
 
 /*!
-    \fn Measurement::analyzeBuffer(const DATA_PACKET &pd)
+    \fn Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
     analyze the data packet and put all events into the right counters and/or histogram
 
-    \param pd data packet
+    \param pPacket data packet
  */
-void Measurement::analyzeBuffer(const DATA_PACKET &pd)
+void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
 	ulong 	data;
 	quint16 neutrons = 0;
@@ -851,35 +851,35 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 	quint16	adcTriggers = 0;
 	quint16 counterTriggers = 0;
 	quint64 tim;
-	quint16 mod = pd.deviceId;
-	m_headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
+	quint16 mod = pPacket->dp.deviceId;
+	m_headertime = pPacket->dp.time[0] + (quint64(pPacket->dp.time[1]) << 16) + (quint64(pPacket->dp.time[2]) << 32);
 		
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 
 	m_packages++;
-	if(pd.bufferType < 0x0003)
+	if(pPacket->dp.bufferType < 0x0003)
 	{
 // extract parameter values:
 		QChar c('0');
-		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		quint32 datalen = (pPacket->dp.bufferLength - pPacket->dp.headerLength) / 3;
 //
 // status Idle is for replaying files
 // 
 		for(quint32 counter = 0, i = 0; i < datalen && (status() == Started || status() == Idle); ++i, counter += 3)
 		{
-			tim = pd.data[counter + 1] & 0x7;
+			tim = pPacket->dp.data[counter + 1] & 0x7;
 			tim <<= 16;
-			tim += pd.data[counter];
+			tim += pPacket->dp.data[counter];
 			tim += m_headertime;
 // id stands for the trigId and modId depending on the package type
-			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
+			quint8 id = (pPacket->dp.data[counter + 2] >> 12) & 0x7;
 			m_counter[TIMERID]->setTime(tim / 10000);
 // not neutron event (counter, chopper, ...)
-			if((pd.data[counter + 2] & TRIGGEREVENTTYPE))
+			if((pPacket->dp.data[counter + 2] & TRIGGEREVENTTYPE))
 			{
 				triggers++;
-				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
-				data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
+				quint8 dataId = (pPacket->dp.data[counter + 2] >> 8) & 0x0F;
+				data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
 				switch(dataId)
 				{
 					case MON1ID :
@@ -913,12 +913,12 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 // neutron event:
 			else
 			{
-				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
+				quint8 slotId = (pPacket->dp.data[counter + 2] >> 7) & 0x1F;
 				quint8 modChan = (id << 3) + slotId;
 				quint16 chan = modChan + (mod << 6);
-				quint16 amp = ((pd.data[counter+2] & 0x7F) << 3) + ((pd.data[counter+1] >> 13) & 0x7),
-					pos = (pd.data[counter+1] >> 3) & 0x3FF;
-				if(pd.bufferType == 0x0002)
+				quint16 amp = ((pPacket->dp.data[counter+2] & 0x7F) << 3) + ((pPacket->dp.data[counter+1] >> 13) & 0x7),
+					pos = (pPacket->dp.data[counter+1] >> 3) & 0x3FF;
+				if(pPacket->dp.bufferType == 0x0002)
 				{
 //
 // in MDLL, data format is different:
@@ -1007,7 +1007,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 			if (var)
 			{
 // only differences > 1 should be logged
-				if ((tmp > var && tmp > (var + 1))|| (tmp < var && (tmp + 1) < var))
+				if ((tmp > var && tmp > (var + 1)) || (tmp < var && (tmp + 1) < var))
 				{
 					MSG_ERROR << m_packages << " counter " << i << " : is " << var << " <-> should be " << m_counter[i]->value();
 					setCounter(i, var);
@@ -1017,7 +1017,7 @@ void Measurement::analyzeBuffer(const DATA_PACKET &pd)
 #endif
 	}
 	else
-		MSG_INFO << "buffer type : " << pd.bufferType;
+		MSG_INFO << "buffer type : " << pPacket->dp.bufferType;
 }
 
 bool Measurement::acqListfile() const
@@ -1157,7 +1157,7 @@ void Measurement::readListfile(const QString &readfilename)
 		}
 		for (i = 0; i < header.size(); ++i)
 		{
-			const quint16* p = reinterpret_cast<const quint16*>(header.constData() + i);
+			const quint16* p = reinterpret_cast<const quint16 *>(header.constData() + i);
 			if (p[0] == sep0 && p[1] == sep5 && p[2] == sepA && p[3] == sepF)
 				break;
 		}
@@ -1213,7 +1213,7 @@ void Measurement::readListfile(const QString &readfilename)
 		c->reset();
 
 	QChar 		c('0');
-	DATA_PACKET 	dataBuf;
+	QSharedDataPointer<SD_PACKET> dataBuf(new SD_PACKET);
 
 // header separator : sep0 sep5 sepA sepF
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
@@ -1224,19 +1224,18 @@ void Measurement::readListfile(const QString &readfilename)
 		m_starttime_msec = m_mesydaq->time();
 		foreach (MesydaqCounter *c, m_counter)
 			c->start(m_starttime_msec);
-		setROI(QRectF(0,0, m_mesydaq->width(), m_mesydaq->height()));
+		setROI(QRectF(0, 0, m_mesydaq->width(), m_mesydaq->height()));
 #endif
-
-		if (getNextBlock(datStream, dataBuf))
+		if (getNextBlock(datStream, dataBuf->dp))
 		{
-			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
+			quint64 tmp = dataBuf->dp.time[0] + (quint64(dataBuf->dp.time[1]) << 16) + (quint64(dataBuf->dp.time[2]) << 32);
 			m_counter[TIMERID]->start(tmp / 10000);
 			analyzeBuffer(dataBuf);
 			++blocks;
 			++bcount;
-			MSG_ERROR << "Run ID " << dataBuf.runID;
+			MSG_ERROR << "Run ID " << dataBuf->dp.runID;
 		}
-		for(; getNextBlock(datStream, dataBuf); ++blocks, ++bcount)
+		for(; getNextBlock(datStream, dataBuf->dp); ++blocks, ++bcount)
 		{
 // hand over data buffer for processing
 			analyzeBuffer(dataBuf);

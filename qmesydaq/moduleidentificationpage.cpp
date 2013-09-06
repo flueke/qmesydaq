@@ -63,7 +63,7 @@ void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
  */
 bool ModuleIdentificationPage::isComplete() const
 {
-     MCPD8 *mcpd = new MCPD8(moduleIDInput->value(), NULL, moduleIPInput->text());
+     MCPD8 *mcpd = new MCPD8(moduleIDInput->value(), moduleIPInput->text());
 
      bool ret = mcpd->version() != 0;
      delete mcpd;

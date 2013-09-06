@@ -46,8 +46,7 @@ Mesydaq2::Mesydaq2(QObject *parent)
 {
 	Q_ASSERT(parent == NULL);
 	MSG_NOTICE << "running on Qt %1" << qVersion();
-	if (QMetaType::type("DATA_PACKET")==0)
-		qRegisterMetaType<DATA_PACKET>();
+	qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
 	m_pThread = new QThread;
 	moveToThread(m_pThread);
 	connect(m_pThread, SIGNAL(finished()), this, SLOT(threadExit()), Qt::DirectConnection);
@@ -245,23 +244,23 @@ void Mesydaq2::stoppedDaq(void)
 }
 
 /*!
-    \fn Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
+    \fn Mesydaq2::addMCPD(quint16 byId, QString szMcpdId, quint16 wPort, QString szHostIp)
 
     'adds' another MCPD to this class
 
-    \param id the ID of the MCPD
-    \param ip the IP address of the MCPD
-    \param port the port number to send data and cmds
-    \param sourceIP IP address to get data and cmd answers back
+    \param byId     the ID of the MCPD
+    \param szMcpdId the IP address of the MCPD
+    \param wPort    the port number to send data and cmds
+    \param szHostIp IP address to get data and cmd answers back
 */
-void Mesydaq2::addMCPD(quint16 id, QString ip, quint16 port, QString sourceIP)
+void Mesydaq2::addMCPD(quint16 byId, QString szMcpdId, quint16 wPort, QString szHostIp)
 {
-	if (m_mcpd.contains(id))
+	if (m_mcpd.contains(byId))
 		return;
-	m_mcpd[id] = new MCPD8(id, this, ip, port, sourceIP);
-	connect(m_mcpd[id], SIGNAL(analyzeDataBuffer(DATA_PACKET &)), this, SLOT(analyzeBuffer(DATA_PACKET &)));
-	connect(m_mcpd[id], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
-	connect(m_mcpd[id], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
+	m_mcpd[byId] = new MCPD8(byId, szMcpdId, wPort, szHostIp);
+	connect(m_mcpd[byId], SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+	connect(m_mcpd[byId], SIGNAL(startedDaq()), this, SLOT(startedDaq()));
+	connect(m_mcpd[byId], SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 }
 
 /*!
@@ -343,7 +342,7 @@ void Mesydaq2::writeBlockSeparator(void)
 	const unsigned short awBuffer[] = {sep0, sepF, sep5, sepA};
 	if (m_datfile.isOpen())
 		m_datStream << sep0 << sepF << sep5 << sepA;
-	m_pDatSender->WriteData(&awBuffer[0],sizeof(awBuffer));
+	m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer));
 }
 
 
@@ -487,10 +486,10 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 {
 	settings.beginGroup("MESYDAQ");
 	settings.setValue("listmode", m_acquireListfile ? "true" : "false");
-	settings.setValue("repeatersource",m_pDatSender->GetSource().toString());
-	settings.setValue("repeatertarget",m_pDatSender->GetTarget().toString());
-	settings.setValue("repeaterport",m_pDatSender->GetPort());
-	settings.setValue("repeaterenable",m_pDatSender->GetEnabled() ? "true" : "false");
+	settings.setValue("repeatersource", m_pDatSender->GetSource().toString());
+	settings.setValue("repeatertarget", m_pDatSender->GetTarget().toString());
+	settings.setValue("repeaterport", m_pDatSender->GetPort());
+	settings.setValue("repeaterenable", m_pDatSender->GetEnabled() ? "true" : "false");
 	settings.endGroup();
 	
 	int i = 0;
@@ -618,7 +617,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	m_acquireListfile = settings.value("listmode", "true").toBool();
 	m_pDatSender->SetSource(settings.value("repeatersource", "").toString());
 	m_pDatSender->SetTarget(settings.value("repeatertarget", "").toString(),
-			      settings.value("repeaterport",m_pDatSender->DEFAULTPORT).toUInt());
+			      settings.value("repeaterport", m_pDatSender->DEFAULTPORT).toUInt());
 	m_pDatSender->SetEnabled(settings.value("repeaterenable", "false").toBool());
 	settings.endGroup();
 
@@ -659,37 +658,44 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		if (port == dataPort)
 			dataPort = 0;
 
-//		addMCPD(iId, IP, port > 0 ? port : cmdPort, cmdIP);
+#if 1
+		addMCPD(iId, IP, port > 0 ? port : cmdPort, cmdIP);
+#else
 		QMetaObject::invokeMethod(this, "addMCPD", Qt::BlockingQueuedConnection,
 					  Q_ARG(quint16, iId), Q_ARG(QString, IP),
 					  Q_ARG(quint16, port > 0 ? port : cmdPort), Q_ARG(QString, cmdIP));
-//		setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
-
-		for (int j = 0; j < 4; ++j)
+#endif
+		if (dynamic_cast<MCPD *>(m_mcpd[iId])!=NULL && m_mcpd[iId]->isInitialized())
 		{
-			setAuxTimer(iId, j, settings.value(QString("auxtimer%1").arg(j), "0").toUInt());
-			setParamSource(iId, j, settings.value(QString("paramsource%1").arg(j), QString("%1").arg(j)).toUInt());
-		}
-
-//		m_mcpd[iId]->setActive(loadSetupBoolean(pSection, szPrefix + "active", true));
-//		m_mcpd[iId]->setHistogram(loadSetupBoolean(pSection, szPrefix + "histogram", true));
-
-		for (int j = 0; j < 8; ++j)
-		{
-			long cells[2] = {7, 22};
-			QStringList k = settings.value(QString("countercell%1").arg(j), "7 22").toString().split(QRegExp("\\s+"));
-			for(int m = 0; m < k.size() && m < 2; ++m)
+//			setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
+			for (int j = 0; j < 4; ++j)
 			{
-				int tmp = k[m].toInt(&bOK);
-				if (bOK)
-					cells[m] = tmp;
-      			}
-			setCounterCell(iId, j, cells[0], cells[1]);
-		}
+				setAuxTimer(iId, j, settings.value(QString("auxtimer%1").arg(j), "0").toUInt());
+				setParamSource(iId, j, settings.value(QString("paramsource%1").arg(j), QString("%1").arg(j)).toUInt());
+			}
+
+//			m_mcpd[iId]->setActive(loadSetupBoolean(pSection, szPrefix + "active", true));
+//			m_mcpd[iId]->setHistogram(loadSetupBoolean(pSection, szPrefix + "histogram", true));
+
+			for (int j = 0; j < 8; ++j)
+			{
+				long cells[2] = {7, 22};
+				QStringList k = settings.value(QString("countercell%1").arg(j), "7 22").toString().split(QRegExp("\\s+"));
+				for(int m = 0; m < k.size() && m < 2; ++m)
+				{
+					int tmp = k[m].toInt(&bOK);
+					if (bOK)
+						cells[m] = tmp;
+				}
+				setCounterCell(iId, j, cells[0], cells[1]);
+			}
 		
-		setTimingSetup(iId, settings.value("master", "true").toBool(), settings.value("terminate", "true").toBool(),
+			setTimingSetup(iId, settings.value("master", "true").toBool(), settings.value("terminate", "true").toBool(),
 				settings.value("extsync", "false").toBool());
 		
+		}
+		else
+			MSG_FATAL << "MCPD id " << iId << " with address " << IP << " was not correctly initialized";
 		settings.endGroup();
 	}
 
@@ -710,35 +716,36 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			threshold;
 		bool 	comgain(true);
 
-		switch (getModuleId(iMCPDId, j)) 
-		{
-			case TYPE_MDLL :
-			case TYPE_NOMODULE :
-				break;
-			default:
-				for (int k = 0; k < 8; ++k)
-				{
-					gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
-					setActive(iMCPDId, j, k, settings.value(QString("active%1").arg(k), "true").toBool());
-					setHistogram(iMCPDId, j, k, settings.value(QString("histogram%1").arg(k), "true").toBool());
-				}
-
-				threshold = settings.value("threshold", "22").toUInt();
-
-				for (int k = 0; k < 8; ++k)
-					if (gains[0] != gains[k])
-	  				{
-	    					comgain = false;
-						break;
-					}
-				if (comgain)
-					setGain(iMCPDId, j, 8, gains[0]);
-				else
+		if (dynamic_cast<MCPD *>(m_mcpd[iId])!=NULL && m_mcpd[iId]->isInitialized())
+			switch (getModuleId(iMCPDId, j))
+			{
+				case TYPE_MDLL :
+				case TYPE_NOMODULE :
+					break;
+				default:
 					for (int k = 0; k < 8; ++k)
-						setGain(iMCPDId, j, k, gains[k]);
-				setThreshold(iMCPDId, j, threshold);
-				break;
-		}
+					{
+						gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
+						setActive(iMCPDId, j, k, settings.value(QString("active%1").arg(k), "true").toBool());
+						setHistogram(iMCPDId, j, k, settings.value(QString("histogram%1").arg(k), "true").toBool());
+					}
+
+					threshold = settings.value("threshold", "22").toUInt();
+
+					for (int k = 0; k < 8; ++k)
+						if (gains[0] != gains[k])
+						{
+							comgain = false;
+							break;
+						}
+					if (comgain)
+						setGain(iMCPDId, j, 8, gains[0]);
+					else
+						for (int k = 0; k < 8; ++k)
+							setGain(iMCPDId, j, k, gains[k]);
+					setThreshold(iMCPDId, j, threshold);
+					break;
+			}
 		settings.endGroup();
 	}
 
@@ -758,7 +765,8 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 //		int j = iId % 8;
 
-		if (getModuleId(iMCPDId, 0) == TYPE_MDLL)
+		if (dynamic_cast<MCPD *>(m_mcpd[iId])!=NULL && m_mcpd[iId]->isInitialized() &&
+		    getModuleId(iMCPDId, 0) == TYPE_MDLL)
 		{
 			quint8 	thresh[3], 
 				shift[2], 
@@ -1694,72 +1702,74 @@ void Mesydaq2::setRunId(quint32 runid)
 }
 
 /*!
-    \fn Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
+    \fn Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
     callback to analyze input data packet
 
-    \param pd data packet
+    \param pPacket data packet
  */
-void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
+void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
+	const DATA_PACKET *dp = &pPacket.constData()->dp;
 	if (m_daq == RUNNING)
 	{
-		quint64 headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
+		quint64 headertime = dp->time[0] + (quint64(dp->time[1]) << 16) + (quint64(dp->time[2]) << 32);
 		if (m_starttime_msec > (headertime / 10000))
 		{
 			MSG_FATAL << "OLD PACKAGE : " << (headertime / 10000) << " < " << m_starttime_msec;
 			return;
 		}
 		
-		quint16 mod = pd.deviceId;
-//		m_runID = pd.runID;
-		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
+		quint16 mod = dp->deviceId;
+//		m_runID = dp->runID;
+		quint32 datalen = (dp->bufferLength - dp->headerLength) / 3;
 		for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
 		{
-			if(!(pd.data[counter + 2] & TRIGGEREVENTTYPE))
+			if(!(dp->data[counter + 2] & TRIGGEREVENTTYPE))
 			{
-				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
-				quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
+				quint8 slotId = (dp->data[counter + 2] >> 7) & 0x1F;
+				quint8 id = (dp->data[counter + 2] >> 12) & 0x7;
 				if (getModuleId(mod, slotId) == TYPE_MPSD8 && getMode(mod, id)) // amplitude mode
 				{
 					// put the amplitude to the new format position
-					quint16 amp = (pd.data[counter + 1] >> 3) & 0x3FF;
-					pd.data[counter + 2] &= 0xFF80;	// clear amp and pos field
-					pd.data[counter + 1] &= 0x0007;
-					pd.data[counter + 2] |= (amp >> 3);
-					pd.data[counter + 1] |= ((amp & 0x7) << 13);
+					DATA_PACKET *tmp = const_cast<DATA_PACKET *>(dp);
+					quint16 amp = (tmp->data[counter + 1] >> 3) & 0x3FF;
+					tmp->data[counter + 2] &= 0xFF80;	// clear amp and pos field
+					tmp->data[counter + 1] &= 0x0007;
+					tmp->data[counter + 2] |= (amp >> 3);
+					tmp->data[counter + 1] |= ((amp & 0x7) << 13);
 				}
 			}
 		}
 		if(m_acquireListfile)
 		{
-			quint16 *pD = (quint16 *)&pd;
-			if (pd.bufferLength == 0)
+			const quint16 *pD = static_cast<const quint16 *>(&dp->bufferLength);
+			if (dp->bufferLength == 0)
 			{
 				MSG_ERROR << "BUFFER with length 0";
 				return;
 			}
 #if 0
-			if (pd.bufferLength == 21)
+			if (dp->bufferLength == 21)
 				return;
 #endif
-			if (pd.bufferLength > sizeof(DATA_PACKET) / 2)
+			if (dp->bufferLength > sizeof(DATA_PACKET) / 2)
 			{
-				MSG_ERROR << "BUFFER with length " << pd.bufferLength;
+				MSG_ERROR << "BUFFER with length " << dp->bufferLength;
 				return;
 			}
-			m_datStream << pd.bufferLength;
-			m_datStream << pd.bufferType;
-			m_datStream << pd.headerLength;
-			m_datStream << pd.bufferNumber;
-			for(quint16 i = 4; i < pd.bufferLength; i++)
+			m_datStream << dp->bufferLength;
+			m_datStream << dp->bufferType;
+			m_datStream << dp->headerLength;
+			m_datStream << dp->bufferNumber;
+			for(quint16 i = 4; i < dp->bufferLength; i++)
 				m_datStream << pD[i];
 		}
-		m_pDatSender->WriteData(&pd, pd.bufferLength, true);
+		m_pDatSender->WriteData(&dp->bufferLength, dp->bufferLength, true);
 		writeBlockSeparator();
 //		MSG_DEBUG << "------------------";
-		MSG_DEBUG << "buffer : length : " << pd.bufferLength << " type : " << pd.bufferType;
-		if(pd.bufferType < 0x0003)
+		MSG_DEBUG << "buffer : length : " << dp->bufferLength << " type : " << dp->bufferType;
+		if(dp->bufferType < 0x0003)
 		{
 // extract parameter values:
 			for(quint8 i = 0; i < 4; i++)
@@ -1768,11 +1778,11 @@ void Mesydaq2::analyzeBuffer(DATA_PACKET &pd)
 				for(quint8 j = 0; j < 3; j++)
 				{
 					var <<= 16;
-					var |= pd.param[i][2 - j];
+					var |= dp->param[i][2 - j];
 				}
 				m_mcpd[mod]->setParameter(i, var);
 			}
-			emit analyzeDataBuffer(pd);
+			emit analyzeDataBuffer(pPacket);
 		}
 	}
 	else

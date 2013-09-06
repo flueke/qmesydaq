@@ -26,39 +26,35 @@
 #include "stdafx.h"
 
 QMutex			NetworkDevice::m_mutex(QMutex::Recursive);
-QList<NetworkDevice*> 	NetworkDevice::m_networks;
+QList<NetworkDevice *> 	NetworkDevice::m_aNetworks;
 QList<int>		NetworkDevice::m_inUse;
 
 /*!
-    \fn NetworkDevice *NetworkDevice::create(QObject *parent, QString target, quint16 port, QString source)
+    \fn NetworkDevice *NetworkDevice::create(quint16 wPort = 54321, QString szHostIp = QString("0.0.0.0"))
 
     factory method for creating a object of the class
 
-    \param parent parent object
-    \param source IP address of the communication source
-    \param port port number of the communication source
+    \param wPort    UDP port number of the communication source
+    \param szHostIp host interface to bind to
     \return new object of the class
     \see destroy
  */
-NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 port)
+NetworkDevice *NetworkDevice::create(quint16 wPort /*= 54321*/, QString szHostIp /*= QString("0.0.0.0")*/)
 {
+    QMutexLocker locker(&m_mutex);
     NetworkDevice *tmp;
-    m_mutex.lock();
-    for (int i = 0; i < m_networks.size(); ++i)
+    for (int i = 0; i < m_aNetworks.size(); ++i)
     {
-        tmp = m_networks.at(i);
-        if (tmp->ip() == source && tmp->port() == port)
+        tmp = m_aNetworks.at(i);
+        if (tmp->ip() == szHostIp && tmp->port() == wPort)
         {
             m_inUse[i]++;
-            m_mutex.unlock();
             return tmp;
         }
     }
-    tmp = new NetworkDevice(parent, source, port);
-    Q_ASSERT(parent == NULL);
-    m_networks.push_back(tmp);
+    tmp = new NetworkDevice(wPort, szHostIp);
+    m_aNetworks.push_back(tmp);
     m_inUse.push_back(1);
-    m_mutex.unlock();
     return tmp;
 }
 
@@ -72,10 +68,10 @@ NetworkDevice *NetworkDevice::create(QObject *parent, QString source, quint16 po
  */
 void NetworkDevice::destroy(NetworkDevice *nd)
 {
-    m_mutex.lock();
-    for (int i = m_networks.size() - 1; i >= 0; --i)
+    QMutexLocker locker(&m_mutex);
+    for (int i = m_aNetworks.size() - 1; i >= 0; --i)
     {
-        NetworkDevice *tmp = m_networks.at(i);
+        NetworkDevice *tmp = m_aNetworks.at(i);
         if (tmp->ip() == nd->ip() && tmp->port() == nd->port())
         {
             Q_ASSERT(m_inUse[i] > 0);
@@ -83,39 +79,34 @@ void NetworkDevice::destroy(NetworkDevice *nd)
             if (!m_inUse.at(i))
             {
                 m_inUse.takeAt(i);
-                tmp = m_networks.takeAt(i);
+                tmp = m_aNetworks.takeAt(i);
                 delete tmp;
                 break;
             }
         }
     }
-    m_mutex.unlock();
 }
 
 /*!
+ * \fn NetworkDevice::NetworkDevice(quint16 wPort = 54321, QString szHostIp = QString("0.0.0.0"))
  * constructor
  *
- * \param parent parent object
- * \param source IP address of the communication source
- * \param port port number of the communication source
+ * \param wPort      host UDP port to bind to
+ * \param szHostIp   host IP address to bind to
  */
-NetworkDevice::NetworkDevice(QObject *parent, QString source, quint16 port)
-    : QObject(parent)
-    , m_pThread(NULL)
+NetworkDevice::NetworkDevice(quint16 wPort /*= 54321*/, QString szHostIp /*= QString("0.0.0.0")*/)
+    : m_pThread(NULL)
     , m_bFlag(false)
-    , m_port(port)
-    , m_source(source)
+    , m_szHostIp(szHostIp)
+    , m_wPort(wPort)
     , m_sock(NULL)
     , m_notifyNet(NULL)
 {
-    Q_ASSERT(parent == NULL);
-    if (QMetaType::type("MDP_PACKET") == 0)
-        qRegisterMetaType<MDP_PACKET>();
     m_pThread = new QThread;
     moveToThread(m_pThread);
+    m_pThread->start(QThread::HighestPriority);
     connect(m_pThread, SIGNAL(started()), this, SLOT(createSocket()), Qt::DirectConnection);
     connect(m_pThread, SIGNAL(finished()), this, SLOT(destroySocket()), Qt::DirectConnection);
-    m_pThread->start(QThread::HighestPriority);
     while (!m_bFlag)
         usleep(10000);
 }
@@ -143,7 +134,7 @@ void NetworkDevice::destroySocket()
     if (m_notifyNet)
     {
         m_notifyNet->setEnabled(false);
-        disconnect (m_notifyNet, SIGNAL (activated(int)), this, SLOT (readSocketData()));
+        disconnect(m_notifyNet, SIGNAL(activated(int)), this, SLOT(readSocketData()));
     }
     delete m_notifyNet;
     m_notifyNet = NULL;
@@ -161,16 +152,16 @@ void NetworkDevice::destroySocket()
  */
 int NetworkDevice::createSocket(void)
 {
-    MSG_NOTICE << m_source.toLocal8Bit().constData() << '(' << m_port << ") : init socket: address";
+    MSG_NOTICE << m_szHostIp.toLocal8Bit().constData() << '(' << m_wPort << ") : init socket: address";
 
-// create server address
-    QHostAddress servaddr(m_source); // QHostAddress::Any);
+    // create server address
+    QHostAddress servaddr(m_szHostIp); // QHostAddress::Any);
     if (m_sock)
         delete m_sock;
     m_sock = new QUdpSocket(this);
 
-// bind address
-    if (m_sock && m_sock->bind(servaddr, m_port, QUdpSocket::/*Dont*/ShareAddress))
+    // bind address
+    if (m_sock && m_sock->bind(servaddr, m_wPort, QUdpSocket::/*Dont*/ShareAddress))
     {
         if (m_notifyNet)
         {
@@ -182,7 +173,7 @@ int NetworkDevice::createSocket(void)
         if (m_notifyNet)
         {
             m_notifyNet->setEnabled(false);
-            connect (m_notifyNet, SIGNAL (activated(int)), this, SLOT (readSocketData()));
+            connect(m_notifyNet, SIGNAL (activated(int)), this, SLOT (readSocketData()));
             m_notifyNet->setEnabled(true);
             m_bFlag = true;
             return m_sock->socketDescriptor();
@@ -192,19 +183,100 @@ int NetworkDevice::createSocket(void)
     return -1;
 }
 
+/** \fn bool NetworkDevice::connect_handler(QHostAddress source, quint16 wPort, NetworkDevice::analyzeBufferFunction pFunction, void* pParam)
+ *
+ *  connect a new data packet handler for a MCPD
+ *
+ *  \param source     source address of MCPD
+ *  \param wPort      source port of MCPD
+ *  \param pFunction  pointer to data handler
+ *  \param pParam     the data handler will be called with this pointer
+ */
+bool NetworkDevice::connect_handler(QHostAddress source, quint16 wPort, NetworkDevice::analyzeBufferFunction pFunction, void* pParam)
+{
+    if (source == QHostAddress::Any || source == QHostAddress::AnyIPv6)
+        source.clear();
+    if ((source.isNull() && wPort == 0) || pFunction == NULL)
+        return false;
+
+    QMutexLocker locker(&m_mutex);
+    foreach(const struct handler &tmp, m_aHandler)
+    {
+        if ((tmp.SourceAddr == source || source.isNull())
+	    && (tmp.wPort == wPort || wPort == 0)
+	    && tmp.pFunction == pFunction)
+            return false;
+    }
+
+    struct handler h = {source, wPort, pFunction, pParam};
+#if 0
+    h.SourceAddr = source;
+    h.wPort = wPort;
+    h.pFunction = pFunction;
+    h.pParam = pParam;
+#endif
+    m_aHandler.append(h);
+    return true;
+}
+
+/** \fn void NetworkDevice::disconnect_handler(QHostAddress source, quint16 wPort, NetworkDevice::analyzeBufferFunction pFunction)
+ *
+ *  disconnect packet handler for a MCPD
+ *
+ *  \param source     source address of MCPD
+ *  \param wPort      source port of MCPD
+ *  \param pFunction  pointer to data handler
+ */
+void NetworkDevice::disconnect_handler(QHostAddress source, quint16 wPort, NetworkDevice::analyzeBufferFunction pFunction)
+{
+    if (source == QHostAddress::Any || source == QHostAddress::AnyIPv6)
+        source.clear();
+    if (pFunction == NULL && source.isNull())
+        return;
+
+    QMutexLocker locker(&m_mutex);
+    for (int i = 0; i < m_aHandler.count(); ++i)
+    {
+        struct handler &tmp = m_aHandler[i];
+        if ((tmp.SourceAddr == source || source.isNull())
+	   && (tmp.wPort == wPort || wPort == 0)
+	   && (tmp.pFunction == pFunction || pFunction == NULL))
+            m_aHandler.removeAt(i--);
+    }
+}
+
+/*!
+ *   \fn bool NetworkDevice::sendBuffer(const QString &target, quint16 wPort, const QSharedDataPointer<SD_PACKET> &buf)
+ *
+ *   sends a command packet to the network partner with IP address target
+ *
+ *   \param szTargetIp IP address to send
+ *   \param wPort      UDP port to send
+ *   \param buf        command packet to send
+ */
+bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const QSharedDataPointer<SD_PACKET> &buf)
+{
+    QHostAddress ha(szTargetIp);
+    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << wPort << ") : send buffer " << buf->mdp.bufferLength * 2 << " bytes";
+    qint64 i = m_sock->writeDatagram((const char *)(&buf->mdp), 100, ha, wPort);
+    MSG_DEBUG << i << " sent bytes";
+    return (i != -1);
+}
+
 /*!
  *   \fn bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
  *
  *   sends a command packet to the network partner with IP address target
  *
- *   \param target IP address to send
- *   \param buf command packet to send
+ *   \param szTargetIp IP address to send
+ *   \param wPort      UDP port to send
+ *   \param buf        command packet to send
  */
-bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
+bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const MDP_PACKET &buf)
 {
-    QHostAddress ha(target);
-    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << m_port << ") : send buffer " << buf.bufferLength * 2 << " bytes";
-    qint64 i = m_sock->writeDatagram((const char *)&buf, 100, ha, m_port);
+    QHostAddress ha(szTargetIp);
+    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << wPort << ") : send buffer " << buf.bufferLength * 2 << " bytes";
+    qint64 i = m_sock->writeDatagram((const char *)&buf, 100, ha, wPort);
     MSG_DEBUG << i << " sent bytes";
     return (i != -1);
 }
@@ -214,14 +286,15 @@ bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET &buf)
  *
  *   sends a command packet to the network partner with IP address target
  *
- *   \param target IP address to send
- *   \param buf command packet to send
+ *   \param szTargetIp IP address to send
+ *   \param wPort      UDP port to send
+ *   \param buf        command packet to send
  */
-bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET2 &buf)
+bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const MDP_PACKET2 &buf)
 {
-    QHostAddress ha(target);
-    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << m_port << ") : send buffer " << buf.headerlength << " bytes";
-    qint64 i = m_sock->writeDatagram((const char *)&buf, 200, ha, m_port);
+    QHostAddress ha(szTargetIp);
+    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << wPort << ") : send buffer " << buf.headerlength << " bytes";
+    qint64 i = m_sock->writeDatagram((const char *)&buf, 200, ha, wPort);
     MSG_DEBUG << i << " sent bytes";
     return (i != -1);
 }
@@ -231,26 +304,38 @@ bool NetworkDevice::sendBuffer(const QString &target, const MDP_PACKET2 &buf)
  */
 void NetworkDevice::readSocketData(void)
 {
-// read socket data into receive buffer and notify
+    bool bLostPacket(false);
+    // read socket data into receive buffer and notify
     if (m_sock->hasPendingDatagrams())
     {
 //      MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : NetworkDevice::readSocketData()";
         qint64 maxsize = m_sock->pendingDatagramSize();
         if (maxsize > 0)
         {
-            memset(&m_recBuf, 0, sizeof(m_recBuf));
-//          QHostAddress fromAddress;
-//          quint16	 fromPort;
-            qint64 len = m_sock->readDatagram((char *)&m_recBuf, maxsize /*, &fromAddress, &fromPort */);
+            QSharedDataPointer<SD_PACKET> recBuf(new SD_PACKET);
+            QHostAddress fromAddress;
+            quint16	 fromPort;
+            qint64 len = m_sock->readDatagram((char *)(&recBuf->mdp), maxsize, &fromAddress, &fromPort);
+            bLostPacket=(len>0);
             if (len != -1)
             {
-//              MSG_DEBUG << fromAddress.toString().toLocal8Bit().constData() << '(' << fromPort << ") : ID = " << m_recBuf.deviceId << " read datagram : " << len << " from " << maxsize << " bytes";
-//              MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read nr : " << m_recBuf.bufferNumber << " cmd : " << m_recBuf.cmd << " status " << m_recBuf.deviceStatus;
-//              quint64 tim = m_recBuf.time[0] + m_recBuf.time[1] * 0x10000ULL + m_recBuf.time[2] * 0x100000000ULL;
-//              MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read time : " << tim;
+                // MSG_DEBUG << fromAddress.toString().toLocal8Bit().constData() << '(' << fromPort << ") : ID = " << recBuf.deviceId << " read datagram : " << len << " from " << maxsize << " bytes";
+                // MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read nr : " << recBuf.bufferNumber << " cmd : " << recBuf.cmd << " status " << recBuf.deviceStatus;
+                // quint64 tim = recBuf.time[0] + recBuf.time[1] * 0x10000ULL + recBuf.time[2] * 0x100000000ULL;
+                // MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read time : " << tim;
 
-                emit bufferReceived(m_recBuf);
+                foreach (const struct handler &tmp, m_aHandler)
+                {
+                    if ((tmp.SourceAddr.isNull() || tmp.SourceAddr == fromAddress)
+			&& (tmp.wPort == 0 || tmp.wPort == fromPort))
+                    {
+                        bLostPacket = false;
+                        (tmp.pFunction)(recBuf, tmp.pParam);
+                    }
+                }
             }
+            if (bLostPacket)
+                MSG_DEBUG << "lost " << len << " bytes from " << fromAddress << ", port " << fromPort << ": " << HexDump(&recBuf->mdp, len);
         }
     }
 }

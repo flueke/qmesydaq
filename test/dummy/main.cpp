@@ -18,12 +18,12 @@ int main(int argc, char **argv)
 	Mesydaq2 *mesy(NULL);
 		
 #if 1
-	m[0] = new MCPD8(0, NULL, "192.168.168.121", 54321, "192.168.168.5");
+	m[0] = new MCPD8(0, "192.168.168.121", 54321, "192.168.168.5");
 	qDebug() << QObject::tr("module 2 : %1").arg(m[0]->version());
 	qDebug() << "MCPD capabilities " << m[0]->capabilities();
 	qDebug() << "MPSD capabilities " << m[0]->capabilities(1);
 
-	m[1] = new MCPD8(1, NULL, "192.168.168.122", 54321, "192.168.168.5");
+	m[1] = new MCPD8(1, "192.168.168.122", 54321, "192.168.168.5");
 	qDebug() << QObject::tr("module 1 : %1").arg(m[1]->version());
 	qDebug() << "MCPD capabilities " << m[1]->capabilities();
 	qDebug() << "MPSD capabilities " << m[1]->capabilities(7);

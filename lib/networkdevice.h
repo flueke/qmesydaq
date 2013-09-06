@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QMutex>
+#include <QHostAddress>
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
@@ -32,34 +33,42 @@ class QSocketNotifier;
 /**
  * \short Base class for network devices like MCPD-2, MCPD-8
  *
- * the objects of this class will be created and destroyed via a factory
+ * The objects of this class will be created and destroyed via a factory.
  *
- * \author Gregor Montermann <g.montermann@mesytec.com>
+ * There should be an instance for every UDP port (with interface) on the host computer.
+ * Every instance has a listener thread waiting for incoming packets. You need to use
+ * "connect_handler" to receive packets. You can use "sendBuffer" to send a packet to
+ * a specific target.
+ *
+ * \author Gregor Montermann <g.montermann@mesytec.com>, Lutz Rossa <rossa@helmholtz-berlin.de>
 */
 class LIBQMESYDAQ_EXPORT NetworkDevice : public QObject
 {
 Q_OBJECT
 public:
-	static NetworkDevice *create(QObject *parent = 0, QString = "0.0.0.0", quint16 = 54321);
+	typedef void (*analyzeBufferFunction)(QSharedDataPointer<SD_PACKET> pPacket, void* pParam);
+
+	static NetworkDevice *create(quint16 wPort = 54321, QString szHostIp = QString("0.0.0.0"));
 
 	static void destroy(NetworkDevice *);
 
 private:
-	NetworkDevice(QObject *parent = 0, QString = "0.0.0.0", quint16 = 54321);
-
+	NetworkDevice(quint16 wPort = 54321, QString szHostIp = QString("0.0.0.0"));
 	~NetworkDevice();
 
 public:
-	bool sendBuffer(const QString &target, const MDP_PACKET &packet);
+	bool connect_handler(QHostAddress source, quint16 wPort, analyzeBufferFunction pFunction, void *pParam);
+	void disconnect_handler(QHostAddress source, quint16 wPort, analyzeBufferFunction pFunction);
 
-	bool sendBuffer(const QString &target, const MDP_PACKET2 &packet);
+	bool sendBuffer(const QString &szTargetIp, quint16 wPort, const QSharedDataPointer<SD_PACKET> &buf);
+	bool sendBuffer(const QString &szTargetIp, quint16 wPort, const MDP_PACKET &packet);
+	bool sendBuffer(const QString &szTargetIp, quint16 wPort, const MDP_PACKET2 &packet);
 
 	//! \return IP address of the target
-	//! \return IP address of the target
-	QString ip() {return m_source;}
+	QString ip() {return m_szHostIp;}
 
 	//! \return port number of the communication target
-	quint16 port() {return m_port;}
+	quint16 port() {return m_wPort;}
 
 public slots:
 	//! handles the action if some data reach the socket for incoming data
@@ -75,25 +84,34 @@ private slots:
 	void destroySocket(void);
 
 private:
-	static QMutex			m_mutex;
+	struct handler
+	{
+		QHostAddress SourceAddr;
+		quint16 wPort;
+		analyzeBufferFunction pFunction;
+		void *pParam;
+	};
 
-	static QList<NetworkDevice*>	m_networks;
+	static QMutex                m_mutex;
 
-	static QList<int>		m_inUse;
+	static QList<NetworkDevice*> m_aNetworks;
 
-	QThread*                        m_pThread;
+	static QList<int>            m_inUse;
 
-	bool                            m_bFlag;
+	QThread                      *m_pThread;
 
-	quint16				m_port;
+	bool                         m_bFlag;
 
-	QString				m_source;
+	QString                      m_szHostIp;
 
-	QUdpSocket 			*m_sock;
+	quint16                      m_wPort;
 
-	QSocketNotifier 		*m_notifyNet;
+	QUdpSocket                   *m_sock;
 
-	MDP_PACKET			m_recBuf;
+	QSocketNotifier              *m_notifyNet;
+
+	//! all packet handlers
+	QList<struct handler>        m_aHandler;
 };
 
 #endif

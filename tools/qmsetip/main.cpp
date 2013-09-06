@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 		fromIP = "192.168.168.121";
 	}
 
-	MCPD8 *m = new MCPD8(id, NULL, fromIP);
+	MCPD8 *m = new MCPD8(id, fromIP);
 
 	qDebug() << QObject::tr("%2 module : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(id);
 	qDebug() << QObject::tr("new IP address : %1").arg(toIP);

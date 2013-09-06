@@ -1419,7 +1419,7 @@ void MainWidget::addMCPD(void)
     if (d.exec() == QDialog::Accepted)
     {
 //	m_theApp->addMCPD(d.id(), d.ip());
-	QMetaObject::invokeMethod(m_theApp, "addMCPD", Qt::BlockingQueuedConnection, Q_ARG(quint16, d.id()), Q_ARG(QString, d.ip()));
+	QMetaObject::invokeMethod(m_theApp, "addMCPD", Qt::BlockingQueuedConnection, Q_ARG(quint8, d.id()), Q_ARG(QString, d.ip()));
 	init();
 	m_theApp->setTimingSetup(d.id(), d.master(), d.terminate(), d.externsync());
     }
@@ -1710,7 +1710,7 @@ void MainWidget::customEvent(QEvent *e)
                         Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
                         if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
                         {
-                            // CARESS has it's x=0:y=0 position at top left corner
+                            // CARESS has it's x = 0:y = 0 position at top left corner
                             for (int y = tmpHistogram->height() - 1; y >= 0; --y)
                                 for (int x = 0; x < tmpHistogram->width(); ++x)
                                     tmpData->append(tmpHistogram->value(x, y));
@@ -1754,7 +1754,7 @@ void MainWidget::customEvent(QEvent *e)
                 if(interface)
                 {
                     int i = startStopButton->isChecked();
-                    interface->postCommandToInterface(CommandEvent::C_STATUS,QList<QVariant>() << i);
+                    interface->postCommandToInterface(CommandEvent::C_STATUS, QList<QVariant>() << i);
                 }
                 break;
             case CommandEvent::C_MAPCORRECTION: // mapping and correction data
@@ -1767,7 +1767,7 @@ void MainWidget::customEvent(QEvent *e)
                         MapCorrection *pNewMap = dynamic_cast<MapCorrection *>((QObject*)args[0].toULongLong());
                         if (pNewMap == NULL)
                         {
-                            QSize size(m_meas->width(),m_meas->height());
+                            QSize size(m_meas->width(), m_meas->height());
                             pNewMap = new LinearMapCorrection(size, size, MapCorrection::OrientationDownRev);
                         }
                         if (pNewMap != NULL)
@@ -1803,7 +1803,7 @@ void MainWidget::customEvent(QEvent *e)
                 if (interface)
                 {
                     MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
-                    interface->postCommandToInterface(CommandEvent::C_MAPPEDHISTOGRAM,QList<QVariant>() << ((quint64)pHist));
+                    interface->postCommandToInterface(CommandEvent::C_MAPPEDHISTOGRAM, QList<QVariant>() << ((quint64)pHist));
                 }
                 break;
             case CommandEvent::C_GET_RUNID:
@@ -1866,7 +1866,7 @@ void MainWidget::customEvent(QEvent *e)
                             default:
                                 break;
                         }
-                        interface->postCommandToInterface(CommandEvent::C_READ_COUNTER,QList<QVariant>() << value);
+                        interface->postCommandToInterface(CommandEvent::C_READ_COUNTER, QList<QVariant>() << value);
                     }
                     break;
 		case CommandEvent::C_COUNTER_SELECTED:
@@ -1896,7 +1896,7 @@ void MainWidget::customEvent(QEvent *e)
                             default:
                                 break;
                         }
-                        interface->postCommandToInterface(CommandEvent::C_READ_COUNTER,QList<QVariant>() << value);
+                        interface->postCommandToInterface(CommandEvent::C_READ_COUNTER, QList<QVariant>() << value);
 		    }
 		    break;
                 case CommandEvent::C_SELECT_COUNTER:

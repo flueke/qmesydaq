@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 				id = args.at(i).toInt();
 	}
 
-	MCPD8 *m = new MCPD8(id, NULL, ip);
+	MCPD8 *m = new MCPD8(id, ip);
 	qDebug() << QObject::tr("%2 : MCPD : %1 (id=%3)").arg(m->version()).arg(m->ip()).arg(id);
 	qDebug() << QObject::tr("Set master %1, terminate : %2").arg(master).arg(term);
 

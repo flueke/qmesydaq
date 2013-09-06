@@ -230,7 +230,7 @@ public slots:
 	//! analysis thread end
 	void threadExit(void);
 
-	void addMCPD(quint16 id, QString = "192.168.168.121", quint16 = 54321, QString = "0.0.0.0");
+	void addMCPD(quint16 byId, QString szMcpdId = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = "0.0.0.0");
 
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
 
@@ -291,7 +291,7 @@ public slots:
 
 	void allPulserOff();
 
-	virtual void analyzeBuffer(DATA_PACKET &pd);
+	virtual void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 signals:
 	/**
@@ -304,9 +304,9 @@ signals:
 	/**
 	 * will be emitted if new data packet reached from one of the MCPD's 
 	 *
-	 * \param pd data packet
+	 * \param pPacket data packet
 	 */
-	void analyzeDataBuffer(DATA_PACKET pd);
+	void analyzeDataBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 protected:
 	void timerEvent(QTimerEvent *event);

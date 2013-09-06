@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009-2012 by Jens Kr�ger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2013 by Lutz Rossa <rossa@helmholtz-berlin.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,27 +21,21 @@
 #ifndef MCPD2_H
 #define MCPD2_H
 
-#include <QObject>
-#include <QString>
-#include <QMap>
+#include "mcpd.h"
 
-#include "libqmesydaq_global.h"
-#include "structures.h"
-
-class NetworkDevice;
 class MPSD8;
 class QTimer;
 
 /**
  * \short representation of MCPD-8 central module
  *
- * \author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Gregor Montermann <g.montermann@mesytec.com>, Lutz Rossa <rossa@helmholtz-berlin.de>
 */
-class LIBQMESYDAQ_EXPORT MCPD2 : public QObject
+class LIBQMESYDAQ_EXPORT MCPD2 : public MCPD
 {
 Q_OBJECT
 public:
-	MCPD2(quint8 byId, QObject *parent = 0, QString szMcpdId = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = "0.0.0.0");
+	MCPD2(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = QString("0.0.0.0"));
 
 	virtual ~MCPD2();
 
@@ -58,9 +53,6 @@ public:
 	bool setId(quint8 mcpdid);
 
 	bool readId(void);
-
-	//! \return the ID of this MCPD
-	quint8 getId(void) { return m_id; }
 
 	bool setProtocol(const QString& addr, const QString& datasink = QString("0.0.0.0"), const quint16 dataport = 0, const QString& cmdsink = QString("0.0.0.0"), const quint16 cmdport = 0);
 
@@ -193,27 +185,13 @@ public:
 	 */
 	quint32 getRunId(void) {return m_runId;}
 
-	/**
-	 * gets the address of the MCPD module
-	 *
-	 * \return IP address of the MCPD
-	 */
-	QString ip(void) {return m_ownIpAddress;}
-
-	/**
-	 * gets the command port of the MCPD
-	 *
-	 * \return port number of the command port
-	 */
-	quint16 port(void) {return m_cmdPort;}
-
 public slots:
 	//! analyse network packet
-	void analyzeBuffer(const MDP_PACKET &pd);
+	virtual bool analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 private slots:
 	//! callback for the communication timer to detect a timeout
-	void commTimeout(void);
+//	void commTimeout(void);
 
 signals:
 	//! this will be emitted if the MCPD-8 was started 
@@ -230,7 +208,7 @@ signals:
 	 *
 	 * \param pd data packet
 	 */
-	void analyzeDataBuffer(DATA_PACKET pd);
+	void analyzeDataBuffer(QSharedDataPointer<SD_PACKET> pd);
 
 private:
 	void communicate(bool yesno) {m_bCommActive = yesno;}
@@ -239,60 +217,35 @@ private:
 
 	void finishCmdBuffer(quint16 buflen);
 
-	int sendCommand(bool = true);
+	bool sendCommand(bool = true);
 
 	quint8 calcChksum(const MDP_PACKET2 &buffer);
 
-	int sendCommand(quint16 *buffer);
-
 	void stdInit(void);
 
-	bool isBusy(void) {return m_bCommActive;}
-
 private:
-	//! communication device
-	NetworkDevice	*m_network;
-	
 	//! counter for the send command buffer packets
-	quint16		m_txCmdBufNum;
+	quint16             m_txCmdBufNum;
 
-	//! ID of the MCPD
-	quint8 		m_id;
-
-// communication params
-	//! IP address of the module
-	QString 	m_ownIpAddress;
-
-	//! IP address for sending the commands
-	QString 	m_cmdIpAddress;
-
-	//! Port for commands
-	quint16 	m_cmdPort;
-
-	//! IP address for sending the data
-	QString 	m_dataIpAddress;
-
-	//! Port for the data
-	quint16 	m_dataPort;
-	
+	// communication params
 	//! is this MCPD master on sync bus or not
-	bool 		m_master;
-	
-	//! is this MCPD terminated on sync bus or not
-	bool 		m_term;
-	
-	//! 8 counter cells, trig source in [0], compare reg in [1]
-	quint8 		m_counterCell[8][2];
+	bool                m_master;
 
-	//! four auxiliary timers, capture values
-	quint16 	m_auxTimer[4];
+	//! is this MCPD terminated on sync bus or not
+	bool		m_term;
+
+	//! 8 counter cells, trig source in [0], compare reg in [1]
+	quint8		m_counterCell[8][2];
+
+	//! 4 auxiliary timers, capture values
+	quint16		m_auxTimer[4];
 
 	//! four parameters (transmitted in buffer header), 9 possible sources
-	quint8 		m_paramSource[4];
-	
-	bool 		m_stream;
-	quint64 	m_parameter[4];
-	bool		m_bCommActive;
+	quint8		m_paramSource[4];
+
+	bool		m_stream;
+	quint64		m_parameter[4];
+	bool 		m_bCommActive;
 
 	MDP_PACKET2	m_cmdBuf;
 
@@ -313,26 +266,29 @@ private:
 	//! counter for the sent cmd packets
 	quint32		m_cmdTxd;
 
-	//! counter for the receivcd cmd packets
-	quint32		m_cmdRxd;
-
-	//! the accessed MPSD8 ????
-	QMap<int, MPSD8 *> m_mpsd;
-	
-	//! the header time stamp
-	quint64		m_headertime;
-
-	//! the header time in ms
-	quint64		m_timemsec;
-
-	//! the firmware version 
-	float		m_version;
-
 	//! last register read value
 	quint16		m_reg;
 
+	//! counter for the receivcd cmd packets
+	quint32             m_cmdRxd;
+
+	//! the accessed MPSD8 ????
+	QMap<int, MPSD8 *>  m_mpsd;
+
+	//! the header time stamp
+	quint64             m_headertime;
+
+	//! the header time in ms
+	quint64             m_timemsec;
+
+	//! the firmware version
+	float               m_version;
+
 	//! last peripheral register value
-	quint16		m_periReg;
+	quint16             m_periReg;
+
+	//! READID data
+	quint16             m_awReadId[8];
 };
 
 #endif
