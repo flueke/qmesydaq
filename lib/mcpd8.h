@@ -37,7 +37,7 @@ class LIBQMESYDAQ_EXPORT MCPD8 : public MCPD
 	Q_OBJECT
 
 public:
-	MCPD8(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = QString::null);
+	MCPD8(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = QString::null, bool bTestOnly = false);
 
 	virtual ~MCPD8();
 
@@ -89,9 +89,6 @@ public:
 	bool readId(void);
 
 	bool scanPeriph(void);
-
-	//! \return the ID of this MCPD
-	quint8 getId(void) { return m_id; }
 
 	bool setProtocol(const QString& addr, const QString& datasink = QString::null, const quint16 dataport = 0, const QString& cmdsink = QString::null, const quint16 cmdport = 0);
 
@@ -328,14 +325,11 @@ private:
 	void stdInit(void);
 
 private:
-	//! communication device
-	NetworkDevice	*m_network;
-	
+	//! test mode: do not initialize, for testing existence only (read MCPD version)
+	bool		m_bTestOnly;
+
 	//! counter for the send command buffer packets
 	quint16		m_txCmdBufNum;
-
-	//! ID of the MCPD
-	quint8 		m_id;
 
 // communication params
 	//! IP address of the module

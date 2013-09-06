@@ -39,8 +39,9 @@
  * \param sourceIP   host IP address to bind to
  * \param bTestOnly  do not initialize, read version only
  */
-MCPD8::MCPD8(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szHostIp /*= QString::null*/)
+MCPD8::MCPD8(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szHostIp /*= QString::null*/, bool bTestOnly)
     : MCPD(byId, szMcpdIp, wPort, QString::null, 0, szHostIp)
+    , m_bTestOnly(bTestOnly)
     , m_txCmdBufNum(0)
     , m_master(true)
     , m_term(true)
@@ -67,7 +68,7 @@ MCPD8::MCPD8(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPor
 //  setId(m_id);
 //  version();
     if (isInitialized())
-        if (scanPeriph())
+        if (scanPeriph() && !m_bTestOnly)
             init();
 }
 
@@ -449,6 +450,8 @@ bool MCPD8::scanPeriph(void)
     MSG_DEBUG << "GETVER " << m_byId << ": " << m_version;
     if (m_version < 0.0)
         return false;
+    if (m_bTestOnly)
+        return true;
 
 // check the MCPD capabilities
     m_capabilities = capabilities();
