@@ -30,6 +30,9 @@
 #include "logging.h"
 #include "stdafx.h"
 
+#define MCPD8_MAX_ERRORCOUNT    5
+#define MCPD8_TRY_SETCMD        3
+
 /**
  * constructor
  *
@@ -39,7 +42,7 @@
  * \param sourceIP   host IP address to bind to
  * \param bTestOnly  do not initialize, read version only
  */
-MCPD8::MCPD8(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szHostIp /*= QString::null*/, bool bTestOnly)
+MCPD8::MCPD8(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szHostIp /*= QString::null*/, bool bTestOnly /*= false*/)
     : MCPD(byId, szMcpdIp, wPort, QString::null, 0, szHostIp)
     , m_bTestOnly(bTestOnly)
     , m_txCmdBufNum(0)
@@ -80,7 +83,9 @@ MCPD8::~MCPD8()
 
 bool MCPD8::isInitialized() const
 {
-    return MCPD::isInitialized();
+    if (!MCPD::isInitialized())
+        return false;
+    return (m_iErrorCounter < MCPD8_MAX_ERRORCOUNT);
 }
 
 /*!
@@ -98,6 +103,8 @@ bool MCPD8::init(void)
 
     int modus = TPA;
     quint16 cap = capabilities();
+    if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
+        return false;
 
     MSG_NOTICE << "capabilities : " << cap;
 
@@ -131,6 +138,8 @@ bool MCPD8::init(void)
 // set tx capability
     if (m_mdll.isEmpty())
         writeRegister(103, modus);
+    if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
+        return false;
     MSG_NOTICE << "using modus : " << getTxMode();
 
     for (quint16 c = 0; c < 8; c++)
@@ -142,10 +151,14 @@ bool MCPD8::init(void)
 //		case TYPE_MPSD8:
 		case TYPE_MPSD8SADC:
 			writePeriReg(c, 1, modus);
+			if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
+				return false;
 		default:
 			break;
 	    }
             version(c);
+            if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
+                return false;
         }
     return true;
 }
@@ -457,6 +470,9 @@ bool MCPD8::scanPeriph(void)
     m_capabilities = capabilities();
 // check the peripherial modules
     MSG_DEBUG << "GETCAPABILITIES " << m_byId << ": " << m_capabilities;
+    if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
+        return false;
+    // check the peripherial modules
     if (readId())
     {
         MSG_DEBUG << "READID " << m_byId;
@@ -1426,7 +1442,7 @@ void MCPD8::initCmdBuffer(quint16 cmd)
  */
 void MCPD8::finishCmdBuffer(quint16 buflen)
 {
-    m_cmdBuf.bufferNumber =	m_txCmdBufNum++;
+    m_cmdBuf.bufferNumber = m_txCmdBufNum++;
     m_cmdBuf.bufferLength = CMDHEADLEN + buflen;
     m_cmdBuf.data[buflen] = 0xFFFF;
     m_cmdBuf.headerChksum = 0;
@@ -1444,7 +1460,9 @@ bool MCPD8::sendCommand(bool bCheckAnswer)
 {
     bool bOK(false);
     bool bTimeout(false);
+    int iTryCount(0);
     m_pCommunicationMutex->lock();
+tryagain:
     if (m_pNetwork->sendBuffer(m_szMcpdIp, m_wPort, m_cmdBuf))
     {
         quint64 qwStart = QDateTime::currentMSecsSinceEpoch();
@@ -1476,11 +1494,20 @@ bool MCPD8::sendCommand(bool bCheckAnswer)
             switch (m_iCommActive)
             {
             case RECV_INVALID: // command was not correctly processed
+                m_iErrorCounter = 0;
+                if ((++iTryCount) < MCPD8_TRY_SETCMD)
+                    goto tryagain;
                 bOK = false;
                 break;
             case SEND: // timeout
+                if (m_iErrorCounter < MCPD8_MAX_ERRORCOUNT)
+                {
+                    ++m_iErrorCounter;
+                    goto tryagain;
+                }
                 break;
             default: // normal
+                m_iErrorCounter = 0;
                 bOK = true;
                 break;
             }

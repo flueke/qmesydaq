@@ -33,7 +33,8 @@
  *  \param szSourceIp    optional host IP address
  */
 MCPD::MCPD(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szMcpdDataIp /*= QString::null*/, quint16 wDataPort /*= 0*/, QString szSourceIp /*= QString::null*/)
-    : m_pNetwork(NULL)
+    : m_iErrorCounter(0)
+    , m_pNetwork(NULL)
     , m_pDataNetwork(NULL)
     , m_byId(byId)
     , m_szMcpdIp(szMcpdIp)

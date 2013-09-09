@@ -57,6 +57,13 @@ public:
     virtual ~MCPD();
 
     virtual bool isInitialized() const {return m_bBaseMcpdInitialized;}
+    virtual int errorCount(bool bClear = false)
+    {
+	    int r(m_iErrorCounter);
+	    if (bClear)
+		    m_iErrorCounter = 0;
+	    return r;
+    }
 
     //! connect a new data packet handler to this MCPD
     bool connect_handler(analyzeBufferFunction pFunction, void* pParam = NULL);
@@ -84,6 +91,9 @@ public:
 protected:
     //! analyse a network packet, \return true to prevent calling other packet handlers
     virtual bool analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket) = 0;
+
+    //! error counter
+    int m_iErrorCounter;
 
     //! communication device
     NetworkDevice* m_pNetwork;
