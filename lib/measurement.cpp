@@ -94,7 +94,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
 
-	m_rateTimer = startTimer(8);	// every 8 ms calculate the rates
+	m_rateTimer = startTimer(100);	// every 100 ms calculate the rates, was 8 before
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
 }
 

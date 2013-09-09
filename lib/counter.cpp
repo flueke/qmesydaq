@@ -93,21 +93,22 @@ void MesydaqCounter::setTime(quint64 val)
 
 void MesydaqCounter::calcRate(void)
 {
-	if(m_meastime_msec == 0)
+	if (m_meastime_msec == 0)
 		return;
-	if(m_ratetime_msec >= m_meastime_msec)
+	if (m_ratetime_msec >= m_meastime_msec)
 	{
 		m_ratetime_msec = m_meastime_msec;
 		return;
 	}
-	if (m_rateflag == true)
+	if (m_rateflag)
 	{
 		if (m_meastime_msec > m_ratetime_msec)
 		{
 			quint64 tval = (m_meastime_msec - m_ratetime_msec);
-			if (m_rate.size() > 10)
+			int iSize(m_rate.size());
+			while (iSize-- >= 50)
 				m_rate.removeFirst();
-			if (m_rate.size() > 1 && (m_value >= m_lastValue))
+			if (iSize > 0 && (m_value >= m_lastValue))
 				m_rate.enqueue((m_value - m_lastValue) * 1000 / tval);
 			else
 			{
@@ -127,12 +128,11 @@ void MesydaqCounter::calcRate(void)
 void MesydaqCounter::calcMeanRate(void)
 {
 	quint64 val2(0);
-	for(quint16 c = 1; c < m_rate.size(); ++c)
-		val2 += m_rate[c];
-	if(m_rate.size() > 2)
-		m_meanRate = val2 / (m_rate.size() - 1);
-	else
-		m_meanRate = 0;			
+	foreach (const quint64 &v, m_rate)
+		val2 += v;
+	if(m_rate.size() > 1)
+		val2 /= m_rate.size();
+	m_meanRate = val2;
 }
 
 quint64 MesydaqCounter::rate()
