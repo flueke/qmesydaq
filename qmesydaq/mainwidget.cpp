@@ -1554,13 +1554,13 @@ void MainWidget::quitContinue(void)
 */
 void MainWidget::closeEvent(QCloseEvent *)
 {
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
-    settings.beginGroup("Plot");
-    settings.setValue("pos", m_dataFrame->pos());
-    QSize s = m_dataFrame->size();
-    QSize fs = m_dataFrame->frameSize();
-    settings.setValue("size", QSize(s.width(), fs.height()));
-    settings.endGroup();
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+	settings.beginGroup("Plot");
+	settings.setValue("pos", m_dataFrame->pos());
+	QSize s = m_dataFrame->size();
+	QSize fs = m_dataFrame->frameSize();
+	settings.setValue("size", QSize(s.width(), fs.height()));
+	settings.endGroup();
 }
 
 /*!
@@ -1571,608 +1571,484 @@ void MainWidget::closeEvent(QCloseEvent *)
 void MainWidget::customEvent(QEvent *e)
 {
     CommandEvent *event = dynamic_cast<CommandEvent*>(e);
-    if(!event)
+    if (!event)
     {
         QWidget::customEvent(e);
         return;
     }
-    else
+
+    CommandEvent::Command cmd = event->getCommand();
+    QList<QVariant> args = event->getArgs(); // command arguments
+    QList<QVariant> answer; // answer data
+
+    MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+    QMesyDAQDetectorInterface *interface = NULL;
+    if (app)
+        interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
+
+    if (!interface) // we need an interface: every command needs an answer
+        return;
+
+    switch(cmd)
     {
-        CommandEvent::Command cmd = event->getCommand();
-        QList<QVariant> args = event->getArgs();
-
-        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-        QMesyDAQDetectorInterface *interface = NULL;
-        if(app)
-	{
-            interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
-        }
-
-        switch(cmd)
-	{
-            case CommandEvent::C_START:
+	case CommandEvent::C_START:
 #if 0
-                clearAll->animateClick();
-                QCoreApplication::processEvents();
+		clearAll->animateClick();
+		QCoreApplication::processEvents();
 #endif
-            case CommandEvent::C_RESUME:
-                if (!startStopButton->isChecked())
-                {
-                    startStopButton->click();
-                    QCoreApplication::processEvents();
-                }
-                break;
-            case CommandEvent::C_STOP:
-                if (startStopButton->isChecked())
-                    startStopButton->click();
-                break;
-            case CommandEvent::C_CLEAR:
-                clearAll->animateClick();
-                break;
-            case CommandEvent::C_PRESELECTION:
-                if(interface)
-                {
-                    double value(0);
-                    if (!args.isEmpty())
-                    {
-                        int id(args[0].toInt());
-                        switch (id)
-                        {
-                            case M1CT:
-				value = monitor1Preset->presetValue();
-				break;
-                            case M2CT:
-				value = monitor2Preset->presetValue();
-				break;
-                            case M3CT:
-				value = monitor3Preset->presetValue();
-				break;
-                            case M4CT:
-				value = monitor4Preset->presetValue();
-				break;
-                            case EVCT:
-				value = eventsPreset->presetValue();
-				break;
-                            case TCT:
-                                value = timerPreset->presetValue();
-				break;
-			}
-                    }
-		    else
-		    {
-                        if (timerPreset->isChecked())
-                            value = timerPreset->presetValue();
-                        else if (eventsPreset->isChecked())
-                            value = eventsPreset->presetValue();
-                        else if (monitor1Preset->isChecked())
-                            value = monitor1Preset->presetValue();
-                        else if (monitor2Preset->isChecked())
-                            value = monitor2Preset->presetValue();
-                        else if (monitor3Preset->isChecked())
-                            value = monitor3Preset->presetValue();
-                        else if (monitor4Preset->isChecked())
-                            value = monitor4Preset->presetValue();
-		    }
-                    interface->postCommandToInterface(CommandEvent::C_PRESELECTION, QList<QVariant>() << value);
-                }
-                break;
-            case CommandEvent::C_READ_DIFFRACTOGRAM:
-                if(interface)
-                {
-                    QList<QVariant> retVal;
-                    Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::Diffractogram);
-                    if (tmpSpectrum->width() > 0)
-                    {
-                        for (int i = 0; i < tmpSpectrum->width(); ++i)
-                            retVal << tmpSpectrum->value(i);
-                    }
-                    else
-                        retVal << m_meas->events();
-                    interface->postCommandToInterface(CommandEvent::C_READ_DIFFRACTOGRAM, retVal);
-                }
-                break;
-            case CommandEvent::C_READ_HISTOGRAM_SIZE:
-                if (interface)
-                {
-                    QList<QVariant> retVal;
-                    if (m_meas->setupType() == Measurement::Mstd)
-                    {
-                        Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
-                        retVal << tmpSpectrum->width();
-                        retVal << 1;
-                    }
-                    {
-                        Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-                        retVal << tmpHistogram->width(); 	// width  (should be equal to number of MPSD inputs)
-                        retVal << tmpHistogram->height(); 	// width  (should be equal to number of MPSD inputs)
-//                      retVal << (m_meas->width() + 1);    // height (should be 960)
-                    }
-                    interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM_SIZE, retVal);
-                }
-                break;
-            case CommandEvent::C_READ_HISTOGRAM:
-                if(interface)
-                {
-                    QList<QVariant> retVal;
-                    QList<quint64>* tmpData = new QList<quint64>();
-                    if (m_meas->setupType() == Measurement::Mstd)
-                    {
-                        Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
-                        if (tmpSpectrum->width() > 0)
-                        {
-                            for (int x = 0; x < tmpSpectrum->width(); ++x)
-                                retVal << tmpSpectrum->value(x);
-                        }
-                        interface->postCommandToInterface(CommandEvent::C_READ_SPECTROGRAM, retVal);
-                    }
-                    else
-                    {
-                        Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-                        if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
-                        {
-                            // CARESS has it's x = 0:y = 0 position at top left corner
-                            for (int y = tmpHistogram->height() - 1; y >= 0; --y)
-                                for (int x = 0; x < tmpHistogram->width(); ++x)
-                                    tmpData->append(tmpHistogram->value(x, y));
-                        }
-                        else
-                            tmpData->append(m_meas->events());
-										// hack to transfer a QList<quint64> to QtInterface without to copy it
-                        retVal << ((quint64)tmpData);
-                        interface->postCommandToInterface(CommandEvent::C_READ_HISTOGRAM, retVal);
-                    }
-                }
-                break;
-            case CommandEvent::C_READ_SPECTROGRAM:
-                if(interface)
-                {
-                    QList<QVariant> retVal;
-                    Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-                    Spectrum* tmpSpectrum = NULL;
-                    int i(-1);
-                    if (!args.isEmpty())
-                    {
-                        i = args[0].toInt();
-                        if (i < 0 || i > tmpHistogram->height()) 
-                            i =- 1;
-                    }
-                    if (i >= 0)
-                        tmpSpectrum = tmpHistogram->spectrum(i);
-                    else
-                        tmpSpectrum = tmpHistogram->xSumSpectrum();
-                    if (tmpSpectrum->width() > 0)
-                    {
-                        for (int x = 0; x < tmpSpectrum->width(); ++x)
-                            retVal << tmpSpectrum->value(x);
-                    }
-                    else
-                        retVal << m_meas->events();
-                    interface->postCommandToInterface(CommandEvent::C_READ_SPECTROGRAM, retVal);
-                }
-                break;
-            case CommandEvent::C_STATUS:
-                if(interface)
-                {
-                    int i = startStopButton->isChecked();
-                    interface->postCommandToInterface(CommandEvent::C_STATUS, QList<QVariant>() << i);
-                }
-                break;
-            case CommandEvent::C_MAPCORRECTION: // mapping and correction data
-                if (interface)
-                {
-                    MapCorrection *&pMap = m_meas->posHistMapCorrection();
-                    if (!args.isEmpty())
-                    {
-                        MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
-                        MapCorrection *pNewMap = dynamic_cast<MapCorrection *>((QObject*)args[0].toULongLong());
-                        if (pNewMap == NULL)
-                        {
-                            QSize size(m_meas->width(), m_meas->height());
-                            pNewMap = new LinearMapCorrection(size, size, MapCorrection::OrientationDownRev);
-                        }
-                        if (pNewMap != NULL)
-                        {
-                            // new mapping and correction data
-                            QRect mapRect;
-                            if (pMap != NULL) 
-                                delete pMap;
-                            pMap = pNewMap;
-                            mapRect = pMap->getMapRect();
-                            if (pHist == NULL)
-                                pHist = new MappedHistogram(pMap);
-                            else
-                                pHist->setMapCorrection(pMap, m_meas->hist(Measurement::PositionHistogram));
-                        }
-                        else
-                        {
-                            // delete existing mapping
-                            delete pHist;
-                            pHist = NULL;
-                            delete pMap;
-                            pMap = NULL;
-                        }
-                    }
-                    else
-                    {
-                        // query for current mapping and correction data
-                        interface->postCommandToInterface(CommandEvent::C_MAPCORRECTION, QList<QVariant>() << ((quint64)pMap));
-                    }
-                }
-                break;
-            case CommandEvent::C_MAPPEDHISTOGRAM: // mapped and corrected position histogram
-                if (interface)
-                {
-                    MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
-                    interface->postCommandToInterface(CommandEvent::C_MAPPEDHISTOGRAM, QList<QVariant>() << ((quint64)pHist));
-                }
-                break;
-            case CommandEvent::C_GET_RUNID:
-                if (interface)
-                {
-                    quint32 tmp = m_meas->runId();
-                    bool b = m_meas->getAutoIncRunId();
-                    interface->postCommandToInterface(CommandEvent::C_GET_RUNID, QList<QVariant>() << (tmp) << b);
-                }
-                break;
-            case CommandEvent::C_GET_LISTMODE:
-                if (interface)
-                {
-                    bool tmp = acquireFile->isChecked();
-                    interface->postCommandToInterface(CommandEvent::C_GET_LISTMODE, QList<QVariant>() << (tmp));
-                }
-                break;
-            default :
-                break;
-        }
-
-        if (!args.isEmpty())
+	case CommandEvent::C_RESUME:
+		if (!startStopButton->isChecked())
+		{
+			startStopButton->click();
+			QCoreApplication::processEvents();
+		}
+		break;
+	case CommandEvent::C_STOP:
+		if (startStopButton->isChecked())
+			startStopButton->click();
+		break;
+	case CommandEvent::C_CLEAR:
+		clearAll->animateClick();
+		break;
+	case CommandEvent::C_PRESELECTION:
 	{
-            switch(cmd)
-            {
-                case CommandEvent::C_SET_RUNID:
-                    if (interface)
-                    {
-                        int id(args[0].toInt());
-                        m_meas->setRunId(id);
-                        if (args.size() > 1)
-                          m_meas->setAutoIncRunId(args[1].toBool());
-                    }
-                    break;
-                case CommandEvent::C_READ_COUNTER:
-                    if (interface)
-                    {
-                        double value(0);
-                        int id(args[0].toInt());
-                        switch (id)
-                        {
-                            case M1CT:
-				value = m_meas->mon1();
-				break;
-                            case M2CT:
-				value = m_meas->mon2(); 
-				break;
-                            case M3CT:
-				value = m_meas->mon3(); 
-				break;
-                            case M4CT:
-				value = m_meas->mon4(); 
-				break;
-                            case EVCT:
-				value = m_meas->events(); 
-				break;
-                            case TCT:
-                                value = m_meas->timer() / 1000.0;
-				break;
-                            default:
-                                break;
-                        }
-                        interface->postCommandToInterface(CommandEvent::C_READ_COUNTER, QList<QVariant>() << value);
-                    }
-                    break;
-		case CommandEvent::C_COUNTER_SELECTED:
-		    {
-                        int id(args[0].toInt());
-			bool value(false);
-                        switch (id)
-                        {
-                            case M1CT:
+		double value(0);
+		if (!args.isEmpty())
+		{
+			int id(args[0].toInt());
+			switch (id)
+			{
+				case M1CT:
+					value = monitor1Preset->presetValue();
+					break;
+				case M2CT:
+					value = monitor2Preset->presetValue();
+					break;
+				case M3CT:
+					value = monitor3Preset->presetValue();
+					break;
+				case M4CT:
+					value = monitor4Preset->presetValue();
+					break;
+				case EVCT:
+					value = eventsPreset->presetValue();
+					break;
+				case TCT:
+					value = timerPreset->presetValue();
+					break;
+			}
+		}
+		else
+		{
+			if (timerPreset->isChecked())
+				value = timerPreset->presetValue();
+			else if (eventsPreset->isChecked())
+				value = eventsPreset->presetValue();
+			else if (monitor1Preset->isChecked())
+				value = monitor1Preset->presetValue();
+			else if (monitor2Preset->isChecked())
+				value = monitor2Preset->presetValue();
+			else if (monitor3Preset->isChecked())
+				value = monitor3Preset->presetValue();
+			else if (monitor4Preset->isChecked())
+				value = monitor4Preset->presetValue();
+		}
+		answer << value;
+		break;
+	}
+	case CommandEvent::C_COUNTER_SELECTED:
+	{
+		int id(args[0].toInt());
+		bool value(false);
+		switch (id)
+		{
+			case M1CT:
 				value = monitor1Preset->isChecked();
 				break;
-                            case M2CT:
+			case M2CT:
 				value = monitor2Preset->isChecked();
 				break;
-                            case M3CT:
+			case M3CT:
 				value = monitor3Preset->isChecked();
 				break;
-                            case M4CT:
+			case M4CT:
 				value = monitor4Preset->isChecked();
 				break;
-                            case EVCT:
+			case EVCT:
 				value = eventsPreset->isChecked();
 				break;
-                            case TCT:
+			case TCT:
 				value = timerPreset->isChecked();
 				break;
-                            default:
-                                break;
-                        }
-                        interface->postCommandToInterface(CommandEvent::C_READ_COUNTER, QList<QVariant>() << value);
-		    }
-		    break;
-                case CommandEvent::C_SELECT_COUNTER:
-                    {
-                        bool bEnabled(true);
-                        if (args.count() > 1 && args[1].canConvert(QVariant::Bool))
-                            bEnabled = args[1].toBool();
-                        switch (args[0].toInt())
-                        {
-                            case M1CT:
-                                monitor1Preset->setChecked(bEnabled);
-                                break;
-                            case M2CT:
-                                monitor2Preset->setChecked(bEnabled);
-                                break;
-                            case M3CT:
-                                monitor3Preset->setChecked(bEnabled);
-                                break;
-                            case M4CT:
-                                monitor4Preset->setChecked(bEnabled);
-                                break;
-                            case EVCT:
-                                eventsPreset->setChecked(bEnabled);
-                                break;
-                            case TCT:
-                                timerPreset->setChecked(bEnabled);
-                                break;
-                        }
-                        if (args.count() > 2 && args[2].canConvert(QVariant::Double))
-                        {
-                            double dblPreset = args[2].toDouble();
-                            switch (args[0].toInt())
-                            {
-                                case M1CT:
-                                    monitor1Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
-                                    break;
-                                case M2CT:
-                                    monitor2Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
-                                    break;
-                                case M3CT:
-                                    monitor3Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
-                                    break;
-                                case M4CT:
-                                    monitor4Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
-                                    break;
-                                case EVCT:
-                                    eventsPreset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
-                                    break;
-                                case TCT:
-                                    timerPreset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
-                                    break;
-                            }
-                        }
-                        break;
-                    }
-/*
-                case CommandEvent::C_SET_PRESELECTION:
-                    if (timerPreset->isChecked())
-                    {
-                        timerPreset->setPresetValue(args[0].toDouble());
-                        m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
-                    }
-                    else if (eventsPreset->isChecked())
-                    {
-                        eventsPreset->setPresetValue(args[0].toInt());
-                        m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
-                    }
-                    else if (monitor1Preset->isChecked())
-                    {
-                        monitor1Preset->setPresetValue(args[0].toInt());
-                        m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
-                    }
-                    else if (monitor2Preset->isChecked())
-                    {
-                        monitor2Preset->setPresetValue(args[0].toInt());
-                        m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
-                    }
-                    else if (monitor3Preset->isChecked())
-                    {
-                        monitor3Preset->setPresetValue(args[0].toInt());
-                        m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
-                    }
-                    else if (monitor4Preset->isChecked())
-                    {
-                        bool bEnabled(true);
-			bool setPreset(false);
-                        double dblPreset(0);
-                        if (args.count() > 1 && args[1].canConvert(QVariant::Bool))
-                            bEnabled = args[1].toBool();
-                        if (args.count() > 2 && args[2].canConvert(QVariant::Double))
-			{
-			    setPreset = true;
-                            dblPreset = args[2].toDouble();
-			}
-                        switch (args[0].toInt())
-                        {
-                            case M1CT:
-                                monitor1Preset->setChecked(bEnabled);
-				if (setPreset)
-				{
-                                    monitor1Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON1ID, dblPreset, true);
-				}
-                                break;
-                            case M2CT:
-                                monitor2Preset->setChecked(bEnabled);
-				if (setPreset)
-				{
-                                    monitor2Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON2ID, dblPreset, true);
-				}
-                                break;
-                            case M3CT:
-                                monitor3Preset->setChecked(bEnabled);
-				if (setPreset)
-				{
-                                    monitor3Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON3ID, dblPreset, true);
-				}
-                                break;
-                            case M4CT:
-                                monitor4Preset->setChecked(bEnabled);
-				if (setPreset)
-				{
-                                    monitor4Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON4ID, dblPreset, true);
-				}
-                                break;
-                            case EVCT:
-                                eventsPreset->setChecked(bEnabled);
-				if (setPreset)
-				{
-                                    eventsPreset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(EVID, dblPreset, true);
-				}
-                                break;
-                            case TCT:
-                                timerPreset->setChecked(bEnabled);
-				if (setPreset)
-				{
-                                    timerPreset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(TIMERID, qint64(dblPreset * 1000), true);
-				}
-                                break;
-                            default:
+			default:
 				break;
-                        }
-                        break;
-                    }
-*/
-                case CommandEvent::C_SET_PRESELECTION:
-		    {
-			double dblPreset = args[0].toDouble();
-                        if (args.count() > 1)
-                        {
-                            int id(args[1].toInt());
-                            switch (id)
-                            {
-                                case M1CT:
-                                    monitor1Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON1ID, dblPreset, true);
-				    break;
-                                case M2CT:
-                                    monitor2Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON2ID, dblPreset, true);
-				    break;
-                                case M3CT:
-                                    monitor3Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON3ID, dblPreset, true);
-				    break;
-                                case M4CT:
-                                    monitor4Preset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(MON4ID, dblPreset, true);
-				    break;
-                                case EVCT:
-                                    eventsPreset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(EVID, dblPreset, true);
-				    break;
-                                case TCT:
-                                    timerPreset->setPresetValue(dblPreset);
-                                    m_meas->setPreset(TIMERID, quint64(dblPreset * 1000), true);
-				    break;
-				default:
-				    break;
-			    }
-                        }
-		        else
-		        {
-                            if (timerPreset->isChecked())
-                            {
-                                timerPreset->setPresetValue(dblPreset);
-                                m_meas->setPreset(TIMERID, quint64(dblPreset * 1000), true);
-                            }
-                            else if (eventsPreset->isChecked())
-                            {
-                                eventsPreset->setPresetValue(dblPreset);
-                                m_meas->setPreset(EVID, dblPreset, true);
-                            }
-                            else if (monitor1Preset->isChecked())
-                            {
-                                monitor1Preset->setPresetValue(dblPreset);
-                                m_meas->setPreset(MON1ID, dblPreset, true);
-                            }
-                            else if (monitor2Preset->isChecked())
-                            {
-                                monitor2Preset->setPresetValue(dblPreset);
-                                m_meas->setPreset(MON2ID, dblPreset, true);
-                            }
-                            else if (monitor3Preset->isChecked())
-                            {
-                                monitor3Preset->setPresetValue(dblPreset);
-                                m_meas->setPreset(MON3ID, dblPreset, true);
-                            }
-                            else if (monitor4Preset->isChecked())
-                            {
-                                monitor4Preset->setPresetValue(dblPreset);
-                                m_meas->setPreset(MON4ID, dblPreset, true);
-                            }
+		}
+		answer << value;
+		break;
+	}
+	case CommandEvent::C_SELECT_COUNTER:
+	{
+		bool bEnabled(true);
+		if (args.count() > 1 && args[1].canConvert(QVariant::Bool))
+			bEnabled = args[1].toBool();
+		switch (args[0].toInt())
+		{
+			case M1CT:
+				monitor1Preset->setChecked(bEnabled);
+				break;
+			case M2CT:
+				monitor2Preset->setChecked(bEnabled);
+				break;
+			case M3CT:
+				monitor3Preset->setChecked(bEnabled);
+				break;
+			case M4CT:
+				monitor4Preset->setChecked(bEnabled);
+				break;
+			case EVCT:
+				eventsPreset->setChecked(bEnabled);
+				break;
+			case TCT:
+				timerPreset->setChecked(bEnabled);
+				break;
+		}
+		if (args.count() > 2 && args[2].canConvert(QVariant::Double))
+		{
+			double dblPreset = args[2].toDouble();
+			switch (args[0].toInt())
+			{
+				case M1CT:
+					monitor1Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
+					break;
+				case M2CT:
+					monitor2Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
+					break;
+				case M3CT:
+					monitor3Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
+					break;
+				case M4CT:
+					monitor4Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
+					break;
+				case EVCT:
+					eventsPreset->setPresetValue(dblPreset);
+					m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
+					break;
+				case TCT:
+					timerPreset->setPresetValue(dblPreset);
+					m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
+					break;
 			}
-		    }
-                    break;
-                case CommandEvent::C_SET_LISTMODE:
-                    acquireFile->setChecked(args[0].toBool());
-                    break;
-                case CommandEvent::C_SET_LISTHEADER:
-                    if (interface)
-                    {
-			QByteArray header((const char*)args[0].toULongLong(), args[1].toInt());
-			bool bInsertHeaderLength(true);
-			if (args.size() > 2 && args[2].canConvert(QVariant::Bool))
-				bInsertHeaderLength = args[2].toBool();
-			m_meas->setListFileHeader(header, bInsertHeaderLength);
-			interface->postCommandToInterface(CommandEvent::C_SET_LISTHEADER);
-                    }
-		    break;
-		case CommandEvent::C_UPDATEMAINWIDGET:
-		    if (args.count() >= 3)
-		    {
-                        bool b;
-                        int i;
-                        QString s;
+		}
+		break;
+	}
+	case CommandEvent::C_SET_PRESELECTION:
+	{
+		double dblPreset = args[0].toDouble();
+		if (args.count() > 1)
+		{
+			int id(args[1].toInt());
+			switch (id)
+			{
+				case M1CT:
+					monitor1Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON1ID, dblPreset, true);
+					break;
+				case M2CT:
+					monitor2Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON2ID, dblPreset, true);
+					break;
+				case M3CT:
+					monitor3Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON3ID, dblPreset, true);
+					break;
+				case M4CT:
+					monitor4Preset->setPresetValue(dblPreset);
+					m_meas->setPreset(MON4ID, dblPreset, true);
+					break;
+				case EVCT:
+					eventsPreset->setPresetValue(dblPreset);
+					m_meas->setPreset(EVID, dblPreset, true);
+					break;
+				case TCT:
+					timerPreset->setPresetValue(dblPreset);
+					m_meas->setPreset(TIMERID, quint64(dblPreset * 1000), true);
+					break;
+				default:
+					break;
+			}
+		}
+		else
+		{
+			if (timerPreset->isChecked())
+			{
+				timerPreset->setPresetValue(dblPreset);
+				m_meas->setPreset(TIMERID, quint64(dblPreset * 1000), true);
+			}
+			else if (eventsPreset->isChecked())
+			{
+				eventsPreset->setPresetValue(dblPreset);
+				m_meas->setPreset(EVID, dblPreset, true);
+			}
+			else if (monitor1Preset->isChecked())
+			{
+				monitor1Preset->setPresetValue(dblPreset);
+				m_meas->setPreset(MON1ID, dblPreset, true);
+			}
+			else if (monitor2Preset->isChecked())
+			{
+				monitor2Preset->setPresetValue(dblPreset);
+				m_meas->setPreset(MON2ID, dblPreset, true);
+			}
+			else if (monitor3Preset->isChecked())
+			{
+				monitor3Preset->setPresetValue(dblPreset);
+				m_meas->setPreset(MON3ID, dblPreset, true);
+			}
+			else if (monitor4Preset->isChecked())
+			{
+				monitor4Preset->setPresetValue(dblPreset);
+				m_meas->setPreset(MON4ID, dblPreset, true);
+			}
+		}
+		break;
+	}
+	case CommandEvent::C_READ_COUNTER:
+	{
+		double value(0);
+		int id(args[0].toInt());
+		switch (id)
+		{
+			case M1CT:
+				value = m_meas->mon1();
+				break;
+			case M2CT:
+				value = m_meas->mon2();
+				break;
+			case M3CT:
+				value = m_meas->mon3();
+				break;
+			case M4CT:
+				value = m_meas->mon4();
+				break;
+			case EVCT:
+				value = m_meas->events();
+				break;
+			case TCT:
+				value = m_meas->timer() / 1000.0;
+				break;
+			default:
+				break;
+		}
+		answer  << value;
+		break;
+	}
+	case CommandEvent::C_READ_DIFFRACTOGRAM:
+	{
+		Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::Diffractogram);
+		if (tmpSpectrum->width() > 0)
+		{
+			for (int i = 0; i < tmpSpectrum->width(); ++i)
+				answer << tmpSpectrum->value(i);
+		}
+		else
+			answer << m_meas->events();
+		break;
+	}
+	case CommandEvent::C_READ_HISTOGRAM_SIZE:
+	{
+		if (m_meas->setupType() == Measurement::Mstd)
+		{
+			Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
+			answer << tmpSpectrum->width();
+			answer << 1;
+		}
+		else
+		{
+			Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+			answer << tmpHistogram->width();       // width  (should be equal to number of MPSD inputs)
+			answer << tmpHistogram->height();      // width  (should be equal to number of MPSD inputs)
+			answer << (m_meas->width() + 1);    // height (should be 960)
+		}
+		break;
+	}
+	case CommandEvent::C_READ_HISTOGRAM:
+	{
+		QList<quint64>* tmpData = new QList<quint64>();
+		if (m_meas->setupType() == Measurement::Mstd)
+		{
+			Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
+			if (tmpSpectrum->width() > 0)
+			{
+				for (int x = 0; x < tmpSpectrum->width(); ++x)
+					answer << tmpSpectrum->value(x);
+			}
+		}
+		else
+		{
+			Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+			if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
+			{
+				// CARESS has it's x=0:y=0 position at top left corner
+				for (int y = tmpHistogram->height() - 1; y >= 0; --y)
+					for (int x = 0; x < tmpHistogram->width(); ++x)
+						tmpData->append(tmpHistogram->value(x, y));
+			}
+			else
+				tmpData->append(m_meas->events());
+			// hack to transfer a QList<quint64> to QtInterface without to copy it
+			answer << ((quint64)tmpData);
+		}
+		break;
+	}
+	case CommandEvent::C_READ_SPECTROGRAM:
+	{
+		Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+		Spectrum* tmpSpectrum = NULL;
+		int i(-1);
+		if (!args.isEmpty())
+		{
+			i = args[0].toInt();
+			if (i < 0 || i > tmpHistogram->height())
+				i =- 1;
+		}
+		if (i >= 0)
+			tmpSpectrum = tmpHistogram->spectrum(i);
+		else
+			tmpSpectrum = tmpHistogram->xSumSpectrum();
+		if (tmpSpectrum->width() > 0)
+		{
+			for (int x = 0; x < tmpSpectrum->width(); ++x)
+				answer << tmpSpectrum->value(x);
+		}
+		else
+			answer << m_meas->events();
+		break;
+	}
+	case CommandEvent::C_STATUS:
+	{
+		int i = startStopButton->isChecked();
+		answer << i;
+		break;
+	}
+	case CommandEvent::C_SET_LISTMODE:
+		acquireFile->setChecked(args[0].toBool());
+		break;
+	case CommandEvent::C_SET_LISTHEADER:
+	{
+		QByteArray header((const char*)args[0].toULongLong(), args[1].toInt());
+		bool bInsertHeaderLength(true);
+		if (args.size() > 2 && args[2].canConvert(QVariant::Bool))
+			bInsertHeaderLength = args[2].toBool();
+		m_meas->setListFileHeader(header, bInsertHeaderLength);
+		break;
+	}
+	case CommandEvent::C_MAPCORRECTION: // mapping and correction data
+	{
+		MapCorrection *&pMap = m_meas->posHistMapCorrection();
+		if (!args.isEmpty())
+		{
+			MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
+			MapCorrection *pNewMap = dynamic_cast<MapCorrection *>((QObject*)args[0].toULongLong());
+			if (pNewMap == NULL)
+			{
+				QSize size(m_meas->width(),m_meas->height());
+				pNewMap = new LinearMapCorrection(size, size, MapCorrection::OrientationDownRev);
+			}
+			if (pNewMap != NULL)
+			{
+				// new mapping and correction data
+				QRect mapRect;
+				if (pMap != NULL)
+					delete pMap;
+				pMap = pNewMap;
+				mapRect = pMap->getMapRect();
+				if (pHist == NULL)
+					pHist = new MappedHistogram(pMap);
+				else
+					pHist->setMapCorrection(pMap, m_meas->hist(Measurement::PositionHistogram));
+			}
+			else
+			{
+				// delete existing mapping
+				delete pHist;
+				pHist = NULL;
+				delete pMap;
+				pMap = NULL;
+			}
+		}
+		else
+		{
+			// query for current mapping and correction data
+			answer << ((quint64)pMap);
+		}
+		break;
+	}
+	case CommandEvent::C_MAPPEDHISTOGRAM: // mapped and corrected position histogram
+	{
+		MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
+		answer << ((quint64)pHist);
+		break;
+	}
+	case CommandEvent::C_GET_RUNID:
+	{
+		quint32 tmp = m_meas->runId();
+		bool b = m_meas->getAutoIncRunId();
+		answer << (tmp) << b;
+		break;
+	}
+	case CommandEvent::C_SET_RUNID:
+	{
+		int id(args[0].toInt());
+		m_meas->setRunId(id);
+		if (args.size() > 1)
+			m_meas->setAutoIncRunId(args[1].toBool());
+		break;
+	}
+	case CommandEvent::C_GET_LISTMODE:
+	{
+		bool tmp = acquireFile->isChecked();
+		answer << tmp;
+		break;
+	}
+	case CommandEvent::C_UPDATEMAINWIDGET:
+		if (args.count() >= 3)
+		{
+			bool b;
+			int i;
+			QString s;
 
-                        QVariant& v = args[0];
-                        i = v.toInt(&b); 
-                        if (!b || i <= 0) 
-                            s = "unknown"; 
-                        else 
-                            s = v.toString();
-                        caressWidth->setText(s);
-                        v = args[1];
-                        i = v.toInt(&b); 
-                        if (!b || i <= 0) 
-                            s = "unknown"; 
-                        else 
-                            s = v.toString();
-                        caressHeight->setText(s);
-                        v = args[2];
-                        i = v.toInt(&b); 
-                        if (!b || i <= 0) 
-                            s = (i == 0) ? "scratch file" : "unknown"; 
-                        else 
-                            s = v.toString();
-                        caressRun->setText(s);
-		    }
-		    break;
-	        default:
-		    break;
-            }
-        }
+			QVariant& v = args[0];
+			i = v.toInt(&b);
+			if (!b || i <= 0)
+				s = "unknown";
+			else
+				s = v.toString();
+			caressWidth->setText(s);
+			v = args[1];
+			i = v.toInt(&b);
+			if (!b || i <= 0)
+				s = "unknown";
+			else
+				s = v.toString();
+			caressHeight->setText(s);
+			v = args[2];
+			i = v.toInt(&b);
+			if (!b || i <= 0)
+				s = (i == 0) ? "scratch file" : "unknown";
+			else
+				s = v.toString();
+			caressRun->setText(s);
+		}
+		break;
+	default:
+		MSG_DEBUG << "ignoring invalid interface command " << cmd << args;
+		return;
     }
+    interface->postCommandToInterface(cmd, answer);
 }
 
 /*!
@@ -2185,8 +2061,8 @@ void MainWidget::customEvent(QEvent *e)
  */
 void MainWidget::moduleHistogramSlot(quint8 id, bool set)
 {
-    MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
-    m_theApp->setHistogram(devid_2->value(), id, set);
+	MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
+	m_theApp->setHistogram(devid_2->value(), id, set);
 }
 
 /*!
@@ -2198,7 +2074,7 @@ void MainWidget::moduleHistogramSlot(quint8 id, bool set)
  */
 void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
-    m_theApp->setActive(devid_2->value(), id, set);
+	m_theApp->setActive(devid_2->value(), id, set);
 }
 
 /*!
@@ -2208,22 +2084,22 @@ void MainWidget::moduleActiveSlot(quint8 id, bool set)
  */
 void MainWidget::selectUserMode(int val)
 {
-    switch (val)
-    {
-        case MainWidget::User :
-            realTimeLabel->setHidden(true);
-            slidingFrame->setHidden(true);
-            break;
-        case MainWidget::Expert:
-            realTimeLabel->setVisible(true);
-            slidingFrame->setHidden(true);
-            break;
-        case MainWidget::SuperUser:
-            realTimeLabel->setVisible(true);
-            slidingFrame->setVisible(true);
-            break;
-        default:
-            break;
-    }
+	switch (val)
+	{
+		case MainWidget::User :
+			realTimeLabel->setHidden(true);
+			slidingFrame->setHidden(true);
+			break;
+		case MainWidget::Expert:
+			realTimeLabel->setVisible(true);
+			slidingFrame->setHidden(true);
+			break;
+		case MainWidget::SuperUser:
+			realTimeLabel->setVisible(true);
+			slidingFrame->setVisible(true);
+			break;
+		default:
+			break;
+	}
 }
 

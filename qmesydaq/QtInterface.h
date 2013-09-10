@@ -47,12 +47,12 @@ public:
 	QObject *getReceiver();
 
 	void postEvent(QEvent *);
-	void postCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
-	void postCommandToInterface(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
+	void postCommand(CommandEvent::Command, QList<QVariant> = QList<QVariant>());
+	void postCommandToInterface(CommandEvent::Command, QList<QVariant> = QList<QVariant>());
 
 protected:
-	void postRequestCommand(CommandEvent::Command,QList<QVariant> = QList<QVariant>());
-	void waitForEvent();
+	void postRequestCommand(CommandEvent::Command, QList<QVariant> = QList<QVariant>());
+	bool waitForEvent(void);
 
 	//! receiver object 
 	QObject *m_receiver;

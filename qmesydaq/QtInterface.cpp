@@ -23,6 +23,7 @@
 #include <QDateTime>
 #include "QtInterface.h"
 #include "LoopObject.h"
+#include "logging.h"
 #include "stdafx.h"
 
 /*!
@@ -70,27 +71,11 @@ void QtInterface::postEvent(QEvent *event)
 }
 
 /*!
-    \fn void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
-
-    \param cmd
-    \param args
- */
-void QtInterface::postCommand(CommandEvent::Command cmd, QList<QVariant> args)
-{
-    CommandEvent *newEvent;
-    if(args.isEmpty())
-        newEvent = new CommandEvent(cmd);
-    else
-        newEvent = new CommandEvent(cmd, args);
-    postEvent(newEvent);
-}
-
-/*!
-    \fn void QtInterface::waitForEvent()
+    \fn bool QtInterface::waitForEvent()
 
     handles a sleep to wait for an event as a response to a sent action
   */
-void QtInterface::waitForEvent()
+bool QtInterface::waitForEvent()
 {
     LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
     QTime tStart=QTime::currentTime();
@@ -109,10 +94,16 @@ void QtInterface::waitForEvent()
             if (tDiff < 0)
                 tDiff += 86400000;
             if (tDiff > 5000)
-                break;
+            {
+#ifdef DEBUGBUILD
+                Q_ASSERT(false);
+#endif
+                return false;
+            }
             usleep(1000);
         }
     }
+    return true;
 }
 
 /*!
@@ -123,9 +114,32 @@ void QtInterface::waitForEvent()
  */
 void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
 {
-        m_eventReceived = false;
-    postCommand(cmd, args);
-    waitForEvent();
+    CommandEvent *newEvent;
+    m_eventReceived = false;
+    if(args.isEmpty())
+        newEvent = new CommandEvent(cmd);
+    else
+        newEvent = new CommandEvent(cmd, args);
+    postEvent(newEvent);
+    if (!waitForEvent())
+    {
+        const char* szCmd(NULL);
+        switch (cmd)
+        {
+#define CMD(x) case CommandEvent::x: szCmd=#x; break;
+            CMD(C_START) CMD(C_STOP) CMD(C_CLEAR) CMD(C_RESUME) CMD(C_SET_PRESELECTION) CMD(C_PRESELECTION)
+            CMD(C_READ_DIFFRACTOGRAM) CMD(C_STATUS) CMD(C_READ_HISTOGRAM_SIZE) CMD(C_READ_HISTOGRAM)
+            CMD(C_READ_SPECTROGRAM) CMD(C_READ_COUNTER) CMD(C_SELECT_COUNTER) CMD(C_SET_LISTMODE)
+            CMD(C_SET_LISTHEADER) CMD(C_MAPCORRECTION) CMD(C_MAPPEDHISTOGRAM) CMD(C_UPDATEMAINWIDGET)
+            CMD(C_QUIT) CMD(C_SET_RUNID) CMD(C_GET_RUNID) CMD(C_GET_LISTMODE) CMD(C_COUNTER_SELECTED)
+#undef CMD
+            default: szCmd="???"; break;
+        }
+        MSG_FATAL << "timeout for command " << cmd << "(" << szCmd << ")" << args;
+#ifdef DEBUGBUILD
+        Q_ASSERT(false);
+#endif
+    }
 }
 
 /*!

@@ -28,6 +28,7 @@
 #include "LoopObject.h"
 #include "mapcorrect.h"
 #include "mappedhistogram.h"
+#include "logging.h"
 
 /*!
     constructor
@@ -51,7 +52,7 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
  */
 void QMesyDAQDetectorInterface::start()
 {
-        postCommand(CommandEvent::C_START);
+	postRequestCommand(CommandEvent::C_START);
 }
 
 /*!
@@ -59,7 +60,7 @@ void QMesyDAQDetectorInterface::start()
  */
 void QMesyDAQDetectorInterface::stop()
 {
-        postCommand(CommandEvent::C_STOP);
+        postRequestCommand(CommandEvent::C_STOP);
 }
 
 /*!
@@ -67,7 +68,7 @@ void QMesyDAQDetectorInterface::stop()
  */
 void QMesyDAQDetectorInterface::clear()
 {
-        postCommand(CommandEvent::C_CLEAR);
+	postRequestCommand(CommandEvent::C_CLEAR);
 }
 
 /*!
@@ -75,7 +76,7 @@ void QMesyDAQDetectorInterface::clear()
  */
 void QMesyDAQDetectorInterface::resume()
 {
-        postCommand(CommandEvent::C_RESUME);
+	postRequestCommand(CommandEvent::C_RESUME);
 }
 
 /*!
@@ -103,7 +104,7 @@ double QMesyDAQDetectorInterface::readCounter(int id)
  */
 void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable)
 {
-	postCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable);
+	postRequestCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable);
 }
 
 bool QMesyDAQDetectorInterface::counterSelected(int id)
@@ -125,7 +126,7 @@ bool QMesyDAQDetectorInterface::counterSelected(int id)
  */
 void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable, double dblTarget)
 {
-	postCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable << dblTarget);
+	postRequestCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable << dblTarget);
 }
 
 /*!
@@ -135,7 +136,7 @@ void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable, double dblTa
  */
 void QMesyDAQDetectorInterface::setPreSelection(double value)
 {
-        postCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value);
+	postRequestCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value);
 }
 
 /*!
@@ -146,7 +147,7 @@ void QMesyDAQDetectorInterface::setPreSelection(double value)
  */
 void QMesyDAQDetectorInterface::setPreSelection(int id, double value)
 {
-        postCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value << id);
+	postRequestCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value << id);
 }
 
 /*!
@@ -283,13 +284,13 @@ void QMesyDAQDetectorInterface::setMappingCorrection(const MapCorrection& map)
 		if (pMap != NULL)
 		{
 			pMap = NULL;
-			postCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
+			postRequestCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
 		}
 	}
 	else if (pMap == NULL)
 	{
 		pMap = new MapCorrection(map);
-		postCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
+		postRequestCommand(CommandEvent::C_MAPCORRECTION,QList<QVariant>() << ((quint64)pMap));
 	}
 	else
 		(*pMap) = map;
@@ -335,7 +336,7 @@ void QMesyDAQDetectorInterface::setListFileName(const QString name)
  */
 void QMesyDAQDetectorInterface::setListMode(bool bEnable)
 {
-	postCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable);
+	postRequestCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable);
 }
 
 /*!
@@ -345,10 +346,13 @@ void QMesyDAQDetectorInterface::setListMode(bool bEnable)
  */
 bool QMesyDAQDetectorInterface::getListMode()
 {
+	bool bListmodeActive;
+
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_GET_LISTMODE);
+	bListmodeActive = m_boolean;
 	m_mutex.unlock();
-	return m_boolean;
+	return bListmodeActive;
 }
 
 void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength, bool bInsertHeaderLength)
@@ -366,7 +370,7 @@ void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength
  */
 void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iRunNo)
 {
-	postCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << iWidth << iHeight << iRunNo);
+	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << iWidth << iHeight << iRunNo);
 }
 
 /*!
@@ -377,7 +381,29 @@ void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iR
  */
 void QMesyDAQDetectorInterface::updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo)
 {
-	postCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << sWidth << sHeight << sRunNo);
+	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << sWidth << sHeight << sRunNo);
+}
+
+void QMesyDAQDetectorInterface::setRunID(const quint32 runid)
+{
+	postRequestCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid);
+}
+
+void QMesyDAQDetectorInterface::setRunID(const quint32 runid, bool bAutoIncrement)
+{
+	postRequestCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid << bAutoIncrement);
+}
+
+quint32 QMesyDAQDetectorInterface::getRunID(bool *pbAutoIncrement)
+{
+	quint32 r(0.0);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_GET_RUNID);
+	r = m_runid;
+	if (pbAutoIncrement)
+		*pbAutoIncrement = m_boolean;
+	m_mutex.unlock();
+	return r;
 }
 
 /*!
@@ -411,14 +437,14 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_READ_DIFFRACTOGRAM:
 				case CommandEvent::C_READ_SPECTROGRAM:
 					m_values.clear();
-					for (QList<QVariant>::const_iterator it = args.begin(); it != args.end(); ++it)
-						m_values.push_back(it->toULongLong());
+					foreach (const QVariant &v, args)
+						m_values.push_back(v.toULongLong());
 					m_eventReceived = true;
 					break;
 				case CommandEvent::C_READ_HISTOGRAM:
 				{
 					// hack to transfer a QList<quint64> to QtInterface without to copy it
-					QList<quint64>* tmpData = (QList<quint64>*)args[0].toULongLong();
+					QList<quint64> *tmpData = (QList<quint64>*)args[0].toULongLong();
 					if (tmpData != NULL)
 					{
 						m_values = *tmpData;
@@ -478,6 +504,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_counter = args[0].toUInt();
 					m_eventReceived = true;
 				default:
+					MSG_DEBUG << "ignoring invalid interface answer " << cmd << args;
 					break;
 			}
 		}
@@ -488,34 +515,22 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_QUIT:
 					m_bDoLoop = false;
 					break;
+				case CommandEvent::C_START:
+				case CommandEvent::C_STOP:
+				case CommandEvent::C_CLEAR:
+				case CommandEvent::C_RESUME:
+				case CommandEvent::C_SET_PRESELECTION:
+				case CommandEvent::C_SELECT_COUNTER:
+				case CommandEvent::C_SET_LISTMODE:
+				case CommandEvent::C_UPDATEMAINWIDGET:
+				case CommandEvent::C_SET_RUNID:
 				case CommandEvent::C_SET_LISTHEADER:
 					m_eventReceived = true;
 					break;
 				default:
+					MSG_DEBUG << "ignoring invalid interface answer " << cmd << args;
 					break;
 			}
 		}
 	}
-}
-
-void QMesyDAQDetectorInterface::setRunID(const quint32 runid)
-{
-	postCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid);
-}
-
-void QMesyDAQDetectorInterface::setRunID(const quint32 runid, bool bAutoIncrement)
-{
-	postCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid << bAutoIncrement);
-}
-
-quint32 QMesyDAQDetectorInterface::getRunID(bool *pbAutoIncrement)
-{
-	quint32 r(0.0);
-	m_mutex.lock();
-	postRequestCommand(CommandEvent::C_GET_RUNID);
-	r = m_runid;
-	if (pbAutoIncrement)
-	*pbAutoIncrement = m_boolean;
-	m_mutex.unlock();
-	return r;
 }
