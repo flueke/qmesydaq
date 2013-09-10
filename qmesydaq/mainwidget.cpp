@@ -383,7 +383,8 @@ void MainWidget::startStopSlot(bool checked)
                 QString name = interface->getHistogramFileName();
                 if (!name.isEmpty())
                 {
-                    name = m_meas->getHistfilepath() + "/" + name;
+                    if (!name.startsWith('/'))
+                        name = m_meas->getHistfilepath() + "/" + name;
                     if (name.indexOf(".mtxt") == -1)
                         name.append(".mtxt");
                     m_meas->writeHistograms(name);
@@ -456,6 +457,7 @@ void MainWidget::checkListfilename(bool checked)
     {
         QString name(QString::null); 
         MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+        bool bAsk = true;
         if(app)
         {
             QMesyDAQDetectorInterface *interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
@@ -464,9 +466,22 @@ void MainWidget::checkListfilename(bool checked)
         }
 
         if (name.isEmpty())
+        {
             name = selectListfile();
+            bAsk = false;
+        }
         else
             name = m_meas->getListfilepath() + "/" + name;
+
+        if (!name.isEmpty() && QFile::exists(name))
+        {
+            // files exists
+            if (bAsk && m_meas->getWriteProtection()) // ask user for other file name
+                name = selectListfile();
+            if (!name.isEmpty() && !QFile::remove(name)) // try to delete file or do not acquire list file
+                name.clear();
+        }
+
         if(!name.isEmpty())
             m_theApp->setListfilename(name);
         else
@@ -893,8 +908,16 @@ void MainWidget::dispFiledata(void)
 */
 void MainWidget::writeHistSlot()
 {
-    QString name = QFileDialog::getSaveFileName(this, tr("Write Histogram..."), m_meas->getHistfilepath(),
-                                                "mesydaq histogram files (*.mtxt);;all files (*.*)");
+    QString suggestion = m_meas->getHistfilepath();
+    QString name       = m_theApp->getListfilename();
+    if (!name.isEmpty())
+    {
+        if (!suggestion.endsWith('/'))
+            suggestion += '/';
+        suggestion += QFileInfo(name).baseName() + ".mtxt";
+    }
+    name = QFileDialog::getSaveFileName(this, tr("Write Histogram..."), suggestion,
+                                        "mesydaq histogram files (*.mtxt);;all files (*.*)");
     if(!name.isEmpty())
     {
         int i = name.indexOf(".mtxt");
