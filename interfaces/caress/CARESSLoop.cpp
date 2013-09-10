@@ -1218,65 +1218,65 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 						MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
 					else
 						MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
-				} else
-					// forced use of 64 bit return values
-					if ((iNameLen>=8 && strncasecmp(pStart,"return64",8)==0) ||
-							(iNameLen>=5  && strncasecmp(pStart,"use64",5)==0) ||
-							(iNameLen==5  && strncasecmp(pStart,"64bit",5)==0) ||
-							(iNameLen>=6 && strncasecmp(pStart,"force64",6)==0))
+				}
+				// forced use of 64 bit return values
+				else if ((iNameLen>=8 && strncasecmp(pStart,"return64",8)==0) ||
+					(iNameLen>=5  && strncasecmp(pStart,"use64",5)==0) ||
+					(iNameLen==5  && strncasecmp(pStart,"64bit",5)==0) ||
+					(iNameLen>=6 && strncasecmp(pStart,"force64",6)==0))
+				{
+					int iValueLen=p2-p1;
+					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=true;
+					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=false;
+					if (iDevice<ARRAY_SIZE(g_asDevices))
+						MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
+					else
+						MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
+				}
+				// timer scaler/factor
+				else if (iDevice==QMESYDAQ_TIMER &&
+					((iNameLen>=9 && strncasecmp(pStart,"timescale",9)==0) ||
+					(iNameLen=10 && strncasecmp(pStart,"timefactor",10)==0)))
+				{
+					m_dblTimerScale=QString::fromLatin1(p1,p2-p1).toDouble();
+					if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
+					MSG_DEBUG << "load time scale/factor " << m_dblTimerScale;
+				}
+				// list mode
+				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+					iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
+				{
+					int iValueLen=p2-p1;
+					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bListmode=true;
+					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bListmode=false;
+					if (pInterface)
+						pInterface->setListMode(m_bListmode);
+					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
+				}
+				// list file
+				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+					((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
+					(iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
+				{
+					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+					m_sListfile=QString::fromLatin1(p1,p2-p1);
+					m_bListmode=true;
+					if (pInterface)
 					{
-						int iValueLen=p2-p1;
-						if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
-								(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
-								(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=true;
-						else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
-								 (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
-								 (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=false;
-						if (iDevice<ARRAY_SIZE(g_asDevices))
-							MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
-						else
-							MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << id;
-					} else
-						// timer scaler/factor
-						if (iDevice==QMESYDAQ_TIMER &&
-								((iNameLen>=9 && strncasecmp(pStart,"timescale",9)==0) ||
-								 (iNameLen=10 && strncasecmp(pStart,"timefactor",10)==0)))
-						{
-							m_dblTimerScale=QString::fromLatin1(p1,p2-p1).toDouble();
-							if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
-							MSG_DEBUG << "load time scale/factor " << m_dblTimerScale;
-						} else
-							// list mode
-							if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-									iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
-							{
-								int iValueLen=p2-p1;
-								QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-								if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
-										(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
-										(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bListmode=true;
-								else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
-										 (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
-										 (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bListmode=false;
-								if (pInterface)
-									pInterface->setListMode(m_bListmode);
-								MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
-							} else
-								// list file
-								if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-										((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
-										 (iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
-								{
-									QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-									m_sListfile=QString::fromLatin1(p1,p2-p1);
-									m_bListmode=true;
-									if (pInterface)
-									{
-										pInterface->setListFileName(m_sListfile);
-										pInterface->setListMode(m_bListmode);
-									}
-									MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
-								}
+						pInterface->setListFileName(m_sListfile);
+						pInterface->setListMode(m_bListmode);
+					}
+					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
+				}
 			}
 			pStart=p2+1;
 		}
