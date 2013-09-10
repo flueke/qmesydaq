@@ -65,6 +65,8 @@
 #include <QTime>
 #include "stdafx.h"
 
+const int g_iGlobalSyncSleep = 1;
+
 // omniORB needs to know the platform as define __??__
 #if defined(__amd64) || defined(__amd64__) || defined(amd64) || defined(__x86_64)
 #ifndef __x86_64__
@@ -516,6 +518,8 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 		m_lId[iDevice]=0;
 		m_b64Bit[iDevice]=false;
 		if (m_iMaster==iDevice) m_iMaster=-1;
+		if (pInterface->status())
+			pInterface->stop();
 
 		switch (iDevice)
 		{
@@ -798,6 +802,8 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 			m_lRunNo=run_no;
 			m_lMesrCount=mesr_count;
 			pInterface->setRunID(m_lRunNo,false);
+			if (g_iGlobalSyncSleep>0)
+				sleep(g_iGlobalSyncSleep);
 			if (kind==0)
 			{
 				if (mesr_count==0) ++m_lStepNo;
@@ -808,19 +814,21 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 					pInterface->setListFileName(sName);
 				}
 			}
-			if (pInterface->status()==0)
+			if (!pInterface->status())
 			{
 				QTime t1;
 				if (kind==1)
 					pInterface->resume();
 				else
 					pInterface->start();
+				if (g_iGlobalSyncSleep>0)
+					sleep(g_iGlobalSyncSleep);
 				t1=QTime::currentTime();
 				for (;;)
 				{
 					int tDiff;
 					usleep(1000);
-					if (pInterface->status()!=0) break;
+                    if (pInterface->status()) break;
 					tDiff=t1.msecsTo(QTime::currentTime());
 					if (tDiff<0) tDiff+=86400000;
 					if (tDiff>1000) break;
@@ -880,16 +888,18 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 
 			if (m_iMaster<0 || iDevice>=0) // no master or this device is the master
 			{
-				if (pInterface->status()!=0)
+				if (pInterface->status())
 				{
 					QTime t1;
 					pInterface->stop();
+					if (g_iGlobalSyncSleep>0)
+						sleep(g_iGlobalSyncSleep);
 					t1=QTime::currentTime();
 					for (;;)
 					{
 						int tDiff;
 						usleep(1000);
-						if (pInterface->status()==0) break;
+						if (!pInterface->status()) break;
 						tDiff=t1.msecsTo(QTime::currentTime());
 						if (tDiff<0) tDiff+=86400000;
 						if (tDiff>1000) break;
@@ -1395,13 +1405,42 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		{
 			bool bListMode=pInterface->getListMode();
 			quint32 uRun=pInterface->getRunID();
+			QTime t1;
 			if (bListMode)
 				pInterface->setListMode(false);
 			pInterface->setRunID(uRun,false);
+			if (g_iGlobalSyncSleep>0)
+				sleep(g_iGlobalSyncSleep);
 			pInterface->start();
-			sleep(1);
+			if (g_iGlobalSyncSleep>0)
+				sleep(g_iGlobalSyncSleep);
+			t1=QTime::currentTime();
+			for (;;)
+			{
+				int tDiff;
+				usleep(1000);
+				if (pInterface->status()) break;
+				tDiff=t1.msecsTo(QTime::currentTime());
+				if (tDiff<0) tDiff+=86400000;
+				if (tDiff>1000) break;
+			}
+			usleep(100000); // 100ms time for MCPDs to send data
 			pInterface->stop();
+			if (g_iGlobalSyncSleep>0)
+				sleep(g_iGlobalSyncSleep);
+			t1=QTime::currentTime();
+			for (;;)
+			{
+				int tDiff;
+				usleep(1000);
+				if (pInterface->status()) break;
+				tDiff=t1.msecsTo(QTime::currentTime());
+				if (tDiff<0) tDiff+=86400000;
+				if (tDiff>1000) break;
+			}
 			pInterface->setRunID(uRun,false);
+			if (g_iGlobalSyncSleep>0)
+				sleep(g_iGlobalSyncSleep);
 			pInterface->readHistogramSize(w,h);
 			if (bListMode)
 				pInterface->setListMode(bListMode);
