@@ -42,7 +42,7 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
 	, m_height(0)
 	, m_pObject(NULL)
 	, m_status(0)
-	, m_autoIncRunNumber(false)
+	, m_boolean(false)
 {
 }
 
@@ -348,7 +348,7 @@ bool QMesyDAQDetectorInterface::getListMode()
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_GET_LISTMODE);
 	m_mutex.unlock();
-	return m_autoIncRunNumber;
+	return m_boolean;
 }
 
 void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength, bool bInsertHeaderLength)
@@ -465,13 +465,13 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_GET_RUNID:
 					m_runid = args[0].toUInt();
 					if (args.size() > 1)
-						m_autoIncRunNumber = args[1].toBool();
+						m_boolean = args[1].toBool();
 					else
-						m_autoIncRunNumber = true;
+						m_boolean = true;
 					m_eventReceived = true;
 					break;
 				case CommandEvent::C_GET_LISTMODE:
-					m_autoIncRunNumber = args[0].toBool();
+					m_boolean = args[0].toBool();
 					m_eventReceived = true;
 					break;
 				case CommandEvent::C_COUNTER_SELECTED:
@@ -515,7 +515,7 @@ quint32 QMesyDAQDetectorInterface::getRunID(bool *pbAutoIncrement)
 	postRequestCommand(CommandEvent::C_GET_RUNID);
 	r = m_runid;
 	if (pbAutoIncrement)
-		*pbAutoIncrement = m_autoIncRunNumber;
+	*pbAutoIncrement = m_boolean;
 	m_mutex.unlock();
 	return r;
 }

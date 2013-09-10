@@ -151,7 +151,7 @@ private:
 	quint32			m_runid;
 
 	//! is listmode enabled / auto increment run number
-	bool			m_autoIncRunNumber;
+	bool                m_boolean;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H
