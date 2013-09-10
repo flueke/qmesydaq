@@ -183,7 +183,9 @@ protected:
 	long    m_lStepNo;             //!< current/last CARESS measurement step
 	long    m_lMesrCount;          //!< current/last CARESS resolution step (not used)
 	bool    m_bListmode;           //!< true, if QMesyDAQ should acquire a list file
+	bool	m_bHistogram;          //!< true, if QMesyDAQ should generater a histogram file
 	QString m_sListfile;           //!< list file name
+	QString	m_sHistofile;          //!< histogram file name
 	double  m_dblTimerScale;       //!< override for DEFAULTTIMEFACTOR
 	long    m_lSourceChannels;     //!< used for mapping: number of MPSD-or-something channels
 
@@ -430,7 +432,8 @@ CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
 	m_theApp(pApp), m_sInstrument(""), m_lHistogramX(0), m_lHistogramY(0),
 	m_lDiffractogramWidth(0), m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
 	m_lRunNo(0), m_lStepNo(0), m_lMesrCount(-1), m_bListmode(false),
-	m_dblTimerScale(DEFAULTTIMEFACTOR), m_lSourceChannels(-1), m_iMaster(-1), m_iDetectorWidth(0)
+	m_bHistogram(false), m_dblTimerScale(DEFAULTTIMEFACTOR), m_lSourceChannels(-1),
+	m_iMaster(-1), m_iDetectorWidth(0)
 {
 	memset(&m_lId[0],0,sizeof(m_lId));
 	memset(&m_b64Bit[0],0,sizeof(m_b64Bit));
@@ -811,10 +814,38 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 				if (m_bListmode && m_sListfile.isEmpty())
 				{
 					QString sName;
-					sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lStepNo);
+					if (m_sInstrument.compare("V4",Qt::CaseInsensitive)==0)
+					{
+						if (m_lStepNo!=1)
+							sName.sprintf("_step%03ld",m_lStepNo); // unusual: more than one step
+						if (m_lRunNo!=0)
+							sName.prepend(QString().sprintf("M%07ld",m_lRunNo)); // normal file name
+						else
+							sName="scratch-file"; // scratch measurement
+						sName.append(".md2"); // different extension
+					}
+					else
+						sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lStepNo);
 					pInterface->setListFileName(sName);
 				}
 				pInterface->setListMode(m_bListmode,m_lRunNo!=0); // do not write protect scratch file
+				if (m_bHistogram && m_sHistofile.isEmpty())
+				{
+					QString sName;
+					if (m_sInstrument.compare("V4",Qt::CaseInsensitive)==0)
+					{
+						if (m_lStepNo!=1)
+							sName.sprintf("_step%03ld",m_lStepNo); // unusual: more than one step
+						if (m_lRunNo!=0)
+							sName.prepend(QString().sprintf("M%07ld",m_lRunNo)); // normal file name
+						else
+							sName="scratch-file"; // scratch measurement
+						sName.append(".mtxt"); // extension
+					}
+					else
+						sName.sprintf("car_histogram_r%05ld_s%03ld.mtxt",m_lRunNo,m_lStepNo);
+					pInterface->setHistogramFileName(sName);
+				}
 			}
 			if (pInterface->status(&bRunAck)==0 || !bRunAck)
 			{
@@ -1269,14 +1300,46 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					(iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-					m_sListfile=QString::fromLatin1(p1,p2-p1);
-					m_bListmode=true;
+					m_sListfile=QString::fromLatin1(p1,p2-p1).trimmed();
+					if (!m_sListfile.isEmpty())
+						m_bListmode=true;
 					if (pInterface)
 					{
 						pInterface->setListFileName(m_sListfile);
 						pInterface->setListMode(m_bListmode,true);
 					}
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
+				}
+				// histogram mode
+				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+					((iNameLen==9 && strncasecmp(pStart,"histomode",9)==0) ||
+					(iNameLen==9 && strncasecmp(pStart,"histogram",9)==0) ||
+					(iNameLen==13 && strncasecmp(pStart,"histogrammode",13)==0)))
+				{
+					int iValueLen=p2-p1;
+					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bHistogram=true;
+					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bHistogram=false;
+					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - histogrammode=" << ((const char*)(m_bHistogram?"on":"off"));
+					if (!m_bHistogram)
+						pInterface->setHistogramFileName(QString());
+				}
+				// histogram file
+				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+					((iNameLen==9 && strncasecmp(pStart,"histofile",9)==0) ||
+					(iNameLen==13 && strncasecmp(pStart,"histogramfile",13)==0)))
+				{
+					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+					m_sHistofile=QString::fromLatin1(p1,p2-p1).trimmed();
+					if (!m_sHistofile.isEmpty())
+						m_bHistogram=true;
+					if (pInterface)
+						pInterface->setHistogramFileName(m_sHistofile);
+					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - histogramfile=" << m_sHistofile.toLatin1().constData();
 				}
 			}
 			pStart=p2+1;
@@ -1313,8 +1376,6 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 
 			if ((pStart+2)<pEnd && strncasecmp(pStart,"on",2)==0) m_bListmode=true;
 			else if ((pStart+3)<pEnd && strncasecmp(pStart,"off",3)==0) m_bListmode=false;
-			m_sListfile="";
-			pInterface->setListFileName(m_sListfile);
 			pInterface->setListMode(m_bListmode,true);
 		}
 		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
@@ -1325,10 +1386,40 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			if (pStart<pEnd && pStart[0]=='=') ++pStart;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
 
-			m_bListmode=true;
-			m_sListfile=QString::fromLatin1(pStart,pEnd-pStart);
+			m_sListfile=QString::fromLatin1(pStart,pEnd-pStart).trimmed();
+			if (!m_sListfile.isEmpty())
+				m_bListmode=true;
 			pInterface->setListFileName(m_sListfile);
 			pInterface->setListMode(m_bListmode,true);
+		}
+		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+			(((pStart+9)<pEnd && strncasecmp(pStart,"histomode",9)==0) ||
+			((pStart+9)<pEnd && strncasecmp(pStart,"histogram",9)==0) ||
+			((pStart+13)<pEnd && strncasecmp(pStart,"histogrammode",13)==0)))
+		{
+			pStart+=(strncasecmp(pStart+9,"m",1)==0) ? 13 : 9;
+			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
+			if (pStart<pEnd && pStart[0]=='=') ++pStart;
+			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
+
+			if ((pStart+2)<pEnd && strncasecmp(pStart,"on",2)==0) m_bHistogram=true;
+			else if ((pStart+3)<pEnd && strncasecmp(pStart,"off",3)==0) m_bHistogram=false;
+			if (!m_bHistogram)
+				pInterface->setHistogramFileName(QString());
+		}
+		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+			(((pStart+9)<pEnd && strncasecmp(pStart,"histofile",9)==0) ||
+			((pStart+13)<pEnd && strncasecmp(pStart,"histogramfile",13)==0)))
+		{
+			pStart+=(strncasecmp(pStart+5,"g",1)==0) ? 13 : 9;
+			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
+			if (pStart<pEnd && pStart[0]=='=') ++pStart;
+			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
+
+			m_sHistofile=QString::fromLatin1(pStart,pEnd-pStart).trimmed();
+			if (!m_sHistofile.isEmpty())
+				m_bHistogram=true;
+			pInterface->setHistogramFileName(m_sHistofile);
 		}
 		else
 		{
