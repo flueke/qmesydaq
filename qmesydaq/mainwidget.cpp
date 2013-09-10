@@ -669,6 +669,7 @@ void MainWidget::replayListfileSlot()
         m_meas->setROI(QRectF(0, 0, 0, 0)); 
 #endif
 	m_dispTimer = startTimer(1000);
+        m_theApp->setListfilename(QFileInfo(name).fileName());
         m_meas->readListfile(name);
         if (m_dispTimer)
             killTimer(m_dispTimer);
@@ -895,10 +896,10 @@ void MainWidget::dispFiledata(void)
         calibrationFilename->setText("-");
     else
         calibrationFilename->setText(m_meas->getCalibrationfilename());
-    if (!m_meas || m_meas->getListfilename().isEmpty())
+    if (m_theApp->getListfilename().isEmpty())
         listFilename->setText("-");
     else
-        listFilename->setText(m_meas->getListfilename());
+        listFilename->setText(m_theApp->getListfilename());
 }
 
 /*!
