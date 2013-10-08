@@ -376,6 +376,7 @@ public:
 	 */
 	void setListfilename(const QString &name);
 
+	//! \return name of the current list mode data file
 	QString getListfilename(void) const
 	{
 		return m_listfilename;
