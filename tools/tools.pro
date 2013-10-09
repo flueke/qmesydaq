@@ -31,6 +31,7 @@ SUBDIRS		+= qmsetip \
 		qmdump \
 		qmfire \
 		fixlmfile \
-		mstd16
+		mstd16 \
+		simulator
 
 TARGET = 	
