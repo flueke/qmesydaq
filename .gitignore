@@ -34,6 +34,7 @@ tools/qmlsmod/qmlsmod
 tools/qmmaster/qmmaster
 tools/qmsetid/qmsetid
 tools/qmsetip/qmsetip
+tools/simulator/simulator
 
 interfaces/caress/corbadevice.h
 interfaces/caress/corbadeviceSK.cpp
