@@ -39,6 +39,7 @@ GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
     listfilepath->setText(m_meas->getListfilepath());
     runId->setValue(m_meas->runId());
     runIdAuto->setChecked(m_meas->getAutoIncRunId());
+    writeProtect->setChecked(m_meas->getWriteProtection());
 }
 
 /*!
@@ -95,4 +96,14 @@ void GeneralSetup::setRunIdSlot()
 void GeneralSetup::selectAutoIncRunIdSlot()
 {
     m_meas->setAutoIncRunId(runIdAuto->isChecked());
+}
+
+/*!
+ *   \fn GeneralSetup::selectWriteProtectSlot
+ *
+ *   callback to select write protection for closed files
+ */
+void GeneralSetup::selectWriteProtectSlot()
+{
+    m_meas->setWriteProtection(writeProtect->isChecked());
 }

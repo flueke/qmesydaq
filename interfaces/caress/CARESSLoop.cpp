@@ -814,6 +814,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 					sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lStepNo);
 					pInterface->setListFileName(sName);
 				}
+				pInterface->setListMode(m_bListmode,m_lRunNo!=0); // do not write protect scratch file
 			}
 			if (pInterface->status(&bRunAck)==0 || !bRunAck)
 			{
@@ -1259,7 +1260,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
 						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bListmode=false;
 					if (pInterface)
-						pInterface->setListMode(m_bListmode);
+					pInterface->setListMode(m_bListmode,true);
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
 				}
 				// list file
@@ -1273,7 +1274,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					if (pInterface)
 					{
 						pInterface->setListFileName(m_sListfile);
-						pInterface->setListMode(m_bListmode);
+						pInterface->setListMode(m_bListmode,true);
 					}
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
 				}
@@ -1314,7 +1315,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			else if ((pStart+3)<pEnd && strncasecmp(pStart,"off",3)==0) m_bListmode=false;
 			m_sListfile="";
 			pInterface->setListFileName(m_sListfile);
-			pInterface->setListMode(m_bListmode);
+			pInterface->setListMode(m_bListmode,true);
 		}
 		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
 				 (((pStart+8)<pEnd && strncasecmp(pStart,"listfile",8)==0) || ((pStart+12)<pEnd && strncasecmp(pStart,"listmodefile",12)==0)))
@@ -1327,7 +1328,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			m_bListmode=true;
 			m_sListfile=QString::fromLatin1(pStart,pEnd-pStart);
 			pInterface->setListFileName(m_sListfile);
-			pInterface->setListMode(m_bListmode);
+			pInterface->setListMode(m_bListmode,true);
 		}
 		else
 		{
@@ -1410,7 +1411,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			quint32 uRun=pInterface->getRunID();
 			QTime t1;
 			if (bListMode)
-				pInterface->setListMode(false);
+			pInterface->setListMode(false,true);
 			pInterface->setRunID(uRun,false);
 			if (g_iGlobalSyncSleep>0)
 				sleep(g_iGlobalSyncSleep);
@@ -1446,7 +1447,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 				sleep(g_iGlobalSyncSleep);
 			pInterface->readHistogramSize(w,h);
 			if (bListMode)
-				pInterface->setListMode(bListMode);
+				pInterface->setListMode(bListMode,true);
 			m_lSourceChannels=w;
 		}
 

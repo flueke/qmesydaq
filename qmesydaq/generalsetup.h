@@ -53,11 +53,14 @@ public:
 	//! \return auto increment run id selection
 	bool getAutoIncRunId(void)  {return runIdAuto->isChecked();}
 
+	//! \return write protect closed files
+	bool getWriteProtection(void)  {return writeProtect->isChecked();}
+
 	/*!
 	    set the last run id
             \param val
          */
-  void setLastRunId(const quint32 val) {runId->setValue(val);}
+	void setLastRunId(const quint32 val) {runId->setValue(val);}
 
 private slots:
 	void selectConfigpathSlot();
@@ -69,6 +72,8 @@ private slots:
 	void setRunIdSlot();
 
 	void selectAutoIncRunIdSlot();
+
+	void selectWriteProtectSlot();
 
 private:
 	//! store the measurement object

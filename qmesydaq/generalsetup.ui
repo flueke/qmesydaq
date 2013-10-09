@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>532</width>
-    <height>246</height>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="0">
-       <widget class="QLabel" name="textLabel1_9">
+       <widget class="QLabel" name="textLabel1">
         <property name="text">
          <string>Listmode files</string>
         </property>
@@ -41,7 +41,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="textLabel1_9_2">
+       <widget class="QLabel" name="textLabel2">
         <property name="text">
          <string>Histograms</string>
         </property>
@@ -61,7 +61,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="textLabel1_9_3">
+       <widget class="QLabel" name="textLabel3">
         <property name="text">
          <string>Config files</string>
         </property>
@@ -79,6 +79,13 @@
          <string>...</string>
         </property>
        </widget>
+      </item>
+      <item row="3" column="0" colspan="3">
+        <widget class="QCheckBox" name="writeProtect">
+          <property name="text">
+            <string>write protect data files</string>
+          </property>
+        </widget>
       </item>
      </layout>
     </widget>
@@ -243,6 +250,22 @@
    <signal>clicked()</signal>
    <receiver>GeneralSetup</receiver>
    <slot>selectAutoIncRunIdSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>writeProtect</sender>
+   <signal>clicked()</signal>
+   <receiver>GeneralSetup</receiver>
+   <slot>selectWriteProtectSlot()</slot>
   </connection>
  </connections>
  <slots>
@@ -251,5 +274,6 @@
   <slot>selectHistpathSlot()</slot>
   <slot>setRunIdSlot()</slot>
   <slot>selectAutoIncRunIdSlot()</slot>
+  <slot>selectWriteProtectSlot()</slot>
  </slots>
 </ui>

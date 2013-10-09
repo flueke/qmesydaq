@@ -104,6 +104,7 @@ void MainWindow::restoreSettings()
 	quint32 lastrunid = settings.value("config/lastrunid", 0).toUInt();
 	m_mesy->setRunId(lastrunid);
 	m_mesy->setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
+	m_mesy->setWriteProtection(settings.value("config/writeprotect", "false").toBool());
 	setGeometry(QRect(pos, size));
 }
 
@@ -116,6 +117,7 @@ void MainWindow::saveSettings()
 	settings.setValue("size", QSize(s.width(), fs.height()));
 	settings.setValue("config/lastrunid", m_mesy->runId());
 	settings.setValue("config/autoincrunid", m_mesy->getAutoIncRunId());
+	settings.setValue("config/writeprotect", m_mesy->getWriteProtection());
 }
 
 /*! 

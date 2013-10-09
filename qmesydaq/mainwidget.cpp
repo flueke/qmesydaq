@@ -1501,6 +1501,7 @@ void MainWidget::setupGeneral()
         m_meas->setConfigfilepath(d.configFilePath());
         m_meas->setRunId(d.lastRunId());
         m_meas->setAutoIncRunId(d.getAutoIncRunId());
+        m_meas->setWriteProtection(d.getWriteProtection());
     }
 }
 
@@ -1939,6 +1940,8 @@ void MainWidget::customEvent(QEvent *e)
 	}
 	case CommandEvent::C_SET_LISTMODE:
 		acquireFile->setChecked(args[0].toBool());
+		if (args.size() > 1)
+			m_meas->setWriteProtection(args[1].toBool());
 		break;
 	case CommandEvent::C_SET_LISTHEADER:
 	{
@@ -2013,8 +2016,9 @@ void MainWidget::customEvent(QEvent *e)
 	}
 	case CommandEvent::C_GET_LISTMODE:
 	{
-		bool tmp = acquireFile->isChecked();
-		answer << tmp;
+		bool bListmode = acquireFile->isChecked();
+		bool bWriteProtect = m_meas->getWriteProtection();
+		answer << bListmode << bWriteProtect;
 		break;
 	}
 	case CommandEvent::C_UPDATEMAINWIDGET:

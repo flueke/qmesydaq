@@ -79,6 +79,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 
 	setRunId(settings.value("config/lastrunid", "0").toUInt());
 	setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
+	setWriteProtection(settings.value("config/writeprotect", "false").toBool());
 
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
@@ -709,6 +710,8 @@ void Measurement::writeHistograms(const QString &name)
     			t << m_Hist[CorrectedPositionHistogram]->format() << '\r' << '\n';
 		}
 		f.close();
+		if (getWriteProtection())
+			f.setPermissions(f.permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
 	}
 }
 

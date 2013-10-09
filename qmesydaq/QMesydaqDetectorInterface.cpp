@@ -44,6 +44,7 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
 	, m_pObject(NULL)
 	, m_status(0)
 	, m_boolean(false)
+	, m_bWriteProtectFiles(false) // write protect data files
 {
 }
 
@@ -336,9 +337,9 @@ void QMesyDAQDetectorInterface::setListFileName(const QString name)
 
     \param bEnable
  */
-void QMesyDAQDetectorInterface::setListMode(bool bEnable)
+void QMesyDAQDetectorInterface::setListMode(bool bEnable, bool bWriteProtection)
 {
-	postRequestCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable);
+	postRequestCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable << bWriteProtection);
 }
 
 /*!
@@ -346,13 +347,15 @@ void QMesyDAQDetectorInterface::setListMode(bool bEnable)
 
     \return is listmode enabled
  */
-bool QMesyDAQDetectorInterface::getListMode()
+bool QMesyDAQDetectorInterface::getListMode(bool *pbWriteProtect)
 {
 	bool bListmodeActive;
 
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_GET_LISTMODE);
 	bListmodeActive = m_boolean;
+	if (pbWriteProtect != NULL)
+		*pbWriteProtect = m_bWriteProtectFiles;
 	m_mutex.unlock();
 	return bListmodeActive;
 }
@@ -504,6 +507,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					break;
 				case CommandEvent::C_GET_LISTMODE:
 					m_boolean = args[0].toBool();
+					if (args.size() > 1)
+						m_bWriteProtectFiles = args[1].toBool();
+					else
+						m_bWriteProtectFiles = false;
 					m_eventReceived = true;
 					break;
 				case CommandEvent::C_COUNTER_SELECTED:

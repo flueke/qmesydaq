@@ -41,6 +41,7 @@ Mesydaq2::Mesydaq2()
 	, m_starttime_msec(0)
 	, m_runId(0)
 	, m_bAutoIncRunId(true)
+	, m_bWriteProtect(false)
 {
 	MSG_NOTICE << "running on Qt %1" << qVersion();
 	qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
@@ -237,7 +238,11 @@ void Mesydaq2::stoppedDaq(void)
 {
 	writeClosingSignature();
 	if(m_acquireListfile && m_datfile.isOpen())
+	{
 		m_datfile.close();
+		if (m_bWriteProtect)
+			m_datfile.setPermissions(m_datfile.permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
+	}
 	m_bRunAck = false;
 	MSG_DEBUG << "daq stopped";
 }

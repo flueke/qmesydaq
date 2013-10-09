@@ -176,6 +176,15 @@ public:
 	bool getAutoIncRunId() const { return m_bAutoIncRunId; }
 	void setAutoIncRunId(bool b) { m_bAutoIncRunId=b; }
 
+	//! \return write protect closed files
+	bool getWriteProtection() const {return m_bWriteProtect;}
+	/**
+	 * sets the write protection of the data files
+	 *
+	 * \param b true enables the write protection
+	 */
+	void setWriteProtection(bool b) {m_bWriteProtect=b;}
+
 	quint64 receivedData(); 
 
 	quint64 receivedCmds(); 
@@ -353,6 +362,9 @@ private:
 	quint32		m_runId;
 
 	bool		m_bAutoIncRunId;
+
+	//! write protect closed files
+	bool		m_bWriteProtect;
 };
 
 

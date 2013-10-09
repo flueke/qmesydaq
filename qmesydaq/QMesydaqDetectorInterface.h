@@ -83,8 +83,8 @@ public:
 	void setMappingCorrection(const MapCorrection& map);
 	const MappedHistogram* getMappedHistogram();
 
-	bool getListMode();
-	void setListMode(bool bEnable);
+	bool getListMode(bool* pbWriteProtect = NULL);
+	void setListMode(bool bEnable, bool bWriteProtection = false);
 
 	//! \return name of the list mode data file
         QString getListFileName(void) const {return m_listFileName;} 
@@ -152,6 +152,9 @@ private:
 
 	//! is listmode enabled / auto increment run number
 	bool                m_boolean;
+
+	//! write protect data files?
+	bool                m_bWriteProtectFiles;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H

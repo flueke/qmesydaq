@@ -302,6 +302,12 @@ public:
 		m_mesydaq->setAutoIncRunId(b);
 	}
 
+	//! \return write protect closed files is enabled
+	bool getWriteProtection() const {return m_mesydaq->getWriteProtection();}
+
+	//! write protect closed files
+	void setWriteProtection(bool b) {m_mesydaq->setWriteProtection(b);}
+
 	//! returns the current operation mode
 	Mode mode(void) const 
 	{
