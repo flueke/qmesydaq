@@ -212,6 +212,11 @@ Measurement::~Measurement()
 	destroyHistogram();
 }
 
+QString Measurement::version() const
+{
+    return QString(VERSION);
+}
+
 /*!
     \fn Measurement::timerEvent(QTimerEvent *event)
 

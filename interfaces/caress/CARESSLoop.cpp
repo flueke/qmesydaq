@@ -2237,6 +2237,17 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
 		v->s((const char*)(&m_szErrorMessage[0]));
 		return v._retn();
 	}
+    if (strcmp(name,"version_text")==0)
+    {
+        QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+        if (!pInterface)
+            throw CARESS::ErrorDescription("control interface not initialized");
+        QString szVersion(pInterface->getVersionText());
+        szVersion.append(",interface " VERSION);
+        CARESS::Value_var v=new CARESS::Value;
+        v->s(szVersion.toLatin1().constData());
+        return v._retn();
+    }
 	throw CARESS::ErrorDescription("not implemented");
 }
 

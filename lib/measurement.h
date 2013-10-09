@@ -120,6 +120,8 @@ public:
 
 	~Measurement();
 
+    QString version() const;
+
 	void resizeHistogram(const quint16 w, const quint16 h, const bool = true, const bool = false);
 
 	//! \return the width of the histogram

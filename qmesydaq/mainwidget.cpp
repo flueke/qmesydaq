@@ -2075,6 +2075,9 @@ void MainWidget::customEvent(QEvent *e)
 			caressRun->setText(s);
 		}
 		break;
+    case CommandEvent::C_VERSIONTEXT:
+        answer << QString("QMesyDAQ " REVISION ",lib %1").arg(m_meas->version());
+        break;
 	default:
 		MSG_DEBUG << "ignoring invalid interface command " << cmd << args;
 		return;

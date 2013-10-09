@@ -411,6 +411,16 @@ quint32 QMesyDAQDetectorInterface::getRunID(bool *pbAutoIncrement)
 	return r;
 }
 
+QString QMesyDAQDetectorInterface::getVersionText()
+{
+    QString sVersion;
+    m_mutex.lock();
+    postRequestCommand(CommandEvent::C_VERSIONTEXT);
+    sVersion=m_sVersion;
+    m_mutex.unlock();
+    return sVersion;
+}
+
 /*!
     \fn void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 
@@ -516,6 +526,11 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_COUNTER_SELECTED:
 					m_counter = args[0].toUInt();
 					m_eventReceived = true;
+					break;
+				case CommandEvent::C_VERSIONTEXT:
+					m_sVersion = args[0].toString();
+					m_eventReceived = true;
+					break;
 				default:
 					MSG_DEBUG << "ignoring invalid interface answer " << cmd << args;
 					break;
@@ -525,6 +540,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 		{
 			switch (cmd)
 			{
+				case CommandEvent::C_VERSIONTEXT:
+					m_sVersion = QString("QMesyDAQ version unknown");
+					m_eventReceived = true;
+				        break;
 				case CommandEvent::C_QUIT:
 					m_bDoLoop = false;
 					break;

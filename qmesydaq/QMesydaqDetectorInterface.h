@@ -111,6 +111,9 @@ public:
 	//! returns the current runid
 	quint32 getRunID(bool *pbAutoIncrement = NULL);
 
+    //! return QMesyDAQ and library version text
+    QString getVersionText();
+
 protected:
 	void customEvent(QEvent *);
 
@@ -146,6 +149,9 @@ private:
 
 	//! name of the current histogram file
 	QString 		m_histFileName;
+
+    //! QMesyDAQ and library version
+    QString             m_sVersion;
 
 	//! current run ID
 	quint32			m_runid;
