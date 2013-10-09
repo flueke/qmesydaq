@@ -370,9 +370,9 @@ public:
 	}
 
 	/**
-	 * sets the path for the list mode data files
+	 * sets the list mode file name
 	 *
-	 * \param path to the list mode data files
+	 * \param name list mode file name
 	 */
 	void setListfilename(const QString &name);
 
