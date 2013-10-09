@@ -62,7 +62,6 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_triggers(0)
 	, m_mode(DataAcquisition)
 	, m_histfilename("")
-	, m_listfilename("") 
 	, m_calibrationfilename("")
 	, m_neutrons(0)
 	, m_setup(Mpsd)
@@ -1374,9 +1373,13 @@ void Measurement::setHistfilepath(const QString &path)
 
 void Measurement::setListfilename(const QString &name)
 {
-	m_listfilename = name;
-	if(!m_listfilename.isEmpty() && m_listfilename.indexOf(".mdat") == -1)
-		m_listfilename.append(".mdat");
+	if (m_mesydaq)
+	{
+		QString tmp = name;
+		if(!tmp.isEmpty() && tmp.indexOf(".mdat") == -1)
+			tmp.append(".mdat");
+		m_mesydaq->setListfilename(tmp);
+	}
 }
 
 void Measurement::setHistfilename(const QString &name) 

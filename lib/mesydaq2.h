@@ -113,9 +113,6 @@ public:
 
 	bool saveSetup(QSettings &);
 
-        //! returns the current configuration file name
-//	const CConfigFile& getLastConfiguration() const { return m_lastConfiguration; }
-
 	bool checkMcpd(quint8 device);
 
 	//! \returns the number of the first MCPD
@@ -343,6 +340,8 @@ private:
 	bool            m_bRunAck;
 
 	bool		m_acquireListfile;
+
+	//! currently used list mode file
 	QString		m_listfilename;
 
 	QFile		m_datfile;
@@ -350,7 +349,6 @@ private:
 	DataRepeater*	m_pDatSender;
 
 	quint8  	m_timingwidth;
-//	int 		m_checkTimer;
 
 	QByteArray 	m_datHeader;
 	bool		m_bInsertHeaderLength;

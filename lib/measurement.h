@@ -103,7 +103,6 @@ public:
 	//! Defines the DAQ status
 	enum Status {
 		Idle = IDLE,	//!< no acquistion 
-		Running,	//!< data acquisition is running
 		Started,	//!< data acquisition is requested to run
 		Stopped,	//!< data acquisition is requested to stop
 	};
@@ -390,7 +389,7 @@ public:
 	//! \return name of the current list mode data file
 	QString getListfilename(void) const
 	{
-		return m_listfilename;
+		return m_mesydaq ? m_mesydaq->getListfilename() : "";
 	}
 
 // configuration file oriented methods
@@ -534,9 +533,6 @@ private:
 
 	//! histogram data file name path
 	QString 	m_histPath;
-
-	//! currently used list mode file
-	QString		m_listfilename;
 
 	//! list mode data file name path
 	QString 	m_listPath;

@@ -35,8 +35,6 @@ class MesydaqSpectrumData;
 class MesydaqHistogramData;
 class Histogram;
 class Mesydaq2;
-class CorbaThread;
-class ControlInterface;
 
 /**
     \short Main Widget in the application
@@ -231,12 +229,6 @@ private:
 
 	//! display timer ID
 	int 			m_dispTimer;
-
-	//! ???
-	CorbaThread		*m_ct;
-
-	//! the remote control interface
-	ControlInterface 	*m_controlInt;
 
 	//! the printer
 	QPrinter		*m_printer;

@@ -210,13 +210,10 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
   \param[in] argList   command line arguments of QMesyDAQ
   \param[in] interface QtInterface for data exchange between QMesyDAQ and CARESS interface
  */
-CARESSLoop::CARESSLoop(QStringList argList, QtInterface *interface)
+CARESSLoop::CARESSLoop(QStringList argList, QtInterface *)
 	: m_bDoLoop(true), m_asArguments(argList)
 {
-	(void)interface;
-
 	setObjectName("CARESSLoop");
-	// testing
 }
 
 //! \brief CARESSLoop is derived from QThread and if this function returns, the thread exits
@@ -2271,7 +2268,6 @@ void CORBADevice_i::set_attribute(CORBA::Long id, const char* name, const CARESS
 	MSG_ERROR << "set_attribute(id=" << id << ", name=" << name << ')';
 	throw CARESS::ErrorDescription("not implemented");
 }
-
 
 /*!
  * \brief parse a long value from string an move pointer

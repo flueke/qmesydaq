@@ -70,7 +70,6 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_histData(NULL)
     , m_meas(NULL)
     , m_dispTimer(0)
-    , m_controlInt(NULL)
     , m_histogram(NULL)
     , m_histoType(Measurement::PositionHistogram)
 {
