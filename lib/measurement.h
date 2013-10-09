@@ -314,6 +314,9 @@ public:
 		return m_status;
 	}
 
+	//! \returns return hardware acquisition status
+	bool hwstatus(bool *pbAck = NULL) const {return m_mesydaq->status(pbAck);}
+
 // calibration file oriented methods
 	/**
 	 * sets the file name of a calibration data file

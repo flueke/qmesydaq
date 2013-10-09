@@ -763,6 +763,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 											   CORBA::Long& module_status)
 {
 	QMutexLocker lock(&m_mutex);
+	bool bRunAck=false;
 	MSG_DEBUG << "start(kind=" << kind << ", id=" << id << ", run_no=" << run_no << ", mesr_count=" << mesr_count << ", module_status=ACTIVE)";
 	m_szErrorMessage[0]='\0';
 	try
@@ -814,7 +815,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 					pInterface->setListFileName(sName);
 				}
 			}
-			if (!pInterface->status())
+			if (pInterface->status(&bRunAck)==0 || !bRunAck)
 			{
 				QTime t1;
 				if (kind==1)
@@ -828,7 +829,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 				{
 					int tDiff;
 					usleep(1000);
-                    if (pInterface->status()) break;
+					if (pInterface->status(&bRunAck)!=0 && bRunAck) break;
 					tDiff=t1.msecsTo(QTime::currentTime());
 					if (tDiff<0) tDiff+=86400000;
 					if (tDiff>1000) break;
@@ -863,6 +864,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 						CORBA::Long& module_status)
 {
 	QMutexLocker lock(&m_mutex);
+	bool bRunAck=false;
 	MSG_DEBUG << "stop(all=" << (const char*)(((kind>>31)&1)?"yes":"no") << ", kind=" << (kind&0x7FFFFFFF) << ", id=" << id << ')';
 	m_szErrorMessage[0]='\0';
 	try
@@ -888,7 +890,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 
 			if (m_iMaster<0 || iDevice>=0) // no master or this device is the master
 			{
-				if (pInterface->status())
+				if (pInterface->status(&bRunAck)!=0 || bRunAck)
 				{
 					QTime t1;
 					pInterface->stop();
@@ -899,7 +901,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 					{
 						int tDiff;
 						usleep(1000);
-						if (!pInterface->status()) break;
+						if (pInterface->status(&bRunAck)==0 && !bRunAck) break;
 						tDiff=t1.msecsTo(QTime::currentTime());
 						if (tDiff<0) tDiff+=86400000;
 						if (tDiff>1000) break;
@@ -1403,6 +1405,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 
 		if (m_lSourceChannels<=0 || m_lSourceChannels>=65536)
 		{
+			bool bRunAck=false;
 			bool bListMode=pInterface->getListMode();
 			quint32 uRun=pInterface->getRunID();
 			QTime t1;
@@ -1419,7 +1422,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			{
 				int tDiff;
 				usleep(1000);
-				if (pInterface->status()) break;
+				if (pInterface->status(&bRunAck)!=0 && bRunAck) break;
 				tDiff=t1.msecsTo(QTime::currentTime());
 				if (tDiff<0) tDiff+=86400000;
 				if (tDiff>1000) break;
@@ -1433,7 +1436,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			{
 				int tDiff;
 				usleep(1000);
-				if (pInterface->status()) break;
+				if (pInterface->status(&bRunAck)==0 && !bRunAck) break;
 				tDiff=t1.msecsTo(QTime::currentTime());
 				if (tDiff<0) tDiff+=86400000;
 				if (tDiff>1000) break;
@@ -1494,6 +1497,7 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
 											  CARESS::Value_out data)
 {
 	QMutexLocker lock(&m_mutex);
+	bool bRunAck=false;
 	(void)kind;
 	CARESS::Value_var val=new CARESS::Value;
 	CARESS::ReturnType result=CARESS::NOT_OK;
@@ -1525,8 +1529,8 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
 			MSG_DEBUG << "read - " << (const char*)m_szErrorMessage;
 			val->l(0);
 			data=val._retn();
-			module_status=OFF_LINE;
-			return CARESS::NOT_OK;
+			module_status=MODULE_RESET;
+			return CARESS::OK;
 		}
 
 		switch (iDevice)
@@ -1543,7 +1547,7 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
 			val->l64((CORBA::LongLong)dblValue);
 		else
 			val->l((CORBA::Long)dblValue);
-		module_status=pInterface->status() ? ACTIVE : DONE;
+		module_status=(pInterface->status(&bRunAck)!=0 || bRunAck) ? ACTIVE : DONE;
 		result=CARESS::OK;
 	}
 	catch (...)
@@ -1707,6 +1711,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 												   CARESS::Value_out data)
 {
 	QMutexLocker lock(&m_mutex);
+	bool bRunAck=false;
 	(void)kind;
 
 	CARESS::Value_var val=new CARESS::Value;
@@ -1908,7 +1913,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 			for (i=0; i<j; ++i) t2[i]=al64[i];
 			val->al(t2);
 		}
-		module_status=pInterface->status() ? ACTIVE : DONE;
+		module_status=(pInterface->status(&bRunAck)!=0 || bRunAck) ? ACTIVE : DONE;
 		result=CARESS::OK;
 	}
 	catch (...)

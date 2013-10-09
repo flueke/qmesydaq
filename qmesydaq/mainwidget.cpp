@@ -1930,8 +1930,11 @@ void MainWidget::customEvent(QEvent *e)
 	}
 	case CommandEvent::C_STATUS:
 	{
-		int i = startStopButton->isChecked();
-		answer << i;
+		bool bRunning, bRunAck = false;
+		int i;
+		bRunning = m_meas->hwstatus(&bRunAck);
+		i = (bRunning || (startStopButton->isChecked() != 0) || (m_meas->status() == Measurement::Started)) ? 1 : 0;
+		answer << i << bRunAck;
 		break;
 	}
 	case CommandEvent::C_SET_LISTMODE:

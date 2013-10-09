@@ -242,12 +242,14 @@ QList<quint64> QMesyDAQDetectorInterface::readSpectrogram(int iSpectrogram/*=-1*
 /*!
     \return the current status of the detector
  */
-int QMesyDAQDetectorInterface::status()
+int QMesyDAQDetectorInterface::status(bool* pbRunAck /*= NULL*/)
 {
 	int r(0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_STATUS);
 	r = m_status;
+	if (pbRunAck != NULL)
+		*pbRunAck = m_boolean;
 	m_mutex.unlock();
 	return r;
 }
@@ -478,6 +480,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_STATUS:
 					m_status = args[0].toInt();
 					m_eventReceived = true;
+					if (args.size() > 1)
+						m_boolean = args[1].toBool();
+					else
+						m_boolean = (m_status != 0);
 					break;
 				case CommandEvent::C_READ_COUNTER:
 					m_counter = args[0].toDouble();

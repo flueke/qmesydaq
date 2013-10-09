@@ -77,7 +77,7 @@ public:
 	QList<quint64> readHistogram();
 	QList<quint64> readDiffractogram();
 	QList<quint64> readSpectrogram(int iSpectrogram = -1);
-        int status();
+	int status(bool *pbRunAck = NULL);
 
 	const MapCorrection* getMappingCorrection();
 	void setMappingCorrection(const MapCorrection& map);

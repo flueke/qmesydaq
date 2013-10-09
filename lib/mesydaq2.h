@@ -293,6 +293,8 @@ public slots:
 
 	virtual void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
+	bool status(bool* pbAck = NULL) const;
+
 signals:
 	/**
 	 * will be emitted if the status has changed
@@ -325,7 +327,11 @@ private:
 private:
 	QThread*	m_pThread;
 
-	quint8		m_daq;
+	//! acquisition is active
+	bool            m_bRunning;
+
+	//! hardware acknowledge of acquisition status
+	bool            m_bRunAck;
 
 	bool		m_acquireListfile;
 	QString		m_listfilename;

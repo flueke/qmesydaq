@@ -32,7 +32,8 @@
 */
 Mesydaq2::Mesydaq2()
     : m_pThread(NULL)
-	, m_daq(IDLE)
+	, m_bRunning(false)
+	, m_bRunAck(false)
 	, m_acquireListfile(false)
 	, m_listfilename("")
 	, m_timingwidth(1)
@@ -219,6 +220,7 @@ void Mesydaq2::startedDaq(void)
 		writeListfileHeader();
 		writeHeaderSeparator();
 	}
+	m_bRunAck = true;
 	MSG_ERROR << "daq started";
 }
 
@@ -236,6 +238,7 @@ void Mesydaq2::stoppedDaq(void)
 	writeClosingSignature();
 	if(m_acquireListfile && m_datfile.isOpen())
 		m_datfile.close();
+	m_bRunAck = false;
 	MSG_DEBUG << "daq stopped";
 }
 
@@ -944,7 +947,7 @@ void Mesydaq2::start(void)
 	foreach(MCPD8 *it, m_mcpd)
 		if (it->isMaster())
 			it->start();
-	m_daq = RUNNING;
+	m_bRunning = true;
 	m_starttime_msec = time();
 	emit statusChanged("STARTED");
 }
@@ -966,7 +969,7 @@ void Mesydaq2::stop(void)
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
 			it->stop();
-	m_daq = IDLE;
+	m_bRunning = false;
 	emit statusChanged("IDLE");
 }
 
@@ -1707,7 +1710,7 @@ void Mesydaq2::setRunId(quint32 runid)
 void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
 	const DATA_PACKET *dp = &pPacket.constData()->dp;
-	if (m_daq == RUNNING)
+	if (m_bRunning)
 	{
 		quint64 headertime = dp->time[0] + (quint64(dp->time[1]) << 16) + (quint64(dp->time[2]) << 32);
 		if (m_starttime_msec > (headertime / 10000))
@@ -1910,4 +1913,16 @@ void Mesydaq2::setListFileHeader(const QByteArray& header, bool bInsertHeaderLen
 {
 	m_datHeader = header;
 	m_bInsertHeaderLength = bInsertHeaderLength;
+}
+
+/*! \returns return acquisition status
+ *
+ * \param pbAck return acknowledged acquisition status of hardware
+ * \return return acquisition status
+ */
+bool Mesydaq2::status(bool* pbAck /*= NULL*/) const
+{
+	if (pbAck!=NULL)
+		*pbAck = m_bRunAck;
+	return m_bRunning;
 }
