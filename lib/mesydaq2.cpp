@@ -1014,7 +1014,7 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
 {
 	quint8 c(0);
 	foreach(MCPD8 *value, m_mcpd)
-		scanPeriph(c++);    	
+		(void)value, scanPeriph(c++);
 	return true;
 }
 
