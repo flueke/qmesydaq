@@ -26,7 +26,7 @@ include($${SRCBASE}/mesydaqconfig.pri)
 TEMPLATE 	= app
 TARGET 		= qmesydaq
 
-DEPENDPATH 	+= . $${SRCBASE}/test/plot
+DEPENDPATH 	+= . $${SRCBASE}/test/plot $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE} $${SRCBASE}/test/plot
 
 SUBDIRS		+= diskspace
