@@ -178,7 +178,7 @@ static void messageToFile(QtMsgType type, const char *msg)
 				g_LogFile.close();
 			}
 		}
-	}  
+	}
 }
 
 //==================================================================================================================
@@ -195,16 +195,19 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 	{
 		QString szArgument = args[i], 
 			szParameter;
-		bool 	bSeparatedParameter=false;
-		if (szArgument.indexOf('=') >= 0)
+		bool	bSeparatedParameter(false);
+		if (szArgument.indexOf('=') != -1)
 		{
 			int iPos = szArgument.indexOf('=');
-			szParameter = szArgument.mid(iPos);
+			szParameter = szArgument.mid(iPos + 1);
 			szArgument.remove(iPos, szArgument.size() - iPos);
 		}
 		else
 		{
-			szParameter = args[i];
+			if ((i + 1) < args.size())
+				szParameter = args[i + 1];
+			else
+				szParameter = QString::null;
 			bSeparatedParameter = true;
 		}
 
