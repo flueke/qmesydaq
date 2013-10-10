@@ -48,7 +48,7 @@ SpectrumData::SpectrumData(const SpectrumData &data)
 
 SpectrumData::~SpectrumData()
 {
-	delete m_data;
+	delete [] m_data;
 }
 
 QwtData *SpectrumData::copy() const

@@ -245,7 +245,7 @@ void MesyDAQ::IO::Counter::deviceInit(void) throw (::TACO::Exception)
 	catch (const ::TACO::Exception &e)
 	{
 		setDeviceState(::TACO::State::FAULT);
-		throw e;
+		throw;
 	}
 	setDeviceState(::TACO::State::DEVICE_NORMAL);
 #if 0

@@ -39,6 +39,8 @@
 QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject *parent)
     	: QtInterface(receiver, parent)
 	, m_bDoLoop(true)
+	, m_preSelection(0.0)
+	, m_counter(0.0)
 	, m_width(0)
 	, m_height(0)
 	, m_pObject(NULL)

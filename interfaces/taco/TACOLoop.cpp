@@ -70,5 +70,5 @@ void TACOLoop::runLoop()
 
 	DevLong status = nethost_alloc(&error);
 	status = device_server(const_cast<char *>(m_server.toStdString().c_str()), const_cast<char *>(m_personal.toStdString().c_str()), 0, 1, 0, 0, deviceList.size(), devList);
-	MSG_DEBUG << "device_server does not run";
+	MSG_DEBUG << "device_server does not run : " << status;
 }

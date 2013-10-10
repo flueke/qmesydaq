@@ -51,7 +51,7 @@ MdllSetup::MdllSetup(Mesydaq2 *mesy, QWidget *parent)
 
     \param id
  */
-void MdllSetup::setMCPD(int id)
+void MdllSetup::setMCPD(int /* id */)
 {
 #if 0
     devid->setValue(id);

@@ -282,7 +282,7 @@ void DataRepeater::timerEvent(QTimerEvent *event)
   \brief real data sending function, which splits much data into smaller datagrams
   \param bForce  false=do not send short datagrams, true=send also short datagrams
 */
-void DataRepeater::SendDatagram(bool bForce)
+void DataRepeater::SendDatagram(bool /* bForce */)
 {
   int iLength=m_abyTodo.count();
   if (m_pSocket==NULL)

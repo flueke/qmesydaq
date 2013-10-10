@@ -23,24 +23,22 @@ Spectrum	*m_tubeSpectrum;
 
 void analyzeBuffer(const DATA_PACKET &pd)
 {
-	quint16 time;
-	ulong 	data;
-	quint16 neutrons = 0;
-	quint16 triggers = 0;
-	quint16	monitorTriggers = 0;
-	quint16	ttlTriggers = 0;
-	quint16	adcTriggers = 0;
-	quint16 counterTriggers = 0;
 	quint64 tim;
 	quint16 mod = pd.deviceId;
 	quint64 headertime = pd.time[0] + (quint64(pd.time[1]) << 16) + (quint64(pd.time[2]) << 32);
 //	setCurrentTime(headertime / 10000); // headertime is in 100ns steps
-	quint16 runID = pd.runID;
+	quint16 runID(pd.runID);
 
 	MSG_DEBUG << QObject::tr("# : %3, mod : %1, runID : %2").arg(mod).arg(runID).arg(pd.bufferNumber);
 
 	if(pd.bufferType < 0x0003)
 	{
+		quint16 neutrons(0);
+		quint16 triggers(0);
+		quint16	monitorTriggers(0);
+		quint16	ttlTriggers(0);
+		quint16	adcTriggers(0);
+		quint16 counterTriggers(0);
 // extract parameter values:
 		QChar c('0');
 		quint32 datalen = (pd.bufferLength - pd.headerLength) / 3;
@@ -63,8 +61,8 @@ void analyzeBuffer(const DATA_PACKET &pd)
 			{
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
-				data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
-				time = (quint16)tim;
+				ulong data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
+//				quint16 time = (quint16)tim;
 				switch(dataId)
 				{
 					case MON1ID :
@@ -321,7 +319,7 @@ void readListfile(QString readfilename)
 			MSG_DEBUG << blocks << ". header time : " << tmp;
 			if (!blocks)
 			{
-				quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
+				tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
 // 				m_counter[TIMERID]->start(tmp / 10000);	// headertime is in 100ns steps
 			}
 // hand over data buffer for processing

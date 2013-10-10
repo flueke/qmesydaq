@@ -28,7 +28,7 @@
 
 #include "CommandEvent.h"
 
-TCPLoop::TCPLoop(QtInterface *interface)
+TCPLoop::TCPLoop(QtInterface * /* interface */)
 {
 	setObjectName("TCPLoop");
 // testing

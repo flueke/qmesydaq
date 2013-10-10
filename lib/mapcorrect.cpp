@@ -222,7 +222,7 @@ bool MapCorrection::map(const QRect& src, const QPoint& dst, float fCorrection)
     for (int y = src.top(); y <= src.bottom(); ++y)
     {
         int iStart = y * m_rect.width();
-        bool bLastY=(y==src.bottom());
+//      bool bLastY=(y==src.bottom());
         for (int x = src.left(); x <= src.right(); ++x)
         {
             QPoint *p = &m_aptMap[iStart+x];
