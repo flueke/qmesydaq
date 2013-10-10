@@ -666,7 +666,7 @@ int main(int argc, char *argv[])
 			j = szArg.indexOf(':');
 			if (j > 0)
 			{
-				id = atoi(szArg.toLatin1().constData() + j + 1);
+				id = szArg.mid(j + 1).toInt();
 				szArg.remove(j, szArg.size() - j);
 				if (id < 0 || id > 255)
 				{
@@ -693,7 +693,7 @@ int main(int argc, char *argv[])
 				qDebug() << "invalid argument: " << szArg;
 				break;
 			}
-			int l = atoi(szArg.toLatin1().constData() + j);
+			int l = szArg.mid(j).toInt();
 			if (l < 1 || l > 64)
 			{
 				qDebug() << "invalid width: " << l;
@@ -710,7 +710,7 @@ int main(int argc, char *argv[])
 				qDebug() << "invalid argument: " << szArg;
 				break;
 			}
-			int l = atoi(szArg.toLatin1().constData() + j);
+			int l = szArg.mid(j).toInt();
 			if (l < 1 || l > 1024)
 			{
 				qDebug() << "invalid height: " << l;
@@ -726,7 +726,7 @@ int main(int argc, char *argv[])
 				qDebug() << "invalid argument: " << szArg;
 				break;
 			}
-			long long l = atoll(szArg.toLatin1().constData() + j);
+			long long l = szArg.mid(j).toLongLong();
 			if (l < 1 || l > 0x7FFFFFFFLL)
 			{
 				qDebug() << "invalid stop counter: " << l;
@@ -743,7 +743,7 @@ int main(int argc, char *argv[])
 				qDebug() << "invalid argument: " << szArg;
 				break;
 			}
-			int l = atoi(szArg.toLatin1().constData() + j);
+			int l = szArg.mid(j).toInt();
 			if (l < 1 || l > 1000)
 			{
 				qDebug() << "invalid interval: " << l;
