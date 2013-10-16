@@ -1109,7 +1109,7 @@ bool MCPD2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         // MSG_DEBUG << tr("MCPD2::analyzeBuffer(MDP_PACKET recBuf) 0x%1 : %2").arg(pMdp->bufferType, 0, 16).arg(pMdp->cmd);
 
         MPSD8   *ptrMPSD;
-        quint16 chksum = pMdp->headerChksum;
+        // quint16 chksum = pMdp->headerChksum;
 #if defined(_MSC_VER)
 #   pragma message("if (chksum != calcChksum(recBuf))")
 #   pragma message("MSG_INFO << \"cmd packet (cmd = \" << pMdp->cmd << \", size = \" << pMdp->bufferLength")
