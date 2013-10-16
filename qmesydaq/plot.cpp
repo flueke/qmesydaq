@@ -75,14 +75,14 @@ Plot::Plot(QWidget *parent)
 	plotLayout()->setAlignCanvasToScales(true);
 
 // Standard colors for the curves
-	QPen p[] = {	QPen(Qt::red)
-			, QPen(Qt::black)
-			, QPen(Qt::green)
-			, QPen(Qt::blue)
-			, QPen(Qt::yellow)
-			, QPen(Qt::magenta)
-			, QPen(Qt::cyan)
-			, QPen(Qt::white)
+	QPen p[] = {	QPen(Qt::red),
+			QPen(Qt::black),
+			QPen(Qt::green),
+			QPen(Qt::blue),
+			QPen(Qt::yellow),
+			QPen(Qt::magenta),
+			QPen(Qt::cyan),
+			QPen(Qt::white),
 			};
 
 // Insert new curves
