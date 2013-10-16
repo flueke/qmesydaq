@@ -294,8 +294,8 @@ void DataRepeater::SendDatagram(bool /* bForce */)
   while (iLength>0)
   {
     int len=iLength;
-        unsigned int uiMaxSendableDatagramSize = m_iMaxDatagramSize - sizeof(m_globalPackageCounter); //n Byte for the UDP Package Counter
-    if (len>(uiMaxSendableDatagramSize))
+        int iMaxSendableDatagramSize = m_iMaxDatagramSize - sizeof(m_globalPackageCounter); //n Byte for the UDP Package Counter
+    if (len>(iMaxSendableDatagramSize))
         {
                 MSG_DEBUG << tr("UDP Server: Send more than one UDP package for one block!");
         len=m_iMaxDatagramSize;
@@ -318,7 +318,7 @@ void DataRepeater::SendDatagram(bool /* bForce */)
                 break;
     }
     m_abyTodo.remove(0,len);
-    iLength-=uiMaxSendableDatagramSize;
+    iLength-=iMaxSendableDatagramSize;
   }
   m_abyTodo.clear();
 }
