@@ -136,7 +136,7 @@ void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> 
 #undef CMD
             default: szCmd="???"; break;
         }
-        MSG_FATAL << "timeout for command " << cmd << "(" << szCmd << ")" << args;
+        MSG_FATAL << tr("timeout for command %1(%2)").arg(cmd).arg(szCmd) << args;
 #ifdef DEBUGBUILD
         Q_ASSERT(false);
 #endif

@@ -119,6 +119,6 @@ quint8	MPSD8old::calcThreshval(quint8 thr)
 	float diff = ft - t;
 	if(diff > 0.5)
 		t++;
-//	MSG_ERROR << "threshpoti: " << t << ", threshval: " << thr;
+//	MSG_ERROR << tr("threshpoti: %1, threshval: %2").arg(t).arg(thr);
 	return t;
 }

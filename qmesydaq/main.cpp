@@ -116,9 +116,9 @@ int main(int argc, char **argv)
 #if USE_TACO
 	if (!getenv("NETHOST"))
 	{
-		MSG_DEBUG << "Environment variable \"NETHOST\" is not set";
-		MSG_DEBUG << "You may set it explicitly in the command shell";
-		MSG_DEBUG << "or by using command line option -n 'nethost.domain'";
+		MSG_DEBUG << QObject::tr("Environment variable \"NETHOST\" is not set");
+		MSG_DEBUG << QObject::tr("You may set it explicitly in the command shell");
+		MSG_DEBUG << QObject::tr("or by using command line option -n 'nethost.domain'");
 	}
 	else 
 		loop = new TACOLoop;

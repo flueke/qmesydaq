@@ -96,7 +96,7 @@ void MCPDSetup::sendAuxSlot()
 void MCPDSetup::resetTimerSlot()
 {
     quint16 id = mcpdId->value();
-    MSG_NOTICE << "reset timer";
+    MSG_NOTICE << tr("reset timer");
     m_theApp->setMasterClock(id, 0LL);
 }
 
@@ -109,7 +109,7 @@ void MCPDSetup::setTimingSlot()
 {
     quint16 id = mcpdId->value();
     resetTimer->setEnabled(master->isChecked());
-    MSG_NOTICE << "set timing";
+    MSG_NOTICE << tr("set timing");
     m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked(), extsync->isChecked());
     if (master->isChecked())
         emit sync(extsync->isChecked());
@@ -262,7 +262,7 @@ void MCPDSetup::setModule(int modNr)
             cmdPort;
 
     m_theApp->getProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
-    MSG_DEBUG << QString("%1 %2(%3) %4(%5)").arg(mcpdIP).arg(dataIP).arg(dataPort).arg(cmdIP).arg(cmdPort);
+    MSG_DEBUG << tr("%1 %2(%3) %4(%5)").arg(mcpdIP).arg(dataIP).arg(dataPort).arg(cmdIP).arg(cmdPort);
 
     mcpdIPAddress->setText(mcpdIP);
     if (!dataIP.isEmpty())

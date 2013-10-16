@@ -58,7 +58,7 @@ void TACOLoop::runLoop()
 		deviceList << m_counterDevice[i];
 
 	QString devices = deviceList.join(" ");	
-	MSG_DEBUG << "device_server to start " << m_server << "/" << m_personal << " with device(s) " << devices;
+	MSG_DEBUG << tr("device_server to start %1/%2 with device(s) ").arg(m_server).arg(m_personal) << devices;
 
 	char **devList = new char*[deviceList.size()];
 	for (int i = 0; i < deviceList.size(); ++i)
@@ -70,5 +70,5 @@ void TACOLoop::runLoop()
 
 	DevLong status = nethost_alloc(&error);
 	status = device_server(const_cast<char *>(m_server.toStdString().c_str()), const_cast<char *>(m_personal.toStdString().c_str()), 0, 1, 0, 0, deviceList.size(), devList);
-	MSG_DEBUG << "device_server does not run : " << status;
+	MSG_FATAL << tr("device_server does not run : %1").arg(status);
 }

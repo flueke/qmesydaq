@@ -152,7 +152,7 @@ void NetworkDevice::destroySocket()
  */
 int NetworkDevice::createSocket(void)
 {
-    MSG_NOTICE << m_szHostIp.toLocal8Bit().constData() << '(' << m_wPort << ") : init socket: address";
+    MSG_NOTICE << tr("%1(%2) : init socket: address").arg(m_szHostIp).arg(m_wPort);
 
     // create server address
     QHostAddress servaddr(m_szHostIp); // QHostAddress::Any);
@@ -257,9 +257,9 @@ void NetworkDevice::disconnect_handler(QHostAddress source, quint16 wPort, Netwo
 bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const QSharedDataPointer<SD_PACKET> &buf)
 {
     QHostAddress ha(szTargetIp);
-    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << wPort << ") : send buffer " << buf->mdp.bufferLength * 2 << " bytes";
+    MSG_INFO << tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(wPort).arg(buf->mdp.bufferLength * 2);
     qint64 i = m_sock->writeDatagram((const char *)(&buf->mdp), 100, ha, wPort);
-    MSG_DEBUG << i << " sent bytes";
+    MSG_DEBUG << tr("%1 sent bytes").arg(i);
     return (i != -1);
 }
 
@@ -275,9 +275,9 @@ bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const Q
 bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const MDP_PACKET &buf)
 {
     QHostAddress ha(szTargetIp);
-    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << wPort << ") : send buffer " << buf.bufferLength * 2 << " bytes";
+    MSG_INFO << tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(wPort).arg(buf.bufferLength * 2);
     qint64 i = m_sock->writeDatagram((const char *)&buf, 100, ha, wPort);
-    MSG_DEBUG << i << " sent bytes";
+    MSG_DEBUG << tr("%1 sent bytes").arg(i);
     return (i != -1);
 }
 
@@ -293,9 +293,9 @@ bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const M
 bool NetworkDevice::sendBuffer(const QString &szTargetIp, quint16 wPort, const MDP_PACKET2 &buf)
 {
     QHostAddress ha(szTargetIp);
-    MSG_INFO << ha.toString().toLocal8Bit().constData() << '(' << wPort << ") : send buffer " << buf.headerlength << " bytes";
+    MSG_INFO << tr("%1(%2) : send buffer %3 bytes").arg(ha.toString()).arg(wPort).arg(buf.headerlength);
     qint64 i = m_sock->writeDatagram((const char *)&buf, 200, ha, wPort);
-    MSG_DEBUG << i << " sent bytes";
+    MSG_DEBUG << tr("%1 sent bytes").arg(i);
     return (i != -1);
 }
 
@@ -308,7 +308,7 @@ void NetworkDevice::readSocketData(void)
     // read socket data into receive buffer and notify
     if (m_sock->hasPendingDatagrams())
     {
-//      MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : NetworkDevice::readSocketData()";
+//      MSG_DEBUG << tr("%1(%2) : NetworkDevice::readSocketData()").arg(ip()).arg(port();
         qint64 maxsize = m_sock->pendingDatagramSize();
         if (maxsize > 0)
         {
@@ -319,10 +319,10 @@ void NetworkDevice::readSocketData(void)
             bLostPacket=(len>0);
             if (len != -1)
             {
-                // MSG_DEBUG << fromAddress.toString().toLocal8Bit().constData() << '(' << fromPort << ") : ID = " << recBuf.deviceId << " read datagram : " << len << " from " << maxsize << " bytes";
-                // MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read nr : " << recBuf.bufferNumber << " cmd : " << recBuf.cmd << " status " << recBuf.deviceStatus;
+                // MSG_DEBUG << tr("%1(%2) : ID = %3 read datagram : %4 from %5 bytes").arg(fromAddress.toString()).arg(fromPort).arg(recBuf.deviceId).arg(len).arg(maxsize);
+                // MSG_DEBUG << tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(recBuf.bufferNumber).arg(recBuf.cmd).arg(recBuf.deviceStatus);
                 // quint64 tim = recBuf.time[0] + recBuf.time[1] * 0x10000ULL + recBuf.time[2] * 0x100000000ULL;
-                // MSG_DEBUG << ip().toLocal8Bit().constData() << '(' << port() << ") : read time : " << tim;
+                // MSG_DEBUG << tr("%1(%2) : read time : %3").arg(ip()).arg(port()).arg(tim);
 
                 foreach (const struct handler &tmp, m_aHandler)
                 {
@@ -335,7 +335,7 @@ void NetworkDevice::readSocketData(void)
                 }
             }
             if (bLostPacket)
-                MSG_DEBUG << "lost " << len << " bytes from " << fromAddress << ", port " << fromPort << ": " << HexDump(&recBuf->mdp, len);
+                MSG_DEBUG << tr("lost %1 bytes from %2%, port 3: %4").arg(len).arg(fromAddress.toString()).arg(fromPort).arg(QString(HexDump(&recBuf->mdp, len)));
         }
     }
 }

@@ -414,7 +414,7 @@ void MainWidget::setStreamSlot()
         m_cmdBuffer[2] = 1;
     else
         m_cmdBuffer[2] = 0;
-		MSG_WARNING << "Set stream " << m_cmdBuffer[2];
+		MSG_WARNING << tr("Set stream %1").arg(m_cmdBuffer[2]);
     m_theApp->sendCommand(m_pBuffer);
 
     m_theApp->setStream(mcpdId->value(), statusStream->isChecked());
@@ -485,7 +485,7 @@ void MainWidget::checkListfilename(bool checked)
             m_theApp->setListfilename(name);
         else
 	{
-	    MSG_DEBUG << "disable list file";
+	    MSG_DEBUG << tr("disable list file");
             acquireFile->setChecked(false);
 	}
     }
@@ -576,7 +576,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
         val = round(val / 10000.0);
 //      nsec = timeval - (1000 * val);
     }
-//  MSG_DEBUG << timeval << ' ' << val << ' ' << nsec;
+//  MSG_DEBUG << tr("%1 %2 %3").arg(timeval).arg(val).arg(nsec);
 // hours = val / 3600 (s/h)
     hr = val / 3600;
 // remaining seconds:
@@ -585,7 +585,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
     min = val / 60;
 // remaining seconds:
     sec = val - (min * 60);
-//  MSG_DEBUG << nsecs << ' ' << hr << ' ' << min << ' ' << sec << ' ' << nsec;
+//  MSG_DEBUG << tr("%1 %2 %3 %4 %1").arg(nsecs).arg(hr).arg(min).arg(sec);
     str.sprintf("%02lu:%02lu:%02lu", hr, min, sec);
     return str;
 }
@@ -630,7 +630,7 @@ void MainWidget::clearMcpdSlot()
 void MainWidget::clearMpsdSlot()
 {
     quint32 start = dispMpsd->value() * 8 + dispMcpd->value() * 64;
-//  MSG_DEBUG << "clearMpsd: " << start;
+//  MSG_DEBUG << tr("clearMpsd: %1").arg(start);
     for(quint32 i = start; i < start + 8; i++)
         m_meas->clearChanHist(i);
     emit redraw();
@@ -720,7 +720,7 @@ void MainWidget::displayMpsdSlot(int iModule)
 	tmp = "TP";
     else if (cap & P)
 	tmp = "P";
-    MSG_ERROR << cap << " " << tmp;
+    MSG_ERROR << tr("%1 %2").arg(cap).arg(tmp);
     capabilities->setText(tmp);
     
 // Status display:
@@ -1181,7 +1181,7 @@ void MainWidget::m4ResetSlot()
 */
 void MainWidget::mpsdCheck(int mod)
 {
-	MSG_DEBUG << "MainWidget::mpsdCheck() : module " << mod;
+	MSG_DEBUG << tr("MainWidget::mpsdCheck() : module %1").arg(mod);
 	displayMpsdSlot(mod);
 }
 
@@ -2078,7 +2078,7 @@ void MainWidget::customEvent(QEvent *e)
         answer << QString("QMesyDAQ " REVISION ",lib %1").arg(m_meas->version());
         break;
 	default:
-		MSG_DEBUG << "ignoring invalid interface command " << cmd << args;
+		MSG_DEBUG << tr("ignoring invalid interface command %1").arg(cmd) << args;
 		return;
     }
     interface->postCommandToInterface(cmd, answer);

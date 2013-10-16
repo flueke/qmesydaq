@@ -148,13 +148,13 @@ void RemoteServer::parseInput(const QString &line)
 		tmp.remove(tmp.length() - 1, 1);
 	if (tmp.endsWith("\r"))
 		tmp.remove(tmp.length() - 1, 1);
-	MSG_DEBUG << "parseInput : " << tmp.toLocal8Bit().constData();
+	MSG_DEBUG << tr("parseInput : %1").arg(tmp);
 		
 	QStringList l = tmp.split(' ', QString::SkipEmptyParts);
 	if (l.length() > 1 && l.at(0) == "MESYDAQ")
 	{
 		QString cmd = l.at(1);
-		MSG_DEBUG << "command : " << cmd.toLocal8Bit().constData();
+		MSG_DEBUG << tr("command : %1").arg(cmd);
 
 		if (cmd == "START")
 		{
@@ -256,7 +256,7 @@ void RemoteServer::parseInput(const QString &line)
 		else
 		{
 			syntaxOk = false;
-			MSG_DEBUG << "unknown command : %s" << cmd.toLocal8Bit().constData();
+			MSG_DEBUG << tr("unknown command : %1").arg(cmd);
 		}
 	}
 	else

@@ -68,7 +68,7 @@ MPSD8::MPSD8(quint8 id, QObject *parent)
 		m_pulser[c] = false;
 		m_ampMode[c] = false;
 	}
-	MSG_DEBUG << "identified MPSD id on MCPD " << m_mcpdId << ", bus " << m_busNum << ": " << id;
+	MSG_DEBUG << tr("identified MPSD id on MCPD %1, bus %2: %3").arg(m_mcpdId).arg(m_busNum).arg(id);
 }
 
 //! desctructor
@@ -110,8 +110,7 @@ void MPSD8::setGain(quint8 channel, float gainv, bool preset)
 		m_gainPoti[channel][preset] = val;
 		m_gainVal[channel][preset] = gainv;
 	}
-	MSG_NOTICE << "m_gainVal " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum
-						 << ",  " << channel << " to " << tr("%1").arg(gainv,6,'f',2) << " (" << val << ')';
+	MSG_NOTICE << tr("m_gainVal %1%2, %3, %4 to %5 (%6)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gainv, 6, 'f', 2).arg(val);
 }
 
 /*!
@@ -142,8 +141,7 @@ void MPSD8::setGain(quint8 channel, quint8 gain, bool preset)
 		m_gainPoti[channel][preset] = gain;
 		m_gainVal[channel][preset] = gv;
 	}
-	MSG_NOTICE << "gain " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum
-						 << ",  " << channel << " to " << gain << " (" << tr("%1").arg(gv,6,'f',2) << ')';
+	MSG_NOTICE << tr("gain %1%2, %3, %4 to %5 (%6)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gain).arg(gv, 6, 'f', 2);
 }
 
 /*!
@@ -162,7 +160,7 @@ void MPSD8::setThreshold(quint8 threshold, bool preset)
 	m_threshPoti[preset] = calcThreshpoti(threshold);
 	m_threshVal[preset] = threshold;
 
-	MSG_NOTICE << "threshold " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum << " to " << threshold << " (" << m_threshPoti[preset] << ')';
+	MSG_NOTICE << tr("threshold %1%2, %3 to %4 (%5)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(threshold).arg(m_threshPoti[preset]);
 }
 
 /*!
@@ -181,7 +179,7 @@ void MPSD8::setThreshpoti(quint8 thresh, bool preset)
 	m_threshPoti[preset] = thresh;
 	m_threshVal[preset] = calcThreshval(thresh);
    	
-	MSG_NOTICE << "threspoti " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum << " to " << thresh << " (" << m_threshVal[preset] << ')';
+	MSG_NOTICE << tr("threspoti %1%2, %3 to %4 (%5)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(thresh).arg(m_threshVal[preset]);
 }
 
 /*!
@@ -198,8 +196,7 @@ void MPSD8::setThreshpoti(quint8 thresh, bool preset)
  */
 void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 {
-	MSG_NOTICE << "MPSD8::setPulserPoti(chan = " << chan << ", pos = " << pos << ", poti = " << poti
-						 << ", on = " << on << ", preset = " << preset << ')';
+	MSG_NOTICE << tr("MPSD8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5").arg(chan).arg(pos).arg(poti).arg(on).arg(preset);
 	if(pos > MIDDLE)
 		m_pulsPos[preset] = MIDDLE;
 	else
@@ -214,8 +211,8 @@ void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool 
 	m_pulsAmp[preset] = calcPulsAmp(poti, m_gainVal[chan][0]);
 	m_pulser[preset] = on;
 
-	MSG_NOTICE << "pulser " << (const char*)(preset?"preset ":"") << m_mcpdId << ", bus " << m_busNum
-						 << " to pos " << m_pulsPos[preset] << ", poti " << poti << " - ampl " << tr("%1").arg(m_pulsAmp[preset],6,'f',2);
+	MSG_NOTICE << tr("pulser %1%2, bus %3 to pos %4, poti %5 - ampl %6").
+		arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(poti).arg(m_pulsAmp[preset], 6, 'f', 2);
 }
 
 /*!
@@ -246,8 +243,8 @@ void MPSD8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool prese
 	m_pulsAmp[preset] = amp;
 	m_pulser[preset] = on;
    	
-	MSG_NOTICE << "pulser " << (const char*)(preset?"preset ":"") << m_mcpdId << ", bus " << m_busNum
-						 << " to pos " << m_pulsPos[preset] << ", ampl " << amp << " - poti " << m_pulsPoti[preset];
+	MSG_NOTICE << tr("pulser %1%2, bus %3 to pos %4, ampl %5 - poti %6").arg(preset ? "preset " : "").
+		arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(amp).arg(m_pulsPoti[preset]);
 }
 
 /*!
@@ -261,7 +258,7 @@ void MPSD8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool prese
 quint8 MPSD8::calcGainpoti(float fval)
 {
 	quint8 ug = (quint8) fval;
-//	MSG_ERROR << "m_gainVal: " << fval << ", m_gainPoti: " << ug;
+//	MSG_ERROR << tr("m_gainVal: %1, m_gainPoti: %2").arg(fval).arg(ug);
 	return ug;
 }
 
@@ -276,7 +273,7 @@ quint8 MPSD8::calcGainpoti(float fval)
 quint8 MPSD8::calcThreshpoti(quint8 tval)
 {
 	quint8 ut = tval;
-//	MSG_ERROR << "threshold: " << tval << ", threshpoti: " << ut;
+//	MSG_ERROR << tr("threshold: %1, threshpoti: %2").arg(tval).arg(ut);
 	return ut;
 }
 
@@ -292,7 +289,7 @@ quint8 MPSD8::calcThreshpoti(quint8 tval)
 float MPSD8::calcGainval(quint8 ga)
 {
 	float fgain = float(ga);
-//	MSG_ERROR << "m_gainPoti: " << ga << ", m_gainVal: " << fgain;
+//	MSG_ERROR << tr("m_gainPoti: %1, m_gainVal: %2").arg(ga).arg(fgain);
 	return fgain;
 }
 
@@ -308,7 +305,7 @@ float MPSD8::calcGainval(quint8 ga)
 quint8 MPSD8::calcThreshval(quint8 thr)
 {
 	quint8 t = thr;
-//	MSG_ERROR << "threshpoti: " << t << ", threshval: " << thr;
+//	MSG_ERROR << tr("threshpoti: %1, threshval: %2").arg(t).arg(thr);
 	return t;
 }
 
@@ -324,7 +321,7 @@ quint8 MPSD8::calcThreshval(quint8 thr)
 quint8 MPSD8::calcPulsPoti(quint8 val, float /* gv */)
 {
 	quint8 pa = val;
-//	MSG_ERROR << "pulsval: " << val << ", pulspoti: " << pa;
+//	MSG_ERROR << tr("pulsval: %1, pulspoti: %2").arg(val).arg(pa);
 	return pa;
 }
 
@@ -339,7 +336,7 @@ quint8 MPSD8::calcPulsPoti(quint8 val, float /* gv */)
  */
 quint8 MPSD8::calcPulsAmp(quint8 val, float gv)
 {
-	MSG_NOTICE << "MPSD8::calcPulsAmp(val = " << val << ", gv = " << gv << ')';
+	MSG_NOTICE << tr("MPSD8::calcPulsAmp(val = %1, gv = %2").arg(val).arg(gv);
 	return val;
 }
 
@@ -357,8 +354,7 @@ void MPSD8::setInternalreg(quint8 reg, quint16 val, bool preset)
 {
 	m_internalReg[reg][preset] = val;
    	
-	MSG_NOTICE << "register " << (const char*)(preset?"preset ":"") << m_mcpdId << ", " << m_busNum
-						 << ", " << reg << ", to " << m_internalReg[reg][preset];
+	MSG_NOTICE << tr("register %1%2, %3, %4, to %5").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(reg).arg(m_internalReg[reg][preset]);
 }
 
 /*!

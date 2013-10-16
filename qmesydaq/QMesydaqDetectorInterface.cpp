@@ -534,7 +534,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_eventReceived = true;
 					break;
 				default:
-					MSG_DEBUG << "ignoring invalid interface answer " << cmd << args;
+					MSG_DEBUG << tr("ignoring invalid interface answer %1").arg(cmd) << args;
 					break;
 			}
 		}
@@ -562,7 +562,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_eventReceived = true;
 					break;
 				default:
-					MSG_DEBUG << "ignoring invalid interface answer " << cmd << args;
+					MSG_DEBUG << tr("ignoring invalid interface answer %1").arg(cmd) << args;
 					break;
 			}
 		}

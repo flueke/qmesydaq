@@ -111,7 +111,7 @@ bool UserMapCorrection::loadCalFile(const QString &fName)
 				qreal min = list[1].toUInt(),
 				max = list[2].toUInt();
 				m_tube[index] = TubeRange(min, max);
-//				MSG_ERROR << index << " " << min << " " << max;
+//				MSG_ERROR << tr("%1 %2 %3").arg(index).arg(min).arg(max);
 			}
 		}
 		f.close();
@@ -135,18 +135,18 @@ bool UserMapCorrection::loadCalFile(const QString &fName)
 					for (; iStartX < iEndX; ++iStartX)
 						if (chan < 0)
 						{
-//							MSG_ERROR << QPoint(iStartX, k) << nullPt << " 0.0";
+//							MSG_ERROR << QPoint(iStartX, k) << arg(nullPt) << tr(" 0.0");
 							if (!map(QPoint(iStartX, k), nullPt, 0.0))
 							{
-								MSG_FATAL << "failed";
+								MSG_FATAL << tr("failed");
 							}
 						}
 						else
 						{
-//							MSG_ERROR << QPoint(iStartX, k) << pt << " 1.0";
+//							MSG_ERROR << QPoint(iStartX, k) << arg(nullPt) << tr(" 1.0");
 			  				if (!map(QPoint(iStartX, k), pt, 1.0))
 							{
-								MSG_FATAL << "failed";
+								MSG_FATAL << tr("failed");
 							}
 						}
 				}
@@ -159,7 +159,7 @@ bool UserMapCorrection::loadCalFile(const QString &fName)
 
 bool UserMapCorrection::loadLUTFile(const QString &fName)
 {
-	MSG_NOTICE << "load correction file " << fName;
+	MSG_NOTICE << tr("load correction file '%1'").arg(fName);
 	QFile f;
 	f.setFileName(fName);
 	if (f.open(QIODevice::ReadOnly))
@@ -213,7 +213,7 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 						{
 							if (!map(QPoint(col, row), nullPt, 0.0))
 							{
-								MSG_FATAL << QPoint(col, row) << " " << y << " NULL failed";
+								MSG_FATAL << QPoint(col, row) << tr("%1 NULL failed").arg(y);
 							}
 						}
 						else
@@ -221,7 +221,7 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 							float correction(list.at(j + 1).toFloat());
 			  				if (!map(QPoint(col, row), QPoint(col, y), correction))
 							{
-								MSG_FATAL << "failed";
+								MSG_FATAL << tr("failed");
 							}
 						}
 					}

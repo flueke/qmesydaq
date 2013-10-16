@@ -52,14 +52,14 @@ void MesydaqCounter::operator++(void)
 		++m_value;
 	if (isStopped())
 	{
-		MSG_INFO << "counter stop";
+		MSG_INFO << tr("counter stop");
 		emit stop();
 	}
 }
 
 void MesydaqCounter::set(quint64 val)
 {
-	MSG_INFO << "MesydaqCounter::set(" << val << ')';
+	MSG_INFO << tr("MesydaqCounter::set(%1)").arg(val);
 	m_value = m_offset + val - m_start;
 }
 
@@ -113,12 +113,12 @@ void MesydaqCounter::calcRate(void)
 			else
 			{
 				if (m_value)
-					MSG_ERROR << "size : " << m_rate.size() << "; m_value : " << m_value << ", m_lastValue : " << m_lastValue;
+					MSG_ERROR << tr("size : %1; m_value : %2, m_lastValue : %3").arg(m_rate.size()).arg(m_value).arg(m_lastValue);
 				m_rate.enqueue(0);
 			}
 		}
 		else
-			MSG_ERROR << "m_meastime_msec : " << m_meastime_msec << ",  m_ratetime_msec " << m_ratetime_msec;
+			MSG_ERROR << tr("m_meastime_msec : %1,  m_ratetime_msec %2").arg(m_meastime_msec).arg(m_ratetime_msec);
 		m_lastValue = m_value;
 	}
 	m_ratetime_msec = m_meastime_msec;
@@ -149,7 +149,7 @@ void MesydaqTimer::start(quint64 val)
 {
 	m_start = val;
 	m_value = 0;
-	MSG_INFO << "timer start1";
+	MSG_INFO << tr("timer start");
 }
 
 quint64 MesydaqTimer::value(void) 
@@ -163,7 +163,7 @@ void MesydaqTimer::setTime(quint64 val)
 		m_value = val - m_start;
 	if (isStopped())
 	{
-		MSG_INFO << "timer stop";
+		MSG_INFO << tr("timer stop");
 		emit stop();
 	}
 }

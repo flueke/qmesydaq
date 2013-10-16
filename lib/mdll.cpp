@@ -100,18 +100,14 @@ void MDLL::setThresholds(quint8 threshX, quint8 threshY, quint8 threshA, bool pr
         m_thresh[0][1] = threshX;
         m_thresh[1][1] = threshY;
         m_thresh[2][1] = threshA;
-        MSG_NOTICE << "m_thresh presets" <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_thresh[0][preset] << ", " << m_thresh[1][preset] << ", " <<
-                      m_thresh[3][preset];
+        MSG_NOTICE << tr("m_thresh presets%1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_thresh[0][preset]).arg(m_thresh[1][preset]).arg(m_thresh[3][preset]);
     }
     else
     {
         m_thresh[0][0] = threshX;
         m_thresh[1][0] = threshY;
         m_thresh[2][0] = threshA;
-        MSG_NOTICE << "m_thresh" <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_thresh[0][preset] << ", " << m_thresh[1][preset] << ", " <<
-                      m_thresh[3][preset];
+        MSG_NOTICE << tr("m_thresh presets%1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_thresh[0][preset]).arg(m_thresh[1][preset]).arg(m_thresh[3][preset]);
     }
 }
 
@@ -133,9 +129,8 @@ void MDLL::setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scale
         m_shift[1][1] = shiftY;
         m_scale[0][1] = scaleX;
         m_scale[1][1] = scaleY;
-        MSG_NOTICE << "m_shift/scale presets " <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_shift[0][preset] << ", " << m_shift[1][preset] << ", " <<
-                      m_scale[0][preset] << ", " << m_scale[1][preset];
+        MSG_NOTICE << tr("m_shift/scale presets %1, MDLL to: %2, %3, %4, %5").
+		arg(m_mcpdId).arg(m_shift[0][preset]).arg(m_shift[1][preset]).arg(m_scale[0][preset]).arg(m_scale[1][preset]);
     }
     else
     {
@@ -143,9 +138,8 @@ void MDLL::setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scale
         m_shift[1][0] = shiftY;
         m_scale[0][0] = scaleX;
         m_scale[1][0] = scaleY;
-        MSG_NOTICE << "m_shift/scale " <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_shift[0][preset] << ", " << m_shift[1][preset] << ", " <<
-                      m_scale[0][preset] << ", " << m_scale[1][preset];
+        MSG_NOTICE << tr("m_shift/scale presets %1, MDLL to: %2, %3, %4, %5").
+		arg(m_mcpdId).arg(m_shift[0][preset]).arg(m_shift[1][preset]).arg(m_scale[0][preset]).arg(m_scale[1][preset]);
     }
 }
 
@@ -162,14 +156,12 @@ void MDLL::setDataset(quint8 set, bool preset)
     if(preset)
     {
         m_dataset[1] = set;
-        MSG_NOTICE << "m_dataset preset " <<  m_mcpdId << ", " << "MDLL to: " <<
-                  m_dataset[preset];
+        MSG_NOTICE << tr("m_dataset preset %1, MDLL to: %2").arg(m_mcpdId).arg(m_dataset[preset]);
     }
     else
     {
         m_dataset[0] = set;
-        MSG_NOTICE << "m_dataset " <<  m_mcpdId << ", " << "MDLL to: " <<
-                  m_dataset[preset];
+        MSG_NOTICE << tr("m_dataset preset %1, MDLL to: %2").arg(m_mcpdId).arg(m_dataset[preset]);
     }
 }
 
@@ -190,9 +182,8 @@ void MDLL::setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, b
         m_timingWindow[1][1] = xhi;
         m_timingWindow[2][1] = ylo;
         m_timingWindow[3][1] = yhi;
-        MSG_NOTICE << "m_timingWindow presets " <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_timingWindow[0][preset] << ", " << m_timingWindow[1][preset] << ", " <<
-                      m_timingWindow[2][preset] << ", " << m_timingWindow[3][preset];
+        MSG_NOTICE << tr("m_timingWindow presets %1, MDLL to: %2, %3, %4, %5").
+	       arg(m_mcpdId).arg(m_timingWindow[0][preset]).arg(m_timingWindow[1][preset]).arg(m_timingWindow[2][preset]).arg(m_timingWindow[3][preset]);
     }
     else
     {
@@ -200,9 +191,8 @@ void MDLL::setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, b
         m_timingWindow[1][0] = xhi;
         m_timingWindow[2][0] = ylo;
         m_timingWindow[3][0] = yhi;
-        MSG_NOTICE << "m_timingWindow " <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_timingWindow[0][preset] << ", " << m_timingWindow[1][preset] << ", " <<
-                      m_timingWindow[2][preset] << ", " << m_timingWindow[3][preset];
+        MSG_NOTICE << tr("m_timingWindow presets %1, MDLL to: %2, %3, %4, %5").
+	       arg(m_mcpdId).arg(m_timingWindow[0][preset]).arg(m_timingWindow[1][preset]).arg(m_timingWindow[2][preset]).arg(m_timingWindow[3][preset]);
     }
 }
 
@@ -220,13 +210,11 @@ void MDLL::setEnergyWindow(quint8 elo, quint8 ehi, bool preset)
 
     if(preset)
     {
-        MSG_NOTICE << "m_energyWindow presets " <<  m_mcpdId << ", " << "MDLL to: " <<
-                        m_energyWindow[0][preset] << ", " << m_energyWindow[1][preset];
+        MSG_NOTICE << tr("m_energyWindow presets %1, MDLL to: %2, %3").arg(m_mcpdId).arg(m_energyWindow[0][preset]).arg(m_energyWindow[1][preset]);
     }
     else
     {
-        MSG_NOTICE << "m_shift/scale " <<  m_mcpdId << ", " << "MDLL to: " <<
-                        m_energyWindow[0][preset] << ", " << m_energyWindow[1][preset];
+        MSG_NOTICE << tr("m_energyWindow presets %1, MDLL to: %2, %3").arg(m_mcpdId).arg(m_energyWindow[0][preset]).arg(m_energyWindow[1][preset]);
     }
 }
 
@@ -250,9 +238,7 @@ void MDLL::setPulser(quint8 pos, quint8 amp, quint8 on, bool preset)
         if(amp > 3)
             amp = 3;
         m_pulsAmp[1] = amp;
-        MSG_NOTICE << "Pulser presets " <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_pulser[preset] << ", " << m_pulsPos[preset] << ", " <<
-                      m_pulsAmp[preset];
+        MSG_NOTICE << tr("Pulser presets %1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_pulser[preset]).arg(m_pulsPos[preset]).arg(m_pulsAmp[preset]);
     }
     else
     {
@@ -264,9 +250,7 @@ void MDLL::setPulser(quint8 pos, quint8 amp, quint8 on, bool preset)
         if(amp > 3)
             amp = 3;
         m_pulsAmp[0] = amp;
-        MSG_NOTICE << "Pulser " <<  m_mcpdId << ", " << "MDLL to: " <<
-                      m_pulser[preset] << ", " << m_pulsPos[preset] << ", " <<
-                      m_pulsAmp[preset];
+        MSG_NOTICE << tr("Pulser presets %1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_pulser[preset]).arg(m_pulsPos[preset]).arg(m_pulsAmp[preset]);
     }
 }
 

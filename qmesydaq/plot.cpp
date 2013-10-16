@@ -156,7 +156,7 @@ void Plot::setHistogramData(MesydaqHistogramData *data)
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 			setAxisScale(QwtPlot::yLeft, 0, r.height());
 			QwtDoubleInterval iv = data->range();
-			// MSG_ERROR << iv.minValue() << ", " << iv.maxValue();
+			// MSG_ERROR << tr("%1, %2").arg(iv.minValue()).arg(iv.maxValue());
 			setAxisScale(QwtPlot::yRight, iv.minValue(), iv.maxValue());
 		}
 		replot();
@@ -379,7 +379,7 @@ void Plot::resizeEvent(QResizeEvent *e)
 
 int Plot::heightForWidth(int w) const
 {
-	MSG_ERROR << __PRETTY_FUNCTION__ << " " << w << " " << canvas()->size();
+//	MSG_ERROR << __PRETTY_FUNCTION__ << " " << w << " " << canvas()->size();
 	return -1;
 }
 

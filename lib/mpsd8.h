@@ -177,7 +177,7 @@ public:
 	 */
 	float	getGainval(quint8 chan, bool preset = false) 
 	{
-		MSG_DEBUG << "gain val " << chan << ' ' << m_gainVal[chan][preset];
+		MSG_DEBUG << tr("gain val %1 %2").arg(chan).arg(m_gainVal[chan][preset]);
 		return m_gainVal[chan][preset];
 	}
 

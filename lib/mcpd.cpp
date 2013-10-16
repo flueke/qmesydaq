@@ -229,7 +229,7 @@ void MCPDThread::run()
                 }
             }
             if (bPacketLost)
-                MSG_DEBUG << "lost packet id " << m_pMcpd->m_byId << ": " << HexDump(&pPacket->mdp, sizeof(pPacket->mdp));
+                MSG_DEBUG << tr("lost packet id %1: %2").arg(m_pMcpd->m_byId).arg(QString(HexDump(&pPacket->mdp, sizeof(pPacket->mdp))));
             m_pMcpd->m_pPacketMutex->lock();
             pPacket = NULL;
         }

@@ -225,7 +225,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 			{
 				g_LogFile.close();
 				g_bUseLogfile = true;
-				MSG_DEBUG << "logfile found or created: " << szParameter;
+				MSG_DEBUG << QObject::tr("logfile found or created: %1").arg(szParameter);
 			}
 			if (bSeparatedParameter) 
 				++i;
@@ -238,7 +238,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 				DEBUGLEVEL = iLogLevel;
 			if (bSeparatedParameter) 
 				++i;
-			MSG_DEBUG << "logging level " << DEBUGLEVEL;
+			MSG_DEBUG << QObject::tr("logging level %1").arg(DEBUGLEVEL);
 		}
 		else if (szArgument == "-nt" || szArgument.indexOf(QRegExp("-no.?time")) >= 0)
 		{

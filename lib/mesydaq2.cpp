@@ -43,7 +43,7 @@ Mesydaq2::Mesydaq2()
 	, m_bAutoIncRunId(true)
 	, m_bWriteProtect(false)
 {
-	MSG_NOTICE << "running on Qt %1" << qVersion();
+	MSG_NOTICE << tr("running on Qt %1").arg(qVersion());
 	qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
 	m_pThread = new QThread;
 	moveToThread(m_pThread);
@@ -199,7 +199,7 @@ float Mesydaq2::getFirmware(quint16 id)
 void Mesydaq2::acqListfile(bool yesno)
 {
 	m_acquireListfile = yesno;
-	MSG_NOTICE << "Listfile recording " << (const char*)(yesno ? "on" : "off");
+	MSG_NOTICE << tr("Listfile recording %1").arg(yesno ? "on" : "off");
 }
 
 /*!
@@ -222,7 +222,7 @@ void Mesydaq2::startedDaq(void)
 		writeHeaderSeparator();
 	}
 	m_bRunAck = true;
-	MSG_ERROR << "daq started";
+	MSG_ERROR << tr("daq started");
 }
 
 /*!
@@ -244,7 +244,7 @@ void Mesydaq2::stoppedDaq(void)
 			m_datfile.setPermissions(m_datfile.permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
 	}
 	m_bRunAck = false;
-	MSG_DEBUG << "daq stopped";
+	MSG_DEBUG << tr("daq stopped");
 }
 
 /*!
@@ -560,10 +560,10 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 					for (int k = 0; k < 8; ++k)
 					{
 						settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
-						MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->active(j, k);
+						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->active(j, k);
 						settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
 						settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
-						MSG_ERROR << QString("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
+						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
 					}
 					settings.endGroup();
 					break;
@@ -636,7 +636,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			MSG_ERROR << tr("found no or invalid MCPD id").toStdString().c_str();
+			MSG_ERROR << tr("found no or invalid MCPD id");
 			continue;
 		}
 		++nMcpd;
@@ -703,7 +703,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		
 		}
 		else
-			MSG_FATAL << "MCPD id " << iId << " with address " << IP << " was not correctly initialized";
+			MSG_FATAL << tr("MCPD id %1 with address %2 was not correctly initialized").arg(iId).arg(IP);
 		settings.endGroup();
 	}
 
@@ -715,7 +715,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			MSG_ERROR << tr("found no or invalid Module id").toStdString().c_str();
+			MSG_ERROR << tr("found no or invalid Module id");
 			continue;
 		}
 		int iMCPDId = iId / 8;
@@ -765,7 +765,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			MSG_ERROR << tr("found no or invalid Module id").toStdString().c_str();
+			MSG_ERROR << tr("found no or invalid Module id");
 			continue;
 		}
 
@@ -816,7 +816,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	foreach(MCPD8 *value, m_mcpd)
 		p += value->numModules();
 
-	MSG_NOTICE << nMcpd << " MCPD-8 and " << p << " Modules found";
+	MSG_NOTICE << tr("%1 MCPD-8 and %2 Modules found").arg(nMcpd).arg(p);
 	return true;
 }
 
@@ -947,7 +947,7 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
  */
 void Mesydaq2::start(void)
 {
-	MSG_NOTICE << "remote start";
+	MSG_NOTICE << tr("remote start");
 // start the slaves first
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
@@ -968,7 +968,7 @@ void Mesydaq2::start(void)
  */
 void Mesydaq2::stop(void)
 {
-	MSG_NOTICE << "remote stop";
+	MSG_NOTICE << tr("remote stop");
 	emit statusChanged("STOPPED");
 // Stop the masters first
 	foreach(MCPD8 *it, m_mcpd)
@@ -989,7 +989,7 @@ void Mesydaq2::stop(void)
  */
 void Mesydaq2::cont(void)
 {
-	MSG_NOTICE << "remote cont";
+	MSG_NOTICE << tr("remote cont");
 // continue the slaves first
 	foreach(MCPD8 *it, m_mcpd)
 		if (!it->isMaster())
@@ -1010,7 +1010,7 @@ void Mesydaq2::cont(void)
  */
 void Mesydaq2::reset(void)
 {
-	MSG_NOTICE << "remote reset";
+	MSG_NOTICE << tr("remote reset");
 	foreach(MCPD8 *it, m_mcpd)
 		it->reset();
 }
@@ -1165,7 +1165,7 @@ void Mesydaq2::setParamSource(quint16 id, quint16 param, quint16 source)
  */
 void Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 {
-	MSG_NOTICE << "set aux timer : ID = " << id << ", timer = " << tim << ", interval = " << val;
+	MSG_NOTICE << tr("set aux timer : ID = %1, timer = %2, interval = %3").arg(id).arg(tim).arg(val);
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setAuxTimer(tim, val);
 }
@@ -1656,7 +1656,7 @@ float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getGainVal(addr, chan);
-	MSG_DEBUG << "getGain not found id " << id;
+	MSG_DEBUG << tr("getGain not found id %1").arg(id);
 	return 0;
 }
 
@@ -1699,7 +1699,7 @@ quint32 Mesydaq2::runId(void)
  */
 void Mesydaq2::setRunId(quint32 runid)
 {
-	MSG_NOTICE << "Mesydaq2::setRunId(" << runid << ')';
+	MSG_NOTICE << tr("Mesydaq2::setRunId(%1)").arg(runid);
 	m_runId = runid;
 	foreach (MCPD8* value, m_mcpd)
 		if (value->isMaster())
@@ -1724,7 +1724,7 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		quint64 headertime = dp->time[0] + (quint64(dp->time[1]) << 16) + (quint64(dp->time[2]) << 32);
 		if (m_starttime_msec > (headertime / 10000))
 		{
-			MSG_FATAL << "OLD PACKAGE : " << (headertime / 10000) << " < " << m_starttime_msec;
+			MSG_FATAL << tr("OLD PACKAGE : %1 < %2").arg(headertime / 10000).arg(m_starttime_msec);
 			return;
 		}
 		
@@ -1754,7 +1754,7 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			const quint16 *pD = static_cast<const quint16 *>(&dp->bufferLength);
 			if (dp->bufferLength == 0)
 			{
-				MSG_ERROR << "BUFFER with length 0";
+				MSG_ERROR << tr("BUFFER with length 0");
 				return;
 			}
 #if 0
@@ -1763,7 +1763,7 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 #endif
 			if (dp->bufferLength > sizeof(DATA_PACKET) / 2)
 			{
-				MSG_ERROR << "BUFFER with length " << dp->bufferLength;
+				MSG_ERROR << tr("BUFFER with length %1").arg(dp->bufferLength);
 				return;
 			}
 			m_datStream << dp->bufferLength;
@@ -1775,8 +1775,8 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		}
 		m_pDatSender->WriteData(&dp->bufferLength, dp->bufferLength, true);
 		writeBlockSeparator();
-//		MSG_DEBUG << "------------------";
-		MSG_DEBUG << "buffer : length : " << dp->bufferLength << " type : " << dp->bufferType;
+//		MSG_DEBUG << tr("------------------");
+		MSG_DEBUG << tr("buffer : length : %1 type : %2").arg(dp->bufferLength).arg(dp->bufferType);
 		if(dp->bufferType < 0x0003)
 		{
 // extract parameter values:
@@ -1795,7 +1795,7 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		}
 	}
 	else
-		MSG_DEBUG << "DROP DATA PACKET";
+		MSG_DEBUG << tr("DROP DATA PACKET");
 }
 
 /*!
