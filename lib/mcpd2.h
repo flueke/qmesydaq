@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2012 by Jens Kr�ger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2013 by Lutz Rossa <rossa@helmholtz-berlin.de>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
