@@ -16,14 +16,71 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef __SIMAPP_H__
+#define __SIMAPP_H__
 
-// simulate one or more MCPD-8 with MPSD-8
-// usage: simulator --mcpd=...
-#include "simapp.h"
+#include <QCoreApplication>
+#include <QHostAddress>
+#include "structures.h"
 
-int main(int argc, char *argv[])
+class QTimerEvent;
+class SimMCPD8;
+
+class SimApp : public QCoreApplication
 {
-	SimApp app(argc, argv);
+	Q_OBJECT
+public:
+	SimApp(int &argc, char **argv);
 
-	return app.exec();
-}
+public slots:
+	void timerEvent(QTimerEvent *);
+	void NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAddress &sender, quint16 &senderPort);
+
+private:
+	void ComputeSpectrum(void);
+
+	void StartStop(SimMCPD8 *pMCPD8, bool bDAQ, const char *szReason);
+
+	quint64 GetClock(void);
+
+private:
+	//! default: MCPD has 64 channels (8 full MPSDs)
+	quint16            m_wSpectrumWidth;
+
+	//! spectrum height
+	quint16            m_wSpectrumHeight;
+
+	//! stop after this number of packets
+	quint16            m_dwStopPacket;
+
+	//! simulation timer
+	quint16            m_wTimerInterval;
+
+	//! simulate "round" detector of HZB instrument V4/SANS
+	bool               m_bV4;
+
+	QVector<SimMCPD8*> m_apMCPD8;
+
+	//! simulator is running
+	bool               m_bDAQ;
+
+	//! header run#
+	quint16            m_wRunId;
+
+	//! start time
+	quint64            m_qwMasterOffset;
+
+	//! packet counter
+	quint32            m_dwPackets;
+
+	//! loop counter for full simulation cycles
+	quint64            m_qwLoopCount;
+
+	// output spectrum
+	QVector<quint8>    m_abySpectrum;
+
+	// point to simulate
+	QVector<int>       m_aiPoints;
+};
+
+#endif /* __SIMAPP_H__ */

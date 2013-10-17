@@ -17,7 +17,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.2.0
+VERSION		= 0.3.0
 SRCBASE		= ../..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -35,8 +35,8 @@ INCLUDEPATH	+= . $${SRCBASE}/lib
 
 LIBS		+= -L$${SRCBASE}/lib
 
-SOURCES		+= main.cpp simmcpd8.cpp
-HEADERS		+= main.h simmcpd8.h
+SOURCES		+= main.cpp simmcpd8.cpp simapp.cpp
+HEADERS		+= utils.h simmcpd8.h simapp.h
 
 INSTALLS	= target
 

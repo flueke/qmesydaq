@@ -19,25 +19,10 @@
 #ifndef __MAIN_H__4BAC047E_3685_4F88_9ADF_3EE05A666E1C__
 #define __MAIN_H__4BAC047E_3685_4F88_9ADF_3EE05A666E1C__
 
-#include <QApplication>
-#include <QHostAddress>
-#include <QTimerEvent>
-#include "structures.h"
-#include "mdefines.h"
+#include <QString>
 
 class SimMCPD8;
 void logmsg(SimMCPD8 *pMCPD8, const QString &szLine);
 void logmsg(SimMCPD8 *pMCPD8, const char *szFormat, ...);
-
-class SimApp : public QApplication
-{
-	Q_OBJECT
-public:
-	SimApp(int &argc, char **argv) : QApplication(argc,argv) {}
-
-public slots:
-	void timerEvent(QTimerEvent *);
-	void NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAddress &sender, quint16 &senderPort);
-};
 
 #endif /*__MAIN_H__4BAC047E_3685_4F88_9ADF_3EE05A666E1C__*/
