@@ -639,7 +639,7 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 // main function
 int main(int argc, char *argv[])
 {
-	SimApp a(argc, argv);
+	SimApp app(argc, argv);
 	bool bWidth(false);
 	int i;
 
@@ -681,7 +681,7 @@ int main(int argc, char *argv[])
 				break;
 			}
 			g_apMCPD8.append(pMcpd);
-			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), &a,
+			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), &app,
 					SLOT(NewCmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), Qt::DirectConnection);
 			qDebug() << "created " << pMcpd->ip() << ":" << id;
 		}
@@ -775,7 +775,7 @@ int main(int argc, char *argv[])
 		if (pMcpd != NULL)
 		{
 			g_apMCPD8.append(pMcpd);
-			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), &a,
+			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), &app,
 					SLOT(NewCmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), Qt::DirectConnection);
 			qDebug() << "created " << pMcpd->ip() << ":" << pMcpd->id();
 		}
@@ -800,7 +800,7 @@ int main(int argc, char *argv[])
 
 	ComputeSpectrum();
 	g_aiPoints.clear();
-	a.startTimer(g_wTimerInterval);
+	app.startTimer(g_wTimerInterval);
 
-	return a.exec();
+	return app.exec();
 }
