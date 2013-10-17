@@ -724,7 +724,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			threshold;
 		bool 	comgain(true);
 
-		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized())
+		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
 			switch (getModuleId(iMCPDId, j))
 			{
 				case TYPE_MDLL :
@@ -773,7 +773,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 //		int j = iId % 8;
 
-		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized() &&
+		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized() &&
 		    getModuleId(iMCPDId, 0) == TYPE_MDLL)
 		{
 			quint8 	thresh[3], 
