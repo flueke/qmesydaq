@@ -1612,7 +1612,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
     quint16 diff = pMdp->bufferNumber - m_lastBufnum;
     if(diff > 1 && pMdp->bufferNumber > 0 && m_lastBufnum != 255)
-        MSG_ERROR << tr("%1(%2) %3 : Lost %4 Buffers: current: %5, last: %6").
+        MSG_ERROR << tr("%1(%2): Lost %3 Buffers: current: %4, last: %5").
 		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(diff).arg(pMdp->bufferNumber).arg(m_lastBufnum);
     m_lastBufnum = pMdp->bufferNumber;
 
