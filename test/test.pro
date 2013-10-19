@@ -20,5 +20,6 @@ SUBDIRS	 	+= listfile \
 		calibration \
 		readlistfile \
 		colormaps \
-		countrates
+		countrates \
+		threads
 
