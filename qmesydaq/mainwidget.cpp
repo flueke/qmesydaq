@@ -783,7 +783,7 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     configfilename->setText(m_meas->getConfigfilename());
     acquireFile->setChecked(m_meas->acqListfile());
 
-    QSettings settings(m_meas->getConfigfilename());
+    QSettings settings(m_meas->getConfigfilename(), QSettings::IniFormat);
     settings.beginGroup("MESYDAQ");
     acquireFile->setChecked(settings.value("listmode", true).toBool());
     timerPreset->setChecked(settings.value("Preset/time", true).toBool());
