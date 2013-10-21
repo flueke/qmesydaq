@@ -51,7 +51,8 @@ MCPD8::MCPD8(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPor
     , m_extsync(false)
     , m_stream(false)
     , m_iCommActive(RECV)
-    , m_lastBufnum(0)
+    , m_lastCmdBufnum(0)
+    , m_lastDataBufnum(0)
     , m_runId(0)
     , m_dataRxd(0)
     , m_cmdTxd(0)
@@ -1610,14 +1611,14 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         return false;
     }
 
-    quint16 diff = pMdp->bufferNumber - m_lastBufnum;
-    if(diff > 1 && pMdp->bufferNumber > 0 && m_lastBufnum != 255)
-        MSG_ERROR << tr("%1(%2): Lost %3 Buffers: current: %4, last: %5").
-		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(diff).arg(pMdp->bufferNumber).arg(m_lastBufnum);
-    m_lastBufnum = pMdp->bufferNumber;
-
     if(pMdp->bufferType & CMDBUFTYPE)
     {
+        quint16 diff = pMdp->bufferNumber - m_lastCmdBufnum;
+        if(diff > 1 && pMdp->bufferNumber > 0 && m_lastCmdBufnum > 0)
+             MSG_ERROR << tr("%1(%2) %3: Lost %4 command buffers: current: %5, last: %6").
+		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff).arg(pMdp->bufferNumber).arg(m_lastCmdBufnum);
+        m_lastCmdBufnum = pMdp->bufferNumber;
+
         ++m_cmdRxd;
 //	MSG_DEBUG << tr("%1(%2) : id %3").arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(pMdp->deviceId);
 
@@ -2007,6 +2008,11 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
     }
     else
     {
+        quint16 diff = pMdp->bufferNumber - m_lastDataBufnum;
+        if(diff > 1 && pMdp->bufferNumber > 0 && m_lastDataBufnum > 0)
+             MSG_ERROR << tr("%1(%2) %3: Lost %4 data buffers: current: %5, last: %6").
+		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff).arg(pMdp->bufferNumber).arg(m_lastDataBufnum);
+        m_lastDataBufnum = pMdp->bufferNumber;
         ++m_dataRxd;
 //      MSG_DEBUG << tr("ID %1 : emit analyzeBuffer(pPacket)").arg(m_id);
 	emit analyzeDataBuffer(pPacket);

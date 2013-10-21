@@ -364,8 +364,11 @@ private:
 	
 	MDP_PACKET      m_cmdBuf;
 
-	//! last buffer number
-	quint32 	m_lastBufnum;
+	//! last command buffer number
+	quint32 	m_lastCmdBufnum;
+
+	//! last data buffer number
+	quint32		m_lastDataBufnum;
 
 	QTimer 		*m_commTimer;
 
