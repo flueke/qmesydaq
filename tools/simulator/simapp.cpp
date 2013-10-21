@@ -44,6 +44,7 @@ const char *g_szLongUsage =
 		"  --interval=<n>\n"
 		"               packet generator interval in ms (1..1000, default 20)\n"
 		"  --v4         generate a \"round\" detector like HZB-V4/SANS\n"
+		"  --fast       do faster (less random) simulation\n"
 		"  --stop=<n>   generate max. n data packages\n";
 
 // print special packet with this number
@@ -144,6 +145,39 @@ void SimApp::ComputeSpectrum(void)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+// void SimApp::GeneratePoints(void)
+//
+// generate index array of points
+void SimApp::GeneratePoints(void)
+{
+	int i, j;
+
+	if (m_aiPoints.size() < 1)
+	{
+		QVector<int> aiPoints;
+		for (i = 0; i < m_abySpectrum.size(); ++i)
+			for (j = m_abySpectrum[i]; j > 0; --j)
+				aiPoints.append(i);
+
+		if (m_iFastPoint >= 0)
+		{
+			// once and only randomisation
+			m_aiPoints.clear();
+			while (aiPoints.size() > 0)
+			{
+				j = qrand() % aiPoints.size();
+				m_aiPoints.append(aiPoints.at(j));
+				aiPoints.remove(j);
+			}
+		}
+		else
+			m_aiPoints = aiPoints; // zero time copy
+	}
+	if (m_iFastPoint >= m_aiPoints.size())
+		m_iFastPoint = 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 // quint64 SimApp::GetClock(void)
 //
 // read clock with more precision
@@ -207,6 +241,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_qwMasterOffset(0ULL)
 	, m_dwPackets(0)
 	, m_qwLoopCount(0ULL)
+	, m_iFastPoint(-1)
 {
 	bool bWidth(false);
 	int i;
@@ -321,6 +356,8 @@ SimApp::SimApp(int &argc, char **argv)
 		}
 		else if (szArg.indexOf("v4", Qt::CaseInsensitive) == 0)
 			m_bV4 = true;
+		else if (szArg.indexOf("fast", Qt::CaseInsensitive) == 0)
+			m_iFastPoint = 0;
 	}
 	if (i < argc)
 	{
@@ -373,10 +410,13 @@ SimApp::SimApp(int &argc, char **argv)
 		szText.append(QString().sprintf("round shape with %d different lengths", (int)((sizeof(v4Scale) / sizeof(v4Scale[0]) + 1) / 2)));
 	else
 		szText += "rectangular shape";
+	if (m_iFastPoint >= 0)
+		szText += ", faster simulation";
 	qDebug() << szText;
 
 	ComputeSpectrum();
 	m_aiPoints.clear();
+	GeneratePoints();
 	startTimer(m_wTimerInterval);
 }
 
@@ -395,12 +435,9 @@ void SimApp::timerEvent(QTimerEvent *)
 			     k;
 		quint16 *p;
 
-		if (m_aiPoints.size() < 1)
+		if (m_aiPoints.size() < 1 || m_iFastPoint >= m_aiPoints.size())
 		{
-			m_aiPoints.clear();
-			for (i = 0; i < (unsigned)m_abySpectrum.size(); ++i)
-				for (j = m_abySpectrum[i]; j > 0; --j)
-					m_aiPoints.append(i);
+			GeneratePoints();
 			++m_qwLoopCount;
 		}
 
@@ -478,11 +515,16 @@ void SimApp::timerEvent(QTimerEvent *)
 
 		for (i = 0; i < 480; ++i)
 		{
-			if (m_aiPoints.size() < 1)
+			if (m_aiPoints.size() < 1 || m_iFastPoint >= m_aiPoints.size())
 				break;
-			j = (j + qrand()) % m_aiPoints.size();
-			k = m_aiPoints.at(j);
-			m_aiPoints.remove(j);
+			if (m_iFastPoint >= 0)
+				k = m_aiPoints.at(m_iFastPoint++);
+			else
+			{
+				j = (j + qrand()) % m_aiPoints.size();
+				k = m_aiPoints.at(j);
+				m_aiPoints.remove(j);
+			}
 			if (k >= (unsigned)m_abySpectrum.size())
 			{
 #if 0
@@ -564,6 +606,8 @@ void SimApp::timerEvent(QTimerEvent *)
 		{
 			struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
 			int iSize(m_aiPoints.size());
+			if (m_iFastPoint >= 0)
+				iSize -= m_iFastPoint;
 			pPacket->param[1][0] = iSize & 0xFFFF;
 			pPacket->param[1][1] = (iSize >> 16) & 0xFFFF;
 		}
@@ -598,6 +642,11 @@ void SimApp::timerEvent(QTimerEvent *)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8,
+//                           QHostAddress &sender, quint16 &senderPort)
+//
+// MCPD8 command packet handler
 void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAddress &sender, quint16 &senderPort)
 {
 	quint16 wBufferLen = pPacket->bufferLength;

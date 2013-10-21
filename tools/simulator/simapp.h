@@ -33,14 +33,23 @@ public:
 	SimApp(int &argc, char **argv);
 
 public slots:
+	//! simulate new data packets
 	void timerEvent(QTimerEvent *);
+
+	//! MCPD8 command packet handler
 	void NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAddress &sender, quint16 &senderPort);
 
 private:
+	//! generate a simulated spectrum
 	void ComputeSpectrum(void);
 
+	//! generate index array of points
+	void GeneratePoints(void);
+
+	//! called for start or stop commands
 	void StartStop(SimMCPD8 *pMCPD8, bool bDAQ, const char *szReason);
 
+	//! read more accurate clock
 	quint64 GetClock(void);
 
 private:
@@ -81,6 +90,9 @@ private:
 
 	// point to simulate
 	QVector<int>       m_aiPoints;
+
+	// index into m_aiPoints for faster simulation (if >= 0)
+	int                m_iFastPoint;
 };
 
 #endif /* __SIMAPP_H__ */
