@@ -131,7 +131,11 @@ contains(INTERFACE, CARESS) {
 INCLUDEPATH	+= diskspace
 DEPENDPATH	+= diskspace
 
-LIBS		+= -lboost_filesystem-mt -lboost_system-mt
+isEmpty(BOOST_LIBS) {
+	BOOST_LIBS	=  -lboost_filesystem$$MT -lboost_system$$MT
+}
+
+LIBS		+= $${BOOST_LIBS}
 
 PRE_TARGETDEPS 	+= revision.h
 
