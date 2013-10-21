@@ -1,6 +1,5 @@
 ############################################################################
-#   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>
-#   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>
+#   Copyright (C) 2013 by Jens Krüger <jens.krueger@frm2.tum.de>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -18,25 +17,19 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-SRCBASE		= ..
 
-include($${SRCBASE}/mesydaqconfig.pri)
+VERSION		= 1.0.0
+SRCBASE		= ../..
 
-TEMPLATE 	= subdirs
+include(../../mesydaqconfig.pri)
 
-TARGET 		= 
+TEMPLATE 	= app
+TARGET 		=
 
-SUBDIRS	 	+= listfile \
-		dummy \
-		mapping \
-		plot \
-		loadsetup \
-		lstohisto \
-		readhisto \
-		calibration \
-		readlistfile \
-		colormaps \
-		countrates \
-		threads \
-		histogramming
+DEPENDPATH 	+= ../lib
+INCLUDEPATH 	+= ../lib
 
+# Input
+SOURCES 	+= main.cpp
+
+QT 		+= network
