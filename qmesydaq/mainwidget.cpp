@@ -100,7 +100,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->setCursor(QCursor(Qt::CrossCursor));
 
     QObject::connect(linlogButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(setLinLog(int)));
-    QObject::connect(m_dataFrame, SIGNAL(zoom(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+    QObject::connect(m_dataFrame, SIGNAL(zoom(const QRectF &)), this, SLOT(zoomed(const QRectF &)));
     m_dataFrame->show();
 
     m_time = QTime(QTime::currentTime());
@@ -292,13 +292,13 @@ void MainWidget::allPulserOff(void)
 }
 
 /*!
-    \fn void MainWidget::zoomed(const QwtDoubleRect &rect)
+    \fn void MainWidget::zoomed(const QRectF &rect)
 
     callback if the zoomer has changed
 
     \param rect zoom area
 */
-void MainWidget::zoomed(const QwtDoubleRect &rect)
+void MainWidget::zoomed(const QRectF &rect)
 {
     if (m_meas)
     {

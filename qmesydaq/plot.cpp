@@ -105,7 +105,7 @@ void Plot::setSpectrumData(SpectrumData *data, int curve)
 		m_curve[curve]->setData(*data);
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
-			QwtDoubleRect r = m_curve[curve]->boundingRect();
+			QRectF r = m_curve[curve]->boundingRect();
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 		}
 		replot();
@@ -121,7 +121,7 @@ void Plot::setSpectrumData(MesydaqSpectrumData *data, int curve)
 		m_curve[curve]->setData(*data);
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
-			QwtDoubleRect r = m_curve[curve]->boundingRect();
+			QRectF r = m_curve[curve]->boundingRect();
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 		}
 		replot();
@@ -137,7 +137,7 @@ void Plot::setHistogramData(HistogramData *data)
 		m_histogram->setData(*data);
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
-			QwtDoubleRect r = m_histogram->boundingRect();
+			QRectF r = m_histogram->boundingRect();
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 			setAxisScale(QwtPlot::yLeft, 0, r.height());
 		}
@@ -152,7 +152,7 @@ void Plot::setHistogramData(MesydaqHistogramData *data)
 		m_histogram->setData(*data);
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
-			QwtDoubleRect r = m_histogram->boundingRect();
+			QRectF r = m_histogram->boundingRect();
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 			setAxisScale(QwtPlot::yLeft, 0, r.height());
 			QwtDoubleInterval iv = data->range();
@@ -317,23 +317,23 @@ void Plot::setZoomer(const QColor &c)
 {
 	if (m_zoomer)
 	{
-		disconnect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
-		disconnect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+		disconnect(m_zoomer, SIGNAL(selected(const QRectF &)), this, SLOT(zoomAreaSelected(const QRectF &)));
+		disconnect(m_zoomer, SIGNAL(zoomed(const QRectF &)), this, SLOT(zoomed(const QRectF &)));
 		delete m_zoomer;
 	}
 	replot();
 	m_zoomer = new Zoomer(canvas());
         m_zoomer->setColor(c);
 
-	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
-	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+	connect(m_zoomer, SIGNAL(selected(const QRectF &)), this, SLOT(zoomAreaSelected(const QRectF &)));
+	connect(m_zoomer, SIGNAL(zoomed(const QRectF &)), this, SLOT(zoomed(const QRectF &)));
 }
 
-void Plot::zoomed(const QwtDoubleRect &rect)
+void Plot::zoomed(const QRectF &rect)
 {
 	if (m_zoomer && !m_zoomer->zoomRectIndex())
    	{
-		QwtDoubleRect r;
+		QRectF r;
         	switch(m_mode)
 		{
 			default : 
@@ -353,11 +353,11 @@ void Plot::zoomed(const QwtDoubleRect &rect)
 }
 
 /*!
-    \fn void Plot::zoomAreaSelected(const QwtDoubleRect &)
+    \fn void Plot::zoomAreaSelected(const QRectF &)
 
     callback for the zoomer area 
 */
-void Plot::zoomAreaSelected(const QwtDoubleRect &)
+void Plot::zoomAreaSelected(const QRectF &)
 {
 	if (m_zoomer && !m_zoomer->zoomRectIndex())
 		m_zoomer->setZoomBase();

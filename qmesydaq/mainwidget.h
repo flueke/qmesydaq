@@ -123,7 +123,7 @@ public slots:
 
 	void	m4ResetSlot();
 
-	void	zoomed(const QwtDoubleRect &rect);
+	void	zoomed(const QRectF &rect);
 
 protected:
         void    customEvent(QEvent *);

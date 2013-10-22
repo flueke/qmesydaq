@@ -84,7 +84,7 @@ double TestSpectrumData::x(size_t i) const
 }
 
 HistogramData::HistogramData()
-	: QwtRasterData(QwtDoubleRect(-1.5, -1.5, 3.0, 3.0))
+	: QwtRasterData(QRectF(-1.5, -1.5, 3.0, 3.0))
 {
 }
 
@@ -116,7 +116,7 @@ DiffractogramData::DiffractogramData(const SpectrumData &data)
 DiffractogramData::DiffractogramData(const HistogramData &data, int dir)
 	: SpectrumData()
 {
-	QwtDoubleRect r = data.boundingRect();
+	QRectF r = data.boundingRect();
 	if (dir == Data::xDir)
 	{
 		d_size = size_t(r.width() / 0.1);

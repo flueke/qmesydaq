@@ -146,7 +146,7 @@ QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
 }
 	
 /*!
-     \fn QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area) const
+     \fn QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area) const
 
      creates the image to display
 
@@ -156,7 +156,7 @@ QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
  
     \return image of the rendered spectrogram
  */
-QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QwtDoubleRect &area)	const
+QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area)	const
 {
 	if (area.isEmpty())
 		return QImage();
