@@ -1191,7 +1191,7 @@ bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quin
         {
 #if defined(_MSC_VER)
 #   pragma message("m_ownIpAddress = addr;")
-#   pragma message("MSG_NOTICE << "mcpd #" << m_byId << ": ip address set to " << m_ownIpAddress;")
+#   pragma message(MSG_NOTICE << tr("mcpd #%1: ip address set to %2").arg(m_byId).arg(m_ownIpAddress);)
 #else
 #   warning m_ownIpAddress = addr;
 #   warning MSG_NOTICE << tr("mcpd #%1: ip address set to %2").arg(m_byId).arg(m_ownIpAddress);

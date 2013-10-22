@@ -21,6 +21,7 @@
 #define CALIBRATION_H
 
 #include <cmath>
+#include "stdafx.h"
 
 class TubeRange  
 {

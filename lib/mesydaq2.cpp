@@ -24,6 +24,7 @@
 #include "datarepeater.h"
 #include "mcpd8.h"
 #include "logging.h"
+#include "stdafx.h"
 
 /*!
     \fn Mesydaq2::Mesydaq2()

@@ -803,7 +803,11 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 				break;
 			default:
 				MSG_ERROR << tr("Linear Map correction");
-#warning TODO the size of the corrected map 
+#if defined(_MSC_VER)
+#	pragma message("TODO the size of the corrected map")
+#else
+#	warning TODO the size of the corrected map
+#endif
 #if 0
 				m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(128, 128));
 #else
@@ -998,7 +1002,11 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 #endif
 						chan <<= 1;			// each tube has two channels
 						chan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
-#warning TODO left/right
+#if defined(_MSC_VER)
+#	pragma message("TODO left/right")
+#else
+#	warning TODO left/right
+#endif
 						amp &= 0x1FF;			// in MSB of amp is the information left/right
 #if 0
 						MSG_DEBUG << tr("Put this event into channel : %1").arg(chan);
@@ -1230,7 +1238,11 @@ void Measurement::readListfile(const QString &readfilename)
 		datfile.seek(seekPos);
 		datStream.setDevice(&datfile);
 	}
-#warning TODO dynamic resizing of the mapped histogram 
+#if defined(_MSC_VER)
+#	pragma message("TODO dynamic resizing of the mapped histogram")
+#else
+#	warning TODO dynamic resizing of the mapped histogram
+#endif
 #if 0
 	resizeHistogram(0, 0, true, true);
 #else
