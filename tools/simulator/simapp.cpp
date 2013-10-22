@@ -225,8 +225,11 @@ void logmsg(SimMCPD8 *pMCPD8, const char *szFormat, ...)
 void SimApp::StartStop(SimMCPD8 *pMCPD8, bool bDAQ, const char *szReason)
 {
 	logmsg(pMCPD8, "%s", szReason);
+	if (m_bDAQ && !bDAQ)	// first stop
+		logmsg(NULL, "send %d packets with %d events", m_dwPackets, m_dwSendEvents);
 	m_bDAQ = bDAQ;
 	m_dwPackets = 0;
+	m_dwSendEvents = 0;
 }
 
 SimApp::SimApp(int &argc, char **argv)
@@ -242,6 +245,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_dwPackets(0)
 	, m_qwLoopCount(0ULL)
 	, m_iFastPoint(-1)
+	, m_dwSendEvents(0)
 {
 	bool bWidth(false);
 	int i;
@@ -616,12 +620,9 @@ void SimApp::timerEvent(QTimerEvent *)
 		{
 			struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
 			pPacket->bufferLength = (sizeof(*pPacket) - sizeof(pPacket->data)) / sizeof(quint16) + (3 * pPacket->bufferLength);
-			m_apMCPD8[i]->Send(pPacket);
-		}
 #ifdef PRINTPACKET
-		if (bPrintPacket)
-		{
-			for (i = 0; i < (unsigned int)packets.size(); ++i)
+			logmsg(m_apMCPD8[i], "Package contains: %d events", (pPacket->bufferLength - pPacket->headerLength) / 3);
+			if (bPrintPacket)
 			{
 				struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
 				logmsg(m_apMCPD8[i], QString(HexDump(QByteArray((const char*)pPacket, pPacket->bufferLength * sizeof(quint16)))));
@@ -633,12 +634,21 @@ void SimApp::timerEvent(QTimerEvent *)
 						((p[2] & 0x7F) << 3) + (p[1] >> 13), (p[1] >> 3) & 0x3FF, p[1] & 0x07, p[0]);
 				}
 			}
-		}
 #endif
-
-		if (m_dwStopPacket > 0)
-			if ((++m_dwPackets) >= m_dwStopPacket)
-				StartStop(NULL, false, "STOP due packet counter");
+		}
+		for (int k = 0; k < 5; ++k)
+		{
+			for (i = 0; i < (unsigned int)packets.size(); ++i)
+			{
+				m_apMCPD8[i]->Send(&packets[i]);
+				m_dwSendEvents += (packets[i].bufferLength - packets[i].headerLength) / 3;
+				if (m_dwStopPacket > 0 && ((++m_dwPackets) >= m_dwStopPacket))
+				{
+					StartStop(NULL, false, "STOP due packet counter");
+					return;
+				}
+			}
+		}
 	}
 }
 

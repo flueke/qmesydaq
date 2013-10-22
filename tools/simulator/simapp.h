@@ -93,6 +93,9 @@ private:
 
 	// index into m_aiPoints for faster simulation (if >= 0)
 	int                m_iFastPoint;
+
+	// number of send events
+	quint32            m_dwSendEvents;
 };
 
 #endif /* __SIMAPP_H__ */
