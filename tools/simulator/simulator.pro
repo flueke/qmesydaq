@@ -35,6 +35,8 @@ INCLUDEPATH	+= . $${SRCBASE}/lib
 
 LIBS		+= -L$${SRCBASE}/lib
 
+unix:	LIBS	+= -lrt
+
 SOURCES		+= main.cpp simmcpd8.cpp simapp.cpp
 HEADERS		+= utils.h simmcpd8.h simapp.h
 
