@@ -38,6 +38,4 @@ LIBS		+= -L$${SRCBASE}/lib
 # Input
 SOURCES 	+= main.cpp
 
-INSTALLS        = target
-
-target.path     = $${TARGETPATH}/bin
+INSTALLS        =
