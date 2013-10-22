@@ -147,5 +147,5 @@ revtarget.commands 	= @echo \"updating file $$revtarget.target\"; \
 			\"$${LITERAL_HASH}define REVISION_H\\n\" \
 			\"$${LITERAL_HASH}define REVISION \\\"$${VERSION}\(`git describe --always`)\\\"\\n\" \
 			\"$${LITERAL_HASH}endif\" > $$revtarget.target
-revtarget.depends 	= $$SOURCES $$HEADERS $$FORMS qmesydaq.pro
+revtarget.depends 	= ${SOURCES} ${HEADERS} ${FORMS} $${_PRO_FILE_}
 QMAKE_DISTCLEAN 	+= $$revtarget.target
