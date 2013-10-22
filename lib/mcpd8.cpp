@@ -1616,7 +1616,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         quint16 diff = pMdp->bufferNumber - m_lastCmdBufnum;
         if(diff > 1 && pMdp->bufferNumber > 0 && m_lastCmdBufnum > 0)
              MSG_ERROR << tr("%1(%2) %3: Lost %4 command buffers: current: %5, last: %6").
-		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff).arg(pMdp->bufferNumber).arg(m_lastCmdBufnum);
+		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(pMdp->bufferNumber).arg(m_lastCmdBufnum);
         m_lastCmdBufnum = pMdp->bufferNumber;
 
         ++m_cmdRxd;
@@ -2011,7 +2011,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         quint16 diff = pMdp->bufferNumber - m_lastDataBufnum;
         if(diff > 1 && pMdp->bufferNumber > 0 && m_lastDataBufnum > 0)
              MSG_ERROR << tr("%1(%2) %3: Lost %4 data buffers: current: %5, last: %6").
-		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff).arg(pMdp->bufferNumber).arg(m_lastDataBufnum);
+		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(pMdp->bufferNumber).arg(m_lastDataBufnum);
         m_lastDataBufnum = pMdp->bufferNumber;
         ++m_dataRxd;
 //      MSG_DEBUG << tr("ID %1 : emit analyzeBuffer(pPacket)").arg(m_id);
