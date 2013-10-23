@@ -21,6 +21,7 @@
 
 #include <QCoreApplication>
 #include <QHostAddress>
+#include <QVector>
 #include "structures.h"
 
 class QTimerEvent;
@@ -101,6 +102,9 @@ private:
 
 	// Timer id
 	int                m_iTimer;
+
+	// MDLL mode
+	bool               m_bMdll;
 };
 
 #endif /* __SIMAPP_H__ */

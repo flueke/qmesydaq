@@ -34,16 +34,20 @@
 #include "logging.h"
 #include "mdefines.h"
 
-const char *g_szShortUsage = "[--mcpd=127.0.0.2:0] [--mcpd=127.0.0.3:1] ... [--width=64] [--height=960]"
-			     " [--interval=20] [--v4] [--stop=0]";
+#include <algorithm>    // std::random_shuffle
+
+const char *g_szShortUsage = "[[--mdll=127.0.0.2:0] | [--mcpd=127.0.0.2:0] [--mcpd=127.0.0.3:1] ... [--width=64] [--height=960] [--v4]]"
+			     " [--interval=20] [--stop=0]";
 const char *g_szLongUsage =
+                "  --mdll=<bind-ip>:<id>\n"
+                "               bind a MDLL with ID to this IP address (id 0..255)\n"
 		"  --mcpd=<bind-ip>:<id>\n"
 		"               bind a MCPD (max 64) with ID to this IP address (id 0..255)\n"
 		"  --width=<n>  each MCPD with <n> channels (1..64, default 64)\n"
 		"  --height=<n> spectrum height with <n> bins (8..1024, default 960)\n"
+		"  --v4         generate a \"round\" detector like HZB-V4/SANS\n"
 		"  --interval=<n>\n"
 		"               packet generator interval in ms (1..1000, default 20)\n"
-		"  --v4         generate a \"round\" detector like HZB-V4/SANS\n"
 		"  --fast       do faster (less random) simulation\n"
 		"  --stop=<n>   generate max. n data packages\n";
 
@@ -150,28 +154,20 @@ void SimApp::ComputeSpectrum(void)
 // generate index array of points
 void SimApp::GeneratePoints(void)
 {
-	int i, j;
-
 	if (m_aiPoints.size() < 1)
 	{
-		QVector<int> aiPoints;
-		for (i = 0; i < m_abySpectrum.size(); ++i)
-			for (j = m_abySpectrum[i]; j > 0; --j)
-				aiPoints.append(i);
+		std::vector<int> aiPoints;
+		for (int i = 0; i < m_abySpectrum.size(); ++i)
+			for (int j = m_abySpectrum[i]; j > 0; --j)
+				aiPoints.push_back(i);
 
 		if (m_iFastPoint >= 0)
 		{
+			std::srand(unsigned(std::time(0)));
 			// once and only randomisation
-			m_aiPoints.clear();
-			while (aiPoints.size() > 0)
-			{
-				j = qrand() % aiPoints.size();
-				m_aiPoints.append(aiPoints.at(j));
-				aiPoints.remove(j);
-			}
+			std::random_shuffle(aiPoints.begin(), aiPoints.end());
 		}
-		else
-			m_aiPoints = aiPoints; // zero time copy
+		m_aiPoints = QVector<int>::fromStdVector(aiPoints); // zero time copy
 	}
 	if (m_iFastPoint >= m_aiPoints.size())
 		m_iFastPoint = 0;
@@ -254,6 +250,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_iFastPoint(-1)
 	, m_dwSendEvents(0)
 	, m_iTimer(0)
+	, m_bMdll(false)
 {
 	bool bWidth(false);
 	int i;
@@ -268,71 +265,8 @@ SimApp::SimApp(int &argc, char **argv)
 			continue;
 		while (szArg[0] == '-')
 			szArg.remove(0, 1);
-		if (szArg.indexOf("mcpd", Qt::CaseInsensitive) == 0)
-		{
-			int j = szArg.indexOf('=') + 1;
-			int id = m_apMCPD8.size();
-			if (j < 2)
-			{
-				qDebug() << "invalid argument: " << szArg;
-				break;
-			}
-			szArg.remove(0, j);
-			j = szArg.indexOf(':');
-			if (j > 0)
-			{
-				id = szArg.mid(j + 1).toInt();
-				szArg.remove(j, szArg.size() - j);
-				if (id < 0 || id > 255)
-				{
-					qDebug() << "invalid id";
-					break;
-				}
-			}
-			SimMCPD8 *pMcpd = new SimMCPD8(id, QHostAddress(szArg));
-			if (pMcpd == NULL)
-			{
-				qDebug() << "cannot create MCPD with " << szArg << ":" << id;
-				break;
-			}
-			m_apMCPD8.append(pMcpd);
-			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), this,
-					SLOT(NewCmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), Qt::DirectConnection);
-			qDebug() << "created " << pMcpd->ip() << ":" << id;
-		}
-		else if (szArg.indexOf("width", Qt::CaseInsensitive) == 0)
-		{
-			int j = szArg.indexOf('=') + 1;
-			if (j < 2)
-			{
-				qDebug() << "invalid argument: " << szArg;
-				break;
-			}
-			int l = szArg.mid(j).toInt();
-			if (l < 1 || l > 64)
-			{
-				qDebug() << "invalid width: " << l;
-				break;
-			}
-			bWidth = true;
-			m_wSpectrumWidth = l;
-		}
-		else if (szArg.indexOf("height", Qt::CaseInsensitive) == 0)
-		{
-			int j = szArg.indexOf('=') + 1;
-			if (j < 2)
-			{
-				qDebug() << "invalid argument: " << szArg;
-				break;
-			}
-			int l = szArg.mid(j).toInt();
-			if (l < 1 || l > 1024)
-			{
-				qDebug() << "invalid height: " << l;
-				break;
-			}
-			m_wSpectrumHeight = l;
-		}
+		if (szArg.indexOf("fast", Qt::CaseInsensitive) == 0)
+			m_iFastPoint = 0;
 		else if (szArg.indexOf("stop", Qt::CaseInsensitive) == 0)
 		{
 			int j = szArg.indexOf('=') + 1;
@@ -366,10 +300,119 @@ SimApp::SimApp(int &argc, char **argv)
 			}
 			m_wTimerInterval = l;
 		}
+		else if (szArg.indexOf("mcpd", Qt::CaseInsensitive) == 0)
+		{
+			if (m_bMdll)
+				usage(argv[0]);
+			int j = szArg.indexOf('=') + 1;
+			int id = m_apMCPD8.size();
+			if (j < 2)
+			{
+				qDebug() << "invalid argument: " << szArg;
+				break;
+			}
+			szArg.remove(0, j);
+			j = szArg.indexOf(':');
+			if (j > 0)
+			{
+				id = szArg.mid(j + 1).toInt();
+				szArg.remove(j, szArg.size() - j);
+				if (id < 0 || id > 255)
+				{
+					qDebug() << "invalid id";
+					break;
+				}
+			}
+			SimMCPD8 *pMcpd = new SimMCPD8(id, QHostAddress(szArg));
+			if (pMcpd == NULL)
+			{
+				qDebug() << "cannot create MCPD with " << szArg << ":" << id;
+				break;
+			}
+			m_apMCPD8.append(pMcpd);
+			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), this,
+					SLOT(NewCmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), Qt::DirectConnection);
+			qDebug() << "created " << pMcpd->ip() << ":" << id;
+		}
+		else if (szArg.indexOf("mdll", Qt::CaseInsensitive) == 0)
+		{
+			if (m_apMCPD8.size())
+				usage(argv[0]);
+			m_bMdll = true;
+			m_wSpectrumWidth = 960;
+			int j = szArg.indexOf('=') + 1;
+			int id = 0;
+			if (j < 2)
+			{
+				qDebug() << "invalid argument: " << szArg;
+				break;
+			}
+			szArg.remove(0, j);
+			j = szArg.indexOf(':');
+			if (j > 0)
+			{
+				id = szArg.mid(j + 1).toInt();
+				szArg.remove(j, szArg.size() - j);
+				if (id < 0 || id > 255)
+				{
+					qDebug() << "invalid id";
+					break;
+				}
+			}
+			SimMCPD8 *pMcpd = new SimMCPD8(id, QHostAddress(szArg));
+			if (pMcpd == NULL)
+			{
+				qDebug() << "cannot create MCPD with " << szArg << ":" << id;
+				break;
+			}
+			m_apMCPD8.append(pMcpd);
+			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), this,
+					SLOT(NewCmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), Qt::DirectConnection);
+			qDebug() << "created " << pMcpd->ip() << ":" << id;
+		}
+		else if (szArg.indexOf("width", Qt::CaseInsensitive) == 0)
+		{
+			if (m_bMdll)
+				usage(argv[0]);
+			int j = szArg.indexOf('=') + 1;
+			if (j < 2)
+			{
+				qDebug() << "invalid argument: " << szArg;
+				break;
+			}
+			int l = szArg.mid(j).toInt();
+			if (l < 1 || l > 64)
+			{
+				qDebug() << "invalid width: " << l;
+				break;
+			}
+			bWidth = true;
+			m_wSpectrumWidth = l;
+		}
+		else if (szArg.indexOf("height", Qt::CaseInsensitive) == 0)
+		{
+			if (m_bMdll)
+				usage(argv[0]);
+			int j = szArg.indexOf('=') + 1;
+			if (j < 2)
+			{
+				qDebug() << "invalid argument: " << szArg;
+				break;
+			}
+			int l = szArg.mid(j).toInt();
+			if (l < 1 || l > 1024)
+			{
+				qDebug() << "invalid height: " << l;
+				break;
+			}
+			m_wSpectrumHeight = l;
+		}
 		else if (szArg.indexOf("v4", Qt::CaseInsensitive) == 0)
+		{
+			if (m_bMdll)
+				usage(argv[0]);
 			m_bV4 = true;
-		else if (szArg.indexOf("fast", Qt::CaseInsensitive) == 0)
-			m_iFastPoint = 0;
+		}
 	}
 	if (i < argc)
 	{
@@ -399,8 +442,11 @@ SimApp::SimApp(int &argc, char **argv)
 		m_wSpectrumWidth = 56;
 
 	QString szText;
-	szText.sprintf("created %d MCPD-8 each with %d MPSD-8 (width=%u height=%u) and ",
-		m_apMCPD8.size(), (m_wSpectrumWidth + 7) >> 3, m_wSpectrumWidth, m_wSpectrumHeight);
+	if (m_bMdll)
+		szText.sprintf("created a MDLL (width=%u, height=%u) ", m_wSpectrumWidth, m_wSpectrumHeight);
+	else
+		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 (width=%u height=%u) and ",
+			m_apMCPD8.size(), (m_wSpectrumWidth + 7) >> 3, m_wSpectrumWidth, m_wSpectrumHeight);
 	if (m_bV4)
 		szText.append(QString().sprintf("round shape with %d different lengths", (int)((sizeof(v4Scale) / sizeof(v4Scale[0]) + 1) / 2)));
 	else
@@ -410,8 +456,10 @@ SimApp::SimApp(int &argc, char **argv)
 	qDebug() << szText;
 
 	ComputeSpectrum();
+	qDebug() << "Spectrum computed";
 	m_aiPoints.clear();
 	GeneratePoints();
+	qDebug() << "Ready";
 }
 
 void SimApp::usage(const QString &progname)
@@ -464,12 +512,14 @@ void SimApp::timerEvent(QTimerEvent *)
 	packets.resize(m_apMCPD8.size());
 	for (i = 0; i < (unsigned int)m_apMCPD8.size(); ++i)
 	{
-		struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
+		struct DATA_PACKET *pPacket = &packets[i];
 		memset(pPacket, 0, sizeof(*pPacket));
 
 		pPacket->bufferLength = 0;
-		//pPacket->bufferType = 0x0002; // MDLL data buffer
-		pPacket->bufferType   = 0x0000; // data event buffer
+		if (m_bMdll)
+			pPacket->bufferType = 0x0002; // MDLL data buffer
+		else
+			pPacket->bufferType   = 0x0000; // data event buffer
 		pPacket->headerLength = (sizeof(*pPacket) - sizeof(pPacket->data)) / sizeof(quint16); // header length
 		pPacket->bufferNumber = m_apMCPD8[i]->NextBufferNo();
 		pPacket->runID        = m_wRunId;
@@ -487,6 +537,7 @@ void SimApp::timerEvent(QTimerEvent *)
 		pPacket->param[3][1]  = (dwTime >> 16) & 0xFFFF;
 	}
 
+	// add some trigger events
 	for (i = 0; i < (unsigned int)packets.size(); ++i)
 		for (j = 0; j < 10; ++j)
 		{
@@ -528,6 +579,7 @@ void SimApp::timerEvent(QTimerEvent *)
 			}
 		}
 
+	// add neutron events
 	for (i = 0; i < 480; ++i)
 	{
 		if (m_aiPoints.size() < 1 || m_iFastPoint >= m_aiPoints.size())
@@ -548,78 +600,118 @@ void SimApp::timerEvent(QTimerEvent *)
 #endif
 			continue;
 		}
+		struct DATA_PACKET *pPacket;
 		unsigned int y = k / m_wSpectrumHeight;
-		quint16 mod = y / m_wSpectrumWidth;
-		if (mod >= (unsigned int)m_apMCPD8.size())
+
+		if (m_bMdll)
 		{
-#if 0
-			logmsg(NULL, "j=%u k=%u mod=%u (max. %d)", j, k, mod, m_apMCPD8.size());
-			Q_ASSERT(false);
+			pPacket = &packets[0];
+			y %= m_wSpectrumWidth;
+
+			p = &pPacket->data[3 * (pPacket->bufferLength++)];
+			// Type(1)  ModID(3)  SlotID(5)  Amplitude(10)  Position(10)  Timestamp(19)
+			// |    Amplitude(8)
+			// |    |         y(10)
+			// |    |         |          x(10)
+			// |    |         |          |               Timestamp(19)
+			// |    |         |          |               |
+			// | +-/ \-+  +--/ \--+  +--/ \--+  +-------/ \-------+
+			// |/       \/         \/         \/                   \a
+			// YAAAAAAA Ayyyyyyy yyyXXXXX XXXXXttt tttttttt tttttttt
+			// 22222222 22222222 11111111 11111111 00000000 00000000
+			p[2] &= 0x0000;                       // Type
+			p[2] |= (0 & 0xff) << 7;              // Amplitude
+
+			p[2] |= (y >> 3) & 0x7F;              // Y-HI
+			p[1] |= (y & 7) << 13;                // Y-LO
+
+			p[1] |= (k % m_wSpectrumHeight) << 3; // X
+
+			p[1] |= 0x0000;                       // Timestamp-HI
+			p[0] = i;                             // Timestamp-LO
+#ifdef PRINTPACKET
+			if (bPrintPacket)
+			{
+				logmsg(NULL, "i=%u j=%u k=%u y=%u x=%u - p[3]=%04x %04x %04x",
+					i, j, k, y, k % m_wSpectrumHeight, k / m_wSpectrumHeight, p[0], p[1], p[2]);
+			}
 #endif
-			continue;
 		}
-		y %= m_wSpectrumWidth;
-		// Q_ASSERT(mod < 2);
-		// Q_ASSERT(y < 56);
+		else
+		{
+			quint16 mod = y / m_wSpectrumWidth;
+			if (mod >= (unsigned int)m_apMCPD8.size())
+			{
+#if 0
+				logmsg(NULL, "j=%u k=%u mod=%u (max. %d)", j, k, mod, m_apMCPD8.size());
+				Q_ASSERT(false);
+#endif
+				continue;
+			}
+			y %= m_wSpectrumWidth;
+			// Q_ASSERT(mod < 2);
+			// Q_ASSERT(y < 56);
 
-		struct DATA_PACKET *pPacket = &packets[mod];
-		p = &pPacket->data[3 * (pPacket->bufferLength++)];
+			pPacket = &packets[mod];
+			p = &pPacket->data[3 * (pPacket->bufferLength++)];
 
 #if 0
-		quint16 mod = pd.deviceId;
-		quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
-		quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
-		quint8 modChan = (id << 3) + slotId;
-		quint16 chan = modChan + (mod << 6);
-		quint16 amp = ((pd.data[counter + 2] & 0x7F) << 3) + ((pd.data[counter + 1] >> 13) & 0x7);
-		quint16 pos = (pd.data[counter + 1] >> 3) & 0x3FF;
+			quint16 mod = pd.deviceId;
+			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
+			quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
+			quint8 modChan = (id << 3) + slotId;
+			quint16 chan = modChan + (mod << 6);
+			quint16 amp = ((pd.data[counter + 2] & 0x7F) << 3) + ((pd.data[counter + 1] >> 13) & 0x7);
+			quint16 pos = (pd.data[counter + 1] >> 3) & 0x3FF;
 #endif
 
-		// Type(1)  ModID(3)  SlotID(5)  Amplitude(10)  Position(10)  Timestamp(19)
-		// | ModID(3)
-		// | |   SlotID(5)
-		// | |   |        Amplitude(10)
-		// | |   |        |          Position(10)
-		// | |   |        |          |               Timestamp(19)
-		// | |   /\       |          |               |
-		// | |  /  \  +--/ \--+  +--/ \--+  +-------/ \-------+
-		// |/ \/    \/         \/         \/                   \a
-		// YmmmSSSS Saaaaaaa aaaPPPPP PPPPPttt tttttttt tttttttt
-		// 22222222 22222222 11111111 11111111 00000000 00000000
-		p[2] |= 0x0000;                       // Type
-		p[2] |= ((y >> 3) & 7) << 12;         // ModID
-		p[2] |= (y & 7) << 7;                 // SlotID
-		p[2] |= 0x0000;                       // Amplitude-HI
+			// Type(1)  ModID(3)  SlotID(5)  Amplitude(10)  Position(10)  Timestamp(19)
+			// | ModID(3)
+			// | |   SlotID(5)
+			// | |   |        Amplitude(10)
+			// | |   |        |          Position(10)
+			// | |   |        |          |               Timestamp(19)
+			// | |   /\       |          |               |
+			// | |  /  \  +--/ \--+  +--/ \--+  +-------/ \-------+
+			// |/ \/    \/         \/         \/                   \a
+			// YmmmSSSS Saaaaaaa aaaPPPPP PPPPPttt tttttttt tttttttt
+			// 22222222 22222222 11111111 11111111 00000000 00000000
+			p[2] |= 0x0000;                       // Type
 
-		p[1] |= 0x0000;                       // Amplitude-LO
-		p[1] |= (k % m_wSpectrumHeight) << 3; // Position
-		p[1] |= 0x0000;                       // Timestamp-HI
+			p[2] |= ((y >> 3) & 7) << 12;         // ModID
+			p[2] |= (y & 7) << 7;                 // SlotID
 
-		p[0] = i;                             // Timestamp-LO
+			p[2] |= 0x0000;                       // Amplitude-HI
+			p[1] |= 0x0000;                       // Amplitude-LO
+
+			p[1] |= (k % m_wSpectrumHeight) << 3; // Position
+
+			p[1] |= 0x0000;                       // Timestamp-HI
+			p[0] = i;                             // Timestamp-LO
 
 #ifdef PRINTPACKET
-		if (bPrintPacket)
-		{
-			logmsg(NULL, "i=%u j=%u k=%u mod=%u y=%u (%u/%u) - p[3]=%04x %04x %04x",
-				i, j, k, mod, y, k % m_wSpectrumHeight, k / m_wSpectrumHeight, p[0], p[1], p[2]);
-		}
+			if (bPrintPacket)
+			{
+				logmsg(NULL, "i=%u j=%u k=%u mod=%u y=%u (%u/%u) - p[3]=%04x %04x %04x",
+					i, j, k, mod, y, k % m_wSpectrumHeight, k / m_wSpectrumHeight, p[0], p[1], p[2]);
+			}
 #endif
 #if 0
-		//             TimeStamp-LO
-		*p++ = htole16(i&0xFFFF);
-		//       Amplitude-LO   Position                         TimeStamp-HI
-		*p++ = htole16(0x0000 | ((k % m_wSpectrumHeight) << 3) | (i >> 16));
-		//             Type     ModID                    SlotID           Amplitude-HI
-		*p++ = htole16(0x0000 | (((y >> 3) & 7) << 12) | ((y & 7) << 4) | 0x0000);
+			//             TimeStamp-LO
+			*p++ = htole16(i & 0xFFFF);
+			//       Amplitude-LO   Position                         TimeStamp-HI
+			*p++ = htole16(0x0000 | ((k % m_wSpectrumHeight) << 3) | (i >> 16));
+			//             Type     ModID                    SlotID           Amplitude-HI
+			*p++ = htole16(0x0000 | (((y >> 3) & 7) << 12) | ((y & 7) << 4) | 0x0000);
 #endif
-
+		}
 		if (pPacket->bufferLength >= ((sizeof(pPacket->data) - 6 - 136) / 6))
 			break;
 	}
 
 	for (i = 0; i < (unsigned int)m_apMCPD8.size(); ++i)
 	{
-		struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
+		struct DATA_PACKET *pPacket = &packets[i];
 		int iSize(m_aiPoints.size());
 		if (m_iFastPoint >= 0)
 			iSize -= m_iFastPoint;
@@ -629,13 +721,12 @@ void SimApp::timerEvent(QTimerEvent *)
 
 	for (i = 0; i < (unsigned int)packets.size(); ++i)
 	{
-		struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
+		struct DATA_PACKET *pPacket = &packets[i];
 		pPacket->bufferLength = (sizeof(*pPacket) - sizeof(pPacket->data)) / sizeof(quint16) + (3 * pPacket->bufferLength);
 #ifdef PRINTPACKET
 		logmsg(m_apMCPD8[i], "Package contains: %d events", (pPacket->bufferLength - pPacket->headerLength) / 3);
 		if (bPrintPacket)
 		{
-			struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
 			logmsg(m_apMCPD8[i], QString(HexDump(QByteArray((const char*)pPacket, pPacket->bufferLength * sizeof(quint16)))));
 			p = (quint16*)(&pPacket->data[0]);
 			for (j = 0; j < (unsigned int)((pPacket->bufferLength - pPacket->headerLength) / 3); ++j, p += 3)
@@ -817,14 +908,19 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 		case READID: // read connected devices
 			pPacket->bufferLength = CMDHEADLEN + 8;
 			// TODO READID: which types are supported
-			pPacket->data[0] = TYPE_MPSD8;
-			pPacket->data[1] = (m_wSpectrumWidth >  8) ? TYPE_MPSD8 : TYPE_NOMODULE;
-			pPacket->data[2] = (m_wSpectrumWidth > 16) ? TYPE_MPSD8 : TYPE_NOMODULE;
-			pPacket->data[3] = (m_wSpectrumWidth > 24) ? TYPE_MPSD8 : TYPE_NOMODULE;
-			pPacket->data[4] = (m_wSpectrumWidth > 32) ? TYPE_MPSD8 : TYPE_NOMODULE;
-			pPacket->data[5] = (m_wSpectrumWidth > 40) ? TYPE_MPSD8 : TYPE_NOMODULE;
-			pPacket->data[6] = (m_wSpectrumWidth > 48) ? TYPE_MPSD8 : TYPE_NOMODULE;
-			pPacket->data[7] = (m_wSpectrumWidth > 56) ? TYPE_MPSD8 : TYPE_NOMODULE;
+			if (m_bMdll)
+				pPacket->data[0] = TYPE_MDLL;
+			else
+			{
+				pPacket->data[0] = TYPE_MPSD8;
+				pPacket->data[1] = (m_wSpectrumWidth >  8) ? TYPE_MPSD8 : TYPE_NOMODULE;
+				pPacket->data[2] = (m_wSpectrumWidth > 16) ? TYPE_MPSD8 : TYPE_NOMODULE;
+				pPacket->data[3] = (m_wSpectrumWidth > 24) ? TYPE_MPSD8 : TYPE_NOMODULE;
+				pPacket->data[4] = (m_wSpectrumWidth > 32) ? TYPE_MPSD8 : TYPE_NOMODULE;
+				pPacket->data[5] = (m_wSpectrumWidth > 40) ? TYPE_MPSD8 : TYPE_NOMODULE;
+				pPacket->data[6] = (m_wSpectrumWidth > 48) ? TYPE_MPSD8 : TYPE_NOMODULE;
+				pPacket->data[7] = (m_wSpectrumWidth > 56) ? TYPE_MPSD8 : TYPE_NOMODULE;
+			}
 			logmsg(pMCPD8, "READID");
 			break;
 //		case DATAREQUEST:
