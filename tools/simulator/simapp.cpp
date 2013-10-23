@@ -230,6 +230,13 @@ void SimApp::StartStop(SimMCPD8 *pMCPD8, bool bDAQ, const char *szReason)
 	m_bDAQ = bDAQ;
 	m_dwPackets = 0;
 	m_dwSendEvents = 0;
+	if (m_bDAQ && !m_iTimer)
+		m_iTimer = startTimer(m_wTimerInterval);
+	else if (m_iTimer)
+	{
+		killTimer(m_iTimer);
+		m_iTimer = 0;
+	}
 }
 
 SimApp::SimApp(int &argc, char **argv)
@@ -246,6 +253,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_qwLoopCount(0ULL)
 	, m_iFastPoint(-1)
 	, m_dwSendEvents(0)
+	, m_iTimer(0)
 {
 	bool bWidth(false);
 	int i;
@@ -404,7 +412,6 @@ SimApp::SimApp(int &argc, char **argv)
 	ComputeSpectrum();
 	m_aiPoints.clear();
 	GeneratePoints();
-	startTimer(m_wTimerInterval);
 }
 
 void SimApp::usage(const QString &progname)
@@ -437,222 +444,219 @@ void SimApp::usage(const QString &progname)
 void SimApp::timerEvent(QTimerEvent *)
 {
 	QVector<struct DATA_PACKET> packets;
-	if (m_bDAQ)
+	quint64 qwHeaderTime = GetClock() - m_qwMasterOffset;
+	unsigned int i,
+		     j,
+		     k;
+	quint16 *p;
+
+	if (m_aiPoints.size() < 1 || m_iFastPoint >= m_aiPoints.size())
 	{
-		quint64 qwHeaderTime = GetClock() - m_qwMasterOffset;
-		unsigned int i,
-			     j,
-			     k;
-		quint16 *p;
-
-		if (m_aiPoints.size() < 1 || m_iFastPoint >= m_aiPoints.size())
-		{
-			GeneratePoints();
-			++m_qwLoopCount;
-		}
+		GeneratePoints();
+		++m_qwLoopCount;
+	}
 
 #ifdef PRINTPACKET
-		bool bPrintPacket(false);
-		if (m_iPrintPacket > 0)
-			bPrintPacket = ((--m_iPrintPacket) == 0);
+	bool bPrintPacket(false);
+	if (m_iPrintPacket > 0)
+		bPrintPacket = ((--m_iPrintPacket) == 0);
 #endif
-		packets.resize(m_apMCPD8.size());
-		for (i = 0; i < (unsigned int)m_apMCPD8.size(); ++i)
+	packets.resize(m_apMCPD8.size());
+	for (i = 0; i < (unsigned int)m_apMCPD8.size(); ++i)
+	{
+		struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
+		memset(pPacket, 0, sizeof(*pPacket));
+
+		pPacket->bufferLength = 0;
+		//pPacket->bufferType = 0x0002; // MDLL data buffer
+		pPacket->bufferType   = 0x0000; // data event buffer
+		pPacket->headerLength = (sizeof(*pPacket) - sizeof(pPacket->data)) / sizeof(quint16); // header length
+		pPacket->bufferNumber = m_apMCPD8[i]->NextBufferNo();
+		pPacket->runID        = m_wRunId;
+		pPacket->deviceStatus = m_bDAQ ? 0x03 : 0x02; // bit 0: DAQ active, bit 1: SYNC ok
+		pPacket->deviceId     = m_apMCPD8[i]->id();
+		pPacket->time[0]      = qwHeaderTime & 0xFFFF;
+		pPacket->time[1]      = (qwHeaderTime >> 16) & 0xFFFF;
+		pPacket->time[2]      = (qwHeaderTime >> 32) & 0xFFFF;
+
+		pPacket->param[2][0]  = m_qwLoopCount & 0xFFFF;
+		pPacket->param[2][1]  = (m_qwLoopCount >> 16) & 0xFFFF;
+		pPacket->param[2][2]  = (m_qwLoopCount >> 32) & 0xFFFF;
+		quint32 dwTime        = QDateTime::currentDateTimeUtc().toTime_t();
+		pPacket->param[3][0]  = dwTime & 0xFFFF;
+		pPacket->param[3][1]  = (dwTime >> 16) & 0xFFFF;
+	}
+
+	for (i = 0; i < (unsigned int)packets.size(); ++i)
+		for (j = 0; j < 10; ++j)
 		{
-			struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
-			memset(pPacket, 0, sizeof(*pPacket));
-
-			pPacket->bufferLength = 0;
-			//pPacket->bufferType = 0x0002; // MDLL data buffer
-			pPacket->bufferType   = 0x0000; // data event buffer
-			pPacket->headerLength = (sizeof(*pPacket) - sizeof(pPacket->data)) / sizeof(quint16); // header length
-			pPacket->bufferNumber = m_apMCPD8[i]->NextBufferNo();
-			pPacket->runID        = m_wRunId;
-			pPacket->deviceStatus = m_bDAQ ? 0x03 : 0x02; // bit 0: DAQ active, bit 1: SYNC ok
-			pPacket->deviceId     = m_apMCPD8[i]->id();
-			pPacket->time[0]      = qwHeaderTime & 0xFFFF;
-			pPacket->time[1]      = (qwHeaderTime >> 16) & 0xFFFF;
-			pPacket->time[2]      = (qwHeaderTime >> 32) & 0xFFFF;
-
-			pPacket->param[2][0]  = m_qwLoopCount & 0xFFFF;
-			pPacket->param[2][1]  = (m_qwLoopCount >> 16) & 0xFFFF;
-			pPacket->param[2][2]  = (m_qwLoopCount >> 32) & 0xFFFF;
-			quint32 dwTime        = QDateTime::currentDateTimeUtc().toTime_t();
-			pPacket->param[3][0]  = dwTime & 0xFFFF;
-			pPacket->param[3][1]  = (dwTime >> 16) & 0xFFFF;
-		}
-
-		for (i = 0; i < (unsigned int)packets.size(); ++i)
-			for (j = 0; j < 10; ++j)
-			{
-				// Type(1)  ModID(3)  SlotID(5)  Amplitude(10)  Position(10)  Timestamp(19)
-				// | TrigID(3)
-				// | |   DataID(4)
-				// | |   |              Data(21)
-				// | |   |              |                   Timestamp(19)
-				// | |   |              |                   |
-				// | |  /\   +---------/ \--------++-------/ \---------+
-				// |/ \/  \ /                     \/                   \a
-				// YiiiSSSS dddddddd dddddddd dddddTTT TTTTTTTT TTTTTTTT
-				// 22222222 22222222 11111111 11111111 00000000 00000000
-				struct DATA_PACKET *pPacket = &packets[i];
-				p = &pPacket->data[3 * pPacket->bufferLength];
-				k = qrand() & 0x1F;
-				switch (k) // trigger events
-				{
-					default:
-						// additional chances for monitor counters
-						if (k != 8 && k != 16 && k != 24 && // 3*MON1
-							k != 9 && k != 17 &&        // 2*MON2
-							k != 10)                    // 1*MON3
-							break;
-						k &= 0x07;
-						/*no break*/
-					case 0: case 1: case 2: case 3: // monitor counter
-					case 4: case 5: // rear TTL inputs 1,2
-					case 6: case 7: // ADC inputs 1,2
-					{
-						pPacket->bufferLength++;
-						p[2] = 0x8000 + (k << 8);
-						k = qrand() & 0x1FFFFF;
-						p[2] |= k >> 13;
-						p[1] = (k & 0x1FFF) << 3;
-						p[0] = 0x0000;
-						break;
-					}
-				}
-			}
-
-		for (i = 0; i < 480; ++i)
-		{
-			if (m_aiPoints.size() < 1 || m_iFastPoint >= m_aiPoints.size())
-				break;
-			if (m_iFastPoint >= 0)
-				k = m_aiPoints.at(m_iFastPoint++);
-			else
-			{
-				j = (j + qrand()) % m_aiPoints.size();
-				k = m_aiPoints.at(j);
-				m_aiPoints.remove(j);
-			}
-			if (k >= (unsigned)m_abySpectrum.size())
-			{
-#if 0
-				logmsg(NULL, "j=%u k=%u (max. %d)", j, k, m_abyStartSpectrum.size());
-				Q_ASSERT(false);
-#endif
-				continue;
-			}
-			unsigned int y = k / m_wSpectrumHeight;
-			quint16 mod = y / m_wSpectrumWidth;
-			if (mod >= (unsigned int)m_apMCPD8.size())
-			{
-#if 0
-				logmsg(NULL, "j=%u k=%u mod=%u (max. %d)", j, k, mod, m_apMCPD8.size());
-				Q_ASSERT(false);
-#endif
-				continue;
-			}
-			y %= m_wSpectrumWidth;
-			// Q_ASSERT(mod < 2);
-			// Q_ASSERT(y < 56);
-
-			struct DATA_PACKET *pPacket = &packets[mod];
-			p = &pPacket->data[3 * (pPacket->bufferLength++)];
-
-#if 0
-			quint16 mod = pd.deviceId;
-			quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
-			quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
-			quint8 modChan = (id << 3) + slotId;
-			quint16 chan = modChan + (mod << 6);
-			quint16 amp = ((pd.data[counter + 2] & 0x7F) << 3) + ((pd.data[counter + 1] >> 13) & 0x7);
-			quint16 pos = (pd.data[counter + 1] >> 3) & 0x3FF;
-#endif
-
 			// Type(1)  ModID(3)  SlotID(5)  Amplitude(10)  Position(10)  Timestamp(19)
-			// | ModID(3)
-			// | |   SlotID(5)
-			// | |   |        Amplitude(10)
-			// | |   |        |          Position(10)
-			// | |   |        |          |               Timestamp(19)
-			// | |   /\       |          |               |
-			// | |  /  \  +--/ \--+  +--/ \--+  +-------/ \-------+
-			// |/ \/    \/         \/         \/                   \a
-			// YmmmSSSS Saaaaaaa aaaPPPPP PPPPPttt tttttttt tttttttt
+			// | TrigID(3)
+			// | |   DataID(4)
+			// | |   |              Data(21)
+			// | |   |              |                   Timestamp(19)
+			// | |   |              |                   |
+			// | |  /\   +---------/ \--------++-------/ \---------+
+			// |/ \/  \ /                     \/                   \a
+			// YiiiSSSS dddddddd dddddddd dddddTTT TTTTTTTT TTTTTTTT
 			// 22222222 22222222 11111111 11111111 00000000 00000000
-			p[2] |= 0x0000;                       // Type
-			p[2] |= ((y >> 3) & 7) << 12;         // ModID
-			p[2] |= (y & 7) << 7;                 // SlotID
-			p[2] |= 0x0000;                       // Amplitude-HI
+			struct DATA_PACKET *pPacket = &packets[i];
+			p = &pPacket->data[3 * pPacket->bufferLength];
+			k = qrand() & 0x1F;
+			switch (k) // trigger events
+			{
+				default:
+					// additional chances for monitor counters
+					if (k != 8 && k != 16 && k != 24 && // 3*MON1
+						k != 9 && k != 17 &&        // 2*MON2
+						k != 10)                    // 1*MON3
+						break;
+					k &= 0x07;
+					/*no break*/
+				case 0: case 1: case 2: case 3: // monitor counter
+				case 4: case 5: // rear TTL inputs 1,2
+				case 6: case 7: // ADC inputs 1,2
+				{
+					pPacket->bufferLength++;
+					p[2] = 0x8000 + (k << 8);
+					k = qrand() & 0x1FFFFF;
+					p[2] |= k >> 13;
+					p[1] = (k & 0x1FFF) << 3;
+					p[0] = 0x0000;
+					break;
+				}
+			}
+		}
 
-			p[1] |= 0x0000;                       // Amplitude-LO
-			p[1] |= (k % m_wSpectrumHeight) << 3; // Position
-			p[1] |= 0x0000;                       // Timestamp-HI
+	for (i = 0; i < 480; ++i)
+	{
+		if (m_aiPoints.size() < 1 || m_iFastPoint >= m_aiPoints.size())
+			break;
+		if (m_iFastPoint >= 0)
+			k = m_aiPoints.at(m_iFastPoint++);
+		else
+		{
+			j = (j + qrand()) % m_aiPoints.size();
+			k = m_aiPoints.at(j);
+			m_aiPoints.remove(j);
+		}
+		if (k >= (unsigned)m_abySpectrum.size())
+		{
+#if 0
+			logmsg(NULL, "j=%u k=%u (max. %d)", j, k, m_abyStartSpectrum.size());
+			Q_ASSERT(false);
+#endif
+			continue;
+		}
+		unsigned int y = k / m_wSpectrumHeight;
+		quint16 mod = y / m_wSpectrumWidth;
+		if (mod >= (unsigned int)m_apMCPD8.size())
+		{
+#if 0
+			logmsg(NULL, "j=%u k=%u mod=%u (max. %d)", j, k, mod, m_apMCPD8.size());
+			Q_ASSERT(false);
+#endif
+			continue;
+		}
+		y %= m_wSpectrumWidth;
+		// Q_ASSERT(mod < 2);
+		// Q_ASSERT(y < 56);
 
-			p[0] = i;                             // Timestamp-LO
+		struct DATA_PACKET *pPacket = &packets[mod];
+		p = &pPacket->data[3 * (pPacket->bufferLength++)];
+
+#if 0
+		quint16 mod = pd.deviceId;
+		quint8 id = (pd.data[counter + 2] >> 12) & 0x7;
+		quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
+		quint8 modChan = (id << 3) + slotId;
+		quint16 chan = modChan + (mod << 6);
+		quint16 amp = ((pd.data[counter + 2] & 0x7F) << 3) + ((pd.data[counter + 1] >> 13) & 0x7);
+		quint16 pos = (pd.data[counter + 1] >> 3) & 0x3FF;
+#endif
+
+		// Type(1)  ModID(3)  SlotID(5)  Amplitude(10)  Position(10)  Timestamp(19)
+		// | ModID(3)
+		// | |   SlotID(5)
+		// | |   |        Amplitude(10)
+		// | |   |        |          Position(10)
+		// | |   |        |          |               Timestamp(19)
+		// | |   /\       |          |               |
+		// | |  /  \  +--/ \--+  +--/ \--+  +-------/ \-------+
+		// |/ \/    \/         \/         \/                   \a
+		// YmmmSSSS Saaaaaaa aaaPPPPP PPPPPttt tttttttt tttttttt
+		// 22222222 22222222 11111111 11111111 00000000 00000000
+		p[2] |= 0x0000;                       // Type
+		p[2] |= ((y >> 3) & 7) << 12;         // ModID
+		p[2] |= (y & 7) << 7;                 // SlotID
+		p[2] |= 0x0000;                       // Amplitude-HI
+
+		p[1] |= 0x0000;                       // Amplitude-LO
+		p[1] |= (k % m_wSpectrumHeight) << 3; // Position
+		p[1] |= 0x0000;                       // Timestamp-HI
+
+		p[0] = i;                             // Timestamp-LO
 
 #ifdef PRINTPACKET
-			if (bPrintPacket)
-			{
-				logmsg(NULL, "i=%u j=%u k=%u mod=%u y=%u (%u/%u) - p[3]=%04x %04x %04x",
-					i, j, k, mod, y, k % m_wSpectrumHeight, k / m_wSpectrumHeight, p[0], p[1], p[2]);
-			}
+		if (bPrintPacket)
+		{
+			logmsg(NULL, "i=%u j=%u k=%u mod=%u y=%u (%u/%u) - p[3]=%04x %04x %04x",
+				i, j, k, mod, y, k % m_wSpectrumHeight, k / m_wSpectrumHeight, p[0], p[1], p[2]);
+		}
 #endif
 #if 0
-			//             TimeStamp-LO
-			*p++ = htole16(i&0xFFFF);
-			//       Amplitude-LO   Position                         TimeStamp-HI
-			*p++ = htole16(0x0000 | ((k % m_wSpectrumHeight) << 3) | (i >> 16));
-			//             Type     ModID                    SlotID           Amplitude-HI
-			*p++ = htole16(0x0000 | (((y >> 3) & 7) << 12) | ((y & 7) << 4) | 0x0000);
+		//             TimeStamp-LO
+		*p++ = htole16(i&0xFFFF);
+		//       Amplitude-LO   Position                         TimeStamp-HI
+		*p++ = htole16(0x0000 | ((k % m_wSpectrumHeight) << 3) | (i >> 16));
+		//             Type     ModID                    SlotID           Amplitude-HI
+		*p++ = htole16(0x0000 | (((y >> 3) & 7) << 12) | ((y & 7) << 4) | 0x0000);
 #endif
 
-			if (pPacket->bufferLength >= ((sizeof(pPacket->data) - 6 - 136) / 6))
-				break;
-		}
+		if (pPacket->bufferLength >= ((sizeof(pPacket->data) - 6 - 136) / 6))
+			break;
+	}
 
-		for (i = 0; i < (unsigned int)m_apMCPD8.size(); ++i)
+	for (i = 0; i < (unsigned int)m_apMCPD8.size(); ++i)
+	{
+		struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
+		int iSize(m_aiPoints.size());
+		if (m_iFastPoint >= 0)
+			iSize -= m_iFastPoint;
+		pPacket->param[1][0] = iSize & 0xFFFF;
+		pPacket->param[1][1] = (iSize >> 16) & 0xFFFF;
+	}
+
+	for (i = 0; i < (unsigned int)packets.size(); ++i)
+	{
+		struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
+		pPacket->bufferLength = (sizeof(*pPacket) - sizeof(pPacket->data)) / sizeof(quint16) + (3 * pPacket->bufferLength);
+#ifdef PRINTPACKET
+		logmsg(m_apMCPD8[i], "Package contains: %d events", (pPacket->bufferLength - pPacket->headerLength) / 3);
+		if (bPrintPacket)
 		{
 			struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
-			int iSize(m_aiPoints.size());
-			if (m_iFastPoint >= 0)
-				iSize -= m_iFastPoint;
-			pPacket->param[1][0] = iSize & 0xFFFF;
-			pPacket->param[1][1] = (iSize >> 16) & 0xFFFF;
+			logmsg(m_apMCPD8[i], QString(HexDump(QByteArray((const char*)pPacket, pPacket->bufferLength * sizeof(quint16)))));
+			p = (quint16*)(&pPacket->data[0]);
+			for (j = 0; j < (unsigned int)((pPacket->bufferLength - pPacket->headerLength) / 3); ++j, p += 3)
+			{
+				logmsg(m_apMCPD8[i], "%u p[3]=%04x %04x %04x type=%u mod=%u slot=%u amp=%u pos=%u time=%u/%u",
+					j, p[0], p[1], p[2], p[2] >> 15, (p[2] >> 12) & 0x07, (p[2] >> 4) & 0x1F,
+					((p[2] & 0x7F) << 3) + (p[1] >> 13), (p[1] >> 3) & 0x3FF, p[1] & 0x07, p[0]);
+			}
 		}
-
+#endif
+	}
+	for (int k = 0; k < 5; ++k)
+	{
 		for (i = 0; i < (unsigned int)packets.size(); ++i)
 		{
-			struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
-			pPacket->bufferLength = (sizeof(*pPacket) - sizeof(pPacket->data)) / sizeof(quint16) + (3 * pPacket->bufferLength);
-#ifdef PRINTPACKET
-			logmsg(m_apMCPD8[i], "Package contains: %d events", (pPacket->bufferLength - pPacket->headerLength) / 3);
-			if (bPrintPacket)
+			m_apMCPD8[i]->Send(&packets[i]);
+			m_dwSendEvents += (packets[i].bufferLength - packets[i].headerLength) / 3;
+			if (m_dwStopPacket > 0 && ((++m_dwPackets) >= m_dwStopPacket))
 			{
-				struct DATA_PACKET *pPacket = (struct DATA_PACKET*)(&packets[i]);
-				logmsg(m_apMCPD8[i], QString(HexDump(QByteArray((const char*)pPacket, pPacket->bufferLength * sizeof(quint16)))));
-				p = (quint16*)(&pPacket->data[0]);
-				for (j = 0; j < (unsigned int)((pPacket->bufferLength - pPacket->headerLength) / 3); ++j, p += 3)
-				{
-					logmsg(m_apMCPD8[i], "%u p[3]=%04x %04x %04x type=%u mod=%u slot=%u amp=%u pos=%u time=%u/%u",
-						j, p[0], p[1], p[2], p[2] >> 15, (p[2] >> 12) & 0x07, (p[2] >> 4) & 0x1F,
-						((p[2] & 0x7F) << 3) + (p[1] >> 13), (p[1] >> 3) & 0x3FF, p[1] & 0x07, p[0]);
-				}
-			}
-#endif
-		}
-		for (int k = 0; k < 5; ++k)
-		{
-			for (i = 0; i < (unsigned int)packets.size(); ++i)
-			{
-				m_apMCPD8[i]->Send(&packets[i]);
-				m_dwSendEvents += (packets[i].bufferLength - packets[i].headerLength) / 3;
-				if (m_dwStopPacket > 0 && ((++m_dwPackets) >= m_dwStopPacket))
-				{
-					StartStop(NULL, false, "STOP due packet counter");
-					return;
-				}
+				StartStop(NULL, false, "STOP due packet counter");
+				return;
 			}
 		}
 	}

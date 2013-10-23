@@ -98,6 +98,9 @@ private:
 
 	// number of send events
 	quint32            m_dwSendEvents;
+
+	// Timer id
+	int                m_iTimer;
 };
 
 #endif /* __SIMAPP_H__ */
