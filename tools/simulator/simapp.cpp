@@ -365,24 +365,7 @@ SimApp::SimApp(int &argc, char **argv)
 	}
 	if (i < argc)
 	{
-		std::cout << QString(argv[0]).split('/').last().toStdString()
-			<< " [-l=<logfile> | --log=<logfile] [-d|--debug|-d=<level>|--debug=<level>]" << std::endl
-			<< "         [-nt|--no-timestamp] [-ns|--no-source]" << std::endl;
-		if (g_szShortUsage != NULL && g_szShortUsage[0] != '\0')
-			std::cout << "         " << g_szShortUsage << std::endl;
-		std::cout
-			<< "  -h --help    this help text" << std::endl
-			<< "  -l --log     write messages to this log file" << std::endl
-			<< "  -d=<level> --debug=<level>" << std::endl
-			<< "  -d --debug   set logging level: 0=fatal errors only, 1=errors, 2=warnings," << std::endl
-			<< "               3=notices (default), 4=info messages, 5=debug messages" << std::endl
-			<< "  -nt --no-timestamps" << std::endl
-			<< "               do not print timestamps" << std::endl
-			<< "  -ns --no-source" << std::endl
-			<< "               do not print source file names" << std::endl;
-		if (g_szLongUsage != NULL && g_szLongUsage[0] != '\0')
-			std::cout << g_szLongUsage << std::endl;
-		QTimer::singleShot(50, this, SLOT(quit()));
+		usage(argv[0]);
 		return;
 	}
 
@@ -422,6 +405,29 @@ SimApp::SimApp(int &argc, char **argv)
 	m_aiPoints.clear();
 	GeneratePoints();
 	startTimer(m_wTimerInterval);
+}
+
+void SimApp::usage(const QString &progname)
+{
+	std::cout << QString(progname).split('/').last().toStdString()
+		<< " [-l=<logfile> | --log=<logfile] [-d|--debug|-d=<level>|--debug=<level>]" << std::endl
+		<< "         [-nt|--no-timestamp] [-ns|--no-source]" << std::endl;
+	if (g_szShortUsage != NULL && g_szShortUsage[0] != '\0')
+		std::cout << "         " << g_szShortUsage << std::endl;
+	std::cout
+		<< "  -h --help    this help text" << std::endl
+		<< "  -l --log     write messages to this log file" << std::endl
+		<< "  -d=<level> --debug=<level>" << std::endl
+		<< "  -d --debug   set logging level: 0=fatal errors only, 1=errors, 2=warnings," << std::endl
+		<< "               3=notices (default), 4=info messages, 5=debug messages" << std::endl
+		<< "  -nt --no-timestamps" << std::endl
+		<< "               do not print timestamps" << std::endl
+		<< "  -ns --no-source" << std::endl
+		<< "               do not print source file names" << std::endl;
+	if (g_szLongUsage != NULL && g_szLongUsage[0] != '\0')
+		std::cout << g_szLongUsage << std::endl;
+	QTimer::singleShot(50, this, SLOT(quit()));
+	return;
 }
 
 /////////////////////////////////////////////////////////////////////////////

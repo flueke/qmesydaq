@@ -52,6 +52,8 @@ private:
 	//! read more accurate clock
 	quint64 GetClock(void);
 
+	void usage(const QString &);
+
 private:
 	//! default: MCPD has 64 channels (8 full MPSDs)
 	quint16            m_wSpectrumWidth;
