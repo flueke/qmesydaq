@@ -653,7 +653,8 @@ void SimApp::timerEvent(QTimerEvent *)
 		{
 			m_apMCPD8[i]->Send(&packets[i]);
 			m_dwSendEvents += (packets[i].bufferLength - packets[i].headerLength) / 3;
-			if (m_dwStopPacket > 0 && ((++m_dwPackets) >= m_dwStopPacket))
+			++m_dwPackets;
+			if (m_dwStopPacket > 0 && m_dwPackets >= m_dwStopPacket)
 			{
 				StartStop(NULL, false, "STOP due packet counter");
 				return;
