@@ -63,7 +63,7 @@ private:
 	quint16            m_wSpectrumHeight;
 
 	//! stop after this number of packets
-	quint16            m_dwStopPacket;
+	quint32            m_dwStopPacket;
 
 	//! simulation timer
 	quint16            m_wTimerInterval;
