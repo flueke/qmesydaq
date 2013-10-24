@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 	QString 		szLoadConfiguration(QString::null);
 
 	startLogging(g_szShortUsage, g_szLongUsage);
-	for (int i = 0; i < argList.size(); ++i)
+	for (int i = 1; i < argList.size(); ++i)
 	{
 		QString szArgument = argList[i], szParameter;
 		bool bSeparatedParameter(false);
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 		if (szArgument == "-f" || szArgument == "--file" || szArgument == "--config")
 		{
 			// load this configuration file
-			if (!szLoadConfiguration.isEmpty())
+			if (szLoadConfiguration.isEmpty())
 				szLoadConfiguration = szParameter;
 			if (bSeparatedParameter) 
 				++i;
@@ -149,6 +149,7 @@ int main(int argc, char **argv)
 		QObject::connect(loop, SIGNAL(terminated()), mainWin.centralWidget(), SLOT(quitContinue()));
 	}
 	app.processEvents();
+
 	if (szLoadConfiguration.isNull())
 	{
 		// get last configuration file name
