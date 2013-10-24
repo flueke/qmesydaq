@@ -182,6 +182,8 @@ public:
 	 */
 	void setWriteProtection(bool b) {m_bWriteProtect=b;}
 
+	quint64 missedData();
+
 	quint64 receivedData(); 
 
 	quint64 receivedCmds(); 

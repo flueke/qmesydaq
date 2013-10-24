@@ -68,8 +68,17 @@ void Mesydaq2::threadExit()
 	m_mcpd.clear();
 }
 
+//! \return number of missed data packages for the whole setup
+quint64 Mesydaq2::missedData(void)
+{
+	quint64 dataMissed = 0;
+	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
+		dataMissed += i.value()->missedData();
+	return dataMissed;
+}
+
 //! \return number of received data packages for the whole setup
-quint64 Mesydaq2::receivedData(void) 
+quint64 Mesydaq2::receivedData(void)
 {
 	quint64 dataRxd = 0;
 	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)

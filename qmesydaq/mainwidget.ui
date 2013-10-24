@@ -972,6 +972,13 @@ Listfile</string>
             <string>Statistics</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_10">
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>data buffers missed:</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="textLabel15">
               <property name="text">
@@ -1038,6 +1045,19 @@ Listfile</string>
               </property>
               <property name="wordWrap">
                <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLabel" name="dataMissed">
+              <property name="text">
+               <string>0</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::LogText</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>

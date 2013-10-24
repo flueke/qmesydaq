@@ -111,6 +111,9 @@ public:
 	//! returns the number of received data packages
 	quint64 receivedData() {return m_dataRxd;} 
 
+	//! returns the number of missed data packages
+	quint64 missedData() {return m_dataMissed;}
+
 	//! returns the number of received cmd answer packages
 	quint64 receivedCmds() {return m_cmdRxd;} 
 
@@ -377,6 +380,9 @@ private:
 
 	//! counter for the received data packets
 	quint32		m_dataRxd;
+
+	//! counter for the missed data packets
+	quint32		m_dataMissed;
 
 	//! counter for the sent cmd packets
 	quint32		m_cmdTxd;

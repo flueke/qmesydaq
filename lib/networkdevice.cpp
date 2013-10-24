@@ -316,7 +316,7 @@ void NetworkDevice::readSocketData(void)
             QHostAddress fromAddress;
             quint16	 fromPort;
             qint64 len = m_sock->readDatagram((char *)(&recBuf->mdp), maxsize, &fromAddress, &fromPort);
-            bLostPacket=(len>0);
+            bLostPacket = (len > 0);
             if (len != -1)
             {
                 // MSG_DEBUG << tr("%1(%2) : ID = %3 read datagram : %4 from %5 bytes").arg(fromAddress.toString()).arg(fromPort).arg(recBuf.deviceId).arg(len).arg(maxsize);

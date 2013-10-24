@@ -506,6 +506,7 @@ void MainWidget::updateDisplay(void)
     realTimeLabel->setText(QString("Real time: %1").arg(tmpTime.toString("HH:mm:ss.zzz")));
     if (statusTab->tabText(ci) == tr("Statistics"))
     {
+        dataMissed->setText(tr("%1").arg(m_theApp->missedData()));
         dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
         cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
         cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
