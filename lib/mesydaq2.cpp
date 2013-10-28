@@ -72,8 +72,8 @@ void Mesydaq2::threadExit()
 quint64 Mesydaq2::receivedData(void) 
 {
 	quint64 dataRxd = 0;
-	foreach (MCPD8	*value, m_mcpd)
-		dataRxd += value->receivedData();	
+	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
+		dataRxd += i.value()->receivedData();
 	return dataRxd;
 }
 
@@ -81,8 +81,8 @@ quint64 Mesydaq2::receivedData(void)
 quint64 Mesydaq2::receivedCmds(void)
 {
 	quint64 cmdRxd = 0;
-	foreach (MCPD8	*value, m_mcpd)
-		cmdRxd += value->receivedCmds();	
+	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
+		cmdRxd += i.value()->receivedCmds();
 	return cmdRxd;
 }
 
@@ -90,8 +90,8 @@ quint64 Mesydaq2::receivedCmds(void)
 quint64 Mesydaq2::sentCmds(void) 
 {
 	quint64 cmdTxd = 0;
-	foreach (MCPD8	*value, m_mcpd)
-		cmdTxd += value->sentCmds();	
+	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
+		cmdTxd += i.value()->sentCmds();
 	return cmdTxd;
 }
 
