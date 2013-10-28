@@ -228,7 +228,7 @@ void SimApp::StartStop(SimMCPD8 *pMCPD8, bool bDAQ, const char *szReason)
 	m_dwSendEvents = 0;
 	if (m_bDAQ && !m_iTimer)
 		m_iTimer = startTimer(m_wTimerInterval);
-	else if (m_iTimer)
+	else if (!m_bDAQ && m_iTimer)
 	{
 		killTimer(m_iTimer);
 		m_iTimer = 0;
