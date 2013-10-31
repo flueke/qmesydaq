@@ -72,8 +72,8 @@ void Mesydaq2::threadExit()
 quint64 Mesydaq2::missedData(void)
 {
 	quint64 dataMissed = 0;
-	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
-		dataMissed += i.value()->missedData();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		dataMissed += it.value()->missedData();
 	return dataMissed;
 }
 
@@ -81,8 +81,8 @@ quint64 Mesydaq2::missedData(void)
 quint64 Mesydaq2::receivedData(void)
 {
 	quint64 dataRxd = 0;
-	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
-		dataRxd += i.value()->receivedData();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		dataRxd += it.value()->receivedData();
 	return dataRxd;
 }
 
@@ -90,8 +90,8 @@ quint64 Mesydaq2::receivedData(void)
 quint64 Mesydaq2::receivedCmds(void)
 {
 	quint64 cmdRxd = 0;
-	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
-		cmdRxd += i.value()->receivedCmds();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		cmdRxd += it.value()->receivedCmds();
 	return cmdRxd;
 }
 
@@ -99,8 +99,8 @@ quint64 Mesydaq2::receivedCmds(void)
 quint64 Mesydaq2::sentCmds(void) 
 {
 	quint64 cmdTxd = 0;
-	for (QHash<int, MCPD8 *>::iterator i = m_mcpd.begin(); i != m_mcpd.end(); ++i)
-		cmdTxd += i.value()->sentCmds();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		cmdTxd += it.value()->sentCmds();
 	return cmdTxd;
 }
 
@@ -117,10 +117,10 @@ quint64 Mesydaq2::time(void)
 	quint64 ret(0);
 	if (!m_mcpd.empty())
 	{
-		foreach (MCPD8	*value, m_mcpd)
-			if (value->isMaster())
+		for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+			if (it.value()->isMaster())
 			{
-				ret = value->time();
+				ret = it.value()->time();
 				break;
 			}
 	}
@@ -398,9 +398,9 @@ QSize Mesydaq2::size(void)
 quint16 Mesydaq2::height(void)
 {
 	quint16 bins(0);
-	foreach(MCPD8 *value, m_mcpd) 
-		if (value->bins() > bins)
-			bins = value->bins();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (it.value()->bins() > bins)
+			bins = it.value()->bins();
 	return bins ? bins : 960;
 }
 
@@ -415,11 +415,11 @@ quint16 Mesydaq2::width(void)
 {
 	QList<quint16> modList;
 	quint16 n(0);
-	foreach (MCPD8 *value, m_mcpd)
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 	{
-		QList<quint16> tmpList = value->getHistogramList();
+		QList<quint16> tmpList = it.value()->getHistogramList();
 		foreach(quint16 h, tmpList)
-			modList.append(value->getId() * 64 + h);
+			modList.append(it.value()->getId() * 64 + h);
 	}
 	qSort(modList);
 	if (!modList.isEmpty())
@@ -436,8 +436,8 @@ quint16 Mesydaq2::width(void)
  */
 bool Mesydaq2::isPulserOn()
 {
-	foreach(MCPD8 *value, m_mcpd) 
-		if (value->isPulserOn())
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (it.value()->isPulserOn())
 			return true;
 	return false;
 }
@@ -866,10 +866,10 @@ void Mesydaq2::initMcpd(quint8 id)
 void Mesydaq2::allPulserOff()
 {
 // send pulser off to all connected MPSD
-	foreach(MCPD8 *value, m_mcpd)
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 		for(quint8 j = 0; j < 8; j++)
-			if(value->getModuleId(j))
-				value->setPulser(j, 0, 2, 40, false);
+			if(it.value()->getModuleId(j))
+				it.value()->setPulser(j, 0, 2, 40, false);
 }
 
 /*!
@@ -958,13 +958,13 @@ void Mesydaq2::start(void)
 {
 	MSG_NOTICE << tr("remote start");
 // start the slaves first
-	foreach(MCPD8 *it, m_mcpd)
-		if (!it->isMaster())
-			it->start();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (!it.value()->isMaster())
+			it.value()->start();
 // start the masters
-	foreach(MCPD8 *it, m_mcpd)
-		if (it->isMaster())
-			it->start();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (it.value()->isMaster())
+			it.value()->start();
 	m_bRunning = true;
 	m_starttime_msec = time();
 	emit statusChanged("STARTED");
@@ -980,13 +980,13 @@ void Mesydaq2::stop(void)
 	MSG_NOTICE << tr("remote stop");
 	emit statusChanged("STOPPED");
 // Stop the masters first
-	foreach(MCPD8 *it, m_mcpd)
-		if (it->isMaster())
-			it->stop();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (it.value()->isMaster())
+			it.value()->stop();
 // Stop the slaves
-	foreach(MCPD8 *it, m_mcpd)
-		if (!it->isMaster())
-			it->stop();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (!it.value()->isMaster())
+			it.value()->stop();
 	m_bRunning = false;
 	emit statusChanged("IDLE");
 }
@@ -1000,13 +1000,13 @@ void Mesydaq2::cont(void)
 {
 	MSG_NOTICE << tr("remote cont");
 // continue the slaves first
-	foreach(MCPD8 *it, m_mcpd)
-		if (!it->isMaster())
-			it->cont();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (!it.value()->isMaster())
+			it.value()->cont();
 // continue the masters
-	foreach(MCPD8 *it, m_mcpd)
-		if (it->isMaster())
-			it->cont();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (it.value()->isMaster())
+			it.value()->cont();
 	emit statusChanged("STARTED");
 }
 
@@ -1020,8 +1020,8 @@ void Mesydaq2::cont(void)
 void Mesydaq2::reset(void)
 {
 	MSG_NOTICE << tr("remote reset");
-	foreach(MCPD8 *it, m_mcpd)
-		it->reset();
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		it.value()->reset();
 }
 
 /*!
@@ -1034,8 +1034,8 @@ void Mesydaq2::reset(void)
 bool Mesydaq2::checkMcpd(quint8 /* device */)
 {
 	quint8 c(0);
-	foreach(MCPD8 *value, m_mcpd)
-		(void)value, scanPeriph(c++);
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		(void)it.value(), scanPeriph(c++);
 	return true;
 }
 
@@ -1710,10 +1710,10 @@ void Mesydaq2::setRunId(quint32 runid)
 {
 	MSG_NOTICE << tr("Mesydaq2::setRunId(%1)").arg(runid);
 	m_runId = runid;
-	foreach (MCPD8* value, m_mcpd)
-		if (value->isMaster())
+	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
+		if (it.value()->isMaster())
 		{
-			value->setRunId(m_runId);
+			it.value()->setRunId(m_runId);
 			return;
 		}
 }
