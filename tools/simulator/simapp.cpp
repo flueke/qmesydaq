@@ -37,7 +37,7 @@
 #include <algorithm>    // std::random_shuffle
 
 const char *g_szShortUsage = "[[--mdll=127.0.0.2:0] | [--mcpd=127.0.0.2:0] [--mcpd=127.0.0.3:1] ... [--width=64] [--height=960] [--v4]]"
-			     " [--interval=20] [--stop=0]";
+			     " [--interval=20] [--ppe=5] [--stop=0]";
 const char *g_szLongUsage =
                 "  --mdll=<bind-ip>:<id>\n"
                 "               bind a MDLL with ID to this IP address (id 0..255)\n"
@@ -48,6 +48,7 @@ const char *g_szLongUsage =
 		"  --v4         generate a \"round\" detector like HZB-V4/SANS\n"
 		"  --interval=<n>\n"
 		"               packet generator interval in ms (1..1000, default 20)\n"
+		"  --ppe=<n>    data packets per timer event (default 5)\n"
 		"  --fast       do faster (less random) simulation\n"
 		"  --stop=<n>   generate max. n data packages\n";
 
@@ -241,6 +242,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_wSpectrumHeight(960)
 	, m_dwStopPacket(0)
 	, m_wTimerInterval(20)
+	, m_wTimerPackets(5)
 	, m_bV4(false)
 	, m_bDAQ(false)
 	, m_wRunId(1)
@@ -299,6 +301,22 @@ SimApp::SimApp(int &argc, char **argv)
 				break;
 			}
 			m_wTimerInterval = l;
+		}
+		else if (szArg.indexOf("ppe", Qt::CaseInsensitive) == 0)
+		{
+			int j = szArg.indexOf('=') + 1;
+			if (j < 2)
+			{
+				qDebug() << "invalid argument: " << szArg;
+				break;
+			}
+			int l = szArg.mid(j).toInt();
+			if (l < 1)
+			{
+				qDebug() << "invalid number of packets per timer event: " << l;
+				break;
+			}
+			m_wTimerPackets = l;
 		}
 		else if (szArg.indexOf("mcpd", Qt::CaseInsensitive) == 0)
 		{
@@ -738,7 +756,7 @@ void SimApp::timerEvent(QTimerEvent *)
 		}
 #endif
 	}
-	for (int k = 0; k < 5; ++k)
+	for (quint16 k = 0; k < m_wTimerPackets; ++k)
 	{
 		for (i = 0; i < (unsigned int)packets.size(); ++i)
 		{

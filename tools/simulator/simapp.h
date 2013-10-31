@@ -68,6 +68,9 @@ private:
 	//! simulation timer
 	quint16            m_wTimerInterval;
 
+	//! packets per timer event
+	quint16            m_wTimerPackets;
+
 	//! simulate "round" detector of HZB instrument V4/SANS
 	bool               m_bV4;
 
