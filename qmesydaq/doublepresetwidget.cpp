@@ -26,9 +26,9 @@
 DoublePresetWidget::DoublePresetWidget(QWidget *parent)
 	: QWidget(parent)
 {
-    setupUi(this);
-    setLabel("");
-    setPresetValue(0.0);
+	setupUi(this);
+	setLabel("");
+	setPresetValue(0.0);
 }
 
 /*!
@@ -38,10 +38,10 @@ DoublePresetWidget::DoublePresetWidget(QWidget *parent)
  */
 void DoublePresetWidget::setLabel(const QString &text)
 {
-    label->setText(text);
-    presetButton->setToolTip(tr("activate preset for '%1'").arg(text));
-    preset->setToolTip(tr("preset value for '%1'").arg(text));
-    resetButton->setToolTip(tr("reset the preset for '%1'").arg(text));
+	label->setText(text);
+	presetButton->setToolTip(tr("activate preset for '%1'").arg(text));
+	preset->setToolTip(tr("preset value for '%1'").arg(text));
+	resetButton->setToolTip(tr("reset the preset for '%1'").arg(text));
 }
 
 /*!
@@ -51,7 +51,7 @@ void DoublePresetWidget::setLabel(const QString &text)
  */
 double DoublePresetWidget::presetValue(void)
 {
-    return preset->value();
+	return preset->value();
 }
 
 /*!
@@ -63,7 +63,7 @@ double DoublePresetWidget::presetValue(void)
  */
 void DoublePresetWidget::setValue(const double val)
 {
-    currentValue->setText(tr("%1").arg(val, 0, 'f', 1));
+	currentValue->setText(tr("%1").arg(val, 0, 'f', 1));
 }
 
 /*!
@@ -75,7 +75,7 @@ void DoublePresetWidget::setValue(const double val)
  */
 void DoublePresetWidget::setPresetValue(const double val)
 {
-    preset->setValue(val);
+	preset->setValue(val);
 }
 
 /*!
@@ -87,10 +87,8 @@ void DoublePresetWidget::setPresetValue(const double val)
  */
 void DoublePresetWidget::setChecked(const bool val)
 {
-    presetButton->setChecked(val);
-    preset->setEnabled(val);
-//    preset->setHidden(!val);
-//    resetButton->setHidden(!val);
+	presetButton->setChecked(val);
+	preset->setEnabled(val);
 }
 
 /*!
@@ -100,7 +98,7 @@ void DoublePresetWidget::setChecked(const bool val)
  */
 bool DoublePresetWidget::isChecked(void)
 {
-    return presetButton->isChecked();
+	return presetButton->isChecked();
 }
 
 /*!

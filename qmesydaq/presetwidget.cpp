@@ -25,11 +25,9 @@
 PresetWidget::PresetWidget(QWidget *parent)
 	: QWidget(parent)
 {
-    setupUi(this);
-    setLabel("");
-    setPresetValue(0);
-//  connect(resetButton, SIGNAL(clicked()), this, SLOT(resetButtonClicked()));
-//  connect(presetButton, SIGNAL(clicked(bool)), this, SLOT(presetCheckClicked(bool)));
+	setupUi(this);
+	setLabel("");
+	setPresetValue(0);
 }
 
 /*!
@@ -39,10 +37,10 @@ PresetWidget::PresetWidget(QWidget *parent)
  */
 void PresetWidget::setLabel(const QString &text)
 {
-    label->setText(text);
-    presetButton->setToolTip(tr("activate preset for '%1'").arg(text));
-    preset->setToolTip(tr("preset value for '%1'").arg(text));
-    resetButton->setToolTip(tr("reset the preset for '%1'").arg(text));
+	label->setText(text);
+	presetButton->setToolTip(tr("activate preset for '%1'").arg(text));
+	preset->setToolTip(tr("preset value for '%1'").arg(text));
+	resetButton->setToolTip(tr("reset the preset for '%1'").arg(text));
 }
 
 /*!
@@ -52,7 +50,7 @@ void PresetWidget::setLabel(const QString &text)
  */
 quint64 PresetWidget::presetValue(void)
 {
-    return preset->value();
+	return preset->value();
 }
 
 /*!
@@ -64,7 +62,7 @@ quint64 PresetWidget::presetValue(void)
  */
 void PresetWidget::setRate(const quint64 val)
 {
-    rate->setText(QString::number(val));
+	rate->setText(QString::number(val));
 }
 
 /*! 
@@ -76,7 +74,7 @@ void PresetWidget::setRate(const quint64 val)
  */
 void PresetWidget::setValue(const quint64 val)
 {
-    currentValue->setText(QString::number(val));
+	currentValue->setText(QString::number(val));
 }
 
 /*!
@@ -88,7 +86,7 @@ void PresetWidget::setValue(const quint64 val)
  */
 void PresetWidget::setPresetValue(const quint64 val)
 {
-    preset->setValue(val);
+	preset->setValue(val);
 }
 
 /*!
@@ -100,10 +98,8 @@ void PresetWidget::setPresetValue(const quint64 val)
  */
 void PresetWidget::setChecked(const bool val)
 {
-    presetButton->setChecked(val);
-    preset->setEnabled(val);
-//    preset->setHidden(!val);
-//    resetButton->setHidden(!val);
+	presetButton->setChecked(val);
+	preset->setEnabled(val);
 }
 
 /*!
@@ -113,7 +109,7 @@ void PresetWidget::setChecked(const bool val)
  */
 bool PresetWidget::isChecked(void)
 {
-    return presetButton->isChecked();
+	return presetButton->isChecked();
 }
 
 /*!

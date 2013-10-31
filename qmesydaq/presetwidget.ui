@@ -169,7 +169,7 @@
  <connections>
   <connection>
    <sender>presetButton</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>PresetWidget</receiver>
    <slot>presetCheckClicked(bool)</slot>
    <hints>
