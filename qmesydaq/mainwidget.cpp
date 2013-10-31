@@ -104,9 +104,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->show();
 
     m_time = QTime(QTime::currentTime());
+    m_time.start();
     realTimeLabel->setHidden(true);
-
-    dateTimeLabel->setText(QString("Date/Time: %1").arg(m_time.toString("HH:mm:ss")));
 
     statusTab->setCurrentIndex(0);
 
@@ -360,14 +359,13 @@ void MainWidget::startStopSlot(bool checked)
             m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
         startStopButton->setText("Stop");
         // set device id to 0 -> will be filled by mesydaq for master
-	m_time.start();
         m_meas->start();
+	m_time.restart();
 	m_dispTimer = startTimer(500);
     }
     else
     {
         m_meas->stop();
-//	m_time.stop();
         if (m_dispTimer)
             killTimer(m_dispTimer);
         m_dispTimer = 0;
@@ -499,11 +497,14 @@ void MainWidget::checkListfilename(bool checked)
  */
 void MainWidget::updateDisplay(void)
 {
+    dateTimeLabel->setText(QString("Date/Time: %1").arg(m_time.currentTime().toString("HH:mm:ss")));
+
     quint16 id = (quint16) paramId->value();
     int ci = statusTab->currentIndex();
     QTime tmpTime;
     tmpTime = tmpTime.addMSecs(m_time.elapsed());
-    realTimeLabel->setText(QString("Real time: %1").arg(tmpTime.toString("HH:mm:ss.zzz")));
+    if (m_dispTimer)
+	realTimeLabel->setText(QString("Real time: %1").arg(tmpTime.toString("HH:mm:ss.zzz")));
     if (statusTab->tabText(ci) == tr("Statistics"))
     {
         dataMissed->setText(tr("%1").arg(m_theApp->missedData()));
