@@ -186,13 +186,22 @@ private slots:
 	 * 
 	 * \param rect zoom area
 	 */
-	void zoomed(const QRectF &rect);
 
+#if QWT_VERSION >= 0x060000
+	void zoomed(const QRectF &rect);
 	void zoomAreaSelected(const QRectF &);
+#else
+	void zoomed(const QwtDoubleRect &rect);
+	void zoomAreaSelected(const QwtDoubleRect &);
+#endif
 
 signals:
 	//! this signal will be emitted if the user has zoomed in or out
+#if QWT_VERSION >= 0x060000
 	void zoom(const QRectF &rect);
+#else
+	void zoom(const QwtDoubleRect &rect);
+#endif
 
 protected:
 	//! overwrites the default implementation

@@ -317,39 +317,49 @@ void Plot::setZoomer(const QColor &c)
 {
 	if (m_zoomer)
 	{
+#if QWT_VERSION >= 0x060000
 		disconnect(m_zoomer, SIGNAL(selected(const QRectF &)), this, SLOT(zoomAreaSelected(const QRectF &)));
 		disconnect(m_zoomer, SIGNAL(zoomed(const QRectF &)), this, SLOT(zoomed(const QRectF &)));
+#else
+		disconnect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+		disconnect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+#endif
 		delete m_zoomer;
 	}
 	replot();
 	m_zoomer = new Zoomer(canvas());
         m_zoomer->setColor(c);
 
+#if QWT_VERSION >= 0x060000
 	connect(m_zoomer, SIGNAL(selected(const QRectF &)), this, SLOT(zoomAreaSelected(const QRectF &)));
 	connect(m_zoomer, SIGNAL(zoomed(const QRectF &)), this, SLOT(zoomed(const QRectF &)));
+#else
+	connect(m_zoomer, SIGNAL(selected(const QwtDoubleRect &)), this, SLOT(zoomAreaSelected(const QwtDoubleRect &)));
+	connect(m_zoomer, SIGNAL(zoomed(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+#endif
 }
 
 void Plot::zoomed(const QRectF &rect)
 {
 	if (m_zoomer && !m_zoomer->zoomRectIndex())
-   	{
+	{
 		QRectF r;
-        	switch(m_mode)
+		switch(m_mode)
 		{
 			default : 
-            			setAxisAutoScale(QwtPlot::yLeft);
+				setAxisAutoScale(QwtPlot::yLeft);
 				r = m_curve[0]->boundingRect();
-            			setAxisScale(QwtPlot::xBottom, 0, r.width());
+				setAxisScale(QwtPlot::xBottom, 0, r.width());
 				break;
 			case Histogram :
 				r = m_histogram->boundingRect();
-            			setAxisScale(QwtPlot::xBottom, 0, r.width());
-            			setAxisScale(QwtPlot::yLeft, 0, r.height());
+				setAxisScale(QwtPlot::xBottom, 0, r.width());
+				setAxisScale(QwtPlot::yLeft, 0, r.height());
 				break;
-        	}
+		}
 	}
 	replot(); 
-        emit(zoom(rect));
+	emit(zoom(rect));
 }
 
 /*!

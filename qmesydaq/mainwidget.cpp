@@ -1551,7 +1551,6 @@ void MainWidget::printPlot(void)
         filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
         m_dataFrame->print(*m_printer, filter);
 #else
-
         QwtPlotRenderer renderer;
 
         renderer.setDiscardFlag(QwtPlotRenderer::DiscardBackground, false);
