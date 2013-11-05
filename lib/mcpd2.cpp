@@ -1019,7 +1019,11 @@ bool MCPD2::sendCommand(bool wait)
     m_pCommunicationMutex->lock();
     if (m_pNetwork->sendBuffer(m_szMcpdIp, m_wPort, m_cmdBuf))
     {
-        quint64 qwStart=QDateTime::currentMSecsSinceEpoch();
+#if QT_VERSION >= 0x040700
+        quint64 qwStart = QDateTime::currentMSecsSinceEpoch();
+#else
+        quint64 qwStart = quint64(QDateTime::currentDateTime().toTime_t()) * 1000;
+#endif
         MSG_FATAL << tr("%1(%2) : %3. sent cmd: %4 to id: %5").arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(m_cmdBuf.packet).arg(m_cmdBuf.cmd).arg(m_byId);
         m_bCommActive = wait;
         bOK = true;
@@ -1029,7 +1033,12 @@ bool MCPD2::sendCommand(bool wait)
             usleep(1000);
             if (!m_bCommActive)
                 break;
-            if (quint64(QDateTime::currentMSecsSinceEpoch()-qwStart) > 500)
+#if QT_VERSION >= 0x040700
+            if (quint64(QDateTime::currentMSecsSinceEpoch()-qwStart) > ((m_cmdBuf.cmd == SETPROTOCOL) ? 5000 : 500))
+#else
+            quint64 tmp = quint64(QDateTime::currentDateTime().toTime_t()) * 1000;
+            if (quint64(tmp - qwStart) > ((m_cmdBuf.cmd == SETPROTOCOL) ? 5000 : 500))
+#endif
             {
                 bOK = false;
                 break;

@@ -550,7 +550,11 @@ void SimApp::timerEvent(QTimerEvent *)
 		pPacket->param[2][0]  = m_qwLoopCount & 0xFFFF;
 		pPacket->param[2][1]  = (m_qwLoopCount >> 16) & 0xFFFF;
 		pPacket->param[2][2]  = (m_qwLoopCount >> 32) & 0xFFFF;
+#if QT_VERSION >= 0x040700
 		quint32 dwTime        = QDateTime::currentDateTimeUtc().toTime_t();
+#else
+		quint32 dwTime        = QDateTime::currentDateTime().toUTC().toTime_t();
+#endif
 		pPacket->param[3][0]  = dwTime & 0xFFFF;
 		pPacket->param[3][1]  = (dwTime >> 16) & 0xFFFF;
 	}

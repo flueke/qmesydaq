@@ -1466,7 +1466,11 @@ bool MCPD8::sendCommand(bool bCheckAnswer)
 tryagain:
     if (m_pNetwork->sendBuffer(m_szMcpdIp, m_wPort, m_cmdBuf))
     {
+#if QT_VERSION >= 0x040700
         quint64 qwStart = QDateTime::currentMSecsSinceEpoch();
+#else
+        quint64 qwStart = quint64(QDateTime::currentDateTime().toTime_t()) * 1000;
+#endif
         MSG_FATAL << tr("%1(%2) : %3. sent cmd: %4 to id: %5").
 		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(m_cmdBuf.bufferNumber).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId);
 // block other commands due to the writing on flash to avoid crashes on MCPD-8
@@ -1481,7 +1485,12 @@ tryagain:
             if (m_iCommActive == RECV || m_iCommActive == RECV_INVALID)
                 break;
             // 5sec timeout: block other commands due to the writing on flash to avoid crashes on MCPD-8
+#if QT_VERSION >= 0x040700
             if (quint64(QDateTime::currentMSecsSinceEpoch()-qwStart) > ((m_cmdBuf.cmd == SETPROTOCOL) ? 5000 : 500))
+#else
+            quint64 tmp = quint64(QDateTime::currentDateTime().toTime_t()) * 1000;
+            if (quint64(tmp - qwStart) > ((m_cmdBuf.cmd == SETPROTOCOL) ? 5000 : 500))
+#endif
             {
                 bOK = false;
                 bTimeout = true;
