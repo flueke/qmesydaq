@@ -192,6 +192,7 @@ protected:
 	long    m_lId[QMESYDAQ_MAXDEVICES];    //!< CARESS ids of internal devices
 	bool    m_b64Bit[QMESYDAQ_MAXDEVICES]; //!< 64-bit mode for internal devices
 	int     m_iMaster;                     //!< which internal device is the master counter
+	bool    m_bMasterPause;                //!< CARESS measurement is paused
 
 	char    m_szErrorMessage[64];          //!< last error message text
 	QList<quint64> m_aullDetectorData;     //!< last histogram/diffractogram/spectrogram
@@ -517,7 +518,11 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 		if (iDevice!=QMESYDAQ_SPECTROGRAM   && m_lId[QMESYDAQ_SPECTROGRAM]  ==id) m_lId[QMESYDAQ_SPECTROGRAM]  =0;
 		m_lId[iDevice]=0;
 		m_b64Bit[iDevice]=false;
-		if (m_iMaster==iDevice) m_iMaster=-1;
+		if (m_iMaster==iDevice)
+		{
+			m_iMaster=-1;
+			m_bMasterPause=false;
+		}
 		if (pInterface->status())
 			pInterface->stop();
 
@@ -802,6 +807,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 		{
 			m_lRunNo=run_no;
 			m_lMesrCount=mesr_count;
+			m_bMasterPause=false;
 			pInterface->setRunID(m_lRunNo,false);
 			if (g_iGlobalSyncSleep>0)
 				sleep(g_iGlobalSyncSleep);
@@ -911,7 +917,11 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 
 		if (kind==0/*PAUSE*/ || kind==1/*END-OF-MEASUREMENT*/)
 		{
-			if (kind==1) m_lStepNo=0;
+			if (kind==1)
+			{
+				m_lStepNo=0;
+				m_sListfile.clear();
+			}
 
 			for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
 				if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
@@ -935,6 +945,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 						if (tDiff<0) tDiff+=86400000;
 						if (tDiff>1000) break;
 					}
+					m_bMasterPause=(kind==0);
 				}
 				if (iDevice<ARRAY_SIZE(g_asDevices))
 					MSG_DEBUG << "stop device " << g_asDevices[iDevice];
@@ -1052,6 +1063,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 				bool bOK(false);
 
 				m_iMaster=-1;
+				m_bMasterPause=false;
 				switch (iDevice)
 				{
 					case QMESYDAQ_MON1:  iTmpDev=M1CT; break;
@@ -1097,6 +1109,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 				if (bOK)
 				{
 					m_iMaster=iDevice;
+					m_bMasterPause=false;
 					if (iDevice==QMESYDAQ_TIMER) dblTarget/=m_dblTimerScale;
 					pInterface->selectCounter(iTmpDev,true,dblTarget);
 					// pInterface->setPreSelection(dblTarget);
@@ -1115,7 +1128,10 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 			}
 			case 15: // LOADSLAVE
 				if (m_iMaster==iDevice)
+				{
 					m_iMaster=-1;
+					m_bMasterPause=false;
+				}
 				pInterface->selectCounter(iTmpDev,false);
 				if (iDevice<ARRAY_SIZE(g_asDevices))
 					MSG_DEBUG << "slave device " << g_asDevices[iDevice];
@@ -1636,7 +1652,8 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
 			val->l64((CORBA::LongLong)dblValue);
 		else
 			val->l((CORBA::Long)dblValue);
-		module_status=(pInterface->status(&bRunAck)!=0 || bRunAck) ? ACTIVE : DONE;
+		module_status=(pInterface->status(&bRunAck)!=0 || bRunAck) ? ACTIVE
+			: ((m_iMaster>=0 && iDevice==m_iMaster && m_bMasterPause) ? NOT_ACTIVE : DONE);
 		result=CARESS::OK;
 	}
 	catch (...)
