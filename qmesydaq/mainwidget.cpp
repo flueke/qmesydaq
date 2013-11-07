@@ -475,7 +475,7 @@ void MainWidget::checkListfilename(bool checked)
             // files exists
             if (bAsk && m_meas->getWriteProtection()) // ask user for other file name
                 name = selectListfile();
-            if (!name.isEmpty() && !QFile::remove(name)) // try to delete file or do not acquire list file
+            if (!name.isEmpty() && QFile::exists(name) && !QFile::remove(name)) // try to delete file or do not acquire list file
                 name.clear();
         }
 
