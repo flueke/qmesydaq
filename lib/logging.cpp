@@ -33,6 +33,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QDebug>
+#include <QMutexLocker>
 #include <iostream>
 #include "logging.h"
 #include "mdefines.h"
@@ -46,12 +47,7 @@ double g_dblTimeoutFactor=1.0;
 
 // log file
 static QFile g_LogFile;
-
-// containing time-informations for the last log entry
-static QTime	lastlogTime;
-static QDate	lastlogDate;
-static QString lastlogTimeString;
-static QString lastlogDateString;
+static QMutex g_hLogMutex;
 
 //	show which debugging options are enabled
 static bool g_bUseLogfile=false;
@@ -63,7 +59,7 @@ int DEBUGLEVEL=NOTICE;
 // writes a message with date and time to the given file
 static QString createMessage(const char *msg, char cLogLevel)
 {
-	QString retStr = "";
+	QString retStr;
 
 	while (!g_bUseSourcefile)
 	{
@@ -79,23 +75,8 @@ static QString createMessage(const char *msg, char cLogLevel)
 
 	if (g_bUseTimestamp)
 	{
-		QTime currentTime = QTime::currentTime();
-		QDate currentDate = QDate::currentDate();
+		retStr = QDateTime::currentDateTime().toString("yyyy/dd/MM hh:mm:ss.zzz");
 
-		if (lastlogTime != currentTime)
-		{
-			lastlogTime = currentTime;
-			lastlogTimeString = currentTime.toString("hh:mm:ss.zzz");
-		}
-		if (lastlogDate != currentDate)
-		{
-			lastlogDate = currentDate;
-			lastlogDateString = currentDate.toString("yyyy/dd/MM");
-		}
-
-		retStr.append(lastlogDateString);
-		retStr.append(' ');
-		retStr.append(lastlogTimeString);
 #if defined(MAX_LOGLINE_LENGTH) && MAX_LOGLINE_LENGTH>=40
 		retStr.append(':');
 	}
@@ -172,6 +153,7 @@ static void messageToFile(QtMsgType type, const char *msg)
 
 		if (g_bUseLogfile)
 		{
+			QMutexLocker locker(&g_hLogMutex);
 			if (g_LogFile.open(QFile::WriteOnly | QFile::Append))
 			{
 				g_LogFile.write(logline.toLocal8Bit());
@@ -215,6 +197,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 			szArgument.remove(0, 1);
 		if (szArgument == "-l" || szArgument == "-log")
 		{
+			QMutexLocker locker(&g_hLogMutex);
 			g_LogFile.setFileName(szParameter);
 			if (!g_LogFile.open(QFile::WriteOnly | QFile::Append))
 			{
@@ -273,37 +256,37 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 //! generate a displayable hex dump of given memory area (max. 16KB)
 QByteArray HexDump(const void* pData, int iLength)
 {
-    QByteArray dst;
-    const unsigned char* p=(const unsigned char*)pData;
-    if (iLength > 16384)
-        iLength = 16384; // max. 16KB
-    for (int i = 0; i < iLength; i += 16)
-    {
-        QString szLine;
-        szLine.sprintf("%04x  ",i);
-        for (int j = 0; j < 16; ++j)
-        {
-            QString szTmp;
-            if (j == 8)
-                szLine += "- ";
-            if ((i + j) < iLength)
-                szTmp.sprintf("%02x ",p[i + j]);
-            else
-                szTmp = "   ";
-            szLine += szTmp;
-        }
-        szLine += " ";
-        for (int j = 0; j < 16 && (i + j) < iLength; ++j)
-        {
-            unsigned char c = p[i + j];
-            if (c < ' ' || c > '~')
-               c = '.';
-            if (j == 8)
-               szLine += " - ";
-            szLine += c;
-        }
-        dst += szLine;
-        dst += "\n";
-    }
-    return dst;
+	QByteArray dst;
+	const unsigned char* p=(const unsigned char*)pData;
+	if (iLength > 16384)
+		iLength = 16384; // max. 16KB
+	for (int i = 0; i < iLength; i += 16)
+	{
+		QString szLine;
+		szLine.sprintf("%04x  ",i);
+		for (int j = 0; j < 16; ++j)
+		{
+			QString szTmp;
+			if (j == 8)
+				szLine += "- ";
+			if ((i + j) < iLength)
+				szTmp.sprintf("%02x ",p[i + j]);
+			else
+				szTmp = "   ";
+			szLine += szTmp;
+		}
+		szLine += " ";
+		for (int j = 0; j < 16 && (i + j) < iLength; ++j)
+		{
+			unsigned char c = p[i + j];
+			if (c < ' ' || c > '~')
+			   c = '.';
+			if (j == 8)
+			   szLine += " - ";
+			szLine += c;
+		}
+		dst += szLine;
+		dst += "\n";
+	}
+	return dst;
 }
