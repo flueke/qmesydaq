@@ -24,6 +24,7 @@
 #define MESYDAQ_DETECTOR_INTERFACE_H
 
 #include <QMutex>
+#include <QSize>
 #include "QtInterface.h"
 #include "CommandEvent.h"
 
@@ -73,8 +74,8 @@ public:
 	double preSelection();
 	double preSelection(int id);
 
-	void readHistogramSize(quint16& width, quint16& height);
-	QList<quint64> readHistogram();
+	QSize readHistogramSize(int = 0);
+	QList<quint64> readHistogram(int = 0);
 	QList<quint64> readDiffractogram();
 	QList<quint64> readSpectrogram(int iSpectrogram = -1);
 	int status(bool *pbRunAck = NULL);

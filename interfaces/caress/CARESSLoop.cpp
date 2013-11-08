@@ -556,9 +556,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lHistogramX=0;
 				else if (m_lHistogramX==0 && pInterface!=NULL)
 				{
-					quint16 w=0,h=0;
-					pInterface->readHistogramSize(w,h);
-					m_lHistogramX=w;
+					m_lHistogramX=pInterface->readHistogramSize().width();
 				}
 				if (m_lHistogramX<1)
 				{
@@ -571,9 +569,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lHistogramY=0;
 				else if (m_lHistogramY==0 && pInterface!=NULL)
 				{
-					quint16 w=0,h=0;
-					pInterface->readHistogramSize(w,h);
-					m_lHistogramY=h;
+					m_lHistogramY=pInterface->readHistogramSize().height();
 				}
 				if (m_lHistogramY<1)
 				{
@@ -1549,7 +1545,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			pInterface->setRunID(uRun,false);
 			if (g_iGlobalSyncSleep>0)
 				sleep(g_iGlobalSyncSleep);
-			pInterface->readHistogramSize(w,h);
+			QSize s=pInterface->readHistogramSize();
+			w=s.width();
+			h=s.height();
 			if (bListMode)
 				pInterface->setListMode(bListMode,true);
 			m_lSourceChannels=w;
@@ -1718,8 +1716,8 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 		{
 			case QMESYDAQ_HISTOGRAM:
 			{
-				quint16 w=0,h=0;
-				pInterface->readHistogramSize(w,h);
+				QSize s = pInterface->readHistogramSize();
+				quint16 w=s.width(),h=s.height();
 				if (m_lHistogramX==0 && m_lHistogramY==0)
 					end_channel=((CORBA::Long)w)*((CORBA::Long)h);
 				else
@@ -2208,12 +2206,11 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
 				if (x==0 && y==0)
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
-					quint16 w,h;
 					if (!pInterface)
 						throw CARESS::ErrorDescription("control interface not initialized");
-					pInterface->readHistogramSize(w,h);
-					x=w;
-					y=h;
+					QSize s=pInterface->readHistogramSize();
+					x=s.width();
+					y=s.height();
 				}
 				a[0]=x;
 				a[1]=y;

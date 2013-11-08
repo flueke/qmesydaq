@@ -1897,10 +1897,23 @@ void MainWidget::customEvent(QEvent *e)
 		}
 		else
 		{
-			Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-			answer << tmpHistogram->width();       // width  (should be equal to number of MPSD inputs)
-			answer << tmpHistogram->height();      // width  (should be equal to number of MPSD inputs)
-			answer << (m_meas->width() + 1);    // height (should be 960)
+			Measurement::HistogramType id = static_cast<Measurement::HistogramType>(args[0].toInt());
+			switch (id)
+			{
+				case Measurement::PositionHistogram:
+				case Measurement::AmplitudeHistogram:
+				case Measurement::CorrectedPositionHistogram:
+					{
+						Histogram *tmpHistogram = m_meas->hist(id);
+						answer << tmpHistogram->width();       // width  (should be equal to number of MPSD inputs)
+						answer << tmpHistogram->height();      // width  (should be equal to number of MPSD inputs)
+						answer << (m_meas->width() + 1);    // height (should be 960)
+					}
+					break;
+				default:
+					answer << 0 << 0 << 0;
+					break;
+			}
 		}
 		break;
 	}
@@ -1918,16 +1931,28 @@ void MainWidget::customEvent(QEvent *e)
 		}
 		else
 		{
-			Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
-			if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
+			Measurement::HistogramType id = static_cast<Measurement::HistogramType>(args[0].toInt());
+			switch (id)
 			{
-				// CARESS has it's x=0:y=0 position at top left corner
-				for (int y = tmpHistogram->height() - 1; y >= 0; --y)
-					for (int x = 0; x < tmpHistogram->width(); ++x)
-						tmpData->append(tmpHistogram->value(x, y));
+				case Measurement::PositionHistogram:
+				case Measurement::AmplitudeHistogram:
+				case Measurement::CorrectedPositionHistogram:
+					{
+						Histogram *tmpHistogram = m_meas->hist(id);
+						if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
+						{
+							// CARESS has it's x=0:y=0 position at top left corner
+							for (int y = tmpHistogram->height() - 1; y >= 0; --y)
+								for (int x = 0; x < tmpHistogram->width(); ++x)
+									tmpData->append(tmpHistogram->value(x, y));
+						}
+						else
+							tmpData->append(m_meas->events());
+					}
+					break;
+				default:
+					break;
 			}
-			else
-				tmpData->append(m_meas->events());
 			// hack to transfer a QList<quint64> to QtInterface without to copy it
 			answer << ((quint64)tmpData);
 		}

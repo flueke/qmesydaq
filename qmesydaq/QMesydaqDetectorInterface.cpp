@@ -190,23 +190,23 @@ double QMesyDAQDetectorInterface::preSelection(int id)
      \param width
      \param height
  */
-void QMesyDAQDetectorInterface::readHistogramSize(quint16 &width, quint16 &height)
+QSize QMesyDAQDetectorInterface::readHistogramSize(int histo)
 {
 	m_mutex.lock();
-	postRequestCommand(CommandEvent::C_READ_HISTOGRAM_SIZE);
-	width = m_width;
-	height = m_height;
+	postRequestCommand(CommandEvent::C_READ_HISTOGRAM_SIZE, QList<QVariant>() << histo);
+	QSize s(m_width, m_height);
 	m_mutex.unlock();
+	return s;
 }
 
 /*!
     \return the histogram
  */
-QList<quint64> QMesyDAQDetectorInterface::readHistogram()
+QList<quint64> QMesyDAQDetectorInterface::readHistogram(int histo)
 {
 	QList<quint64> r;
 	m_mutex.lock();
-	postRequestCommand(CommandEvent::C_READ_HISTOGRAM);
+	postRequestCommand(CommandEvent::C_READ_HISTOGRAM, QList<QVariant>() << histo);
 	r = m_values;
 	m_mutex.unlock();
 	return r;

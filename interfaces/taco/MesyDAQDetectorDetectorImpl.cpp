@@ -123,11 +123,11 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 		quint16 width,
 			height;
 
-		m_interface->readHistogramSize(width, height);
+		QSize s = m_interface->readHistogramSize();
 		tmpList = m_interface->readHistogram();
 
-		tmp.push_back(width);
-		tmp.push_back(height);
+		tmp.push_back(s.width());
+		tmp.push_back(s.height());
 		tmp.push_back(1);
 	}
 // spectrogram
