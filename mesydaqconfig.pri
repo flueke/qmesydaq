@@ -100,11 +100,13 @@ contains(INTERFACE, TACO) {
 		TACO_ROOT	= /opt/taco
 	}
 
-	contains(CONFIG, bit64) {
-		TACOLIBS	= -L$${TACO_ROOT}/lib64
-	}
-	else {
-		TACOLIBS	= -L$${TACO_ROOT}/lib
+	isEmpty(TACOLIBS) {
+		contains(CONFIG, bit64) {
+			TACOLIBS	= -L$${TACO_ROOT}/lib64
+		}
+		else {
+			TACOLIBS	= -L$${TACO_ROOT}/lib
+		}
 	}
 	TACOLIBS	+= -lTACOExtensions -ltaco++ -llog4taco -llog4cpp
 	INCLUDEPATH 	+= $${TACO_ROOT}/include
