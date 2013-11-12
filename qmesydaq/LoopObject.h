@@ -40,6 +40,8 @@ public:
 
 	void pSleep(long ms);
 
+	virtual QString version(void) = 0;
+
 protected:
 	virtual void runLoop(); // = 0;
 };

@@ -122,10 +122,13 @@ int main(int argc, char **argv)
 	}
 	else 
 		loop = new TACOLoop;
-#endif
-#if USE_CARESS
+#elif USE_CARESS
 	loop = new CARESSLoop(argList);
+#elif USE_TCP
+	loop = new TCPLoop(argList);
 #endif
+	if (loop)
+		app.setLoopObject(loop);
 
 	app.setStyle(new QPlastiqueStyle());
 
@@ -143,7 +146,6 @@ int main(int argc, char **argv)
 
 	if (loop)
 	{
-		app.setLoopObject(loop);
 		app.setQtInterface(new QMesyDAQDetectorInterface);
 		app.setLoopEventReceiver(mainWin.centralWidget());
 		QObject::connect(loop, SIGNAL(terminated()), mainWin.centralWidget(), SLOT(quitContinue()));

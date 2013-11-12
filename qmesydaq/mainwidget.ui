@@ -535,6 +535,20 @@ Listfile</string>
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="libraryVersionLabel">
+            <property name="text">
+             <string>lib 0.0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="remoteInterfaceVersionLabel">
+            <property name="text">
+             <string>interface: 0.0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="dateTimeLabel">
             <property name="text">
              <string>Date/Time:</string>

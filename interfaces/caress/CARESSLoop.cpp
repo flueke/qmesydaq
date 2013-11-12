@@ -217,6 +217,12 @@ CARESSLoop::CARESSLoop(QStringList argList, QtInterface *)
 	setObjectName("CARESSLoop");
 }
 
+//! \brief Returns the type and version of the remote interface
+QString CARESSLoop::version(void)
+{
+	return "CARESS " VERSION;
+}
+
 //! \brief CARESSLoop is derived from QThread and if this function returns, the thread exits
 void CARESSLoop::runLoop()
 {

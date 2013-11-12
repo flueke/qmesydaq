@@ -37,6 +37,8 @@ class CARESSLoop : public LoopObject
 public:
 	CARESSLoop(QStringList argList, QtInterface *interface = 0);
 
+	QString version(void);
+
 protected:
 	void runLoop();
 

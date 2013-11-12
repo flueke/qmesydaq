@@ -47,6 +47,8 @@ public:
 	//! Constructor
 	TACOLoop(QtInterface *interface = 0);
 
+	QString version(void);
+
 protected:
 	//! thread loop
 	void runLoop();

@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             
 ############################################################################
 
-VERSION 	= 0.0.2
+VERSION 	= 0.1.0
 SRCBASE		= ../..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -36,7 +36,7 @@ target.path	= $${TARGETLIBPATH}
 
 # Input
 HEADERS 	+= remoteserver.h \
-		TCPLoop.h 
+		TCPLoop.h
 
 SOURCES 	+= remoteserver.cpp \
 		TCPLoop.cpp

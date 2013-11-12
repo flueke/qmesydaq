@@ -34,6 +34,11 @@ TCPLoop::TCPLoop(QtInterface * /* interface */)
 // testing
 }
 
+QString TCPLoop::version(void)
+{
+	return "TCP " VERSION;
+}
+
 void TCPLoop::runLoop()
 {
 }

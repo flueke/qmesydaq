@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "diskspace.h"
+#include <QDebug>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QPrinter>
@@ -39,6 +40,7 @@
 #include "CommandEvent.h"
 #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
+#include "LoopObject.h"
 #include "generalsetup.h"
 #include "modulewizard.h"
 #include "mapcorrect.h"
@@ -131,6 +133,15 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     displayModeButtonGroup->setId(dispMstdSpectrum, Plot::SingleSpectrum);
 
     versionLabel->setText("QMesyDAQ " REVISION "\n" __DATE__);
+    LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
+    if (loop)
+    {
+	MSG_ERROR << loop->version();
+        remoteInterfaceVersionLabel->setText(tr("Interface %1").arg(loop->version()));
+    }
+    else
+        remoteInterfaceVersionLabel->setText("");
+    libraryVersionLabel->setText(tr("Library %1").arg(m_theApp->libVersion()));
 
     connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
     connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
@@ -198,27 +209,25 @@ void MainWidget::about()
     QString text = tr("<h3>About QMesyDAQ </h3>")
 		   + tr("<p>Authors</p><ul>")
                    + tr("<li>Copyright (C) 2008 <a href=\"mailto:g.montermann@mesytec.com\">Gregor Montermann</a</li>")
-                   + tr("<li>Copyright (C) 2009-2011 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
-		   + tr("<li>Copyright (C) 2011 <a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a></li>")
+                   + tr("<li>Copyright (C) 2009-2013 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
+		   + tr("<li>Copyright (C) 2011-2013 <a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a></li>")
 		   + tr("</ul><p>Contributors</p><ul>")
 		   + tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
                    + tr("<li><a href=\"mailto:m.drochner@fz-juelich.de\">Matthias Drochner</a> Bug reports</li>")
-                   + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>")
-#if USE_TACO || USE_CARESS
-		   + tr("<p>It may be remotely controlled by:")
-		   + tr("<ul>")
-#if USE_TACO
-		   + tr("<li><b>TACO</b></li>")
-#endif
-#if USE_CARESS
-		   + tr("<li><b>CARESS</b></li>")
-#endif
-		   + tr("</ul></p>")
-#endif
-                   + tr("<p>It is published under GPL (GNU General Public License) <tt><a href=\"http://www.gnu.org/licenses/gpl.html\">http://www.gnu.org/licenses/gpl.html</a></tt></p>")
-		   + tr("The data plot window is based in part on the work of the <a href=\"http://qwt.sf.net\">Qwt project</a>")
-                   + tr("<p>Version : <b>%1</b></p>").arg(VERSION)
-		   + tr("<p>Library Version : <b>%1</b></p>").arg(m_theApp->libVersion());
+                   + tr("<li><a href=\"mailto:m.drochner@fz-juelich.de\">Christian Randau</a> Windows port</li>")
+                   + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>");
+    LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
+    if (loop)
+    {
+        text += tr("<p>It may be remotely controlled by:")
+		+ tr("<ul>")
+		+ tr("<li><b>%1</b></li>").arg(loop->version())
+		+ tr("</ul></p>");
+    }
+    text += tr("<p>It is published under GPL (GNU General Public License) <tt><a href=\"http://www.gnu.org/licenses/gpl.html\">http://www.gnu.org/licenses/gpl.html</a></tt></p>")
+            + tr("The data plot window is based in part on the work of the <a href=\"http://qwt.sf.net\">Qwt project</a>")
+            + tr("<p>Version : <b>%1</b></p>").arg(VERSION)
+            + tr("<p>Library Version : <b>%1</b></p>").arg(m_theApp->libVersion());
 
     QMessageBox msgBox(this);
     msgBox.setText(text);

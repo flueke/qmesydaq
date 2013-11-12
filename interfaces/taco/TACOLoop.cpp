@@ -40,16 +40,21 @@ TACOLoop::TACOLoop(QtInterface * /* interface */)
 	setObjectName("TACOLoop");
 }
 
+QString TACOLoop::version()
+{
+	return "TACO " VERSION;
+}
+
 void TACOLoop::runLoop()
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.beginGroup("TACO");
 	m_personal = settings.value("personal", "srv0").toString();
-	m_detDevice = settings.value("detector", "puma/qmesydaq/det").toString();
-	m_timerDevice = settings.value("timer", "puma/qmesydaq/timer").toString();
+	m_detDevice = settings.value("detector", "test/qmesydaq/det").toString();
+	m_timerDevice = settings.value("timer", "test/qmesydaq/timer").toString();
 	for (int i = 0; i < 4; ++i)
-		m_counterDevice[i] = settings.value(QString("counter%1").arg(i), QString("puma/qmesydaq/counter%1").arg(i)).toString();
-	m_counterDevice[4] = settings.value("events", "puma/qmesydaq/events").toString();
+		m_counterDevice[i] = settings.value(QString("counter%1").arg(i), QString("test/qmesydaq/counter%1").arg(i)).toString();
+	m_counterDevice[4] = settings.value("events", "test/qmesydaq/events").toString();
 	settings.endGroup(); 
 
 	QStringList	deviceList;
