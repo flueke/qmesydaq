@@ -1,4 +1,5 @@
 // Interface to the QMesyDAQ software
+// Interface to the QMesyDAQ software
 // Copyright (C) 2009-2013 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
@@ -123,8 +124,9 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 		quint16 width,
 			height;
 
-		QSize s = m_interface->readHistogramSize();
-		tmpList = m_interface->readHistogram();
+		logStream->infoStream() << "MesyDAQ::Detector::Detector::read(" << m_histo << ")" << log4cpp::eol;
+		QSize s = m_interface->readHistogramSize(m_histo);
+		tmpList = m_interface->readHistogram(m_histo);
 
 		tmp.push_back(s.width());
 		tmp.push_back(s.height());
@@ -152,6 +154,7 @@ void MesyDAQ::Detector::Detector::deviceInit(void) throw (::TACO::Exception)
 	{
 		Server::deviceUpdate("lastlistfile");
 		Server::deviceUpdate("lasthistfile");
+		Server::deviceUpdate("histogram");
 	}
 	catch (const ::TACO::Exception &e)
 	{
@@ -187,7 +190,7 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
                 }
                 catch (::TACO::Exception &e)
                 {
-                        throw "could not update 'runid' " >> e;
+                        throw_exception(e, "could not update 'runid' ");
                 }
         if (resourceUpdateRequest("lastlistfile"))
                 try
@@ -202,7 +205,7 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
                 }
                 catch (::TACO::Exception &e)
                 {
-                        throw "could not update 'lastlistfile' " >> e;
+                        throw_exception(e, "could not update 'lastlistfile' ");
                 }
         if (resourceUpdateRequest("lasthistfile")) 
                 try
@@ -219,7 +222,7 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
                 }
                 catch (::TACO::Exception &e)
                 {
-                        throw "could not update 'lasthistfile' " >> e;
+                        throw_exception(e, "could not update 'lasthistfile' ");
                 }
         if (resourceUpdateRequest("lastbinnedfile")) 
                 try
@@ -236,12 +239,47 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
                 }
                 catch (::TACO::Exception &e)
                 {
-                        throw "could not update 'lasthistfile' " >> e;
+                        throw_exception(e, "could not update 'lasthistfile' ");
                 }
+	if (resourceUpdateRequest("histogram"))
+		try
+		{
+			std::string tmp = queryResource<std::string>("histogram");
+			if (tmp == "mapped")
+				m_histo = 2;
+			else if (tmp == "amplitude")
+				m_histo = 1;
+			else
+				m_histo = 0;
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'histogram' ");
+		}
 }
 
 void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Exception)
 {
+	if (resourceQueryRequest("histogram"))
+		try
+		{
+			switch (m_histo)
+			{
+				default:
+					updateResource<std::string>("histogram", "raw");
+					break;
+				case 1:
+					updateResource<std::string>("histogram", "amplitude");
+					break;
+				case 2:
+					updateResource<std::string>("histogram", "mapped");
+					break;
+			}
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not query resource 'histogram' ");
+		}
         if (resourceQueryRequest("runid"))
                 try
                 {
@@ -249,7 +287,7 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
                 }
                 catch (TACO::Exception &e)
                 {
-                        throw "Could not query resource 'runid' " >> e;
+                        throw_exception(e, "Could not query resource 'runid' ");
                 }
         if (resourceQueryRequest("lastlistfile"))
                 try
@@ -260,7 +298,7 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
                 }
                 catch (TACO::Exception &e)
                 {
-                        throw "Could not query resource 'lastlistfile' " >> e;
+                        throw_exception(e, "Could not query resource 'lastlistfile' ");
                 }
         if (resourceQueryRequest("lasthistfile") || resourceQueryRequest("lastbinnedfile"))
                 try
@@ -272,7 +310,7 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
                 }
                 catch (TACO::Exception &e)
                 {
-                        throw "Could not query resource 'lasthistfile' " >> e;
+                        throw_exception(e, "Could not query resource 'lasthistfile' ");
                 }
 
         TACO::Server::deviceQueryResource();
