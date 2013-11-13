@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>34</height>
+    <width>550</width>
+    <height>32</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -136,14 +136,20 @@
    </item>
    <item row="0" column="7">
     <widget class="QLabel" name="rate">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
-       <width>49</width>
+       <width>64</width>
        <height>24</height>
       </size>
      </property>
      <property name="text">
-      <string>1234560</string>
+      <string>56785678</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
