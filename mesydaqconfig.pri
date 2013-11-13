@@ -77,13 +77,17 @@ contains(CONFIG, bit64) {
 	isEmpty(QWTLIBS) {
 		QWTLIBS	= $${QWT_ROOT}/lib64
 	}
-	TARGETLIBPATH = $${TARGETPATH}/lib64
+	isEmpty(TARGETLIBPATH) {
+		TARGETLIBPATH = $${TARGETPATH}/lib64
+	}
 }
 else {
 	isEmpty(QWTLIBS) {
 		QWTLIBS	= $${QWT_ROOT}/lib
 	}
-	TARGETLIBPATH = $${TARGETPATH}/lib
+	isEmpty(TARGETLIBPATH) {
+		TARGETLIBPATH = $${TARGETPATH}/lib
+	}
 }
 
 QWTLIBS		= -L$${QWTLIBS} -l$${QWTLIB}
