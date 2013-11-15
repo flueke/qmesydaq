@@ -213,7 +213,7 @@ void Plot::setDisplayMode(const Mode &m)
 		m_curve[i]->detach();
 	m_histogram->detach();
 
-	QColor 	c(QColor(Qt::black));
+	QColor 	c = QColor(Qt::black);
 	switch (m_mode)
 	{
 		case Diffractogram:
