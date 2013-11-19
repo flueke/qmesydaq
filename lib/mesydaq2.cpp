@@ -522,12 +522,12 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		settings.setValue("id", i);
 		settings.setValue("ipAddress", ip);
 		settings.setValue("port", cmdport);
-		if (!cmdip.isEmpty() && cmdip != "0.0.0.0")
+		if (!cmdip.isEmpty() && cmdip != "0.0.0.0" && cmdip != ip)
 		{
 			settings.setValue("cmdip", cmdip);
 			settings.setValue("cmdport", cmdport);
 		}
-		if (!dataip.isEmpty() && dataip != "0.0.0.0")
+		if (!dataip.isEmpty() && dataip != "0.0.0.0" && dataip != ip)
 		{
 			settings.setValue("dataip", dataip);
 			if (dataport != cmdport)
@@ -658,7 +658,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		quint16 dataPort = settings.value("dataport", "0").toUInt();
 
 		QHostAddress cmd(cmdIP);
-		if (cmd == QHostAddress::Any || cmd == QHostAddress::AnyIPv6)
+		if (cmd == QHostAddress::Any || cmd == QHostAddress::AnyIPv6 || IP == cmdIP)
 		{
 			cmdIP = "0.0.0.0";
 			cmdPort = 0;
@@ -667,7 +667,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			cmdPort = 0;
 
 		QHostAddress data(dataIP);
-		if (data == QHostAddress::Any || data == QHostAddress::AnyIPv6)
+		if (data == QHostAddress::Any || data == QHostAddress::AnyIPv6 || IP == dataIP)
 		{
 			dataIP = "0.0.0.0";
 //			dataPort = 0;
