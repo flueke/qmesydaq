@@ -2461,6 +2461,22 @@ Listfile</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dispAllChannels</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>dispAllChannelsChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>329</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>395</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>redraw()</signal>
@@ -2487,6 +2503,7 @@ Listfile</string>
   <slot>moduleActiveSlot(quint8, bool)</slot>
   <slot>allPulserOff()</slot>
   <slot>statusTabChanged(int)</slot>
+  <slot>dispAllChannelsChanged(bool)</slot>
  </slots>
  <buttongroups>
   <buttongroup name="displayModeButtonGroup"/>

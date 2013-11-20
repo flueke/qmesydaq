@@ -75,6 +75,7 @@ public:
 		Histogram,	//!< histogram
 		Diffractogram, 	//!< diffractogram
 		SingleSpectrum,	//!< MSTD-16 spectrum
+		ModuleSpectrum, //!< all 8 spectra from a single module
 	};
 
 	//! how should the y scale be displayed

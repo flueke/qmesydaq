@@ -158,6 +158,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #endif
 
     m_data = new MesydaqSpectrumData();
+    for (int i = 0; i < 8; ++i)
+        m_specData[i] = new MesydaqSpectrumData();
     m_histData = new MesydaqHistogramData();
 
     m_printer = new QPrinter;
@@ -194,6 +196,13 @@ MainWidget::~MainWidget()
     if (m_dispTimer)
         killTimer(m_dispTimer);
     m_dispTimer = 0;
+
+    delete m_data;
+    for (int i = 0; i < 7; ++i)
+        delete m_specData[i];
+    delete m_histData;
+
+    delete m_printer;
 
     delete m_meas;
     m_meas = NULL;
@@ -1261,10 +1270,12 @@ void MainWidget::setDisplayMode(int val)
             dispAll->setEnabled(true);
             if (!dispAll->isChecked())
             {
-                 dispMcpd->setEnabled(true);
-                 dispMpsd->setEnabled(true);
-                 dispChan->setEnabled(true);
-                 dispAllChannels->setEnabled(true);
+                dispMcpd->setEnabled(true);
+                dispMpsd->setEnabled(true);
+                dispChan->setEnabled(true);
+                dispAllChannels->setEnabled(true);
+                if (dispAllChannels->isChecked())
+		    m_dataFrame->setDisplayMode(Plot::ModuleSpectrum);
             }
             break;
         case Plot::Histogram:
@@ -1361,7 +1372,8 @@ void MainWidget::draw(void)
                             spec = m_meas->data(Measurement::AmplitudeHistogram, chan + i);
                         if (spec)
                             counts += spec->getTotalCounts();
-                        m_data->setData(spec);
+                        m_specData[i]->setData(spec);
+			m_dataFrame->setSpectrumData(m_specData[i], i);
                         countsInROI->setText(tr("%1").arg(counts));
                     }
                 }
@@ -2175,3 +2187,17 @@ void MainWidget::selectUserMode(int val)
 	}
 }
 
+/*!
+    \fn void MainWidget::dispAllChannelsChanged(bool val)
+
+    callback to set the display mode in case of all spectra option is selected or deselected
+
+    \param val selected or not
+ */
+void MainWidget::dispAllChannelsChanged(bool val)
+{
+    if (val)
+        setDisplayMode(Plot::ModuleSpectrum);
+    else
+        setDisplayMode(displayModeButtonGroup->checkedId());
+}

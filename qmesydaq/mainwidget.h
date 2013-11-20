@@ -190,6 +190,8 @@ private slots:
 
 	void setLinLog(int);
 
+        void dispAllChannelsChanged(bool);
+
 private:
 	void 	dispFiledata(void);
 
@@ -218,6 +220,9 @@ private:
 
 	//! spectrum to be plotted
 	MesydaqSpectrumData	*m_data;
+
+	//! spectra to be plotted in case of all spectra per module selected
+	MesydaqSpectrumData	*m_specData[8];
 
 	//! histogram to be plotted
 	MesydaqHistogramData	*m_histData;

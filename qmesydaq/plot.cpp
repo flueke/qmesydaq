@@ -247,6 +247,9 @@ void Plot::setDisplayMode(const Mode &m)
 			setAxisTitle(QwtPlot::yLeft, "counts");
 			m_curve[0]->attach(this);
 			break;
+		case ModuleSpectrum:
+			for (int i = 1; i < 8; ++i)
+				m_curve[i]->attach(this);
 		case Spectrum:
 			enableAxis(QwtPlot::yRight, false);
 			switch (m_linlog)
