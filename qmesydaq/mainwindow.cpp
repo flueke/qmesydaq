@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionTACO, SIGNAL(triggered()), m_main, SLOT(setupTACO()));
 #endif
 	connect(actionAddMCPD, SIGNAL(triggered()), m_main, SLOT(addMCPD()));
+	connect(actionPulser, SIGNAL(triggered()), m_main, SLOT(toolPulser()));
 	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
@@ -144,6 +145,7 @@ void MainWindow::selectUser(void)
 #if USE_TACO
 	actionTACO->setVisible(false);
 #endif
+	actionPulser->setVisible(false);
 	m_main->selectUserMode(MainWidget::User);
 }
 
@@ -157,6 +159,8 @@ void MainWindow::selectExpert(void)
 #if USE_TACO
 		actionTACO->setVisible(false);
 #endif
+		actionPulser->setVisible(true);
+		actionPulser->setEnabled(true);
 		m_main->selectUserMode(MainWidget::Expert);
 	}
 	else
@@ -174,6 +178,8 @@ void MainWindow::selectSuperuser(void)
 		actionTACO->setVisible(true);
 		actionTACO->setEnabled(true);
 #endif
+		actionPulser->setVisible(true);
+		actionPulser->setEnabled(true);
 		m_main->selectUserMode(MainWidget::SuperUser);
 	}
 	else

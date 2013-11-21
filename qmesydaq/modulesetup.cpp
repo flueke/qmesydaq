@@ -81,45 +81,6 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 }
 
 /*!
-    \fn void ModuleSetup::setPulserSlot()
-
-    callback to handle the pulser settings
-*/
-void ModuleSetup::setPulserSlot()
-{
-    if (tabWidget->tabText(tabWidget->currentIndex()) != tr("Pulser"))
-       return;
-    bool ok;
-    quint16 id = (quint16) devid->value();
-    quint16 mod = module->value();
-    quint16 chan = pulsChan->value();
-
-    quint8 ampl;
-    if(pulsampRadio1->isChecked())
-        ampl = (quint8) pulsAmp1->text().toInt(&ok);
-    else
-        ampl = (quint8) pulsAmp2->text().toInt(&ok);
-
-    quint16 pos = MIDDLE;
-    int modType = m_theApp->getModuleId(mod, id);
-    
-    if (pulsLeft->isChecked())
-        pos = (modType != TYPE_MSTD16) ? LEFT : RIGHT;
-    else if (pulsRight->isChecked())
-        pos = (modType != TYPE_MSTD16) ? RIGHT : LEFT;
-    else if (pulsMid->isChecked())
-        pos = MIDDLE;
-
-    bool pulse = pulserButton->isChecked();
-    if (pulse)
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
-    else
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
-
-    m_theApp->setPulser(id, mod, chan, pos, ampl, pulse);
-}
-
-/*!
     \fn void ModuleSetup::setGainSlot()
 
     callback to handle the gain settings
@@ -299,7 +260,6 @@ void ModuleSetup::displaySlot()
     quint8 id = module->value();
     int modType = m_theApp->getModuleId(mod, id);
     qDebug() << mod << " " << id << " modType " << modType;
-    pulsMid->setVisible(modType != TYPE_MSTD16);
     Ui_ModuleSetup::pos->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
     Ui_ModuleSetup::amp->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
 
@@ -309,40 +269,6 @@ void ModuleSetup::displaySlot()
 // threshold:
     threshold->setText(tr("%1").arg(m_theApp->getThreshold(mod, id)));
 
-// pulser:  on/off
-    if(m_theApp->isPulserOn(mod, id))
-    {
-        pulserButton->setChecked(true);
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
-    }
-    else
-    {
-        pulserButton->setChecked(false);
-        const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
-    }
-// channel
-    pulsChan->setValue((int)m_theApp->getPulsChan(mod, id));
-// amplitude
-#if 0
-    QString dstr;
-    dstr.sprintf("%3d", m_theApp->getPulsAmp(mod, id));
-#endif
-    pulsAmp1->setValue((int)m_theApp->getPulsAmp(mod, id));
-
-// position
-    qDebug() << "pulser Pos " << m_theApp->getPulsPos(mod, id);
-    switch(m_theApp->getPulsPos(mod, id))
-    {
-    	case LEFT:
-        	modType != TYPE_MSTD16 ? pulsLeft->setChecked(true) : pulsRight->setChecked(true);
-        	break;
-    	case RIGHT:
-        	modType != TYPE_MSTD16 ? pulsRight->setChecked(true) : pulsLeft->setChecked(true);
-        	break;
-    	case MIDDLE:
-        	pulsMid->setChecked(true);
-        	break;
-    }
 // mode
     if (m_theApp->getMode(mod, id))
         amp->setChecked(true);

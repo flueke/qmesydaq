@@ -48,6 +48,7 @@
 #include "modulesetup.h"
 #include "mdllsetup.h"
 #include "mcpdsetup.h"
+#include "mpsdpulser.h"
 #include "logging.h"
 #include "stdafx.h"
 #if USE_TACO
@@ -1486,6 +1487,28 @@ void MainWidget::setupTACO(void)
     d.exec();
 }
 #endif
+
+/*!
+    \fn void MainWidget::toolPulser(void)
+
+    opens the dialog to handle the MPSD Pulser dialog
+ */
+void MainWidget::toolPulser(void)
+{
+    static QDialog *d(NULL);
+    if (m_meas->setupType() != Measurement::Mdll)
+    {
+        if (!d)
+            d = new MPSDPulser(m_theApp, this);
+    }
+    else
+    {
+        if (!d)
+            d = NULL;
+    }
+    if (d)
+        d->show();
+}
 
 /*!
     \fn void MainWidget::setupModule(quint8)

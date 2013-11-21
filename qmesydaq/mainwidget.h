@@ -97,6 +97,8 @@ public slots:
 #endif
 	void 	addMCPD();
 
+	void	toolPulser();
+
 	//! load configuration file
 	void	loadConfiguration(const QString &sFilename);
 

@@ -17,11 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MODULE_SETUP_H
-#define MODULE_SETUP_H
+#ifndef MPSD_PULSER_H
+#define MPSD_PULSER_H
 
 #include <QDialog>
-#include "ui_modulesetup.h"
+#include "ui_mpsdpulser.h"
 
 class Mesydaq2;
 
@@ -32,11 +32,11 @@ class Mesydaq2;
 
     \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class ModuleSetup : public QDialog, public Ui_ModuleSetup
+class MPSDPulser : public QDialog, public Ui_MPSDPulser
 {
 	Q_OBJECT
 public:
-	ModuleSetup(Mesydaq2 *, QWidget * = 0);
+	MPSDPulser(Mesydaq2 *, QWidget * = 0);
 
 public:
 	void setModule(int);
@@ -45,43 +45,29 @@ public slots:
 	void setMCPD(int);
 
 private slots:
-	void setGainSlot();
-
-	void setThresholdSlot();
-
-	void readRegisterSlot();
-
-	void writeRegisterSlot();
-
-	void setModeSlot(bool);
-
 	void displayMCPDSlot(int = -1);
 
 	void displayMPSDSlot(int = -1);
 
-	void displaySlot();
+	void amplitudeChanged(int);
 
-	void setHistogram1(bool);
-	void setHistogram2(bool);
-	void setHistogram3(bool);
-	void setHistogram4(bool);
-	void setHistogram5(bool);
-	void setHistogram6(bool);
-	void setHistogram7(bool);
-	void setHistogram8(bool);
+	void setPulser(bool);
 
-	void setActive1(bool);
-	void setActive2(bool);
-	void setActive3(bool);
-	void setActive4(bool);
-	void setActive5(bool);
-	void setActive6(bool);
-	void setActive7(bool);
-	void setActive8(bool);
+	void setPulserPosition(bool);
+
+	void setChannel(int);
+
+private:
+	void updatePulser();
+
+	void display();
 
 private:
 	//! The MesyDaq objext
 	Mesydaq2	*m_theApp;
+
+	//! guard to disable the updates of the pulser
+	bool		m_enabled;
 
 };
 #endif
