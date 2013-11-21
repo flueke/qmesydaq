@@ -326,8 +326,8 @@ void ModuleSetup::displaySlot()
 #if 0
     QString dstr;
     dstr.sprintf("%3d", m_theApp->getPulsAmp(mod, id));
-    pulsAmp->setValue((int)m_theApp->getPulsAmp(mod, id));
 #endif
+    pulsAmp1->setValue((int)m_theApp->getPulsAmp(mod, id));
 
 // position
     qDebug() << "pulser Pos " << m_theApp->getPulsPos(mod, id);
