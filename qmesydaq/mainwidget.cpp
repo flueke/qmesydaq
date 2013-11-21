@@ -51,8 +51,6 @@
 #include "logging.h"
 #include "stdafx.h"
 
-#include "revision.h"
-
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
 
@@ -132,7 +130,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     displayModeButtonGroup->setId(dispDiffractogram, Plot::Diffractogram);
     displayModeButtonGroup->setId(dispMstdSpectrum, Plot::SingleSpectrum);
 
-    versionLabel->setText("QMesyDAQ " REVISION "\n" __DATE__);
+    versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
     LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
     if (loop)
     {
@@ -2126,7 +2124,7 @@ void MainWidget::customEvent(QEvent *e)
 		}
 		break;
     case CommandEvent::C_VERSIONTEXT:
-        answer << QString("QMesyDAQ " REVISION ",lib %1").arg(m_meas->version());
+        answer << QString("QMesyDAQ " VERSION ",lib %1").arg(m_meas->version());
         break;
 	default:
 		MSG_DEBUG << tr("ignoring invalid interface command %1").arg(cmd) << args;

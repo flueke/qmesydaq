@@ -137,15 +137,3 @@ isEmpty(BOOST_LIBS) {
 
 LIBS		+= $${BOOST_LIBS}
 
-PRE_TARGETDEPS 	+= revision.h
-
-QMAKE_EXTRA_TARGETS	+= revtarget
-revtarget.target 	= revision.h
-revtarget.commands 	= @echo \"updating file $$revtarget.target\"; \
-			/bin/echo -e \"/* generated file \(do not edit\) */\\n\" \
-			\"$${LITERAL_HASH}ifndef REVISION_H\\n\" \
-			\"$${LITERAL_HASH}define REVISION_H\\n\" \
-			\"$${LITERAL_HASH}define REVISION \\\"$${VERSION}\(`git describe --always`)\\\"\\n\" \
-			\"$${LITERAL_HASH}endif\" > $$revtarget.target
-revtarget.depends 	= ${SOURCES} ${HEADERS} ${FORMS} $${_PRO_FILE_}
-QMAKE_DISTCLEAN 	+= $$revtarget.target
