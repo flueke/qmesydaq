@@ -229,8 +229,8 @@ void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool 
  */
 void MPSD8::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool preset)
 {
-	if(pos > 2)
-		m_pulsPos[preset] = 2;
+	if(pos > MIDDLE)
+		m_pulsPos[preset] = MIDDLE;
 	else
 		m_pulsPos[preset] = pos;
     
