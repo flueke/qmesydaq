@@ -211,7 +211,7 @@ void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool 
 	m_pulsAmp[preset] = calcPulsAmp(poti, m_gainVal[chan][0]);
 	m_pulser[preset] = on;
 
-	MSG_NOTICE << tr("pulser %1%2, bus %3 to pos %4, poti %5 - ampl %6").
+	MSG_NOTICE << tr("pulser poti %1%2, bus %3 to pos %4, poti %5 - ampl %6").
 		arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(poti).arg(m_pulsAmp[preset], 6, 'f', 2);
 }
 
