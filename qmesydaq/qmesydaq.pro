@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.17.2
+VERSION		= 0.18.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -120,6 +120,10 @@ contains(INTERFACE, TACO) {
 	DEPENDPATH	+= $${SRCBASE}/interfaces/taco
 	INCLUDEPATH	+= $${SRCBASE}/interfaces/taco
 	LIBS		+= -L$${SRCBASE}/interfaces/taco -ltacoInterface $${TACOLIBS} $${LIBS}
+
+	FORMS		+= tacosetup.ui
+	HEADERS		+= tacosetup.h
+	SOURCES		+= tacosetup.cpp
 }
 
 contains(INTERFACE, CARESS) {

@@ -92,6 +92,9 @@ public slots:
 
 	void	setupMCPD();
 
+#if USE_TACO
+	void    setupTACO();
+#endif
 	void 	addMCPD();
 
 	//! load configuration file

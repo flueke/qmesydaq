@@ -50,6 +50,9 @@
 #include "mcpdsetup.h"
 #include "logging.h"
 #include "stdafx.h"
+#if USE_TACO
+#	include "tacosetup.h"
+#endif
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -1475,6 +1478,14 @@ void MainWidget::addMCPD(void)
 	m_theApp->setTimingSetup(d.id(), d.master(), d.terminate(), d.externsync());
     }
 }
+
+#if USE_TACO
+void MainWidget::setupTACO(void)
+{
+    TACOSetup d;
+    d.exec();
+}
+#endif
 
 /*!
     \fn void MainWidget::setupModule(quint8)

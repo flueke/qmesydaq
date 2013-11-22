@@ -73,11 +73,19 @@
      <addaction name="actionExpert"/>
      <addaction name="actionSuperUser"/>
     </widget>
+    <widget class="QMenu" name="menuRemoteInterface">
+     <property name="title">
+      <string>Remote Interface</string>
+     </property>
+     <addaction name="actionTACO"/>
+    </widget>
     <addaction name="actionGeneral"/>
     <addaction name="menuMCPD"/>
     <addaction name="actionModule"/>
     <addaction name="separator"/>
     <addaction name="menuMode"/>
+    <addaction name="separator"/>
+    <addaction name="menuRemoteInterface"/>
    </widget>
    <addaction name="menu_Files"/>
    <addaction name="menu_Configuration"/>
@@ -202,6 +210,14 @@
   <action name="actionLoad_Calibration_File">
    <property name="text">
     <string>Load &amp;Calibration File ...</string>
+   </property>
+  </action>
+  <action name="actionTACO">
+   <property name="text">
+    <string>TACO</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

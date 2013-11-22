@@ -55,6 +55,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionModule, SIGNAL(triggered()), m_main, SLOT(setupModule()));
 	connect(actionNewSetup, SIGNAL(triggered()), m_main, SLOT(newSetupSlot()));
 	connect(actionSetupMCPD, SIGNAL(triggered()), m_main, SLOT(setupMCPD()));
+#if USE_TACO
+	connect(actionTACO, SIGNAL(triggered()), m_main, SLOT(setupTACO()));
+#endif
 	connect(actionAddMCPD, SIGNAL(triggered()), m_main, SLOT(addMCPD()));
 	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -77,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent)
 	statusBar()->addPermanentWidget(m_daqStatus);
 	statusBar()->addPermanentWidget(m_pulserStatus);
 	statusBar()->addPermanentWidget(m_mode);
+
+	menuRemoteInterface->setEnabled(false);
 
 	restoreSettings();
 }
@@ -135,6 +140,10 @@ void MainWindow::selectUser(void)
 {
 	actionExpert->setChecked(false);
 	actionSuperUser->setChecked(false);
+	menuRemoteInterface->setEnabled(false);
+#if USE_TACO
+	actionTACO->setVisible(false);
+#endif
 	m_main->selectUserMode(MainWidget::User);
 }
 
@@ -144,6 +153,10 @@ void MainWindow::selectExpert(void)
 	{	
 		actionUser->setChecked(false);
 		actionSuperUser->setChecked(false);
+		menuRemoteInterface->setEnabled(false);
+#if USE_TACO
+		actionTACO->setVisible(false);
+#endif
 		m_main->selectUserMode(MainWidget::Expert);
 	}
 	else
@@ -156,6 +169,11 @@ void MainWindow::selectSuperuser(void)
 	{	
 		actionUser->setChecked(false);
 		actionExpert->setChecked(false);
+		menuRemoteInterface->setEnabled(true);
+#if USE_TACO
+		actionTACO->setVisible(true);
+		actionTACO->setEnabled(true);
+#endif
 		m_main->selectUserMode(MainWidget::SuperUser);
 	}
 	else
