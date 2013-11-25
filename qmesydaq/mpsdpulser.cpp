@@ -150,9 +150,11 @@ void MPSDPulser::setModule(int id)
  */
 void MPSDPulser::setMCPD(int id)
 {
-    devid->setValue(id);
+    if (id != -1)
+        devid->setValue(id);
     id = devid->value();
     module->setModuleList(m_theApp->mpsdId(id));
+    display();
 }
 
 /*!

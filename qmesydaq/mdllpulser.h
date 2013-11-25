@@ -39,7 +39,7 @@ public:
 	MdllPulser(Mesydaq2 *, QWidget * = 0);
 
 public slots:
-	void setMCPD(int);
+	void setMCPD(int = -1);
 
 private slots:
 	void setPulserAmplitude(int);

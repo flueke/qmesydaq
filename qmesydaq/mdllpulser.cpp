@@ -50,6 +50,7 @@ MdllPulser::MdllPulser(Mesydaq2 *mesy, QWidget *parent)
  */
 void MdllPulser::setMCPD(int /* id */)
 {
+	display();
 }
 
 /*!

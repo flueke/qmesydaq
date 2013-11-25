@@ -77,6 +77,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     , m_dispTimer(0)
     , m_histogram(NULL)
     , m_histoType(Measurement::PositionHistogram)
+    , m_pulserDialog(NULL)
 {
     setupUi(this);
 #ifndef USE_CARESS
@@ -309,6 +310,13 @@ void MainWidget::timerEvent(QTimerEvent *event)
 void MainWidget::allPulserOff(void)
 {
     m_theApp->allPulserOff();
+    if (m_pulserDialog)
+    {
+        if (dynamic_cast<MdllPulser *>(m_pulserDialog))
+	    dynamic_cast<MdllPulser *>(m_pulserDialog)->setMCPD();
+        else if (dynamic_cast<MPSDPulser *>(m_pulserDialog))
+            dynamic_cast<MPSDPulser *>(m_pulserDialog)->setMCPD();
+    }
 }
 
 /*!
@@ -1496,19 +1504,18 @@ void MainWidget::setupTACO(void)
  */
 void MainWidget::toolPulser(void)
 {
-    static QDialog *d(NULL);
     if (m_meas->setupType() != Measurement::Mdll)
     {
-        if (!d)
-            d = new MPSDPulser(m_theApp, this);
+        if (!m_pulserDialog)
+            m_pulserDialog = new MPSDPulser(m_theApp, this);
     }
     else
     {
-        if (!d)
-            d = new MdllPulser(m_theApp, this);
+        if (!m_pulserDialog)
+            m_pulserDialog = new MdllPulser(m_theApp, this);
     }
-    if (d)
-        d->show();
+    if (m_pulserDialog)
+        m_pulserDialog->show();
 }
 
 /*!

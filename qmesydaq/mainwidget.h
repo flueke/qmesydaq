@@ -252,6 +252,8 @@ private:
 	Plot 			*m_dataFrame;
 
 	Measurement::HistogramType	m_histoType;
+
+	QDialog 		*m_pulserDialog;
 };	
 
 #endif
