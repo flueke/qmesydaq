@@ -62,7 +62,8 @@ public:
 		C_GET_RUNID,           // read run id and autoincrement; no args; result: run id (and auto increment enabled)
 		C_GET_LISTMODE,        // read list mode; no args; result: list mode enabled and write protect data files
 		C_COUNTER_SELECTED,    // read, if single counter is selected as preset counter; args: counter id; result: counter enabled
-        C_VERSIONTEXT,         // read QMesyDAQ and library version; no args; result: string
+		C_VERSIONTEXT,         // read QMesyDAQ and library version; no args; result: string
+		C_INIT,                // reload the current config file to initialize the hardware again
 	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());

@@ -415,12 +415,18 @@ quint32 QMesyDAQDetectorInterface::getRunID(bool *pbAutoIncrement)
 
 QString QMesyDAQDetectorInterface::getVersionText()
 {
-    QString sVersion;
-    m_mutex.lock();
-    postRequestCommand(CommandEvent::C_VERSIONTEXT);
-    sVersion=m_sVersion;
-    m_mutex.unlock();
-    return sVersion;
+	QString sVersion;
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_VERSIONTEXT);
+	sVersion=m_sVersion;
+	m_mutex.unlock();
+	return sVersion;
+}
+
+void QMesyDAQDetectorInterface::init(void)
+{
+// possible in the future add a name of a different config file
+	postRequestCommand(CommandEvent::C_INIT, QList<QVariant>());
 }
 
 /*!
@@ -549,6 +555,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_QUIT:
 					m_bDoLoop = false;
 					break;
+				case CommandEvent::C_INIT:
 				case CommandEvent::C_START:
 				case CommandEvent::C_STOP:
 				case CommandEvent::C_CLEAR:

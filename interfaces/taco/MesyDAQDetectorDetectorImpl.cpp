@@ -155,6 +155,9 @@ void MesyDAQ::Detector::Detector::deviceInit(void) throw (::TACO::Exception)
 		Server::deviceUpdate("lastlistfile");
 		Server::deviceUpdate("lasthistfile");
 		Server::deviceUpdate("histogram");
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->init();
 	}
 	catch (const ::TACO::Exception &e)
 	{

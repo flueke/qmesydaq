@@ -1674,6 +1674,9 @@ void MainWidget::customEvent(QEvent *e)
 
     switch(cmd)
     {
+	case CommandEvent::C_INIT:
+		emit(loadConfiguration(m_meas->getConfigfilename()));
+		break;
 	case CommandEvent::C_START:
 #if 0
 		clearAll->animateClick();
