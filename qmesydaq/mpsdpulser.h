@@ -44,6 +44,9 @@ public:
 public slots:
 	void setMCPD(int = -1);
 
+protected:
+	void closeEvent(QCloseEvent *);
+
 private slots:
 	void displayMCPDSlot(int = -1);
 

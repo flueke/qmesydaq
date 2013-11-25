@@ -39,6 +39,16 @@ MdllPulser::MdllPulser(Mesydaq2 *mesy, QWidget *parent)
 	QList<int> mcpdList = m_theApp->mcpdId();
 	devid->setMCPDList(mcpdList);
 	display(devid->value());
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+	QPoint pos = settings.value("PulserDialog/pos", QPoint(0, 0)).toPoint();
+	if (pos != QPoint(0, 0))
+		move(pos);
+}
+
+void MdllPulser::closeEvent(QCloseEvent *)
+{
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+	settings.setValue("PulserDialog/pos", pos());
 }
 
 /*!

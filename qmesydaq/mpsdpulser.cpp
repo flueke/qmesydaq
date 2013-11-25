@@ -17,6 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <QApplication>
+
 #include "mdefines.h"
 #include "mpsdpulser.h"
 #include "mesydaq2.h"
@@ -40,6 +42,16 @@ MPSDPulser::MPSDPulser(Mesydaq2 *mesy, QWidget *parent)
     module->setModuleList(m_theApp->mpsdId(devid->value()));
 
     display();
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+    QPoint pos = settings.value("PulserDialog/pos", QPoint(0, 0)).toPoint();
+    if (pos != QPoint(0, 0))
+        move(pos);
+}
+
+void MPSDPulser::closeEvent(QCloseEvent *)
+{
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+    settings.setValue("PulserDialog/pos", pos());
 }
 
 /*!
