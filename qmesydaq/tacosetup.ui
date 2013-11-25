@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TACOSetup</class>
+ <widget class="QDialog" name="TACOSetup">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>326</width>
+    <height>306</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>TACO personal name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="personalName"/>
+   </item>
+   <item row="3" column="0" rowspan="2">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>detector</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="detectorName">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" rowspan="2">
+    <widget class="QLineEdit" name="timerName"/>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="counter0Name">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>timer</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>events</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLineEdit" name="eventsName"/>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>&lt;b&gt;Monitors&lt;/b&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" rowspan="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>counter0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1" rowspan="2">
+    <widget class="QLineEdit" name="counter1Name"/>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>counter1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>counter2</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QLineEdit" name="counter2Name"/>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>counter3</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QLineEdit" name="counter3Name"/>
+   </item>
+   <item row="13" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>&lt;b&gt;Detector&lt;/b&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="text">
+      <string>&lt;b&gt;Server&lt;/b&gt;</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>TACOSetup</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>240</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>TACOSetup</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>322</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
