@@ -66,22 +66,6 @@ void MdllSetup::setMCPD(int /* id */)
 }
 
 /*!
-    \fn void MdllSetup::setPulserSlot()
-
-    set pulser 
- */
-void MdllSetup::setPulserSlot()
-{
-    quint8 amp = pulsamp->currentIndex();
-    quint8 pos = pulspos->currentIndex();
-    if(pulserBox->isChecked())
-        m_theApp->setPulser(0, 0, 0, pos, amp, true);
-    else
-        m_theApp->setPulser(0, 0, 0, pos, amp, false);
-}
-
-
-/*!
     \fn void MdllSetup::setTimingSlot()
 
     callback to set the timing window
@@ -186,19 +170,4 @@ void MdllSetup::displaySlot(int id)
     threshX->setValue(m_theApp->getMdllThresholds(id, 0));
     threshY->setValue(m_theApp->getMdllThresholds(id, 1));
     threshA->setValue(m_theApp->getMdllThresholds(id, 2));
-
-    // pulser:  on/off
-    if(m_theApp->getMdllPulser(id, 0))
-    {
-        pulserBox->setChecked(true);
-    }
-    else
-    {
-        pulserBox->setChecked(false);
-    }
-// channel
-    pulspos->setCurrentIndex((int)m_theApp->getMdllPulser(id, 2));
-// amplitude
-    // channel
-    pulsamp->setCurrentIndex((int)m_theApp->getMdllPulser(id, 1));
 }

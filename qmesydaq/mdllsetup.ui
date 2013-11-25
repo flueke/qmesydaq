@@ -51,7 +51,7 @@
    <item row="2" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -515,122 +515,6 @@ Range of timing delay, scales spectrum</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
-      <attribute name="title">
-       <string>Pulser</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_10">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="pulserBox">
-         <property name="text">
-          <string>Pulser</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" rowspan="2">
-        <widget class="QGroupBox" name="groupBox_6">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="title">
-          <string>Pulser Settings</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Amplitude</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="pulsamp">
-            <item>
-             <property name="text">
-              <string>25%</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>50%</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>75%</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>100%</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>Position</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="pulspos">
-            <item>
-             <property name="text">
-              <string>upper right</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>middle</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>bottom left</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <spacer name="verticalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>78</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QPushButton" name="setPulser">
-            <property name="text">
-             <string>Set Pulser</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>143</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
@@ -657,22 +541,6 @@ Range of timing delay, scales spectrum</string>
     <hint type="destinationlabel">
      <x>309</x>
      <y>193</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pulserBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>groupBox_6</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>32</x>
-     <y>76</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>134</x>
-     <y>93</y>
     </hint>
    </hints>
   </connection>
@@ -753,38 +621,6 @@ Range of timing delay, scales spectrum</string>
     <hint type="destinationlabel">
      <x>90</x>
      <y>343</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pulserBox</sender>
-   <signal>clicked()</signal>
-   <receiver>MdllSetup</receiver>
-   <slot>setPulserSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>54</x>
-     <y>78</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>10</x>
-     <y>362</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>setPulser</sender>
-   <signal>clicked()</signal>
-   <receiver>MdllSetup</receiver>
-   <slot>setPulserSlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>183</x>
-     <y>252</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>189</x>
-     <y>344</y>
     </hint>
    </hints>
   </connection>

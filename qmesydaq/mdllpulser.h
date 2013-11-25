@@ -17,11 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MDLL_SETUP_H
-#define MDLL_SETUP_H
+#ifndef MDLL_PULSER_H
+#define MDLL_PULSER_H
 
 #include <QDialog>
-#include "ui_mdllsetup.h"
+#include "ui_mdllpulser.h"
 
 class Mesydaq2;
 
@@ -32,27 +32,26 @@ class Mesydaq2;
 
     \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MdllSetup : public QDialog, public Ui_MdllSetup
+class MdllPulser : public QDialog, public Ui_MdllPulser
 {
 	Q_OBJECT
 public:
-	MdllSetup(Mesydaq2 *, QWidget * = 0);
+	MdllPulser(Mesydaq2 *, QWidget * = 0);
 
 public slots:
 	void setMCPD(int);
 
 private slots:
-	void displaySlot(int = -1);
+	void setPulserAmplitude(int);
 
-	void setTimingSlot();
+	void setPulserPosition(int);
 
-	void setThresholdsSlot();
+	void setPulser(bool);
 
-	void setEnergySlot();
+private:
+	void display(int = -1);
 
-	void setSpectrumSlot();
-
-	void setDatasetSlot();
+	void updatePulser();
 
 private:
 	//! The Mesydaq object

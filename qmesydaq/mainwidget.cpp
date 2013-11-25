@@ -49,6 +49,7 @@
 #include "mdllsetup.h"
 #include "mcpdsetup.h"
 #include "mpsdpulser.h"
+#include "mdllpulser.h"
 #include "logging.h"
 #include "stdafx.h"
 #if USE_TACO
@@ -1504,7 +1505,7 @@ void MainWidget::toolPulser(void)
     else
     {
         if (!d)
-            d = NULL;
+            d = new MdllPulser(m_theApp, this);
     }
     if (d)
         d->show();
