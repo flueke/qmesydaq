@@ -141,6 +141,7 @@ int main(int argc, char **argv)
 	app.setOrganizationName("MesyTec");
 	app.setOrganizationDomain("mesytec.com");
 	app.setApplicationName("QMesyDAQ");
+	app.setWindowIcon(QIcon(":/images/logo32.png"));
 
 	MainWindow mainWin;
 
