@@ -64,6 +64,9 @@
 #include <QMutexLocker>
 #include <QTime>
 #include "stdafx.h"
+#ifdef Q_OS_UNIX
+#include <signal.h>
+#endif
 
 const int g_iGlobalSyncSleep = 1;
 
@@ -215,6 +218,9 @@ CARESSLoop::CARESSLoop(QStringList argList, QtInterface *)
 	: m_bDoLoop(true), m_asArguments(argList)
 {
 	setObjectName("CARESSLoop");
+#ifdef Q_OS_UNIX
+	signal(SIGPIPE,SIG_IGN);
+#endif
 }
 
 //! \brief Returns the type and version of the remote interface
