@@ -39,3 +39,15 @@ Build a distribution
 
 QMAKEFEATURES=`pwd`  qmake -recursive
 make edist
+
+If a remote interface is selected and it is TACO the following TACO packages
+must be installed:
+
+taco
+taco-common
+taco-common-io
+taco-common-detector
+
+These packages are available at:
+
+ftp://ftp.frm2.tum.de/pub/software/taco/src/
