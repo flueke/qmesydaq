@@ -194,7 +194,7 @@ void MainWindow::selectSuperuser(void)
  */
 bool MainWindow::checkPasswd(const QString &section)
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	QString passwd = settings.value(section + "/passwd", "").toString();
 	QString usertyped("");
 	if (!passwd.isEmpty())
