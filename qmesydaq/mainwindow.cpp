@@ -111,6 +111,22 @@ void MainWindow::restoreSettings()
 	m_mesy->setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
 	m_mesy->setWriteProtection(settings.value("config/writeprotect", "false").toBool());
 	setGeometry(QRect(pos, size));
+	switch (settings.value("config/accesslevel", 0).toUInt())
+	{
+		default:
+		case MainWidget::User:
+			actionUser->setChecked(true);
+			selectUser();
+			break;
+		case MainWidget::Expert:
+			actionExpert->setChecked(true);
+			selectExpert();
+			break;
+		case MainWidget::SuperUser:
+			actionSuperUser->setChecked(true);
+			selectSuperuser();
+			break;
+	}
 }
 
 void MainWindow::saveSettings()
@@ -123,6 +139,12 @@ void MainWindow::saveSettings()
 	settings.setValue("config/lastrunid", m_mesy->runId());
 	settings.setValue("config/autoincrunid", m_mesy->getAutoIncRunId());
 	settings.setValue("config/writeprotect", m_mesy->getWriteProtection());
+	if (actionExpert->isChecked())
+		settings.setValue("config/accesslevel", MainWidget::Expert);
+	else if (actionUser->isChecked())
+		settings.setValue("config/accesslevel", MainWidget::SuperUser);
+	else
+		settings.setValue("config/accesslevel", MainWidget::User);
 }
 
 /*! 
