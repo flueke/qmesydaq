@@ -158,21 +158,24 @@
        </item>
        <item row="0" column="3">
         <widget class="QGroupBox" name="mcpdModeGroup">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="title">
           <string>MCPD mode</string>
          </property>
          <layout class="QGridLayout" name="_3">
           <item row="0" column="0">
-           <widget class="QRadioButton" name="radioButton23">
+           <widget class="QRadioButton" name="position">
             <property name="text">
              <string>position</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QRadioButton" name="radioButton24">
+           <widget class="QRadioButton" name="amplitude">
             <property name="text">
-             <string>energy</string>
+             <string>energy/amplitude</string>
             </property>
            </widget>
           </item>

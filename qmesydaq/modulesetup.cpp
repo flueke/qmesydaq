@@ -150,15 +150,18 @@ void ModuleSetup::writeRegisterSlot()
 }
 
 /*!
-    \fn void ModuleSetup::setModeSlot(bool mode)
+    \fn void ModuleSetup::setModeSlot()
 
     callback to handle the settings of the amplitude/position mode
 
     \param mode
 */
-void ModuleSetup::setModeSlot(bool mode)
+void ModuleSetup::setModeSlot()
 {
-    m_theApp->setMode(devid->value(), module->value(), mode);
+    int mod = module->value();
+    if (comAmp->isChecked())
+        mod = 8;
+    m_theApp->setMode(devid->value(), mod, amp->isChecked());
 }
 
 /*!

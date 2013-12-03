@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>784</width>
-    <height>247</height>
+    <height>249</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,7 +72,7 @@
           <string>Mode</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_18">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QRadioButton" name="pos">
             <property name="text">
              <string>Position</string>
@@ -82,10 +82,27 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QRadioButton" name="amp">
             <property name="text">
              <string>Amplitude</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="comAmp">
+            <property name="text">
+             <string>Common</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="setMode">
+            <property name="text">
+             <string>Set Mode</string>
             </property>
            </widget>
           </item>
@@ -738,14 +755,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>amp</sender>
-   <signal>toggled(bool)</signal>
+   <sender>setMode</sender>
+   <signal>clicked()</signal>
    <receiver>ModuleSetup</receiver>
-   <slot>setModeSlot(bool)</slot>
+   <slot>setModeSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>46</x>
-     <y>103</y>
+     <x>60</x>
+     <y>108</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -1012,7 +1029,7 @@
  </connections>
  <slots>
   <slot>displaySlot(int)</slot>
-  <slot>setModeSlot(bool)</slot>
+  <slot>setModeSlot()</slot>
   <slot>setPulserSlot()</slot>
   <slot>readRegisterSlot()</slot>
   <slot>writeRegisterSlot()</slot>

@@ -53,7 +53,7 @@ private slots:
 
 	void writeRegisterSlot();
 
-	void setModeSlot(bool);
+	void setModeSlot();
 
 	void displayMCPDSlot(int = -1);
 

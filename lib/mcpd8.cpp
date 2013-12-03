@@ -851,26 +851,25 @@ quint8 MCPD8::getMdllPulser(quint8 val)
 */
 bool MCPD8::setMode(quint16 addr, bool mode)
 {
-    if (m_mpsd.find(addr) == m_mpsd.end())
-        return false;
-    if (addr > 8)
-        addr = 8;
-#if defined(_MSC_VER)
-#	pragma message("TODO common mode handling")
-#else
-#	warning TODO common mode handling
-#endif
-//! \todo common mode handling
-    if (addr == 8)
-    {
-        for (int i = 0; i < 8; ++i)
-            m_mpsd[i]->setMode(mode, 1);
-    }
-    else
-        m_mpsd[addr]->setMode(mode, 1);
-
     MSG_DEBUG << tr("SETMODE %1").arg(m_byId);
     QMutexLocker locker(m_pCommandMutex);
+    if (addr >= 8)
+    {
+	bool ret(true);
+	//! \todo current firmware does not support addr 8 to set all
+        for (int i = 0; ret && i < 8; ++i)
+	{
+            m_mpsd[i]->setMode(mode, 1);
+            initCmdBuffer(SETMODE);
+            m_cmdBuf.data[0] = i;
+            m_cmdBuf.data[1] = mode;
+            finishCmdBuffer(2);
+            ret &= sendCommand(false);
+	}
+	return ret;
+    }
+
+    m_mpsd[addr]->setMode(mode, 1);
     initCmdBuffer(SETMODE);
     m_cmdBuf.data[0] = addr;
     m_cmdBuf.data[1] = mode;
@@ -1773,7 +1772,14 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		ptrMPSD->setPulserPoti(pMdp->data[1], pMdp->data[2], pMdp->data[3], pMdp->data[4], 0);
                 break;
             case SETMODE: // extract the set mode:
-		m_mpsd[pMdp->data[0]]->setMode(pMdp->data[1] == 1, 0);
+		{
+		    int mod = pMdp->data[0];
+		    if (mod == 8)
+		        for (int i = 0; i < 8; ++i)
+		            m_mpsd[i]->setMode(pMdp->data[1] == 1, 0);
+                    else
+		        m_mpsd[mod]->setMode(pMdp->data[1] == 1, 0);
+		}
                 break;
             case SETDAC:
                 MSG_ERROR << tr("not handled command : SETDAC");
