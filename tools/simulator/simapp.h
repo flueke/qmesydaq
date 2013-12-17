@@ -108,6 +108,9 @@ private:
 
 	// MDLL mode
 	bool               m_bMdll;
+
+	// MSTD-16 module
+	bool               m_bMstd;
 };
 
 #endif /* __SIMAPP_H__ */

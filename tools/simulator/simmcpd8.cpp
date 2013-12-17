@@ -24,12 +24,12 @@
 // SimMCPD8::SimMCPD8(QObject *parent, quint8 id, const QHostAddress &address, quint16 port)
 //
 // constructor
-SimMCPD8::SimMCPD8(quint8 id, const QHostAddress &address, quint16 port) :
-	m_pSocket(NULL),
-	m_DataTarget(QHostAddress::Broadcast),
-	m_wDataPort(54321),
-	m_byCpdId(id),
-	m_wBufferNo(0)
+SimMCPD8::SimMCPD8(quint8 id, const QHostAddress &address, quint16 port)
+	: m_pSocket(NULL)
+	, m_DataTarget(QHostAddress::Broadcast)
+	, m_wDataPort(54321)
+	, m_byCpdId(id)
+	, m_wBufferNo(0)
 {
 	m_pSocket = new QUdpSocket(this);
 	if (m_pSocket->bind(address, port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))

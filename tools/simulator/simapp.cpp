@@ -59,6 +59,8 @@ const char *g_szLongUsage =
                 "               bind a MDLL with ID to this IP address (id 0..255)\n"
 		"  --mcpd=<bind-ip>:<id>\n"
 		"               bind a MCPD (max 64) with ID to this IP address (id 0..255)\n"
+		"  --mstd=<bind-ip>:<id>\n"
+		"               bind a MCPD with an MSTD-16 module\n"
 		"  --width=<n>  each MCPD with <n> channels (1..64, default 64)\n"
 		"  --height=<n> spectrum height with <n> bins (8..1024, default 960)\n"
 		"  --v4         generate a \"round\" detector like HZB-V4/SANS\n"
@@ -269,6 +271,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_dwSendEvents(0)
 	, m_iTimer(0)
 	, m_bMdll(false)
+	, m_bMstd(false)
 {
 	bool bWidth(false);
 	int i;
@@ -367,6 +370,41 @@ SimApp::SimApp(int &argc, char **argv)
 			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), this,
 					SLOT(NewCmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), Qt::DirectConnection);
 			qDebug() << "created " << pMcpd->ip() << ":" << id;
+		}
+		else if (szArg.indexOf("mstd", Qt::CaseInsensitive) == 0)
+		{
+			if (m_bMdll)
+				usage(argv[0]);
+			int j = szArg.indexOf('=') + 1;
+			int id = m_apMCPD8.size();
+			if (j < 2)
+			{
+				qDebug() << "invalid argument: " << szArg;
+				break;
+			}
+			szArg.remove(0, j);
+			j = szArg.indexOf(':');
+			if (j > 0)
+			{
+				id = szArg.mid(j + 1).toInt();
+				szArg.remove(j, szArg.size() - j);
+				if (id < 0 || id > 255)
+				{
+					qDebug() << "invalid id";
+					break;
+				}
+			}
+			SimMCPD8 *pMcpd = new SimMCPD8(id, QHostAddress(szArg));
+			if (pMcpd == NULL)
+			{
+				qDebug() << "cannot create MCPD with " << szArg << ":" << id;
+				break;
+			}
+			m_apMCPD8.append(pMcpd);
+			QObject::connect(pMcpd, SIGNAL(CmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), this,
+					SLOT(NewCmdPacket(MDP_PACKET*, SimMCPD8*, QHostAddress&, quint16&)), Qt::DirectConnection);
+			qDebug() << "created " << pMcpd->ip() << ":" << id;
+			m_bMstd = true;
 		}
 		else if (szArg.indexOf("mdll", Qt::CaseInsensitive) == 0)
 		{
@@ -478,12 +516,15 @@ SimApp::SimApp(int &argc, char **argv)
 	QString szText;
 	if (m_bMdll)
 		szText.sprintf("created a MDLL (width=%u, height=%u) ", m_wSpectrumWidth, m_wSpectrumHeight);
+	else if (m_bMstd)
+		szText.sprintf("created %d MCPD-8 each with %d MSTD-16 (%u channels)",
+			m_apMCPD8.size(), (m_wSpectrumWidth + 7) >> 3, 2 * m_wSpectrumWidth);
 	else
-		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 (width=%u height=%u) and ",
+		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 (width=%u height=%u)",
 			m_apMCPD8.size(), (m_wSpectrumWidth + 7) >> 3, m_wSpectrumWidth, m_wSpectrumHeight);
 	if (m_bV4)
 		szText.append(QString().sprintf("round shape with %d different lengths", (int)((sizeof(v4Scale) / sizeof(v4Scale[0]) + 1) / 2)));
-	else
+	else if (!m_bMstd)
 		szText += "rectangular shape";
 	if (m_iFastPoint >= 0)
 		szText += ", faster simulation";
@@ -950,7 +991,10 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 				pPacket->data[0] = TYPE_MDLL;
 			else
 			{
-				pPacket->data[0] = TYPE_MPSD8;
+				if (m_bMstd)
+					pPacket->data[0] = TYPE_MSTD16;
+				else
+					pPacket->data[0] = TYPE_MPSD8;
 				pPacket->data[1] = (m_wSpectrumWidth >  8) ? TYPE_MPSD8 : TYPE_NOMODULE;
 				pPacket->data[2] = (m_wSpectrumWidth > 16) ? TYPE_MPSD8 : TYPE_NOMODULE;
 				pPacket->data[3] = (m_wSpectrumWidth > 24) ? TYPE_MPSD8 : TYPE_NOMODULE;
