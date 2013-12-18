@@ -85,6 +85,7 @@ quint32 MesydaqSpectrumData::max(void)
 MesydaqHistogramData::MesydaqHistogramData() 
 	: QwtRasterData()
 	, m_histogram(NULL)
+	, m_range(QwtDoubleInterval(0, 0))
 {
 }
 
@@ -92,7 +93,13 @@ QwtRasterData *MesydaqHistogramData::copy() const
 {
 	MesydaqHistogramData *tmp = new MesydaqHistogramData();
 	tmp->setData(m_histogram);
+	tmp->setRange(m_range);
 	return tmp;
+}
+
+void MesydaqHistogramData::setRange(const QwtDoubleInterval &r)
+{
+	m_range = r;
 }
 
 QwtDoubleInterval MesydaqHistogramData::range() const
@@ -101,7 +108,10 @@ QwtDoubleInterval MesydaqHistogramData::range() const
 	{
 		double _max = double(m_histogram->maxROI());
 		double _min = double(m_histogram->minROI());
-		return QwtDoubleInterval(_min, _max);
+		if (m_range.isNull())
+			return QwtDoubleInterval(_min, _max);
+		else
+			return m_range;
 	}
 	else
 		return QwtDoubleInterval(0.0, 1.0);

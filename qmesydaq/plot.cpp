@@ -62,6 +62,7 @@ Plot::Plot(QWidget *parent)
 	, m_colorMap(NULL)
 	, m_mode(None)
 	, m_linlog(Linear)
+	, m_thresholds(QwtDoubleInterval(0., 0.))
 {
 	setColorMap(new JetColorMap());
 
@@ -149,6 +150,7 @@ void Plot::setHistogramData(MesydaqHistogramData *data)
 {
 	if (data)
 	{
+		data->setRange(m_thresholds);
 		m_histogram->setData(*data);
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
@@ -409,4 +411,10 @@ void Plot::print(QPaintDevice &printer, const QwtPlotPrintFilter &filter)
 void Plot::setColorMap(MesydaqColorMap *map)
 {
 	m_colorMap = map;
+}
+
+void Plot::setThresholds(const QwtDoubleInterval &iv)
+{
+	MSG_DEBUG << iv.minValue() << " " << iv.maxValue();
+	m_thresholds = iv;
 }

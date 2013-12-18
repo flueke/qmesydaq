@@ -23,6 +23,7 @@
 
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_double_interval.h>
 
 class QwtPlotCurve;
 class QwtPlotSpectrogram;
@@ -181,6 +182,13 @@ public slots:
 	 */
 	void	replot(void);
 
+	/*!
+	 * Sets the thresholds
+	 *
+	 * \param interval
+	 */
+	void	setThresholds(const QwtDoubleInterval &interval);
+
 private slots:
 	/*!
 	 * callback if the zoomer has changed
@@ -245,6 +253,9 @@ private:
 
 	//! lin/log scaling
 	enum Scale		m_linlog;
+
+	//! Save threshold settings
+	QwtDoubleInterval	m_thresholds;
 };
 
 #endif

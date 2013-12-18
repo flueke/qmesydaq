@@ -92,6 +92,8 @@ public:
 	//! \return the interval between min count and maximum count
 	QwtDoubleInterval range(void) const;
 
+	virtual void setRange(const QwtDoubleInterval &range);
+
 	/**
 	 * gets the value of the cell x, y if exist, otherwise 0,
 	 * the x and y values will be treated as integer values.
@@ -116,7 +118,9 @@ public:
 	
 private:
 	//! The histogram data
-	Histogram	*m_histogram;
+	Histogram		*m_histogram;
+
+	QwtDoubleInterval	m_range;
 };
 
 /**

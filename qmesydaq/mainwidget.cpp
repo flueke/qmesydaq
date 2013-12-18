@@ -275,7 +275,7 @@ void MainWidget::init()
     startStopButton->setDisabled(true);
     acquireFile->setDisabled(true);
     allPulsersoffButton->setDisabled(true);
-    displayTabWidget->setDisabled(true);
+    displayGroupBox->setDisabled(true);
     statusMeasTab->setDisabled(true);
     statusModuleTab->setDisabled(true);
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
@@ -691,7 +691,7 @@ void MainWidget::replayListfileSlot()
     {
         startStopButton->setDisabled(true);
         clearAllSlot();
-        displayTabWidget->setEnabled(true);
+        displayGroupBox->setEnabled(true);
 #warning TODO dynamic resizing of mapped histograms
 #if 0
         m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
@@ -827,7 +827,7 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     startStopButton->setDisabled(mcpdList.empty());
     acquireFile->setDisabled(mcpdList.empty());
     allPulsersoffButton->setDisabled(mcpdList.empty());
-    displayTabWidget->setDisabled(mcpdList.empty());
+    displayGroupBox->setDisabled(mcpdList.empty());
     statusMeasTab->setDisabled(mcpdList.empty());
     statusModuleTab->setDisabled(mcpdList.empty());
     dispMstdSpectrum->setVisible(m_meas->setupType() == Measurement::Mstd);
@@ -856,7 +856,7 @@ void MainWidget::restoreSetupSlot()
 {
     QString name = QFileDialog::getOpenFileName(this, tr("Load Config File..."), m_meas->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
     if (!name.isEmpty())
-      emit(loadConfiguration(name));
+        emit(loadConfiguration(name));
 }
 
 /*!
@@ -872,10 +872,12 @@ void MainWidget::applyThreshSlot()
     {
         m_dispHiThresh = hiLim->text().toUInt(&ok, 0);
         m_dispLoThresh = loLim->text().toUInt(&ok, 0);
+        m_dataFrame->setThresholds(QwtDoubleInterval(m_dispLoThresh, m_dispHiThresh));
     }
+    else
+        m_dataFrame->setThresholds(QwtDoubleInterval(0.0, 0.0));
     emit redraw();
 }
-
 /*!
     \fn void MainWidget::drawOpData()
 
@@ -976,7 +978,7 @@ void MainWidget::loadHistSlot()
     if(!name.isEmpty())
     {
         m_meas->readHistograms(name);
-        displayTabWidget->setEnabled(true);
+        displayGroupBox->setEnabled(true);
         emit redraw();
     }
 }
