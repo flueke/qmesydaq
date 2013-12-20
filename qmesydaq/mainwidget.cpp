@@ -2204,6 +2204,23 @@ void MainWidget::customEvent(QEvent *e)
 		if (args.size() > 1)
 			m_meas->setWriteProtection(args[1].toBool());
 		break;
+	case CommandEvent::C_GET_CONFIGFILE:
+		{
+			QFileInfo fi = m_meas->getConfigfilename();
+			answer << fi.fileName();
+		}
+		break;
+	case CommandEvent::C_SET_CONFIGFILE:
+		{
+			// TODO Should we check for an file extension like 'mcfg'?
+			QString fn = args[0].toString();
+			QFileInfo fi(m_meas->getConfigfilepath(), fn);
+			if (fi.isFile() && fi.isReadable())
+				loadConfiguration(fi.filePath());
+			else
+				MSG_ERROR << "Could not find : " << fi.absoluteFilePath();
+		}
+		break;
 	case CommandEvent::C_SET_LISTHEADER:
 	{
 		QByteArray header((const char*)args[0].toULongLong(), args[1].toInt());

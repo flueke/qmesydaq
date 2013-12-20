@@ -101,6 +101,9 @@ public:
 	void updateMainWidget(int iWidth, int iHeight, int iRunNo, const QString& sActive);
 	void updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo, const QString& sActive);
 
+	void loadConfigurationFile(const QString &confFile);
+	QString getConfigurationFileName(void);
+
 	/*!
 	 * Sets the run ID
 	 *
@@ -165,6 +168,9 @@ private:
 
 	//! write protect data files?
 	bool                m_bWriteProtectFiles;
+
+	//! name of the configuration file
+	QString             m_configFile;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H

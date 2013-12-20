@@ -69,6 +69,7 @@ MesyDAQ::Detector::Detector::Detector(const std::string& name, DevLong& error) t
 	addResource("lastbinnedfile", D_STRING_TYPE, "name of the last/currently used histogram data (binned) file");
 	addResource("runid", D_ULONG_TYPE, "name of the last/currently used histogram data (binned) file");
 	addResource("histogram", D_STRING_TYPE, "type of the histogram (raw|mapped|amplitude)");
+	addResource("configfile", D_STRING_TYPE, "currently used configuration file");
 
 	MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
 	if (app)

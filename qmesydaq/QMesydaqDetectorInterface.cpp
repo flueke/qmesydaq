@@ -418,7 +418,7 @@ QString QMesyDAQDetectorInterface::getVersionText()
 	QString sVersion;
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_VERSIONTEXT);
-	sVersion=m_sVersion;
+	sVersion = m_sVersion;
 	m_mutex.unlock();
 	return sVersion;
 }
@@ -427,6 +427,21 @@ void QMesyDAQDetectorInterface::init(void)
 {
 // possible in the future add a name of a different config file
 	postRequestCommand(CommandEvent::C_INIT, QList<QVariant>());
+}
+
+void QMesyDAQDetectorInterface::loadConfigurationFile(const QString &confFile)
+{
+	postRequestCommand(CommandEvent::C_SET_CONFIGFILE, QList<QVariant>() << confFile);
+}
+
+QString QMesyDAQDetectorInterface::getConfigurationFileName(void)
+{
+	QString configFile;
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_GET_CONFIGFILE);
+	configFile = m_configFile;
+	m_mutex.unlock();
+	return configFile;
 }
 
 /*!
@@ -539,6 +554,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_sVersion = args[0].toString();
 					m_eventReceived = true;
 					break;
+				case CommandEvent::C_GET_CONFIGFILE:
+					m_configFile = args[0].toString();
+					m_eventReceived = true;
+					break;
 				default:
 					MSG_DEBUG << tr("ignoring invalid interface answer %1").arg(cmd) << args;
 					break;
@@ -560,6 +579,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_STOP:
 				case CommandEvent::C_CLEAR:
 				case CommandEvent::C_RESUME:
+				case CommandEvent::C_SET_CONFIGFILE:
 				case CommandEvent::C_SET_PRESELECTION:
 				case CommandEvent::C_SELECT_COUNTER:
 				case CommandEvent::C_SET_LISTMODE:

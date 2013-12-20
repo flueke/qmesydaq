@@ -233,11 +233,26 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 			if (!m_interface)
 				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 			m_interface->setRunID(m_runid);
-			ERROR_STREAM << "RUN ID " << m_runid << ENDLOG;
+			INFO_STREAM << "RUN ID " << m_runid << ENDLOG;
 		}
 		catch (::TACO::Exception &e)
 		{
 			throw_exception(e, "could not update 'runid' ");
+		}
+	if (resourceUpdateRequest("configfile"))
+		try
+		{
+			std::string tmp = queryResource<std::string>("configfile");
+			if (tmp.empty())
+				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "Not empty config file name allowed");
+			if (!m_interface)
+				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			m_interface->loadConfigurationFile(tmp.c_str());
+			INFO_STREAM << "CONFIG FILE " << tmp << ENDLOG;
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'configfile' ");
 		}
 	if (resourceUpdateRequest("lastlistfile"))
 		try
@@ -248,7 +263,7 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 			if (!m_interface)
 				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 			m_interface->setListFileName(m_listFilename.c_str());
-			ERROR_STREAM << "LIST FILE " << m_listFilename << ENDLOG;
+			INFO_STREAM << "LIST FILE " << m_listFilename << ENDLOG;
 		}
 		catch (::TACO::Exception &e)
 		{
@@ -265,7 +280,7 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 			m_interface->setHistogramFileName(m_histFilename.c_str());
 			m_binnedFilename = m_histFilename;
 			updateResource<std::string>("lastbinnedfile", m_binnedFilename);
-			ERROR_STREAM << "HISTOGRAM FILE " << m_histFilename << ENDLOG;
+			INFO_STREAM << "HISTOGRAM FILE " << m_histFilename << ENDLOG;
 		}
 		catch (::TACO::Exception &e)
 		{
@@ -282,7 +297,7 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 			m_interface->setHistogramFileName(m_binnedFilename.c_str());
 			m_histFilename = m_binnedFilename;
 			updateResource<std::string>("lasthistfile", m_histFilename);
-			ERROR_STREAM << "BINNED FILE " << m_histFilename << ENDLOG;
+			INFO_STREAM << "BINNED FILE " << m_histFilename << ENDLOG;
 		}
 		catch (::TACO::Exception &e)
 		{
@@ -345,6 +360,15 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
 		catch (TACO::Exception &e)
 		{
 			throw_exception(e, "Could not query resource 'runid' ");
+		}
+	if (resourceQueryRequest("configfile"))
+		try
+		{
+			updateResource<std::string>("configfile", m_interface->getConfigurationFileName().toStdString());
+		}
+		catch (TACO::Exception &e)
+		{
+			throw_exception(e, "Could not query resource 'configfile' ");
 		}
 	if (resourceQueryRequest("lastlistfile"))
 		try

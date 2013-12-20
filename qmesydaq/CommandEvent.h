@@ -64,6 +64,8 @@ public:
 		C_COUNTER_SELECTED,    // read, if single counter is selected as preset counter; args: counter id; result: counter enabled
 		C_VERSIONTEXT,         // read QMesyDAQ and library version; no args; result: string
 		C_INIT,                // reload the current config file to initialize the hardware again
+		C_SET_CONFIGFILE,      // load a new configuration file
+		C_GET_CONFIGFILE,      // return the current load configuration file
 	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());
