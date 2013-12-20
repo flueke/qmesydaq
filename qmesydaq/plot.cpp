@@ -364,7 +364,11 @@ void Plot::zoomed(const QRectF &rect)
 		}
 	}
 	replot(); 
-	emit(zoom(rect));
+#if QWT_VERSION >= 0x060000
+	emit zoom(rect);
+#else
+	emit zoom(QwtDoubleRect(rect));
+#endif
 }
 
 /*!

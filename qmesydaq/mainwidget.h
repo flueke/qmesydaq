@@ -126,7 +126,11 @@ public slots:
 
 	void	m4ResetSlot();
 
+#if QWT_VERSION >= 0x060000
 	void	zoomed(const QRectF &rect);
+#else
+	void	zoomed(const QwtDoubleRect &rect);
+#endif
 
 protected:
         void    customEvent(QEvent *);

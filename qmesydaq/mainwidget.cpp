@@ -106,7 +106,11 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     m_dataFrame->setCursor(QCursor(Qt::CrossCursor));
 
     QObject::connect(linlogButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(setLinLog(int)));
+#if QWT_VERSION >= 0x060000
     QObject::connect(m_dataFrame, SIGNAL(zoom(const QRectF &)), this, SLOT(zoomed(const QRectF &)));
+#else
+    QObject::connect(m_dataFrame, SIGNAL(zoom(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
+#endif
     m_dataFrame->show();
 
     m_time = QTime(QTime::currentTime());
