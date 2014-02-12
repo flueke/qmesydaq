@@ -206,7 +206,7 @@ MainWidget::~MainWidget()
     m_dispTimer = 0;
 
     delete m_data;
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 8; ++i)
         delete m_specData[i];
     delete m_histData;
 

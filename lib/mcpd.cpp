@@ -93,6 +93,7 @@ MCPD::~MCPD()
     m_pCommandMutex->unlock();
     delete m_pCommunicationMutex;
     delete m_pCommandMutex;
+    delete m_pPacketMutex;
 }
 
 /** \fn bool MCPD::connect_handler(analyzeBufferFunction pFunction, void* pParam = NULL)
