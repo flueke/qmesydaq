@@ -1993,11 +1993,8 @@ void MainWidget::customEvent(QEvent *e)
 		if (m_meas->setupType() == Measurement::Mstd)
 		{
 			Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
-			if (tmpSpectrum->width() > 0)
-			{
-				for (int x = 0; x < tmpSpectrum->width(); ++x)
-					answer << tmpSpectrum->value(x);
-			}
+			for (int x = 0; x < tmpSpectrum->width(); ++x)
+				tmpData->append(tmpSpectrum->value(x));
 		}
 		else
 		{
@@ -2023,9 +2020,9 @@ void MainWidget::customEvent(QEvent *e)
 				default:
 					break;
 			}
-			// hack to transfer a QList<quint64> to QtInterface without to copy it
-			answer << ((quint64)tmpData);
 		}
+		// hack to transfer a QList<quint64> to QtInterface without to copy it
+		answer << ((quint64)tmpData);
 		break;
 	}
 	case CommandEvent::C_READ_SPECTROGRAM:
