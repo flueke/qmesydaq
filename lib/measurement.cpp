@@ -773,14 +773,13 @@ void Measurement::readHistograms(const QString &name)
 }
 
 /*!
-    \fn void Measurement::readCalibration(const QString &name)
+	\fn void Measurement::readCalibration(const QString &name)
 
-    \param name calibration file name
+	\param name calibration file name
  */
 void Measurement::readCalibration(const QString &name)
 {
-        setCalibrationfilename(name);
-
+	setCalibrationfilename(name);
 	if (m_posHistMapCorrection)
 		delete m_posHistMapCorrection;
 	if (m_calibrationfilename.isEmpty())

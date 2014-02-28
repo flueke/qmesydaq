@@ -32,7 +32,7 @@
 class QFile;
 
 /**
- * \short represents a single spectrum 
+ * \short represents a single spectrum
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
@@ -41,7 +41,7 @@ class LIBQMESYDAQ_EXPORT Spectrum : public QObject
 	Q_OBJECT
 
 	//! defines whether the spectrum should be automatically resized or not
-        //! if the data points not included in the spectrum
+	//! if the data points not included in the spectrum
 	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
 
 public:
@@ -69,7 +69,7 @@ public:
 	float mean(float &s);
 
 //	quint64 operator[](quint16 index) {return m_data[index];}
-	
+
 	/**
 	 * gives the counts at the position index
 	 *
@@ -99,7 +99,7 @@ public:
 	void resize(const quint16 bins);
 
 	/*!
-    	 * The histogram will be formatted
+	 * The histogram will be formatted
 	 *
 	 * \return formatted histogram as string
 	 */
@@ -109,23 +109,23 @@ public:
 	bool autoResize(void) const {return m_autoResize;}
 
 	/**
-             sets the autoresizing capability of the spectrum
-             \param resize
-         */
-        void setAutoResize(const bool resize) {m_autoResize = resize;}
+	 * sets the autoresizing capability of the spectrum
+	 * \param resize
+	 */
+	void setAutoResize(const bool resize) {m_autoResize = resize;}
 
 private:
 	void calcFloatingMean(const quint16 bin);
 
 	void calcMaximumPosition(const quint16 bin);
 
-        /**
-            checks whether the bin is inside the histogram or not.
-            If the autoresize is set and the bin isn't inside the size
-	    of the histogram will be resized to the bin number.
-            
-	    \param bin requested bin
-         */
+	/**
+	 * checks whether the bin is inside the histogram or not.
+	 * If the autoresize is set and the bin isn't inside the size
+	 * of the histogram will be resized to the bin number.
+	 *
+	 * \param bin requested bin
+	 */
 	bool checkBin(const quint16 bin);
 
 private:
@@ -138,10 +138,10 @@ private:
 	quint64			m_totalCounts;
 
 	//! implicit ring buffer due to the change of 256 -> 0
-	quint8 			m_meanPos;
+	quint8			m_meanPos;
 
 	//! last events
-	quint16			m_floatingMean[256]; 
+	quint16			m_floatingMean[256];
 
 	bool			m_autoResize;
 
@@ -163,7 +163,7 @@ class LIBQMESYDAQ_EXPORT Histogram : public QObject
 	Q_OBJECT
 
 	//! defines whether the histogram should be automatically resized or not
-        //! if the data points not included in the histogram
+	//! if the data points not included in the histogram
 	Q_PROPERTY(bool m_autoResize READ autoResize WRITE setAutoResize)
 public:
 	Histogram(const quint16 channels = CHANNELS, const quint16 bins = LINBINS);
@@ -194,8 +194,8 @@ public:
 
 	quint64 max(const quint16 channel) const;
 
-	virtual quint64 max(void) const; 
-	
+	virtual quint64 max(void) const;
+
 	//! \return the number of the first tube containing the maximum value
 	virtual quint16 maxpos(void) const {return m_maximumPos;}
 
@@ -209,7 +209,7 @@ public:
 
 	virtual quint64 value(const quint16 x, const quint16 y) const;
 
-	virtual quint16	height(void) const; 
+	virtual quint16	height(void) const;
 
 	void setHeight(const quint16 h);
 
@@ -224,10 +224,10 @@ public:
 	bool autoResize(void) const {return m_autoResize;}
 
 	/**
-             sets the autoresizing capability of the spectrum
-             \param resize
-         */
-        void setAutoResize(const bool resize); 
+	 * sets the autoresizing capability of the spectrum
+	 * \param resize
+	 */
+	void setAutoResize(const bool resize);
 
 	//! returns the minimum value in currently set ROI
 	quint64	minROI(void) const;
@@ -240,41 +240,41 @@ public:
 private:
 	/**
 	 * Calculates the maximum position of a tube spectrum
-	 * 
-         * \param chan number of the tube
+	 *
+	 * \param chan number of the tube
 	 */
 	void calcMaximumPosition(const quint16 chan);
 
-        /**
-            checks whether the channel chan is inside the histogram or not.
-            If the autoresize is set and the channel isn't inside the size
-	    of the histogram will be resized to the channel number.
-            
-	    \param chan requested channel
-         */
+	/**
+	 * checks whether the channel chan is inside the histogram or not.
+	 * If the autoresize is set and the channel isn't inside the size
+	 * of the histogram will be resized to the channel number.
+	 *
+	 * \param chan requested channel
+	 */
 	bool checkChannel(const quint16 chan);
 
-        /**
-            checks whether the bin is inside the histogram or not.
-            If the autoresize is set and the bin isn't inside the size
-	    of the histogram will be resized to the bin number.
-            
-	    \param bin requested bin
-         */
+	/**
+	 * checks whether the bin is inside the histogram or not.
+	 * If the autoresize is set and the bin isn't inside the size
+	 * of the histogram will be resized to the bin number.
+	 *
+	 * \param bin requested bin
+	 */
 	bool checkBin(const quint16 bin);
 
 private:
 	//! total number of counts inside the histogram
-	quint64 			m_totalCounts;
+	quint64			m_totalCounts;
 
 	//! tube spectra list
-	QHash<QPoint, int>		m_data1;
+	QHash<QPoint, int>	m_data1;
 
 	//! all spectra
 	Spectrum			**m_data;
 
 	//! the list of all keys for the spectra
-	QList<quint16>			m_dataKeys;
+	QList<quint16>		m_dataKeys;
 
 protected:
 	//! length of the tube

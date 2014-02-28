@@ -19,15 +19,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-////////////////////////////////////////////////////////////////////////////
-// $$HeadURL$$
-//
-// last change:
-// $$Author$$
-// $$Date$$
-// revision $$Rev$$
-////////////////////////////////////////////////////////////////////////////
-
 #ifndef _MAPPEDHISTOGRAM_H_
 #define _MAPPEDHISTOGRAM_H_
 
@@ -58,7 +49,7 @@ public:
 
 	    \param pMapCorrection pointer to to new mapping data (this class stores the reference only)
 	    \param pSrc           pointer to existing source histogram or NULL
-        */
+	*/
 	void setMapCorrection(MapCorrection *pMapCorrection, Histogram *pSrc = NULL);
 
 	/*!
@@ -66,21 +57,18 @@ public:
 
 	    \param pSrc pointer to existing source histogram
 	*/
-	void setHistogram(Histogram *pSrc) 
-	{ 
-		setMapCorrection(NULL, pSrc); 
+	void setHistogram(Histogram *pSrc)
+	{
+		setMapCorrection(NULL, pSrc);
 	}
-
-	//! \return sum of all events as uncorrected value
-	virtual quint64 getTotalCounts(void) const { return m_ullTotalCounts; }
 
 	//! \return sum of all events after correction
 	quint64 getCorrectedTotalCounts(void);
 
 	//! \return the maximum value of this histogram
 	virtual quint64 max() const
-	{ 
-		return m_iMaxPos >= 0 && m_iMaxPos < m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : 0; 
+	{
+		return m_iMaxPos >= 0 && m_iMaxPos < m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : 0;
 	}
 
 	//! \return the number of the first tube containing the maximum value
@@ -138,4 +126,4 @@ private:
 #endif
 };
 
-#endif 
+#endif

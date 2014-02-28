@@ -19,19 +19,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-////////////////////////////////////////////////////////////////////////////
-// $$HeadURL$$
-//
-// last change:
-// $$Author$$
-// $$Date$$
-// revision $$Rev$$
-////////////////////////////////////////////////////////////////////////////
-
 #include "mappedhistogram.h"
-
 #include "mapcorrect.h"
-
 #include "logging.h"
 
 /*!
@@ -118,10 +107,10 @@ void MappedHistogram::setMapCorrection(MapCorrection *pMapCorrection, Histogram 
 	}
 	m_adblData.resize(m_iWidth * m_iHeight);
 	if (pSrc == NULL)
-        	return;
+		return;
 	clear();
 	for (int ys = 0; ys < pSrc->height(); ++ys)
-        	for (int xs = 0; xs < pSrc->width(); ++xs)
+		for (int xs = 0; xs < pSrc->width(); ++xs)
 			addValue(xs, ys, pSrc->value(xs, ys));
 }
 
@@ -129,7 +118,7 @@ quint64 MappedHistogram::getCorrectedTotalCounts(void)
 {
 	quint64 r = (quint64)(m_dblTotalCounts + 0.5);
 	if (!r && m_ullTotalCounts > 0) // single event only
-		++r; 
+		++r;
 	return r;
 }
 
@@ -145,7 +134,7 @@ quint64 MappedHistogram::value(quint16 x, quint16 y) const
 {
 	double r = this->floatValue(x, y);
 	if (r > 0.0 && r < 1.0) 	// single event only
-		r = 1.0; 
+		r = 1.0;
 	return (quint64)(r + 0.5);
 }
 
@@ -192,11 +181,11 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 					m_dblTotalCounts += 1.0;
 
 					m_adblData[iPos] += fCorrection;
-					if (m_iMaxPos < 0) 
-						m_iMaxPos = iPos; 
+					if (m_iMaxPos < 0)
+						m_iMaxPos = iPos;
 					else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
 						m_iMaxPos = iPos;
-					switch (m_pMapCorrection->orientation()) 
+					switch (m_pMapCorrection->orientation())
 					{
 #warning TODO the change of the iPos value for the unhandled cases
 						case MapCorrection::OrientationLeft:
@@ -206,7 +195,7 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 						case MapCorrection::OrientationUpRev:
 						case MapCorrection::OrientationDown:
 							break;
-						default: 
+						default:
 							++iDstY;
 							break;
 						case MapCorrection::OrientationDownRev:
@@ -247,12 +236,12 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 					m_ullTotalCounts += val;
 					m_dblTotalCounts += val;
 					m_adblData[iPos] += val * fCorrection;
-					if (m_iMaxPos < 0) 
-						m_iMaxPos = iPos; 
+					if (m_iMaxPos < 0)
+						m_iMaxPos = iPos;
 					else if (m_adblData[iPos] > m_adblData[m_iMaxPos])
 						m_iMaxPos = iPos;
 
-					switch (m_pMapCorrection->orientation()) 
+					switch (m_pMapCorrection->orientation())
 					{
 #warning TODO the change of the iPos value for the unhandled cases
 						case MapCorrection::OrientationLeft:
@@ -262,7 +251,7 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 						case MapCorrection::OrientationUpRev:
 						case MapCorrection::OrientationDown:
 							break;
-						default: 
+						default:
 							++iDstY;
 							break;
 						case MapCorrection::OrientationDownRev:
@@ -276,7 +265,7 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 						m_adblData[iPos] += val * (1 - fCorrection);
 						if (m_adblData[iPos] > m_adblData[m_iMaxPos])
 							m_iMaxPos = iPos;
-					}				
+					}
 				}
 			}
 		}
@@ -309,11 +298,11 @@ void MappedHistogram::maporientation(int iSrcX, int iSrcY, int& iDstX, int& iDst
 QPoint MappedHistogram::maporientation(const QPoint& src)
 {
 	QPoint dst;
-	if (!m_pMapCorrection) 
+	if (!m_pMapCorrection)
 		return src;
 	switch (m_pMapCorrection->m_iOrientation) // X
 	{
-        	default: //MapCorrection::OrientationUp:
+		default: //MapCorrection::OrientationUp:
 			return src;
 		case MapCorrection::OrientationUpRev:
 			dst.setX(src.x());
@@ -333,7 +322,7 @@ QPoint MappedHistogram::maporientation(const QPoint& src)
 	}
 	switch (m_pMapCorrection->m_iOrientation) // Y
 	{
-		default: 
+		default:
 			return src; // never reached
 		case MapCorrection::OrientationUpRev:
 		case MapCorrection::OrientationDown:

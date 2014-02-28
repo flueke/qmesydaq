@@ -19,18 +19,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-////////////////////////////////////////////////////////////////////////////
-// $$HeadURL$$
-//
-// last change:
-// $$Author$$
-// $$Date$$
-// revision $$Rev$$
-////////////////////////////////////////////////////////////////////////////
-
 #ifndef __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__
 #define __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__
-
 
 #include "libqmesydaq_global.h"
 #include "histogram.h"
@@ -44,161 +34,161 @@ class LIBQMESYDAQ_EXPORT MappedHistogram;
  */
 class LIBQMESYDAQ_EXPORT MapCorrection : public QObject
 {
-    Q_OBJECT
-    Q_ENUMS(Orientation)
+	Q_OBJECT
+	Q_ENUMS(Orientation)
 
-    Q_PROPERTY(bool m_bNoMapping READ isNoMap)
+	Q_PROPERTY(bool m_bNoMapping READ isNoMap)
 
 public:
-    /** 
-     * orientation of histogram
-     *
-     * OrientatationUp means the origin at 0, 0 is in the left bottom corner
-     */ 
-    enum Orientation {
-        OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
-        OrientationDown,    //!< rotation 180 deg channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
-        OrientationLeft,    //!< rotation 90 deg ccw channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
-        OrientationRight,   //!< rotation 90 deg cw channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
-        OrientationUpRev,   //!< mirror channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
-        OrientationDownRev, //!< rotation 180 deg and mirror channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
-        OrientationLeftRev, //!< rotation 90 deg ccw and mirror channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
-        OrientationRightRev //!< rotation 90 deg cw and mirror channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
-    };
+	/**
+	 * orientation of histogram
+	 *
+	 * OrientatationUp means the origin at 0, 0 is in the left bottom corner
+	 */
+	enum Orientation {
+		OrientationUp = 0,  //!< channel --> X [left=0 ... right], bin --> Y [bottom=0 ... top]
+		OrientationDown,    //!< rotation 180 deg channel --> X [right=0 ... left], bin --> Y [top=0 ... bottom]
+		OrientationLeft,    //!< rotation 90 deg ccw channel --> Y [bottom=0 ... top], bin --> X [left=0 ... right]
+		OrientationRight,   //!< rotation 90 deg cw channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
+		OrientationUpRev,   //!< mirror channel --> X [left=0 ... right], bin --> Y [top=0 ... bottom]
+		OrientationDownRev, //!< rotation 180 deg and mirror channel --> X [right=0 ... left], bin --> Y [bottom=0 ... top]
+		OrientationLeftRev, //!< rotation 90 deg ccw and mirror channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
+		OrientationRightRev //!< rotation 90 deg cw and mirror channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
+	};
 
-    //! select which pixel should be hold a correction factor: source or mapped pixel
-    enum CorrectionType {
-        CorrectSourcePixel = 0, //!< use correction factor before position mapping
-        CorrectMappedPixel      //!< use correction factor after position mapping
-    };
+	//! select which pixel should be hold a correction factor: source or mapped pixel
+	enum CorrectionType {
+		CorrectSourcePixel = 0, //!< use correction factor before position mapping
+		CorrectMappedPixel      //!< use correction factor after position mapping
+	};
 
-    //! default constructor
-    MapCorrection()
-        : QObject()
-        , m_bNoMapping(false)
-        , m_iOrientation(MapCorrection::OrientationUp)
-        , m_iCorrection(MapCorrection::CorrectSourcePixel)
-    {
-    }
+	//! default constructor
+	MapCorrection()
+		: QObject()
+		, m_bNoMapping(false)
+		, m_iOrientation(MapCorrection::OrientationUp)
+		, m_iCorrection(MapCorrection::CorrectSourcePixel)
+	{
+	}
 
-    MapCorrection(const MapCorrection& src);
+	MapCorrection(const MapCorrection& src);
 
-    MapCorrection& operator=(const MapCorrection& src);
+	MapCorrection& operator=(const MapCorrection& src);
 
-    /*!
-        constructor
+	/*!
+		constructor
 
-        \param size
-        \param iOrientation
-        \param iCorrection
-     */
-    MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-        : QObject()
-    {
-        initialize(size.width(), size.height(), iOrientation, iCorrection);
-    }
+		\param size
+		\param iOrientation
+		\param iCorrection
+	 */
+	MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+		: QObject()
+	{
+		initialize(size.width(), size.height(), iOrientation, iCorrection);
+	}
 
-    //! destructor
-    ~MapCorrection()
-    {
-    }
+	//! destructor
+	~MapCorrection()
+	{
+	}
 
-    //! \return whether no mapping
-    bool isNoMap() const { return m_bNoMapping; }
+	//! \return whether no mapping
+	bool isNoMap() const { return m_bNoMapping; }
 
-    bool isValid() const;
+	bool isValid() const;
 
-    void setNoMap();
+	void setNoMap();
 
-    void initialize(int iWidth, int iHeight, enum Orientation iOrientation, enum CorrectionType iCorrection);
+	void initialize(int iWidth, int iHeight, enum Orientation iOrientation, enum CorrectionType iCorrection);
 
-    /*!
-        initialize mapping
+	/*!
+		initialize mapping
 
-        \param size
-        \param iOrientation
-        \param iCorrection
-     */
-    void initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-    {
-        initialize(size.width(),size.height(),iOrientation,iCorrection);
-    }
+		\param size
+		\param iOrientation
+		\param iCorrection
+	 */
+	void initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+	{
+		initialize(size.width(),size.height(),iOrientation,iCorrection);
+	}
 
-    void setMappedRect(const QRect& mapRect);
+	void setMappedRect(const QRect& mapRect);
 
-    bool map(const QPoint& src, const QPoint& dst, float dblCorrection);
+	bool map(const QPoint& src, const QPoint& dst, float dblCorrection);
 
-    bool map(const QRect& src, const QPoint& dst, float dblCorrection);
+	bool map(const QRect& src, const QPoint& dst, float dblCorrection);
 
-    //! \return the correction map
-    const QRect& getMapRect() const { return m_mapRect; }
+	//! \return the correction map
+	const QRect& getMapRect() const { return m_mapRect; }
 
-    bool getMap(const QPoint& src, QPoint& dst, float& dblCorrection) const;
+	bool getMap(const QPoint& src, QPoint& dst, float& dblCorrection) const;
 
-    /*!
-        read mapping
+	/*!
+		read mapping
 
-        \param iSrcX
-        \param iSrcY
-        \param iDstX
-        \param iDstY
-        \param dblCorrection
+		\param iSrcX
+		\param iSrcY
+		\param iDstX
+		\param iDstY
+		\param dblCorrection
 
-        \return true if mapping was successful
-    */
-    bool getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const
-    {
-        QPoint 	s(iSrcX, iSrcY),
-                d;
-        bool r = getMap(s,d,dblCorrection);
-        iDstX = d.x();
-        iDstY = d.y();
-        return r;
-    }
+		\return true if mapping was successful
+	*/
+	bool getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const
+	{
+		QPoint 	s(iSrcX, iSrcY),
+				d;
+		bool r = getMap(s,d,dblCorrection);
+		iDstX = d.x();
+		iDstY = d.y();
+		return r;
+	}
 
-    void mirrorVertical();
+	void mirrorVertical();
 
-    void mirrorHorizontal();
+	void mirrorHorizontal();
 
-    void rotateLeft();
+	void rotateLeft();
 
-    void rotateRight();
+	void rotateRight();
 
-    //! \return an empty mapping
-    static MapCorrection noMap()
-    {
-        MapCorrection r;
-        r.m_bNoMapping = true;
-        return r;
-    }
+	//! \return an empty mapping
+	static MapCorrection noMap()
+	{
+		MapCorrection r;
+		r.m_bNoMapping = true;
+		return r;
+	}
 
-    //! \return the orientation of the mapping
-    enum Orientation orientation(void)
-    {
-        return m_iOrientation;
-    }
+	//! \return the orientation of the mapping
+	enum Orientation orientation(void)
+	{
+		return m_iOrientation;
+	}
 
 private:
-    //! do not apply mapping
-    bool m_bNoMapping;
+	//! do not apply mapping
+	bool m_bNoMapping;
 
-    //! orientation
-    enum Orientation m_iOrientation;
+	//! orientation
+	enum Orientation m_iOrientation;
 
-    //! correction type
-    enum CorrectionType m_iCorrection;
+	//! correction type
+	enum CorrectionType m_iCorrection;
 
-    //! size of the original array
-    QRect m_rect;
+	//! size of the original array
+	QRect m_rect;
 
-    //! size and position of the mapped array
-    QRect m_mapRect;
+	//! size and position of the mapped array
+	QRect m_mapRect;
 
-    //! mapping information
-    QVector<QPoint> m_aptMap;
+	//! mapping information
+	QVector<QPoint> m_aptMap;
 
-    //! intensity correction
-    QVector<float> m_afCorrection;
+	//! intensity correction
+	QVector<float> m_afCorrection;
 };
 
 /**
@@ -209,44 +199,44 @@ private:
 class LIBQMESYDAQ_EXPORT LinearMapCorrection : public MapCorrection
 {
 public:
-    //! default constructor
-    LinearMapCorrection()
-        : MapCorrection()
-    {
-    }
-  
-    /**
-     * constructor
-     *
-     * \param srcSize
-     * \param destSize
-     * \param iOrientation
-     */
-    LinearMapCorrection(const QSize &srcSize, const QSize &destSize, const enum Orientation iOrientation = MapCorrection::OrientationUp)
-        : MapCorrection(srcSize, iOrientation, MapCorrection::CorrectSourcePixel)
-    {
-        int iDstHeight(destSize.height());
-        int iSrcHeight(srcSize.height());
-        int iDstWidth(destSize.width());
-        int iSrcWidth(srcSize.width());
+	//! default constructor
+	LinearMapCorrection()
+		: MapCorrection()
+	{
+	}
 
-        setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
+	/**
+	 * constructor
+	 *
+	 * \param srcSize
+	 * \param destSize
+	 * \param iOrientation
+	 */
+	LinearMapCorrection(const QSize &srcSize, const QSize &destSize, const enum Orientation iOrientation = MapCorrection::OrientationUp)
+		: MapCorrection(srcSize, iOrientation, MapCorrection::CorrectSourcePixel)
+	{
+		int iDstHeight(destSize.height());
+		int iSrcHeight(srcSize.height());
+		int iDstWidth(destSize.width());
+		int iSrcWidth(srcSize.width());
 
-        for (int i = 0; i < iDstHeight; ++i)
-        {
-            int iStartY = (iSrcHeight * i) / iDstHeight;
-            int iEndY   = (iSrcHeight * (i + 1)) / iDstHeight;
-            for(int k = iStartY; k < iEndY; ++k)
-                for (int j = 0; j < iDstWidth; ++j)
-                {
-                    int iStartX = (iSrcWidth * j) / iDstWidth;
-                    int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
-                    QPoint pt(j, i);
-                    for (; iStartX < iEndX; ++iStartX)
-                        map(QPoint(iStartX, k), pt, 1.0);
-                }
-        }
-    }
+		setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
+
+		for (int i = 0; i < iDstHeight; ++i)
+		{
+			int iStartY = (iSrcHeight * i) / iDstHeight;
+			int iEndY   = (iSrcHeight * (i + 1)) / iDstHeight;
+			for(int k = iStartY; k < iEndY; ++k)
+				for (int j = 0; j < iDstWidth; ++j)
+				{
+					int iStartX = (iSrcWidth * j) / iDstWidth;
+					int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
+					QPoint pt(j, i);
+					for (; iStartX < iEndX; ++iStartX)
+						map(QPoint(iStartX, k), pt, 1.0);
+				}
+		}
+	}
 };
 
 #endif /* __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__ */

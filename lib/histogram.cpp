@@ -110,7 +110,7 @@ void Spectrum::calcFloatingMean(const quint16 bin)
     sets the events at position bin
 
     \param bin position inside the spectrum to set
-    \param val events 
+    \param val events
     \return true or false if successful or not
  */
 bool Spectrum::setValue(const quint16 bin, const quint64 val)
@@ -132,7 +132,7 @@ bool Spectrum::setValue(const quint16 bin, const quint64 val)
     adds events at position bin
 
     \param bin position inside the spectrum to set
-    \param val events 
+    \param val events
     \return true or false if successful or not
  */
 bool Spectrum::addValue(const quint16 bin, const quint64 val)
@@ -154,14 +154,14 @@ bool Spectrum::addValue(const quint16 bin, const quint64 val)
  */
 void Spectrum::clear(void)
 {
-	memset(m_data, '\0', sizeof(quint64) * m_width);
-	memset(m_floatingMean, '\0', sizeof(m_floatingMean));
+	memset(m_data, 0, sizeof(quint64) * m_width);
+	memset(m_floatingMean, 0, sizeof(m_floatingMean));
 	m_totalCounts = m_maximumPos = m_meanCount = m_meanPos = 0;
 }
 
 /*!
     \fn Spectrum::mean(float &s)
-  
+
     calculates the mean value and standard deviation of the mean value
 
     \param s standard deviation of the floating mean value
@@ -175,7 +175,7 @@ float Spectrum::mean(float &s)
 		for(quint8 c = 0; c < m_meanCount; ++c)
 			m += m_floatingMean[c];
 		m /= m_meanCount;
-		
+
 		// calculate sigma
 		for(quint8 c = 0; c < m_meanCount; c++)
 		{
@@ -183,7 +183,7 @@ float Spectrum::mean(float &s)
 			s += tmp * tmp;
 		}
 		s = sqrt(s / m_meanCount);
-		s *= 2.3; // ln(10)	
+		s *= 2.3; // ln(10)
 	}
 	return m;
 }
@@ -203,7 +203,7 @@ void Spectrum::setWidth(const quint16 w)
 	m_width = w;
 }
 
-void Spectrum::resize(const quint16 bins) 
+void Spectrum::resize(const quint16 bins)
 {
 	if (bins == m_width)
 		return;
@@ -224,10 +224,10 @@ quint64 Spectrum::value(const quint16 index)
 		return m_data[index];
 	return 0;
 }
- 
+
 /*!
     \fn Histogram::Histogram(const quint16 h, const quint16 w)
-    
+
     constructor
 
     \param h number of channels (i.e. number of tubes)
@@ -251,7 +251,7 @@ Histogram::~Histogram()
 }
 
 /*!
-    \fn Histogram::max(void) const  
+	\fn Histogram::max(void) const
 
     \return the maximum of the whole histogram
 */
@@ -265,7 +265,7 @@ quint64 Histogram::max(void) const
 /*!
     \fn Histogram::value(const quint16 chan, const quint16 bin) const
 
-    gives the counts of the cell x,y. 
+	gives the counts of the cell x,y.
 
     The implementation is a little bit tricky. In the m_dataKeys list
     are stored all keys for the single tube spectra. The will mapped
@@ -278,9 +278,7 @@ quint64 Histogram::max(void) const
 quint64 Histogram::value(const quint16 chan, const quint16 bin) const
 {
 	if (chan < m_width)
-	{
 		return m_data[chan]->value(bin);
-	}
 	return 0;
 }
 
@@ -472,9 +470,9 @@ quint64 Histogram::getCounts(const QRect &region) const
  */
 Spectrum *Histogram::spectrum(const quint16 channel)
 {
-   	if (channel < m_height && m_data && m_data[channel])
-   		return m_data[channel];
-	else 
+	if (channel < m_height && m_data && m_data[channel])
+		return m_data[channel];
+	else
 		return NULL;
 }
 
@@ -486,8 +484,8 @@ Spectrum *Histogram::spectrum(const quint16 channel)
  */
 quint64 Histogram::max(const quint16 channel) const
 {
-   	if (channel < m_height && m_data && m_data[channel])
-   		return m_data[channel]->max();
+	if (channel < m_height && m_data && m_data[channel])
+		return m_data[channel]->max();
 	else
 		return 0;
 }
@@ -500,9 +498,9 @@ quint64 Histogram::max(const quint16 channel) const
  */
 quint16 Histogram::maxpos(const quint16 channel) const
 {
-   	if (channel < m_height && m_data && m_data[channel])
+	if (channel < m_height && m_data && m_data[channel])
 		return m_data[channel]->maxpos();
-	else 
+	else
 		return 0;
 }
 
@@ -510,17 +508,15 @@ quint16 Histogram::maxpos(const quint16 channel) const
     \fn Histogram::getMean(const quint16 chan, float &m, float &s)
 
     gives the mean value and the standard deviation of the last events in the tube chan
-	
+
     \param chan the number of the tube
     \param m mean value
     \param s standard deviation
  */
 void Histogram::getMean(const quint16 chan, float &m, float &s)
 {
-   	if (chan < m_height && m_data && m_data[chan])
-	{
+	if (chan < m_height && m_data && m_data[chan])
 		m = m_data[chan]->mean(s);
-	}
 	else
 		m = s = 0.0;
 }
@@ -543,9 +539,9 @@ void Histogram::getMean(float &m, float &s)
 
     \return number of tubes
 */
-quint16	Histogram::height(void) const 
+quint16	Histogram::height(void) const
 {
-	return m_height; 
+	return m_height;
 }
 
 /*!
@@ -565,7 +561,7 @@ void Histogram::setWidth(const quint16 w)
 		for (int i = m_width; i < w; ++i)
 			m_data[i] = new Spectrum(m_height);
 	}
-	else 
+	else
 	{
 		for (int i = m_width - 1; i >= w; --i)
 			delete m_data[i];
@@ -603,13 +599,13 @@ void Histogram::setHeight(const quint16 h)
     \param w width of histogram
     \param h height of histogram
  */
-void Histogram::resize(const quint16 w, const quint16 h) 
+void Histogram::resize(const quint16 w, const quint16 h)
 {
-	setWidth(w); 
+	setWidth(w);
 	setHeight(h);
 }
 
-void Histogram::setAutoResize(const bool resize) 
+void Histogram::setAutoResize(const bool resize)
 {
 	m_autoResize = resize;
 	for(int i = 0; i < m_width; ++i)
@@ -651,7 +647,7 @@ QString Histogram::format(void)
    \fn void Histogram::calcMinMaxInROI(const QRectF &r)
 
    calculates the min and max in the ROI
-  
+
    \param r required ROI
  */
 void Histogram::calcMinMaxInROI(const QRectF &r)
@@ -659,7 +655,7 @@ void Histogram::calcMinMaxInROI(const QRectF &r)
 	m_minROI = max();
 	m_maxROI = 0;
 // no idea why, but Qwt seems to define height as width and vice versa
-	int right = ceil(r.left() + r.width()); 
+	int right = ceil(r.left() + r.width());
 	int top = ceil(r.top() + r.height());
 	for (int j = floor(r.top()); j <= top; ++j)
 		for (int i = floor(r.left()); i <= right; ++i)
@@ -683,4 +679,3 @@ quint64 Histogram::maxROI(void) const
 {
 	return m_maxROI;
 }
-

@@ -216,7 +216,6 @@ private:
 	//! The MesyDaq object
 	Mesydaq2		*m_theApp;
 	
-	
 // using thresholds for display
 	//! using thresholds ?
 	bool			m_dispThresh;

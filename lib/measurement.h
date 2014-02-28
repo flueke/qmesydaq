@@ -432,8 +432,7 @@ public:
 	 * \param val setup type
 	 */
 	void setSetupType(const Setup val);
-	
-	
+
 public slots:
 	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
