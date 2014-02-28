@@ -79,12 +79,6 @@ public:
 	//! \return the mapped value as double
 	double floatValue(quint16 x, quint16 y) const;
 
-	//! \return the height of this histogram
-	virtual quint16 height() const { return m_iHeight; }
-
-	//! \return the width of this histogram
-	virtual quint16 width() const { return m_iWidth; }
-
 	//! \param chan hardware input channel
 	//! \param bin  position at specified channel
 	//! \brief store an event at position
@@ -96,20 +90,11 @@ public:
 	virtual void clear(void);
 
 private:
-	//! width of mapped histogram
-	quint16 m_iWidth;
-
-	//! height of mapped histogram
-	quint16 m_iHeight;
-
 	//! pointer to mapping information
 	MapCorrection* m_pMapCorrection;
 
 	//! mapped histogram data
 	QVector<double> m_adblData;
-
-	//! uncorrected event counter
-	quint64 m_ullTotalCounts;
 
 	//! corrected event counter
 	double m_dblTotalCounts;

@@ -31,10 +31,7 @@
  */
 MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram)
 	: Histogram(0, 0)
-	, m_iWidth(0)
-	, m_iHeight(0)
 	, m_pMapCorrection(NULL)
-	, m_ullTotalCounts(0ULL)
 	, m_dblTotalCounts(0.0)
 	, m_iMaxPos(-1)
 {
@@ -47,12 +44,9 @@ MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHist
     \param src
  */
 MappedHistogram::MappedHistogram(const MappedHistogram &src)
-	: Histogram(src.m_iHeight, src.m_iWidth)
-	, m_iWidth(src.m_iWidth)
-	, m_iHeight(src.m_iHeight)
+	: Histogram(src)
 	, m_pMapCorrection(src.m_pMapCorrection)
 	, m_adblData(src.m_adblData)
-	, m_ullTotalCounts(src.m_ullTotalCounts)
 	, m_dblTotalCounts(src.m_dblTotalCounts)
 	, m_iMaxPos(src.m_iMaxPos)
 {
@@ -66,11 +60,9 @@ MappedHistogram::MappedHistogram(const MappedHistogram &src)
  */
 MappedHistogram& MappedHistogram::operator=(const MappedHistogram &src)
 {
-	m_iWidth = src.m_iWidth;
-	m_iHeight = src.m_iHeight;
+	Histogram::operator =(src);
 	m_pMapCorrection = src.m_pMapCorrection;
 	m_adblData = src.m_adblData;
-	m_ullTotalCounts = src.m_ullTotalCounts;
 	m_dblTotalCounts = src.m_dblTotalCounts;
 	m_iMaxPos = src.m_iMaxPos;
 	return *this;
@@ -95,29 +87,27 @@ void MappedHistogram::setMapCorrection(MapCorrection *pMapCorrection, Histogram 
 {
 	if (pMapCorrection != NULL && pMapCorrection != m_pMapCorrection)
 	{
-        	const QRect &mapRect = pMapCorrection->getMapRect();
-        	m_pMapCorrection = pMapCorrection;
-        	m_width = m_iWidth = mapRect.width();
-        	m_height = m_iHeight = mapRect.height();
+		const QRect &mapRect = pMapCorrection->getMapRect();
+		m_pMapCorrection = pMapCorrection;
+		resize(mapRect.width(), mapRect.height());
 	}
-	else if (m_pMapCorrection == NULL && pSrc != NULL) 
-	{
-        	m_width = m_iWidth = pSrc->width();
-        	m_height = m_iHeight = pSrc->height();
-	}
-	m_adblData.resize(m_iWidth * m_iHeight);
+	else if (m_pMapCorrection == NULL && pSrc != NULL)
+		resize(pSrc->width(), pSrc->height());
+	m_adblData.resize(m_width * m_height);
 	if (pSrc == NULL)
 		return;
 	clear();
-	for (int ys = 0; ys < pSrc->height(); ++ys)
-		for (int xs = 0; xs < pSrc->width(); ++xs)
+	register int iHeight = pSrc->height();
+	register int iWidth = pSrc->width();
+	for (int ys = 0; ys < iHeight; ++ys)
+		for (int xs = 0; xs < iWidth; ++xs)
 			addValue(xs, ys, pSrc->value(xs, ys));
 }
 
 quint64 MappedHistogram::getCorrectedTotalCounts(void)
 {
 	quint64 r = (quint64)(m_dblTotalCounts + 0.5);
-	if (!r && m_ullTotalCounts > 0) // single event only
+	if (!r && m_totalCounts > 0) // single event only
 		++r;
 	return r;
 }
@@ -148,8 +138,8 @@ quint64 MappedHistogram::value(quint16 x, quint16 y) const
  */
 double MappedHistogram::floatValue(quint16 x, quint16 y) const
 {
-	register int iPos = y * m_iWidth + x;
-	if (x < m_iWidth && y < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
+	register int iPos = y * m_width + x;
+	if (x < m_width && y < m_height && iPos >= 0 && iPos < m_adblData.count())
 		return m_adblData[iPos];
 	return 0.0;
 }
@@ -174,10 +164,10 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 		{
 			if (fCorrection > 0.0)
 			{
-				int iPos(m_iWidth * iDstY + iDstX);
-				if (iDstX >= 0 && iDstX < m_iWidth &&  iDstY >= 0 && iDstY < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
+				int iPos(m_width * iDstY + iDstX);
+				if (iDstX >= 0 && iDstX < m_width &&  iDstY >= 0 && iDstY < m_height && iPos >= 0 && iPos < m_adblData.count())
 				{
-					++m_ullTotalCounts;
+					++m_totalCounts;
 					m_dblTotalCounts += 1.0;
 
 					m_adblData[iPos] += fCorrection;
@@ -203,8 +193,8 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 							break;
 					}
 
-					iPos = m_iWidth * iDstY + iDstX;
-					if (iPos >= 0 && iDstY < m_iHeight && iPos < m_adblData.count())
+					iPos = m_width * iDstY + iDstX;
+					if (iPos >= 0 && iDstY < m_height && iPos < m_adblData.count())
 					{
 						m_adblData[iPos] += 1 - fCorrection;
 						if (m_adblData[iPos] > m_adblData[m_iMaxPos])
@@ -230,10 +220,10 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 		{
 			if (fCorrection > 0.0)
 			{
-				int iPos(m_iWidth * iDstY + iDstX);
-				if (iDstX >= 0 && iDstX < m_iWidth && iDstY >= 0 && iDstY < m_iHeight && iPos >= 0 && iPos < m_adblData.count())
+				int iPos(m_width * iDstY + iDstX);
+				if (iDstX >= 0 && iDstX < m_width && iDstY >= 0 && iDstY < m_height && iPos >= 0 && iPos < m_adblData.count())
 				{
-					m_ullTotalCounts += val;
+					m_totalCounts += val;
 					m_dblTotalCounts += val;
 					m_adblData[iPos] += val * fCorrection;
 					if (m_iMaxPos < 0)
@@ -259,12 +249,13 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 							break;
 					}
 
-					iPos = m_iWidth * iDstY + iDstX;
-					if (iPos >= 0 && iDstY < m_iHeight && iPos < m_adblData.count())
+					iPos = m_width * iDstY + iDstX;
+					if (iPos >= 0 && iDstY < m_height && iPos < m_adblData.count())
 					{
 						m_adblData[iPos] += val * (1 - fCorrection);
 						if (m_adblData[iPos] > m_adblData[m_iMaxPos])
 							m_iMaxPos = iPos;
+						bOK = true;
 					}
 				}
 			}
@@ -275,9 +266,9 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 
 void MappedHistogram::clear(void)
 {
+	Histogram::clear();
 	for (int i = 0; i<m_adblData.count(); ++i)
 		m_adblData[i] = 0.0;
-	m_ullTotalCounts = 0;
 	m_dblTotalCounts = 0.0;
 	m_iMaxPos=-1;
 }

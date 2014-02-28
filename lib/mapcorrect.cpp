@@ -156,6 +156,11 @@ void MapCorrection::initialize(int iSrcWidth, int iSrcHeight, MapCorrection::Ori
 void MapCorrection::setMappedRect(const QRect &mapRect)
 {
 	m_mapRect = mapRect;
+	if (!mapRect.isValid())
+	{
+		setNoMap();
+		return;
+	}
 	if (!m_bNoMapping && m_iCorrection == MapCorrection::CorrectMappedPixel)
 	{
 		int iCount = mapRect.width() * mapRect.height();
@@ -183,14 +188,14 @@ bool MapCorrection::map(const QPoint &src, const QPoint &dst, float fCorrection)
 
 	int iPos = src.y() * m_rect.width() + src.x();
 	QPoint *p = &m_aptMap[iPos];
-	p->setX(dst.x());
-	p->setY(dst.y());
 	if (m_iCorrection == MapCorrection::CorrectMappedPixel)
 	{
 		iPos = (dst.y() - m_mapRect.top()) * m_mapRect.width() + (dst.x() -  m_mapRect.left());
 		if (iPos < 0 || iPos >= m_afCorrection.count())
 			return false;
 	}
+	p->setX(dst.x());
+	p->setY(dst.y());
 	m_afCorrection[iPos]=fCorrection;
 	return true;
 }

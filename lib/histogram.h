@@ -47,6 +47,10 @@ class LIBQMESYDAQ_EXPORT Spectrum : public QObject
 public:
 	Spectrum(const quint16 bins = LINBINS);
 
+	Spectrum(const Spectrum &src);
+
+	Spectrum& operator=(const Spectrum &src);
+
 	~Spectrum();
 
 	bool incVal(const quint16 bin);
@@ -168,6 +172,10 @@ class LIBQMESYDAQ_EXPORT Histogram : public QObject
 public:
 	Histogram(const quint16 channels = CHANNELS, const quint16 bins = LINBINS);
 
+	Histogram(const Histogram &src);
+
+	Histogram& operator=(const Histogram &src);
+
 	virtual ~Histogram();
 
 	virtual bool incVal(const quint16 chan, const quint16 bin);
@@ -263,7 +271,7 @@ private:
 	 */
 	bool checkBin(const quint16 bin);
 
-private:
+protected:
 	//! total number of counts inside the histogram
 	quint64			m_totalCounts;
 
@@ -276,14 +284,12 @@ private:
 	//! the list of all keys for the spectra
 	QList<quint16>		m_dataKeys;
 
-protected:
 	//! length of the tube
 	quint16				m_height;
 
 	//! number of tubes
 	quint16				m_width;
 
-private:
 	//! X sum spectrum
 	Spectrum			m_xSumSpectrum;
 
