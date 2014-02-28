@@ -35,6 +35,7 @@ class MesydaqSpectrumData;
 class MesydaqHistogramData;
 class Histogram;
 class Mesydaq2;
+class EditorMemory;
 
 /**
     \short Main Widget in the application
@@ -166,6 +167,10 @@ private slots:
 	void scanPeriSlot(bool = true);
 
 	void newSetupSlot(void);
+
+	void editHistogramMapping(void);
+
+	void mappingChanged();
 
 // setup related methods
 	void restoreSetupSlot();

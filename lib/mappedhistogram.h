@@ -89,6 +89,8 @@ public:
 	//! \brief clear this histogram
 	virtual void clear(void);
 
+	MapCorrection* getMapCorrection() { return m_pMapCorrection; }
+
 private:
 	//! pointer to mapping information
 	MapCorrection* m_pMapCorrection;

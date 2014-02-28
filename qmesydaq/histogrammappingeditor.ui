@@ -1,0 +1,839 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HistogramMappingEditor</class>
+ <widget class="QDialog" name="HistogramMappingEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1075</width>
+    <height>604</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Histogram Mapping Editor</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="QMenuBar" name="menubar">
+     <widget class="QMenu" name="menuFile">
+      <property name="title">
+       <string>&amp;File</string>
+      </property>
+      <addaction name="actionLoad"/>
+      <addaction name="actionSave"/>
+      <addaction name="separator"/>
+      <addaction name="actionEmpty"/>
+     </widget>
+     <widget class="QMenu" name="menu_Edit">
+      <property name="title">
+       <string>&amp;Edit</string>
+      </property>
+      <addaction name="actionCopy"/>
+      <addaction name="actionPaste"/>
+      <addaction name="separator"/>
+      <addaction name="actionApplyData"/>
+      <addaction name="actionClearData"/>
+      <addaction name="separator"/>
+      <addaction name="actionMoveUp"/>
+      <addaction name="actionMoveDown"/>
+     </widget>
+     <widget class="QMenu" name="menu_Help">
+      <property name="title">
+       <string>&amp;Help</string>
+      </property>
+      <addaction name="actionHelp"/>
+     </widget>
+     <addaction name="menuFile"/>
+     <addaction name="menu_Edit"/>
+     <addaction name="menu_Help"/>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QToolBar" name="toolBar">
+     <property name="windowTitle">
+      <string>toolBar</string>
+     </property>
+     <property name="floatable">
+      <bool>false</bool>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionCopy"/>
+     <addaction name="actionPaste"/>
+     <addaction name="separator"/>
+     <addaction name="actionMoveUp"/>
+     <addaction name="actionMoveDown"/>
+     <addaction name="actionApplyData"/>
+     <addaction name="separator"/>
+     <addaction name="actionClearData"/>
+     <addaction name="separator"/>
+     <addaction name="actionHelp"/>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="HistogramEditTableWidget" name="TableWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <property name="rowCount">
+        <number>0</number>
+       </property>
+       <property name="columnCount">
+        <number>6</number>
+       </property>
+       <column>
+        <property name="text">
+         <string>Chan#</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Start data</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>End data</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Start pos.</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>End pos.</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Factor</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="LabelChannelNumber">
+           <property name="toolTip">
+            <string>Includes the number of channel which are used.</string>
+           </property>
+           <property name="text">
+            <string>Cha&amp;nnel Count</string>
+           </property>
+           <property name="buddy">
+            <cstring>ChannelNumber</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="ChannelNumber"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="LabelOrientation">
+           <property name="text">
+            <string>Or&amp;ientation</string>
+           </property>
+           <property name="buddy">
+            <cstring>Orientation</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="Orientation">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Orientation of mapped histogram.&lt;/p&gt;&lt;p&gt;up: up=up, down=down, left=left ...&lt;/p&gt;&lt;p&gt;down: rotated by 180deg&lt;/p&gt;&lt;p&gt;left: rotated by 90deg ccw&lt;/p&gt;&lt;p&gt;right: rotated by 90deg cw&lt;/p&gt;&lt;p&gt;uprev: up=up, down=down, but left and right are mirrored&lt;/p&gt;&lt;p&gt;downrev: up and down are mirrored, but left=left, right=right&lt;/p&gt;&lt;p&gt;leftrev: rotated by 90deg ccw, but up and down are mirrored&lt;/p&gt;&lt;p&gt;rightrev: rotated by 90deg cw, but up and down are mirrored&lt;/p&gt;&lt;p/&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>up</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>down</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>left</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>right</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>up (reversed)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>down (reversed)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>left (reversed)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>right (reversed)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="LabelChannel">
+           <property name="text">
+            <string>Channe&amp;l Selection</string>
+           </property>
+           <property name="buddy">
+            <cstring>Channel</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="Channel">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Marks the specified channels.&lt;/p&gt;&lt;p&gt;(An area will be marked if two numbers are seperated by a hyphen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer1">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>108</width>
+           <height>88</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="LabelStartInput">
+           <property name="text">
+            <string>&amp;1 Start Input</string>
+           </property>
+           <property name="buddy">
+            <cstring>StartInput</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="StartInput">
+           <property name="toolTip">
+            <string>Input tube start position (0 &lt;= data &lt; 960)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="LabelEndInput">
+           <property name="text">
+            <string>&amp;2 End Input</string>
+           </property>
+           <property name="buddy">
+            <cstring>EndInput</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="EndInput">
+           <property name="toolTip">
+            <string>Input tube end position (0 &lt;= data &lt; 960)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="LabelStartOutput">
+           <property name="text">
+            <string>&amp;3 Start Output</string>
+           </property>
+           <property name="buddy">
+            <cstring>StartOutput</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="StartOutput">
+           <property name="toolTip">
+            <string>Mapped output start position (pos &gt;= 0)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="LabelEndOutput">
+           <property name="text">
+            <string>&amp;4 End Output</string>
+           </property>
+           <property name="buddy">
+            <cstring>EndOutput</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="EndOutput">
+           <property name="toolTip">
+            <string>Mapped output end position (pos &gt;= 0)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="LabelFactor">
+           <property name="text">
+            <string>&amp;5 Factor</string>
+           </property>
+           <property name="buddy">
+            <cstring>Factor</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="Factor"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="ApplyData">
+           <property name="toolTip">
+            <string>Applies the values from text fields to selected rows in the table.</string>
+           </property>
+           <property name="text">
+            <string>Appl&amp;y to Rows</string>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ClearData">
+           <property name="toolTip">
+            <string>Clear selected rows in the table (see help).</string>
+           </property>
+           <property name="text">
+            <string>Clea&amp;r Rows</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>108</width>
+           <height>150</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Apply|QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::RestoreDefaults</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+  <action name="actionLoad">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/fileopen.xpm</normaloff>:/images/fileopen.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Load Mapping Configuration ...</string>
+   </property>
+   <property name="iconText">
+    <string>Load</string>
+   </property>
+   <property name="toolTip">
+    <string>Load a mapping file into this editor.</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/filesave.xpm</normaloff>:/images/filesave.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save Mapping Configuration ...</string>
+   </property>
+   <property name="iconText">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Saves the of this editor into a file.</string>
+   </property>
+  </action>
+  <action name="actionEmpty">
+   <property name="text">
+    <string>&amp;Clear to empty default</string>
+   </property>
+   <property name="iconText">
+    <string>Restore Defaults</string>
+   </property>
+   <property name="toolTip">
+    <string>Restores the default mapping.</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/editcopy.xpm</normaloff>:/images/editcopy.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copies data of selected rows into clipboard.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/editpaste.xpm</normaloff>:/images/editpaste.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="toolTip">
+    <string>Pastes the clipboard data into the first selected row and below.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionApplyData">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/apply.png</normaloff>:/images/apply.png</iconset>
+   </property>
+   <property name="text">
+    <string>Appl&amp;y Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Applies the values from text fields to selected rows in the table.</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Y</string>
+   </property>
+  </action>
+  <action name="actionClearData">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/clear.png</normaloff>:/images/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clea&amp;r Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Clears selected rows int the table (see help).</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+R</string>
+   </property>
+  </action>
+  <action name="actionMoveUp">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/up.png</normaloff>:/images/up.png</iconset>
+   </property>
+   <property name="text">
+    <string>Move &amp;Up</string>
+   </property>
+   <property name="toolTip">
+    <string>Moves the currently marked rows up by one line.</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+U</string>
+   </property>
+  </action>
+  <action name="actionMoveDown">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+   </property>
+   <property name="text">
+    <string>Move &amp;Down</string>
+   </property>
+   <property name="toolTip">
+    <string>Moves the currently marked rows down by one line.</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+D</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="qmesydaq.qrc">
+     <normaloff>:/images/help.png</normaloff>:/images/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>Help ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows a simple help window</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HistogramEditTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>histogramedittablewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>TableWidget</tabstop>
+  <tabstop>ChannelNumber</tabstop>
+  <tabstop>Orientation</tabstop>
+  <tabstop>Channel</tabstop>
+  <tabstop>StartInput</tabstop>
+  <tabstop>EndInput</tabstop>
+  <tabstop>StartOutput</tabstop>
+  <tabstop>EndOutput</tabstop>
+  <tabstop>Factor</tabstop>
+  <tabstop>ApplyData</tabstop>
+  <tabstop>ClearData</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources>
+  <include location="qmesydaq.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>859</x>
+     <y>597</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>927</x>
+     <y>597</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>loadClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>saveClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionEmpty</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>setDefaultsClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCopy</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>copyTubesClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPaste</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>pasteTubesClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionApplyData</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>applyClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClearData</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>clearClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMoveUp</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>shiftTubesUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMoveDown</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>shiftTubesDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionHelp</sender>
+   <signal>triggered()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>helpClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Channel</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>textChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>897</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ApplyData</sender>
+   <signal>clicked()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>applyClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>724</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ClearData</sender>
+   <signal>clicked()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>clearClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>954</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TableWidget</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>HistogramMappingEditor</receiver>
+   <slot>itemSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>537</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>applyedData()</signal>
+  <slot>on_ButtonBoxClicked(QAbstractButton *)</slot>
+  <slot>textChanged(QString)</slot>
+  <slot>itemSelectionChanged()</slot>
+  <slot>applyClick()</slot>
+  <slot>clearClick()</slot>
+  <slot>saveClick()</slot>
+  <slot>loadClick()</slot>
+  <slot>shiftTubesDown()</slot>
+  <slot>shiftTubesUp()</slot>
+  <slot>copyTubesClick()</slot>
+  <slot>pasteTubesClick()</slot>
+  <slot>helpClick()</slot>
+  <slot>setDefaultsClick()</slot>
+ </slots>
+</ui>

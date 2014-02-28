@@ -43,7 +43,7 @@
 #include "LoopObject.h"
 #include "generalsetup.h"
 #include "modulewizard.h"
-#include "mapcorrect.h"
+#include "usermapcorrect.h"
 #include "mappedhistogram.h"
 #include "modulesetup.h"
 #include "mdllsetup.h"
@@ -51,6 +51,9 @@
 #include "mpsdpulser.h"
 #include "mdllpulser.h"
 #include "logging.h"
+#include "histogrammappingeditor.h"
+#include "editormemory.h"
+#include "mainwindow.h"
 #include "stdafx.h"
 #if USE_TACO
 #	include "tacosetup.h"
@@ -201,6 +204,14 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 //! destructor
 MainWidget::~MainWidget()
 {
+    UserMapCorrection* pUserCorrection(dynamic_cast<UserMapCorrection*>(m_meas->posHistMapCorrection()));
+    if (pUserCorrection != NULL)
+    {
+        EditorMemory* pEM(pUserCorrection->getMESFData());
+        if (pEM != NULL)
+            pEM->wantToSave(this, pUserCorrection->getSourceSize().width());
+    }
+
     if (m_dispTimer)
         killTimer(m_dispTimer);
     m_dispTimer = 0;
@@ -265,6 +276,7 @@ void MainWidget::init()
     if (m_meas)
     {
         disconnect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
+        disconnect(m_meas, SIGNAL(mappingChanged()), this, SLOT(mappingChanged()));
         disconnect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
         delete m_meas;
     }
@@ -285,6 +297,7 @@ void MainWidget::init()
     m_dataFrame->setAxisScale(QwtPlot::xBottom, 0, m_meas->width());
 
     connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
+    connect(m_meas, SIGNAL(mappingChanged()), this, SLOT(mappingChanged()), Qt::QueuedConnection);
     connect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
     displayMcpdSlot(dispMcpd->value());
 #if 0
@@ -940,9 +953,9 @@ void MainWidget::dispFiledata(void)
     else
         calibrationFilename->setText(m_meas->getCalibrationfilename());
     if (m_theApp->getListfilename().isEmpty())
-        listFilename->setText("-");
+		listFilename->setText("-");
     else
-        listFilename->setText(m_theApp->getListfilename());
+		listFilename->setText(m_theApp->getListfilename());
 }
 
 /*!
@@ -994,11 +1007,11 @@ void MainWidget::loadHistSlot()
 */
 void MainWidget::loadCalibrationSlot()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Load Calibration File ..."), m_meas->getConfigfilepath(), "mesydaq calibration files(*.mcal *.txt);;all files (*.*)");
-    if(!name.isEmpty())
+    QString name = QFileDialog::getOpenFileName(this, tr("Load Calibration File ..."), m_meas->getConfigfilepath(), "mesydaq calibration files(*.mcal *.mesf *.txt);;all files (*.*)");
+    if (!name.isEmpty())
     {
-        m_meas->readCalibration(name);
-	emit redraw();
+        m_meas->readCalibration(name, true);
+        emit redraw();
     }
 }
 
@@ -1598,6 +1611,70 @@ void MainWidget::setupGeneral()
         m_meas->setRunId(d.lastRunId());
         m_meas->setAutoIncRunId(d.getAutoIncRunId());
         m_meas->setWriteProtection(d.getWriteProtection());
+    }
+}
+
+/*!
+    \fn void MainWidget::editHistogramMapping()
+
+    callback to edit the histogram mapping
+ */
+void MainWidget::editHistogramMapping()
+{
+    MapCorrection* &pCorrection(m_meas->posHistMapCorrection());
+    UserMapCorrection* pUserCorrection(dynamic_cast<UserMapCorrection*>(pCorrection));
+    MapCorrection* pDefaultCorrection(pCorrection);
+    if (pUserCorrection == NULL)
+        // the user may overwrite this default mapping, check comes later
+        pCorrection = pUserCorrection = new UserMapCorrection(QSize(m_meas->width(), m_meas->height()), MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
+    else
+        // default is already a UserMapCorrection -> unable to restore it
+        pDefaultCorrection = NULL;
+    if (pUserCorrection != NULL)
+    {
+        HistogramMappingEditor d(m_meas, this);
+        connect(&d, SIGNAL(applyedData()), this, SIGNAL(redraw()));
+        d.exec();
+        disconnect(&d, SIGNAL(applyedData()), this, SIGNAL(redraw()));
+        if (pDefaultCorrection != NULL && d.hasChanged())
+        {
+            // user has changed the mapping
+            delete pDefaultCorrection;
+            pDefaultCorrection = NULL;
+        }
+    }
+    if (pDefaultCorrection != NULL && pCorrection != pDefaultCorrection)
+    {
+        // the user did not change the default mapping, restore it
+        delete pCorrection;
+        pCorrection = pDefaultCorrection;
+    }
+}
+
+/*!
+    \fn void MainWidget::mappingChanged()
+
+    callback to show or hide the menu entry for the "histogram mapping editor"
+ */
+void MainWidget::mappingChanged()
+{
+    MainWindow* pMainWindow = dynamic_cast<MainWindow*>(parent());
+    if (pMainWindow != NULL)
+    {
+        bool bVisible(false);
+        MapCorrection* pCorrection(m_meas->posHistMapCorrection());
+        UserMapCorrection* pUserCorrection = dynamic_cast<UserMapCorrection*>(pCorrection);
+        LinearMapCorrection* pLinearCorrection = dynamic_cast<LinearMapCorrection*>(pCorrection);
+        if (pMainWindow->actionUser->isChecked() ||
+            pMainWindow->actionSuperUser->isChecked())
+        {
+            if (pLinearCorrection != NULL)
+                bVisible = true;
+            else if (pUserCorrection != NULL)
+                bVisible = (pUserCorrection->getMESFData() != NULL);
+        }
+        pMainWindow->actionHistogram_Mapping->setVisible(bVisible);
+        pMainWindow->actionHistogram_Mapping->setEnabled(bVisible);
     }
 }
 

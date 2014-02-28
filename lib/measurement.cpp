@@ -32,6 +32,7 @@
 #include "mappedhistogram.h"
 #include "mesydaq2.h"
 #include "logging.h"
+#include "editormemory.h"
 #include "stdafx.h"
 
 #include <cmath>
@@ -140,7 +141,7 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 		}
 	}
 
-	readCalibration(m_calibrationfilename);
+	readCalibration(m_calibrationfilename, false);
 
 	if (m_Hist[CorrectedPositionHistogram])
 		delete m_Hist[CorrectedPositionHistogram];
@@ -773,12 +774,16 @@ void Measurement::readHistograms(const QString &name)
 }
 
 /*!
-	\fn void Measurement::readCalibration(const QString &name)
+	\fn void Measurement::readCalibration(const QString &name, bool bForceDefault)
 
 	\param name calibration file name
+	\param bForceDefault reset to default with empry calibration file name
  */
-void Measurement::readCalibration(const QString &name)
+void Measurement::readCalibration(const QString &name, bool bForceDefault)
 {
+	if (m_calibrationfilename.isEmpty() && !bForceDefault)
+		return;
+
 	setCalibrationfilename(name);
 	if (m_posHistMapCorrection)
 		delete m_posHistMapCorrection;
@@ -799,10 +804,13 @@ void Measurement::readCalibration(const QString &name)
 #endif
 				break;
 		}
-		return;
 	}
-	MSG_ERROR << tr("User map correction from file '%1'").arg(m_calibrationfilename);
-	m_posHistMapCorrection = new UserMapCorrection(m_calibrationfilename);
+	else
+	{
+		MSG_ERROR << tr("User map correction from file '%1'").arg(m_calibrationfilename);
+		m_posHistMapCorrection = new UserMapCorrection(QSize(m_width, m_height), m_calibrationfilename);
+	}
+	emit mappingChanged();
 }
 
 /*!
@@ -1391,7 +1399,8 @@ void Measurement::setHistfilename(const QString &name)
 void Measurement::setCalibrationfilename(const QString &name) 
 {
 	m_calibrationfilename = name;
-	if(!m_calibrationfilename.isEmpty() && m_calibrationfilename.indexOf(".mcal") == -1 && m_calibrationfilename.indexOf(".txt") == -1)
+	if (!m_calibrationfilename.isEmpty() && m_calibrationfilename.indexOf(".mcal") == -1 &&
+		m_calibrationfilename.indexOf(".txt") == -1 && m_calibrationfilename.indexOf(".mesf") == -1)
 		m_calibrationfilename.append(".mcal");
 }
      
@@ -1471,7 +1480,7 @@ bool Measurement::loadSetup(const QString &name)
 //	m_acquireListfile = settings.value("listmode", "true").toBool();
 	sz = settings.value("calibrationfile", "").toString();
 
-	readCalibration(sz);
+	readCalibration(sz, true);
 
 	settings.endGroup();
 
@@ -1549,6 +1558,10 @@ bool Measurement::saveSetup(const QString &name)
 	settings.setValue("debugLevel", QString("%1").arg(debug[DEBUGLEVEL]));
 	settings.setValue("calibrationfile", m_calibrationfilename);
 	settings.endGroup();
+
+	UserMapCorrection* pUserMapCorrection(dynamic_cast<UserMapCorrection*>(m_posHistMapCorrection));
+	if (pUserMapCorrection != NULL)
+		pUserMapCorrection->saveCorrectionFile(m_calibrationfilename);
 
 	m_mesydaq->saveSetup(settings);
 	settings.sync();

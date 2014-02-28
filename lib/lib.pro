@@ -19,7 +19,7 @@
 ############################################################################
 
 
-VERSION		= 1.23.6
+VERSION		= 1.24.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -57,8 +57,10 @@ HEADERS 	+= stdafx.h \
 		   mcpd2.h \
 		   mdll.h \
 		   networkdevice.h \
-        	   structures.h \
-		   calibration.h
+		   structures.h \
+		   calibration.h \
+		   mappeddetector.h \
+		   editormemory.h
 
 SOURCES 	+= stdafx.cpp \
 		   counter.cpp \
@@ -81,4 +83,6 @@ SOURCES 	+= stdafx.cpp \
 		   mstd16.cpp \
 		   mdll.cpp \
 		   mpsdfactory.cpp \
-		   networkdevice.cpp
+		   networkdevice.cpp \
+		   mappeddetector.cpp \
+		   editormemory.cpp

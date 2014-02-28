@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.23.2
+VERSION		= 0.24.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -69,7 +69,9 @@ HEADERS 	+= mainwidget.h \
 		colormaps.h \
 		colorwidget.h \
 		mpsdpulser.h \
-		mdllpulser.h
+		mdllpulser.h \
+		histogrammappingeditor.h \
+		histogramedittablewidget.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -87,7 +89,8 @@ FORMS 		+= mainwidget.ui \
 		statusbarentry.ui \
 		passworddialog.ui \
 		mpsdpulser.ui \
-		mdllpulser.ui
+		mdllpulser.ui \
+		histogrammappingeditor.ui
 
 SOURCES 	+= main.cpp \
 		mainwindow.cpp \
@@ -117,7 +120,9 @@ SOURCES 	+= main.cpp \
 		colormaps.cpp \
 		colorwidget.cpp \
 		mpsdpulser.cpp \
-		mdllpulser.cpp
+		mdllpulser.cpp \
+		histogrammappingeditor.cpp \
+		histogramedittablewidget.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png

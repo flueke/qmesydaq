@@ -244,7 +244,7 @@ public:
 
 	void readHistograms(const QString &name);
 
-	void readCalibration(const QString &name);
+	void readCalibration(const QString &name, bool bForceDefault = false);
 
 	void clearAllHist(void);
 
@@ -433,6 +433,9 @@ public:
 	 */
 	void setSetupType(const Setup val);
 
+	//! \return get access to the hardware layer
+	Mesydaq2 *getMesydaq() { return m_mesydaq; }
+
 public slots:
 	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
@@ -447,6 +450,9 @@ signals:
 
 	//! will be emitted in case of change in respect to the handling of list mode data files
 	void acqListfile(bool);
+
+	//! will be emitted in case of change of user mapping
+	void mappingChanged();
 
 protected:
 	void timerEvent(QTimerEvent *event);

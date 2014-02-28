@@ -83,6 +83,7 @@
     <addaction name="menuMCPD"/>
     <addaction name="actionModule"/>
     <addaction name="separator"/>
+    <addaction name="actionHistogram_Mapping"/>
     <addaction name="menuMode"/>
     <addaction name="separator"/>
     <addaction name="menuRemoteInterface"/>
@@ -220,6 +221,14 @@
   <action name="actionLoad_Calibration_File">
    <property name="text">
     <string>Load &amp;Calibration File ...</string>
+   </property>
+  </action>
+  <action name="actionHistogram_Mapping">
+   <property name="text">
+    <string>&amp;Histogram Mapping</string>
+   </property>
+   <property name="toolTip">
+    <string>edit histogram mapping</string>
    </property>
   </action>
   <action name="actionTACO">

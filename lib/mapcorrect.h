@@ -89,7 +89,7 @@ public:
 	}
 
 	//! destructor
-	~MapCorrection()
+	virtual ~MapCorrection()
 	{
 	}
 
@@ -122,6 +122,9 @@ public:
 
 	//! \return the correction map
 	const QRect& getMapRect() const { return m_mapRect; }
+
+	//! \return the source mapping size
+	QSize getSourceSize() const { return m_rect.size(); }
 
 	bool getMap(const QPoint& src, QPoint& dst, float& dblCorrection) const;
 
@@ -162,13 +165,18 @@ public:
 		return r;
 	}
 
+	void setOrientation(Orientation x)
+	{
+		m_iOrientation = x;
+	}
+
 	//! \return the orientation of the mapping
 	enum Orientation orientation(void)
 	{
 		return m_iOrientation;
 	}
 
-private:
+protected:
 	//! do not apply mapping
 	bool m_bNoMapping;
 

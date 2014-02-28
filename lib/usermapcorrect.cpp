@@ -25,11 +25,27 @@
 #include <QTextStream>
 #include <QStringList>
 
+#include "editormemory.h"
 #include "logging.h"
 
-UserMapCorrection::UserMapCorrection(const QString &fName)
+UserMapCorrection::UserMapCorrection(const QSize &size, const QString &fName)
+	: MapCorrection(size,MapCorrection::OrientationUp,MapCorrection::CorrectSourcePixel)
+	, m_pEditorMemory(NULL)
 {
 	loadCorrectionFile(fName);
+}
+
+UserMapCorrection::UserMapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+	: MapCorrection(size,iOrientation,iCorrection)
+	, m_pEditorMemory(NULL)
+{
+	m_pEditorMemory = new EditorMemory(NULL, size.width());
+}
+
+UserMapCorrection::~UserMapCorrection()
+{
+	if (m_pEditorMemory != NULL)
+		delete m_pEditorMemory;
 }
 
 bool UserMapCorrection::loadCorrectionFile(const QString &fName)
@@ -37,11 +53,28 @@ bool UserMapCorrection::loadCorrectionFile(const QString &fName)
 	if (fName.isEmpty())
 		return false;
 	if (fName.indexOf(".mcal") > 0)
+	{
+		setMESFData(NULL);
 		return loadCalFile(fName);
+	}
 	else if (fName.indexOf(".txt") > 0)
+	{
+		setMESFData(NULL);
 		return loadLUTFile(fName);
+	}
+	else if (fName.endsWith(".mesf"))
+		return loadMESFFile(fName);
 	else
 		return false;
+}
+
+bool UserMapCorrection::saveCorrectionFile(QString fName)
+{
+	if (m_pEditorMemory == NULL)
+		return false;
+	if (fName.isEmpty())
+		fName = m_pEditorMemory->getPath();
+	return m_pEditorMemory->saveToPath(fName);
 }
 
 bool UserMapCorrection::loadCalFile(const QString &fName)
@@ -233,3 +266,87 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 	return false;
 }
 
+bool UserMapCorrection::loadMESFFile(const QString &fName)
+{
+	if (m_pEditorMemory == NULL)
+		m_pEditorMemory = new EditorMemory(NULL, m_rect.width());
+	if (!m_pEditorMemory->loadFromPath(fName))
+		return false;
+	return setMapCorrection(*m_pEditorMemory);
+}
+
+void UserMapCorrection::setMESFData(EditorMemory *pEM)
+{
+	if (m_pEditorMemory == pEM)
+		return;
+	if (m_pEditorMemory != NULL)
+		delete m_pEditorMemory;
+	m_pEditorMemory = pEM;
+}
+
+bool UserMapCorrection::setMapCorrection(EditorMemory &EM)
+{
+	int iNonExisting = 0;                      // number of unused tubes
+	int iNumberOfTubes = EM.getChannelCount(); // tube count
+	int iMinStart = m_rect.height();           // lowest used channel
+	int iMaxEnd = 0;                          // highest used channel
+	int iFirst = m_rect.width();               // lowest used tube
+	int iLast = -1;                            // highest used tube
+
+	m_iOrientation = EM.getOrientation();
+	m_aptMap.resize(m_rect.width() * m_rect.height());
+	m_afCorrection.resize(m_rect.width() * m_rect.height());
+	m_iCorrection = CorrectSourcePixel;
+	if (iNumberOfTubes > m_rect.width())
+		iNumberOfTubes = m_rect.width();
+	for (int iY = 0; iY < iNumberOfTubes; ++iY)
+	{
+		MappedDetector &md = EM.getTubes()[iY];
+		if (md.getEndOutput() >= 0 && iMaxEnd <= md.getEndOutput())
+			iMaxEnd = md.getEndOutput() + 1;
+		if (md.getStartOutput() >= 0 && iMinStart > md.getStartOutput())
+			iMinStart = md.getStartOutput();
+
+		double dblFactor(1.0);
+		if (md.getEndInput() != md.getStartInput())
+			dblFactor = double(md.getEndOutput() - md.getStartOutput()) / double(md.getEndInput() - md.getStartInput());
+
+		bool bOffline = md.getEndInput() < 0 || md.getEndOutput() < 0 ||
+						md.getStartInput() < 0 || md.getStartOutput() < 0 || md.getFactor() <= 0.0;
+
+		for (int iX = 0; iX < m_rect.height(); ++iX)
+		{
+			QPoint *pDst = &m_aptMap[iY + iX * m_rect.width()];
+			float* pFactor = &m_afCorrection[iY + iX * m_rect.width()];
+			if (!bOffline && iX >= md.getStartInput() && iX <= md.getEndInput())
+			{
+				pDst->setX(iY - iNonExisting);
+				pDst->setY(int(dblFactor * (iX - md.getStartInput()) + md.getStartOutput() + 0.5));
+				*pFactor = md.getFactor();
+			}
+			else
+			{
+				pDst->setX(-1);
+				pDst->setY(-1);
+				*pFactor = 1.0;
+			}
+		}
+		if (bOffline)
+			++iNonExisting;
+		else
+		{
+			if (iFirst > iY)
+				iFirst = iY;
+			if (iLast < iY)
+				iLast = iY;
+		}
+	}
+	if (iMinStart >= m_rect.height() || iMaxEnd <= 0 || iMinStart >= iMaxEnd)
+		iMinStart = iMaxEnd = 0;
+	if (iFirst > iLast)
+		iFirst = iLast = 0;
+
+	m_bNoMapping = false;
+	m_mapRect = QRect(iFirst, iMinStart, iNumberOfTubes - iNonExisting, iMaxEnd - iMinStart);
+	return (iMinStart < iMaxEnd && iFirst < iLast && iNumberOfTubes > iNonExisting);
+}

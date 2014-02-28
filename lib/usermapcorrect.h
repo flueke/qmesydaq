@@ -27,6 +27,8 @@
 
 #include <QHash>
 
+class LIBQMESYDAQ_EXPORT EditorMemory;
+
 /**
  * \short this object represents user defined histogram mapping and correction data
  *
@@ -34,39 +36,68 @@
  */
 class LIBQMESYDAQ_EXPORT UserMapCorrection : public MapCorrection
 {
+	//! unaccessible default constructor
+	UserMapCorrection() {}
 public:
-	//! default constructor
-	UserMapCorrection()
-		: MapCorrection()
-	{
-	}
-
 	/**
 	 * constructor
 	 *
+	 * \param size
 	 * \param fName file name
 	 */
-	UserMapCorrection(const QString &fName);
+	UserMapCorrection(const QSize &size, const QString &fName);
+	/*!
+		constructor
+
+		\param size
+		\param iOrientation
+		\param iCorrection
+	 */
+	UserMapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection);
+
+	//! \brief destructor
+	virtual ~UserMapCorrection();
 
 	/**
 	 * loads a correction file
-         * Depending on the extensions it tries to use different types of reading
-	 * If the extension is mcal it uses the loadCalFile otherwise the loadLUTFile
+	 * Depending on the extensions it tries to use different types of reading
+	 * extensions: mcal -> loadCalFile, mesf -> loadMESFFile, txt -> loadLUTFile
 	 *
 	 * \param fName file name
 	 * \return true if the reading was successful otherwise false
 	 */
 	bool loadCorrectionFile(const QString &fName);
 
+	/**
+	 * save a correction file
+	 * implemented for MESF files only
+	 * \param fName filename
+	 * \return true if the writing was successful
+	 */
+	bool saveCorrectionFile(QString fName);
+
+	//! \brief get access to histogram mapping editor data
+	EditorMemory* getMESFData() const { return m_pEditorMemory; }
+
+	//! \brief set new histogram mapping editor data pointer
+	void setMESFData(EditorMemory *pEM);
+
+	//! \brief set mapping from histogram mapping editor
+	bool setMapCorrection(EditorMemory &EM);
+
 private:
 	bool loadCalFile(const QString &fName);
 
 	bool loadLUTFile(const QString &fName);
 
+	bool loadMESFFile(const QString &fName);
+
 private:
 	TubeRange		m_detector;
 
 	QHash<int, TubeRange>	m_tube;
+
+	EditorMemory*	m_pEditorMemory;
 };
 
 #endif 

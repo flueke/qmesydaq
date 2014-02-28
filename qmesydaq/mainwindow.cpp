@@ -62,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionPulser, SIGNAL(triggered()), m_main, SLOT(toolPulser()));
 	connect(action_About, SIGNAL(triggered()), m_main, SLOT(about()));
 	connect(actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+	connect(actionHistogram_Mapping, SIGNAL(triggered()), m_main, SLOT(editHistogramMapping()));
 
 	connect(m_main, SIGNAL(started(bool)), action_Replay_List_File, SLOT(setDisabled(bool)));
 	connect(m_main, SIGNAL(started(bool)), actionLoad_Histogram_File, SLOT(setDisabled(bool)));
@@ -168,6 +169,7 @@ void MainWindow::selectUser(void)
 	actionTACO->setVisible(false);
 #endif
 	actionPulser->setVisible(false);
+	actionHistogram_Mapping->setVisible(false);
 	m_main->selectUserMode(MainWidget::User);
 }
 
@@ -183,6 +185,8 @@ void MainWindow::selectExpert(void)
 #endif
 		actionPulser->setVisible(true);
 		actionPulser->setEnabled(true);
+		actionHistogram_Mapping->setVisible(true);
+		actionHistogram_Mapping->setEnabled(true);
 		m_main->selectUserMode(MainWidget::Expert);
 	}
 	else
@@ -202,6 +206,8 @@ void MainWindow::selectSuperuser(void)
 #endif
 		actionPulser->setVisible(true);
 		actionPulser->setEnabled(true);
+		actionHistogram_Mapping->setVisible(true);
+		actionHistogram_Mapping->setEnabled(true);
 		m_main->selectUserMode(MainWidget::SuperUser);
 	}
 	else
