@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2012-2013 Jens Krüger
+// Copyright (C) 2012-2014 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,18 +38,18 @@
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-MesyDAQ::IO::Timer::Timer( const std::string& name, DevLong& error) throw (::TACO::Exception)
-	: ::TACO::Server( name, error)
+MesyDAQ::IO::Timer::Timer(const std::string& name, DevLong& error) throw (::TACO::Exception)
+	: ::TACO::Server(name, error)
 
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS END
 
-        , m_interface(NULL)
+	, m_interface(NULL)
 
 	/* , MyFirstBaseClass(), MySecondBaseClass(), ... */
-{
+
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
-
+{
 	addDeviceType(::IO::TIMER_ID);
 	addCommand(::TACO::Command::START, &tacoStart, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::STOP, &tacoStop, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
@@ -81,8 +81,8 @@ MesyDAQ::IO::Timer::Timer( const std::string& name, DevLong& error) throw (::TAC
 		Server::setDeviceState(DEVON_NOT_REACHED);
 	}
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE END
-        MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-        if (app)
+	MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+	if (app)
 		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 }
 
@@ -94,114 +94,92 @@ MesyDAQ::IO::Timer::~Timer() throw ()
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS BEGIN
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-void MesyDAQ::IO::Timer::tacoStart(::TACO::Server *server, DevArgument , DevArgument ) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		s->start();
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->start();
 }
 
-void MesyDAQ::IO::Timer::tacoStop(::TACO::Server *server, DevArgument , DevArgument ) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		s->stop();
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->stop();
 }
 
-void MesyDAQ::IO::Timer::tacoSetPreselection(::TACO::Server *server, DevArgument argin, DevArgument ) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoSetPreselection(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		s->setPreselection( ::TACO::convert( static_cast<DevDouble*>( argin)));
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->setPreselection(::TACO::convert(static_cast<DevDouble*>(argin)));
 }
 
-void MesyDAQ::IO::Timer::tacoResume(::TACO::Server *server, DevArgument , DevArgument ) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		s->resume();
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->resume();
 }
 
-void MesyDAQ::IO::Timer::tacoClear(::TACO::Server *server, DevArgument , DevArgument ) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		s->clear();
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->clear();
 }
 
-void MesyDAQ::IO::Timer::tacoPreselection(::TACO::Server *server, DevArgument , DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoPreselection(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		::TACO::assign( static_cast<DevDouble*>( argout), s->preselection());
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	::TACO::assign(static_cast<DevDouble*>(argout), s->preselection());
 }
 
-void MesyDAQ::IO::Timer::tacoSetMode(::TACO::Server *server, DevArgument argin, DevArgument ) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoSetMode(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		s->setMode( ::TACO::convert( static_cast<DevLong*>( argin)));
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->setMode(::TACO::convert(static_cast<DevLong*>(argin)));
 }
 
-void MesyDAQ::IO::Timer::tacoMode(::TACO::Server *server, DevArgument , DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoMode(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		::TACO::assign( static_cast<DevLong*>( argout), s->mode());
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	::TACO::assign(static_cast<DevLong*>(argout), s->mode());
 }
 
-void MesyDAQ::IO::Timer::tacoEnableMaster(::TACO::Server *server, DevArgument argin, DevArgument ) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoEnableMaster(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		s->enableMaster( ::TACO::convert( static_cast<DevBoolean*>( argin)));
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->enableMaster(::TACO::convert(static_cast<DevBoolean*>(argin)));
 }
 
-void MesyDAQ::IO::Timer::tacoIsMaster(::TACO::Server *server, DevArgument , DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoIsMaster(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		::TACO::assign( static_cast<DevBoolean*>( argout), s->isMaster());
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	::TACO::assign(static_cast<DevBoolean*>(argout), s->isMaster());
 }
 
-void MesyDAQ::IO::Timer::tacoRead(::TACO::Server *server, DevArgument , DevArgument argout) throw (::TACO::Exception)
+void MesyDAQ::IO::Timer::tacoRead(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception)
 {
-	Timer* s = dynamic_cast<Timer*>( server);
-	if (s != 0) {
-		::TACO::assign( static_cast<DevDouble*>( argout), s->read());
-	} else {
-		throw ::TACO::Exception( ::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	}
+	Timer* s = dynamic_cast<Timer*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	::TACO::assign(static_cast<DevDouble*>(argout), s->read());
 }
 
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS END

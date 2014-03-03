@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2012-2013 Jens Krüger
+// Copyright (C) 2012-2014 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,11 +40,11 @@
 
 DevVoid MesyDAQ::IO::Timer::start() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::start()" << log4cpp::eol;
+	INFO_STREAM << "MesyDAQ::IO::Timer::start()" << ENDLOG;
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -54,11 +54,11 @@ DevVoid MesyDAQ::IO::Timer::start() throw (::TACO::Exception)
 
 DevVoid MesyDAQ::IO::Timer::stop() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::stop()" << log4cpp::eol;
+	INFO_STREAM << "MesyDAQ::IO::Timer::stop()" << ENDLOG;
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -68,11 +68,11 @@ DevVoid MesyDAQ::IO::Timer::stop() throw (::TACO::Exception)
 
 DevVoid MesyDAQ::IO::Timer::setPreselection(const DevDouble input) throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::setPreselection(" << input << ")" << log4cpp::eol;
+	INFO_STREAM << "MesyDAQ::IO::Timer::setPreselection(" << input << ")" << ENDLOG;
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 		m_interface->setPreSelection(TCT, input);
 	}
 	catch (::TACO::Exception &e)
@@ -83,11 +83,11 @@ DevVoid MesyDAQ::IO::Timer::setPreselection(const DevDouble input) throw (::TACO
 
 DevVoid MesyDAQ::IO::Timer::resume() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::resume()" << log4cpp::eol;
+	INFO_STREAM << "MesyDAQ::IO::Timer::resume()" << ENDLOG;
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -97,11 +97,11 @@ DevVoid MesyDAQ::IO::Timer::resume() throw (::TACO::Exception)
 
 DevVoid MesyDAQ::IO::Timer::clear() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::clear()" << log4cpp::eol;
+	INFO_STREAM << "MesyDAQ::IO::Timer::clear()" << ENDLOG;
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -111,12 +111,12 @@ DevVoid MesyDAQ::IO::Timer::clear() throw (::TACO::Exception)
 
 DevDouble MesyDAQ::IO::Timer::preselection() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::preselection()" << log4cpp::eol;
-	DevDouble tmp(0.0);
+	INFO_STREAM << "MesyDAQ::IO::Timer::preselection()" << ENDLOG;
+	static DevDouble tmp(0.0);
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 		tmp = m_interface->preSelection(TCT);
 	}
 	catch (::TACO::Exception &e)
@@ -128,11 +128,11 @@ DevDouble MesyDAQ::IO::Timer::preselection() throw (::TACO::Exception)
 
 DevVoid MesyDAQ::IO::Timer::setMode(const DevLong input) throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::setMode(" << input << ")" << log4cpp::eol;
+	INFO_STREAM << "MesyDAQ::IO::Timer::setMode(" << input << ")" << ENDLOG;
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -142,12 +142,12 @@ DevVoid MesyDAQ::IO::Timer::setMode(const DevLong input) throw (::TACO::Exceptio
 
 DevLong MesyDAQ::IO::Timer::mode() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::mode()" << log4cpp::eol;
-	DevLong tmp(::IO::MODE_NORMAL);
+	INFO_STREAM << "MesyDAQ::IO::Timer::mode()" << ENDLOG;
+	static DevLong tmp(::IO::MODE_NORMAL);
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -158,11 +158,11 @@ DevLong MesyDAQ::IO::Timer::mode() throw (::TACO::Exception)
 
 DevVoid MesyDAQ::IO::Timer::enableMaster(const bool input) throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::enableMaster(" << input << ")" << log4cpp::eol;
+	INFO_STREAM << "MesyDAQ::IO::Timer::enableMaster(" << input << ")" << ENDLOG;
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 		m_interface->selectCounter(TCT, input, preselection());
 	}
 	catch (::TACO::Exception &e)
@@ -173,12 +173,12 @@ DevVoid MesyDAQ::IO::Timer::enableMaster(const bool input) throw (::TACO::Except
 
 bool MesyDAQ::IO::Timer::isMaster() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::isMaster()" << log4cpp::eol;
-	bool tmp(false);
+	INFO_STREAM << "MesyDAQ::IO::Timer::isMaster()" << ENDLOG;
+	static bool tmp(false);
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 		tmp = m_interface->counterSelected(TCT);
 	}
 	catch (::TACO::Exception &e)
@@ -190,12 +190,12 @@ bool MesyDAQ::IO::Timer::isMaster() throw (::TACO::Exception)
 
 DevDouble MesyDAQ::IO::Timer::read() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::IO::Timer::read()" << log4cpp::eol;
-	DevDouble tmp;
+	INFO_STREAM << "MesyDAQ::IO::Timer::read()" << ENDLOG;
+	static DevDouble tmp(0.0);
 	try
 	{
 		if (!m_interface)
-        		throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 		tmp = m_interface->readCounter(TCT);
 	}
 	catch (::TACO::Exception &e)
@@ -207,30 +207,30 @@ DevDouble MesyDAQ::IO::Timer::read() throw (::TACO::Exception)
 
 void MesyDAQ::IO::Timer::deviceInit(void) throw (::TACO::Exception)
 {
-// Please implement this for the startup 
+	INFO_STREAM << "MesyDAQ::IO::Timer::deviceInit()" << ENDLOG;
+// Please implement this for the startup
 	try
 	{
 		::TACO::Server::deviceUpdate(std::string());
+		setDeviceState(::TACO::State::DEVICE_NORMAL);
 	}
 	catch (const ::TACO::Exception &e)
 	{
 		setDeviceState(::TACO::State::FAULT);
 		throw;
 	}
-	setDeviceState(::TACO::State::DEVICE_NORMAL);
-#if 0
-	::TACO::Server::deviceInit();
-#endif
 }
 
 void MesyDAQ::IO::Timer::deviceReset(void) throw (::TACO::Exception)
 {
+	INFO_STREAM << "MesyDAQ::IO::Timer::deviceReset()" << ENDLOG;
 	::TACO::Server::deviceReset();
 }
 
 DevShort MesyDAQ::IO::Timer::deviceState(void) throw (::TACO::Exception)
 {
-	if(!m_interface)
+	INFO_STREAM << "MesyDAQ::IO::Timer::deviceState()" << ENDLOG;
+	if (!m_interface)
 		return ::TACO::State::FAULT;
 	switch (m_interface->status())
 	{
@@ -244,10 +244,12 @@ DevShort MesyDAQ::IO::Timer::deviceState(void) throw (::TACO::Exception)
 
 void MesyDAQ::IO::Timer::deviceUpdate(void) throw (::TACO::Exception)
 {
+	INFO_STREAM << "MesyDAQ::IO::Timer::deviceUpdate()" << ENDLOG;
 	::TACO::Server::deviceUpdate();
 }
 
 void MesyDAQ::IO::Timer::deviceQueryResource(void) throw (::TACO::Exception)
 {
+	INFO_STREAM << "MesyDAQ::IO::Timer::deviceQueryResource()" << ENDLOG;
 	::TACO::Server::deviceQueryResource();
 }

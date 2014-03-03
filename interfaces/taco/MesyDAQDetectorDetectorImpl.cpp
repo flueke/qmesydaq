@@ -1,6 +1,5 @@
 // Interface to the QMesyDAQ software
-// Interface to the QMesyDAQ software
-// Copyright (C) 2009-2013 Jens Krüger
+// Copyright (C) 2009-2014 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,114 +40,156 @@
 
 DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::start()" << log4cpp::eol;
-
-	if (!m_interface)
-        	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+	INFO_STREAM << "MesyDAQ::Detector::Detector::start()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 #if 1
-	m_listFilename = incNumber(m_listFilename);
+		m_listFilename = incNumber(m_listFilename);
 #else
-	m_listFilename = runNumber(m_listFilename);
+		m_listFilename = runNumber(m_listFilename);
 #endif
-	updateResource<std::string>("lastlistfile", m_listFilename);
-    	m_interface->setListFileName(m_listFilename.c_str());
+		updateResource<std::string>("lastlistfile", m_listFilename);
+		m_interface->setListFileName(m_listFilename.c_str());
 #if 1
-	m_histFilename = incNumber(m_histFilename);
+		m_histFilename = incNumber(m_histFilename);
 #else
-	m_histFilename = runNumber(m_histFilename);
+		m_histFilename = runNumber(m_histFilename);
 #endif
-	updateResource<std::string>("lasthistfile", m_histFilename);
-    	m_interface->setHistogramFileName(m_histFilename.c_str());
-	m_interface->start();
+		updateResource<std::string>("lasthistfile", m_histFilename);
+		m_interface->setHistogramFileName(m_histFilename.c_str());
+		m_interface->start();
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::start()");
+	}
 }
 
 DevVoid MesyDAQ::Detector::Detector::stop() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::stop()" << log4cpp::eol;
-
-	if (!m_interface)
-        	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-        m_interface->stop();
+	INFO_STREAM << "MesyDAQ::Detector::Detector::stop()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->stop();
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::stop()");
+	}
 }
 
 DevVoid MesyDAQ::Detector::Detector::resume() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::resume()" << log4cpp::eol;
-
-	if (!m_interface)
-        	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-	m_interface->resume();
+	INFO_STREAM << "MesyDAQ::Detector::Detector::resume()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->resume();
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::resume()");
+	}
 }
 
 DevVoid MesyDAQ::Detector::Detector::clear() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::clear()" << log4cpp::eol;
-
-	if (!m_interface)
-        	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-        m_interface->clear();
+	INFO_STREAM << "MesyDAQ::Detector::Detector::clear()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->clear();
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::clear()");
+	}
 }
 
 DevVoid MesyDAQ::Detector::Detector::setPreselection(const DevDouble input) throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::setPrelection(" << input << ")" << log4cpp::eol;
-
-	if (!m_interface)
-        	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-        m_interface->setPreSelection(input);
+	INFO_STREAM << "MesyDAQ::Detector::Detector::setPrelection(" << input << ")" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		m_interface->setPreSelection(input);
 #warning TODO preselection values
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::setPreselection()");
+	}
 }
 
 DevDouble MesyDAQ::Detector::Detector::preselection() throw (::TACO::Exception)
 {
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::preselection()" << log4cpp::eol;
-
-	if (!m_interface)
-        	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-        return m_interface->preSelection();
+	INFO_STREAM << "MesyDAQ::Detector::Detector::preselection()" << ENDLOG;
+	static DevDouble retVal(0.0);
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		retVal = m_interface->preSelection();
 #warning TODO preselection values
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::preselection()");
+	}
+	return retVal;
 }
 
 const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::Exception)
 {
+	INFO_STREAM << "MesyDAQ::Detector::Detector::read()" << ENDLOG;
 	static std::vector<DevULong> tmp;
-	logStream->infoStream() << "MesyDAQ::Detector::Detector::read()" << log4cpp::eol;
-
 	tmp.clear();
-	if (!m_interface)
-        	throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-        
-	QList<quint64> tmpList;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+
+		QList<quint64> tmpList;
 // complete histogram
-	{
-		quint16 width,
-			height;
+		if (true)
+		{
+			INFO_STREAM << "MesyDAQ::Detector::Detector::read(" << m_histo << ")" << ENDLOG;
+			QSize s = m_interface->readHistogramSize(m_histo);
+			tmpList = m_interface->readHistogram(m_histo);
 
-		logStream->infoStream() << "MesyDAQ::Detector::Detector::read(" << m_histo << ")" << log4cpp::eol;
-		QSize s = m_interface->readHistogramSize(m_histo);
-		tmpList = m_interface->readHistogram(m_histo);
-
-		tmp.push_back(s.width());
-		tmp.push_back(s.height());
-		tmp.push_back(1);
-	}
+			tmp.push_back(s.width());
+			tmp.push_back(s.height());
+			tmp.push_back(1);
+		}
 // spectrogram
-	{
+		else
+		{
 // 1 1 1 value
-#if 0
-		tmpList = m_interface->readDiffractogram();
-        	tmp.push_back(m_values.count());
-		tmp.push_back(1);
-		tmp.push_back(1);
-#endif
+			tmpList = m_interface->readDiffractogram();
+			tmp.push_back(tmpList.count());
+			tmp.push_back(1);
+			tmp.push_back(1);
+		}
+		for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+			tmp.push_back(quint32(*it));
 	}
-	for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
-		tmp.push_back(quint32(*it));
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::read()");
+	}
 	return tmp;
 }
 
 void MesyDAQ::Detector::Detector::deviceInit(void) throw (::TACO::Exception)
 {
+	INFO_STREAM << "MesyDAQ::Detector::Detector::deviceInit()" << ENDLOG;
 	// Please implement this for the startup
 	try
 	{
@@ -168,7 +209,8 @@ void MesyDAQ::Detector::Detector::deviceInit(void) throw (::TACO::Exception)
 
 DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception)
 {
-	if(!m_interface)
+	INFO_STREAM << "MesyDAQ::Detector::Detector::deviceState()" << ENDLOG;
+	if (!m_interface)
 		return ::TACO::State::FAULT;
 	switch (m_interface->status())
 	{
@@ -182,68 +224,70 @@ DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception
 
 void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 {
-        if (resourceUpdateRequest("runid"))
-                try
-                {
-                        m_listFilename = queryResource<DevULong>("runid");
+	INFO_STREAM << "MesyDAQ::Detector::Detector::deviceUpdate()" << ENDLOG;
+
+	if (resourceUpdateRequest("runid"))
+		try
+		{
+			m_listFilename = queryResource<DevULong>("runid");
 			if (!m_interface)
-        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-                        m_interface->setRunID(m_runid);
-			logStream->errorStream() << "RUN ID " << m_runid << log4cpp::eol;
-                }
-                catch (::TACO::Exception &e)
-                {
-                        throw_exception(e, "could not update 'runid' ");
-                }
-        if (resourceUpdateRequest("lastlistfile"))
-                try
-                {
-                        m_listFilename = queryResource<std::string>("lastlistfile");
+				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			m_interface->setRunID(m_runid);
+			ERROR_STREAM << "RUN ID " << m_runid << ENDLOG;
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'runid' ");
+		}
+	if (resourceUpdateRequest("lastlistfile"))
+		try
+		{
+			m_listFilename = queryResource<std::string>("lastlistfile");
 			if (m_listFilename == "")
 				m_listFilename = "tacolistfile00000.mdat";
 			if (!m_interface)
-        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-                        m_interface->setListFileName(m_listFilename.c_str());
-			logStream->errorStream() << "LIST FILE " << m_listFilename << log4cpp::eol;
-                }
-                catch (::TACO::Exception &e)
-                {
-                        throw_exception(e, "could not update 'lastlistfile' ");
-                }
-        if (resourceUpdateRequest("lasthistfile")) 
-                try
-                {
-                        m_histFilename = queryResource<std::string>("lasthistfile");
+				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			m_interface->setListFileName(m_listFilename.c_str());
+			ERROR_STREAM << "LIST FILE " << m_listFilename << ENDLOG;
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'lastlistfile' ");
+		}
+	if (resourceUpdateRequest("lasthistfile"))
+		try
+		{
+			m_histFilename = queryResource<std::string>("lasthistfile");
 			if (m_histFilename == "")
 				m_histFilename = "tacohistfile00000.mtxt";
 			if (!m_interface)
-        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-                        m_interface->setHistogramFileName(m_histFilename.c_str());
+				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			m_interface->setHistogramFileName(m_histFilename.c_str());
 			m_binnedFilename = m_histFilename;
 			updateResource<std::string>("lastbinnedfile", m_binnedFilename);
-			logStream->errorStream() << "HISTOGRAM FILE " << m_histFilename << log4cpp::eol;
-                }
-                catch (::TACO::Exception &e)
-                {
-                        throw_exception(e, "could not update 'lasthistfile' ");
-                }
-        if (resourceUpdateRequest("lastbinnedfile")) 
-                try
-                {
-                        m_binnedFilename = queryResource<std::string>("lastbinnedfile");
+			ERROR_STREAM << "HISTOGRAM FILE " << m_histFilename << ENDLOG;
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'lasthistfile' ");
+		}
+	if (resourceUpdateRequest("lastbinnedfile"))
+		try
+		{
+			m_binnedFilename = queryResource<std::string>("lastbinnedfile");
 			if (m_binnedFilename == "")
 				m_binnedFilename = "tacohistfile00000.mtxt";
 			if (!m_interface)
-        			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-                        m_interface->setHistogramFileName(m_binnedFilename.c_str());
+				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			m_interface->setHistogramFileName(m_binnedFilename.c_str());
 			m_histFilename = m_binnedFilename;
 			updateResource<std::string>("lasthistfile", m_histFilename);
-			logStream->errorStream() << "BINNED FILE " << m_histFilename << log4cpp::eol;
-                }
-                catch (::TACO::Exception &e)
-                {
-                        throw_exception(e, "could not update 'lasthistfile' ");
-                }
+			ERROR_STREAM << "BINNED FILE " << m_histFilename << ENDLOG;
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'lasthistfile' ");
+		}
 	if (resourceUpdateRequest("histogram"))
 		try
 		{
@@ -259,10 +303,13 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 		{
 			throw_exception(e, "could not update 'histogram' ");
 		}
+	::TACO::Server::deviceUpdate();
 }
 
 void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Exception)
 {
+	INFO_STREAM << "MesyDAQ::Detector::Detector::deviceQueryResource()" << ENDLOG;
+
 	if (resourceQueryRequest("histogram"))
 		try
 		{
@@ -283,40 +330,47 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
 		{
 			throw_exception(e, "could not query resource 'histogram' ");
 		}
-        if (resourceQueryRequest("runid"))
-                try
-                {
-                        updateResource<DevULong>("runid", m_interface->getRunID());
-                }
-                catch (TACO::Exception &e)
-                {
-                        throw_exception(e, "Could not query resource 'runid' ");
-                }
-        if (resourceQueryRequest("lastlistfile"))
-                try
-                {
+
+	if (!m_interface)
+	{
+		makeResourceQuerySuccessful();
+		return;
+	}
+
+	if (resourceQueryRequest("runid"))
+		try
+		{
+			updateResource<DevULong>("runid", m_interface->getRunID());
+		}
+		catch (TACO::Exception &e)
+		{
+			throw_exception(e, "Could not query resource 'runid' ");
+		}
+	if (resourceQueryRequest("lastlistfile"))
+		try
+		{
 			if (m_interface->getListFileName().isEmpty())
 				m_interface->setListFileName(m_listFilename.c_str());
-                        updateResource<std::string>("lastlistfile", m_interface->getListFileName().toStdString());
-                }
-                catch (TACO::Exception &e)
-                {
-                        throw_exception(e, "Could not query resource 'lastlistfile' ");
-                }
-        if (resourceQueryRequest("lasthistfile") || resourceQueryRequest("lastbinnedfile"))
-                try
-                {
+			updateResource<std::string>("lastlistfile", m_interface->getListFileName().toStdString());
+		}
+		catch (TACO::Exception &e)
+		{
+			throw_exception(e, "Could not query resource 'lastlistfile' ");
+		}
+	if (resourceQueryRequest("lasthistfile") || resourceQueryRequest("lastbinnedfile"))
+		try
+		{
 			if (m_interface->getHistogramFileName().isEmpty())
 				m_interface->setHistogramFileName(m_histFilename.c_str());
-                        updateResource<std::string>("lasthistfile", m_interface->getHistogramFileName().toStdString());
-                        updateResource<std::string>("lastbinnedfile", m_interface->getHistogramFileName().toStdString());
-                }
-                catch (TACO::Exception &e)
-                {
-                        throw_exception(e, "Could not query resource 'lasthistfile' ");
-                }
+			updateResource<std::string>("lasthistfile", m_interface->getHistogramFileName().toStdString());
+			updateResource<std::string>("lastbinnedfile", m_interface->getHistogramFileName().toStdString());
+		}
+		catch (TACO::Exception &e)
+		{
+			throw_exception(e, "Could not query resource 'lasthistfile' ");
+		}
 
-        TACO::Server::deviceQueryResource();
+	TACO::Server::deviceQueryResource();
 }
 
 std::string MesyDAQ::Detector::Detector::incNumber(const std::string &val)
@@ -337,14 +391,14 @@ std::string MesyDAQ::Detector::Detector::incNumber(const std::string &val)
 	{
 		currIndex = strtol(baseName.substr(baseName.length() - 5).c_str(), NULL, 10);
 		if (currIndex)
-        		baseName.erase(baseName.length() - 5);
+			baseName.erase(baseName.length() - 5);
 	}
 	std::string tmp = ::TACO::numberToString(++currIndex, 5);
 	pos = tmpString.find(baseName);
 	pos += baseName.length();
 	tmpString.erase(pos);
 	for (int i = tmp.length(); i < 5; ++i)
-        	tmpString += '0';
+		tmpString += '0';
 	tmpString += tmp;
 	tmpString += ext;
 	return tmpString;
@@ -368,7 +422,7 @@ std::string MesyDAQ::Detector::Detector::runNumber(const std::string &val)
 	{
 		currIndex = strtol(baseName.substr(baseName.length() - 5).c_str(), NULL, 10);
 		if (currIndex)
-        		baseName.erase(baseName.length() - 5);
+			baseName.erase(baseName.length() - 5);
 	}
 	if (m_interface)
 	{
@@ -379,7 +433,7 @@ std::string MesyDAQ::Detector::Detector::runNumber(const std::string &val)
 	pos += baseName.length();
 	tmpString.erase(pos);
 	for (int i = tmp.length(); i < 5; ++i)
-        	tmpString += '0';
+		tmpString += '0';
 	tmpString += tmp;
 	tmpString += ext;
 	return tmpString;

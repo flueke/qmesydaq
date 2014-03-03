@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2012-2013 Jens Krüger
+// Copyright (C) 2012-2014 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 #include <log4cpp/BasicConfigurator.hh>
 #include <log4cpp/PropertyConfigurator.hh>
-#include <log4cpp/Category.hh>
+#include <log4taco.h>
 
 #if HAVE_RPC_RPC_H
 #	include <rpc/rpc.h>
@@ -51,7 +51,7 @@
 // TACODEVEL CODEGEN STARTUP BEGIN
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-extern log4cpp::Category       *logStream;
+extern log4cpp::Category	*logStream;
 
 /**
  * This function will initialise the log4cpp logging service.
@@ -85,7 +85,7 @@ static void init_logstream(const std::string serverName)
 		log4cpp::BasicConfigurator::configure();
 	}
 	logStream = &log4cpp::Category::getInstance("taco.server." + tmp);
-	logStream->noticeStream() << "using " << logpath << " configuration file" << log4cpp::eol;
+	NOTICE_STREAM << "using " << logpath << " configuration file" << ENDLOG;
 }
 // list of all exported devices of the server
 static std::vector< ::TACO::Server *> devices;
@@ -96,7 +96,7 @@ static std::vector< ::TACO::Server *> devices;
  * should make use of the database to determine which devices it should create. Initialisation of
  * devices is normally done from startup().
  *
- * This routine overwrites the startup routine provided by the TACO libraries by linking this file 
+ * This routine overwrites the startup routine provided by the TACO libraries by linking this file
  * statically to the server. Due to the mechanism of dynamically loading unresolved symbols at runtime,
  * this routine will called if the startup routine is linked statically, otherwise the device server
  * will use the startup() provided the TACO libraries.
@@ -110,91 +110,106 @@ long startup(char *serverName, DevLong *e)
 {
 	init_logstream(serverName);
 
-	logStream->noticeStream() << "startup: starting device server: " << serverName << log4cpp::eol;
+	NOTICE_STREAM << "startup: starting device server: " << serverName << ENDLOG;
 
 	devices.clear();
-	TACO::Server::setServerName( serverName);
+	TACO::Server::setServerName(serverName);
 
 // Query the list of device names for the corresponding device server from the database
 	std::vector<std::string> deviceList;
-	try {
+	try
+	{
 		if (config_flags->device_no)
 		{
 			for (int i = 0; i < config_flags->device_no; ++i)
 				deviceList.push_back(config_flags->device_list[i]);
 		}
 		else
-			deviceList = TACO::queryDeviceList( serverName);
-	} catch (const ::TACO::Exception& tmp) {
+			deviceList = TACO::queryDeviceList(serverName);
+	}
+	catch (const ::TACO::Exception& tmp)
+	{
 		*e = tmp;
-		logStream->fatalStream() << "startup: error: getting device list failed: " << tmp.what() << log4cpp::eol;
+		FATAL_STREAM << "startup: error: getting device list failed: " << tmp.what() << ENDLOG;
 		return DS_NOTOK;
 	}
 
 // Allocate memory for the devices
-	if ( 0 < MesyDAQ::DEVICE_MAX && MesyDAQ::DEVICE_MAX < deviceList.size()) {
-		logStream->fatalStream() << "startup: error: too many devices" << log4cpp::eol;
+	if (0 < MesyDAQ::DEVICE_MAX && MesyDAQ::DEVICE_MAX < deviceList.size())
+	{
+		FATAL_STREAM << "startup: error: too many devices" << ENDLOG;
 		return DS_NOTOK;
 	}
 
-	for (unsigned int i = 0; i < deviceList.size(); ++i) {
-		logStream->infoStream() << "startup: device: " << deviceList[i] << log4cpp::eol;
-	}
+	for (unsigned int i = 0; i < deviceList.size(); ++i)
+		INFO_STREAM << "startup: device: " << deviceList[i] << ENDLOG;
 
 	unsigned int counter = 0;
 // Create and export the devices
-	for (unsigned int i = 0; i < deviceList.size(); ++i) {
+	for (unsigned int i = 0; i < deviceList.size(); ++i)
+	{
 		// Determine which device should be created
 		std::string type;
-		try {
+		try
+		{
 			type = TACO::queryResource<std::string>(deviceList [i], "type");
-		} catch (const ::TACO::Exception& tmp) {
+		}
+		catch (const ::TACO::Exception& tmp)
+		{
 			*e = tmp;
-			logStream->infoStream() << "startup: error: cannot get type for: " << deviceList[i]
-				<< " : " << tmp.what() << log4cpp::eol;
+			INFO_STREAM << "startup: error: cannot get type for: " << deviceList[i]
+				<< " : " << tmp.what() << ENDLOG;
 			continue;
 		}
 
 // Create the device
 		::TACO::Server *device(NULL);
-		try {
-			if (type == IO::COUNTER_ID) {
-				device = new MesyDAQ::IO::Counter( deviceList [i], *e);
-			} else if (type == IO::TIMER_ID) {
-				device = new MesyDAQ::IO::Timer( deviceList [i], *e);
-			} else if (type == Detector::DETECTOR_ID) {
-				device = new MesyDAQ::Detector::Detector( deviceList [i], *e);
-			} else {
-				logStream->errorStream() << "startup: error: unsupported type: " << deviceList[i]
-					<< " : " << type << log4cpp::eol;
+		try
+		{
+			if (type == IO::COUNTER_ID)
+				device = new MesyDAQ::IO::Counter(deviceList [i], *e);
+			else if (type == IO::TIMER_ID)
+				device = new MesyDAQ::IO::Timer(deviceList [i], *e);
+			else if (type == Detector::DETECTOR_ID)
+				device = new MesyDAQ::Detector::Detector(deviceList [i], *e);
+			else
+			{
+				ERROR_STREAM << "startup: error: unsupported type: " << deviceList[i]
+					<< " : " << type << ENDLOG;
 				continue;
 			}
-			logStream->infoStream() << "startup: created device: " << deviceList[i] << log4cpp::eol;
-		} catch (const ::TACO::Exception& tmp) {
+			INFO_STREAM << "startup: created device: " << deviceList[i] << ENDLOG;
+		}
+		catch (const ::TACO::Exception& tmp)
+		{
 			*e = tmp;
-			logStream->errorStream() << "startup: error: cannot create device: " << deviceList[i]
-				<< " : " << tmp.what() << log4cpp::eol;
+			ERROR_STREAM << "startup: error: cannot create device: " << deviceList[i]
+				<< " : " << tmp.what() << ENDLOG;
 			continue;
 		}
 
 // Export the device
-		if (dev_export (const_cast<char*>(deviceList [i].c_str()), device, e) != DS_OK) {
+		if (dev_export (const_cast<char*>(deviceList [i].c_str()), device, e) != DS_OK)
+		{
 			delete device;
-			logStream->errorStream() << "startup: error: cannot export device: " << deviceList[i]
-				<< " : " << ::TACO::errorString( *e) << log4cpp::eol;
-		} else {
+			ERROR_STREAM << "startup: error: cannot export device: " << deviceList[i]
+				<< " : " << ::TACO::errorString(*e) << ENDLOG;
+		}
+		else
+		{
 			++counter;
-			logStream->infoStream() << "startup: exported device: " << deviceList[i] << log4cpp::eol;
+			INFO_STREAM << "startup: exported device: " << deviceList[i] << ENDLOG;
 			devices.push_back(device);
 		}
 	}
 
-	if (counter == deviceList.size()) {
-		logStream->noticeStream() << "startup: success" << log4cpp::eol;
-	} else if (counter != 0) {
-		logStream->errorStream() << "startup: some errors occured. Not all devices exported." << log4cpp::eol;
-	} else {
-		logStream->fatalStream() << "startup: failed" << log4cpp::eol;
+	if (counter == deviceList.size())
+		NOTICE_STREAM << "startup: success" << ENDLOG;
+	else if (counter != 0)
+		ERROR_STREAM << "startup: some errors occured. Not all devices exported." << ENDLOG;
+	else
+	{
+		FATAL_STREAM << "startup: failed" << ENDLOG;
 		return DS_NOTOK;
 	}
 
@@ -212,7 +227,7 @@ void unregister_server (void)
 	{
 		if ((*it) == NULL)
 			continue;
-		logStream->noticeStream() << "delete device " << (*it)->deviceName() << log4cpp::eol;
+		NOTICE_STREAM << "delete device " << (*it)->deviceName() << ENDLOG;
 		delete (*it);
 		(*it) = NULL;
 	}
@@ -226,25 +241,25 @@ void unregister_server (void)
 	if (multi_nethost[0].config_flags.device_server == True)
 	{
 		if (!multi_nethost[0].config_flags.no_database && (db_svc_unreg (multi_nethost[0].config_flags.server_name, &error) != DS_OK))
-			logStream->errorStream() << "db_svc_unreg failed" <<  error << log4cpp::eol;
+			ERROR_STREAM << "db_svc_unreg failed" <<  error << ENDLOG;
 //
 // destroy open client handles to message and database servers
-//		clnt_destroy (db_info.conf->clnt);
-//		clnt_destroy (msg_info.conf->clnt);
+//		clnt_destroy(db_info.conf->clnt);
+//		clnt_destroy(msg_info.conf->clnt);
 //
 	}
 //
 // unregister synchronous version (4) of server from portmapper
 //
-	pmap_unset (multi_nethost[0].config_flags.prog_number, API_VERSION);
+	pmap_unset(multi_nethost[0].config_flags.prog_number, API_VERSION);
 //
 // unregister the asynchronous version (5) of the server from portmapper
 //
-	pmap_unset (multi_nethost[0].config_flags.prog_number, ASYNCH_API_VERSION);
+	pmap_unset(multi_nethost[0].config_flags.prog_number, ASYNCH_API_VERSION);
 //
 //  finally unregister version (1) used by gettransient_ut()
 //
-	pmap_unset (multi_nethost[0].config_flags.prog_number, DEVSERVER_VERS);
+	pmap_unset(multi_nethost[0].config_flags.prog_number, DEVSERVER_VERS);
 //
 // the server has been unregistred, so set flag to false!
 // otherwise, there may be more than one attempt to unregister the server

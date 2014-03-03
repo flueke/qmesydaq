@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2009-2013 Jens Krüger
+// Copyright (C) 2009-2014 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,15 +44,15 @@ namespace MesyDAQ {
 	}
 }
 
-class MesyDAQ::Detector::Detector
 	// TACODEVEL CODEGEN BASE CLASSES BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
+class MesyDAQ::Detector::Detector
 	: public ::TACO::Server
 
 	// TACODEVEL CODEGEN BASE CLASSES END
 
-	/* , MyFirstBaseClass, MySecondBaseClass, ... */ 
+	/* , MyFirstBaseClass, MySecondBaseClass, ... */
 	// TACODEVEL CODEGEN METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 {
@@ -93,19 +93,19 @@ private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-	static void tacoStart( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
+	static void tacoStart(::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
-	static void tacoStop( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
+	static void tacoStop(::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
-	static void tacoSetPreselection( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
+	static void tacoSetPreselection(::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
-	static void tacoResume( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
+	static void tacoResume(::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
-	static void tacoClear( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
+	static void tacoClear(::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
-	static void tacoPreselection( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
+	static void tacoPreselection(::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
-	static void tacoRead( ::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
+	static void tacoRead(::TACO::Server* server, DevArgument argin, DevArgument argout) throw (::TACO::Exception);
 
 	void deviceInit(void) throw (::TACO::Exception);
 
@@ -117,7 +117,7 @@ private:
 	std::string runNumber(const std::string &val);
 
 private:
-        QMesyDAQDetectorInterface	*m_interface;
+	QMesyDAQDetectorInterface	*m_interface;
 
 	std::string			m_listFilename;
 
