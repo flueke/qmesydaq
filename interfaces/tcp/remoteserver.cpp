@@ -168,22 +168,14 @@ void RemoteServer::parseInput(const QString &line)
 		{
 			emit clear();
 		}
-		else if (cmd == "MONITOR1")
+		else if (cmd == "MONITOR1" || cmd == "MONITOR2" || cmd == "MONITOR3" || cmd == "MONITOR4")
 		{
 			if (l.length() > 2)
 			{
 				quint32 val = l.at(2).toULong();
-				emit monitor1(val);
-			}
-			else
-				syntaxOk = false;
-		}
-		else if (cmd == "MONITOR2")
-		{
-			if (l.length() > 2)
-			{
-				quint32 val = l.at(2).toULong();
-				emit monitor2(val);
+				quint8 i = cmd.right(1).toInt();
+				MSG_ERROR << cmd << " " << i << " " << val;
+				emit monitor(i, val);
 			}
 			else
 				syntaxOk = false;
@@ -237,14 +229,11 @@ void RemoteServer::parseInput(const QString &line)
 					emit event();
 					return;
 				}
-				else if (val == "MONITOR1")
+				else if (val == "MONITOR1" || val == "MONITOR2" || val == "MONITOR3" || val == "MONITOR4")
 				{
-					emit monitor1();
-					return;
-				}
-				else if (val == "MONITOR2")
-				{
-					emit monitor2();
+					quint8 i = val.right(1).toInt();
+					MSG_ERROR << val << " " << i;
+					emit monitor(i);
 					return;
 				}
 				else

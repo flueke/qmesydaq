@@ -134,6 +134,11 @@ contains(INTERFACE, CARESS) {
 	message("build the CARESS remote interface")
 }
 
+contains(INTERFACE, TCP) {
+        DEFINES		+= USE_TCP=1
+	message("build the TCP remote interface")
+}
+
 interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP")
 !count(interfaces, 0) {
         !count(interfaces, 1) {

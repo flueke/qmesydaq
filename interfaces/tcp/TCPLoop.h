@@ -22,10 +22,15 @@
 #ifndef TCPLOOP_H
 #define TCPLOOP_H
 
+#include <QList>
+#include <QString>
+
 #include <LoopObject.h>
 
 class QtInterface;
 class RemoteServer;
+class QMesyDAQDetectorInterface;
+class QThread;
 
 /**
   \short TCP loop to manange incoming TCP requests
@@ -48,15 +53,53 @@ public:
 	//! constructor
 	TCPLoop(QtInterface *interface = 0);
 
+	//! destructor
+	virtual ~TCPLoop();
+
 	QString version(void);
+
+private slots:
+	void start(void);
+	void stop(void);
+	void clear(void);
+	void reset(void);
+	void presetTimer(const quint32);
+	void presetMonitor(const quint8, const quint32);
+	void presetEvent(const quint32);
+	void status(void);
+	void histogram(void);
+	void timer(void);
+	void event(void);
+	void monitor(const quint8);
 
 protected:
 	//! thread  loop
 	void runLoop();
 
 private:
+	QString formatHistogram(quint32 width, quint32 height, const QList<quint64> histo);
+
+private:
 	//! TCP server object
-	RemoteServer	*m_server;
+	RemoteServer			*m_server;
+
+	//! TCP server port
+	quint16				m_tcpport;
+
+	//! The Qt interface
+	QMesyDAQDetectorInterface	*m_interface;
+
+	QString				m_listFilename;
+
+	QString				m_histFilename;
+
+	QString				m_binnedFilename;
+
+	quint32				m_runid;
+
+	quint32				m_histo;
+
+	QThread				*m_thread;
 };
 
 #endif // TACOLOOP_H

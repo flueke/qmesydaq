@@ -24,9 +24,10 @@
 
 #if USE_TACO
 #	include "TACOLoop.h"
-#endif
-#if USE_CARESS
+#elif USE_CARESS
 #	include "CARESSLoop.h"
+#elif USE_TCP
+#	include "TCPLoop.h"
 #endif
 
 const char* g_szShortUsage =
@@ -37,8 +38,7 @@ const char* g_szShortUsage =
 const char* g_szLongUsage =
 #if USE_TACO
 	"  -n=<nethost> set environment variable NETHOST\n"
-#endif
-#if USE_CARESS
+#elif USE_CARESS
 	"  -n=<name>    use this name in CORBA name service\n"
 #endif
 	"  -f=<file>\n  --file=<file>\n  --config=<file>\n" \
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
 #elif USE_CARESS
 	loop = new CARESSLoop(argList);
 #elif USE_TCP
-	loop = new TCPLoop(argList);
+	loop = new TCPLoop;
 #endif
 	if (loop)
 		app.setLoopObject(loop);

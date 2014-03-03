@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.23.1
+VERSION		= 0.23.2
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -136,6 +136,12 @@ contains(INTERFACE, CARESS) {
 	DEPENDPATH	+= $${SRCBASE}/interfaces/caress
 	INCLUDEPATH	+= $${SRCBASE}/interfaces/caress
 	LIBS		+= -L$${SRCBASE}/interfaces/caress -lcaressInterface $${LIBS}
+}
+
+contains(INTERFACE, TCP) {
+	DEPENDPATH	+= $${SRCBASE}/interfaces/tcp
+	INCLUDEPATH	+= $${SRCBASE}/interfaces/tcp
+	LIBS		+= -L$${SRCBASE}/interfaces/tcp -ltcpInterface $${LIBS}
 }
 
 INCLUDEPATH	+= diskspace

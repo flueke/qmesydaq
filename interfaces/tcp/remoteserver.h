@@ -70,13 +70,9 @@ signals :
 
 	void event(void);
 
-	void monitor1(const quint32);
+	void monitor(const quint8, const quint32);
 
-	void monitor1(void);
-
-	void monitor2(const quint32);
-
-	void monitor2(void);
+	void monitor(const quint8);
 
 	void status(void);
 
