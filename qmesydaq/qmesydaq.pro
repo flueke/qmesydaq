@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.24.2
+VERSION		= 0.25.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -71,7 +71,10 @@ HEADERS 	+= mainwidget.h \
 		mpsdpulser.h \
 		mdllpulser.h \
 		histogrammappingeditor.h \
-		histogramedittablewidget.h
+		histogramedittablewidget.h \
+		tacosetup.h \
+		caresssetup.h \
+		tcpsetup.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -90,7 +93,10 @@ FORMS 		+= mainwidget.ui \
 		passworddialog.ui \
 		mpsdpulser.ui \
 		mdllpulser.ui \
-		histogrammappingeditor.ui
+		histogrammappingeditor.ui \
+		tacosetup.ui \
+		caresssetup.ui \
+		tcpsetup.ui
 
 SOURCES 	+= main.cpp \
 		mainwindow.cpp \
@@ -122,7 +128,10 @@ SOURCES 	+= main.cpp \
 		mpsdpulser.cpp \
 		mdllpulser.cpp \
 		histogrammappingeditor.cpp \
-		histogramedittablewidget.cpp
+		histogramedittablewidget.cpp \
+		tacosetup.cpp \
+		caresssetup.cpp \
+		tcpsetup.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
@@ -131,10 +140,6 @@ contains(INTERFACE, TACO) {
 	DEPENDPATH	+= $${SRCBASE}/interfaces/taco
 	INCLUDEPATH	+= $${SRCBASE}/interfaces/taco
 	LIBS		+= -L$${SRCBASE}/interfaces/taco -ltacoInterface $${TACOLIBS} $${LIBS}
-
-	FORMS		+= tacosetup.ui
-	HEADERS		+= tacosetup.h
-	SOURCES		+= tacosetup.cpp
 }
 
 contains(INTERFACE, CARESS) {

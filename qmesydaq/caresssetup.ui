@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CARESSSetup</class>
+ <widget class="QDialog" name="CARESSSetup">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>702</width>
+    <height>101</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label1">
+     <property name="text">
+      <string>&lt;b&gt;CORBA Service&lt;/b&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label2">
+     <property name="toolTip">
+      <string>&lt;b&gt;default command line arguments&lt;/b&gt;&lt;br&gt;These default arguments are used, if no command line arguments are used while start of QMesyDAQ.</string>
+     </property>
+     <property name="text">
+      <string>default command line arguments</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLineEdit" name="argumentlist">
+     <property name="toolTip">
+      <string>&lt;b&gt;default command line arguments&lt;/b&gt;&lt;br&gt;These default arguments are used, if no command line arguments are used while start of QMesyDAQ.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>CARESSSetup</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>96</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>96</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>CARESSSetup</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>96</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>96</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

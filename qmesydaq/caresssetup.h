@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2013 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,26 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TACO_SETUP_H
-#define TACO_SETUP_H
+#ifndef CARESS_SETUP_H
+#define CARESS_SETUP_H
 
 #include <QDialog>
-#include "ui_tacosetup.h"
+#include "ui_caresssetup.h"
 
 /*!
-    \class TACOSetup
+    \class CARESSSetup
 
-    \short This class handles the setup dialog for setting up the TACO remote interface
+    \short This class handles the setup dialog for setting up the CARESS remote interface
 
     \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class TACOSetup : public QDialog, public Ui_TACOSetup
+class CARESSSetup : public QDialog, public Ui_CARESSSetup
 {
 	Q_OBJECT
 public:
-	TACOSetup(QWidget * = 0);
+	CARESSSetup(QWidget * = 0);
 
-	virtual ~TACOSetup(){}
+	virtual ~CARESSSetup(){}
 
 public slots:
 	virtual void accept(void);

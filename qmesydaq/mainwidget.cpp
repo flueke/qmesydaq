@@ -55,9 +55,9 @@
 #include "editormemory.h"
 #include "mainwindow.h"
 #include "stdafx.h"
-#if USE_TACO
-#	include "tacosetup.h"
-#endif
+#include "tacosetup.h"
+#include "tcpsetup.h"
+#include "caresssetup.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -1510,13 +1510,23 @@ void MainWidget::addMCPD(void)
     }
 }
 
-#if USE_TACO
 void MainWidget::setupTACO(void)
 {
     TACOSetup d;
     d.exec();
 }
-#endif
+
+void MainWidget::setupTCP(void)
+{
+    TCPSetup d;
+    d.exec();
+}
+
+void MainWidget::setupCARESS(void)
+{
+    CARESSSetup d;
+    d.exec();
+}
 
 /*!
     \fn void MainWidget::toolPulser(void)

@@ -55,8 +55,18 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionModule, SIGNAL(triggered()), m_main, SLOT(setupModule()));
 	connect(actionNewSetup, SIGNAL(triggered()), m_main, SLOT(newSetupSlot()));
 	connect(actionSetupMCPD, SIGNAL(triggered()), m_main, SLOT(setupMCPD()));
+	actionTACO->setVisible(false);
+	actionTCP->setVisible(false);
+	actionCARESS->setVisible(false);
 #if USE_TACO
+	actionTACO->setVisible(true);
 	connect(actionTACO, SIGNAL(triggered()), m_main, SLOT(setupTACO()));
+#elif USE_TCP
+	actionTCP->setVisible(true);
+	connect(actionTCP, SIGNAL(triggered()), m_main, SLOT(setupTCP()));
+#elif USE_CARESS
+	actionCARESS->setVisible(true);
+	connect(actionCARESS, SIGNAL(triggered()), m_main, SLOT(setupCARESS()));
 #endif
 	connect(actionAddMCPD, SIGNAL(triggered()), m_main, SLOT(addMCPD()));
 	connect(actionPulser, SIGNAL(triggered()), m_main, SLOT(toolPulser()));

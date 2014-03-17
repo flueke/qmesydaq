@@ -22,7 +22,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Files">
@@ -78,6 +78,8 @@
       <string>Remote Interface</string>
      </property>
      <addaction name="actionTACO"/>
+     <addaction name="actionTCP"/>
+     <addaction name="actionCARESS"/>
     </widget>
     <addaction name="actionGeneral"/>
     <addaction name="menuMCPD"/>
@@ -234,6 +236,25 @@
   <action name="actionTACO">
    <property name="text">
     <string>TACO</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionTCP">
+   <property name="text">
+    <string>TCP</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionCARESS">
+   <property name="text">
+    <string>CARESS</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionPulser">

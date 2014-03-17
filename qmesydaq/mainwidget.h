@@ -93,9 +93,12 @@ public slots:
 
 	void	setupMCPD();
 
-#if USE_TACO
 	void    setupTACO();
-#endif
+
+	void	setupTCP();
+
+	void	setupCARESS();
+
 	void 	addMCPD();
 
 	void	toolPulser();

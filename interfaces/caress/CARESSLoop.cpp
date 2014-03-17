@@ -239,6 +239,22 @@ void CARESSLoop::runLoop()
 		return;
 	}
 
+	if (m_asArguments.size() < 2)
+	{
+		// without command line arguments: use stored settings
+		// but use the current program name
+		QString sProgramName("QMesyDAQ");
+		if (m_asArguments.size() > 0)
+			sProgramName = m_asArguments[0];
+		m_asArguments.clear();
+		m_asArguments.append(sProgramName);
+
+		QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+		settings.beginGroup("CARESS");
+		m_asArguments.append(settings.value("argumentlist").toStringList());
+		settings.endGroup();
+	}
+
 	QList<char*> args1;
 	char** args2=NULL;
 	int i;

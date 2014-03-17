@@ -17,26 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TACO_SETUP_H
-#define TACO_SETUP_H
+#ifndef TCP_SETUP_H
+#define TCP_SETUP_H
 
 #include <QDialog>
-#include "ui_tacosetup.h"
+#include "ui_tcpsetup.h"
 
 /*!
-    \class TACOSetup
+    \class TCPSetup
 
-    \short This class handles the setup dialog for setting up the TACO remote interface
+    \short This class handles the setup dialog for setting up the TCP remote interface
 
     \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class TACOSetup : public QDialog, public Ui_TACOSetup
+class TCPSetup : public QDialog, public Ui_TCPSetup
 {
 	Q_OBJECT
 public:
-	TACOSetup(QWidget * = 0);
+	TCPSetup(QWidget * = 0);
 
-	virtual ~TACOSetup(){}
+	virtual ~TCPSetup(){}
 
 public slots:
 	virtual void accept(void);
