@@ -1,5 +1,6 @@
 *.[oa]
 *~
+*.patch
 Makefile
 revision.h
 
