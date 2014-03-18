@@ -243,6 +243,8 @@ void MainWidget::about()
 		   + tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
                    + tr("<li><a href=\"mailto:m.drochner@fz-juelich.de\">Matthias Drochner</a> Bug reports</li>")
                    + tr("<li><a href=\"mailto:christian.randau@frm2.tum.de\">Christian Randau</a> Windows port</li>")
+		   + tr("<li><a href=\"mailto:eric.faustmann@helmholtz-berlin.de\">Eric Faustmann</a>Histogram mapping editor</li>") 
+		   + tr("<li><a href=\"mailto:damian.rhein@helmholtz-berlin.de\">Damian Rhein</a>Histogram mapping editor</li>") 
                    + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>");
     LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
     if (loop)
