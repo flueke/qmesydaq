@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2008-2013 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *   Copyright (C) 2009-2010 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -136,6 +136,8 @@ enum {
 	QMESYDAQ_MAXDEVICES
 };
 static const char* g_asDevices[]={"monitor_1","monitor_2","monitor_3","monitor_4","event_counter","timer","histogram","diffractogram"};
+static QString g_sCaressActive("<b>connected</b>");
+static QString g_sCaressNotActive("<i>not connected</i>");
 static bool init_module_parse_long(const char** pPtr, long* plResult);
 
 /*!
@@ -149,6 +151,9 @@ public:
 	// standard constructor
 	CORBADevice_i(MultipleLoopApplication* pApp);
 	virtual ~CORBADevice_i();
+
+	// called nearly every second
+	void idleTimer();
 
 	// methods corresponding to defined IDL attributes and operations
 	CARESS::ReturnType init_module(CORBA::Long kind, CORBA::Long id, const char* config_line, CORBA::Long& module_status);
@@ -173,7 +178,8 @@ public:
 
 private:
 	MultipleLoopApplication* m_theApp;
-	QMutex  m_mutex;
+	QDateTime m_dtLastCall;        //!< last CORBA call to this interface
+	QMutex    m_mutex;
 
 protected:
 	QString m_sInstrument;         //!< name of instrument
@@ -215,7 +221,7 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
   \param[in] interface QtInterface for data exchange between QMesyDAQ and CARESS interface
  */
 CARESSLoop::CARESSLoop(QStringList argList, QtInterface *)
-	: m_bDoLoop(true), m_asArguments(argList)
+	: m_bDoLoop(true), m_asArguments(argList), m_pIdleThread(NULL)
 {
 	setObjectName("CARESSLoop");
 #ifdef Q_OS_UNIX
@@ -339,6 +345,10 @@ void CARESSLoop::runLoop()
 		PortableServer::POAManager_var pman = poa->the_POAManager();
 		pman->activate();
 
+		m_pDevice = myCORBADevice_i;
+		omni_thread* pIdleThread = new omni_thread(&CARESSLoop::idleLoop, this);
+		pIdleThread->start();
+
 		// allow a clean CORBA shutdown instead of simply call "orb->run();"
 		connect(app,SIGNAL(aboutToQuit()),this,SLOT(shutdownLoop()),Qt::QueuedConnection);
 		while (m_bDoLoop)
@@ -347,6 +357,7 @@ void CARESSLoop::runLoop()
 				orb->perform_work();
 			usleep(1000);
 		}
+		m_pDevice = NULL;
 		orb->destroy();
 	}
 	catch (CORBA::SystemException&)
@@ -446,6 +457,18 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
 	return 1;
 }
 
+void CARESSLoop::idleLoop(void *pParam)
+{
+	CARESSLoop* pLoop = static_cast<CARESSLoop*>(pParam);
+	while (pLoop != NULL && pLoop->m_pDevice != NULL)
+	{
+		omni_thread::yield();
+		omni_thread::sleep(1);
+		omni_thread::yield();
+		pLoop->m_pDevice->idleTimer();
+	}
+}
+
 /***************************************************************************
  * implementation of the CARESS CORBA server
  ***************************************************************************/
@@ -457,7 +480,7 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
 CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
 	m_theApp(pApp), m_sInstrument(""), m_lHistogramX(0), m_lHistogramY(0),
 	m_lDiffractogramWidth(0), m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
-	m_lRunNo(0), m_lStepNo(0), m_lMesrCount(-1), m_bListmode(false),
+	m_lRunNo(-1), m_lStepNo(0), m_lMesrCount(-1), m_bListmode(false),
 	m_bHistogram(false), m_dblTimerScale(DEFAULTTIMEFACTOR), m_lSourceChannels(-1),
 	m_iMaster(-1), m_iDetectorWidth(0)
 {
@@ -469,6 +492,44 @@ CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
 //! \brief destructor
 CORBADevice_i::~CORBADevice_i()
 {
+}
+
+void CORBADevice_i::idleTimer()
+{
+	if (m_theApp == NULL)
+		return;
+	QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+	if (pInterface == NULL)
+		return;
+
+	QString s(g_sCaressNotActive);
+	int x(-1), y(-1);
+	if (m_lId[QMESYDAQ_HISTOGRAM] > 0)
+	{
+		x = m_lHistogramX;
+		y = m_lHistogramY;
+	}
+	else if (m_lId[QMESYDAQ_SPECTROGRAM] > 0)
+	{
+		x = m_lSpectrogramWidth;
+		y = m_lSpectrogramChannel;
+	}
+	else if (m_lId[QMESYDAQ_DIFFRACTOGRAM] > 0)
+	{
+		x = m_lDiffractogramWidth;
+		y = 0;
+	}
+	if (!m_dtLastCall.isNull())
+	{
+		int iIdleTime(m_dtLastCall.secsTo(QDateTime::currentDateTime()));
+		if (iIdleTime < 10)
+			s = g_sCaressActive;
+		else if (iIdleTime < 60)
+			s = QString("%1 (%2s)").arg(g_sCaressActive).arg(60 - iIdleTime);
+		else
+			s = QString("<b>timeout?</b> (%1s)").arg(iIdleTime);
+	}
+	pInterface->updateMainWidget(x, y, m_lRunNo, s);
 }
 
 /*!
@@ -553,6 +614,8 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 		}
 		if (pInterface->status())
 			pInterface->stop();
+		m_lRunNo = -1;
+		m_dtLastCall = QDateTime::currentDateTime();
 
 		switch (iDevice)
 		{
@@ -610,7 +673,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lSourceChannels=-1;
 
 				if (pInterface!=NULL)
-					pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
+					pInterface->updateMainWidget(m_lHistogramX, m_lHistogramY, m_lRunNo, g_sCaressActive);
 				MSG_DEBUG << "init(histogram)";
 				break;
 			}
@@ -641,7 +704,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lSourceChannels=-1;
 
 				if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
-					pInterface->updateMainWidget(m_lDiffractogramWidth,0,-1);
+					pInterface->updateMainWidget(m_lDiffractogramWidth, 0, m_lRunNo, g_sCaressActive);
 				MSG_DEBUG << "init(diffractogram)";
 				break;
 			}
@@ -685,7 +748,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lSourceChannels=-1;
 
 				if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1)
-					pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
+					pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
 				MSG_DEBUG << "init(spectrogram)";
 				break;
 			}
@@ -695,7 +758,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 				else
 					MSG_DEBUG << "init(counter " << id << ')';
 				if (pInterface!=NULL && m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1 && m_lId[QMESYDAQ_DIFFRACTOGRAM]<1)
-					pInterface->updateMainWidget(0,0,-1);
+					pInterface->updateMainWidget(0, 0, m_lRunNo, g_sCaressActive);
 				break;
 		}
 		m_lId[iDevice]=id;
@@ -736,7 +799,9 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 	QMesyDAQDetectorInterface* pInterface=NULL;
 	int iDevice;
 
-	(void)kind;
+	if (kind == 4)
+		return CARESS::OK;
+
 	if (m_theApp!=NULL)
 		pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 
@@ -745,6 +810,8 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 			break;
 	m_lId[iDevice]=0;
 	m_b64Bit[iDevice]=false;
+	m_lRunNo = -1;
+	m_dtLastCall = QDateTime();
 	MSG_DEBUG << "release(kind=" << kind << ", id=" << id << ')';
 	m_szErrorMessage[0]='\0';
 	if (pInterface!=NULL)
@@ -752,23 +819,23 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 		switch (iDevice)
 		{
 			case QMESYDAQ_HISTOGRAM:
-				if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-				else pInterface->updateMainWidget(0,0,-1);
+				if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
+				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
+				else pInterface->updateMainWidget(0, 0, m_lRunNo, g_sCaressNotActive);
 				m_sInstrument.clear();
 				m_mapHistogram.setNoMap();
 				break;
 			case QMESYDAQ_DIFFRACTOGRAM:
-				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
-				else if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-				else pInterface->updateMainWidget(0,0,-1);
+				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX, m_lHistogramY, m_lRunNo, g_sCaressActive);
+				else if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
+				else pInterface->updateMainWidget(0, 0, m_lRunNo, g_sCaressNotActive);
 				m_sInstrument.clear();
 				m_mapHistogram.setNoMap();
 				break;
 			case QMESYDAQ_SPECTROGRAM:
-				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,-1);
-				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,-1);
-				else pInterface->updateMainWidget(0,0,-1);
+				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX, m_lHistogramY, m_lRunNo, g_sCaressActive);
+				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
+				else pInterface->updateMainWidget(0, 0, m_lRunNo, g_sCaressNotActive);
 				m_sInstrument.clear();
 				m_mapHistogram.setNoMap();
 				break;
@@ -812,18 +879,19 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 			if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 				break;
 
+		m_dtLastCall = QDateTime::currentDateTime();
 		switch (iDevice)
 		{
 			case QMESYDAQ_HISTOGRAM:
-				pInterface->updateMainWidget(m_lHistogramX,m_lHistogramY,run_no);
+				pInterface->updateMainWidget(m_lHistogramX, m_lHistogramY, run_no, g_sCaressActive);
 				break;
 			case QMESYDAQ_SPECTROGRAM:
 				if (m_lId[QMESYDAQ_HISTOGRAM]<1)
-					pInterface->updateMainWidget(m_lSpectrogramWidth,m_lSpectrogramChannel,run_no);
+					pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, run_no, g_sCaressActive);
 				break;
 			case QMESYDAQ_DIFFRACTOGRAM:
 				if (m_lId[QMESYDAQ_HISTOGRAM]<1 && m_lId[QMESYDAQ_SPECTROGRAM]<1)
-					pInterface->updateMainWidget(m_lDiffractogramWidth,0,run_no);
+					pInterface->updateMainWidget(m_lDiffractogramWidth, 0, run_no, g_sCaressActive);
 				break;
 		}
 
@@ -939,6 +1007,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 			return CARESS::NOT_OK;
 		}
 
+		m_dtLastCall = QDateTime::currentDateTime();
 		if (kind==0/*PAUSE*/ || kind==1/*END-OF-MEASUREMENT*/)
 		{
 			if (kind==1)
@@ -1046,6 +1115,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 			return CARESS::NOT_OK;
 		}
 
+		m_dtLastCall = QDateTime::currentDateTime();
 		for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
 			if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 				break;
@@ -1224,6 +1294,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		return CARESS::NOT_OK;
 	}
 
+	m_dtLastCall = QDateTime::currentDateTime();
 	if (kind==0 && start_channel==1 && start_channel<end_channel &&
 			data._d()==CARESS::TypeArrayByte &&
 			(CORBA::ULong)end_channel==data.ab().length())
@@ -1664,6 +1735,7 @@ CARESS::ReturnType CORBADevice_i::read_module(CORBA::Long kind,
 			return CARESS::OK;
 		}
 
+		m_dtLastCall = QDateTime::currentDateTime();
 		switch (iDevice)
 		{
 			case QMESYDAQ_MON1: dblValue=pInterface->readCounter(M1CT); break;
@@ -1740,6 +1812,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 			return CARESS::NOT_OK;
 		}
 
+		m_dtLastCall = QDateTime::currentDateTime();
 		switch (iDevice)
 		{
 			case QMESYDAQ_HISTOGRAM:
@@ -2128,6 +2201,7 @@ CORBA::Boolean CORBADevice_i::is_readable_module(CORBA::Long id)
 	{
 		if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 		{
+			m_dtLastCall = QDateTime::currentDateTime();
 			MSG_DEBUG << "is_readable_module=TRUE";
 			return 1;
 		}
@@ -2144,6 +2218,7 @@ CORBA::Boolean CORBADevice_i::is_drivable_module(CORBA::Long id)
 	{
 		if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 		{
+			m_dtLastCall = QDateTime::currentDateTime();
 			MSG_DEBUG << "is_drivable_module=FALSE";
 			return 0;
 		}
@@ -2160,6 +2235,7 @@ CORBA::Boolean CORBADevice_i::is_counting_module(CORBA::Long id)
 	{
 		if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 		{
+			m_dtLastCall = QDateTime::currentDateTime();
 			MSG_DEBUG << "is_counting_module=TRUE";
 			return 1;
 		}
@@ -2176,6 +2252,7 @@ CORBA::Boolean CORBADevice_i::is_status_module(CORBA::Long id)
 	{
 		if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 		{
+			m_dtLastCall = QDateTime::currentDateTime();
 			MSG_DEBUG << "is_status_module=FALSE";
 			return 0;
 		}
@@ -2192,6 +2269,7 @@ CORBA::Boolean CORBADevice_i::needs_reference_module(CORBA::Long id)
 	{
 		if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 		{
+			m_dtLastCall = QDateTime::currentDateTime();
 			MSG_DEBUG << "needs_reference_module=FALSE";
 			return 0;
 		}
@@ -2223,6 +2301,7 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
 
 	if (strcmp(name,"detector_channels")==0)
 	{
+		m_dtLastCall = QDateTime::currentDateTime();
 		switch (iDevice)
 		{
 			case QMESYDAQ_HISTOGRAM:
@@ -2274,6 +2353,7 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
 	{
 		CARESS::Value_var v=new CARESS::Value;
 		v->s((const char*)(&m_szErrorMessage[0]));
+		m_dtLastCall = QDateTime::currentDateTime();
 		return v._retn();
 	}
     if (strcmp(name,"version_text")==0)

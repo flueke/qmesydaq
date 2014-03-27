@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2008-2013 by Lutz Rossa <rossa@hmi.de>                  *
+ *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@hmi.de>                  *
  *   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
@@ -375,9 +375,9 @@ void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength
     \param iHeight
     \param iRunNo
  */
-void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iRunNo)
+void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iRunNo, const QString& sActive)
 {
-	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << iWidth << iHeight << iRunNo);
+	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << iWidth << iHeight << iRunNo << sActive);
 }
 
 /*!
@@ -386,9 +386,9 @@ void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iR
     \param sHeight
     \param sRunNo
  */
-void QMesyDAQDetectorInterface::updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo)
+void QMesyDAQDetectorInterface::updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo, const QString& sActive)
 {
-	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << sWidth << sHeight << sRunNo);
+	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << sWidth << sHeight << sRunNo << sActive);
 }
 
 void QMesyDAQDetectorInterface::setRunID(const quint32 runid)

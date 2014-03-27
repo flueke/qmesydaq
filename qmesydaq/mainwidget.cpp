@@ -2231,7 +2231,7 @@ void MainWidget::customEvent(QEvent *e)
 		break;
 	}
 	case CommandEvent::C_UPDATEMAINWIDGET:
-		if (args.count() >= 3)
+		if (args.count() >= 4)
 		{
 			bool b;
 			int i;
@@ -2258,6 +2258,9 @@ void MainWidget::customEvent(QEvent *e)
 			else
 				s = v.toString();
 			caressRun->setText(s);
+			v = args[3];
+			s = v.toString();
+			caressActive->setText(s);
 		}
 		break;
     case CommandEvent::C_VERSIONTEXT:

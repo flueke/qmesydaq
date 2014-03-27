@@ -1274,6 +1274,16 @@ Listfile</string>
               </property>
              </widget>
             </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="textLabel24">
+              <property name="text">
+               <string>connection to CARESS:</string>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <widget class="QLabel" name="caressHeight">
               <property name="text">
@@ -1299,6 +1309,13 @@ Listfile</string>
               <property name="text">
                <string>&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;</string>
               </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLabel" name="caressActive">
               <property name="wordWrap">
                <bool>false</bool>
               </property>

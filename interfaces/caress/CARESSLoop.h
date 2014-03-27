@@ -26,6 +26,8 @@
 #include "LoopObject.h"
 
 class QtInterface;
+class CORBADevice_i;
+class omni_thread;
 
 /*!
   \brief CARESS interface loop object
@@ -46,8 +48,12 @@ private slots:
 	void shutdownLoop() { m_bDoLoop=false; }
 
 private:
-	bool        m_bDoLoop;     //!< flag to detect exit of QMesyDAQ
-	QStringList m_asArguments; //!< command line arguments of QMesyDAQ
+	bool           m_bDoLoop;     //!< flag to detect exit of QMesyDAQ
+	QStringList    m_asArguments; //!< command line arguments of QMesyDAQ
+	CORBADevice_i* m_pDevice;     //!< the one and only device instance
+	omni_thread*   m_pIdleThread; //!< checks for idle connection
+
+	static void idleLoop(void* pParam);
 };
 
 #endif // CARESSLOOP_H

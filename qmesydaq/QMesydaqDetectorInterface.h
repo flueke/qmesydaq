@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2008-2013 by Lutz Rossa <rossa@hmi.de>                  *
+ *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@hmi.de>                  *
  *   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
@@ -98,8 +98,8 @@ public:
         QString getHistogramFileName(void) const {return m_histFileName;}
         void setHistogramFileName(const QString name);
 
-	void updateMainWidget(int iWidth, int iHeight, int iRunNo);
-	void updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo);
+	void updateMainWidget(int iWidth, int iHeight, int iRunNo, const QString& sActive);
+	void updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo, const QString& sActive);
 
 	/*!
 	 * Sets the run ID
