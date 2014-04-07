@@ -150,6 +150,7 @@ public:
 	void	setPreset(const quint8 cNum, const quint64 prval, const bool mast);
 
 	void	setListmode(const bool truth);
+	void	setAutoSaveHistogram(const bool truth);
 	void	setRemote(const bool truth);
 	bool	remoteStart(void) const;
 
@@ -158,6 +159,9 @@ public:
 
 	//! \return stream the data into a separate file too
 	bool	acqListfile(void) const;
+
+	//! \return automatic save of histogram after stopping data acquisition
+	bool	autoSaveHistogram(void) const;
 
 	void	readListfile(const QString &readfilename);
 
@@ -453,6 +457,9 @@ signals:
 
 	//! will be emitted in case of change in respect to the handling of list mode data files
 	void acqListfile(bool);
+
+	//! will be emitted in case of change in respect to the handling of automatic saving histogram data files
+	void autoSaveHistogram(bool);
 
 	//! will be emitted in case of change of user mapping
 	void mappingChanged();

@@ -94,6 +94,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
 
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
+	connect(this, SIGNAL(autoSaveHistogram(bool)), m_mesydaq, SLOT(autoSaveHistogram(bool)));
 
 	m_rateTimer = startTimer(100);	// every 100 ms calculate the rates, was 8 before
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
@@ -512,6 +513,18 @@ quint64 Measurement::getPreset(quint8 cNum)
 void Measurement::setListmode(bool truth)
 {
 	emit acqListfile(truth);
+}
+
+/*!
+    \fn Measurement::setAutoSaveHistogram(bool truth)
+
+    sets the auto save histogram mode
+
+    \param truth auto save histogram mode
+ */
+void Measurement::setAutoSaveHistogram(bool truth)
+{
+	emit autoSaveHistogram(truth);
 }
 
 /*!

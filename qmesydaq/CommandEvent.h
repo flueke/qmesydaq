@@ -66,6 +66,8 @@ public:
 		C_INIT,                // reload the current config file to initialize the hardware again
 		C_SET_CONFIGFILE,      // load a new configuration file
 		C_GET_CONFIGFILE,      // return the current load configuration file
+		C_SET_SAVEHISTOGRAM,   // set auto saving histogram after stop; args: auto save histogram enabled
+		C_GET_SAVEHISTOGRAM,   // get auto saving histogram after stop; no args; result: boolean
 	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());

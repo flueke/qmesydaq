@@ -286,6 +286,11 @@ public slots:
 	//! \return stream the data into a separate file too
 	bool acqListfile() const {return m_acquireListfile;}
 
+	void autoSaveHistogram(bool yesno);
+
+	//! \return save the histogram data automatically
+	bool autoSaveHistogram() const {return m_autoSaveHistogram;}
+
 	void start(void);
 
 	void startedDaq(void);
@@ -345,6 +350,8 @@ private:
 	bool            m_bRunAck;
 
 	bool		m_acquireListfile;
+
+	bool		m_autoSaveHistogram;
 
 	//! currently used list mode file
 	QString		m_listfilename;

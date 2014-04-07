@@ -456,13 +456,24 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="acquireFile">
+         <widget class="QCheckBox" name="acquireListFile">
           <property name="text">
            <string>ac&amp;quire
 Listfile</string>
           </property>
           <property name="shortcut">
            <string>Alt+Q</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="autoSaveHistogram">
+          <property name="text">
+           <string>a&amp;uto save
+histogram file</string>
+          </property>
+          <property name="shortcut">
+           <string>Alt+H</string>
           </property>
          </widget>
         </item>

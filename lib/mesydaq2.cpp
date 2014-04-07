@@ -36,6 +36,7 @@ Mesydaq2::Mesydaq2()
 	, m_bRunning(false)
 	, m_bRunAck(false)
 	, m_acquireListfile(false)
+	, m_autoSaveHistogram(false)
 	, m_listfilename("")
 	, m_timingwidth(1)
 	, m_bInsertHeaderLength(true)
@@ -210,6 +211,19 @@ void Mesydaq2::acqListfile(bool yesno)
 {
 	m_acquireListfile = yesno;
 	MSG_NOTICE << tr("Listfile recording %1").arg(yesno ? "on" : "off");
+}
+
+/*!
+    \fn Mesydaq2::autoSaveHistogram(bool yesno)
+
+    enables the writing of list mode file
+
+    \param yesno enable/disable if true/false
+ */
+void Mesydaq2::autoSaveHistogram(bool yesno)
+{
+	m_autoSaveHistogram = yesno;
+	MSG_NOTICE << tr("automatic histogram saving after stop data acquisition %1").arg(yesno ? "on" : "off");
 }
 
 /*!
@@ -515,6 +529,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 {
 	settings.beginGroup("MESYDAQ");
 	settings.setValue("listmode", m_acquireListfile ? "true" : "false");
+	settings.setValue("autosavehistogram", m_autoSaveHistogram ? "true" : "false");
 	settings.setValue("repeatersource", m_pDatSender->GetSource().toString());
 	settings.setValue("repeatertarget", m_pDatSender->GetTarget().toString());
 	settings.setValue("repeaterport", m_pDatSender->GetPort());
@@ -644,6 +659,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 	settings.beginGroup("MESYDAQ");
 	m_acquireListfile = settings.value("listmode", "true").toBool();
+	m_autoSaveHistogram = settings.value("autosavehistogram", "false").toBool();
 	m_pDatSender->SetSource(settings.value("repeatersource", "").toString());
 	m_pDatSender->SetTarget(settings.value("repeatertarget", "").toString(),
 			      settings.value("repeaterport", m_pDatSender->DEFAULTPORT).toUInt());

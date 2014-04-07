@@ -28,6 +28,7 @@ test/readhisto/readhisto
 test/readlistfile/readlistfile
 test/threads/threads
 test/histogramming/histogramming
+test/ipaddresswidget/ipaddresswidget
 
 tools/fixlmfile/fixlmfile
 tools/mstd16/mstd16

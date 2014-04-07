@@ -186,6 +186,8 @@ private slots:
 
 	void checkListfilename(bool);
 
+	void checkHistogramFilename(bool bEnabled);
+
 	void applyThreshSlot();
 
 	void writeHistSlot();
@@ -220,6 +222,8 @@ private:
 	void	init();
 
 	QString selectListfile(void);
+
+	QString selectHistogramfile(QString sName);
 
 private:
 	//! The MesyDaq object

@@ -154,7 +154,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
         remoteInterfaceVersionLabel->setText("");
     libraryVersionLabel->setText(tr("Library %1").arg(m_theApp->libVersion()));
 
-    connect(acquireFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
+    connect(acquireListFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
+    connect(autoSaveHistogram, SIGNAL(toggled(bool)), m_theApp, SLOT(autoSaveHistogram(bool)));
     connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
 
     connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
@@ -165,7 +166,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     connect(dispMcpd, SIGNAL(valueChanged(int)), devid, SLOT(setValue(int)));
     connect(devid, SIGNAL(valueChanged(int)), dispMcpd, SLOT(setValue(int)));
 
-    connect(acquireFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
+    connect(acquireListFile, SIGNAL(toggled(bool)), this, SLOT(checkListfilename(bool)));
 #endif
 
     m_data = new MesydaqSpectrumData();
@@ -184,7 +185,8 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
     QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 
     QSettings setup(settings.value("lastconfigfile", "mesycfg.mcfg").toString(), QSettings::IniFormat);
-    acquireFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
+    acquireListFile->setChecked(setup.value("MESYDAQ/listmode", true).toBool());
+    autoSaveHistogram->setChecked(setup.value("MESYDAQ/autosavehistogram", false).toBool());
     timerPreset->setChecked(setup.value("MESYDAQ/Preset/time", true).toBool());
 #endif
 
@@ -294,7 +296,8 @@ void MainWidget::init()
     devid_2->setMCPDList(mcpdList);
     paramId->setMCPDList(mcpdList);
     startStopButton->setDisabled(true);
-    acquireFile->setDisabled(true);
+    acquireListFile->setDisabled(true);
+    autoSaveHistogram->setDisabled(true);
     allPulsersoffButton->setDisabled(true);
     displayGroupBox->setDisabled(true);
     statusMeasTab->setDisabled(true);
@@ -391,7 +394,8 @@ void MainWidget::startStopSlot(bool checked)
     if (checked)
     {
         m_meas->setHistfilename("");
-        checkListfilename(acquireFile->isChecked());
+        checkListfilename(acquireListFile->isChecked());
+        checkHistogramFilename(autoSaveHistogram->isChecked());
         // get timing binwidth
         // m_theApp->setTimingwidth(timingBox->value());
 
@@ -411,8 +415,8 @@ void MainWidget::startStopSlot(bool checked)
         startStopButton->setText("Stop");
         // set device id to 0 -> will be filled by mesydaq for master
         m_meas->start();
-	m_time.restart();
-	m_dispTimer = startTimer(500);
+        m_time.restart();
+        m_dispTimer = startTimer(500);
     }
     else
     {
@@ -426,17 +430,25 @@ void MainWidget::startStopSlot(bool checked)
         if(app)
         {
             QMesyDAQDetectorInterface *interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
+            QString sName;
             if (interface)
+                sName = interface->getHistogramFileName();
+            if (!sName.isEmpty())
+                autoSaveHistogram->setChecked(true);
+            else
+                sName = m_meas->getHistfilename();
+            if (!sName.isEmpty())
             {
-                QString name = interface->getHistogramFileName();
-                if (!name.isEmpty())
+                if (!sName.endsWith(".mtxt"))
+                    sName.append(".mtxt");
+                m_meas->setHistfilename(sName);
+                if (!sName.startsWith("/"))
                 {
-                    if (!name.startsWith('/'))
-                        name = m_meas->getHistfilepath() + "/" + name;
-                    if (name.indexOf(".mtxt") == -1)
-                        name.append(".mtxt");
-                    m_meas->writeHistograms(name);
+                    sName.prepend("/");
+                    sName.prepend(m_meas->getHistfilepath());
                 }
+                if (autoSaveHistogram->isChecked())
+                    m_meas->writeHistograms(sName);
             }
         }
         emit redraw();
@@ -476,12 +488,12 @@ void MainWidget::setStreamSlot()
     Opens a user dialog for selecting a file name to store the list mode data into.
 
     It checks also the extension of the file name and if not 'mdat' it will added.
-    \returns selected file name, if no file name is selected or aborted it will retur
+    \returns selected file name, if no file name is selected or aborted it will return
              an empty string
 */
 QString MainWidget::selectListfile(void)
 {
-    QString name = QFileDialog::getSaveFileName(this, tr("Save as..."), m_meas->getListfilepath(),
+    QString name = QFileDialog::getSaveFileName(this, tr("Select list mode file name"), m_meas->getListfilepath(),
                                                 "mesydaq data files (*.mdat);;all files (*.*);;really all files (*)");
     if(!name.isEmpty())
     {
@@ -533,10 +545,83 @@ void MainWidget::checkListfilename(bool checked)
         if(!name.isEmpty())
             m_theApp->setListfilename(name);
         else
-	{
-	    MSG_DEBUG << tr("disable list file");
-            acquireFile->setChecked(false);
-	}
+        {
+            MSG_DEBUG << tr("disable list file");
+            acquireListFile->setChecked(false);
+        }
+    }
+    emit redraw();
+}
+
+/*!
+    \fn QString MainWidget::selectHistogramfile(QString sName)
+    \param sName suggestion for a histogram file name
+
+    Opens a user dialog for selecting a file name to store the histogram data into.
+
+    It checks also the extension of the file name and if not 'mtxt' it will added.
+    \returns selected file name, if no file name is selected or aborted it will return
+	     an empty string
+*/
+QString MainWidget::selectHistogramfile(QString sName)
+{
+    QString sSuggestion(m_meas->getHistfilepath());
+    if (!sSuggestion.endsWith('/'))
+        sSuggestion += '/';
+    if (!sName.isEmpty())
+        sSuggestion += QFileInfo(sName).baseName() + ".mtxt";
+    sName = QFileDialog::getSaveFileName(this, tr("Select histogram file name"), sSuggestion,
+				tr("mesydaq histogram files (*.mtxt);;all files (*.*);;really all files (*)"));
+    if (!sName.isEmpty())
+        if (sName.indexOf(".mtxt") < 0)
+            sName.append(".mtxt");
+    return sName;
+}
+
+/*!
+    \fn void MainWidget::checkHistogramFilename(bool bEnabled)
+
+    checks whether a histogram file name is given, otherwise the checkbox will be disabled
+
+    \param bEnabled
+*/
+void MainWidget::checkHistogramFilename(bool bEnabled)
+{
+    if (!bEnabled)
+		return;
+
+    QString sFilename(QString::null);
+    MultipleLoopApplication *pApp(dynamic_cast<MultipleLoopApplication*>(QApplication::instance()));
+    bool bAsk = true;
+    if (pApp)
+    {
+        QMesyDAQDetectorInterface *pInterface = dynamic_cast<QMesyDAQDetectorInterface*>(pApp->getQtInterface());
+        if (pInterface)
+            sFilename = pInterface->getHistogramFileName();
+    }
+
+    if (sFilename.isEmpty())
+    {
+        sFilename = selectHistogramfile(QString::null);
+        bAsk = false;
+    }
+    else
+        sFilename = m_meas->getHistfilepath() + "/" + sFilename;
+
+    if (!sFilename.isEmpty() && QFile::exists(sFilename))
+    {
+        // files exists
+        if (bAsk && m_meas->getWriteProtection()) // ask user for other file name
+            sFilename = selectHistogramfile(sFilename);
+        if (!sFilename.isEmpty() && QFile::exists(sFilename) && !QFile::remove(sFilename)) // try to delete file or do not acquire list file
+            sFilename.clear();
+    }
+
+    m_meas->setHistfilename(sFilename);
+    if (sFilename.isEmpty())
+    {
+        MSG_DEBUG << tr("disable autosaving histogram file");
+        autoSaveHistogram->setChecked(false);
     }
     emit redraw();
 }
@@ -843,11 +928,12 @@ void MainWidget::loadConfiguration(const QString& sFilename)
         QMessageBox::warning(this, tr("No list mode file storing file path"),
                              tr("The list mode file storing file path<br><b>%1</b><br>does not exists!").arg(m_meas->getListfilepath()));
     configfilename->setText(m_meas->getConfigfilename());
-    acquireFile->setChecked(m_meas->acqListfile());
+    acquireListFile->setChecked(m_meas->acqListfile());
 
     QSettings settings(m_meas->getConfigfilename(), QSettings::IniFormat);
     settings.beginGroup("MESYDAQ");
-    acquireFile->setChecked(settings.value("listmode", true).toBool());
+    acquireListFile->setChecked(settings.value("listmode", true).toBool());
+    autoSaveHistogram->setChecked(settings.value("autosavehistogram", false).toBool());
     timerPreset->setChecked(settings.value("Preset/time", true).toBool());
     settings.endGroup();
 
@@ -857,7 +943,8 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     devid_2->setDisabled(mcpdList.empty());
     paramId->setMCPDList(mcpdList);
     startStopButton->setDisabled(mcpdList.empty());
-    acquireFile->setDisabled(mcpdList.empty());
+    acquireListFile->setDisabled(mcpdList.empty());
+    autoSaveHistogram->setDisabled(mcpdList.empty());
     allPulsersoffButton->setDisabled(mcpdList.empty());
     displayGroupBox->setDisabled(mcpdList.empty());
     statusMeasTab->setDisabled(mcpdList.empty());
@@ -865,18 +952,18 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     dispMstdSpectrum->setVisible(m_meas->setupType() == Measurement::Mstd || m_meas->setupType() == Measurement::Mdll);
     if (m_meas->setupType() == Measurement::Mdll)
     {
-	dispMstdSpectrum->setText(tr("Amplitude spectrum"));
-	dispDiffractogram->setText(tr("Projection to X"));
-	dispSpectra->setText(tr("Projection to Y"));
+        dispMstdSpectrum->setText(tr("Amplitude spectrum"));
+        dispDiffractogram->setText(tr("Projection to X"));
+        dispSpectra->setText(tr("Projection to Y"));
     }
     else if (m_meas->setupType() == Measurement::Mstd)
     {
-	dispMstdSpectrum->setText(tr("Single spectrum"));
+        dispMstdSpectrum->setText(tr("Single spectrum"));
     }
     else
     {
-	dispDiffractogram->setText(tr("Diffractogram"));
-	dispSpectra->setText(tr("Spectra"));
+        dispDiffractogram->setText(tr("Diffractogram"));
+        dispSpectra->setText(tr("Spectra"));
     }
     dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
     moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll);
@@ -888,8 +975,8 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     moduleStatus7->setHidden(m_meas->setupType() == Measurement::Mdll);
     if (m_meas->setupType() == Measurement::Mstd)
     {
-    	dispMstdSpectrum->setChecked(true);
-    	setDisplayMode(Plot::SingleSpectrum);
+        dispMstdSpectrum->setChecked(true);
+        setDisplayMode(Plot::SingleSpectrum);
     }
     emit redraw();
 }
@@ -995,23 +1082,9 @@ void MainWidget::dispFiledata(void)
 */
 void MainWidget::writeHistSlot()
 {
-    QString suggestion = m_meas->getHistfilepath();
-    QString name       = m_theApp->getListfilename();
-    if (!name.isEmpty())
-    {
-        if (!suggestion.endsWith('/'))
-            suggestion += '/';
-        suggestion += QFileInfo(name).baseName() + ".mtxt";
-    }
-    name = QFileDialog::getSaveFileName(this, tr("Write Histogram..."), suggestion,
-                                        "mesydaq histogram files (*.mtxt);;all files (*.*)");
-    if(!name.isEmpty())
-    {
-        int i = name.indexOf(".mtxt");
-        if(i == -1)
-            name.append(".mtxt");
-        m_meas->writeHistograms(name);
-    }
+	QString sName(selectHistogramfile(m_theApp->getListfilename()));
+	if (!sName.isEmpty())
+		m_meas->writeHistograms(sName);
 }
 
 /*!
@@ -2200,7 +2273,7 @@ void MainWidget::customEvent(QEvent *e)
 		break;
 	}
 	case CommandEvent::C_SET_LISTMODE:
-		acquireFile->setChecked(args[0].toBool());
+		acquireListFile->setChecked(args[0].toBool());
 		if (args.size() > 1)
 			m_meas->setWriteProtection(args[1].toBool());
 		break;
@@ -2220,6 +2293,8 @@ void MainWidget::customEvent(QEvent *e)
 			else
 				MSG_ERROR << "Could not find : " << fi.absoluteFilePath();
 		}
+	case CommandEvent::C_SET_SAVEHISTOGRAM:
+		autoSaveHistogram->setChecked(args[0].toBool());
 		break;
 	case CommandEvent::C_SET_LISTHEADER:
 	{
@@ -2294,9 +2369,15 @@ void MainWidget::customEvent(QEvent *e)
 	}
 	case CommandEvent::C_GET_LISTMODE:
 	{
-		bool bListmode = acquireFile->isChecked();
+		bool bListmode = acquireListFile->isChecked();
 		bool bWriteProtect = m_meas->getWriteProtection();
 		answer << bListmode << bWriteProtect;
+		break;
+	}
+	case CommandEvent::C_GET_SAVEHISTOGRAM:
+	{
+		bool bAutoSaveHistogram = autoSaveHistogram->isChecked();
+		answer << bAutoSaveHistogram;
 		break;
 	}
 	case CommandEvent::C_UPDATEMAINWIDGET:
