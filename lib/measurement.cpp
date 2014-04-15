@@ -933,7 +933,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				quint16 chan = modChan + (mod << 6);
 				quint16 amp = ((pPacket->dp.data[counter+2] & 0x7F) << 3) + ((pPacket->dp.data[counter+1] >> 13) & 0x7),
 					pos = (pPacket->dp.data[counter+1] >> 3) & 0x3FF;
-				if(pPacket->dp.bufferType == 0x0002)
+				if (pPacket->dp.bufferType == 0x0002)
 				{
 //
 // in MDLL, data format is different:
@@ -976,7 +976,10 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					if (m_Hist[PositionHistogram])
 						m_Hist[PositionHistogram]->incVal(chan, pos);
 					if (m_Hist[AmplitudeHistogram])
-						m_Hist[AmplitudeHistogram]->incVal(chan, amp);
+						if (pPacket->dp.bufferType == 0x0002)
+							m_Hist[AmplitudeHistogram]->addValue(chan, pos, amp);
+						else
+							m_Hist[AmplitudeHistogram]->incVal(chan, amp);
 					if (m_Hist[CorrectedPositionHistogram])
 						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
 					if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
