@@ -71,7 +71,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	setListfilepath(getenv("HOME"));
 	for (int i = 0; i < int(sizeof(m_Hist) / sizeof(Histogram *)); ++i)
 		m_Hist[i] = NULL;
-	for (int i = 0; i < int(sizeof(m_Spectrum) / sizeof(Histogram *)); ++i)
+	for (int i = 0; i < int(sizeof(m_Spectrum) / sizeof(Spectrum *)); ++i)
 		m_Spectrum[i] = NULL;
 
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
