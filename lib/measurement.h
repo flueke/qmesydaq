@@ -96,6 +96,7 @@ public:
 		XSpectrum,		//!< ???
 		YSpectrum,		//!< ???
 		EnergySpectrum,		//!< ???
+		AmplitudeSpectrum,	//!< Spectrum of the amplitudes (esp. for MDLL)
 		SingleTubeSpectrum,	//!< for MSTD-16
 		NoSpectrum,		//!< Do not change this entry, this must be the last entry
 	};

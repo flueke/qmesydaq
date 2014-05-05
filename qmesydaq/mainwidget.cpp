@@ -849,7 +849,9 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     displayGroupBox->setDisabled(mcpdList.empty());
     statusMeasTab->setDisabled(mcpdList.empty());
     statusModuleTab->setDisabled(mcpdList.empty());
-    dispMstdSpectrum->setVisible(m_meas->setupType() == Measurement::Mstd);
+    dispMstdSpectrum->setVisible(m_meas->setupType() == Measurement::Mstd || m_meas->setupType() == Measurement::Mdll);
+    if (m_meas->setupType() == Measurement::Mdll)
+	    dispMstdSpectrum->setText(tr("Amplitude spectrum"));
     dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
     moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll);
     moduleStatus2->setHidden(m_meas->setupType() == Measurement::Mdll);
@@ -1358,7 +1360,10 @@ void MainWidget::draw(void)
             countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
             break;
         case Plot::SingleSpectrum :
-            spec = m_meas->spectrum(Measurement::SingleTubeSpectrum); 
+	    if (m_meas->setupType() == Measurement::Mdll)
+                spec = m_meas->spectrum(Measurement::AmplitudeSpectrum);
+	    else
+                spec = m_meas->spectrum(Measurement::SingleTubeSpectrum);
             m_data->setData(spec);
 	    m_dataFrame->setSpectrumData(m_data);
             labelCountsInROI->setText(tr("Counts"));

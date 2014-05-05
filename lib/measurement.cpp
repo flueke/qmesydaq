@@ -183,6 +183,10 @@ void Measurement::destroyHistogram(void)
 	if (m_Spectrum[SingleTubeSpectrum])
 		delete m_Spectrum[SingleTubeSpectrum];
 	m_Spectrum[SingleTubeSpectrum] = NULL;
+
+	if (m_Spectrum[AmplitudeSpectrum])
+		delete m_Spectrum[AmplitudeSpectrum];
+	m_Spectrum[AmplitudeSpectrum] = NULL;
 #if 0
 	if (m_Spectrum[Diffractogram])
 		delete m_Spectrum[Diffractogram];
@@ -577,6 +581,8 @@ void Measurement::clearAllHist(void)
 		m_Spectrum[TimeSpectrum]->clear();
 	if (m_Spectrum[SingleTubeSpectrum])
 		m_Spectrum[SingleTubeSpectrum]->clear();
+	if (m_Spectrum[AmplitudeSpectrum])
+		m_Spectrum[AmplitudeSpectrum]->clear();
 #if 0
 	if (m_Spectrum[Diffractogram])
 		m_Spectrum[Diffractogram]->clear();
@@ -977,7 +983,10 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						m_Hist[PositionHistogram]->incVal(chan, pos);
 					if (m_Hist[AmplitudeHistogram])
 						if (pPacket->dp.bufferType == 0x0002)
+						{
 							m_Hist[AmplitudeHistogram]->addValue(chan, pos, amp);
+							m_Spectrum[AmplitudeSpectrum]->incVal(amp);
+						}
 						else
 							m_Hist[AmplitudeHistogram]->incVal(chan, amp);
 					if (m_Hist[CorrectedPositionHistogram])
@@ -1517,6 +1526,11 @@ bool Measurement::loadSetup(const QString &name)
 			m_Spectrum[SingleTubeSpectrum]->resize(16);
 		else
 			m_Spectrum[SingleTubeSpectrum] = new Spectrum(16);
+	}
+	else if (m_setup == Mdll)
+	{
+		if (!m_Spectrum[AmplitudeSpectrum])
+			m_Spectrum[AmplitudeSpectrum] = new Spectrum();
 	}
 // Calibration file must be read after hardware configuration
 	readCalibration(sz, true);
