@@ -119,7 +119,7 @@ public:
 
 	~Measurement();
 
-    QString version() const;
+	QString version() const;
 
 	void resizeHistogram(const quint16 w, const quint16 h, const bool = true, const bool = false);
 
