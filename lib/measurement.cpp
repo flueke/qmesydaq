@@ -792,6 +792,7 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 		switch (setupType()) 
 		{
 			case Mdll:
+				MSG_ERROR << tr("MDLL Map correction");
 				m_posHistMapCorrection = new MdllMapCorrection(QSize(480, 480/* m_width, m_height */));
 				break;
 			default:
@@ -1479,9 +1480,6 @@ bool Measurement::loadSetup(const QString &name)
 	}
 //	m_acquireListfile = settings.value("listmode", "true").toBool();
 	sz = settings.value("calibrationfile", "").toString();
-
-	readCalibration(sz, true);
-
 	settings.endGroup();
 
 	m_mesydaq->loadSetup(settings);
@@ -1504,7 +1502,9 @@ bool Measurement::loadSetup(const QString &name)
 				case TYPE_MDLL :
 					if (m_mesydaq->active(mod, j))
 						setSetupType(Mdll);
-				break;
+					break;
+				default:
+					break;
 			}
 		
 	}
@@ -1515,6 +1515,8 @@ bool Measurement::loadSetup(const QString &name)
 		else
 			m_Spectrum[SingleTubeSpectrum] = new Spectrum(16);
 	}
+// Calibration file must be read after hardware configuration
+	readCalibration(sz, true);
 	return true;
 }
 
