@@ -851,7 +851,20 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     statusModuleTab->setDisabled(mcpdList.empty());
     dispMstdSpectrum->setVisible(m_meas->setupType() == Measurement::Mstd || m_meas->setupType() == Measurement::Mdll);
     if (m_meas->setupType() == Measurement::Mdll)
-	    dispMstdSpectrum->setText(tr("Amplitude spectrum"));
+    {
+	dispMstdSpectrum->setText(tr("Amplitude spectrum"));
+	dispDiffractogram->setText(tr("Projection to X"));
+	dispSpectra->setText(tr("Projection to Y"));
+    }
+    else if (m_meas->setupType() == Measurement::Mstd)
+    {
+	dispMstdSpectrum->setText(tr("Single spectrum"));
+    }
+    else
+    {
+	dispDiffractogram->setText(tr("Diffractogram"));
+	dispSpectra->setText(tr("Spectra"));
+    }
     dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
     moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll);
     moduleStatus2->setHidden(m_meas->setupType() == Measurement::Mdll);
