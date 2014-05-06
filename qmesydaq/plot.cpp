@@ -396,7 +396,7 @@ void Plot::resizeEvent(QResizeEvent *e)
 	}
 }
 
-int Plot::heightForWidth(int w) const
+int Plot::heightForWidth(int /* w */) const
 {
 //	MSG_ERROR << __PRETTY_FUNCTION__ << " " << w << " " << canvas()->size();
 	return -1;
