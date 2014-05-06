@@ -21,9 +21,7 @@
 #ifndef _DISKSPACE_H
 #define _DISKSPACE_H
 
-#include <boost/filesystem.hpp>
-
-#include <QString>
+#include <QtCore>
 
 /*!
     \class DiskSpace
@@ -41,29 +39,15 @@ public:
 	 * \param p path to the directory
 	 */
 	DiskSpace(const QString &p)
-		: m_path(p.toStdString())
+		: m_path(QDir(p))
 	{
 	}
-
-#if 0
-	DiskSpace(const boost::filesystem::path &p)
-		: m_path(p)
-	{
-	}
-#endif
 
 	//! \returns the current path
 	std::string path(void)
 	{
-		return m_path.string();
+		return m_path.path().toStdString();
 	}
-
-#if 0
-	void setPath(const boost::filesystem::path &p)
-	{
-		m_path = p;
-	}
-#endif
 
 	/**
 	 * sets the path
@@ -72,28 +56,13 @@ public:
 	 */
 	void setPath(const QString &p)
 	{
-		m_path = p.toStdString();
+		m_path = QDir(p);
 	}
 
 	//! returns the number of free bytes
-	unsigned long long freeBytes(void)
-	{
-		try
-		{
-			boost::filesystem::space_info spi = boost::filesystem::space(m_path);
-			return spi.free;
-		}
-#if BOOST_FILESYSTEM_VERSION == 2
-		catch (const boost::filesystem::basic_filesystem_error<boost::filesystem::path> &e)
-#else 
-		catch ( ... )
-#endif
-		{
-		}
-		return 0;
-	}
+	unsigned long long freeBytes(void);
 
-	//! returns the number of free space in kB 
+	//! returns the number of free space in kB
 	unsigned long long freeKB(void)
 	{
 		return freeBytes() / 1024;
@@ -112,22 +81,7 @@ public:
 	}
 
 	//! returns the number of available bytes
-	unsigned long long availableBytes(void)
-	{
-		try
-		{
-			boost::filesystem::space_info spi = boost::filesystem::space(m_path);
-			return spi.available;
-		}
-#if BOOST_FILESYSTEM_VERSION == 2
-		catch (const boost::filesystem::basic_filesystem_error<boost::filesystem::path> &e)
-#else
-		catch ( ... )
-#endif
-		{
-		}
-		return 0;
-	}
+	unsigned long long availableBytes(void);
 
 	//! returns the number of available space in kB
 	unsigned long long availableKB(void)
@@ -148,7 +102,7 @@ public:
 	}
 
 private:
-	boost::filesystem::path m_path;
+	QDir m_path;
 };
 
-#endif
+#endif //_DISKSPACE_H

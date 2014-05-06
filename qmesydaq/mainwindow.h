@@ -52,7 +52,7 @@ public:
 	//!  Destructor
 	virtual ~MainWindow();
 
-        /*! 
+        /*!
 	 * wrapper method to emit signal to load a configuration file
 	 *
 	 * \param sFilename name of the file

@@ -32,7 +32,11 @@ MainWindow::MainWindow(QWidget *parent)
 	, Ui_MainWindow()
 {
 	setupUi(this);
+#ifdef VERSION
 	setWindowTitle("QMesyDAQ " + QString(VERSION) + " " __DATE__);
+#else
+	setWindowTitle("QMesyDAQ " __DATE__);
+#endif
 
 	m_mesy = new Mesydaq2();
 	m_main = new MainWidget(m_mesy, this);
@@ -102,7 +106,7 @@ void MainWindow::updateStatusBar()
 {
 	QList<int> list = m_mesy->mcpdId();
         MSG_ERROR << tr("MCPD %1").arg(list.size());
-	for (int i = 0; i < list.size(); ++i) 
+	for (int i = 0; i < list.size(); ++i)
      		if (m_mesy->isExtsynced(list.at(i)))
 			m_sync->setText("External");
 }
@@ -158,7 +162,7 @@ void MainWindow::saveSettings()
 		settings.setValue("config/accesslevel", MainWidget::User);
 }
 
-/*! 
+/*!
     if the the windows closes it will be called
 
     \param event close event
@@ -186,7 +190,7 @@ void MainWindow::selectUser(void)
 void MainWindow::selectExpert(void)
 {
 	if (checkPasswd("expert"))
-	{	
+	{
 		actionUser->setChecked(false);
 		actionSuperUser->setChecked(false);
 		menuRemoteInterface->setEnabled(false);
@@ -206,7 +210,7 @@ void MainWindow::selectExpert(void)
 void MainWindow::selectSuperuser(void)
 {
 	if (checkPasswd("superuser"))
-	{	
+	{
 		actionUser->setChecked(false);
 		actionExpert->setChecked(false);
 		menuRemoteInterface->setEnabled(true);

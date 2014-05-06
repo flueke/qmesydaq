@@ -14,12 +14,16 @@
 //#include <cstdio>
 //#include <cmath>
 
+#include "libqmesydaq_global.h"
+
 #if defined(_MSC_VER)
+#define VERSION "1.2"
+
 //Functions
-Q_EXTERN_C int round(double value);
+LIBQMESYDAQ_EXPORT int round(double value);
 //POSIX Functions
-Q_EXTERN_C void sleep(unsigned int s);
-Q_EXTERN_C void usleep(unsigned int us);
+LIBQMESYDAQ_EXPORT void sleep(unsigned int s);
+LIBQMESYDAQ_EXPORT void usleep(unsigned int us);
 #else
 #include <unistd.h>
 #endif

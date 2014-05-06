@@ -560,8 +560,8 @@ void HistogramMappingEditor::handleStandardButton(int iButton)
 {
 	switch (iButton)
 	{
-		case QDialogButtonBox::QDialogButtonBox::Reset: // reset to defaults
-		case QDialogButtonBox::QDialogButtonBox::RestoreDefaults:
+		case QDialogButtonBox::Reset: // reset to defaults
+		case QDialogButtonBox::RestoreDefaults:
 			setDefaultsClick();
 			break;
 		case QDialogButtonBox::Help: // help
@@ -577,15 +577,15 @@ void HistogramMappingEditor::handleStandardButton(int iButton)
 		case QDialogButtonBox::Apply: // apply data
 		case QDialogButtonBox::Ok:
 		{
-			MapCorrection* &pCorrection(m_pMeasurement->posHistMapCorrection());
-			UserMapCorrection* pUserMapCorrection(dynamic_cast<UserMapCorrection*>(pCorrection));
+			MapCorrection* pCorrection = m_pMeasurement->posHistMapCorrection();
+			UserMapCorrection* pUserMapCorrection(dynamic_cast<UserMapCorrection*>(m_pMeasurement->posHistMapCorrection()));
 			Histogram* pHistogram(m_pMeasurement->hist(Measurement::PositionHistogram));
 
 			if (pUserMapCorrection == NULL)
 			{
 				// destroy default mapping
 				delete pCorrection;
-				pCorrection = pUserMapCorrection = new UserMapCorrection(QSize(pHistogram->width(), pHistogram->height()),
+				m_pMeasurement->posHistMapCorrection() = pCorrection = pUserMapCorrection = new UserMapCorrection(QSize(pHistogram->width(), pHistogram->height()),
 					m_pEditor->getOrientation(), MapCorrection::CorrectSourcePixel);
 				Q_ASSERT(pUserMapCorrection != NULL);
 			}
@@ -601,7 +601,7 @@ void HistogramMappingEditor::handleStandardButton(int iButton)
 			{
 				// create default mapping
 				delete pCorrection;
-				pCorrection = NULL;
+				m_pMeasurement->posHistMapCorrection() = NULL;
 				m_pMeasurement->readCalibration(QString(""), true);
 				pCorrection = m_pMeasurement->posHistMapCorrection();
 			}

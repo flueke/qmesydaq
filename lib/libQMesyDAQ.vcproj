@@ -176,6 +176,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\editormemory.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\histogram.cpp"
 				>
 			</File>
@@ -185,6 +189,14 @@
 			</File>
 			<File
 				RelativePath=".\mapcorrect.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\mappeddetector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\mappedhistogram.cpp"
 				>
 			</File>
 			<File
@@ -200,11 +212,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\mcpdmdll.cpp"
+				RelativePath=".\mdll.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\mdll.cpp"
+				RelativePath=".\mdllcorrect.cpp"
 				>
 			</File>
 			<File
@@ -263,12 +275,20 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\usermapcorrect.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Dateien"
 			Filter="h"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\calibration.h"
+				>
+			</File>
 			<File
 				RelativePath=".\counter.h"
 				>
@@ -320,6 +340,10 @@
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\editormemory.h"
+				>
 			</File>
 			<File
 				RelativePath=".\histogram.h"
@@ -376,6 +400,36 @@
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
 						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_NETWORK_LIB -DLIBQMESYDAQ_LIB -DQT_GUI_LIB -D_WINDLL  &quot;-I.&quot; &quot;-I.\GeneratedFiles&quot; &quot;-I.\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\qtmain&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtNetwork&quot; &quot;-I$(QTDIR)\include\QtGui&quot; &quot;.\mapcorrect.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\mappeddetector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mappedhistogram.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing mappedhistogram.h..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_NETWORK_LIB -DLIBQMESYDAQ_LIB -DQT_GUI_LIB -D_WINDLL &quot;-I.&quot; &quot;-I.\GeneratedFiles&quot; &quot;-I.\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\qtmain&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtNetwork&quot; &quot;-I$(QTDIR)\include\QtGui&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing mappedhistogram.h..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  &quot;$(InputPath)&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_NETWORK_LIB -DLIBQMESYDAQ_LIB -DQT_GUI_LIB -D_WINDLL &quot;-I.&quot; &quot;-I.\GeneratedFiles&quot; &quot;-I.\GeneratedFiles\$(ConfigurationName)\.&quot; &quot;-I$(QTDIR)\include&quot; &quot;-I$(QTDIR)\include\qtmain&quot; &quot;-I$(QTDIR)\include\QtCore&quot; &quot;-I$(QTDIR)\include\QtNetwork&quot; &quot;-I$(QTDIR)\include\QtGui&quot;&#x0D;&#x0A;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -488,6 +542,10 @@
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\mdllcorrect.h"
+				>
 			</File>
 			<File
 				RelativePath=".\measurement.h"
@@ -631,6 +689,10 @@
 				RelativePath=".\structures.h"
 				>
 			</File>
+			<File
+				RelativePath=".\usermapcorrect.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Form Dateien"
@@ -694,6 +756,18 @@
 				</File>
 				<File
 					RelativePath=".\GeneratedFiles\Release\moc_mapcorrect.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\GeneratedFiles\Release\moc_mappedhistogram.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -867,6 +941,18 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\GeneratedFiles\Debug\moc_mappedhistogram.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\GeneratedFiles\Debug\moc_mcpd.cpp"
 					>
 					<FileConfiguration
@@ -992,7 +1078,7 @@
 		/>
 		<Global
 			Name="QtVersion Win32"
-			Value="4.7.0"
+			Value="QT4.7.4"
 		/>
 		<Global
 			Name="RccDir"

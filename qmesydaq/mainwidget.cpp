@@ -190,7 +190,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 
     timerPreset->setLabel(tr("Timer"));
     eventsPreset->setLabel(tr("Events"));
-    
+
     monitor1Preset->setLabel(tr("Monitor 1"));
     monitor2Preset->setLabel(tr("Monitor 2"));
     monitor3Preset->setLabel(tr("Monitor 3"));
@@ -243,8 +243,8 @@ void MainWidget::about()
 		   + tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
                    + tr("<li><a href=\"mailto:m.drochner@fz-juelich.de\">Matthias Drochner</a> Bug reports</li>")
                    + tr("<li><a href=\"mailto:christian.randau@frm2.tum.de\">Christian Randau</a> Windows port</li>")
-		   + tr("<li><a href=\"mailto:eric.faustmann@helmholtz-berlin.de\">Eric Faustmann</a>Histogram mapping editor</li>") 
-		   + tr("<li><a href=\"mailto:damian.rhein@helmholtz-berlin.de\">Damian Rhein</a>Histogram mapping editor</li>") 
+		   + tr("<li><a href=\"mailto:eric.faustmann@helmholtz-berlin.de\">Eric Faustmann</a>Histogram mapping editor</li>")
+		   + tr("<li><a href=\"mailto:damian.rhein@helmholtz-berlin.de\">Damian Rhein</a>Histogram mapping editor</li>")
                    + tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>");
     LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
     if (loop)
@@ -324,7 +324,7 @@ void MainWidget::timerEvent(QTimerEvent *event)
 /*!
     \fn void MainWidget::allPulserOff(void)
 
-    callback to switch all pulsers off 
+    callback to switch all pulsers off
 */
 void MainWidget::allPulserOff(void)
 {
@@ -349,9 +349,9 @@ void MainWidget::zoomed(const QRectF &rect)
 {
     if (m_meas)
     {
-        qreal x, 
+        qreal x,
               y,
-              w, 
+              w,
               h;
         rect.getRect(&x, &y, &w, &h);
 
@@ -450,7 +450,7 @@ void MainWidget::setStreamSlot()
 #if defined(_MSC_VER)
 #	pragma message("TODO implementation is missing ")
 #else
-#	warning TODO implementation is missing 
+#	warning TODO implementation is missing
 #endif
 #if 0
     unsigned short id = (unsigned short) deviceId->value();
@@ -500,7 +500,7 @@ void MainWidget::checkListfilename(bool checked)
 {
     if (checked)
     {
-        QString name(QString::null); 
+        QString name(QString::null);
         MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
         bool bAsk = true;
         if(app)
@@ -536,7 +536,7 @@ void MainWidget::checkListfilename(bool checked)
 	}
     }
     emit redraw();
-}	
+}
 
 /*!
     \fn void MainWidget::updateDisplay(void)
@@ -570,14 +570,14 @@ void MainWidget::updateDisplay(void)
         return;
     hTimeText->setText(buildTimestring(m_meas->getHeadertime(), true));
     mTimeText->setText(buildTimestring(m_meas->timer(), /*getMeastime(),*/ false));
-    
+
     // parameter values for selected ID
     param0->setText(tr("%1").arg(m_theApp->getParameter(id, 0)));
     param1->setText(tr("%1").arg(m_theApp->getParameter(id, 1)));
     param2->setText(tr("%1").arg(m_theApp->getParameter(id, 2)));
     param3->setText(tr("%1").arg(m_theApp->getParameter(id, 3)));
     m_meas->calcMeanRates();
-    
+
     // measurement values counters and rates
     timerPreset->setValue(m_meas->timer() / 1000.);
 
@@ -711,11 +711,15 @@ void MainWidget::replayListfileSlot()
         startStopButton->setDisabled(true);
         clearAllSlot();
         displayGroupBox->setEnabled(true);
-#warning TODO dynamic resizing of mapped histograms
+#if defined(_MSC_VER)
+#	pragma message("TODO dynamic resizing of mapped histograms")
+#else
+#	warning TODO dynamic resizing of mapped histograms
+#endif
 #if 0
         m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
 #else
-        m_meas->setROI(QRectF(0, 0, 0, 0)); 
+        m_meas->setROI(QRectF(0, 0, 0, 0));
 #endif
 	m_dispTimer = startTimer(1000);
         m_theApp->setListfilename(QFileInfo(name).fileName());
@@ -732,7 +736,7 @@ void MainWidget::replayListfileSlot()
 /*!
     \fn void MainWidget::displayMcpdSlot(int id)
 
-    callback to display MCPD 
+    callback to display MCPD
 
     \param id
  */
@@ -761,7 +765,7 @@ void MainWidget::displayMpsdSlot(int iModule)
       mod = devid_2->value();
 // firmware version
     firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod), 0, 'f', 2));
-// MCPD capabilities 
+// MCPD capabilities
     QString tmp("");
     quint16 cap = m_theApp->capabilities(mod);
     if (cap & TPA)
@@ -772,7 +776,7 @@ void MainWidget::displayMpsdSlot(int iModule)
 	tmp = "P";
     MSG_ERROR << tr("%1 %2").arg(cap).arg(tmp);
     capabilities->setText(tmp);
-    
+
 // Status display:
     moduleStatus0->update(m_theApp->getModuleType(mod, 0), m_theApp->getModuleVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));
     moduleStatus1->update(m_theApp->getModuleType(mod, 1), m_theApp->getModuleVersion(mod, 1), m_theApp->online(mod, 1), m_theApp->histogram(mod, 1), m_theApp->active(mod, 1));
@@ -1172,7 +1176,7 @@ void MainWidget::updatePresets(void)
     monitor2Preset->setPresetValue(m_meas->getPreset(MON2ID));
     monitor3Preset->setPresetValue(m_meas->getPreset(MON3ID));
     monitor4Preset->setPresetValue(m_meas->getPreset(MON4ID));
-    
+
     // check for master preset counter
     timerPreset->setChecked(m_meas->isMaster(TIMERID));
     eventsPreset->setChecked(m_meas->isMaster(EVID));
@@ -1313,7 +1317,7 @@ void MainWidget::setDisplayMode(int val)
     m_dataFrame->setDisplayMode(m_mode);
     switch(m_mode)
     {
-        case Plot::Spectrum:	
+        case Plot::Spectrum:
             dispAll->setEnabled(true);
             if (!dispAll->isChecked())
             {
@@ -1326,7 +1330,7 @@ void MainWidget::setDisplayMode(int val)
             }
             break;
         case Plot::Histogram:
-        case Plot::Diffractogram: 
+        case Plot::Diffractogram:
         case Plot::SingleSpectrum:
             dispAll->setEnabled(false);
             dispMcpd->setEnabled(false);
@@ -1371,7 +1375,7 @@ void MainWidget::draw(void)
             countsInROI->setText(tr("%1").arg(histogram->getCounts(m_meas->getROI())));
             break;
         case Plot::Diffractogram :
-            spec = m_meas->spectrum(Measurement::Diffractogram); 
+            spec = m_meas->spectrum(Measurement::Diffractogram);
 	    if (m_meas->setupType() == Measurement::Mdll)
 		m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
             m_data->setData(spec);
@@ -1597,7 +1601,7 @@ void MainWidget::setupModule(quint8 id)
 /*!
     \fn void MainWidget::setupModule()
 
-    opens the dialog to handle the MPSD Module setup 
+    opens the dialog to handle the MPSD Module setup
 */
 void MainWidget::setupModule(void)
 {
@@ -1663,12 +1667,11 @@ void MainWidget::setupGeneral()
  */
 void MainWidget::editHistogramMapping()
 {
-    MapCorrection* &pCorrection(m_meas->posHistMapCorrection());
-    UserMapCorrection* pUserCorrection(dynamic_cast<UserMapCorrection*>(pCorrection));
-    MapCorrection* pDefaultCorrection(pCorrection);
+    MapCorrection* pDefaultCorrection(m_meas->posHistMapCorrection());
+    UserMapCorrection* pUserCorrection(dynamic_cast<UserMapCorrection*>(pDefaultCorrection));
     if (pUserCorrection == NULL)
         // the user may overwrite this default mapping, check comes later
-        pCorrection = pUserCorrection = new UserMapCorrection(QSize(m_meas->width(), m_meas->height()), MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
+        m_meas->posHistMapCorrection() = pUserCorrection = new UserMapCorrection(QSize(m_meas->width(), m_meas->height()), MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel);
     else
         // default is already a UserMapCorrection -> unable to restore it
         pDefaultCorrection = NULL;
@@ -1685,11 +1688,12 @@ void MainWidget::editHistogramMapping()
             pDefaultCorrection = NULL;
         }
     }
+    MapCorrection* pCorrection(m_meas->posHistMapCorrection());
     if (pDefaultCorrection != NULL && pCorrection != pDefaultCorrection)
     {
         // the user did not change the default mapping, restore it
         delete pCorrection;
-        pCorrection = pDefaultCorrection;
+        m_meas->posHistMapCorrection() = pDefaultCorrection;
     }
 }
 

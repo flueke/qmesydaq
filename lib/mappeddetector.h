@@ -22,6 +22,8 @@
 #ifndef MAPPEDDETECTOR_H
 #define MAPPEDDETECTOR_H
 
+#include "libqmesydaq_global.h"
+
 /**
 	\short Data of mapped detector tube without channel
 
@@ -29,7 +31,7 @@
 	\author Damian Rhein <damian.rhein@helmholtz-berlin.de>
 	\author Lutz Rossa <rossa@helmholtz-berlin.de>
 */
-class MappedDetector
+class LIBQMESYDAQ_EXPORT MappedDetector
 {
 public:
 	MappedDetector() { clr(); }

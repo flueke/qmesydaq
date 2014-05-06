@@ -21,9 +21,12 @@
 #define CALIBRATION_H
 
 #include <cmath>
+//This Header file is not using pre compiled headers.
+//The include of the stdafx is necessary for the round function,
+//which is implemented inside the stdafx.cpp.
 #include "stdafx.h"
 
-class TubeRange  
+class TubeRange
 {
 public:
 	TubeRange()

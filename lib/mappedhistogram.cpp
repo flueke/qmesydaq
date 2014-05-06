@@ -177,7 +177,12 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 						m_iMaxPos = iPos;
 					switch (m_pMapCorrection->orientation())
 					{
-#warning TODO the change of the iPos value for the unhandled cases
+#if defined(_MSC_VER)
+#	pragma message("TODO the change of the iPos value for the unhandled cases")
+#else
+#	warning TODO the change of the iPos value for the unhandled cases
+#endif
+
 						case MapCorrection::OrientationLeft:
 						case MapCorrection::OrientationLeftRev:
 						case MapCorrection::OrientationRight:
@@ -233,7 +238,11 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 
 					switch (m_pMapCorrection->orientation())
 					{
-#warning TODO the change of the iPos value for the unhandled cases
+#if defined(_MSC_VER)
+#	pragma message("TODO the change of the iPos value for the unhandled cases")
+#else
+#	warning TODO the change of the iPos value for the unhandled cases
+#endif
 						case MapCorrection::OrientationLeft:
 						case MapCorrection::OrientationLeftRev:
 						case MapCorrection::OrientationRight:

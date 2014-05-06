@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.28.1
+VERSION		= 0.28.2
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -74,7 +74,8 @@ HEADERS 	+= mainwidget.h \
 		histogramedittablewidget.h \
 		tacosetup.h \
 		caresssetup.h \
-		tcpsetup.h
+		tcpsetup.h \
+		diskspace/diskspace.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -131,7 +132,8 @@ SOURCES 	+= main.cpp \
 		histogramedittablewidget.cpp \
 		tacosetup.cpp \
 		caresssetup.cpp \
-		tcpsetup.cpp
+		tcpsetup.cpp \
+		diskspace/diskspace.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
