@@ -111,7 +111,7 @@
            <item row="1" column="0">
             <widget class="QRadioButton" name="dispHistogram">
              <property name="text">
-              <string>Histogram</string>
+              <string>2D Histogram</string>
              </property>
              <property name="shortcut">
               <string/>

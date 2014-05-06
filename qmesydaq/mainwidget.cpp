@@ -1358,6 +1358,11 @@ void MainWidget::draw(void)
     switch (m_mode)
     {
         case Plot::Histogram :
+	    if (m_meas->setupType() == Measurement::Mdll)
+	    {
+		m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
+		m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
+	    }
             histogram = m_meas->hist(Measurement::HistogramType(m_histoType));
 	    histogram->calcMinMaxInROI(m_meas->getROI());
             m_histData->setData(histogram);
@@ -1367,6 +1372,8 @@ void MainWidget::draw(void)
             break;
         case Plot::Diffractogram :
             spec = m_meas->spectrum(Measurement::Diffractogram); 
+	    if (m_meas->setupType() == Measurement::Mdll)
+		m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
             m_data->setData(spec);
 	    m_dataFrame->setSpectrumData(m_data);
             labelCountsInROI->setText(tr("Counts"));
@@ -1374,7 +1381,10 @@ void MainWidget::draw(void)
             break;
         case Plot::SingleSpectrum :
 	    if (m_meas->setupType() == Measurement::Mdll)
+	    {
                 spec = m_meas->spectrum(Measurement::AmplitudeSpectrum);
+		m_dataFrame->setAxisTitle(QwtPlot::xBottom, "amplitude");
+	    }
 	    else
                 spec = m_meas->spectrum(Measurement::SingleTubeSpectrum);
             m_data->setData(spec);
@@ -1383,6 +1393,8 @@ void MainWidget::draw(void)
             countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
             break;
         case Plot::Spectrum :
+	    if (m_meas->setupType() == Measurement::Mdll)
+		m_dataFrame->setAxisTitle(QwtPlot::xBottom, "Y (channel)");
             if(dispAll->isChecked())
             {
                 if (dispAllPos->isChecked())
