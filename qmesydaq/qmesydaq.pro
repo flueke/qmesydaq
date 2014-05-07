@@ -27,7 +27,7 @@ TEMPLATE 	= app
 TARGET 		= qmesydaq
 
 DEPENDPATH 	+= . $${SRCBASE}/test/plot $${SRCBASE}/lib
-INCLUDEPATH 	+= . $${SRCBASE} $${SRCBASE}/test/plot
+INCLUDEPATH 	+= . $${SRCBASE}
 
 SUBDIRS		+= diskspace
 
@@ -76,7 +76,8 @@ HEADERS 	+= mainwidget.h \
 		caresssetup.h \
 		tcpsetup.h \
 		diskspace/diskspace.h \
-		website.h
+		website.h \
+		data.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -137,7 +138,8 @@ SOURCES 	+= main.cpp \
 		caresssetup.cpp \
 		tcpsetup.cpp \
 		diskspace/diskspace.cpp \
-		website.cpp
+		website.cpp \
+		data.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png

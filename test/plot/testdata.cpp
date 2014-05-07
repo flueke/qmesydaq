@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2012 by Jens Kr�ger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2012 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,59 +18,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "mainwindow.h"
-
-#include <QToolBar>
-#include <QToolButton>
-#include <QButtonGroup>
-
-#include "plotwidget.h"
-#include "plot.h"
 #include "testdata.h"
 
-#include <QDebug>
-
-MainWindow::MainWindow(QWidget *parent)
-	: QMainWindow(parent)
-	, m_plot(NULL)
-	, m_spectrumData(NULL)
-	, m_histogramData(NULL)
+TestSpectrumData::TestSpectrumData(double(*_y)(double), size_t size)
+	: SpectrumData(size)
 {
-	m_plotWidget = new PlotWidget(this);
-
-	m_plotWidget->show();
-
-	m_plot = m_plotWidget->m_plot;
-
-// Create spectrum data
-	m_spectrumData = new TestSpectrumData(::myspectrum, 100);
-// Create histogram data
-	m_histogramData = new HistogramData();
-// Create diffractogram data
-	m_diffData = new DiffractogramData(*m_histogramData, Data::xDir);
-
-	m_plot->setSpectrumData(m_spectrumData);
-	m_plot->setHistogramData(m_histogramData);
-	m_plot->setDisplayMode(Plot::Histogram);
-
-	connect(m_plotWidget->displayButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(setDisplayMode(int)));
+	for (size_t i = 0; i < d_size; ++i)
+		m_data[i] = _y(0.1 * i);
 }
 
-void MainWindow::setDisplayMode(int val)
+double TestSpectrumData::x(size_t i) const
 {
-	switch (val)
-	{
-		case Plot::Spectrum :
-			m_plot->setSpectrumData(m_spectrumData);
-			m_plot->setDisplayMode(Plot::Spectrum);
-			break;
-		case Plot::Histogram :
-			m_plot->setHistogramData(m_histogramData);
-			m_plot->setDisplayMode(Plot::Histogram);
-			break;
-		case Plot::Diffractogram :
-			break;
-		default:
-			break;
-	}
+	return 0.1 * i;
 }
+

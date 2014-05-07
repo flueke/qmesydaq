@@ -25,7 +25,7 @@ include (mesydaqconfig.pri)
 TEMPLATE 	= subdirs
 CONFIG		+= ordered edist
 
-SUBDIRS		+= lib interfaces qmesydaq tools # test
+SUBDIRS		+= lib interfaces qmesydaq tools test
 
 TARGET		= mesydaq
 

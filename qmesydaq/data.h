@@ -37,9 +37,9 @@ namespace Data
 class SpectrumData: public QwtData
 {
     // The x values depend on its index and the y values
-    // can be calculated from the corresponding x value. 
+    // can be calculated from the corresponding x value.
     // So we don´t need to store the values.
-    // Such an implementation is slower because every point 
+    // Such an implementation is slower because every point
     // has to be recalculated for every replot, but it demonstrates how
     // QwtData can be used.
 
@@ -57,21 +57,13 @@ public:
 	virtual size_t size() const;
 
 	virtual double x(size_t i) const;
-	
+
 	virtual double y(size_t i) const;
 
 protected:
 	size_t 	d_size;
 
 	double	*m_data;
-};
-
-class TestSpectrumData : public SpectrumData
-{
-public:
-	TestSpectrumData(double(*y)(double), size_t size);
-
-	virtual double x(size_t i) const;
 };
 
 class HistogramData: public QwtRasterData

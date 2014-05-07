@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 1.0.0
+VERSION		= 1.0.1
 SRCBASE		= ../..
 
 include ($${SRCBASE}/mesydaqconfig.pri)
@@ -26,17 +26,18 @@ include ($${SRCBASE}/mesydaqconfig.pri)
 TEMPLATE 	= app
 TARGET 		= plot
 DEPENDPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
-INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
+INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib $${SRCBASE}/qmesydaq
 
 SOURCES 	+= main.cpp \
 		plot.cpp \
 		mainwindow.cpp \
 		zoomer.cpp \
-		data.cpp \
+		testdata.cpp \
 		plotwidget.cpp \
-		colormaps.cpp
+		colormaps.cpp \
+		$${SRCBASE}/qmesydaq/data.cpp
 
-HEADERS 	+= data.h \
+HEADERS 	+= testdata.h \
 		plot.h \
 		mainwindow.h \
 		zoomer.h \

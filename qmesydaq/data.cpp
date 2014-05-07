@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2012 by Jens Kr¿ger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2012 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -65,22 +65,10 @@ double SpectrumData::x(size_t i) const
 {
 	return i;
 }
-	
+
 double SpectrumData::y(size_t i) const
 {
 	return m_data[i];
-}
-
-TestSpectrumData::TestSpectrumData(double(*_y)(double), size_t size)
-	: SpectrumData(size)
-{
-	for (size_t i = 0; i < d_size; ++i)
-		m_data[i] = _y(0.1 * i);
-}
-
-double TestSpectrumData::x(size_t i) const
-{
-	return 0.1 * i;
 }
 
 HistogramData::HistogramData()
@@ -90,12 +78,12 @@ HistogramData::HistogramData()
 
 QwtRasterData *HistogramData::copy() const
 {
-       	return new HistogramData();
+	return new HistogramData();
 }
 
 QwtDoubleInterval HistogramData::range() const
 {
-       	return QwtDoubleInterval(0.0, 10.0);
+	return QwtDoubleInterval(0.0, 10.0);
 }
 
 double HistogramData::value(double x, double y) const
