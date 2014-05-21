@@ -812,6 +812,11 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 	m_b64Bit[iDevice]=false;
 	m_lRunNo = -1;
 	m_dtLastCall = QDateTime();
+	if (m_iMaster == iDevice)
+	{
+		m_iMaster = -1;
+		m_bMasterPause = false;
+	}
 	MSG_DEBUG << "release(kind=" << kind << ", id=" << id << ')';
 	m_szErrorMessage[0]='\0';
 	if (pInterface!=NULL)
