@@ -21,7 +21,6 @@
  ***************************************************************************/
 
 #include <QDateTime>
-#include <QDebug>
 #include <QSettings>
 #include <QEventLoop>
 #include <QThread>
@@ -209,6 +208,7 @@ void TCPLoop::histogram(void)
 //		tmp.push_back(1);
 //		tmp.push_back(1);
 	}
+	MSG_NOTICE << "Histogram size: " << width << "x" << height;
 	QString tmp = formatHistogram(width, height, tmpList);
 	m_server->sendAnswer(tmp);
 }
