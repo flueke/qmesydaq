@@ -242,7 +242,7 @@ QString TCPLoop::formatHistogram(quint32 width, quint32 height, const QList<quin
 	{
 		t += s.setNum(i) + "\t";
 		quint32 row = i * width;
-		for (quint32 j = 0; j < 480; j++)
+		for (quint32 j = 0; j < width; j++)
 			t += s.setNum(histo[row + j]) + "\t";
 		t += "\r\n";
 	}
