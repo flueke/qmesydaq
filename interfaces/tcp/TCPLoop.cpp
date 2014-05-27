@@ -146,21 +146,21 @@ void TCPLoop::presetTimer(const quint32 input)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
-	m_interface->setPreSelection(TCT, input);
+	m_interface->selectCounter(TCT, true, input);
 }
 
 void TCPLoop::presetMonitor(const quint8 mon, const quint32 input)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
-	m_interface->setPreSelection(mon - 1, input);
+	m_interface->selectCounter(mon - 1, true, input);
 }
 
 void TCPLoop::presetEvent(const quint32 input)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
-	m_interface->setPreSelection(EVCT, input);
+	m_interface->selectCounter(EVCT, true, input);
 }
 
 void TCPLoop::status(void)
