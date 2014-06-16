@@ -416,15 +416,20 @@ quint16 Mesydaq2::width(void)
 {
 	QList<quint16> modList;
 	quint16 n(0);
+	m_tubeMapping.clear();
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 	{
 		QList<quint16> tmpList = it.value()->getHistogramList();
-		foreach(quint16 h, tmpList)
-			modList.append(it.value()->getId() * 64 + h);
+		quint16 id = it.value()->getId();
+		m_tubeMapping.resize(id << 6); // == id * 64
+		foreach(quint16 i, tmpList)
+		{
+			modList.append((id << 6) + i);
+			MSG_INFO << "Mapping MCPD : " << id << " tube " << i << " -> " << n;
+			m_tubeMapping.append(n++);
+		}
 	}
-	qSort(modList);
-	if (!modList.isEmpty())
-		n = modList.last() + 1;
+	MSG_INFO << "Found " << n << " tubes to histogram";
 	return n ? n : 128;
 }
 

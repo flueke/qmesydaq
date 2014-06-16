@@ -250,9 +250,11 @@ public:
 	void clearAllHist(void);
 
 	void clearChanHist(const quint16 chan);
+	void clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan);
 
-	Spectrum *data(const HistogramType t, const quint16 line);
 	Spectrum *data(const HistogramType t);
+	Spectrum *data(const HistogramType t, const quint16 line);
+	Spectrum *data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan);
 
 	/**
 	    \param t type of the requested histogram
@@ -267,7 +269,7 @@ public:
 	Spectrum *spectrum(const SpectrumType t);
 
 	//! \return the mapping and correction data for position histogram
-	MapCorrection*& posHistMapCorrection() { return m_posHistMapCorrection; }
+	MapCorrection *&posHistMapCorrection() {return m_posHistMapCorrection;}
 
 	void getMean(const HistogramType t, float &, float &);
 	void getMean(const HistogramType t, quint16, float &, float &);
@@ -435,7 +437,7 @@ public:
 	void setSetupType(const Setup val);
 
 	//! \return get access to the hardware layer
-	Mesydaq2 *getMesydaq() { return m_mesydaq; }
+	Mesydaq2 *getMesydaq() {return m_mesydaq;}
 
 public slots:
 	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
@@ -559,6 +561,9 @@ private:
 	quint64		m_neutrons;
 
 	Setup		m_setup;
+
+	//! mapping vector for the histogrammed tubes
+	QVector<quint16> m_tubeMapping;
 };
 
 #endif

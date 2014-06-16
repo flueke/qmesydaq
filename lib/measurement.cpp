@@ -128,6 +128,8 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 	m_height = h;
 	m_width = w;
 
+	m_tubeMapping = m_mesydaq->getTubeMapping();
+
 	for (int i = PositionHistogram; i < CorrectedPositionHistogram; ++i)
 	{
 		if (!m_Hist[i])
@@ -609,6 +611,20 @@ void Measurement::clearChanHist(quint16 chan)
 }
 
 /*!
+    \fn void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan)
+
+    clears the spectra of a tube
+
+    \param mcpd number of the MCPD
+    \param mpsd number of the MPSD on the MCPD
+    \param chan number of the channel at the MPSD
+ */
+void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan)
+{
+	quint16 line = m_tubeMapping.at(mcpd * 64 + mpsd * 8 + chan);
+	clearChanHist(line);
+}
+/*!
     \fn Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 
     gets a position spectrum of a tube
@@ -616,7 +632,7 @@ void Measurement::clearChanHist(quint16 chan)
     \param t type of the requested histogram
     \param line tube number
     \return spectrum if line exist otherwise NULL pointer
-*/
+ */
 Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 {
 	if (m_Hist[t])
@@ -624,6 +640,24 @@ Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 	else
 		return NULL;
 }
+
+/*!
+    \fn Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint16 mpsd, const quint8 chan)
+
+    gets a position spectrum of a tube
+
+    \param t type of the requested histogram
+    \param mcpd number of the MCPD
+    \param mpsd number of the MPSD on the MCPD
+    \param chan number of the channel at the MPSD
+    \return spectrum if line exist otherwise NULL pointer
+ */
+Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan)
+{
+	quint16 line = m_tubeMapping.at(mcpd * 64 + mpsd * 8 + chan);
+	return data(t, line);
+}
+
 
 /*!
     \fn Spectrum *Measurement::data(const HistogramType t)
@@ -783,7 +817,7 @@ void Measurement::readHistograms(const QString &name)
 	\fn void Measurement::readCalibration(const QString &name, bool bForceDefault)
 
 	\param name calibration file name
-	\param bForceDefault reset to default with empry calibration file name
+	\param bForceDefault reset to default with empty calibration file name
  */
 void Measurement::readCalibration(const QString &name, bool bForceDefault)
 {
@@ -984,6 +1018,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					}
 					neutrons++;
 					++(*m_counter[EVID]);
+					if (moduleID != TYPE_MDLL)
+						chan = m_tubeMapping.at(chan);
 					if (m_Hist[PositionHistogram])
 						m_Hist[PositionHistogram]->incVal(chan, pos);
 					if (m_Hist[AmplitudeHistogram])
@@ -1545,6 +1581,8 @@ bool Measurement::loadSetup(const QString &name)
 		if (!m_Spectrum[AmplitudeSpectrum])
 			m_Spectrum[AmplitudeSpectrum] = new Spectrum();
 	}
+	m_width = m_mesydaq->width();
+	m_height = m_mesydaq->height();
 // Calibration file must be read after hardware configuration
 	readCalibration(sz, true);
 	return true;

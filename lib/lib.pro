@@ -19,7 +19,7 @@
 ############################################################################
 
 
-VERSION		= 1.26.4
+VERSION		= 1.27.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)

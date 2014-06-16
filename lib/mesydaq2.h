@@ -26,6 +26,7 @@
 #include <QSettings>
 #include <QFile>
 #include <QSize>
+#include <QVector>
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
@@ -301,7 +302,9 @@ public slots:
 
 	virtual void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
-	bool status(bool* pbAck = NULL) const;
+	bool status(bool *pbAck = NULL) const;
+
+	QVector<quint16> getTubeMapping() const {return m_tubeMapping;}
 
 signals:
 	/**
@@ -365,6 +368,9 @@ private:
 
 	//! write protect closed files
 	bool		m_bWriteProtect;
+
+	//! mapping vector for the histogrammed tubes
+	QVector<quint16> m_tubeMapping;
 };
 
 

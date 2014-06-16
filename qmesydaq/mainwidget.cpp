@@ -693,8 +693,7 @@ void MainWidget::clearMpsdSlot()
 */
 void MainWidget::clearChanSlot()
 {
-    ulong chan = dispChan->value() + dispMpsd->value() * 8 + dispMcpd->value() * 64;
-    m_meas->clearChanHist(chan);
+    m_meas->clearChanHist(dispMcpd->value(), dispMpsd->value(), dispChan->value());
     emit redraw();
 }
 
@@ -1449,9 +1448,9 @@ void MainWidget::draw(void)
                     labelCountsInROI->setText(tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value()));
                     quint64 counts(0);
                     if (dispAllPos->isChecked())
-                        spec = m_meas->data(Measurement::PositionHistogram, chan);
+                        spec = m_meas->data(Measurement::PositionHistogram, dispMcpd->value(), dispMpsd->value(), dispChan->value());
                     else
-                        spec = m_meas->data(Measurement::AmplitudeHistogram, chan);
+                        spec = m_meas->data(Measurement::AmplitudeHistogram, dispMcpd->value(), dispMpsd->value(), dispChan->value());
                     m_data->setData(spec);
                     if (spec)
                         counts = spec->getTotalCounts();
