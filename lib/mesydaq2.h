@@ -283,7 +283,7 @@ public slots:
 	void acqListfile(bool yesno);
 
 	//! \return stream the data into a separate file too
-	bool acqListfile() const { return m_acquireListfile; }
+	bool acqListfile() const {return m_acquireListfile;}
 
 	void start(void);
 

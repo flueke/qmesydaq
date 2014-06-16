@@ -25,7 +25,9 @@
 /**
 	\short Data of mapped detector tube without channel
 
-	\author Eric Faustmann <eric.faustmann@helmholtz-berlin.de>, Damian Rhein <damian.rhein@helmholtz-berlin.de>, Lutz Rossa <rossa@helmholtz-berlin.de>
+	\author Eric Faustmann <eric.faustmann@helmholtz-berlin.de>
+	\author Damian Rhein <damian.rhein@helmholtz-berlin.de>
+	\author Lutz Rossa <rossa@helmholtz-berlin.de>
 */
 class MappedDetector
 {

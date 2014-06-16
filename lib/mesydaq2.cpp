@@ -822,7 +822,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	}
 
 // scan connected MCPDs
-	quint16 p = 0;
+	quint16 p(0);
 	foreach(MCPD8 *value, m_mcpd)
 		p += value->numModules();
 
