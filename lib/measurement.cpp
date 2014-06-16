@@ -278,7 +278,7 @@ void Measurement::start()
 	m_mode = DataAcquisition;
 	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
 	foreach (MesydaqCounter *c, m_counter)
-		c->reset();	
+		c->reset();
 	m_packages = 0;
 	m_triggers = 0;
 	m_neutrons = 0;
@@ -968,7 +968,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				}
 				if (mode() == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
-					if (m_mesydaq->getModuleId(mod, id) == TYPE_MPSD8OLD)
+					quint16 moduleID = m_mesydaq->getModuleId(mod, id);
+				        if (moduleID == TYPE_MPSD8OLD)
 					{
 						amp >>= 2;
 						pos >>= 2;
@@ -995,7 +996,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 							m_Hist[AmplitudeHistogram]->incVal(chan, amp);
 					if (m_Hist[CorrectedPositionHistogram])
 						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
-					if (m_mesydaq->getModuleId(mod, id) == TYPE_MSTD16)
+					if (moduleID == TYPE_MSTD16)
 					{
 #if 0
 						MSG_INFO << tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id);
