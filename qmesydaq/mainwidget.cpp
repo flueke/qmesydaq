@@ -1444,7 +1444,6 @@ void MainWidget::draw(void)
                 }
                 else
                 {
-                    quint32 chan = dispMcpd->value() * 64 + dispMpsd->value() * 8 + dispChan->value();
                     labelCountsInROI->setText(tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value()));
                     quint64 counts(0);
                     if (dispAllPos->isChecked())
@@ -2371,4 +2370,18 @@ void MainWidget::dispAllChannelsChanged(bool val)
         setDisplayMode(Plot::ModuleSpectrum);
     else
         setDisplayMode(displayModeButtonGroup->checkedId());
+}
+
+/*!
+    \fn void MainWidget::sumSpectra(bool val)
+
+    callback to enable/disable sum/single spectrum
+
+    \param val true = sum spectrum, false single spectrum
+ */
+void MainWidget::sumSpectra(bool val)
+{
+	if (!val)
+		displayMcpdSlot(dispMcpd->value());
+	emit redraw();
 }

@@ -41,23 +41,22 @@ MCPDSpinBox::MCPDSpinBox(QWidget *parent)
  */
 void MCPDSpinBox::setMCPDList(QList<int> modules)
 {
-	m_mcpdList = modules; 
-	if (!m_mcpdList.empty())
+	m_mcpdList = modules;
+	if (m_mcpdList.empty())
+		setDisabled(true);
+	else
 	{
-		setEnabled(true);
 		qSort(m_mcpdList);
 		setRange(m_mcpdList.first(), m_mcpdList.last());
 		setValue(m_mcpdList.at(0));
 	}
-	else
-		setDisabled(true);
 }
 
 /*!
     \overload MCPDSpinBox::stepBy(int steps)
 
-    Virtual function that is called whenever the user triggers a step. The steps parameter 
-    indicates how many steps were taken, e.g. Pressing Qt::Key_Down will trigger a call to 
+    Virtual function that is called whenever the user triggers a step. The steps parameter
+    indicates how many steps were taken, e.g. Pressing Qt::Key_Down will trigger a call to
     stepBy(-1), whereas pressing Qt::Key_Prior will trigger a call to stepBy(10).
 
     It will go to the next possible module and will go around if wrapping is enabled
@@ -106,10 +105,10 @@ void MCPDSpinBox::stepBy(int steps)
 /*!
     \overload QValidator::State MCPDSpinBox::validate(QString &input, int &pos) const
 
-    This virtual function is called by the MCPDSpinBox to determine whether input is valid. 
+    This virtual function is called by the MCPDSpinBox to determine whether input is valid.
 
     \param input string to validate
-    \param pos indicates the position in the string. 
+    \param pos indicates the position in the string.
 
     \return the result of the validator
 */

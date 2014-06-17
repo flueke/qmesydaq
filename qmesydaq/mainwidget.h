@@ -135,6 +135,7 @@ public slots:
 #else
 	void	zoomed(const QwtDoubleRect &rect);
 #endif
+	void	sumSpectra(bool);
 
 protected:
         void    customEvent(QEvent *);

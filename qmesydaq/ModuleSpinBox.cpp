@@ -42,23 +42,22 @@ ModuleSpinBox::ModuleSpinBox(QWidget *parent)
  */
 void ModuleSpinBox::setModuleList(QList<int> modules)
 {
-	m_modList = modules; 
-	if (!m_modList.empty())
+	m_modList = modules;
+	if (m_modList.empty())
+		setDisabled(true);
+	else
 	{
-		setEnabled(true);
 		setValue(m_modList.at(0));
 		qSort(m_modList);
 		setRange(m_modList.first(), m_modList.last());
 	}
-	else
-		setDisabled(true);
 }
 
 /*!
     \overload ModuleSpinBox::stepBy(int steps)
 
-    Virtual function that is called whenever the user triggers a step. The steps parameter 
-    indicates how many steps were taken, e.g. Pressing Qt::Key_Down will trigger a call to 
+    Virtual function that is called whenever the user triggers a step. The steps parameter
+    indicates how many steps were taken, e.g. Pressing Qt::Key_Down will trigger a call to
     stepBy(-1), whereas pressing Qt::Key_Prior will trigger a call to stepBy(10).
 
     It will go to the next possible module and will go around if wrapping is enabled
@@ -105,10 +104,10 @@ void ModuleSpinBox::stepBy(int steps)
 /*!
     \overload QValidator::State ModuleSpinBox::validate(QString &input, int &pos) const
 
-    This virtual function is called by the ModuleSpinBox to determine whether input is valid. 
+    This virtual function is called by the ModuleSpinBox to determine whether input is valid.
 
     \param input string to validate
-    \param pos indicates the position in the string. 
+    \param pos indicates the position in the string.
 
     \return the result of the validator
 */

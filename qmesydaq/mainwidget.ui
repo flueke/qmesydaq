@@ -173,7 +173,7 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <layout class="QHBoxLayout" name="mcpdLayout">
           <item>
            <widget class="QLabel" name="textLabel1">
             <property name="text">
@@ -197,7 +197,7 @@
          </layout>
         </item>
         <item row="3" column="1">
-         <layout class="QHBoxLayout">
+         <layout class="QHBoxLayout" name="moduleLayout">
           <item>
            <widget class="QLabel" name="textLabel2">
             <property name="text">
@@ -224,7 +224,7 @@
          </layout>
         </item>
         <item row="3" column="2">
-         <layout class="QHBoxLayout">
+         <layout class="QHBoxLayout" name="channelLayout">
           <item>
            <widget class="QLabel" name="textLabel3">
             <property name="text">
@@ -1637,7 +1637,7 @@ Listfile</string>
    <sender>dispAll</sender>
    <signal>toggled(bool)</signal>
    <receiver>MainWidget</receiver>
-   <slot>draw()</slot>
+   <slot>sumSpectra(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>20</x>
@@ -2518,6 +2518,7 @@ Listfile</string>
   <slot>setHistogramType(int)</slot>
   <slot>linlogSlot(int)</slot>
   <slot>draw()</slot>
+  <slot>sumSpectra(bool)</slot>
   <slot>setupModule(quint8)</slot>
   <slot>moduleHistogramSlot(quint8, bool)</slot>
   <slot>moduleActiveSlot(quint8, bool)</slot>
