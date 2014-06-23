@@ -84,7 +84,7 @@ ModuleIdentificationPage::~ModuleIdentificationPage()
  */
 void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
 {
-    moduleIPInput->setText(ip);
+    moduleIPInput->setAddress(ip);
     moduleIDInput->setValue(id);
 }
 
@@ -134,7 +134,7 @@ void ModuleIdentificationPage::testTimeout()
 
     if (m_pThread->m_iCommand == ModuleIdentificationPageThread::NONE)
     {
-        m_pThread->m_szMcpdIp = moduleIPInput->displayText(); // 'text()' not feasible, returns "127...2" instead of "127.0.0.2"
+        m_pThread->m_szMcpdIp = moduleIPInput->getAddress(); // 'text()' not feasible, returns "127...2" instead of "127.0.0.2"
         m_pThread->m_byMcpdId = moduleIDInput->value();
         m_pThread->m_iCommand = ModuleIdentificationPageThread::WORK;
         m_pThread->m_ThreadCondition.wakeOne();

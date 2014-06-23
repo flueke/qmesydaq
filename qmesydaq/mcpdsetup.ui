@@ -771,32 +771,14 @@ parameters</string>
           </item>
           <item row="1" column="2">
            <widget class="IPAddressWidget" name="mcpdIPAddress">
-            <property name="inputMask">
-             <string>000.000.000.000;0</string>
-            </property>
-            <property name="text">
-             <string>192.168.168.121</string>
-            </property>
            </widget>
           </item>
           <item row="2" column="2">
            <widget class="IPAddressWidget" name="dataIPAddress">
-            <property name="inputMask">
-             <string>000.000.000.000;0</string>
-            </property>
-            <property name="text">
-             <string>192.168.168.5</string>
-            </property>
            </widget>
           </item>
           <item row="3" column="2">
            <widget class="IPAddressWidget" name="cmdIPAddress">
-            <property name="inputMask">
-             <string>000.000.000.000;0</string>
-            </property>
-            <property name="text">
-             <string>192.168.168.5</string>
-            </property>
            </widget>
           </item>
          </layout>
@@ -852,7 +834,7 @@ parameters</string>
   </customwidget>
   <customwidget>
    <class>IPAddressWidget</class>
-   <extends>QLineEdit</extends>
+   <extends>QFrame</extends>
    <header>ipaddresswidget.h</header>
   </customwidget>
  </customwidgets>

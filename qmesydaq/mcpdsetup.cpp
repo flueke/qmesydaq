@@ -42,8 +42,8 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
     connect(cellTrigger, SIGNAL(currentIndexChanged(int)), this, SLOT(cellTriggerChangedSlot(int)));
 //  listfilepath->setText(mesy->getListfilepath());
 
-    dataIPAddress->setText("192.168.168.005");
-    cmdIPAddress->setText("192.168.168.005");
+    dataIPAddress->setAddress("192.168.168.005");
+    cmdIPAddress->setAddress("192.168.168.005");
 
     mcpdId->setMCPDList(mcpdList);
     moduleNr->setMaximum(mcpdList.size());
@@ -133,9 +133,9 @@ void MCPDSetup::setMcpdIdSlot()
 void MCPDSetup::setIpUdpSlot()
 {
     quint16 id =  deviceId->value();
-    QString mcpdIP = modifyIp->isChecked() ? mcpdIPAddress->text() : "0.0.0.0",
-    cmdIP = !cmdThisPc->isChecked() ? cmdIPAddress->text() : "0.0.0.0",
-    dataIP = !dataThisPc->isChecked() ? dataIPAddress->text() : "0.0.0.0";
+    QString mcpdIP = modifyIp->isChecked() ? mcpdIPAddress->getAddress() : "0.0.0.0",
+    cmdIP = !cmdThisPc->isChecked() ? cmdIPAddress->getAddress() : "0.0.0.0",
+    dataIP = !dataThisPc->isChecked() ? dataIPAddress->getAddress() : "0.0.0.0";
     quint16 cmdPort = (quint16) cmdUdpPort->value(),
     dataPort = (quint16) dataUdpPort->value();
     m_theApp->setProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
@@ -264,11 +264,11 @@ void MCPDSetup::setModule(int modNr)
     m_theApp->getProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
     MSG_DEBUG << tr("%1 %2(%3) %4(%5)").arg(mcpdIP).arg(dataIP).arg(dataPort).arg(cmdIP).arg(cmdPort);
 
-    mcpdIPAddress->setText(mcpdIP);
+    mcpdIPAddress->setAddress(mcpdIP);
     if (!dataIP.isEmpty())
-        dataIPAddress->setText(dataIP);
+        dataIPAddress->setAddress(dataIP);
     if (!cmdIP.isEmpty())
-        cmdIPAddress->setText(cmdIP);
+        cmdIPAddress->setAddress(cmdIP);
 
     deviceId->setValue(id);
 }

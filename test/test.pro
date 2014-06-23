@@ -38,5 +38,6 @@ SUBDIRS	 	+= listfile \
 		colormaps \
 		countrates \
 		threads \
-		histogramming
+		histogramming \
+		ipaddresswidget
 

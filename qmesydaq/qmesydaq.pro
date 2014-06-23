@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.29.0
+VERSION		= 0.30.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -97,7 +97,8 @@ FORMS 		+= mainwidget.ui \
 		histogrammappingeditor.ui \
 		tacosetup.ui \
 		caresssetup.ui \
-		tcpsetup.ui
+		tcpsetup.ui \
+		ipaddresswidget.ui
 
 SOURCES 	+= main.cpp \
 		mainwindow.cpp \
