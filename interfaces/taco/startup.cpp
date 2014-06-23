@@ -61,7 +61,7 @@ extern log4cpp::Category	*logStream;
  *
  * @param serverName the name of the server
  */
-static void init_logstream(const std::string serverName)
+static void init_logstream(const std::string &serverName)
 {
 	const char *logpath = getenv("LOGCONFIG");
 	std::string tmp = serverName;
