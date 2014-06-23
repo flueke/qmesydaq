@@ -127,12 +127,31 @@ void RatePlot::timerEvent(QTimerEvent *)
 	replot();
 }
 
-void RatePlot::setWidth(const quint32 w)
+void RatePlot::setWidth(const quint32 width)
 {
+	quint32 w(width);
 	if (m_width == w)
 		return;
-	m_x = (double *)realloc(m_x, sizeof(double) * w);
-	m_y = (double *)realloc(m_y, sizeof(double) * w);
+	double *tmp;
+	tmp = (double *)realloc(m_x, sizeof(double) * w);
+	if (tmp == NULL)
+	{
+		free(m_x);
+		m_x = NULL;
+		w = 0;
+	}
+	else
+		m_x = tmp;
+
+	tmp = (double *)realloc(m_y, sizeof(double) * w);
+	if (tmp == NULL)
+	{
+		free(m_y);
+		m_y = NULL;
+		w = 0;
+	}
+	else
+		m_y = tmp;
 	for (quint32 i = m_width; i < w; ++i)
 	{
 		m_x[i] = -0.5 * i;
