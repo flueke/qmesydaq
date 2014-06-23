@@ -81,7 +81,7 @@ void analyzeBuffer(const DATA_PACKET &pd)
 			{
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
-				ulong data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
+//				ulong data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
 //				quint16 time = (quint16)tim;
 				switch(dataId)
 				{

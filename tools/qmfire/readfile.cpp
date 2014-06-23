@@ -82,7 +82,7 @@ bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 	}
 	else
 	{
-			MSG_DEBUG << QObject::tr("EOF reached");
+		MSG_DEBUG << QObject::tr("EOF reached");
 	}
 	return ok;
 }
