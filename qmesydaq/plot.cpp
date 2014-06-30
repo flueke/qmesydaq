@@ -188,6 +188,7 @@ void Plot::setLinLog(const enum Scale log)
 			break;
 		case Diffractogram:
 		case SingleSpectrum:
+		case ModuleSpectrum:
 		case Spectrum :
 			switch (m_linlog)
 			{
