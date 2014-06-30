@@ -214,6 +214,8 @@ void ModuleSetup::setMCPD(int id)
 
     checkChannel8Use->setChecked(m_theApp->active(id, mid, 7));
     checkChannel8Histogram->setChecked(m_theApp->histogram(id, mid, 7));
+
+    setGainSlot();
 }
 
 /*!
