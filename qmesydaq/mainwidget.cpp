@@ -845,6 +845,7 @@ void MainWidget::loadConfiguration(const QString& sFilename)
     QList<int> mcpdList = m_theApp->mcpdId();
     dispMcpd->setMCPDList(mcpdList);
     devid_2->setMCPDList(mcpdList);
+    devid_2->setDisabled(mcpdList.empty());
     paramId->setMCPDList(mcpdList);
     startStopButton->setDisabled(mcpdList.empty());
     acquireFile->setDisabled(mcpdList.empty());
