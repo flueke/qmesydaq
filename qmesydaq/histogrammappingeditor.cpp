@@ -102,7 +102,9 @@ void HistogramMappingEditor::show()
 {
 	QStringList asLabels;
 	int iRowCount(m_pEditor->getChannelCount());
+#if QT_VERSION >= 0x040700
 	asLabels.reserve(iRowCount);
+#endif
 	for (int i = 0; i < iRowCount; ++i)
 		asLabels << QString().setNum(i);
 	ui->TableWidget->setRowCount(iRowCount);

@@ -50,7 +50,11 @@ void IPAddressWidget::init(void)
 	{
 		QLabel *pLabel = p_Label[i];
 		QFont font = pLabel->font();
+#if QT_VERSION >= 0x040700
 		font.setStyleHint(QFont::Monospace);
+#else
+		font.setStyleHint(QFont::TypeWriter);
+#endif
 		font.setFixedPitch(true);
 		pLabel->setFont(font);
 //		pLabel->setStyleSheet("background: white");
@@ -67,7 +71,11 @@ void IPAddressWidget::init(void)
 		pEdit->installEventFilter(this);
 
 		QFont font = pEdit->font();
+#if QT_VERSION >= 0x040700
 		font.setStyleHint(QFont::Monospace);
+#else
+		font.setStyleHint(QFont::TypeWriter);
+#endif
 		font.setFixedPitch(true);
 		pEdit->setFont(font);
 
