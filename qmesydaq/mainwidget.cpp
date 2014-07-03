@@ -1757,8 +1757,18 @@ void MainWidget::printPlot(void)
 */
 void MainWidget::quitContinue(void)
 {
-	if (QMessageBox::warning(this, tr("Remote control interface"), tr("Remote control interface is not initialized!<br>"
-			"Do you want continue?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+#if USE_TACO
+	QString interface("TACO");
+#elif USE_CARESS
+	QString interface("CARESS");
+#elif USE_TCP
+	QString interface("TCP");
+#else
+	QString interface("");
+#endif
+	if (QMessageBox::warning(this, tr("Remote control interface").arg(interface), tr("The %1 remote control interface is not initialized!<br>"
+				"Please have a look on the debug output.<br>Do you want continue?").arg(interface),
+				QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
 	{
 		MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
 		app->quit();

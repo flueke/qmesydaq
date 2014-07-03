@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 			// load this configuration file
 			if (szLoadConfiguration.isEmpty())
 				szLoadConfiguration = szParameter;
-			if (bSeparatedParameter) 
+			if (bSeparatedParameter)
 				++i;
 		}
 		else if (szArgument == "-nf" || szArgument == "--nofile" || szArgument == "--noconfig")
@@ -118,9 +118,9 @@ int main(int argc, char **argv)
 	{
 		MSG_DEBUG << QObject::tr("Environment variable \"NETHOST\" is not set");
 		MSG_DEBUG << QObject::tr("You may set it explicitly in the command shell");
-		MSG_DEBUG << QObject::tr("or by using command line option -n 'nethost.domain'");
+		MSG_DEBUG << QObject::tr("or by using command line option -n='nethost.domain'");
 	}
-	else 
+	else
 		loop = new TACOLoop;
 #elif USE_CARESS
 	loop = new CARESSLoop(argList);
@@ -150,6 +150,7 @@ int main(int argc, char **argv)
 		app.setQtInterface(new QMesyDAQDetectorInterface);
 		app.setLoopEventReceiver(mainWin.centralWidget());
 		QObject::connect(loop, SIGNAL(terminated()), mainWin.centralWidget(), SLOT(quitContinue()));
+		QObject::connect(loop, SIGNAL(finished()), mainWin.centralWidget(), SLOT(quitContinue()));
 	}
 	app.processEvents();
 

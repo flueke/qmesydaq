@@ -20,3 +20,5 @@
 #endif
 
 #define HAVE_DECL_GETHOSTNAME 1
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_SIGNAL_H 1
