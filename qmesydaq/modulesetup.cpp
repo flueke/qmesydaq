@@ -24,10 +24,10 @@
 #include "logging.h"
 
 /*!
-    constructor
-
-    \param mesy
-    \param parent
+ *  constructor
+ *
+ *  \param mesy
+ *  \param parent
  */
 ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	: QDialog(parent)
@@ -44,37 +44,79 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	module->setModuleList(modules);
 	module->setEnabled(!modules.empty());
 
-	checkChannel1Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 0));
-	checkChannel1Use->setChecked(m_theApp->active(devid->value(), module->value(), 0));
+	m_label[0] = labelChannel_1;
+	m_label[1] = labelChannel_2;
+	m_label[2] = labelChannel_3;
+	m_label[3] = labelChannel_4;
+	m_label[4] = labelChannel_5;
+	m_label[5] = labelChannel_6;
+	m_label[6] = labelChannel_7;
+	m_label[7] = labelChannel_8;
+	m_label[8] = labelChannel_9;
+	m_label[9] = labelChannel_10;
+	m_label[10] = labelChannel_11;
+	m_label[11] = labelChannel_12;
+	m_label[12] = labelChannel_13;
+	m_label[13] = labelChannel_14;
+	m_label[14] = labelChannel_15;
+	m_label[15] = labelChannel_16;
+
+	m_histogram[0] = checkChannel1Histogram;
+	m_histogram[1] = checkChannel2Histogram;
+	m_histogram[2] = checkChannel3Histogram;
+	m_histogram[3] = checkChannel4Histogram;
+	m_histogram[4] = checkChannel5Histogram;
+	m_histogram[5] = checkChannel6Histogram;
+	m_histogram[6] = checkChannel7Histogram;
+	m_histogram[7] = checkChannel8Histogram;
+	m_histogram[8] = checkChannel9Histogram;
+	m_histogram[9] = checkChannel10Histogram;
+	m_histogram[10] = checkChannel11Histogram;
+	m_histogram[11] = checkChannel12Histogram;
+	m_histogram[12] = checkChannel13Histogram;
+	m_histogram[13] = checkChannel14Histogram;
+	m_histogram[14] = checkChannel15Histogram;
+	m_histogram[15] = checkChannel16Histogram;
+
+	m_active[0] = checkChannel1Use;
+	m_active[1] = checkChannel2Use;
+	m_active[2] = checkChannel3Use;
+	m_active[3] = checkChannel4Use;
+	m_active[4] = checkChannel5Use;
+	m_active[5] = checkChannel6Use;
+	m_active[6] = checkChannel7Use;
+	m_active[7] = checkChannel8Use;
+	m_active[8] = checkChannel9Use;
+	m_active[9] = checkChannel10Use;
+	m_active[10] = checkChannel11Use;
+	m_active[11] = checkChannel12Use;
+	m_active[12] = checkChannel13Use;
+	m_active[13] = checkChannel14Use;
+	m_active[14] = checkChannel15Use;
+	m_active[15] = checkChannel16Use;
+
+	for (int i = 0; i < 16; ++i)
+	{
+		m_histogram[i]->setChecked(m_theApp->histogram(devid->value(), module->value(), i));
+		m_active[i]->setChecked(m_theApp->active(devid->value(), module->value(), i));
+	}
+
 	QObject::connect(checkChannel1Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram1(bool)));
-
-	checkChannel2Use->setChecked(m_theApp->active(devid->value(), module->value(), 1));
-	checkChannel2Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 1));
 	QObject::connect(checkChannel2Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram2(bool)));
-
-	checkChannel3Use->setChecked(m_theApp->active(devid->value(), module->value(), 2));
-	checkChannel3Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 2));
 	QObject::connect(checkChannel3Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram3(bool)));
-
-	checkChannel4Use->setChecked(m_theApp->active(devid->value(), module->value(), 3));
-	checkChannel4Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 3));
 	QObject::connect(checkChannel4Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram4(bool)));
-
-	checkChannel5Use->setChecked(m_theApp->active(devid->value(), module->value(), 4));
-	checkChannel5Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 4));
 	QObject::connect(checkChannel5Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram5(bool)));
-
-	checkChannel6Use->setChecked(m_theApp->active(devid->value(), module->value(), 5));
-	checkChannel6Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 5));
 	QObject::connect(checkChannel6Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram6(bool)));
-
-	checkChannel7Use->setChecked(m_theApp->active(devid->value(), module->value(), 6));
-	checkChannel7Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 6));
 	QObject::connect(checkChannel7Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram7(bool)));
-
-	checkChannel8Use->setChecked(m_theApp->active(devid->value(), module->value(), 7));
-	checkChannel8Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 7));
 	QObject::connect(checkChannel8Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram8(bool)));
+	QObject::connect(checkChannel9Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram9(bool)));
+	QObject::connect(checkChannel10Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram10(bool)));
+	QObject::connect(checkChannel11Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram11(bool)));
+	QObject::connect(checkChannel12Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram12(bool)));
+	QObject::connect(checkChannel13Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram13(bool)));
+	QObject::connect(checkChannel14Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram14(bool)));
+	QObject::connect(checkChannel15Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram15(bool)));
+	QObject::connect(checkChannel16Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram16(bool)));
 
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
@@ -83,11 +125,10 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 }
 
 /*!
-    \fn void ModuleSetup::setGainSlot()
-
-    callback to handle the gain settings
-
-*/
+ *  \fn void ModuleSetup::setGainSlot()
+ *
+ *  callback to handle the gain settings
+ */
 void ModuleSetup::setGainSlot()
 {
 	bool	ok;
@@ -100,11 +141,10 @@ void ModuleSetup::setGainSlot()
 }
 
 /*!
-    \fn void ModuleSetup::setThresholdSlot()
-
-    callback to handle the threshold settings
-
-*/
+ *   \fn void ModuleSetup::setThresholdSlot()
+ *
+ *  callback to handle the threshold settings
+ */
 void ModuleSetup::setThresholdSlot()
 {
 	bool 	ok;
@@ -116,11 +156,11 @@ void ModuleSetup::setThresholdSlot()
 }
 
 /*!
-    \fn void ModuleSetup::readRegisterSlot()
-
-    callback to read from a MPSD register
-    //! \todo display read values
-*/
+ *  \fn void ModuleSetup::readRegisterSlot()
+ *
+ *  callback to read from a MPSD register
+ *  //! \todo display read values
+ */
 void ModuleSetup::readRegisterSlot()
 {
 #if defined(_MSC_VER)
@@ -136,9 +176,9 @@ void ModuleSetup::readRegisterSlot()
 }
 
 /*!
-    \fn void ModuleSetup::writeRegisterSlot()
-
-    callback to write into a MPSD register
+ *  \fn void ModuleSetup::writeRegisterSlot()
+ *
+ *  callback to write into a MPSD register
  */
 void ModuleSetup::writeRegisterSlot()
 {
@@ -152,12 +192,12 @@ void ModuleSetup::writeRegisterSlot()
 }
 
 /*!
-    \fn void ModuleSetup::setModeSlot()
-
-    callback to handle the settings of the amplitude/position mode
-
-    \param mode
-*/
+ *  \fn void ModuleSetup::setModeSlot()
+ *
+ *  callback to handle the settings of the amplitude/position mode
+ *
+ *  \param mode
+ */
 void ModuleSetup::setModeSlot()
 {
 	int mod = module->value();
@@ -167,11 +207,11 @@ void ModuleSetup::setModeSlot()
 }
 
 /*!
-    \fn void ModuleSetup::setModule(int)
-
-    callback to handle the id setting of the module
-
-    \param id
+ *  \fn void ModuleSetup::setModule(int)
+ *
+ *  callback to handle the id setting of the module
+ *
+ *  \param id
  */
 void ModuleSetup::setModule(int id)
 {
@@ -179,11 +219,11 @@ void ModuleSetup::setModule(int id)
 }
 
 /*!
-    \fn void ModuleSetup::setMCPD(int)
-
-    callback to display the found module configuration
-
-    \param id
+ *  \fn void ModuleSetup::setMCPD(int)
+ *
+ *  callback to display the found module configuration
+ *
+ *  \param id
  */
 void ModuleSetup::setMCPD(int id)
 {
@@ -195,39 +235,27 @@ void ModuleSetup::setMCPD(int id)
 	module->setEnabled(!modules.empty());
 	int mid = module->value();
 
-	checkChannel1Use->setChecked(m_theApp->active(id, mid, 0));
-	checkChannel1Histogram->setChecked(m_theApp->histogram(id, mid, 0));
-
-	checkChannel2Use->setChecked(m_theApp->active(id, mid, 1));
-	checkChannel2Histogram->setChecked(m_theApp->histogram(id, mid, 1));
-
-	checkChannel3Use->setChecked(m_theApp->active(id, mid, 2));
-	checkChannel3Histogram->setChecked(m_theApp->histogram(id, mid, 2));
-
-	checkChannel4Use->setChecked(m_theApp->active(id, mid, 3));
-	checkChannel4Histogram->setChecked(m_theApp->histogram(id, mid, 3));
-
-	checkChannel5Use->setChecked(m_theApp->active(id, mid, 4));
-	checkChannel5Histogram->setChecked(m_theApp->histogram(id, mid, 4));
-
-	checkChannel6Use->setChecked(m_theApp->active(id, mid, 5));
-	checkChannel6Histogram->setChecked(m_theApp->histogram(id, mid, 5));
-
-	checkChannel7Use->setChecked(m_theApp->active(id, mid, 6));
-	checkChannel7Histogram->setChecked(m_theApp->histogram(id, mid, 6));
-
-	checkChannel8Use->setChecked(m_theApp->active(id, mid, 7));
-	checkChannel8Histogram->setChecked(m_theApp->histogram(id, mid, 7));
+	for (int i = 0; i < 8; ++i)
+	{
+		m_active[i]->setChecked(m_theApp->active(id, mid, i));
+		m_histogram[i]->setChecked(m_theApp->histogram(id, mid, i));
+	}
+	if (m_theApp->getModuleId(id, mid) == TYPE_MSTD16)
+		for (int i = 8; i < 16; ++i)
+		{
+			m_active[i]->setChecked(m_theApp->active(id, mid, i));
+			m_histogram[i]->setChecked(m_theApp->histogram(id, mid, i));
+		}
 
 	setGainSlot();
 }
 
 /*!
-    \fn void ModuleSetup::displayMCPDSlot(int id)
-    
-    callback to handle the change of the MCPD ID by the user
-
-    \param id new MCPD ID
+ *  \fn void ModuleSetup::displayMCPDSlot(int id)
+ *
+ *  callback to handle the change of the MCPD ID by the user
+ *
+ *  \param id new MCPD ID
  */
 void ModuleSetup::displayMCPDSlot(int id)
 {
@@ -244,11 +272,11 @@ void ModuleSetup::displayMCPDSlot(int id)
 }
 
 /*!
-    \fn void ModuleSetup::displayMPSDSlot(int id)
-
-    callback to handle the change of the MPSD by the user
-
-    \param id new module id
+ *  \fn void ModuleSetup::displayMPSDSlot(int id)
+ *
+ *  callback to handle the change of the MPSD by the user
+ *
+ *  \param id new module id
  */
 void ModuleSetup::displayMPSDSlot(int id)
 {
@@ -258,9 +286,9 @@ void ModuleSetup::displayMPSDSlot(int id)
 }
 
 /*!
-    \fn void ModuleSetup::displaySlot()
-
-    callback to display the settings of the module
+ *  \fn void ModuleSetup::displaySlot()
+ *
+ *  callback to display the settings of the module
  */
 void ModuleSetup::displaySlot()
 {
@@ -269,9 +297,16 @@ void ModuleSetup::displaySlot()
 	quint8 mod = devid->value();
 	quint8 id = module->value();
 	int modType = m_theApp->getModuleId(mod, id);
-	qDebug() << mod << " " << id << " modType " << modType;
+	MSG_DEBUG << mod << " " << id << " modType " << modType;
 	Ui_ModuleSetup::pos->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
 	Ui_ModuleSetup::amp->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
+
+	for (int i = 8; i < 16; ++i)
+	{
+		m_label[i]->setVisible(modType == TYPE_MSTD16);
+		m_histogram[i]->setVisible(modType == TYPE_MSTD16);
+		m_active[i]->setVisible(modType == TYPE_MSTD16);
+	}
 
 // gain:
 	gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));
@@ -285,193 +320,385 @@ void ModuleSetup::displaySlot()
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram1(bool hist)
-
-    callback to handle the histogram settings of channel 1
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram1(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 1
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram1(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 0, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive1(bool act)
-
-    callback to handle the activation settings of channel 1
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive1(bool act)
+ *
+ *  callback to handle the activation settings of channel 1
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive1(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 0, act);
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram2(bool hist)
-
-    callback to handle the histogram settings of channel 2
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram2(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 2
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram2(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 1, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive2(bool act)
-
-    callback to handle the activation settings of channel 2
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive2(bool act)
+ *
+ *  callback to handle the activation settings of channel 2
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive2(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 1, act);
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram3(bool hist)
-
-    callback to handle the histogram settings of channel 3
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram3(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 3
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram3(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 2, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive3(bool act)
-
-    callback to handle the activation settings of channel 3
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive3(bool act)
+ *
+ *  callback to handle the activation settings of channel 3
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive3(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 2, act);
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram4(bool hist)
-
-    callback to handle the histogram settings of channel 4
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram4(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 4
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram4(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 3, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive4(bool act)
-
-    callback to handle the activation settings of channel 4
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive4(bool act)
+ *
+ *  callback to handle the activation settings of channel 4
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive4(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 3, act);
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram5(bool hist)
-
-    callback to handle the histogram settings of channel 5
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram5(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 5
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram5(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 4, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive5(bool act)
-
-    callback to handle the activation settings of channel 5
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive5(bool act)
+ *
+ *  callback to handle the activation settings of channel 5
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive5(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 4, act);
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram6(bool hist)
-
-    callback to handle the histogram settings of channel 6
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram6(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 6
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram6(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 5, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive6(bool act)
-
-    callback to handle the activation settings of channel 6
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive6(bool act)
+ *
+ *  callback to handle the activation settings of channel 6
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive6(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 5, act);
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram7(bool hist)
-
-    callback to handle the histogram settings of channel 7
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram7(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 7
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram7(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 6, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive7(bool act)
-
-    callback to handle the activation settings of channel 7
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive7(bool act)
+ *
+ *  callback to handle the activation settings of channel 7
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive7(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 6, act);
 }
 
 /*!
-    \fn void ModuleSetup::setHistogram8(bool hist)
-
-    callback to handle the histogram settings of channel 8
-
-    \param hist
-*/
+ *  \fn void ModuleSetup::setHistogram8(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 8
+ *
+ *  \param hist
+ */
 void ModuleSetup::setHistogram8(bool hist)
 {
 	m_theApp->setHistogram(devid->value(), module->value(), 7, hist);
 }
 
 /*!
-    \fn void ModuleSetup::setActive8(bool act)
-
-    callback to handle the activation settings of channel 8
-
-    \param act
-*/
+ *  \fn void ModuleSetup::setActive8(bool act)
+ *
+ *  callback to handle the activation settings of channel 8
+ *
+ *  \param act
+ */
 void ModuleSetup::setActive8(bool act)
 {
 	m_theApp->setActive(devid->value(), module->value(), 7, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram9(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 9
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram9(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 8, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive9(bool act)
+ *
+ *  callback to handle the activation settings of channel 9
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive9(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 8, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram10(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 10
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram10(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 9, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive10(bool act)
+ *
+ *  callback to handle the activation settings of channel 10
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive10(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 9, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram11(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 11
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram11(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 10, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive11(bool act)
+ *
+ *  callback to handle the activation settings of channel 11
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive11(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 10, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram12(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 12
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram12(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 11, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive12(bool act)
+ *
+ *  callback to handle the activation settings of channel 12
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive12(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 11, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram13(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 13
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram13(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 12, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive13(bool act)
+ *
+ *  callback to handle the activation settings of channel 13
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive13(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 12, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram14(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 14
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram14(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 13, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive14(bool act)
+ *
+ *  callback to handle the activation settings of channel 14
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive14(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 13, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram15(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 15
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram15(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 14, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive15(bool act)
+ *
+ *  callback to handle the activation settings of channel 15
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive15(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 14, act);
+}
+
+/*!
+ *  \fn void ModuleSetup::setHistogram16(bool hist)
+ *
+ *  callback to handle the histogram settings of channel 16
+ *
+ *  \param hist
+ */
+void ModuleSetup::setHistogram16(bool hist)
+{
+	m_theApp->setHistogram(devid->value(), module->value(), 15, hist);
+}
+
+/*!
+ *  \fn void ModuleSetup::setActive16(bool act)
+ *
+ *  callback to handle the activation settings of channel 16
+ *
+ *  \param act
+ */
+void ModuleSetup::setActive16(bool act)
+{
+	m_theApp->setActive(devid->value(), module->value(), 15, act);
 }

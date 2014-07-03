@@ -70,6 +70,15 @@ private slots:
 	void setHistogram7(bool);
 	void setHistogram8(bool);
 
+	void setHistogram9(bool);
+	void setHistogram10(bool);
+	void setHistogram11(bool);
+	void setHistogram12(bool);
+	void setHistogram13(bool);
+	void setHistogram14(bool);
+	void setHistogram15(bool);
+	void setHistogram16(bool);
+
 	void setActive1(bool);
 	void setActive2(bool);
 	void setActive3(bool);
@@ -79,9 +88,23 @@ private slots:
 	void setActive7(bool);
 	void setActive8(bool);
 
+	void setActive9(bool);
+	void setActive10(bool);
+	void setActive11(bool);
+	void setActive12(bool);
+	void setActive13(bool);
+	void setActive14(bool);
+	void setActive15(bool);
+	void setActive16(bool);
+
 private:
 	//! The MesyDaq objext
 	Mesydaq2	*m_theApp;
 
+	QLabel		*m_label[16];
+
+	QCheckBox	*m_histogram[16];
+
+	QCheckBox	*m_active[16];
 };
 #endif

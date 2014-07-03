@@ -44,13 +44,15 @@ MPSD8::MPSD8(quint8 id, QObject *parent)
 	, m_version(-1.0)
 	, m_capabilities(0)
 {
-	for(int i = 0; i < 8; ++i)
+	m_active.resize(8);
+	m_histogram.resize(8);
+	for (int i = 0; i < m_histogram.size(); ++i)
 	{
 		m_active[i] = true;
 		m_histogram[i] = true;
 	}
 	m_mcpdId = reinterpret_cast<MCPD8 *>(parent)->getId();
-	for(quint8 c = 0; c < 9; c++)
+	for (quint8 c = 0; c < 9; c++)
 	{
 		m_gainPoti[c][0] = 128;
 		m_gainVal[c][0] = 128;
@@ -358,14 +360,14 @@ void MPSD8::setInternalreg(quint8 reg, quint16 val, bool preset)
 }
 
 /*!
-    \fn void MPSD8::setActive(bool act) 
- 
+    \fn void MPSD8::setActive(bool act)
+
     \param act
  */
-void MPSD8::setActive(bool act) 
+void MPSD8::setActive(bool act)
 {
-	for (int i = 0; i < 8; ++i)
-		setActive(i, act); 
+	for (int i = 0; i < m_active.size(); ++i)
+		setActive(i, act);
 }
 
 /*!
@@ -376,7 +378,7 @@ void MPSD8::setActive(bool act)
  */
 void MPSD8::setActive(quint16 chan, bool act)
 {
-	if (chan < 8)
+	if (chan < m_active.size())
 		m_active[chan] = act;
 }
 
@@ -388,21 +390,21 @@ void MPSD8::setActive(quint16 chan, bool act)
  */
 void MPSD8::setHistogram(quint16 chan, bool hist)
 {
-	if (chan < 8)
+	if (chan < m_histogram.size())
 		m_histogram[chan] = hist;
 	if (!hist)
 		setActive(chan, false);
 }
 
 /*!
-    \fn void MPSD8::setHistogram(bool hist) 
- 
+    \fn void MPSD8::setHistogram(bool hist)
+
     \param hist
  */
-void MPSD8::setHistogram(bool hist) 
+void MPSD8::setHistogram(bool hist)
 {
-	for (int i = 0; i < 8; ++i)
-		setHistogram(i, hist); 
+	for (int i = 0; i < m_histogram.size(); ++i)
+		setHistogram(i, hist);
 }
 
 /*!
@@ -413,7 +415,7 @@ void MPSD8::setHistogram(bool hist)
 bool MPSD8::active()
 {
 	bool result(false);
-	for (quint16 i = 0; i < 8; ++i)
+	for (quint16 i = 0; i < m_active.size(); ++i)
 		result |= m_active[i];
 	return result;
 }
@@ -426,7 +428,7 @@ bool MPSD8::active()
 bool MPSD8::histogram()
 {
 	bool result(false);
-	for (quint16 i = 0; i < 8; ++i)
+	for (quint16 i = 0; i < m_histogram.size(); ++i)
 		result |= histogram(i);
 	return result;
 }
@@ -439,7 +441,7 @@ bool MPSD8::histogram()
  */
 bool MPSD8::active(quint16 chan)
 {
-	if (chan < 8)
+	if (chan < m_active.size())
 		return m_active[chan];
 	return false;
 }
@@ -452,7 +454,7 @@ bool MPSD8::active(quint16 chan)
  */
 bool MPSD8::histogram(quint16 chan)
 {
-	if (chan < 8)
+	if (chan < m_histogram.size())
 		return m_histogram[chan];
 	return false;
 }
@@ -465,7 +467,7 @@ bool MPSD8::histogram(quint16 chan)
 QList<quint16> MPSD8::getHistogramList(void)
 {
 	QList<quint16> result;
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < m_histogram.size(); ++i)
 		if (m_histogram[i])
 			result << i;
 	return result;
@@ -479,7 +481,7 @@ QList<quint16> MPSD8::getHistogramList(void)
 QList<quint16> MPSD8::getActiveList(void)
 {
 	QList<quint16> result;
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < m_active.size(); ++i)
 		if (m_active[i])
 			result << i;
 	return result;

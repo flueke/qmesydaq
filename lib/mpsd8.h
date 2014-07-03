@@ -296,10 +296,10 @@ protected:
 private:
 	quint16 	m_internalReg[3][2];
 
-	bool		m_active[8];
-
 protected:
-	bool		m_histogram[8];
+	QVector<bool>	m_active;
+
+	QVector<bool>	m_histogram;
 
 private:
         float		m_version;

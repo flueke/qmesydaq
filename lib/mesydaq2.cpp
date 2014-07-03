@@ -582,27 +582,12 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		for (int j = 0; j < 8; ++j)
 		{
 			QString moduleName;
-			switch (value->getModuleId(j))
+			int moduleID = value->getModuleId(j);
+			switch (moduleID)
 			{
 				case TYPE_NOMODULE :
 					break;
-				default:
-					moduleName = QString("MODULE-%1").arg(8 * i + j);
-				
-					settings.beginGroup(moduleName);
-					settings.setValue("id", i * 8 + j);
-					settings.setValue("threshold", value->getThreshold(j));
-					for (int k = 0; k < 8; ++k)
-					{
-						settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
-						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->active(j, k);
-						settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
-						settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
-						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
-					}
-					settings.endGroup();
-					break;
-				case TYPE_MDLL: 
+				case TYPE_MDLL:
 					settings.beginGroup("MDLL");
 					settings.setValue("id", 0);
 
@@ -625,6 +610,25 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 
 					settings.setValue("dataSet", value->getMdllDataset());
 
+					settings.endGroup();
+					break;
+				default:
+					moduleName = QString("MODULE-%1").arg(8 * i + j);
+
+					settings.beginGroup(moduleName);
+					settings.setValue("id", i * 8 + j);
+					settings.setValue("threshold", value->getThreshold(j));
+					for (int k = 0; k < 8; ++k)
+					{
+						settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
+						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->active(j, k);
+					}
+					for (int k = 0; k < (moduleID == TYPE_MSTD16 ? 16 : 8); ++k)
+					{
+						settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
+						settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
+						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
+					}
 					settings.endGroup();
 					break;
 			}
@@ -761,15 +765,18 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		bool 	comgain(true);
 
 		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
-			switch (getModuleId(iMCPDId, j))
+		{
+			int moduleID = getModuleId(iMCPDId, j);
+			switch (moduleID)
 			{
 				case TYPE_MDLL :
 				case TYPE_NOMODULE :
 					break;
 				default:
 					for (int k = 0; k < 8; ++k)
-					{
 						gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
+					for (int k = 0; k < (moduleID == TYPE_MSTD16 ? 16 : 8); ++k)
+					{
 						setActive(iMCPDId, j, k, settings.value(QString("active%1").arg(k), "true").toBool());
 						setHistogram(iMCPDId, j, k, settings.value(QString("histogram%1").arg(k), "true").toBool());
 					}
@@ -790,6 +797,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 					setThreshold(iMCPDId, j, threshold);
 					break;
 			}
+		}
 		settings.endGroup();
 	}
 

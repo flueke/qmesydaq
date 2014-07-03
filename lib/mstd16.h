@@ -26,7 +26,7 @@
 /**
  * \short representation of MSTD-16 peripheral module 
  *
- * \author Jens Kr�ger <jens.krueger@frm2.tum.de>
+ * \author Jens Krüger <jens.krueger@frm2.tum.de>
  */
 class LIBQMESYDAQ_EXPORT MSTD16 : public MPSD8
 {
