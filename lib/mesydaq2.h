@@ -304,7 +304,7 @@ public slots:
 
 	bool status(bool *pbAck = NULL) const;
 
-	QVector<quint16> getTubeMapping() const {return m_tubeMapping;}
+	QVector<quint16> getTubeMapping();
 
 signals:
 	/**

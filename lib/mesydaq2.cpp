@@ -430,7 +430,13 @@ quint16 Mesydaq2::width(void)
 		}
 	}
 	MSG_INFO << "Found " << n << " tubes to histogram";
-	return n ? n : 128;
+	if (n == 0)
+	{
+		n = 128;
+		for (int i = 0; i < n; ++i)
+			m_tubeMapping.append(i);
+	}
+	return n;
 }
 
 /*!
@@ -1950,4 +1956,15 @@ bool Mesydaq2::status(bool* pbAck /*= NULL*/) const
 	if (pbAck!=NULL)
 		*pbAck = m_bRunAck;
 	return m_bRunning;
+}
+
+/*!
+ *
+ * \returns the tube mapping vector
+ */
+QVector<quint16> Mesydaq2::getTubeMapping()
+{
+	if (m_tubeMapping.isEmpty())
+		width();
+	return m_tubeMapping;
 }
