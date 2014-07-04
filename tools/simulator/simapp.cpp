@@ -52,7 +52,7 @@ int clock_gettime(int /* clockid_t*/ clk_id, struct timespec *tp)
 
 #include <algorithm>    // std::random_shuffle
 
-const char *g_szShortUsage = "[[--mdll=127.0.0.2:0] | [--mcpd=127.0.0.2:0] [--mcpd=127.0.0.3:1] ... [--width=64] [--height=960] [--v4]]"
+const char *g_szShortUsage = "[[--mdll=127.0.0.2:0] | [--mstd=127.0.0.2:0] | [--mcpd=127.0.0.2:0] [--mcpd=127.0.0.3:1] ... [--width=64] [--height=960] [--v4]]"
 			     " [--interval=20] [--ppe=5] [--stop=0]";
 const char *g_szLongUsage =
                 "  --mdll=<bind-ip>:<id>\n"
