@@ -26,6 +26,7 @@
 #include "mesydaq2.h"
 #include "StatusBarEntry.h"
 #include "logging.h"
+#include "website.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
@@ -261,4 +262,13 @@ void MainWindow::runningState(bool started)
 		m_daqStatus->setText("DAQ started");
 	else
 		m_daqStatus->setText("DAQ stopped");
+}
+
+/*!
+ * Opens a browser window to the bug report page.
+ */
+void MainWindow::bugReport(void)
+{
+	WebsiteTool t("https://forge.frm2.tum.de/redmine/projects/qmesydaq");
+	t.exec();
 }

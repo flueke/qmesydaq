@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.30.5
+VERSION		= 0.31.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -35,7 +35,7 @@ INSTALLS	= target
 
 target.path	= $${TARGETPATH}/bin
 
-QT 		+= network svg
+QT 		+= network svg webkit
 
 RESOURCES       += qmesydaq.qrc
 
@@ -75,7 +75,8 @@ HEADERS 	+= mainwidget.h \
 		tacosetup.h \
 		caresssetup.h \
 		tcpsetup.h \
-		diskspace/diskspace.h
+		diskspace/diskspace.h \
+		website.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -98,7 +99,8 @@ FORMS 		+= mainwidget.ui \
 		tacosetup.ui \
 		caresssetup.ui \
 		tcpsetup.ui \
-		ipaddresswidget.ui
+		ipaddresswidget.ui \
+		website.ui
 
 SOURCES 	+= main.cpp \
 		mainwindow.cpp \
@@ -134,7 +136,8 @@ SOURCES 	+= main.cpp \
 		tacosetup.cpp \
 		caresssetup.cpp \
 		tcpsetup.cpp \
-		diskspace/diskspace.cpp
+		diskspace/diskspace.cpp \
+		website.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png

@@ -14,6 +14,9 @@
     <file>images/help.png</file>
     <file>images/up.png</file>
     <file>images/down.png</file>
+    <file alias="quit">images/system-log-out.png</file>
+    <file alias="previous">images/go-previous.png</file>
+    <file alias="next">images/go-next1.png</file>
   </qresource>
 </RCC>
 

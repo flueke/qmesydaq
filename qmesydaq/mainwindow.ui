@@ -22,7 +22,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Files">
@@ -53,6 +53,8 @@
     </property>
     <addaction name="action_About"/>
     <addaction name="actionAbout_Qt"/>
+    <addaction name="separator"/>
+    <addaction name="action_Bug_Report"/>
    </widget>
    <widget class="QMenu" name="menu_Configuration">
     <property name="title">
@@ -268,6 +270,11 @@
     <bool>false</bool>
    </property>
   </action>
+  <action name="action_Bug_Report">
+   <property name="text">
+    <string>Bug report ...</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -335,10 +342,17 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_Bug_Report</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>bugReport()</slot>
+  </connection>
  </connections>
  <slots>
   <slot>selectUser()</slot>
   <slot>selectExpert()</slot>
   <slot>selectSuperuser()</slot>
+  <slot>bugReport()</slot>
  </slots>
 </ui>

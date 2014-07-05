@@ -78,6 +78,9 @@ private slots:
 	//! callback if the super user mode is selected
 	void	selectSuperuser(void);
 
+	//! callback if the bug report is selected
+	void	bugReport(void);
+
 protected:
 	void closeEvent(QCloseEvent *event);
 
