@@ -40,7 +40,9 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
     tabWidget->setDisabled(noModule);
 
     devid->setMCPDList(mcpdList);
-    module->setModuleList(m_theApp->mpsdId(devid->value()));
+    QList<int> modules = m_theApp->mpsdId(devid->value());
+    module->setModuleList(modules);
+    module->setEnabled(!modules.empty());
 
     checkChannel1Histogram->setChecked(m_theApp->histogram(devid->value(), module->value(), 0));
     checkChannel1Use->setChecked(m_theApp->active(devid->value(), module->value(), 0));
@@ -188,7 +190,9 @@ void ModuleSetup::setMCPD(int id)
     devid->setValue(id);
 //  devid->setMCPDList(m_theApp->mcpdId());
     id = devid->value();
-    module->setModuleList(m_theApp->mpsdId(id));
+    QList<int> modules = m_theApp->mpsdId(id);
+    module->setModuleList(modules);
+    module->setEnabled(!modules.empty());
     int mid = module->value();
 
     checkChannel1Use->setChecked(m_theApp->active(id, mid, 0));
@@ -235,6 +239,7 @@ void ModuleSetup::displayMCPDSlot(int id)
         if (m_theApp->getModuleId(id, i))
             modList << i;
     module->setModuleList(modList);
+    module->setEnabled(!modList.empty());
     displaySlot();
 }
 
