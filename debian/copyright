@@ -4,13 +4,13 @@ Source: https://forge.frm2.tum.de/projects/qmesydaq
 
 Files: *
 Copyright: 2008 Gregor Montermann <g.montermann@mesytec.com>
-	   2009-2014 Jens Krüger <jens.krueger@tum.de>
-           2013-2014 Lutz Rossa <rossa@helmholtz-berlin.de>
+	   2009-2015 Jens Krüger <jens.krueger@tum.de>
+           2013-2015 Lutz Rossa <rossa@helmholtz-berlin.de>
 License: GPL-2.0+
 
 Files: debian/*
-Copyright: 2014 Jens Krüger <jens.krueger@tum.de>
-           2014 Alexander Lenz <alexander.lenz@frm2.tum.de>
+Copyright: 2014-2015 Jens Krüger <jens.krueger@tum.de>
+           2014-2015 Alexander Lenz <alexander.lenz@frm2.tum.de>
 License: GPL-2.0+
 
 License: GPL-2.0+
