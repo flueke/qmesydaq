@@ -27,8 +27,8 @@
 ModuleStatus::ModuleStatus(QWidget *parent)
 	: QWidget(parent)
 {
-    setupUi(this);
-    setLabel("");
+	setupUi(this);
+	setLabel("");
 }
 
 /*!
@@ -38,7 +38,7 @@ ModuleStatus::ModuleStatus(QWidget *parent)
  */
 void ModuleStatus::setLabel(const QString &label)
 {
-    moduleLabel->setText(label);
+	moduleLabel->setText(label);
 }
 
 /*!
@@ -52,14 +52,14 @@ void ModuleStatus::setLabel(const QString &label)
  */
 void ModuleStatus::update(const QString &type, const float version, const bool online, const bool histogram, const bool active)
 {
-    moduleType->setText(type);
-    moduleVersion->setText(QString("%1").arg(version));
-    moduleStatus->setText(online ? tr("online") : tr(""));
-    checkHistogramBox->setChecked(histogram);
-    checkActiveBox->setVisible(online);
-    checkActiveBox->setEnabled(online);
-    checkActiveBox->setChecked(online & active);
-    m_online = online;
+	moduleType->setText(type);
+	moduleVersion->setText(QString("%1").arg(version));
+	moduleStatus->setText(online ? tr("online") : tr(""));
+	checkHistogramBox->setChecked(histogram);
+	checkActiveBox->setVisible(online);
+	checkActiveBox->setEnabled(online);
+	checkActiveBox->setChecked(online & active);
+	m_online = online;
 }
 
 /*!
@@ -69,20 +69,20 @@ void ModuleStatus::update(const QString &type, const float version, const bool o
  */
 void ModuleStatus::mouseDoubleClickEvent(QMouseEvent *ev)
 {
-    ev->accept();
-    if (m_online)
-        emit clicked(m_id);
+	ev->accept();
+	if (m_online)
+		emit clicked(m_id);
 }
 
-/*! 
+/*!
     \fn void ModuleStatus::setId(const uint8 id)
 
     \param id
  */
 void ModuleStatus::setId(const quint8 id)
 {
-    m_id = id;
-    setLabel(tr("%1:").arg(m_id + 1));
+	m_id = id;
+	setLabel(tr("%1:").arg(m_id + 1));
 }
 
 /*!
@@ -92,9 +92,9 @@ void ModuleStatus::setId(const quint8 id)
  */
 void ModuleStatus::histogramSlot(bool val)
 {
-    checkActiveBox->setVisible(m_online);
-    checkActiveBox->setEnabled(m_online);
-    emit histogram(m_id, val);
+	checkActiveBox->setVisible(m_online);
+	checkActiveBox->setEnabled(m_online);
+	emit histogram(m_id, val);
 }
 
 /*!
@@ -104,5 +104,5 @@ void ModuleStatus::histogramSlot(bool val)
  */
 void ModuleStatus::activeSlot(bool val)
 {
-    emit active(m_id, val);
+	emit active(m_id, val);
 }

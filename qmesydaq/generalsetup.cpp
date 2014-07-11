@@ -33,13 +33,13 @@ GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
 	: QDialog(parent)
 	, m_meas(meas)
 {
-    setupUi(this);
-    configfilepath->setText(m_meas->getConfigfilepath());
-    histfilepath->setText(m_meas->getHistfilepath());
-    listfilepath->setText(m_meas->getListfilepath());
-    runId->setValue(m_meas->runId());
-    runIdAuto->setChecked(m_meas->getAutoIncRunId());
-    writeProtect->setChecked(m_meas->getWriteProtection());
+	setupUi(this);
+	configfilepath->setText(m_meas->getConfigfilepath());
+	histfilepath->setText(m_meas->getHistfilepath());
+	listfilepath->setText(m_meas->getListfilepath());
+	runId->setValue(m_meas->runId());
+	runIdAuto->setChecked(m_meas->getAutoIncRunId());
+	writeProtect->setChecked(m_meas->getWriteProtection());
 }
 
 /*!
@@ -49,9 +49,9 @@ GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
 */
 void GeneralSetup::selectConfigpathSlot()
 {
-    QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Config File Path..."), configfilepath->text());
-    if(!name.isEmpty())
-        configfilepath->setText(name);
+	QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Config File Path..."), configfilepath->text());
+	if(!name.isEmpty())
+		configfilepath->setText(name);
 }
 
 /*!
@@ -61,9 +61,9 @@ void GeneralSetup::selectConfigpathSlot()
 */
 void GeneralSetup::selectListpathSlot()
 {
-    QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select List File Path..."), listfilepath->text());
-    if(!name.isEmpty())
-        listfilepath->setText(name);
+	QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select List File Path..."), listfilepath->text());
+	if(!name.isEmpty())
+		listfilepath->setText(name);
 }
 
 /*!
@@ -73,19 +73,19 @@ void GeneralSetup::selectListpathSlot()
 */
 void GeneralSetup::selectHistpathSlot()
 {
-    QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Histogram File Path..."), histfilepath->text());
-    if(!name.isEmpty())
-        histfilepath->setText(name);
+	QString name = QFileDialog::getExistingDirectory((QWidget *)this, tr("Select Histogram File Path..."), histfilepath->text());
+	if(!name.isEmpty())
+		histfilepath->setText(name);
 }
 
-/*! 
+/*!
     \fn void GeneralSetup::setRunIdSlot()
 
     callback to set the run ID on the module
  */
 void GeneralSetup::setRunIdSlot()
 {
-    m_meas->setRunId(runId->value());
+	m_meas->setRunId(runId->value());
 }
 
 /*!
@@ -95,7 +95,7 @@ void GeneralSetup::setRunIdSlot()
  */
 void GeneralSetup::selectAutoIncRunIdSlot()
 {
-    m_meas->setAutoIncRunId(runIdAuto->isChecked());
+	m_meas->setAutoIncRunId(runIdAuto->isChecked());
 }
 
 /*!
@@ -105,5 +105,5 @@ void GeneralSetup::selectAutoIncRunIdSlot()
  */
 void GeneralSetup::selectWriteProtectSlot()
 {
-    m_meas->setWriteProtection(writeProtect->isChecked());
+	m_meas->setWriteProtection(writeProtect->isChecked());
 }

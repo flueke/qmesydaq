@@ -41,25 +41,25 @@ ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
 	, m_bValid(false)
 	, m_bOldValid(false)
 {
-    setupUi(this);
-    registerField("ipaddress*", moduleIPInput);
-    registerField("moduleid*", moduleIDInput); 
-    initialize();
-    m_pThreadMutex = new QMutex();
-    m_pThread = new ModuleIdentificationPageThread(this);
-    m_pThread->start(QThread::LowPriority);
-    m_pTestTimer = new QTimer();
-    m_pTestTimer->setSingleShot(true);
-    m_pTestTimer->start(WAITTIME);
-    m_pUpdateTimer = new QTimer();
+	setupUi(this);
+	registerField("ipaddress*", moduleIPInput);
+	registerField("moduleid*", moduleIDInput);
+	initialize();
+	m_pThreadMutex = new QMutex();
+	m_pThread = new ModuleIdentificationPageThread(this);
+	m_pThread->start(QThread::LowPriority);
+	m_pTestTimer = new QTimer();
+	m_pTestTimer->setSingleShot(true);
+	m_pTestTimer->start(WAITTIME);
+	m_pUpdateTimer = new QTimer();
 
-    connect(moduleIPInput, SIGNAL(textChanged(const QString &)), this, SLOT(valueChanged()));
-    connect(moduleIPInput, SIGNAL(textEdited(const QString &)), this, SLOT(valueChanged()));
-    connect(moduleIDInput, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
-    connect(m_pTestTimer, SIGNAL(timeout()), this, SLOT(testTimeout()));
-    connect(m_pUpdateTimer, SIGNAL(timeout()), this, SLOT(updateTimeout()));
+	connect(moduleIPInput, SIGNAL(textChanged(const QString &)), this, SLOT(valueChanged()));
+	connect(moduleIPInput, SIGNAL(textEdited(const QString &)), this, SLOT(valueChanged()));
+	connect(moduleIDInput, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
+	connect(m_pTestTimer, SIGNAL(timeout()), this, SLOT(testTimeout()));
+	connect(m_pUpdateTimer, SIGNAL(timeout()), this, SLOT(updateTimeout()));
 
-    m_pUpdateTimer->start(200);
+	m_pUpdateTimer->start(200);
 }
 
 /** \fn ModuleIdentificationPage::~ModuleIdentificationPage()
@@ -68,24 +68,24 @@ ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
  */
 ModuleIdentificationPage::~ModuleIdentificationPage()
 {
-    delete m_pThread;
-    delete m_pThreadMutex;
-    delete m_pUpdateTimer;
-    delete m_pTestTimer;
+	delete m_pThread;
+	delete m_pThreadMutex;
+	delete m_pUpdateTimer;
+	delete m_pTestTimer;
 }
 
 /*!
     \fn void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
- 
+
     initializes the input fields for IP address and module ID
 
-    \param ip IP address 
+    \param ip IP address
     \param id Module ID
  */
 void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
 {
-    moduleIPInput->setAddress(ip);
-    moduleIDInput->setValue(id);
+	moduleIPInput->setAddress(ip);
+	moduleIDInput->setValue(id);
 }
 
 /*!
@@ -93,12 +93,12 @@ void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
 
     checks for completeness of input. In our case it tries to connect to the MCPD and
     tries to read the connected modules. If found a MCPD it will return true.
-   
+
     \return true in case of found a MCPD otherwise false
  */
 bool ModuleIdentificationPage::isComplete() const
 {
-    return m_bValid;
+	return m_bValid;
 }
 
 /*!
@@ -123,23 +123,23 @@ void ModuleIdentificationPage::valueChanged()
  */
 void ModuleIdentificationPage::testTimeout()
 {
-    for (;;)
-    {
-        m_pThreadMutex->lock();
-        if (m_pThread->m_iCommand != ModuleIdentificationPageThread::WORK)
-            break;
-        m_pThreadMutex->unlock();
-        usleep(1000);
-    }
+	for (;;)
+	{
+        	m_pThreadMutex->lock();
+        	if (m_pThread->m_iCommand != ModuleIdentificationPageThread::WORK)
+			break;
+        	m_pThreadMutex->unlock();
+        	usleep(1000);
+	}
 
-    if (m_pThread->m_iCommand == ModuleIdentificationPageThread::NONE)
-    {
-        m_pThread->m_szMcpdIp = moduleIPInput->getAddress(); // 'text()' not feasible, returns "127...2" instead of "127.0.0.2"
-        m_pThread->m_byMcpdId = moduleIDInput->value();
-        m_pThread->m_iCommand = ModuleIdentificationPageThread::WORK;
-        m_pThread->m_ThreadCondition.wakeOne();
-    }
-    m_pThreadMutex->unlock();
+	if (m_pThread->m_iCommand == ModuleIdentificationPageThread::NONE)
+	{
+        	m_pThread->m_szMcpdIp = moduleIPInput->getAddress(); // 'text()' not feasible, returns "127...2" instead of "127.0.0.2"
+        	m_pThread->m_byMcpdId = moduleIDInput->value();
+        	m_pThread->m_iCommand = ModuleIdentificationPageThread::WORK;
+        	m_pThread->m_ThreadCondition.wakeOne();
+	}
+	m_pThreadMutex->unlock();
 }
 
 /*!
@@ -150,14 +150,14 @@ void ModuleIdentificationPage::testTimeout()
  */
 void ModuleIdentificationPage::updateTimeout()
 {
-    if (m_bOldValid != m_bValid)
-    {
-        enum QWizard::WizardButton bt = QWizard::NextButton;
-        if (isFinalPage())
-            bt = QWizard::FinishButton;
-        wizard()->button(bt)->setEnabled(m_bValid);
-        m_bOldValid = m_bValid;
-    }
+	if (m_bOldValid != m_bValid)
+	{
+		enum QWizard::WizardButton bt = QWizard::NextButton;
+		if (isFinalPage())
+			bt = QWizard::FinishButton;
+		wizard()->button(bt)->setEnabled(m_bValid);
+		m_bOldValid = m_bValid;
+	}
 }
 
 /** \fn ModuleIdentificationPageThread::ModuleIdentificationPageThread(ModuleIdentificationPage* pWizard)
@@ -167,9 +167,9 @@ void ModuleIdentificationPage::updateTimeout()
  *  \param pWizard pointer to matching ModuleIdentificationPage instance
  */
 ModuleIdentificationPageThread::ModuleIdentificationPageThread(ModuleIdentificationPage* pWizard)
-    : m_pWizard(pWizard)
-    , m_iCommand(NONE)
-    , m_byMcpdId(0)
+	: m_pWizard(pWizard)
+	, m_iCommand(NONE)
+	, m_byMcpdId(0)
 {
 }
 
@@ -179,11 +179,11 @@ ModuleIdentificationPageThread::ModuleIdentificationPageThread(ModuleIdentificat
  */
 ModuleIdentificationPageThread::~ModuleIdentificationPageThread()
 {
-    m_pWizard->m_pThreadMutex->lock();
-    m_iCommand = QUIT;
-    m_ThreadCondition.wakeOne();
-    m_pWizard->m_pThreadMutex->unlock();
-    wait();
+	m_pWizard->m_pThreadMutex->lock();
+	m_iCommand = QUIT;
+	m_ThreadCondition.wakeOne();
+	m_pWizard->m_pThreadMutex->unlock();
+	wait();
 }
 
 /** \fn void ModuleIdentificationPageThread::run()
@@ -192,27 +192,27 @@ ModuleIdentificationPageThread::~ModuleIdentificationPageThread()
  */
 void ModuleIdentificationPageThread::run()
 {
-    for (;;)
-    {
-        msleep(1);
-        m_pWizard->m_pThreadMutex->lock();
-        switch (m_iCommand)
-        {
-            case QUIT:
-                m_pWizard->m_pThreadMutex->unlock();
-                return;
-            case NONE:
-                m_ThreadCondition.wait(m_pWizard->m_pThreadMutex);
-                m_pWizard->m_pThreadMutex->unlock();
-                continue;
-            default:
-                break;
-        }
+	for (;;)
+	{
+		msleep(1);
+		m_pWizard->m_pThreadMutex->lock();
+		switch (m_iCommand)
+		{
+			case QUIT:
+				m_pWizard->m_pThreadMutex->unlock();
+				return;
+			case NONE:
+				m_ThreadCondition.wait(m_pWizard->m_pThreadMutex);
+				m_pWizard->m_pThreadMutex->unlock();
+				continue;
+			default:
+				break;
+		}
 
-        m_iCommand = NONE;
-        MCPD8 *mcpd = new MCPD8(m_byMcpdId, m_szMcpdIp, 54321, QString::null, true);
-        m_pWizard->m_bValid = (mcpd->version() > 0.0);
-        delete mcpd;
-        m_pWizard->m_pThreadMutex->unlock();
-    }
+		m_iCommand = NONE;
+		MCPD8 *mcpd = new MCPD8(m_byMcpdId, m_szMcpdIp, 54321, QString::null, true);
+		m_pWizard->m_bValid = (mcpd->version() > 0.0);
+		delete mcpd;
+		m_pWizard->m_pThreadMutex->unlock();
+	}
 }

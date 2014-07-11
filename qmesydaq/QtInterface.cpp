@@ -33,9 +33,9 @@
     \param parent
  */
 QtInterface::QtInterface(QObject *receiver, QObject *parent)
-    : QObject(parent)
-    , m_receiver(receiver)
-    , m_eventReceived(false)
+	: QObject(parent)
+	, m_receiver(receiver)
+	, m_eventReceived(false)
 {
 }
 
@@ -46,7 +46,7 @@ QtInterface::QtInterface(QObject *receiver, QObject *parent)
  */
 void QtInterface::setReceiver(QObject *receiver)
 {
-    this->m_receiver = receiver;
+	this->m_receiver = receiver;
 }
 
 /*!
@@ -56,7 +56,7 @@ void QtInterface::setReceiver(QObject *receiver)
  */
 QObject *QtInterface::getReceiver()
 {
-    return this->m_receiver;
+	return this->m_receiver;
 }
 
 /*!
@@ -66,8 +66,8 @@ QObject *QtInterface::getReceiver()
  */
 void QtInterface::postEvent(QEvent *event)
 {
-    if (this->m_receiver)
-        QApplication::postEvent(this->m_receiver, event);
+	if (this->m_receiver)
+		QApplication::postEvent(this->m_receiver, event);
 }
 
 /*!
@@ -77,33 +77,33 @@ void QtInterface::postEvent(QEvent *event)
   */
 bool QtInterface::waitForEvent()
 {
-    LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
-    QTime tStart=QTime::currentTime();
-    for (;;)
-    {
-        if (m_eventReceived)
-        {
-            m_eventReceived = false;
-            break;
-        }
-        if (loop)
-            loop->pSleep(1);
-        else
-        {
-            int tDiff = tStart.msecsTo(QTime::currentTime());
-            if (tDiff < 0)
-                tDiff += 86400000;
-            if (tDiff > 5000)
-            {
+	LoopObject *loop = dynamic_cast<LoopObject*>(QThread::currentThread());
+	QTime tStart=QTime::currentTime();
+	for (;;)
+	{
+		if (m_eventReceived)
+		{
+			m_eventReceived = false;
+			break;
+		}
+		if (loop)
+			loop->pSleep(1);
+		else
+		{
+			int tDiff = tStart.msecsTo(QTime::currentTime());
+			if (tDiff < 0)
+				tDiff += 86400000;
+			if (tDiff > 5000)
+			{
 #ifdef DEBUGBUILD
-                Q_ASSERT(false);
+				Q_ASSERT(false);
 #endif
-                return false;
-            }
-            usleep(1000);
-        }
-    }
-    return true;
+				return false;
+			}
+			usleep(1000);
+		}
+	}
+	return true;
 }
 
 /*!
@@ -114,33 +114,33 @@ bool QtInterface::waitForEvent()
  */
 void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> args)
 {
-    CommandEvent *newEvent;
-    m_eventReceived = false;
-    if(args.isEmpty())
-        newEvent = new CommandEvent(cmd);
-    else
-        newEvent = new CommandEvent(cmd, args);
-    postEvent(newEvent);
-    if (!waitForEvent())
-    {
-        const char* szCmd(NULL);
-        switch (cmd)
-        {
+	CommandEvent *newEvent;
+	m_eventReceived = false;
+	if(args.isEmpty())
+		newEvent = new CommandEvent(cmd);
+	else
+		newEvent = new CommandEvent(cmd, args);
+	postEvent(newEvent);
+	if (!waitForEvent())
+	{
+		const char* szCmd(NULL);
+		switch (cmd)
+		{
 #define CMD(x) case CommandEvent::x: szCmd=#x; break;
-            CMD(C_START) CMD(C_STOP) CMD(C_CLEAR) CMD(C_RESUME) CMD(C_SET_PRESELECTION) CMD(C_PRESELECTION)
-            CMD(C_READ_DIFFRACTOGRAM) CMD(C_STATUS) CMD(C_READ_HISTOGRAM_SIZE) CMD(C_READ_HISTOGRAM)
-            CMD(C_READ_SPECTROGRAM) CMD(C_READ_COUNTER) CMD(C_SELECT_COUNTER) CMD(C_SET_LISTMODE)
-            CMD(C_SET_LISTHEADER) CMD(C_MAPCORRECTION) CMD(C_MAPPEDHISTOGRAM) CMD(C_UPDATEMAINWIDGET)
-            CMD(C_QUIT) CMD(C_SET_RUNID) CMD(C_GET_RUNID) CMD(C_GET_LISTMODE) CMD(C_COUNTER_SELECTED)
-            CMD(C_VERSIONTEXT) CMD(C_INIT) CMD(C_SET_CONFIGFILE) CMD(C_GET_CONFIGFILE)
+			CMD(C_START) CMD(C_STOP) CMD(C_CLEAR) CMD(C_RESUME) CMD(C_SET_PRESELECTION) CMD(C_PRESELECTION)
+			CMD(C_READ_DIFFRACTOGRAM) CMD(C_STATUS) CMD(C_READ_HISTOGRAM_SIZE) CMD(C_READ_HISTOGRAM)
+			CMD(C_READ_SPECTROGRAM) CMD(C_READ_COUNTER) CMD(C_SELECT_COUNTER) CMD(C_SET_LISTMODE)
+			CMD(C_SET_LISTHEADER) CMD(C_MAPCORRECTION) CMD(C_MAPPEDHISTOGRAM) CMD(C_UPDATEMAINWIDGET)
+			CMD(C_QUIT) CMD(C_SET_RUNID) CMD(C_GET_RUNID) CMD(C_GET_LISTMODE) CMD(C_COUNTER_SELECTED)
+			CMD(C_VERSIONTEXT) CMD(C_INIT) CMD(C_SET_CONFIGFILE) CMD(C_GET_CONFIGFILE)
 #undef CMD
-            default: szCmd="???"; break;
-        }
-        MSG_FATAL << tr("timeout for command %1(%2)").arg(cmd).arg(szCmd) << args;
+			default: szCmd="???"; break;
+		}
+		MSG_FATAL << tr("timeout for command %1(%2)").arg(cmd).arg(szCmd) << args;
 #ifdef DEBUGBUILD
-        Q_ASSERT(false);
+		Q_ASSERT(false);
 #endif
-    }
+	}
 }
 
 /*!
@@ -151,10 +151,10 @@ void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> 
  */
 void QtInterface::postCommandToInterface(CommandEvent::Command cmd, QList<QVariant> args)
 {
-    CommandEvent *newEvent;
-    if(args.isEmpty())
-        newEvent = new CommandEvent(cmd);
-    else
-        newEvent = new CommandEvent(cmd, args);
-    QApplication::postEvent(this, newEvent);
+	CommandEvent *newEvent;
+	if(args.isEmpty())
+		newEvent = new CommandEvent(cmd);
+	else
+		newEvent = new CommandEvent(cmd, args);
+	QApplication::postEvent(this, newEvent);
 }

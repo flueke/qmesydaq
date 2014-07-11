@@ -25,8 +25,8 @@
 ModuleWizard::ModuleWizard(const QString &ip, const quint16 id, QWidget *parent)
 	: QWizard(parent)
 {
-    setupUi(this);
-    wizardPage1->initialize(ip, id); 
+	setupUi(this);
+	wizardPage1->initialize(ip, id);
 }
 
 /*!
@@ -38,7 +38,7 @@ ModuleWizard::ModuleWizard(const QString &ip, const quint16 id, QWidget *parent)
  */
 void ModuleWizard::accept(void)
 {
-    QDialog::accept();
+	QDialog::accept();
 }
 
 /*!
@@ -48,7 +48,7 @@ void ModuleWizard::accept(void)
  */
 QString ModuleWizard::ip(void)
 {
-    return field("ipaddress").toString();
+	return field("ipaddress").toString();
 }
 
 /*!
@@ -57,8 +57,8 @@ QString ModuleWizard::ip(void)
     \return the value of the module id input field
  */
 quint16 ModuleWizard::id(void)
-{  
-    return field("moduleid").toUInt();
+{
+	return field("moduleid").toUInt();
 }
 
 /*!
@@ -67,8 +67,8 @@ quint16 ModuleWizard::id(void)
     \return the checkstate of the master checkbox
  */
 bool ModuleWizard::master(void)
-{  
-    return field("master").toBool();
+{
+	return field("master").toBool();
 }
 
 /*!
@@ -77,8 +77,8 @@ bool ModuleWizard::master(void)
     \return the checkstate of the terminate checkbox
  */
 bool ModuleWizard::terminate(void)
-{  
-    return field("terminate").toBool();
+{
+	return field("terminate").toBool();
 }
 
 /*!
@@ -88,5 +88,5 @@ bool ModuleWizard::terminate(void)
  */
 bool ModuleWizard::externsync(void)
 {
-    return field("externsync").toBool();
+	return field("externsync").toBool();
 }
