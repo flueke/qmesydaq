@@ -1,0 +1,108 @@
+SPODI@FRM-II: resolution steps with CARESS interface
+===============================================================================
+
+The CARESS command RESOSTEP is used at SPODI@FRM-II to increase the resolution
+of the detector. CARESS will make some measurement steps at slightly different
+positions (less the width of one detector). The number of resolution steps and
+the detector position will be loaded before the measurement starts and the
+interface will return a combined histogram or the positions on request.
+
+Insert the following device to your "hardware_modules_m1.dat":
+;name kind CORBA-reference        type      ignore width height
+ADET  500  qmesydaq.caress_object histogram 0      80    254
+
+Insert the following section to your "corbadevice.dat"
+[ADET]
+startcommands = RESOSTEP, COM
+startvalues = TTHS
+mesydaq_gzip = yes
+
+After a measurement inside CARESS with resolution steps>=2, your should be able
+to read the detector data with all resolution steps with the following command
+line (see notes below):
+
+readblock_dev -i qmesydaq.caress_object -d ADET -k 1 -s 1 -e 10000000 -b 16384 -ot le > output.gz
+
+If you don't want to use a gzipped file, set "mesydaq_gzip = no" (see above).
+The file format is almost like the old format of mesydaq.
+
+Here is an example shell script "$CAR_EXEDIR/scan_event.sh" for SPODI@FRM-2:
+
+__________ snip here _____________ snip here _____________ snip here __________
+
+#!/bin/bash
+#######################################################
+#
+#   scan_event.sh
+#
+#   called for measurement events
+#
+#  first argument:
+#    start      start of measurement
+#    prestep    before a measurement step
+#    poststep   after a measurement step
+#    save       a resolution step (or other) is done
+#    abort      measurement was aborted
+#    end        end of measurement
+#    time       snapshot while measurement
+#  second argument:
+#    number of steps      ($1 == start)
+#    current step counter ($1 != start)
+#  third argument (optional, $1 == start):
+#    scan command
+#
+#######################################################
+
+# do not use local format for date or numbers
+LC_ALL=C
+export LC_ALL
+
+# handle only some of the arguments here
+case "$1" in
+
+  save | poststep | abort )
+
+    # generate lower character version of instrument name
+    exp=$(echo "${CAR_EXP}"|tr 'A-Z' 'a-z')
+
+    # generate a date string
+    DATETIME=$(date +'%Y%m%d-%H%M%S')
+
+    # read current run number
+    FILENAME=$(remap_caress_file "${CAR_EXEDIR}/car_run_${exp}.dat")
+    RUN_NO=$(cat "${FILENAME}")
+
+    # read current position of resolution step
+    RESO_POS=$(dump_u1 RESO_POS | sed -rn 's/^(.*)\(([^,]+)(,.*)$/\2/p')
+
+    # take a detector snapshot after every step or resolution step
+    # use the generated file name: "detector_<runno>_<stepno>_<resostep-pos>_<date>.tmp"
+    if [ "$1" = "save" -o "$1" = "poststep" ]; then
+
+      FILENAME=$(printf "%s/detector_%05d_%03d_%07.3f_%s.tmp" "${CAR_RAWDIR}" "${RUN_NO}" "$2" "${RESO_POS}" "${DATETIME}"
+      readblock_dev -i qmesydaq.caress_object -d ADET -k 0 -s 1 -e 10000000 -b 16384 -ot le > ${FILENAME}
+    fi
+
+    # read (almost) complete detector data with resolution steps
+    # use the generated file name: "detector_<runno>_<stepno>_<resostep-pos>.txt"
+    if [ "$1" = "poststep" -o "$1" = "abort" ]; then
+
+      FILENAME=$(printf "%s/detector_%05d_%03d_%07.3f.txt" "${CAR_RAWDIR}" "${RUN_NO}" "$2" "${RESO_POS}"
+      readblock_dev -i qmesydaq.caress_object -d ADET -k 1 -s 1 -e 10000000 -b 16384 -ot le > "${FILENAME}.gz"
+
+      if file "${FILENAME}.gz" | grep -qs 'gzip'; then
+        gunzip < "${FILENAME}.gz" > "${FILENAME}"
+      else
+        mv "${FILENAME}.gz" "${FILENAME}"
+      fi
+    fi
+    ;;
+esac
+
+exit 0
+
+_______________________________________________________________________________
+           snip here               snip here               snip here
+
+Lutz Rossa <rossa@helmholtz-berlin.de>
+2014/08/04

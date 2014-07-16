@@ -24,6 +24,13 @@
 
 #include "mapcorrect.h"
 
+namespace CaressHelper
+{
+	bool zlib_zip(QByteArray abyIn, QByteArray &abyOut, bool bGzipHeader=true);
+
+	bool zlib_unzip(QByteArray abyIn, QByteArray &abyOut);
+}
+
 /*!
   \brief base class for different mapping parsers
   \author Lutz Rossa <rossa@helmholtz-berlin.de>
@@ -38,8 +45,6 @@ public:
 	virtual MapCorrection parseCaressMapCorrection(const QString& mapping, int iSrcWidth, int iSrcHeight, int iDstWidth, int iDstHeight) = 0;
 
 	enum CaressMapType { CARESSMAP_EXED, CARESSMAP_V4_LISTMODE, CARESSMAP_V4_CARESS };
-
-	static bool zlib_unzip(QByteArray abyIn, QByteArray &abyOut);
 };
 
 /*!

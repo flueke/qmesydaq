@@ -37,7 +37,7 @@
     \param parent
  */
 QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject *parent)
-    	: QtInterface(receiver, parent)
+	: QtInterface(receiver, parent)
 	, m_bDoLoop(true)
 	, m_preSelection(0.0)
 	, m_counter(0.0)
@@ -55,7 +55,9 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
  */
 void QMesyDAQDetectorInterface::start()
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_START);
+	m_mutex.unlock();
 }
 
 /*!
@@ -63,7 +65,9 @@ void QMesyDAQDetectorInterface::start()
  */
 void QMesyDAQDetectorInterface::stop()
 {
-        postRequestCommand(CommandEvent::C_STOP);
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_STOP);
+	m_mutex.unlock();
 }
 
 /*!
@@ -71,7 +75,9 @@ void QMesyDAQDetectorInterface::stop()
  */
 void QMesyDAQDetectorInterface::clear()
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_CLEAR);
+	m_mutex.unlock();
 }
 
 /*!
@@ -79,7 +85,9 @@ void QMesyDAQDetectorInterface::clear()
  */
 void QMesyDAQDetectorInterface::resume()
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_RESUME);
+	m_mutex.unlock();
 }
 
 /*!
@@ -107,7 +115,9 @@ double QMesyDAQDetectorInterface::readCounter(int id)
  */
 void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable);
+	m_mutex.unlock();
 }
 
 bool QMesyDAQDetectorInterface::counterSelected(int id)
@@ -129,7 +139,9 @@ bool QMesyDAQDetectorInterface::counterSelected(int id)
  */
 void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable, double dblTarget)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SELECT_COUNTER, QList<QVariant>() << id << bEnable << dblTarget);
+	m_mutex.unlock();
 }
 
 /*!
@@ -139,7 +151,9 @@ void QMesyDAQDetectorInterface::selectCounter(int id, bool bEnable, double dblTa
  */
 void QMesyDAQDetectorInterface::setPreSelection(double value)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value);
+	m_mutex.unlock();
 }
 
 /*!
@@ -150,7 +164,9 @@ void QMesyDAQDetectorInterface::setPreSelection(double value)
  */
 void QMesyDAQDetectorInterface::setPreSelection(int id, double value)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SET_PRESELECTION, QList<QVariant>() << value << id);
+	m_mutex.unlock();
 }
 
 /*!
@@ -341,7 +357,9 @@ void QMesyDAQDetectorInterface::setListFileName(const QString name)
  */
 void QMesyDAQDetectorInterface::setListMode(bool bEnable, bool bWriteProtection)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SET_LISTMODE,QList<QVariant>() << bEnable << bWriteProtection);
+	m_mutex.unlock();
 }
 
 /*!
@@ -377,7 +395,9 @@ void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength
  */
 void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iRunNo, const QString& sActive)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << iWidth << iHeight << iRunNo << sActive);
+	m_mutex.unlock();
 }
 
 /*!
@@ -388,17 +408,23 @@ void QMesyDAQDetectorInterface::updateMainWidget(int iWidth, int iHeight, int iR
  */
 void QMesyDAQDetectorInterface::updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo, const QString& sActive)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_UPDATEMAINWIDGET, QList<QVariant>() << sWidth << sHeight << sRunNo << sActive);
+	m_mutex.unlock();
 }
 
 void QMesyDAQDetectorInterface::setRunID(const quint32 runid)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid);
+	m_mutex.unlock();
 }
 
 void QMesyDAQDetectorInterface::setRunID(const quint32 runid, bool bAutoIncrement)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SET_RUNID, QList<QVariant>() << runid << bAutoIncrement);
+	m_mutex.unlock();
 }
 
 quint32 QMesyDAQDetectorInterface::getRunID(bool *pbAutoIncrement)
@@ -426,12 +452,16 @@ QString QMesyDAQDetectorInterface::getVersionText()
 void QMesyDAQDetectorInterface::init(void)
 {
 // possible in the future add a name of a different config file
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_INIT, QList<QVariant>());
+	m_mutex.unlock();
 }
 
 void QMesyDAQDetectorInterface::loadConfigurationFile(const QString &confFile)
 {
+	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_SET_CONFIGFILE, QList<QVariant>() << confFile);
+	m_mutex.unlock();
 }
 
 QString QMesyDAQDetectorInterface::getConfigurationFileName(void)

@@ -540,8 +540,8 @@ module CARESS
 			\li used for special devices, many devices do not need to change data in "inout" parameters, but they are allowed to change (e.g. check and prepare histogram readout)
 			\param[in] kind           kind of read block \n
 				0 = \c READBLOCK_NORMAL (normal read) \n
-				1 = ( \c READBLOCK_SINGLE, DAU only: read only single detector) \n
-				2 = ( \c READBLOCK_MULTI, DAU only: read only multi detector) \n
+				1 = \c READBLOCK_SINGLE, QMesyDAQ: read detector positions (DAU only: read only single detector) \n
+				2 = \c READBLOCK_MULTI, QMesyDAQ: read all detector resolution step data (DAU only: read only multi detector) \n
 				3 = \c READBLOCK_NOSNAPSHOT (handle it like <tt>kind==0</tt>)
 			\param[in] id             unique device ID given by CARESS
 			\param[in,out] start_channel first channel to load (starts with 1, do not extend range, coerce only to match maximum range)

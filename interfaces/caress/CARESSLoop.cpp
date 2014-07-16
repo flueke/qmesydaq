@@ -96,7 +96,7 @@ const int g_iGlobalSyncSleep = 1;
 #define ARRAY_SIZE(x) ((int)(sizeof(x)/sizeof((x)[0])))
 
 //! \brief default time factor (divider) for timer device (CARESS uses an integer data type for this)
-const double DEFAULTTIMEFACTOR = 100.0; // default CARESS factor for timer (Hertz)
+const double DEFAULTTIMEFACTOR = 1000.0; // default CARESS factor for timer (Hertz)
 
 //! \brief CARESS status values
 enum {
@@ -118,6 +118,67 @@ enum {
 	MODULE_RESET  = 8  /*!< fatal error, module has to be reset */
 };
 
+//! \brief CARESS kinds for function calls
+enum {
+	LOAD_NORMAL    =0,     /*!< default, if nothing matches better */
+	READACTION     =1,     /*!< read info from hardware and print it */
+	LOADACTION     =2,     /*!< load hardware component with info */
+	IMPORTANTDEVICE=3,     /*!< mark device as important */
+	OFFLINEDEVICE  =4,     /*!< mark device as offline */
+	GENERATION     =5,     /*!< CARESS internal command generation */
+	HARDWAREINIT   =6,     /*!< hardware initialization */
+	SETACTION      =7,     /*!< drive to a target position */
+	COMPARE        =8,     /*!< compare target with requested position */
+	LOAD_SNAPSHOT  =9,     /*!< load type and size of snapshot memory */
+	READSTORE      =10,    /*!< read info from hardware, store into file */
+	KEEPACTION     =11,    /*!< Y66 motor should keep current position */
+	STOPACTION     =12,    /*!< stop a hardware activity */
+	LOADANDSTART   =13,    /*!< used for SELECTION_DEVICE and "RELA mismatch" error message */
+	LOADMASTER     =14,    /*!< load preset counter with preset value */
+	LOADSLAVE      =15,    /*!< prepare a counter, histogram for counting */
+	RESETMODULE    =16,    /*!< clear a counter, histogram */
+	LOAD_SETCM2    =17,    /*!< load SETCM2 data into this device */
+	SPECIALLOAD    =18,    /*!< load special info into hardware */
+	LOAD_PERM_INFO =19,    /*!< load permanent moving info */
+	READACTION2    =20,    /*!< read info from hardware and print it */
+	LOAD_OFFSET    =21,    /*!< load CARESS offset (SOFDEV) into device */
+	COUPLED_SCAN   =22,    /*!< prepare a coupled scan */
+
+	INIT_NORMAL    =0,     /*!< initialize a server/device */
+	INIT_REINIT    =1,     /*!< reinitialize a device */
+	INIT_NOINIT    =2,     /*!< reinitialize a server, but dont change devices */
+	INIT_PRECONNECT=3,     /*!< generic CORBA device: connect and load config */
+	INIT_CONNECT   =4,     /*!< connect to existing server/device */
+	INIT_RESET     =8,     /*!< device requested RESET, like INIT_REINIT for existing devices */
+
+	DRIVE_NORMAL   =0,     /*!< drive a motor */
+	DRIVE_REFERENCE=1,     /*!< drive a motor to reference position */
+	DRIVE_SETBITS  =2,     /*!< drive digital output: set bits */
+	DRIVE_CLEARBITS=3,     /*!< drive digital output: clear bits */
+				  /*4*/
+	DRIVE_NOENCODER=5,     /*!< drive a motor relative and ignore encoder */
+
+	READ_NORMAL    =0,     /*!< normal read */
+	READ_EXPRESS   =1,     /*!< look for DONE for fast devices, only */
+	READ_FORCED    =2,     /*!< look for DONE for all devices */
+	READ_STATUS    =3,     /*!< read limit and reference switches */
+	READ_NAMELIST  =4,     /*!< read device names and ids */
+	READ_NOENCODER =5,     /*!< read step counter of motor */
+
+	READBLOCK_NORMAL     = 0, /*!< linear/area detector: read histogram */
+	READBLOCK_SINGLE     = 1, /*!< force single detector data/positions (DAU and QMesyDAQ only) */
+	READBLOCK_MULTI      = 2, /*!< force multi detector data (DAU and QMesyDAQ only) */
+	READBLOCK_NOSNAPSHOT = 3, /*!< linear/area detector: read histogram without snapshots */
+
+	START_NORMAL   = 0, /*!< normal start, start of scan step */
+	START_CONT     = 1, /*!< continue measurement after pause */
+	START_SNAPSHOT = 2, /*!< start in continous mode (information only) */
+
+	STOP_PAUSE       = 0, /*!< pause measurement */
+	STOP_TERMINATION = 1, /*!< termination/end of measurement */
+	STOP_SNAPSHOT    = 2  /*!< stop in continous mode (information only) */
+};
+
 //! \brief mapping of QMesyDAQ devices into CARESS CORBA device arrays
 enum {
 	QMESYDAQ_MON1 = 0,      //!< monitor counter 1
@@ -135,7 +196,7 @@ enum {
 	//QMESYDAQ_TTL2,          //!< digital input 2
 	QMESYDAQ_MAXDEVICES
 };
-static const char* g_asDevices[]={"monitor_1","monitor_2","monitor_3","monitor_4","event_counter","timer","histogram","diffractogram"};
+static const char* g_asDevices[]={"monitor_1","monitor_2","monitor_3","monitor_4","event_counter","timer","histogram","diffractogram","spectrogram"};
 static QString g_sCaressActive("<b>connected</b>");
 static QString g_sCaressNotActive("<i>not connected</i>");
 static bool init_module_parse_long(const char** pPtr, long* plResult);
@@ -178,36 +239,48 @@ public:
 
 private:
 	MultipleLoopApplication* m_theApp;
-	QDateTime m_dtLastCall;        //!< last CORBA call to this interface
-	QMutex    m_mutex;
+	QDateTime		m_dtLastCall;			//!< last CORBA call to this interface
+	QMutex			m_mutex;
 
 protected:
-	QString m_sInstrument;         //!< name of instrument
-	long    m_lHistogramX;         //!< width of histogram
-	long    m_lHistogramY;         //!< height of histogram
-	long    m_lDiffractogramWidth; //!< width of diffractogram
-	long    m_lSpectrogramChannel; //!< selected spectrogram channel
-	long    m_lSpectrogramWidth;   //!< width of spectrogram
-	long    m_lRunNo;              //!< current/last CARESS run number
-	long    m_lStepNo;             //!< current/last CARESS measurement step
-	long    m_lMesrCount;          //!< current/last CARESS resolution step (not used)
-	bool    m_bListmode;           //!< true, if QMesyDAQ should acquire a list file
-	bool	m_bHistogram;          //!< true, if QMesyDAQ should generater a histogram file
-	QString m_sListfile;           //!< list file name
-	QString	m_sHistofile;          //!< histogram file name
-	double  m_dblTimerScale;       //!< override for DEFAULTTIMEFACTOR
-	long    m_lSourceChannels;     //!< used for mapping: number of MPSD-or-something channels
+	QString			m_sInstrument;			//!< name of instrument
+	long			m_lHistogramX;			//!< width of histogram
+	long			m_lHistogramY;			//!< height of histogram
+	long			m_lDiffractogramWidth;	//!< width of diffractogram
+	long			m_lSpectrogramChannel;	//!< selected spectrogram channel
+	long			m_lSpectrogramWidth;	//!< width of spectrogram
+	long			m_lRunNo;				//!< current/last CARESS run number
+	long			m_lStepNo;				//!< current/last CARESS measurement step
+	long			m_lMesrCount;			//!< current/last CARESS resolution step (used for SPODI@FRM-II)
+	bool			m_bListmode;			//!< true, if QMesyDAQ should acquire a list file
+	bool			m_bHistogram;			//!< true, if QMesyDAQ should generater a histogram file
+	QString			m_sListfile;			//!< list file name
+	QString			m_sHistofile;			//!< histogram file name
+	double			m_dblTimerScale;		//!< override for DEFAULTTIMEFACTOR
+	long			m_lSourceChannels;		//!< used for mapping: number of MPSD-or-something channels
 
-	long    m_lId[QMESYDAQ_MAXDEVICES];    //!< CARESS ids of internal devices
-	bool    m_b64Bit[QMESYDAQ_MAXDEVICES]; //!< 64-bit mode for internal devices
-	int     m_iMaster;                     //!< which internal device is the master counter
-	bool    m_bMasterPause;                //!< CARESS measurement is paused
+	long			m_lId[QMESYDAQ_MAXDEVICES];		//!< CARESS ids of internal devices
+	bool			m_b64Bit[QMESYDAQ_MAXDEVICES];	//!< 64-bit mode for internal devices
+	int				m_iMaster;				//!< which internal device is the master counter
+	quint64			m_qwMasterTarget;		//!< target of master counter
+	bool			m_bMasterPause;			//!< CARESS measurement is paused
+	QDateTime		m_tStart;				//!< start time of measurement
+	quint32			m_dwAcquisitionTime;	//!< acquisition time summary
+	QString			m_szComment;			//!< comment from CARESS
 
-	char    m_szErrorMessage[64];          //!< last error message text
-	QList<quint64> m_aullDetectorData;     //!< last histogram/diffractogram/spectrogram
-	int            m_iDetectorWidth;       //!< last width of histogram/diffractogram/spectrogram
+	char			m_szErrorMessage[64];	//!< last error message text
+	QList<quint64>	m_aullDetectorData;		//!< last histogram/diffractogram/spectrogram
+	QByteArray		m_abyDetectorData;		//!< last histogram/diffractogram/spectrogram as byte array
+	int				m_iDetectorWidth;		//!< last width of histogram/diffractogram/spectrogram
 
-	MapCorrection  m_mapHistogram; //!< different histogram mapping for CARESS
+	MapCorrection	m_mapHistogram;			//!< different histogram mapping for CARESS
+
+	// for "resolution steps" used at SPODI(M1)@FRM-II
+	QMap<int,double>			m_hdblResoPos;	//!< detector positions for resolution steps at different positions
+	QMap<int,QList<quint64> >	m_haResoStep;	//!< detector data at different positions
+	int				m_iMaxResoStep;			//!< number of resolution steps
+	double			m_dblDetPos;			//!< detector position
+	bool			m_bUseGzip;				//!< use gzip to compress detector data (readblock-kind==1)
 };
 
 /***************************************************************************
@@ -482,7 +555,8 @@ CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
 	m_lDiffractogramWidth(0), m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
 	m_lRunNo(-1), m_lStepNo(0), m_lMesrCount(-1), m_bListmode(false),
 	m_bHistogram(false), m_dblTimerScale(DEFAULTTIMEFACTOR), m_lSourceChannels(-1),
-	m_iMaster(-1), m_iDetectorWidth(0)
+	m_iMaster(-1), m_qwMasterTarget(0), m_bMasterPause(false), m_dwAcquisitionTime(0),
+	m_iDetectorWidth(0), m_iMaxResoStep(0), m_dblDetPos(0.0), m_bUseGzip(true)
 {
 	memset(&m_lId[0],0,sizeof(m_lId));
 	memset(&m_b64Bit[0],0,sizeof(m_b64Bit));
@@ -590,7 +664,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 		i=ptr1-config_line;
 		while (ptr1[0]==' ' || ptr1[0]=='\t') ++ptr1;
 
-		if      ((i== 7 && strncasecmp(config_line,"monitor",i)==0)       || (i==3 && strncasecmp(config_line,"mon",i)==0) ||
+		if		((i== 7 && strncasecmp(config_line,"monitor",i)==0)       || (i==3 && strncasecmp(config_line,"mon",i)==0) ||
 				 (i== 8 && strncasecmp(config_line,"monitor1",i)==0)      || (i==4 && strncasecmp(config_line,"mon1",i)==0))  iDevice=QMESYDAQ_MON1;
 		else if ((i== 8 && strncasecmp(config_line,"monitor2",i)==0)      || (i==4 && strncasecmp(config_line,"mon2",i)==0))  iDevice=QMESYDAQ_MON2;
 		else if ((i== 8 && strncasecmp(config_line,"monitor3",i)==0)      || (i==4 && strncasecmp(config_line,"mon3",i)==0))  iDevice=QMESYDAQ_MON3;
@@ -610,6 +684,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 		if (m_iMaster==iDevice)
 		{
 			m_iMaster=-1;
+			m_qwMasterTarget=0;
 			m_bMasterPause=false;
 		}
 		if (pInterface->status())
@@ -639,6 +714,10 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 				m_sInstrument.clear();
 				m_mapHistogram.setNoMap();
 				m_lHistogramX=m_lHistogramY=0;
+				m_haResoStep.clear();
+				m_hdblResoPos.clear();
+				m_iMaxResoStep=0;
+				m_dwAcquisitionTime=0;
 				// skip next value
 				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
 
@@ -682,6 +761,10 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 				m_sInstrument.clear();
 				m_mapHistogram.setNoMap();
 				m_lDiffractogramWidth=0;
+				m_haResoStep.clear();
+				m_hdblResoPos.clear();
+				m_iMaxResoStep=0;
+				m_dwAcquisitionTime=0;
 				// skip next value
 				while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
 
@@ -716,6 +799,10 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 				m_mapHistogram.setNoMap();
 				m_lSpectrogramChannel=-2;
 				m_lSpectrogramWidth=0;
+				m_haResoStep.clear();
+				m_hdblResoPos.clear();
+				m_iMaxResoStep=0;
+				m_dwAcquisitionTime=0;
 				// select spectrogram channel
 				while (ptr1[0]=='0' && ptr1[0]>='0' && ptr1[0]<='9') ++ptr1;
 				ptr2=ptr1;
@@ -799,7 +886,7 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 	QMesyDAQDetectorInterface* pInterface=NULL;
 	int iDevice;
 
-	if (kind == 4)
+	if (kind == INIT_CONNECT)
 		return CARESS::OK;
 
 	if (m_theApp!=NULL)
@@ -815,6 +902,7 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 	if (m_iMaster == iDevice)
 	{
 		m_iMaster = -1;
+		m_qwMasterTarget = 0;
 		m_bMasterPause = false;
 	}
 	MSG_DEBUG << "release(kind=" << kind << ", id=" << id << ')';
@@ -827,24 +915,28 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 				if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
 				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
 				else pInterface->updateMainWidget(0, 0, m_lRunNo, g_sCaressNotActive);
-				m_sInstrument.clear();
-				m_mapHistogram.setNoMap();
 				break;
 			case QMESYDAQ_DIFFRACTOGRAM:
 				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX, m_lHistogramY, m_lRunNo, g_sCaressActive);
 				else if (m_lId[QMESYDAQ_SPECTROGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
 				else pInterface->updateMainWidget(0, 0, m_lRunNo, g_sCaressNotActive);
-				m_sInstrument.clear();
-				m_mapHistogram.setNoMap();
 				break;
 			case QMESYDAQ_SPECTROGRAM:
 				if (m_lId[QMESYDAQ_HISTOGRAM]>0) pInterface->updateMainWidget(m_lHistogramX, m_lHistogramY, m_lRunNo, g_sCaressActive);
 				else if (m_lId[QMESYDAQ_DIFFRACTOGRAM]>0) pInterface->updateMainWidget(m_lSpectrogramWidth, m_lSpectrogramChannel, m_lRunNo, g_sCaressActive);
 				else pInterface->updateMainWidget(0, 0, m_lRunNo, g_sCaressNotActive);
-				m_sInstrument.clear();
-				m_mapHistogram.setNoMap();
 				break;
+			default:
+				goto release_do_not_clear_data;
 		}
+		m_sInstrument.clear();
+		m_mapHistogram.setNoMap();
+		m_haResoStep.clear();
+		m_hdblResoPos.clear();
+		m_iMaxResoStep=0;
+		m_dwAcquisitionTime=0;
+release_do_not_clear_data:
+		;
 	}
 	return CARESS::OK;
 }
@@ -854,7 +946,7 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
   \param[in]  kind           kind of start to distinguish between new step or measurement
   \param[in]  id             CARESS id
   \param[in]  run_no         CARESS run number
-  \param[in]  mesr_count     CARESS resolution step (not used)
+  \param[in]  mesr_count     CARESS resolution step (used for SPODI@FRM-II)
   \param[out] module_status  current device status
  */
 CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
@@ -904,13 +996,20 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 		{
 			m_lRunNo=run_no;
 			m_lMesrCount=mesr_count;
-			m_bMasterPause=false;
 			pInterface->setRunID(m_lRunNo,false);
 			if (g_iGlobalSyncSleep>0)
 				sleep(g_iGlobalSyncSleep);
-			if (kind==0)
+			if (kind==START_NORMAL)
 			{
-				if (mesr_count==0) ++m_lStepNo;
+				if (m_lMesrCount<=1)
+					++m_lStepNo;
+				if (!m_bMasterPause && m_lStepNo<=1 && m_lMesrCount<=1)
+				{
+					m_haResoStep.clear();
+					m_hdblResoPos.clear();
+					m_dwAcquisitionTime=0;
+				}
+				m_hdblResoPos[m_lMesrCount]=m_dblDetPos;
 				if (m_bListmode && m_sListfile.isEmpty())
 				{
 					QString sName;
@@ -925,7 +1024,12 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 						sName.append(".md2"); // different extension
 					}
 					else
-						sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lStepNo);
+					{
+						if (m_lMesrCount>0)
+							sName.sprintf("car_listmode_r%05ld_s%03ld_%03ld.mdat",m_lRunNo,m_lStepNo,m_lMesrCount);
+						else
+							sName.sprintf("car_listmode_r%05ld_s%03ld.mdat",m_lRunNo,m_lStepNo);
+					}
 					pInterface->setListFileName(sName);
 				}
 				pInterface->setListMode(m_bListmode,m_lRunNo!=0); // do not write protect scratch file
@@ -943,14 +1047,22 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 						sName.append(".mtxt"); // extension
 					}
 					else
-						sName.sprintf("car_histogram_r%05ld_s%03ld.mtxt",m_lRunNo,m_lStepNo);
+					{
+						if (m_lMesrCount>0)
+							sName.sprintf("car_histogram_r%05ld_s%03ld_%03ld.mdat",m_lRunNo,m_lStepNo,m_lMesrCount);
+						else
+							sName.sprintf("car_histogram_r%05ld_s%03ld.mtxt",m_lRunNo,m_lStepNo);
+					}
 					pInterface->setHistogramFileName(sName);
 				}
 			}
+			if (!m_tStart.isValid())
+				m_tStart=QDateTime::currentDateTime();
+			m_bMasterPause=false;
 			if (pInterface->status(&bRunAck)==0 || !bRunAck)
 			{
 				QTime t1;
-				if (kind==1)
+				if (kind==START_CONT)
 					pInterface->resume();
 				else
 					pInterface->start();
@@ -996,8 +1108,8 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 						CORBA::Long& module_status)
 {
 	QMutexLocker lock(&m_mutex);
-	bool bRunAck=false;
-	MSG_DEBUG << "stop(all=" << (const char*)(((kind>>31)&1)?"yes":"no") << ", kind=" << (kind&0x7FFFFFFF) << ", id=" << id << ')';
+	bool bRunAck=false, bNewPause, bStopAll=((kind>>31)&1)!=0;
+	MSG_DEBUG << "stop(all=" << (const char*)(bStopAll?"yes":"no") << ", kind=" << (kind&0x7FFFFFFF) << ", id=" << id << ')';
 	m_szErrorMessage[0]='\0';
 	try
 	{
@@ -1012,44 +1124,66 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 			return CARESS::NOT_OK;
 		}
 
-		m_dtLastCall = QDateTime::currentDateTime();
-		if (kind==0/*PAUSE*/ || kind==1/*END-OF-MEASUREMENT*/)
+		m_dtLastCall=QDateTime::currentDateTime();
+		bNewPause=true;
+		switch (kind&0x7FFFFFFF)
 		{
-			if (kind==1)
-			{
+			case STOP_TERMINATION: /*END-OF-MEASUREMENT*/
 				m_lStepNo=0;
 				m_sListfile.clear();
-			}
-
-			for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
-				if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
+				bNewPause=false;
+				/*no break*/
+			case STOP_PAUSE:
+				if (bStopAll) // ignore stop_all
 					break;
-
-			if (m_iMaster<0 || iDevice>=0) // no master or this device is the master
-			{
-				if (pInterface->status(&bRunAck)!=0 || bRunAck)
+				for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
+					if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
+						break;
+				if (m_iMaster<0 || iDevice==m_iMaster) // no master or this device is the master
 				{
-					QTime t1;
-					pInterface->stop();
-					if (g_iGlobalSyncSleep>0)
-						sleep(g_iGlobalSyncSleep);
-					t1=QTime::currentTime();
-					for (;;)
+					if (m_tStart.isValid())
 					{
-						int tDiff;
-						usleep(1000);
-						if (pInterface->status(&bRunAck)==0 && !bRunAck) break;
-						tDiff=t1.msecsTo(QTime::currentTime());
-						if (tDiff<0) tDiff+=86400000;
-						if (tDiff>1000) break;
+						m_dwAcquisitionTime+=m_tStart.secsTo(QDateTime::currentDateTime());
+						m_tStart=QDateTime();
 					}
-					m_bMasterPause=(kind==0);
+					if (pInterface->status(&bRunAck)!=0 || bRunAck)
+					{
+						QTime t1;
+						pInterface->stop();
+						if (g_iGlobalSyncSleep>0)
+							sleep(g_iGlobalSyncSleep);
+						t1=QTime::currentTime();
+						for (;;)
+						{
+							int tDiff;
+							usleep(1000);
+							if (pInterface->status(&bRunAck)==0 && !bRunAck) break;
+							tDiff=t1.msecsTo(QTime::currentTime());
+							if (tDiff<0) tDiff+=86400000;
+							if (tDiff>1000) break;
+						}
+					}
+					m_bMasterPause=bNewPause;
+					if (iDevice<ARRAY_SIZE(g_asDevices))
+						MSG_DEBUG << "stop device " << g_asDevices[iDevice];
+					else
+						MSG_DEBUG << "stop device " << iDevice;
 				}
-				if (iDevice<ARRAY_SIZE(g_asDevices))
-					MSG_DEBUG << "stop device " << g_asDevices[iDevice];
-				else
-					MSG_DEBUG << "stop device " << iDevice;
-			}
+				if (m_lMesrCount>0 && m_iMaxResoStep>0)
+				{
+					// store detector data for every resolution step
+					switch (iDevice)
+					{
+						default: if (iDevice!=m_iMaster) break;
+						case QMESYDAQ_HISTOGRAM:
+						case QMESYDAQ_DIFFRACTOGRAM:
+						case QMESYDAQ_SPECTROGRAM:
+							m_haResoStep[m_lMesrCount]=pInterface->readHistogram();
+							m_hdblResoPos[m_lMesrCount]=m_dblDetPos;
+							break;
+					}
+				}
+				break;
 		}
 		module_status=DONE;
 		return CARESS::OK;
@@ -1135,19 +1269,19 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 
 		switch (kind)
 		{
-			case 14: // LOADMASTER
-			case 15: // LOADSLAVE
+			case LOADMASTER:
+			case LOADSLAVE:
 				switch (iDevice)
 				{
-				case QMESYDAQ_MON1:  iTmpDev=M1CT; break;
-				case QMESYDAQ_MON2:  iTmpDev=M2CT; break;
-				case QMESYDAQ_MON3:  iTmpDev=M3CT; break;
-				case QMESYDAQ_MON4:  iTmpDev=M4CT; break;
-				case QMESYDAQ_TIMER: iTmpDev=TCT;  break;
-				default: // QMESYDAQ_EVENT, QMESYDAQ_HISTOGRAM, QMESYDAQ_DIFFRACTOGRAM, QMESYDAQ_SPECTROGRAM:
-					iDevice=QMESYDAQ_EVENT;
-					iTmpDev=EVCT;
-					break;
+					case QMESYDAQ_MON1:  iTmpDev=M1CT; break;
+					case QMESYDAQ_MON2:  iTmpDev=M2CT; break;
+					case QMESYDAQ_MON3:  iTmpDev=M3CT; break;
+					case QMESYDAQ_MON4:  iTmpDev=M4CT; break;
+					case QMESYDAQ_TIMER: iTmpDev=TCT;  break;
+					default: // QMESYDAQ_EVENT, QMESYDAQ_HISTOGRAM, QMESYDAQ_DIFFRACTOGRAM, QMESYDAQ_SPECTROGRAM:
+						iDevice=QMESYDAQ_EVENT;
+						iTmpDev=EVCT;
+						break;
 			}
 				break;
 			default:
@@ -1156,12 +1290,13 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 
 		switch (kind)
 		{
-			case 14: // LOADMASTER
+			case LOADMASTER:
 			{
 				double dblTarget(0.0);
 				bool bOK(false);
 
 				m_iMaster=-1;
+				m_qwMasterTarget=0;
 				m_bMasterPause=false;
 				switch (iDevice)
 				{
@@ -1208,14 +1343,15 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 				if (bOK)
 				{
 					m_iMaster=iDevice;
+					m_qwMasterTarget=(quint64)dblTarget;
 					m_bMasterPause=false;
 					if (iDevice==QMESYDAQ_TIMER) dblTarget/=m_dblTimerScale;
 					pInterface->selectCounter(iTmpDev,true,dblTarget);
 					// pInterface->setPreSelection(dblTarget);
 					if (iDevice<ARRAY_SIZE(g_asDevices))
-						MSG_DEBUG << "master device " << g_asDevices[iDevice];
+						MSG_DEBUG << "master device " << g_asDevices[iDevice] << " counts to " << m_qwMasterTarget;
 					else
-						MSG_DEBUG << "master device " << iDevice;
+						MSG_DEBUG << "master device " << iDevice << " counts to " << m_qwMasterTarget;
 				}
 				else
 				{
@@ -1225,10 +1361,11 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 				}
 				break;
 			}
-			case 15: // LOADSLAVE
+			case LOADSLAVE:
 				if (m_iMaster==iDevice)
 				{
 					m_iMaster=-1;
+					m_qwMasterTarget=0;
 					m_bMasterPause=false;
 				}
 				pInterface->selectCounter(iTmpDev,false);
@@ -1237,7 +1374,7 @@ CARESS::ReturnType CORBADevice_i::load_module(CORBA::Long kind,
 				else
 					MSG_DEBUG << "slave device " << iDevice;
 				break;
-			case 16: // RESETMODULE
+			case RESETMODULE:
 				pInterface->clear();
 				if (iDevice<ARRAY_SIZE(g_asDevices))
 					MSG_DEBUG << "clear device " << g_asDevices[iDevice];
@@ -1300,7 +1437,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 	}
 
 	m_dtLastCall = QDateTime::currentDateTime();
-	if (kind==0 && start_channel==1 && start_channel<end_channel &&
+	if (kind==LOAD_NORMAL && start_channel==1 && start_channel<end_channel &&
 			data._d()==CARESS::TypeArrayByte &&
 			(CORBA::ULong)end_channel==data.ab().length())
 	{
@@ -1317,7 +1454,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					p1=p2+1;
 
 			int iNameLen=p1-pStart-1;
-			if (p1!=p2 && iNameLen==10 && strncasecmp(pStart,"CARESSInfo",10)==0)
+			if (p1<=p2 && iNameLen==10 && strncasecmp(pStart,"CARESSInfo",10)==0)
 			{
 				// extract CARESS revision: CARESS r1537 and later is able to handle 64 bit IEEE numbers
 				long lRevision=strtol(p1,(char**)&p3,10);
@@ -1340,7 +1477,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					m_sInstrument=QString::fromLatin1(p1,p3-p1).trimmed().toUpper();
 				}
 			}
-			else if (p1!=p2 && iNameLen>8 && strncasecmp(pStart,"mesydaq_",8)==0)
+			else if (p1<=p2 && iNameLen>8 && strncasecmp(pStart,"mesydaq_",8)==0)
 			{
 				// may be, we found an option to configure
 				iNameLen-=8;
@@ -1348,14 +1485,14 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 
 				// forced use of 32 bit return values
 				if ((iNameLen>=8 && strncasecmp(pStart,"return32",8)==0) ||
-						(iNameLen>=5  && strncasecmp(pStart,"use32",5)==0) ||
-						(iNameLen==5  && strncasecmp(pStart,"32bit",5)==0) ||
-						(iNameLen>=6 && strncasecmp(pStart,"force32",6)==0))
+					(iNameLen>=5  && strncasecmp(pStart,"use32",5)==0) ||
+					(iNameLen==5  && strncasecmp(pStart,"32bit",5)==0) ||
+					(iNameLen>=6 && strncasecmp(pStart,"force32",6)==0))
 				{
 					int iValueLen=p2-p1;
 					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
-							(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
-							(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=false;
+						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=false;
 					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
 							 (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
 							 (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=true;
@@ -1366,17 +1503,17 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 				}
 				// forced use of 64 bit return values
 				else if ((iNameLen>=8 && strncasecmp(pStart,"return64",8)==0) ||
-					(iNameLen>=5  && strncasecmp(pStart,"use64",5)==0) ||
-					(iNameLen==5  && strncasecmp(pStart,"64bit",5)==0) ||
-					(iNameLen>=6 && strncasecmp(pStart,"force64",6)==0))
+						 (iNameLen>=5  && strncasecmp(pStart,"use64",5)==0) ||
+						 (iNameLen==5  && strncasecmp(pStart,"64bit",5)==0) ||
+						 (iNameLen>=6 && strncasecmp(pStart,"force64",6)==0))
 				{
 					int iValueLen=p2-p1;
 					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
 						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
 						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_b64Bit[iDevice]=true;
 					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
-						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
-						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=false;
+							 (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+							 (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_b64Bit[iDevice]=false;
 					if (iDevice<ARRAY_SIZE(g_asDevices))
 						MSG_DEBUG << "force " << ((int)m_b64Bit[iDevice]?64:32) << "bit data for device " << g_asDevices[iDevice];
 					else
@@ -1384,8 +1521,8 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 				}
 				// timer scaler/factor
 				else if (iDevice==QMESYDAQ_TIMER &&
-					((iNameLen>=9 && strncasecmp(pStart,"timescale",9)==0) ||
-					(iNameLen=10 && strncasecmp(pStart,"timefactor",10)==0)))
+						 ((iNameLen>=9 && strncasecmp(pStart,"timescale",9)==0) ||
+						  (iNameLen=10 && strncasecmp(pStart,"timefactor",10)==0)))
 				{
 					m_dblTimerScale=QString::fromLatin1(p1,p2-p1).toDouble();
 					if (m_dblTimerScale<=0.0) m_dblTimerScale=DEFAULTTIMEFACTOR;
@@ -1393,7 +1530,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 				}
 				// list mode
 				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-					iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
+						 iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
 				{
 					int iValueLen=p2-p1;
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
@@ -1409,8 +1546,8 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 				}
 				// list file
 				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-					((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
-					(iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
+						 ((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
+						 (iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 					m_sListfile=QString::fromLatin1(p1,p2-p1).trimmed();
@@ -1425,9 +1562,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 				}
 				// histogram mode
 				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-					((iNameLen==9 && strncasecmp(pStart,"histomode",9)==0) ||
-					(iNameLen==9 && strncasecmp(pStart,"histogram",9)==0) ||
-					(iNameLen==13 && strncasecmp(pStart,"histogrammode",13)==0)))
+						 ((iNameLen==9 && strncasecmp(pStart,"histomode",9)==0) ||
+						  (iNameLen==9 && strncasecmp(pStart,"histogram",9)==0) ||
+						  (iNameLen==13 && strncasecmp(pStart,"histogrammode",13)==0)))
 				{
 					int iValueLen=p2-p1;
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
@@ -1435,16 +1572,16 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
 						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bHistogram=true;
 					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
-						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
-						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bHistogram=false;
+							 (iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+							 (iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bHistogram=false;
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - histogrammode=" << ((const char*)(m_bHistogram?"on":"off"));
 					if (!m_bHistogram)
 						pInterface->setHistogramFileName(QString());
 				}
 				// histogram file
 				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-					((iNameLen==9 && strncasecmp(pStart,"histofile",9)==0) ||
-					(iNameLen==13 && strncasecmp(pStart,"histogramfile",13)==0)))
+						 ((iNameLen==9 && strncasecmp(pStart,"histofile",9)==0) ||
+						  (iNameLen==13 && strncasecmp(pStart,"histogramfile",13)==0)))
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 					m_sHistofile=QString::fromLatin1(p1,p2-p1).trimmed();
@@ -1454,6 +1591,23 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 						pInterface->setHistogramFileName(m_sHistofile);
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - histogramfile=" << m_sHistofile.toLatin1().constData();
 				}
+				// use gzip for ascii detector data (readblock-kind==1)
+				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
+						 ((iNameLen==4 && strncasecmp(pStart,"gzip",4)==0) ||
+						  (iNameLen==7 && strncasecmp(pStart,"usegzip",7)==0) ||
+						  (iNameLen==8 && strncasecmp(pStart,"use-gzip",8)==0) ||
+						  (iNameLen==8 && strncasecmp(pStart,"use_gzip",8)==0) ||
+						  (iNameLen==8 && strncasecmp(pStart,"compress",8)==0)))
+				{
+					int iValueLen=p2-p1;
+					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bUseGzip=true;
+					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bUseGzip=false;
+					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - gzip=" << ((const char*)(m_bUseGzip?"on":"off"));
+				}
 			}
 			pStart=p2+1;
 		}
@@ -1461,8 +1615,8 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		return CARESS::OK;
 	}
 
-	if (kind==5/*GENERATION*/ && start_channel==1 && start_channel<end_channel &&
-			data._d()==CARESS::TypeArrayByte && (CORBA::ULong)end_channel==data.ab().length())
+	if (kind==GENERATION && start_channel==1 && start_channel<end_channel &&
+		data._d()==CARESS::TypeArrayByte && (CORBA::ULong)end_channel==data.ab().length())
 	{
 		// CARESS commands "LOADTEXT" or "LOADFILE"
 		const CARESS::ArrayByte& ab=data.ab();
@@ -1480,7 +1634,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 
 		while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
 		if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-				(pStart+8)<pEnd && strncasecmp(pStart,"listmode",8)==0)
+			(pStart+8)<pEnd && strncasecmp(pStart,"listmode",8)==0)
 		{
 			pStart+=8;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1506,9 +1660,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			pInterface->setListMode(m_bListmode,true);
 		}
 		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-			(((pStart+9)<pEnd && strncasecmp(pStart,"histomode",9)==0) ||
-			((pStart+9)<pEnd && strncasecmp(pStart,"histogram",9)==0) ||
-			((pStart+13)<pEnd && strncasecmp(pStart,"histogrammode",13)==0)))
+				 (((pStart+9)<pEnd && strncasecmp(pStart,"histomode",9)==0) ||
+				  ((pStart+9)<pEnd && strncasecmp(pStart,"histogram",9)==0) ||
+				  ((pStart+13)<pEnd && strncasecmp(pStart,"histogrammode",13)==0)))
 		{
 			pStart+=(strncasecmp(pStart+9,"m",1)==0) ? 13 : 9;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1521,8 +1675,8 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 				pInterface->setHistogramFileName(QString());
 		}
 		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-			(((pStart+9)<pEnd && strncasecmp(pStart,"histofile",9)==0) ||
-			((pStart+13)<pEnd && strncasecmp(pStart,"histogramfile",13)==0)))
+				 (((pStart+9)<pEnd && strncasecmp(pStart,"histofile",9)==0) ||
+				  ((pStart+13)<pEnd && strncasecmp(pStart,"histogramfile",13)==0)))
 		{
 			pStart+=(strncasecmp(pStart+5,"g",1)==0) ? 13 : 9;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1548,41 +1702,86 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		return CARESS::OK;
 	}
 
-	if (kind==7/*SETACTION*/ && start_channel==1 && start_channel<end_channel &&
+	if (kind==SETACTION && start_channel==1 && start_channel<end_channel &&
 			data._d()==CARESS::TypeArrayByte && (CORBA::ULong)end_channel==data.ab().length())
 	{
 		// CARESS configuration option "startcommands"
 		// data is simple text with unix-end-of-line in variable data.ab()[]
-		const char* pStart=(const char*)(&data.ab()[0]);
+		const CARESS::ArrayByte& ab=data.ab();
+		const char* pStart=(const char*)(&ab[0]);
 		CORBA::ULong uLen=data.ab().length();
-		if (iDevice<ARRAY_SIZE(g_asDevices))
-			MSG_DEBUG << "loadblock(startcommands device " << g_asDevices[iDevice] << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
-		else
-			MSG_DEBUG << "loadblock(startcommands device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
-
-		// TODO: CARESS is able to load selected command structures before any measurement step
+		const char* pEnd=pStart+uLen;
+		const char *p1, *p2;
+		while (pStart<pEnd)
+		{
+			for (p1=p2=pStart; p2<pEnd && *p2!='\r' && *p2!='\n'; ++p2)
+				if (*p2==':' && p1==pStart)
+					p1=p2+1;
+			int iNameLen=p1-pStart-1;
+			if (p1<=p2 && iNameLen==8 && strncasecmp(pStart,"RESOSTEP",8)==0)
+			{
+				while (p1<pEnd && (*p1==' ' || *p1=='\t')) ++p1;
+				m_iMaxResoStep=(int)floor(QString::fromLatin1(p1,p2-p1).toDouble());
+				if (m_iMaxResoStep<2) m_iMaxResoStep=0;
+				if (iDevice<ARRAY_SIZE(g_asDevices))
+					MSG_DEBUG << "got " << m_iMaxResoStep << " resolution steps for device " << g_asDevices[iDevice];
+				else
+					MSG_DEBUG << "got " << m_iMaxResoStep << " resolution steps for device " << id;
+			}
+			else if (p1<=p2 && iNameLen==3 && strncasecmp(pStart,"COM",3)==0)
+			{
+				m_szComment=QString::fromLatin1(p1,p2-p1).trimmed();
+				if (m_szComment.startsWith(QChar('"')) && m_szComment.endsWith(QChar('"')))
+				{
+					m_szComment.remove(m_szComment.size()-1,1);
+					m_szComment.remove(0,1);
+				}
+				for (int i=0; i<m_szComment.size(); ++i)
+					if (!m_szComment[i].isPrint())
+						m_szComment.remove(i--,1);
+				if (iDevice<ARRAY_SIZE(g_asDevices))
+					MSG_DEBUG << "got comment for device " << g_asDevices[iDevice] << ": " << m_szComment;
+				else
+					MSG_DEBUG << "got comment for device " << id << ": " << m_szComment;
+			}
+			// TODO: CARESS is able to load other command structures before any measurement step
+			pStart=p2+1;
+		}
 		module_status=LOADED;
 		return CARESS::OK;
 	}
 
-	if (kind==2/*LOADACTION*/ && start_channel==1 && start_channel<end_channel &&
+	if (kind==LOADACTION && start_channel==1 && start_channel<end_channel &&
 			data._d()==CARESS::TypeArrayByte && (CORBA::ULong)end_channel==data.ab().length())
 	{
 		// CARESS configuration option "startvalues"
 		// data is simple text with unix-end-of-line in variable data.ab()[]
 		const char* pStart=(const char*)(&data.ab()[0]);
 		CORBA::ULong uLen=data.ab().length();
-		if (iDevice<ARRAY_SIZE(g_asDevices))
-			MSG_DEBUG << "loadblock(startvalues device " << g_asDevices[iDevice] << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
-		else
-			MSG_DEBUG << "loadblock(startvalues device " << id << ") - unknown command '" << QByteArray::fromRawData(pStart,uLen).constData() << '\'';
-
-		// TODO: CARESS is able to load current positions of selected devices before any measurement step
+		const char* pEnd=pStart+uLen;
+		const char *p1, *p2;
+		while (pStart<pEnd)
+		{
+			for (p1=p2=pStart; p2<pEnd && *p2!='\r' && *p2!='\n'; ++p2)
+				if (*p2=='=' && p1==pStart)
+					p1=p2+1;
+			int iNameLen=p1-pStart-1;
+			if (p1<=p2 && iNameLen==4 && strncasecmp(pStart,"TTHS",4)==0)
+			{
+				m_dblDetPos=QString::fromLatin1(p1,p2-p1).toDouble();
+				if (iDevice<ARRAY_SIZE(g_asDevices))
+					MSG_DEBUG << "got detector position " << m_dblDetPos << " for device " << g_asDevices[iDevice];
+				else
+					MSG_DEBUG << "got detector position " << m_dblDetPos << " for device " << id;
+			}
+			// TODO: CARESS is able to load current positions of other devices before any measurement step
+			pStart=p2+1;
+		}
 		module_status=LOADED;
 		return CARESS::OK;
 	}
 
-	if (kind==18/*SPECIALLOAD*/ && start_channel==1 && start_channel<end_channel &&
+	if (kind==SPECIALLOAD && start_channel==1 && start_channel<end_channel &&
 			data._d()==CARESS::TypeArrayByte && (CORBA::ULong)end_channel==data.ab().length())
 	{
 		// load special mapping and correction data
@@ -1817,11 +2016,160 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 			return CARESS::NOT_OK;
 		}
 
-		m_dtLastCall = QDateTime::currentDateTime();
+		type=m_b64Bit[iDevice] ? CARESS::TypeLong64 : CARESS::TypeLong;
+		m_dtLastCall=QDateTime::currentDateTime();
+		m_abyDetectorData.clear();
+		switch (kind)
+		{
+			case READBLOCK_SINGLE:
+			case READBLOCK_MULTI:
+			{
+				if (m_iMaxResoStep<1)
+				{
+					// no resolution steps defined
+					MSG_ERROR << "NO RESOSTEPS defined";
+					end_channel=0;
+					return CARESS::NOT_OK;
+				}
+				if (m_lMesrCount>0)
+				{
+					// take snapshot of current detector data
+					m_haResoStep[m_lMesrCount]=pInterface->readHistogram();
+					m_hdblResoPos[m_lMesrCount]=m_dblDetPos;
+				}
+
+				// read detector data of all resolution steps
+				int i,j,k,iMaxLen=0;
+				quint64 qwTotalSum=0;
+				QSize detSize(pInterface->readHistogramSize());
+				for (i=1; i<=m_iMaxResoStep; ++i)
+				{
+					if (m_haResoStep.contains(i))
+					{
+						int iLen=m_haResoStep[i].size();
+						if (iLen>iMaxLen)
+							iMaxLen=iLen;
+					}
+				}
+				if (iMaxLen<1)
+					iMaxLen=detSize.width()*detSize.height();
+				if (iMaxLen<1)
+				{
+					MSG_ERROR << "Histogram Size < 1";
+					end_channel=0;
+					type=m_b64Bit[iDevice] ? CARESS::TypeLong64 : CARESS::TypeLong;
+					return CARESS::NOT_OK;
+				}
+				m_aullDetectorData.clear();
+				m_aullDetectorData.reserve(m_iMaxResoStep*iMaxLen);
+				for (i=0; i<iMaxLen; ++i)
+				{
+					for (j=1; j<=m_iMaxResoStep; ++j)
+					{
+						if (i<m_haResoStep[j].size())
+						{
+							quint64 qwVal=m_haResoStep[j][i];
+							qwTotalSum+=qwVal;
+							m_aullDetectorData.push_back(qwVal);
+						}
+						else
+							m_aullDetectorData.push_back(0);
+					}
+				}
+				if (kind==READBLOCK_SINGLE)
+				{
+					// return detector data as (gzipped) ASCII file
+					QByteArray abyTmp;
+					double dblMin,dblMax,dblRange,dblStep;
+					QHash<int,quint64> hqwTotalSums;
+
+					dblMin=dblMax=m_dblDetPos;
+					foreach (const double& dblPos, m_hdblResoPos.values()) {
+						if (dblMin>dblPos) dblMin=dblPos;
+						if (dblMax<dblPos) dblMax=dblPos;
+					}
+					dblStep=(dblMax-dblMin)/(m_iMaxResoStep-1);
+					dblRange=m_iMaxResoStep*dblStep; // SPODI@FRM-II has 2.0 deg
+
+					// generate header
+					abyTmp=QString("QMesyDAQ CARESS Histogram File  %1\r\n\r\nRun:\t%2\r\nResosteps:\t%3\r\n")
+							.arg(QDateTime::currentDateTime().toString("dd.MM.yyyy  hh:mm:ss"))
+							.arg(m_lRunNo)
+							.arg(m_iMaxResoStep).toLatin1();
+					abyTmp+=QString("2Theta start:\t%1\r\n2Theta range:\t%2\r\nComment:\t%3\r\n")
+							.arg(dblMin)
+							.arg(dblRange)
+							.arg(m_szComment).toLatin1();
+					abyTmp+=QString("Acquisition Time\t%1\r\nTotal Counts\t%2\r\nPreset  %3 counts:\t%4\r\n")
+							.arg(m_dwAcquisitionTime)
+							.arg(qwTotalSum)
+							.arg(m_iMaster>=0&&m_iMaster<ARRAY_SIZE(g_asDevices)?g_asDevices[m_iMaster]:"??")
+							.arg(m_qwMasterTarget).toLatin1();
+					abyTmp+=QString("\r\nCARESS XY data: 1 row title (position numbers), then (resosteps x %1) position data in columns\r\n")
+							.arg(detSize.height()).toLatin1();
+					m_abyDetectorData=abyTmp;
+					abyTmp.clear();
+
+					// generate column header for next table
+					for (i=1; i<=detSize.height(); ++i)
+					{
+						QString szTmp;
+						szTmp.sprintf("\t%d",i);
+						abyTmp+=szTmp.toLatin1();
+					}
+					abyTmp+='\r';
+					abyTmp+='\n';
+					m_abyDetectorData+=abyTmp;
+					abyTmp.clear();
+
+					// generate detector data and calculate sum
+					for (i=0; i<detSize.width(); ++i)
+					{
+						for (j=0; j<m_iMaxResoStep; ++j)
+						{
+							abyTmp+=QString("%1").arg(dblMin+i*dblRange+j*dblStep,0,'f',2).toLatin1();
+							qwTotalSum=0;
+							for (k=0; k<detSize.height(); ++k)
+							{
+								quint64 qwVal=m_aullDetectorData[m_iMaxResoStep*(k*detSize.width()+i)+j];
+								qwTotalSum+=qwVal;
+								abyTmp+=QString("\t%1").arg(qwVal).toLatin1();
+							}
+							abyTmp+='\r';
+							abyTmp+='\n';
+							hqwTotalSums[m_iMaxResoStep*i+j]=qwTotalSum;
+							m_abyDetectorData+=abyTmp;
+							abyTmp.clear();
+						}
+					}
+
+					// generate total sum of each detector tube at every resolution step
+					abyTmp+=QString("\r\ntotal sum\r\n").toLatin1();
+					for (i=0; i<detSize.width(); ++i)
+						for (j=0; j<m_iMaxResoStep; ++j)
+							abyTmp+=QString("%1\t%2\r\n").arg(dblMin+i*dblRange+j*dblStep,0,'f',2).arg(hqwTotalSums[m_iMaxResoStep*i+j]).toLatin1();
+					m_abyDetectorData+=abyTmp;
+					abyTmp.clear();
+
+					if (m_bUseGzip) // try to compress data with gzip
+						if (CaressHelper::zlib_zip(m_abyDetectorData,abyTmp,true))
+							m_abyDetectorData=abyTmp;
+					type=CARESS::TypeArrayByte;
+					end_channel=m_abyDetectorData.size();
+				}
+				else
+					end_channel=m_aullDetectorData.size();
+				return CARESS::OK;
+			}
+			default:
+				break;
+		}
+
 		switch (iDevice)
 		{
 			case QMESYDAQ_HISTOGRAM:
 			{
+				// read detector data of current step
 				QSize s = pInterface->readHistogramSize();
 				quint16 w=s.width(),h=s.height();
 				if (m_lHistogramX==0 && m_lHistogramY==0)
@@ -1832,6 +2180,11 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 				m_iDetectorWidth=w;
 				if (m_iDetectorWidth<1)
 					m_iDetectorWidth=1;
+				if (m_lMesrCount>0 && m_iMaxResoStep>0)
+				{
+					m_haResoStep[m_lMesrCount]=m_aullDetectorData;
+					m_hdblResoPos[m_lMesrCount]=m_dblDetPos;
+				}
 #ifdef DEBUGBUILD
 				do
 				{
@@ -1888,7 +2241,6 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 				MSG_DEBUG << "read other";
 				break;
 		}
-		type=m_b64Bit[iDevice] ? CARESS::TypeLong64 : CARESS::TypeLong;
 		return CARESS::OK;
 	}
 	catch (...)
@@ -1959,160 +2311,199 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 #ifdef DEBUGBUILD
 		Q_ASSERT(m_iDetectorWidth>0);
 #endif
-		switch (iDevice)
+		switch (kind)
 		{
-			case QMESYDAQ_HISTOGRAM:
+			case READBLOCK_SINGLE:
 			{
-				QList<quint64> tmpsrc,tmpdst,dsthistogram;
-				CORBA::Long x,y,lHistoX,lHistoY;
-				int iDetectorHeight=m_aullDetectorData.count()/m_iDetectorWidth;
-
-				lHistoX=m_lHistogramX;
-				lHistoY=m_lHistogramY;
-				if (lHistoX==0 && lHistoY)
-				{
-					lHistoX=m_iDetectorWidth;
-					lHistoY=iDetectorHeight;
-				}
-				if (lHistoX<1 || lHistoY<1)
-				{
-					strcpy(m_szErrorMessage,"invalid histogram size");
-					MSG_DEBUG << "readblock - " << (const char*)m_szErrorMessage;
-					val->l(0);
-					data=val._retn();
-					return CARESS::NOT_OK;
-				}
-				if (end_channel>lHistoX*lHistoY)
-					end_channel=lHistoX*lHistoY;
-
-				if (m_mapHistogram.isValid() && !m_mapHistogram.isNoMap())
-				{
-					// use given mapping
-					dsthistogram.reserve(lHistoX*lHistoY);
-					for (x=lHistoX*lHistoY; x>0; --x)
-						dsthistogram.append(0ULL);
-					for (y=0; y<iDetectorHeight; ++y)
-					{
-						for (x=0; x<m_iDetectorWidth; ++x)
-						{
-							int iDstX=-1,iDstY=-1;
-							float fCorrection=1.0;
-							if (m_mapHistogram.getMap((int)x,(int)y,iDstX,iDstY,fCorrection))
-								if (iDstX>=0 && iDstX<lHistoX && iDstY>=0 && iDstY<lHistoY)
-									dsthistogram[iDstY*lHistoX+iDstX]=m_aullDetectorData[y*m_iDetectorWidth+x]*fCorrection;
-						}
-					}
-				}
-				else if (iDetectorHeight<lHistoY) // scale histogram to given size
-				{
-					// source is smaller height (grow)
-					for (y=0; y<iDetectorHeight; ++y)
-					{
-						int iStartY=(int)((((double)y)*lHistoY)/iDetectorHeight);
-						int iEndY=(int)((((double)y+1.0)*lHistoY)/iDetectorHeight);
-						int iStart=m_iDetectorWidth*y;
-						tmpsrc.clear();
-						tmpdst.clear();
-						for (x=0; x<m_iDetectorWidth; ++x)
-						{
-							if (x<m_aullDetectorData.count())
-								tmpsrc.append(m_aullDetectorData.value(iStart+x));
-							else
-								tmpsrc.append(0ULL);
-						}
-						readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
-						while (iStartY++ < iEndY)
-							dsthistogram.append(tmpdst);
-					}
-				}
+				// read (compressed) detector data as ASCII file
+				int iLen=end_channel-start_channel+1;
+				CARESS::ArrayByte_var ab=new CARESS::ArrayByte;
+				if (iLen<1 || start_channel<1 || end_channel>m_abyDetectorData.size())
+					ab->length(0);
 				else
 				{
-					// source is greater or equal height (shrink)
-					for (y=0; y<lHistoY; ++y)
-					{
-						int iStartY=(int)((((double)y)*iDetectorHeight)/lHistoY);
-						int iEndY=(int)((((double)y+1.0)*iDetectorHeight)/lHistoY);
-						tmpdst.clear();
-						while (iStartY<iEndY)
-						{
-							int iStart=m_iDetectorWidth * iStartY++;
-							tmpsrc.clear();
-							for (x=0; x<m_iDetectorWidth; ++x)
-							{
-								if (x<m_aullDetectorData.count())
-									tmpsrc.append(m_aullDetectorData.value(iStart+x));
-								else
-									tmpsrc.append(0ULL);
-							}
-							readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
-						}
-						dsthistogram.append(tmpdst);
-					}
+					ab->length(iLen);
+					for (int i=0; i<iLen; ++i)
+						ab[i]=m_abyDetectorData[i+start_channel-1];
 				}
+				val->ab(ab);
+				goto end_of_readblock;
+			}
+			case READBLOCK_MULTI:
+			{
+				// read detector data of all resolution steps
+				int iLen=end_channel-start_channel+1;
+				if (iLen<1 || start_channel<1 || end_channel>m_aullDetectorData.size())
+				{
+					val->l(0);
+					goto end_of_readblock;
+				}
+				al64->length(iLen);
+				for (int i=0; i<iLen; ++i)
+					al64[i]=m_aullDetectorData[i+start_channel-1];
+				break;
+			}
+			default:
+				// read selected detector data
+				switch (iDevice)
+				{
+					case QMESYDAQ_HISTOGRAM:
+					{
+						QList<quint64> dsthistogram;
+						CORBA::Long x,y;
+						// read detector data of current step
+						QList<quint64> tmpsrc,tmpdst;
+						CORBA::Long lHistoX,lHistoY;
+						int iDetectorHeight=m_aullDetectorData.count()/m_iDetectorWidth;
+						lHistoX=m_lHistogramX;
+						lHistoY=m_lHistogramY;
+						if (lHistoX==0 && lHistoY)
+						{
+							lHistoX=m_iDetectorWidth;
+							lHistoY=iDetectorHeight;
+						}
+						if (lHistoX<1 || lHistoY<1)
+						{
+							strcpy(m_szErrorMessage,"invalid histogram size");
+							MSG_DEBUG << "readblock - " << (const char*)m_szErrorMessage;
+							val->l(0);
+							data=val._retn();
+							return CARESS::NOT_OK;
+						}
+						if (end_channel>lHistoX*lHistoY)
+							end_channel=lHistoX*lHistoY;
+
+						if (m_mapHistogram.isValid() && !m_mapHistogram.isNoMap())
+						{
+							// use given mapping
+							dsthistogram.reserve(lHistoX*lHistoY);
+							for (x=lHistoX*lHistoY; x>0; --x)
+								dsthistogram.append(0ULL);
+							for (y=0; y<iDetectorHeight; ++y)
+							{
+								for (x=0; x<m_iDetectorWidth; ++x)
+								{
+									int iDstX=-1,iDstY=-1;
+									float fCorrection=1.0;
+									if (m_mapHistogram.getMap((int)x,(int)y,iDstX,iDstY,fCorrection))
+										if (iDstX>=0 && iDstX<lHistoX && iDstY>=0 && iDstY<lHistoY)
+											dsthistogram[iDstY*lHistoX+iDstX]=m_aullDetectorData[y*m_iDetectorWidth+x]*fCorrection;
+								}
+							}
+						}
+						else if (iDetectorHeight<lHistoY) // scale histogram to given size
+						{
+							// source is smaller height (grow)
+							for (y=0; y<iDetectorHeight; ++y)
+							{
+								int iStartY=(int)((((double)y)*lHistoY)/iDetectorHeight);
+								int iEndY=(int)((((double)y+1.0)*lHistoY)/iDetectorHeight);
+								int iStart=m_iDetectorWidth*y;
+								tmpsrc.clear();
+								tmpdst.clear();
+								for (x=0; x<m_iDetectorWidth; ++x)
+								{
+									if (x<m_aullDetectorData.count())
+										tmpsrc.append(m_aullDetectorData.value(iStart+x));
+									else
+										tmpsrc.append(0ULL);
+								}
+								readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
+								while (iStartY++ < iEndY)
+									dsthistogram.append(tmpdst);
+							}
+						}
+						else
+						{
+							// source is greater or equal height (shrink)
+							for (y=0; y<lHistoY; ++y)
+							{
+								int iStartY=(int)((((double)y)*iDetectorHeight)/lHistoY);
+								int iEndY=(int)((((double)y+1.0)*iDetectorHeight)/lHistoY);
+								tmpdst.clear();
+								while (iStartY<iEndY)
+								{
+									int iStart=m_iDetectorWidth * iStartY++;
+									tmpsrc.clear();
+									for (x=0; x<m_iDetectorWidth; ++x)
+									{
+										if (x<m_aullDetectorData.count())
+											tmpsrc.append(m_aullDetectorData.value(iStart+x));
+										else
+											tmpsrc.append(0ULL);
+									}
+									readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
+								}
+								dsthistogram.append(tmpdst);
+							}
+						}
 
 #ifdef DEBUGBUILD
-				do
-				{
-					bool bPrintAny=false;
-					MSG_DEBUG << "read histogram: width=" << lHistoX << " height=" << lHistoY;
-					Q_ASSERT((lHistoX*lHistoY)==dsthistogram.count());
-					for (int y=0; y<lHistoY; ++y)
-					{
-						QString line;
-						char buffer[16];
-						int iStart=lHistoX*y;
-						bool bPrint=false;
-						snprintf(buffer,ARRAY_SIZE(buffer),"%03d ",y);
-						buffer[ARRAY_SIZE(buffer)-1]='\0';
-						line+=QString::fromLatin1(buffer);
-						for (int x=0; x<lHistoX; ++x)
+						do
 						{
-							quint64 z=dsthistogram.value(iStart+x);
-							if (z!=0) bPrint=true;
-							snprintf(buffer,ARRAY_SIZE(buffer)," %5Ld",z);
-							buffer[ARRAY_SIZE(buffer)-1]='\0';
-							line+=QString::fromLatin1(buffer);
-						}
-						if (bPrint)
-						{
-							bPrintAny=true;
-							MSG_DEBUG << "%s",line.toLocal8Bit().constData();
-						}
-					}
-					if (!bPrintAny)
-						MSG_DEBUG << "all values are zero";
-				} while (0);
+							bool bPrintAny=false;
+							MSG_DEBUG << "read histogram: width=" << lHistoX << " height=" << lHistoY;
+							Q_ASSERT((lHistoX*lHistoY)==dsthistogram.count());
+							for (int y=0; y<lHistoY; ++y)
+							{
+								QString line;
+								char buffer[16];
+								int iStart=lHistoX*y;
+								bool bPrint=false;
+								snprintf(buffer,ARRAY_SIZE(buffer),"%03d ",y);
+								buffer[ARRAY_SIZE(buffer)-1]='\0';
+								line+=QString::fromLatin1(buffer);
+								for (int x=0; x<lHistoX; ++x)
+								{
+									quint64 z=dsthistogram.value(iStart+x);
+									if (z!=0) bPrint=true;
+									snprintf(buffer,ARRAY_SIZE(buffer)," %5Ld",z);
+									buffer[ARRAY_SIZE(buffer)-1]='\0';
+									line+=QString::fromLatin1(buffer);
+								}
+								if (bPrint)
+								{
+									bPrintAny=true;
+									MSG_DEBUG << "%s",line.toLocal8Bit().constData();
+								}
+							}
+							if (!bPrintAny)
+								MSG_DEBUG << "all values are zero";
+						} while (0);
 #endif
-				y=end_channel-start_channel+1;
-				al64->length(y);
-				for (x=0; x<y; ++x)
-					al64[x]=dsthistogram.value(x+start_channel-1);
-				break;
-			}
+						y=end_channel-start_channel+1;
+						al64->length(y);
+						for (x=0; x<y; ++x)
+							al64[x]=dsthistogram.value(x+start_channel-1);
+						break;
+					}
 
-			case QMESYDAQ_DIFFRACTOGRAM:
-			case QMESYDAQ_SPECTROGRAM:
-			{
-				QList<quint64> dst;
-				int i,j;
-				i=(iDevice==QMESYDAQ_DIFFRACTOGRAM) ? m_lDiffractogramWidth : m_lSpectrogramWidth;
-				if (i>0)
-					readblock_module_helper(m_aullDetectorData,m_aullDetectorData.count(),dst,i);
-				else
-					dst=m_aullDetectorData;
-				if (end_channel>(int)dst.count())
-					end_channel=dst.size();
-				al64->length(dst.size());
-				j=end_channel-start_channel+1;
-				for (i=0; i<j; ++i)
-					al64[i]=dst.value(i+start_channel-1);
-				break;
-			}
+					case QMESYDAQ_DIFFRACTOGRAM:
+					case QMESYDAQ_SPECTROGRAM:
+					{
+						QList<quint64> dst;
+						int i,j;
+						i=(iDevice==QMESYDAQ_DIFFRACTOGRAM) ? m_lDiffractogramWidth : m_lSpectrogramWidth;
+						if (i>0)
+							readblock_module_helper(m_aullDetectorData,m_aullDetectorData.count(),dst,i);
+						else
+							dst=m_aullDetectorData;
+						if (end_channel>(int)dst.count())
+							end_channel=dst.size();
+						al64->length(dst.size());
+						j=end_channel-start_channel+1;
+						for (i=0; i<j; ++i)
+							al64[i]=dst.value(i+start_channel-1);
+						break;
+					}
 
-			default:
-				al64->length(0);
+					default:
+						al64->length(0);
+						break;
+				}
 				break;
 		}
+
 		if (m_b64Bit[iDevice])
 			val->al64(al64);
 		else
@@ -2123,6 +2514,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 			for (i=0; i<j; ++i) t2[i]=al64[i];
 			val->al(t2);
 		}
+end_of_readblock:
 		module_status=(pInterface->status(&bRunAck)!=0 || bRunAck) ? ACTIVE : DONE;
 		result=CARESS::OK;
 	}

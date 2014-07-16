@@ -31,13 +31,75 @@
 
 #define ARRAY_SIZE(x) ((int)(sizeof(x)/sizeof((x)[0])))
 
+bool CaressHelper::zlib_zip(QByteArray abyIn, QByteArray &abyOut, bool bGzipHeader)
+{
+	const int CHUNK=16384;
+	z_stream strm;
+	int i;
+
+	abyOut.clear();
+	if (abyIn.isEmpty())
+		return false;
+
+	memset(&strm,0,sizeof(strm));
+	strm.zalloc=Z_NULL;
+	strm.zfree=Z_NULL;
+	strm.opaque=Z_NULL;
+	strm.next_in=Z_NULL;
+	strm.avail_in=0;
+	i=deflateInit2(&strm,Z_BEST_COMPRESSION/*level*/,Z_DEFLATED/*method*/,15+(bGzipHeader?16:0)/*windowBits+gzip-header*/,
+				   9/*memLevel*/,Z_DEFAULT_STRATEGY/*strategy*/);
+	if (i!=Z_OK)
+		goto error_of_zlib_zip;
+	if (bGzipHeader)
+	{
+		gz_header h;
+		memset(&h,0,sizeof(h));
+		h.text=Z_UNKNOWN;
+		h.time=QDateTime::currentDateTime().toTime_t();
+		h.xflags=9;
+		h.os=255;
+		i=deflateSetHeader(&strm,&h);
+		if (i!=Z_OK)
+			goto error_of_zlib_zip;
+	}
+	for (;;)
+	{
+		i=abyIn.size();
+		if (i>=CHUNK) i=CHUNK;
+		strm.avail_in=i;
+		int iFlushFlag = (i==abyIn.size()) ? Z_FINISH : Z_NO_FLUSH;
+		strm.next_in=(Bytef*)abyIn.constData();
+		do
+		{
+			char buffer[CHUNK];
+			strm.avail_out=CHUNK;
+			strm.next_out=(Bytef*)(&buffer[0]);
+			i=deflate(&strm,iFlushFlag);
+			if (i==Z_STREAM_ERROR)
+				goto error_of_zlib_zip;
+			int iCompressed=CHUNK-strm.avail_out;
+			if (iCompressed>0)
+				abyOut+=QByteArray::fromRawData(buffer,iCompressed);
+		} while (strm.avail_out==0);
+		if (abyIn.size()<=CHUNK)
+			break;
+		abyIn.remove(0,CHUNK);
+	}
+	deflateEnd(&strm);
+	return true;
+error_of_zlib_zip:
+	deflateEnd(&strm);
+	return false;
+}
+
 /*!
  * \brief unpack zlib compressed data
  * \param [in]  abyIn   compressed data
  * \param [out] abyOut  uncompressed data
  * \return true, if successful
  */
-bool CaressMapCorrection::zlib_unzip(QByteArray abyIn, QByteArray& abyOut)
+bool CaressHelper::zlib_unzip(QByteArray abyIn, QByteArray& abyOut)
 {
 	z_stream strm;
 	int i,j,iSize=1024;
@@ -193,7 +255,7 @@ MapCorrection CaressMapCorrectionDefault::parseCaressMapCorrection(const QString
 			// zlib compressed + base64/mime coded
 			QByteArray abyIn=QByteArray::fromBase64(tmp.last().toLatin1());
 			QByteArray abyOut;
-			if (!zlib_unzip(abyIn,abyOut))
+			if (!CaressHelper::zlib_unzip(abyIn,abyOut))
 			{
 				MSG_DEBUG << "mapping and correction: ignoring invalid line " << iLine;
 				continue;
