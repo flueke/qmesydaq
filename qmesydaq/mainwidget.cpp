@@ -408,7 +408,7 @@ void MainWidget::startStopSlot(bool checked)
 			m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
 		if(m_meas->isMaster(MON3ID))
 			m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
-		if(m_meas->isMaster(MON4ID))
+		if(m_meas->isMaster(MON4ID) && m_meas->setupType() != Measurement::Mdll)
 			m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
 		startStopButton->setText("Stop");
 		// set device id to 0 -> will be filled by mesydaq for master
@@ -679,8 +679,11 @@ void MainWidget::updateDisplay(void)
 	monitor3Preset->setValue(m_meas->mon3());
 	monitor3Preset->setRate(m_meas->getRate(MON3ID));
 
-	monitor4Preset->setValue(m_meas->mon4());
-	monitor4Preset->setRate(m_meas->getRate(MON4ID));
+	if(m_meas->setupType() != Measurement::Mdll)
+	{
+		monitor4Preset->setValue(m_meas->mon4());
+		monitor4Preset->setRate(m_meas->getRate(MON4ID));
+	}
 
 	lcdRunID->display((int)m_meas->runId());
 	dispFiledata();
@@ -972,6 +975,9 @@ void MainWidget::loadConfiguration(const QString& sFilename)
 	moduleStatus5->setHidden(m_meas->setupType() == Measurement::Mdll);
 	moduleStatus6->setHidden(m_meas->setupType() == Measurement::Mdll);
 	moduleStatus7->setHidden(m_meas->setupType() == Measurement::Mdll);
+// MDLL has only three monitor inputs
+	monitor4Preset->setHidden(m_meas->setupType() == Measurement::Mdll);
+	monitor4Preset->setChecked(false);
 	if (m_meas->setupType() == Measurement::Mstd)
 	{
 		dispMstdSpectrum->setChecked(true);
@@ -1239,8 +1245,11 @@ void MainWidget::m4PresetSlot(bool pr)
 		monitor2Preset->setChecked(false);
 		monitor3Preset->setChecked(false);
 	}
-	monitor4Preset->setChecked(pr);
-	m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), pr);
+	if (m_meas->setupType() != Measurement::Mdll)
+	{
+		monitor4Preset->setChecked(pr);
+		m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), pr);
+	}
 }
 
 /*!
@@ -1256,15 +1265,17 @@ void MainWidget::updatePresets(void)
 	monitor1Preset->setPresetValue(m_meas->getPreset(MON1ID));
 	monitor2Preset->setPresetValue(m_meas->getPreset(MON2ID));
 	monitor3Preset->setPresetValue(m_meas->getPreset(MON3ID));
-	monitor4Preset->setPresetValue(m_meas->getPreset(MON4ID));
+	if (m_meas->setupType() != Measurement::Mdll)
+		monitor4Preset->setPresetValue(m_meas->getPreset(MON4ID));
 
 	// check for master preset counter
 	timerPreset->setChecked(m_meas->isMaster(TIMERID));
 	eventsPreset->setChecked(m_meas->isMaster(EVID));
 	monitor1Preset->setChecked(m_meas->isMaster(MON1ID));
 	monitor2Preset->setChecked(m_meas->isMaster(MON2ID));
-	monitor1Preset->setChecked(m_meas->isMaster(MON3ID));
-	monitor2Preset->setChecked(m_meas->isMaster(MON4ID));
+	monitor3Preset->setChecked(m_meas->isMaster(MON3ID));
+	if (m_meas->setupType() != Measurement::Mdll)
+		monitor4Preset->setChecked(m_meas->isMaster(MON4ID));
 }
 
 /*!
@@ -1939,7 +1950,8 @@ void MainWidget::customEvent(QEvent *e)
 							value = monitor3Preset->presetValue();
 							break;
 						case M4CT:
-							value = monitor4Preset->presetValue();
+							if (m_meas->setupType() != Measurement::Mdll)
+								value = monitor4Preset->presetValue();
 							break;
 						case EVCT:
 							value = eventsPreset->presetValue();
@@ -1983,13 +1995,14 @@ void MainWidget::customEvent(QEvent *e)
 						value = monitor3Preset->isChecked();
 						break;
 					case M4CT:
-						value = monitor4Preset->isChecked();
+						if (m_meas->setupType() != Measurement::Mdll)
+							value = monitor4Preset->isChecked();
 						break;
 					case EVCT:
 						value = eventsPreset->isChecked();
 						break;
 					case TCT:
-				value = timerPreset->isChecked();
+						value = timerPreset->isChecked();
 						break;
 					default:
 						break;
@@ -2014,7 +2027,8 @@ void MainWidget::customEvent(QEvent *e)
 						monitor3Preset->setChecked(bEnabled);
 						break;
 					case M4CT:
-						monitor4Preset->setChecked(bEnabled);
+						if (m_meas->setupType() != Measurement::Mdll)
+							monitor4Preset->setChecked(bEnabled);
 						break;
 					case EVCT:
 						eventsPreset->setChecked(bEnabled);
@@ -2041,8 +2055,11 @@ void MainWidget::customEvent(QEvent *e)
 							m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
 							break;
 						case M4CT:
-							monitor4Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
+							if (m_meas->setupType() != Measurement::Mdll)
+							{
+								monitor4Preset->setPresetValue(dblPreset);
+								m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
+							}
 							break;
 						case EVCT:
 							eventsPreset->setPresetValue(dblPreset);
@@ -2077,8 +2094,11 @@ void MainWidget::customEvent(QEvent *e)
 							m_meas->setPreset(MON3ID, dblPreset, true);
 							break;
 						case M4CT:
-							monitor4Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON4ID, dblPreset, true);
+							if (m_meas->setupType() != Measurement::Mdll)
+							{
+								monitor4Preset->setPresetValue(dblPreset);
+								m_meas->setPreset(MON4ID, dblPreset, true);
+							}
 							break;
 						case EVCT:
 							eventsPreset->setPresetValue(dblPreset);
@@ -2119,7 +2139,7 @@ void MainWidget::customEvent(QEvent *e)
 						monitor3Preset->setPresetValue(dblPreset);
 						m_meas->setPreset(MON3ID, dblPreset, true);
 					}
-					else if (monitor4Preset->isChecked())
+					else if (monitor4Preset->isChecked() && m_meas->setupType() != Measurement::Mdll)
 					{
 						monitor4Preset->setPresetValue(dblPreset);
 						m_meas->setPreset(MON4ID, dblPreset, true);
