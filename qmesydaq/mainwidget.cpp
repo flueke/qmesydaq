@@ -1210,16 +1210,16 @@ void MainWidget::m2PresetSlot(bool pr)
  */
 void MainWidget::m3PresetSlot(bool pr)
 {
-    if(pr)
-    {
-        timerPreset->setChecked(false);
-        eventsPreset->setChecked(false);
-        monitor1Preset->setChecked(false);
-        monitor2Preset->setChecked(false);
-        monitor4Preset->setChecked(false);
-    }
-    monitor3Preset->setChecked(pr);
-    m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), pr);
+	if(pr)
+	{
+		timerPreset->setChecked(false);
+		eventsPreset->setChecked(false);
+		monitor1Preset->setChecked(false);
+		monitor2Preset->setChecked(false);
+		monitor4Preset->setChecked(false);
+	}
+	monitor3Preset->setChecked(pr);
+	m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), pr);
 }
 
 /*!
