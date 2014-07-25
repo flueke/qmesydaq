@@ -67,3 +67,19 @@ void MSTD16::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool pres
 	MSG_NOTICE << tr("pulser %1%2, bus %3 to pos %4, ampl %5 - poti %6").
 		arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(amp).arg(m_pulsPoti[preset]);
 }
+
+/*!
+    \fn QList<quint16> MCPD8::getHistogramList(void)
+
+    return the list of channels used in histograms
+
+    \return the list of channels used in histograms
+ */
+QList<quint16> MSTD16::getHistogramList(void)
+{
+	QList<quint16> result;
+	for (int i = 0; i < 8; ++i)
+		if (m_histogram[i])
+			result << (i * 2) << (i * 2 + 1);
+	return result;
+}

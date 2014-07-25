@@ -73,6 +73,8 @@ public:
 
 	QList<quint16> getActiveList(void);
 
+	QVector<quint16> getTubeMapping();
+
 // commands of the MPCD-8
 // commands: DAQ commands
 	bool reset(void);

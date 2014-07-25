@@ -2570,7 +2570,14 @@ QList<quint16> MCPD8::getHistogramList(void)
         Q_ASSERT_X(it != NULL, "MCPD8::getHistogramList", "one of the MPSD's is NULL");
         QList<quint16> tmpHistList = it->getHistogramList();
         foreach(quint16 hit, tmpHistList)
-            result.append(hit + it->busNumber() * 8);
+	{
+#if 0
+	    quint16 busNr = it->busNumber();
+            for (quint16 i = result.size(); i < (busNr  * (it->getModuleId() == TYPE_MSTD16 ? 16 :8)); ++i)
+                result.append(0);
+#endif
+            result.append(hit + it->busNumber() * (it->getModuleId() == TYPE_MSTD16 ? 16 :8));
+	}
     }
     qStableSort(result);
     return result;
@@ -2623,4 +2630,31 @@ quint16 MCPD8::getTxMode()
 quint16 MCPD8::getTxMode(quint8 mod)
 {
 	return readPeriReg(mod, 1);
+}
+
+QVector<quint16> MCPD8::getTubeMapping()
+{
+    QVector<quint16> result;
+
+// MDLL has fixed channels
+    if(m_mdll.contains(0))
+    {
+        for(quint16 i = 0; i < 960; i++)
+            result << i;
+        return result;
+    }
+
+    quint16 n(0);
+    foreach(MPSD8 *it, m_mpsd)
+    {
+        Q_ASSERT_X(it != NULL, "MCPD8::getTubeMapping", "one of the MPSD's is NULL");
+        QList<quint16> tmpList = it->getHistogramList();
+        MSG_INFO << tmpList;
+        quint16 busNr = it->busNumber();
+        if (result.size() < busNr * 8 && tmpList.size() > 0)
+            result.insert(result.size(), busNr * 8 - result.size(), 0);
+        foreach(quint16 i, tmpList)
+            result.append(n++);
+    }
+    return result;
 }

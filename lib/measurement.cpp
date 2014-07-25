@@ -1029,10 +1029,40 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						MSG_WARNING << tr("GHOST EVENT: SlotID %1 Mod %2").arg(slotId).arg(id);
 						continue;
 					}
+					if (moduleID != TYPE_MDLL)
+					{
+						if (chan >= m_tubeMapping.size())
+						{
+							MSG_ERROR << m_tubeMapping;
+							MSG_ERROR << chan << " " << m_tubeMapping.size();
+							continue;
+						}
+						chan = m_tubeMapping.at(chan);
+						if (moduleID == TYPE_MSTD16)
+						{
+#if 0
+							MSG_INFO << tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id);
+#endif
+							chan <<= 1;			// each tube has two channels
+							chan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+#if defined(_MSC_VER)
+#	pragma message("TODO left/right")
+#else
+#	warning TODO left/right
+#endif
+							amp &= 0x1FF;			// in MSB of amp is the information left/right
+#if 0
+							MSG_DEBUG << tr("Put this event into channel : %1").arg(chan);
+#endif
+							if (m_Spectrum[SingleTubeSpectrum])
+								m_Spectrum[SingleTubeSpectrum]->incVal(chan);
+#if 0
+							MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
+#endif
+						}
+					}
 					neutrons++;
 					++(*m_counter[EVID]);
-					if (moduleID != TYPE_MDLL)
-						chan = m_tubeMapping.at(chan);
 					if (m_Hist[PositionHistogram])
 						m_Hist[PositionHistogram]->incVal(chan, pos);
 					if (m_Hist[AmplitudeHistogram])
@@ -1045,28 +1075,6 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 							m_Hist[AmplitudeHistogram]->incVal(chan, amp);
 					if (m_Hist[CorrectedPositionHistogram])
 						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
-					if (moduleID == TYPE_MSTD16)
-					{
-#if 0
-						MSG_INFO << tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id);
-#endif
-						chan <<= 1;			// each tube has two channels
-						chan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
-#if defined(_MSC_VER)
-#	pragma message("TODO left/right")
-#else
-#	warning TODO left/right
-#endif
-						amp &= 0x1FF;			// in MSB of amp is the information left/right
-#if 0
-						MSG_DEBUG << tr("Put this event into channel : %1").arg(chan);
-#endif
-						if (m_Spectrum[SingleTubeSpectrum])
-							m_Spectrum[SingleTubeSpectrum]->incVal(chan);
-#if 0
-						MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
-#endif
-					}
 				}
 				else
 					MSG_WARNING << tr("Neutron for an inactive channel %1 %2 %3").arg(mod).arg(id).arg(modChan);

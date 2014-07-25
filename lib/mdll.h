@@ -177,6 +177,8 @@ public:
     //! returns the number of the bus
     quint8 busNumber(void) {return 0;}
 
+    virtual QList<quint16> getHistogramList(void);
+
 protected:
     // quint8	calcThreshval(quint8 thr);
 public:

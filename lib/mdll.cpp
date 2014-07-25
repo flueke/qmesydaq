@@ -269,6 +269,23 @@ quint8 MDLL::getSpectrum(quint8 val)
 
 }
 
+/*!
+    \fn QList<quint16> MCPD8::getHistogramList(void)
+
+    return the list of channels used in histograms
+
+    \return the list of channels used in histograms
+ */
+QList<quint16> MDLL::getHistogramList(void)
+{
+    QList<quint16> result;
+
+// MDLL has fixed channels
+    for(quint16 i = 0; i < 960; i++)
+        result << i;
+    return result;
+}
+
 #if 0
 /*!
     \fn void MDll::initMdll(void)

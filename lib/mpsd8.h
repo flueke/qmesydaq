@@ -58,9 +58,9 @@ public:
 
 	void	setHistogram(quint16, bool);
 
-	QList<quint16> getHistogramList(void);
+	virtual QList<quint16> getHistogramList(void);
 
-	QList<quint16> getActiveList(void);
+	virtual QList<quint16> getActiveList(void);
 
 	//! \return the ID of the MPSD
 	quint8 	getModuleId(void) {return m_mpsdId;}
@@ -298,8 +298,10 @@ private:
 
 	bool		m_active[8];
 
+protected:
 	bool		m_histogram[8];
 
+private:
         float		m_version;
 
 	quint16		m_capabilities;

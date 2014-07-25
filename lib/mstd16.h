@@ -41,6 +41,11 @@ public:
 	virtual int type(void) {return TYPE_MSTD16;}
 
 	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
+
+	virtual QList<quint16> getHistogramList(void);
+
+//	virtual QList<quint16> getActiveList(void);
+
 protected:
 
 };
