@@ -779,3 +779,23 @@ quint64 Histogram::maxROI(void) const
 {
 	return m_maxROI;
 }
+
+/**
+    \fn void Histogram::addSlice(const quint16 n, const quint16 d, const Histogram &h)
+
+   Adds a histogram as a slice to an existing histogram in the following manner:
+   Beginning with the number n the histogram h will will be added column by column
+   to the histogram. The first column of h will be the column n in the histogram and
+   the second column of h will be the (n + d)th column of the histogram, and so on.
+
+   \param n starting column in the histogram
+   \param d distance between the columns
+   \param h histogram
+ */
+void Histogram::addSlice(const quint16 n, const quint16 d, const Histogram &h)
+{
+	quint16 col(n);
+	for (int i = 0; i < h.width(); ++i, col += d)
+		for (int j = 0; j < h.height(); ++j)
+			setValue(col, j, h.value(i, j));
+}

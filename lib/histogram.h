@@ -245,6 +245,8 @@ public:
 
 	void calcMinMaxInROI(const QRectF &);
 
+	void addSlice(const quint16, const quint16, const Histogram &);
+
 private:
 	/**
 	 * Calculates the maximum position of a tube spectrum
