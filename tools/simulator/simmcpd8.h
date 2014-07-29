@@ -49,7 +49,7 @@ protected:
 	static quint16 CalcCRC(const struct MDP_PACKET *pPacket);
 
 protected:
-	QUdpSocket*     m_pSocket;    // command/data udp socket
+	QUdpSocket	*m_pSocket;   // command/data udp socket
 	QHostAddress    m_DataTarget; // data target udp address
 	quint16         m_wDataPort;  // data target udp port
 	quint8          m_byCpdId;    // MCPD id

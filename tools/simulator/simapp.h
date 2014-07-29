@@ -59,6 +59,9 @@ private:
 	//! default: MCPD has 64 channels (8 full MPSDs)
 	quint16            m_wSpectrumWidth;
 
+	//! spectrum start (for testing unused MPSD channels for certain setups)
+	quint16            m_wSpectrumStart;
+
 	//! spectrum height
 	quint16            m_wSpectrumHeight;
 

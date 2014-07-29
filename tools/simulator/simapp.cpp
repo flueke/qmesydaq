@@ -140,10 +140,11 @@ void SimApp::ComputeSpectrum(void)
 				double x = ((double)xp) / m_wSpectrumHeight;
 				double y = ((double)yp) / iWidth;
 				double value = 1.0;
-				for (unsigned int k = 0; k < sizeof(allPoints)/sizeof(allPoints[0]); ++k) {
+				for (unsigned int k = 0; k < sizeof(allPoints) / sizeof(allPoints[0]); ++k)
+				{
 					struct point *p = &allPoints[k];
-					value += p->height * exp (p->y_exp * pow (2.0 * (y - p->y_min) / (p->y_max - p->y_min) - 1.0,
-						2.0)) * exp (p->x_exp * pow (2.0 * (x - p->x_min) / (p->x_max - p->x_min) - 1.0, 2.0));
+					value += p->height * exp(p->y_exp * pow(2.0 * (y - p->y_min) / (p->y_max - p->y_min) - 1.0, 2.0))
+							   * exp(p->x_exp * pow(2.0 * (x - p->x_min) / (p->x_max - p->x_min) - 1.0, 2.0));
 				}
 				abyTmp[l] = (int)value;
 			}
@@ -257,6 +258,7 @@ void SimApp::StartStop(SimMCPD8 *pMCPD8, bool bDAQ, const char *szReason)
 SimApp::SimApp(int &argc, char **argv)
 	: QCoreApplication(argc,argv)
 	, m_wSpectrumWidth(64)
+	, m_wSpectrumStart(0)
 	, m_wSpectrumHeight(960)
 	, m_dwStopPacket(0)
 	, m_wTimerInterval(20)
@@ -452,7 +454,19 @@ SimApp::SimApp(int &argc, char **argv)
 				qDebug() << "invalid argument: " << szArg;
 				break;
 			}
-			int l = szArg.mid(j).toInt();
+			QString arg = szArg.mid(j);
+			QStringList argList = arg.split('-');
+			if (argList.size() > 1)
+			{
+				int l = argList[0].toInt();
+				if (l < 1 || l > 64)
+				{
+					qDebug() << "invalid start of spectrum: " << l;
+					break;
+				}
+				m_wSpectrumStart = l - 1;
+			}
+			int l = argList[argList.size() - 1].toInt();
 			if (l < 1 || l > 64)
 			{
 				qDebug() << "invalid width: " << l;
@@ -518,10 +532,10 @@ SimApp::SimApp(int &argc, char **argv)
 		szText.sprintf("created a MDLL (width=%u, height=%u) ", m_wSpectrumWidth, m_wSpectrumHeight);
 	else if (m_bMstd)
 		szText.sprintf("created %d MCPD-8 each with %d MSTD-16 (%u channels)",
-			m_apMCPD8.size(), (m_wSpectrumWidth + 7) >> 3, 2 * m_wSpectrumWidth);
+			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, 2 * (m_wSpectrumWidth - m_wSpectrumStart));
 	else
 		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 (width=%u height=%u)",
-			m_apMCPD8.size(), (m_wSpectrumWidth + 7) >> 3, m_wSpectrumWidth, m_wSpectrumHeight);
+			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, (m_wSpectrumWidth - m_wSpectrumStart), m_wSpectrumHeight);
 	if (m_bV4)
 		szText.append(QString().sprintf("round shape with %d different lengths", (int)((sizeof(v4Scale) / sizeof(v4Scale[0]) + 1) / 2)));
 	else if (!m_bMstd)
@@ -728,6 +742,10 @@ void SimApp::timerEvent(QTimerEvent *)
 				continue;
 			}
 			y %= m_wSpectrumWidth;
+
+			// remove all events with tubes lower than the start tube
+			if (y < m_wSpectrumStart)
+				continue;
 			// Q_ASSERT(mod < 2);
 			// Q_ASSERT(y < 56);
 
@@ -743,7 +761,6 @@ void SimApp::timerEvent(QTimerEvent *)
 			quint16 amp = ((pd.data[counter + 2] & 0x7F) << 3) + ((pd.data[counter + 1] >> 13) & 0x7);
 			quint16 pos = (pd.data[counter + 1] >> 3) & 0x3FF;
 #endif
-
 			// Type(1)  ModID(3)  SlotID(5)  Amplitude(10)  Position(10)  Timestamp(19)
 			// | ModID(3)
 			// | |   SlotID(5)
@@ -991,17 +1008,14 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 				pPacket->data[0] = TYPE_MDLL;
 			else
 			{
-				if (m_bMstd)
-					pPacket->data[0] = TYPE_MSTD16;
-				else
-					pPacket->data[0] = TYPE_MPSD8;
-				pPacket->data[1] = (m_wSpectrumWidth >  8) ? TYPE_MPSD8 : TYPE_NOMODULE;
-				pPacket->data[2] = (m_wSpectrumWidth > 16) ? TYPE_MPSD8 : TYPE_NOMODULE;
-				pPacket->data[3] = (m_wSpectrumWidth > 24) ? TYPE_MPSD8 : TYPE_NOMODULE;
-				pPacket->data[4] = (m_wSpectrumWidth > 32) ? TYPE_MPSD8 : TYPE_NOMODULE;
-				pPacket->data[5] = (m_wSpectrumWidth > 40) ? TYPE_MPSD8 : TYPE_NOMODULE;
-				pPacket->data[6] = (m_wSpectrumWidth > 48) ? TYPE_MPSD8 : TYPE_NOMODULE;
-				pPacket->data[7] = (m_wSpectrumWidth > 56) ? TYPE_MPSD8 : TYPE_NOMODULE;
+				pPacket->data[0] = (m_wSpectrumStart <= 0 && m_wSpectrumWidth >  0) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[1] = (m_wSpectrumStart <= 8 && m_wSpectrumWidth >  8) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[2] = (m_wSpectrumStart <= 16 && m_wSpectrumWidth > 16) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[3] = (m_wSpectrumStart <= 24 && m_wSpectrumWidth > 24) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[4] = (m_wSpectrumStart <= 32 && m_wSpectrumWidth > 32) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[5] = (m_wSpectrumStart <= 40 && m_wSpectrumWidth > 40) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[6] = (m_wSpectrumStart <= 48 && m_wSpectrumWidth > 48) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[7] = (m_wSpectrumStart <= 56 && m_wSpectrumWidth > 56) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
 			}
 			logmsg(pMCPD8, "READID");
 			break;
