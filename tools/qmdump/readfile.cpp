@@ -40,7 +40,7 @@ Histogram	*m_posHist;
 Histogram	*m_ampHist;
 Spectrum	*m_diffractogram;
 
-void analyzeBuffer(const DATA_PACKET &pd)
+void analyzeBuffer(const DATA_PACKET &pd, bool printPos)
 {
 	quint64 tim;
 	quint16 mod = pd.deviceId;
@@ -161,8 +161,10 @@ void analyzeBuffer(const DATA_PACKET &pd)
 #if 0
 				++(*m_counter[EVID]);
 #endif
+				if (printPos)
+					MSG_ERROR << "pos : " << pos;
 				if (pos > 959)
-					MSG_ERROR << "POSITION > 960 " << pos; 
+					MSG_ERROR << "POSITION > 960 " << pos;
 				if (m_posHist)
 					m_posHist->incVal(chan, pos);
 				if (m_ampHist)
@@ -282,7 +284,7 @@ bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 	return ok;
 }
 
-void readListfile(QString readfilename)
+void readListfile(const QString &readfilename, bool printPos)
 {
 	QDataStream datStream;
 	QTextStream textStream;
@@ -336,7 +338,7 @@ void readListfile(QString readfilename)
 
 	// header separator: sep0 sep5 sepA sepF
 	if ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF))
-		for(; getNextBlock(datStream, dataBuf); ++blocks, ++bcount)
+		for (; getNextBlock(datStream, dataBuf); ++blocks, ++bcount)
 		{
 			quint64 tmp = dataBuf.time[0] + (quint64(dataBuf.time[1]) << 16) + (quint64(dataBuf.time[2]) << 32);
 			MSG_DEBUG << blocks << ". header time : " << tmp;
@@ -346,7 +348,7 @@ void readListfile(QString readfilename)
 // 				m_counter[TIMERID]->start(tmp / 10000);	// headertime is in 100ns steps
 			}
 // hand over data buffer for processing
-			analyzeBuffer(dataBuf);
+			analyzeBuffer(dataBuf, printPos);
 // check for next separator:
 			if(!(bcount % 1000))
 			{

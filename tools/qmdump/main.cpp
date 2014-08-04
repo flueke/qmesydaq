@@ -28,7 +28,7 @@
 #include <mesydaq2.h>
 #include <mdefines.h>
 
-void readListfile(QString readfilename);
+void readListfile(const QString &, bool = false);
 
 void version(void)
 {
@@ -37,7 +37,8 @@ void version(void)
 
 void help(const QString &program)
 {
-	qDebug() << program << ": [-v] [-h] list_mode_file";
+	qDebug() << program << ": [-v] [-h] [-p] list_mode_file";
+	qDebug() << "       -p - print neutron positions";
 	version();
 }
 
@@ -49,6 +50,7 @@ int main(int argc, char **argv)
 
 	QStringList 	args = app.arguments();
 	QString		fileName;
+	bool		fPrintPos(false);
 	if (args.size() > 1)
 	{
 		for (int i = 1; i < args.size(); ++i)
@@ -62,13 +64,17 @@ int main(int argc, char **argv)
 				version();
 				return 1;
 			}
+			else if (args.at(i) == "-p")
+			{
+				fPrintPos = true;
+			}
 			else
 				fileName = args.at(i);
 	}
 
 	qDebug() << QObject::tr("Read file : %1 ").arg(fileName);
 
-	readListfile(fileName);
+	readListfile(fileName, fPrintPos);
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
