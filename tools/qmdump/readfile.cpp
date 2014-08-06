@@ -40,7 +40,7 @@ Histogram	*m_posHist;
 Histogram	*m_ampHist;
 Spectrum	*m_diffractogram;
 
-void analyzeBuffer(const DATA_PACKET &pd, bool printPos)
+void analyzeBuffer(const DATA_PACKET &pd, bool printPos, bool printChannel = true)
 {
 	quint64 tim;
 	quint16 mod = pd.deviceId;
@@ -162,7 +162,11 @@ void analyzeBuffer(const DATA_PACKET &pd, bool printPos)
 				++(*m_counter[EVID]);
 #endif
 				if (printPos)
+				{
 					MSG_ERROR << "pos : " << pos;
+					if (printChannel)
+						MSG_ERROR << "channel : " << chan;
+				}
 				if (pos > 959)
 					MSG_ERROR << "POSITION > 960 " << pos;
 				if (m_posHist)
