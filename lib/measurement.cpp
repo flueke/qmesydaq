@@ -615,12 +615,13 @@ void Measurement::clearAllHist(void)
  */
 void Measurement::clearChanHist(quint16 chan)
 {
+	quint16 line = m_tubeMapping.at(chan);
 	if (m_Hist[PositionHistogram])
-		m_Hist[PositionHistogram]->clear(chan);
+		m_Hist[PositionHistogram]->clear(line);
 	if (m_Hist[AmplitudeHistogram])
-		m_Hist[AmplitudeHistogram]->clear(chan);
+		m_Hist[AmplitudeHistogram]->clear(line);
 	if (m_Hist[CorrectedPositionHistogram])
-		m_Hist[CorrectedPositionHistogram]->clear(chan);
+		m_Hist[CorrectedPositionHistogram]->clear(line);
 }
 
 /*!
@@ -634,7 +635,7 @@ void Measurement::clearChanHist(quint16 chan)
  */
 void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan)
 {
-	quint16 line = m_tubeMapping.at(mcpd * 64 + mpsd * 8 + chan);
+	quint16 line = mcpd * 64 + mpsd * 8 + chan;
 	clearChanHist(line);
 }
 /*!
@@ -649,7 +650,7 @@ void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const qui
 Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 {
 	if (m_Hist[t])
-		return m_Hist[t]->spectrum(line);
+		return m_Hist[t]->spectrum(m_tubeMapping.at(line));
 	else
 		return NULL;
 }
@@ -667,7 +668,7 @@ Spectrum *Measurement::data(const HistogramType t, const quint16 line)
  */
 Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan)
 {
-	quint16 line = m_tubeMapping.at(mcpd * 64 + mpsd * 8 + chan);
+	quint16 line = mcpd * 64 + mpsd * 8 + chan;
 	return data(t, line);
 }
 
@@ -1377,7 +1378,7 @@ void Measurement::getMean(const HistogramType t, float &mean, float &sigma)
  */
 void Measurement::getMean(const HistogramType t, quint16 chan, float &mean, float &sigma)
 {
-	m_Hist[t]->getMean(chan, mean, sigma);
+	m_Hist[t]->getMean(m_tubeMapping.at(chan), mean, sigma);
 }
 
 /**
