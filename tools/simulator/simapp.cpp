@@ -119,7 +119,7 @@ void SimApp::ComputeSpectrum(void)
 	int iWidth = m_apMCPD8.size() * m_wSpectrumWidth;
 	m_abySpectrum.clear();
 	m_abySpectrum.resize(iWidth * m_wSpectrumHeight);
-	if (iWidth < 2)
+	if (iWidth == 1)
 	{
 		for (int i = 0; i < (int)m_wSpectrumHeight; ++i)
 			m_abySpectrum[i] = 1 + (int)20.0 * exp(-10.0 * pow(2.0 * (i + 1) / m_wSpectrumHeight - 1, 2.0));
@@ -467,7 +467,7 @@ SimApp::SimApp(int &argc, char **argv)
 				m_wSpectrumStart = l - 1;
 			}
 			int l = argList[argList.size() - 1].toInt();
-			if (l < 1 || l > 64)
+			if (l < 0 || l > 64)
 			{
 				qDebug() << "invalid width: " << l;
 				break;
