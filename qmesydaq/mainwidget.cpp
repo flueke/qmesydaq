@@ -2520,5 +2520,7 @@ void MainWidget::sumSpectra(bool val)
 {
 	if (!val)
 		displayMcpdSlot(dispMcpd->value());
+	else
+		dispAllChannels->setChecked(false);
 	emit redraw();
 }
