@@ -434,12 +434,13 @@ quint16 Mesydaq2::width(void)
 	{
 		QVector<quint16> tmpList = it.value()->getTubeMapping();
 		MSG_INFO << tmpList;
-		if (m_tubeMapping.size() > 0 && m_tubeMapping.last() > 0)
+		if (!m_tubeMapping.empty() && m_tubeMapping.last() > 0)
 			for (quint16 i = 0; i < tmpList.size(); ++i)
 				if (tmpList[i] > 0)
 					tmpList[i] += m_tubeMapping.last();
 		m_tubeMapping += tmpList;
-		n = m_tubeMapping.last();
+		if (!m_tubeMapping.empty())
+			n = m_tubeMapping.last();
 	}
 	MSG_INFO << "Found " << n << " tubes to histogram";
 	if (n == 0)
