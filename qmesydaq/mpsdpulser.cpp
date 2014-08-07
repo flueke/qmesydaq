@@ -39,7 +39,11 @@ MPSDPulser::MPSDPulser(Mesydaq2 *mesy, QWidget *parent)
 	setupUi(this);
 
 	devid->setMCPDList(m_theApp->mcpdId());
-	module->setModuleList(m_theApp->mpsdId(devid->value()));
+
+	QList<int> modules = m_theApp->mpsdId(devid->value());
+	module->setModuleList(modules);
+	module->setDisabled(modules.empty());
+	pulserGroupBox->setDisabled(modules.empty());
 
 	display();
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
@@ -165,7 +169,10 @@ void MPSDPulser::setMCPD(int id)
 	if (id != -1)
 		devid->setValue(id);
 	id = devid->value();
-	module->setModuleList(m_theApp->mpsdId(id));
+	QList<int> modules = m_theApp->mpsdId(id);
+	module->setModuleList(modules);
+	module->setDisabled(modules.empty());
+	pulserGroupBox->setDisabled(modules.empty());
 	display();
 }
 
@@ -186,6 +193,8 @@ void MPSDPulser::displayMCPDSlot(int id)
 		if (m_theApp->getModuleId(id, i))
 			modList << i;
 	module->setModuleList(modList);
+	module->setDisabled(modList.empty());
+	pulserGroupBox->setDisabled(modList.empty());
 	display();
 }
 

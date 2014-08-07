@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
+    <width>554</width>
     <height>171</height>
    </rect>
   </property>
@@ -57,7 +57,7 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox35">
+    <widget class="QGroupBox" name="pulserGroupBox">
      <property name="title">
       <string>Pulser</string>
      </property>
