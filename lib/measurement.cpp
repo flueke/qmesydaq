@@ -1043,8 +1043,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 #if 0
 							MSG_INFO << tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id);
 #endif
-							chan <<= 1;			// each tube has two channels
-							chan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+							quint16 lchan = chan << 1;			// each tube has two channels
+							lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
 #if defined(_MSC_VER)
 #	pragma message("TODO left/right")
 #else
@@ -1055,7 +1055,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 							MSG_DEBUG << tr("Put this event into channel : %1").arg(chan);
 #endif
 							if (m_Spectrum[SingleTubeSpectrum])
-								m_Spectrum[SingleTubeSpectrum]->incVal(chan);
+								m_Spectrum[SingleTubeSpectrum]->incVal(lchan);
 #if 0
 							MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
 #endif
