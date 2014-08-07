@@ -42,7 +42,8 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	devid->setMCPDList(mcpdList);
 	QList<int> modules = m_theApp->mpsdId(devid->value());
 	module->setModuleList(modules);
-	module->setEnabled(!modules.empty());
+	module->setDisabled(modules.empty());
+	histogramGroupBox->setDisabled(modules.empty());
 
 	m_label[0] = labelChannel_1;
 	m_label[1] = labelChannel_2;
@@ -232,7 +233,8 @@ void ModuleSetup::setMCPD(int id)
 	id = devid->value();
 	QList<int> modules = m_theApp->mpsdId(id);
 	module->setModuleList(modules);
-	module->setEnabled(!modules.empty());
+	module->setDisabled(modules.empty());
+	histogramGroupBox->setDisabled(modules.empty());
 	int mid = module->value();
 
 	for (int i = 0; i < 8; ++i)
@@ -267,7 +269,8 @@ void ModuleSetup::displayMCPDSlot(int id)
 		if (m_theApp->getModuleId(id, i))
 			modList << i;
 	module->setModuleList(modList);
-	module->setEnabled(!modList.empty());
+	module->setDisabled(modList.empty());
+	histogramGroupBox->setDisabled(modList.empty());
 	displaySlot();
 }
 

@@ -221,7 +221,7 @@
     </attribute>
     <layout class="QGridLayout" name="gridLayout_5">
      <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="histogramGroupBox">
        <property name="title">
         <string>Histogram</string>
        </property>
