@@ -2084,40 +2084,56 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 					QHash<int,quint64> hqwTotalSums;
 
 					dblMin=dblMax=m_dblDetPos;
-					foreach (const double& dblPos, m_hdblResoPos.values()) {
+					foreach (const double& dblPos, m_hdblResoPos.values())
+					{
 						if (dblMin>dblPos) dblMin=dblPos;
 						if (dblMax<dblPos) dblMax=dblPos;
 					}
-					dblStep=(dblMax-dblMin)/(m_iMaxResoStep-1);
-					dblRange=m_iMaxResoStep*dblStep; // SPODI@FRM-II has 2.0 deg
+					if (!m_sInstrument.compare("M1",Qt::CaseInsensitive))
+					{
+						// SPODI@FRM-II has 2.0 deg
+						if (dblRange!=2.0)
+						{
+							dblRange=2.0;
+							dblStep=dblRange/m_iMaxResoStep;
+						}
+					}
+					else
+					{
+						// calculate width of one detector tube
+						dblStep=(dblMax-dblMin)/(m_iMaxResoStep-1);
+						dblRange=m_iMaxResoStep*dblStep;
+					}
 
 					// generate header
-					abyTmp=QString("QMesyDAQ CARESS Histogram File  %1\r\n\r\nRun:\t%2\r\nResosteps:\t%3\r\n")
+					abyTmp=QString("QMesyDAQ CARESS Histogram File  %1\n\nRun:\t%2\nResosteps:\t%3\n")
 							.arg(QDateTime::currentDateTime().toString("dd.MM.yyyy  hh:mm:ss"))
 							.arg(m_lRunNo)
 							.arg(m_iMaxResoStep).toLatin1();
-					abyTmp+=QString("2Theta start:\t%1\r\n2Theta range:\t%2\r\nComment:\t%3\r\n")
-							.arg(dblMin)
-							.arg(dblRange)
+					abyTmp+=QString("2Theta start:\t%1\n2Theta range:\t%2\n\nComment:\t%3\n\n")
+							.arg(dblMin,0,'f',2)
+							.arg(dblRange,0,'f',2)
 							.arg(m_szComment).toLatin1();
-					abyTmp+=QString("Acquisition Time\t%1\r\nTotal Counts\t%2\r\nPreset  %3 counts:\t%4\r\n")
+					abyTmp+=QString("Acquisition Time\t%1\nTotal Counts\t%2\nPreset  %3 counts:\t%4\n")
 							.arg(m_dwAcquisitionTime/m_iMaxResoStep)
 							.arg(qwTotalSum)
 							.arg(m_iMaster>=0&&m_iMaster<ARRAY_SIZE(g_asDevices)?g_asDevices[m_iMaster]:"??")
 							.arg(m_qwMasterTarget).toLatin1();
-					abyTmp+=QString("\r\nCARESS XY data: 1 row title (position numbers), then (resosteps x %1) position data in columns\r\n")
-							.arg(detSize.height()).toLatin1();
+					abyTmp+=QString("\nCARESS XY data: 1 row title (position numbers), then (resosteps x %1) position data in columns\n")
+							.arg(detSize.width()).toLatin1();
 					m_abyDetectorData=abyTmp;
 					abyTmp.clear();
 
 					// generate column header for next table
-					for (i=1; i<=detSize.height(); ++i)
+					int iHeight=detSize.height();
+					if (!m_sInstrument.compare("M1",Qt::CaseInsensitive)) // SPODI@FRM-II
+						--iHeight; // ignore last channel
+					for (i=1; i<=iHeight; ++i)
 					{
 						QString szTmp;
 						szTmp.sprintf("\t%d",i);
 						abyTmp+=szTmp.toLatin1();
 					}
-					abyTmp+='\r';
 					abyTmp+='\n';
 					m_abyDetectorData+=abyTmp;
 					abyTmp.clear();
@@ -2129,13 +2145,12 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 						{
 							abyTmp+=QString("%1").arg(dblMin+i*dblRange+j*dblStep,0,'f',2).toLatin1();
 							qwTotalSum=0;
-							for (k=0; k<detSize.height(); ++k)
+							for (k=0; k<iHeight; ++k)
 							{
 								quint64 qwVal=m_aullDetectorData[m_iMaxResoStep*(k*detSize.width()+i)+j];
 								qwTotalSum+=qwVal;
 								abyTmp+=QString("\t%1").arg(qwVal).toLatin1();
 							}
-							abyTmp+='\r';
 							abyTmp+='\n';
 							hqwTotalSums[m_iMaxResoStep*i+j]=qwTotalSum;
 							m_abyDetectorData+=abyTmp;
@@ -2144,10 +2159,10 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 					}
 
 					// generate total sum of each detector tube at every resolution step
-					abyTmp+=QString("\r\ntotal sum\r\n").toLatin1();
+					abyTmp+=QString("\ntotal sum\n").toLatin1();
 					for (i=0; i<detSize.width(); ++i)
 						for (j=0; j<m_iMaxResoStep; ++j)
-							abyTmp+=QString("%1\t%2\r\n").arg(dblMin+i*dblRange+j*dblStep,0,'f',2).arg(hqwTotalSums[m_iMaxResoStep*i+j]).toLatin1();
+							abyTmp+=QString("%1\t%2\n").arg(dblMin+i*dblRange+j*dblStep,0,'f',2).arg(hqwTotalSums[m_iMaxResoStep*i+j]).toLatin1();
 					m_abyDetectorData+=abyTmp;
 					abyTmp.clear();
 
