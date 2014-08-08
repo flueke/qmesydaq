@@ -2652,7 +2652,7 @@ QVector<quint16> MCPD8::getTubeMapping()
         MSG_INFO << tmpList;
         quint16 busNr = it->busNumber();
         if (result.size() < busNr * 8 && tmpList.size() > 0)
-            result.insert(result.size(), busNr * 8 - result.size(), 0);
+            result.insert(result.size(), busNr * 8 - result.size(), 0xFFFF);
         foreach(quint16 i, tmpList)
             result.append(n++);
     }

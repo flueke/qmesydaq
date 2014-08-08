@@ -1038,7 +1038,13 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 							MSG_ERROR << chan << " " << m_tubeMapping.size();
 							continue;
 						}
+						quint16 tmpChan(chan);
 						chan = m_tubeMapping.at(chan);
+						if (chan == 0xFFFF)
+						{
+							MSG_ERROR << tmpChan << " -> " << chan << " " << m_tubeMapping;
+							continue;
+						}
 						if (moduleID == TYPE_MSTD16)
 						{
 #if 0

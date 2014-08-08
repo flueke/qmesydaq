@@ -430,27 +430,35 @@ quint16 Mesydaq2::width(void)
 {
 	quint16 n(0);
 	m_tubeMapping.clear();
+
+	quint16 w(0);
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 	{
 		QVector<quint16> tmpList = it.value()->getTubeMapping();
+		w += tmpList.size();
 		MSG_INFO << tmpList;
 		if (!m_tubeMapping.empty() && m_tubeMapping.last() > 0)
 			for (quint16 i = 0; i < tmpList.size(); ++i)
-				if (tmpList[i] > 0)
-					tmpList[i] += m_tubeMapping.last();
+				if (tmpList[i] != 0xFFFF)
+					tmpList[i] += n;
+		int l = it.key();
+		if (n != l * 64)
+		{
+			MSG_ERROR << "Must insert from " << n << " to " << (l * 64);
+			m_tubeMapping.insert(m_tubeMapping.size(), (l * 64) - m_tubeMapping.size(), 0xFFFF);
+		}
 		m_tubeMapping += tmpList;
 		if (!m_tubeMapping.empty())
-			n = m_tubeMapping.last();
+			n = m_tubeMapping.last() + 1;
 	}
-	MSG_INFO << "Found " << n << " tubes to histogram";
+	MSG_INFO << "Found " << w << " tubes to histogram";
 	if (n == 0)
 	{
-		n = 128;
+		w = n = 128;
 		for (int i = 0; i < n; ++i)
 			m_tubeMapping.append(i);
 	}
-	MSG_INFO << "MAPPING " << m_tubeMapping;
-	return n;
+	return w;
 }
 
 /*!
