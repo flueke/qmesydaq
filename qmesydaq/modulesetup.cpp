@@ -249,7 +249,7 @@ void ModuleSetup::setMCPD(int id)
 			m_histogram[i]->setChecked(m_theApp->histogram(id, mid, i));
 		}
 
-	setGainSlot();
+	displayMCPDSlot();
 }
 
 /*!
