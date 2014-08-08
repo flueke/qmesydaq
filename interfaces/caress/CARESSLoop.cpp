@@ -2101,7 +2101,7 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 							.arg(dblRange)
 							.arg(m_szComment).toLatin1();
 					abyTmp+=QString("Acquisition Time\t%1\r\nTotal Counts\t%2\r\nPreset  %3 counts:\t%4\r\n")
-							.arg(m_dwAcquisitionTime)
+							.arg(m_dwAcquisitionTime/m_iMaxResoStep)
 							.arg(qwTotalSum)
 							.arg(m_iMaster>=0&&m_iMaster<ARRAY_SIZE(g_asDevices)?g_asDevices[m_iMaster]:"??")
 							.arg(m_qwMasterTarget).toLatin1();
