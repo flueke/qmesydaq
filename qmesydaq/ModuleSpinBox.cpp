@@ -28,6 +28,7 @@
  */
 ModuleSpinBox::ModuleSpinBox(QWidget *parent)
 	: QSpinBox(parent)
+	, m_iChangeSteps(0)
 {
 	setRange(0, 7);
 	setWrapping(false);
@@ -47,7 +48,10 @@ void ModuleSpinBox::setModuleList(QList<int> modules)
 		setDisabled(true);
 	else
 	{
-		setValue(m_modList.at(0));
+		if (m_iChangeSteps < 0)
+			setValue(m_modList.last());
+		else
+			setValue(m_modList.first());
 		qSort(m_modList);
 		setRange(m_modList.first(), m_modList.last());
 	}
@@ -78,7 +82,9 @@ void ModuleSpinBox::stepBy(int steps)
 		if (pos > maximum())
 		{
 			setValue(minimum());
+			m_iChangeSteps=steps;
 			emit changeModule(steps);
+			m_iChangeSteps = 0;
 		}
 		else
 		{
@@ -91,7 +97,9 @@ void ModuleSpinBox::stepBy(int steps)
 		if (pos < minimum())
 		{
 			setValue(maximum());
+			m_iChangeSteps = steps;
 			emit changeModule(steps);
+			m_iChangeSteps = 0;
 		}
 		else
 		{

@@ -76,8 +76,7 @@ void MCPDSpinBox::stepBy(int steps)
 	{
 		if (pos > maximum())
 		{
-			if (wrapping())
-				setValue(minimum());
+			setValue(minimum());
 //			emit changeModule(steps);
 		}
 		else
@@ -90,8 +89,7 @@ void MCPDSpinBox::stepBy(int steps)
 	{
 		if (pos < minimum())
 		{
-			if (wrapping())
-				setValue(maximum());
+			setValue(maximum());
 //			emit changeModule(steps);
 		}
 		else
