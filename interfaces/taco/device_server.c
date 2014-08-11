@@ -183,21 +183,15 @@ int device_server (char *server_name, char *pers_name, int m_opt, int s_opt, int
 {
 	char			host_name [HOST_NAME_LENGTH],
 				dsn_name [37],
-		//		*proc_name,
-				*display,
-				res_path [80],
 				res_name[80];
 	DevVarStringArray	default_access;
 	db_resource		res_tab;
-	void			*test_heap;
 
 	long			prog_number=0,
 				status;
 	DevLong			error = 0;
 	int			pid = 0;
-	short			sig,
-				i,
-				j;
+	short			i;
 
 	if (strlen(server_name) >= DS_NAME_LENGTH)
 	{
@@ -351,6 +345,7 @@ int device_server (char *server_name, char *pers_name, int m_opt, int s_opt, int
  */
 		if ( config_flags->security == True )
 		{
+			char	res_path [80];
 			default_access.length   = 0;
 			default_access.sequence = NULL;
 
@@ -481,7 +476,7 @@ int device_server (char *server_name, char *pers_name, int m_opt, int s_opt, int
  */
 	if (m_opt ==True)
 	{
-		display=getenv("DISPLAY");
+		char *display=getenv("DISPLAY");
 		if(msg_import(dsn_name,host_name,prog_number,display,&error)!=DS_OK)
 /*
  * we dont care
