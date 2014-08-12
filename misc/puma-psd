@@ -1,0 +1,36 @@
+#!/bin/sh
+
+uid=`id -u`
+
+start_simulation() {
+	ip=127.0.0.${1}:${2}
+	echo $ip
+	simulator --mcpd=${ip} --debug=5 --width=8 &
+	sleep 2
+}
+
+stop_simulation() {
+	ip=127.0.0.${1}:${2}
+	echo $ip
+	pid=`ps ax | grep simulator | grep ${ip} | grep -v grep | awk '{print $1}'`
+	echo $pid
+	kill -HUP $pid
+}
+
+case "${1}" in
+	start)
+		for i in 2;
+		do
+			start_simulation $i `expr ${i} - 1`
+		done
+		;;
+	stop)
+		for i in 2;
+		do
+			stop_simulation $i `expr ${i} - 1`
+		done
+		;;
+	*)
+		echo "Usage: $0 (start|stop)"
+		;;
+esac
