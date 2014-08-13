@@ -45,6 +45,13 @@ DevVoid MesyDAQ::IO::Timer::start() throw (::TACO::Exception)
 	{
 		if (!m_interface)
 			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
+		{
+			m_listFilename = incNumber(m_listFilename);
+			updateResource<std::string>("lastlistfile", m_listFilename);
+			m_interface->setListFileName(m_listFilename.c_str());
+			m_interface->start();
+		}
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -59,6 +66,8 @@ DevVoid MesyDAQ::IO::Timer::stop() throw (::TACO::Exception)
 	{
 		if (!m_interface)
 			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (isMaster() && deviceState() == ::TACO::State::COUNTING)
+			m_interface->stop();
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -88,6 +97,8 @@ DevVoid MesyDAQ::IO::Timer::resume() throw (::TACO::Exception)
 	{
 		if (!m_interface)
 			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
+			m_interface->resume();
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -102,6 +113,8 @@ DevVoid MesyDAQ::IO::Timer::clear() throw (::TACO::Exception)
 	{
 		if (!m_interface)
 			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
+			m_interface->resume();
 	}
 	catch (::TACO::Exception &e)
 	{
@@ -211,7 +224,7 @@ void MesyDAQ::IO::Timer::deviceInit(void) throw (::TACO::Exception)
 // Please implement this for the startup
 	try
 	{
-		::TACO::Server::deviceUpdate(std::string());
+		::TACO::Server::deviceUpdate("lastlistfile");
 		setDeviceState(::TACO::State::DEVICE_NORMAL);
 	}
 	catch (const ::TACO::Exception &e)
@@ -236,8 +249,10 @@ DevShort MesyDAQ::IO::Timer::deviceState(void) throw (::TACO::Exception)
 	{
 		case 1 :
 			return ::TACO::State::COUNTING;
-		default:
 		case 0 :
+		default:
+			if (::TACO::Server::deviceState() == ::TACO::State::DEVICE_NORMAL)
+				return ::TACO::State::PRESELECTION_REACHED;
 			return ::TACO::Server::deviceState();
 	}
 }
@@ -245,6 +260,21 @@ DevShort MesyDAQ::IO::Timer::deviceState(void) throw (::TACO::Exception)
 void MesyDAQ::IO::Timer::deviceUpdate(void) throw (::TACO::Exception)
 {
 	INFO_STREAM << "MesyDAQ::IO::Timer::deviceUpdate()" << ENDLOG;
+	if (resourceUpdateRequest("lastlistfile"))
+		try
+		{
+			m_listFilename = queryResource<std::string>("lastlistfile");
+			if (m_listFilename == "")
+				m_listFilename = "tacolistfile00000.mdat";
+			if (!m_interface)
+				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+			m_interface->setListFileName(m_listFilename.c_str());
+			INFO_STREAM << "LIST FILE " << m_listFilename << ENDLOG;
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'lastlistfile' ");
+		}
 	::TACO::Server::deviceUpdate();
 }
 
@@ -252,4 +282,52 @@ void MesyDAQ::IO::Timer::deviceQueryResource(void) throw (::TACO::Exception)
 {
 	INFO_STREAM << "MesyDAQ::IO::Timer::deviceQueryResource()" << ENDLOG;
 	::TACO::Server::deviceQueryResource();
+	if (!m_interface)
+	{
+		makeResourceQuerySuccessful();
+		return;
+	}
+
+	if (resourceQueryRequest("lastlistfile"))
+		try
+		{
+			if (m_interface->getListFileName().isEmpty())
+				m_interface->setListFileName(m_listFilename.c_str());
+			updateResource<std::string>("lastlistfile", m_interface->getListFileName().toStdString());
+		}
+		catch (TACO::Exception &e)
+		{
+			throw_exception(e, "Could not query resource 'lastlistfile' ");
+		}
+}
+
+std::string MesyDAQ::IO::Timer::incNumber(const std::string &val)
+{
+	std::string tmpString = val;
+	std::string baseName = basename(const_cast<char *>(tmpString.c_str()));
+	std::string::size_type pos = baseName.rfind(".");
+	std::string ext("");
+	if (pos == std::string::npos)
+		ext = ".mdat";
+	else
+	{
+		ext = baseName.substr(pos);
+		baseName.erase(pos);
+	}
+	DevLong currIndex(0);
+	if (baseName.length() > 5)
+	{
+		currIndex = strtol(baseName.substr(baseName.length() - 5).c_str(), NULL, 10);
+		if (currIndex)
+			baseName.erase(baseName.length() - 5);
+	}
+	std::string tmp = ::TACO::numberToString(++currIndex, 5);
+	pos = tmpString.find(baseName);
+	pos += baseName.length();
+	tmpString.erase(pos);
+	for (int i = tmp.length(); i < 5; ++i)
+		tmpString += '0';
+	tmpString += tmp;
+	tmpString += ext;
+	return tmpString;
 }

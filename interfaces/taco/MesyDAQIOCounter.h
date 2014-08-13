@@ -135,10 +135,14 @@ private:
 	static void tacoSetPreselection(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception);
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
 
+	std::string incNumber(const std::string &);
+
 private:
 	QMesyDAQDetectorInterface	*m_interface;
 
 	DevULong			m_channel;
+
+	std::string			m_listFilename;
 };
 
 #endif // MESY_D_A_Q_I_O_COUNTER_H
