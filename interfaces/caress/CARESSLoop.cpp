@@ -1720,9 +1720,10 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			int iNameLen=p1-pStart-1;
 			if (p1<=p2 && iNameLen==8 && strncasecmp(pStart,"RESOSTEP",8)==0)
 			{
+				bool bOk(false);
 				while (p1<pEnd && (*p1==' ' || *p1=='\t')) ++p1;
-				m_iMaxResoStep=(int)floor(QString::fromLatin1(p1,p2-p1).toDouble());
-				if (m_iMaxResoStep<2) m_iMaxResoStep=0;
+				m_iMaxResoStep=(int)floor(QString::fromLatin1(p1,p2-p1).toDouble(&bOk));
+				if (!bOk || m_iMaxResoStep<1) m_iMaxResoStep=0;
 				if (iDevice<ARRAY_SIZE(g_asDevices))
 					MSG_DEBUG << "got " << m_iMaxResoStep << " resolution steps for device " << g_asDevices[iDevice];
 				else
@@ -2092,11 +2093,8 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 					if (!m_sInstrument.compare("M1",Qt::CaseInsensitive))
 					{
 						// SPODI@FRM-II has 2.0 deg
-						if (dblRange!=2.0)
-						{
-							dblRange=2.0;
-							dblStep=dblRange/m_iMaxResoStep;
-						}
+						dblRange=2.0;
+						dblStep=dblRange/m_iMaxResoStep;
 					}
 					else
 					{
