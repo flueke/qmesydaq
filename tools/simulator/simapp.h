@@ -114,6 +114,9 @@ private:
 
 	// MSTD-16 module
 	bool               m_bMstd;
+
+	// MPSD8 type
+	quint16            m_wMpsdType;
 };
 
 #endif /* __SIMAPP_H__ */

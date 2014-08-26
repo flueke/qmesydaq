@@ -57,8 +57,9 @@ const char *g_szShortUsage = "[[--mdll=127.0.0.2:0] | [--mstd=127.0.0.2:0] | [--
 const char *g_szLongUsage =
                 "  --mdll=<bind-ip>:<id>\n"
                 "               bind a MDLL with ID to this IP address (id 0..255)\n"
-		"  --mcpd=<bind-ip>:<id>\n"
+		"  --mcpd=<bind-ip>:<id>[:type]\n"
 		"               bind a MCPD (max 64) with ID to this IP address (id 0..255)\n"
+                "               'type'  is optional and could be 'old', 'new', or 'sadc'\n"
 		"  --mstd=<bind-ip>:<id>\n"
 		"               bind a MCPD with an MSTD-16 module\n"
 		"  --width=<n>  each MCPD with <n> channels (1..64, default 64)\n"
@@ -274,6 +275,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_iTimer(0)
 	, m_bMdll(false)
 	, m_bMstd(false)
+	, m_wMpsdType(TYPE_MPSD8)
 {
 	bool bWidth(false);
 	int i;
@@ -351,18 +353,28 @@ SimApp::SimApp(int &argc, char **argv)
 				break;
 			}
 			szArg.remove(0, j);
-			j = szArg.indexOf(':');
-			if (j > 0)
+			QStringList arglist = szArg.split(":");
+			qDebug() << arglist;
+			if (arglist.size() > 1)
 			{
-				id = szArg.mid(j + 1).toInt();
-				szArg.remove(j, szArg.size() - j);
+				id = arglist[0].toInt();
 				if (id < 0 || id > 255)
 				{
 					qDebug() << "invalid id";
 					break;
 				}
+				if (arglist.size() > 2)
+				{
+					if (arglist[2] == "old")
+						m_wMpsdType = TYPE_MPSD8OLD;
+					else if (arglist[2] == "new")
+						m_wMpsdType = TYPE_MPSD8P;
+					else if (arglist[2] == "sadc")
+						m_wMpsdType = TYPE_MPSD8SADC;
+					qDebug() << arglist[2] << m_wMpsdType;
+				}
 			}
-			SimMCPD8 *pMcpd = new SimMCPD8(id, QHostAddress(szArg));
+			SimMCPD8 *pMcpd = new SimMCPD8(id, QHostAddress(arglist[0]));
 			if (pMcpd == NULL)
 			{
 				qDebug() << "cannot create MCPD with " << szArg << ":" << id;
@@ -533,8 +545,17 @@ SimApp::SimApp(int &argc, char **argv)
 	else if (m_bMstd)
 		szText.sprintf("created %d MCPD-8 each with %d MSTD-16 (%u channels)",
 			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, 2 * (m_wSpectrumWidth - m_wSpectrumStart));
-	else
+	else if (m_wMpsdType == TYPE_MPSD8SADC)
+		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 DNS type (width=%u height=%u)",
+			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, (m_wSpectrumWidth - m_wSpectrumStart), m_wSpectrumHeight);
+	else if (m_wMpsdType == TYPE_MPSD8)
 		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 (width=%u height=%u)",
+			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, (m_wSpectrumWidth - m_wSpectrumStart), m_wSpectrumHeight);
+	else if (m_wMpsdType == TYPE_MPSD8OLD)
+		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 SPODI type (width=%u height=%u)",
+			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, (m_wSpectrumWidth - m_wSpectrumStart), m_wSpectrumHeight);
+	else if (m_wMpsdType == TYPE_MPSD8P)
+		szText.sprintf("created %d MCPD-8 each with %d MPSD-8+ (width=%u height=%u)",
 			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, (m_wSpectrumWidth - m_wSpectrumStart), m_wSpectrumHeight);
 	if (m_bV4)
 		szText.append(QString().sprintf("round shape with %d different lengths", (int)((sizeof(v4Scale) / sizeof(v4Scale[0]) + 1) / 2)));
@@ -993,10 +1014,19 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 			break;
 		case READREGISTER:
 			pPacket->bufferLength = CMDHEADLEN + 1;
-			if (pPacket->data[1] == 102)
-				pPacket->data[0] = 1; // MCPD-8 capabilities (bit0=P, bit1=TP, bit2=TPA)
-			else
-				pPacket->data[0] = 0;
+			pPacket->data[1] = m_wMpsdType;
+			switch (m_wMpsdType)	// MCPD-8 capabilities (bit0=P, bit1=TP, bit2=TPA)
+			{
+				case TYPE_MPSD8SADC:
+					pPacket->data[0] = 1;
+					break;
+				case TYPE_MPSD8OLD:
+					pPacket->data[0] = 0;
+					break;
+				default:
+					pPacket->data[0] = 2;
+					break;
+			}
 			logmsg(pMCPD8, "READREGISTER reg=%d val=%d", pPacket->data[0], pPacket->data[1]);
 			break;
 //		case SETPOTI:
@@ -1008,16 +1038,16 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 				pPacket->data[0] = TYPE_MDLL;
 			else
 			{
-				pPacket->data[0] = (m_wSpectrumStart <= 0 && m_wSpectrumWidth >  0) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
-				pPacket->data[1] = (m_wSpectrumStart <= 8 && m_wSpectrumWidth >  8) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
-				pPacket->data[2] = (m_wSpectrumStart <= 16 && m_wSpectrumWidth > 16) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
-				pPacket->data[3] = (m_wSpectrumStart <= 24 && m_wSpectrumWidth > 24) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
-				pPacket->data[4] = (m_wSpectrumStart <= 32 && m_wSpectrumWidth > 32) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
-				pPacket->data[5] = (m_wSpectrumStart <= 40 && m_wSpectrumWidth > 40) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
-				pPacket->data[6] = (m_wSpectrumStart <= 48 && m_wSpectrumWidth > 48) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
-				pPacket->data[7] = (m_wSpectrumStart <= 56 && m_wSpectrumWidth > 56) ? (m_bMstd ? TYPE_MSTD16 : TYPE_MPSD8) : TYPE_NOMODULE;
+				pPacket->data[0] = (m_wSpectrumStart <= 0 && m_wSpectrumWidth >  0) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
+				pPacket->data[1] = (m_wSpectrumStart <= 8 && m_wSpectrumWidth >  8) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
+				pPacket->data[2] = (m_wSpectrumStart <= 16 && m_wSpectrumWidth > 16) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
+				pPacket->data[3] = (m_wSpectrumStart <= 24 && m_wSpectrumWidth > 24) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
+				pPacket->data[4] = (m_wSpectrumStart <= 32 && m_wSpectrumWidth > 32) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
+				pPacket->data[5] = (m_wSpectrumStart <= 40 && m_wSpectrumWidth > 40) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
+				pPacket->data[6] = (m_wSpectrumStart <= 48 && m_wSpectrumWidth > 48) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
+				pPacket->data[7] = (m_wSpectrumStart <= 56 && m_wSpectrumWidth > 56) ? (m_bMstd ? TYPE_MSTD16 : m_wMpsdType) : TYPE_NOMODULE;
 			}
-			logmsg(pMCPD8, "READID");
+			logmsg(pMCPD8, "READID : %u", pPacket->data[0]);
 			break;
 //		case DATAREQUEST:
 //		case QUIET:
