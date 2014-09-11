@@ -104,7 +104,7 @@ bool MCPD8::init(void)
             return true;
 
     int modus = TPA;
-    quint16 cap = capabilities();
+    quint16 cap = capabilities(false);
     if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
         return false;
 
@@ -316,22 +316,26 @@ bool MCPD8::setId(quint8 mcpdid)
 }
 
 /*!
-    \fn MCPD8::capabilities()
+    \fn MCPD8::capabilities(const bool cached)
 
     read out the capabilities register of the MCPD
 
+    \param cached take the read values
     \return capabilities register of the MCPD
  */
-quint16 MCPD8::capabilities()
+quint16 MCPD8::capabilities(const bool cached)
 {
-    readRegister(102);
-    if (!m_capabilities)
+    if (!cached)
     {
-        MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
-        QMutexLocker locker(m_pCommandMutex);
-        initCmdBuffer(GETCAPABILITIES);
-        finishCmdBuffer(0);
-        sendCommand(false);
+        readRegister(102);
+        if (!m_capabilities)
+        {
+            MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
+            QMutexLocker locker(m_pCommandMutex);
+            initCmdBuffer(GETCAPABILITIES);
+            finishCmdBuffer(0);
+            sendCommand(false);
+        }
     }
     if (!m_mdll.isEmpty())
         m_capabilities = TPA;
@@ -339,14 +343,14 @@ quint16 MCPD8::capabilities()
 }
 
 /*!
-    \fn MCPD8::capabilities(quint16 mod)
+    \fn MCPD8::capabilities(quint8 mod)
 
     read out the capabilities of the MPSD with number mod
 
     \param mod number of the MPSD
     \return capabilities register of the MPSD
  */
-quint16 MCPD8::capabilities(quint16 mod)
+quint16 MCPD8::capabilities(quint8 mod)
 {
     if (m_mpsd.find(mod) != m_mpsd.end())
         return m_mpsd[mod]->capabilities();
@@ -472,7 +476,7 @@ bool MCPD8::scanPeriph(void)
         return true;
 
 // check the MCPD capabilities
-    m_capabilities = capabilities();
+    m_capabilities = capabilities(false);
 // check the peripherial modules
     MSG_DEBUG << tr("GETCAPABILITIES %1: %2").arg(m_byId).arg(m_capabilities);
     if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)

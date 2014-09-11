@@ -859,7 +859,7 @@ void MainWidget::displayMpsdSlot(int iModule)
 	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod), 0, 'f', 2));
 // MCPD capabilities
 	QString tmp("");
-	quint16 cap = m_theApp->capabilities(mod);
+	quint16 cap = m_theApp->capabilities(mod, true);
 	if (cap & TPA)
 		tmp = "TPA";
 	else if (cap & TP)

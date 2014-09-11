@@ -945,18 +945,18 @@ void Mesydaq2::setTimingwidth(quint8 width)
 }
 
 /*!
-    \fn quint16 Mesydaq2::capabilities(quint16 id)
+    \fn quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
 
     reads the capabilities of the central module.
 
     \param id number of the MCPD
     \return the central module capabilities
  */
-quint16 Mesydaq2::capabilities(quint16 id)
+quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
 {
 	if (m_mcpd.empty())
 		return 0;
-	return m_mcpd[id]->capabilities();
+	return m_mcpd[id]->capabilities(cached);
 }
 /*!
     \fn Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)

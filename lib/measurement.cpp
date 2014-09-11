@@ -1007,9 +1007,6 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					chan = amp;
 					amp = val;
 				}
-//
-// old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
-//
 				if (pos > 959)
 				{
 					// MSG_ERROR << tr("POSITION > 959 : %1").arg(pos);
@@ -1018,6 +1015,9 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				if (mode() == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
 					quint16 moduleID = m_mesydaq->getModuleId(mod, id);
+//
+// old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
+//
 				        if (moduleID == TYPE_MPSD8OLD)
 					{
 						amp >>= 2;
@@ -1046,12 +1046,21 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 							MSG_ERROR << tmpChan << " -> " << chan << " " << m_tubeMapping;
 							continue;
 						}
+						if (m_mesydaq->capabilities(mod, true) != TPA && m_mesydaq->getMode(mod, id))
+						{
+// If the modules are not able to transfer the position and amplitude simultaneously
+// and the amplitude mode is enabled, the amplitude is in the field for the position
+// given !
+							quint16 val = pos;
+							pos = amp;
+							amp = val;
+						}
 						if (moduleID == TYPE_MSTD16)
 						{
 #if 0
 							MSG_INFO << tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id);
 #endif
-							quint16 lchan = chan << 1;			// each tube has two channels
+							quint16 lchan = chan << 1;	// each tube has two channels
 							lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
 #if defined(_MSC_VER)
 #	pragma message("TODO left/right")

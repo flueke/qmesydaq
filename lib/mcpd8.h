@@ -236,9 +236,9 @@ public:
 
 	bool setStream(quint16 strm);
 
-	quint16 capabilities(void);
+	quint16 capabilities(const bool);
 
-	quint16 capabilities(quint16 mod);
+	quint16 capabilities(quint8 mod);
 
 	/**
 	 * ????

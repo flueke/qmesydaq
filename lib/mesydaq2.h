@@ -83,7 +83,7 @@ public:
 
 	quint16 readPeriReg(quint16 id, quint16 mod, quint16 reg);
 
-	quint16 capabilities(quint16 id);
+	quint16 capabilities(quint16 id, const bool);
 
 // list mode oriented methods
 	/**
