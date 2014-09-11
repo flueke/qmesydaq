@@ -267,7 +267,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_bV4(false)
 	, m_bDAQ(false)
 	, m_wRunId(1)
-	, m_qwMasterOffset(0ULL)
+	, m_qwMasterOffset(GetClock())
 	, m_dwPackets(0)
 	, m_qwLoopCount(0ULL)
 	, m_iFastPoint(-1)
@@ -887,7 +887,7 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 	{
 		case START:
 		{
-			m_qwMasterOffset = GetClock();
+			// m_qwMasterOffset = GetClock();
 			pMCPD8->SetTarget(sender, senderPort);
 			StartStop(pMCPD8, true, "START via network");
 			break;
