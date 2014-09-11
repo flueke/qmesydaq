@@ -883,6 +883,10 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 
 	pPacket->bufferType |= 0x8000; // CMDBUFTYPE
 	pPacket->bufferLength = CMDHEADLEN;
+	quint64 qwHeaderTime = GetClock() - m_qwMasterOffset;
+	pPacket->time[0] = qwHeaderTime & 0xFFFF;
+	pPacket->time[1] = (qwHeaderTime >> 16) & 0xFFFF;
+	pPacket->time[2] = (qwHeaderTime >> 32) & 0xFFFF;
 	switch (pPacket->cmd)
 	{
 		case START:
