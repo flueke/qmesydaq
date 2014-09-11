@@ -233,10 +233,10 @@ public:
         void	setVersion(const float val) {m_version = val;}
 
 // capabilities related methods
-        //! return capabilities 
-	quint16	capabilities(void) const {return m_capabilities;}
+        //! return capabilities
+	virtual quint16 capabilities(void) const {return m_capabilities;}
 
-        //! sets the capabilities 
+        //! sets the capabilities
 	//! \param val
         void	setCapabilities(const quint16 val) {m_capabilities = val;}
 

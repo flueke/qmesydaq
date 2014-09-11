@@ -179,6 +179,7 @@ public:
 
     virtual QList<quint16> getHistogramList(void);
 
+    virtual quint16 capabilities(void) const {return TPA;}
 protected:
     // quint8	calcThreshval(quint8 thr);
 public:

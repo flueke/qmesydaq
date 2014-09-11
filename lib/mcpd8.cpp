@@ -124,6 +124,7 @@ bool MCPD8::init(void)
                     modus &= cap;
                     break;
                 case TYPE_MDLL :
+                    modus = TPA;
                     break;
                 case TYPE_NOMODULE :
                     break;
@@ -332,6 +333,8 @@ quint16 MCPD8::capabilities()
         finishCmdBuffer(0);
         sendCommand(false);
     }
+    if (!m_mdll.isEmpty())
+        m_capabilities = TPA;
     return m_capabilities;
 }
 
