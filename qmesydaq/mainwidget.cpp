@@ -114,6 +114,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #else
 	QObject::connect(m_dataFrame, SIGNAL(zoom(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
 #endif
+	QObject::connect(m_theApp, SIGNAL(newCmdPackageReceived()), this, SLOT(updateDisplay()));
 	m_dataFrame->show();
 
 	m_time = QTime(QTime::currentTime());

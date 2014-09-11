@@ -304,6 +304,9 @@ signals:
 	 */
 	void analyzeDataBuffer(QSharedDataPointer<SD_PACKET> pd);
 
+	//! a new header time received
+	void headerTimeChanged(quint64);
+
 protected:
 	void initCmdBuffer(quint16);
 

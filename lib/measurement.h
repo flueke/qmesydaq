@@ -448,6 +448,11 @@ public slots:
 
 	void calcRates();
 
+	void setHeadertime(quint64 ht)
+	{
+		m_headertime = ht;
+	}
+
 private slots:
 	void requestStop(void);
 

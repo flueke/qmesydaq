@@ -1638,6 +1638,8 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
 //	MSG_DEBUG << tr("MCPD8::analyzeBuffer(QSharedDataPointer<SD_MDP_PACKET> pPacket) 0x%1 : %2").arg(pMdp->bufferType, 0, 16).arg(pMdp->cmd);
 
+	emit headerTimeChanged(m_headertime);
+
         MPSD8	*ptrMPSD;
         MDLL    *ptrMDLL;
 

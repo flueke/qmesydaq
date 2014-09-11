@@ -326,12 +326,25 @@ signals:
 	 */
 	void analyzeDataBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
+	//! a new data package from one of the MCPD's received
+	void newCmdPackageReceived();
+
+	//! a new header time received
+	void headerTimeChanged(quint64);
+
 protected:
 	void timerEvent(QTimerEvent *event);
 
+private slots:
+	void setHeadertime(quint64 ht)
+	{
+		emit headerTimeChanged(ht);
+		emit newCmdPackageReceived();
+	}
+
 private:
 	void clear();
-	
+
 	QHash<int, MCPD8 *>	m_mcpd;
 
 private:

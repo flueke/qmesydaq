@@ -63,8 +63,6 @@ public:
 
 	void 	closeEvent(QCloseEvent *);
 
-	void 	updateDisplay(void);
-
 signals:
 	//! will be emitted in case of start of data acquisition
 	void	started(bool);
@@ -73,6 +71,8 @@ signals:
 	void	redraw(void);
 
 public slots:
+	void 	updateDisplay(void);
+
 	void	exportPDF();
 
 	void	exportSVG();

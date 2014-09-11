@@ -82,6 +82,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	setWriteProtection(settings.value("config/writeprotect", "false").toBool());
 
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+	connect(m_mesydaq, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 	for (quint8 i = 0; i < TIMERID; ++i)
 	{
@@ -925,8 +926,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	quint16 counterTriggers = 0;
 	quint64 tim;
 	quint16 mod = pPacket->dp.deviceId;
-	m_headertime = pPacket->dp.time[0] + (quint64(pPacket->dp.time[1]) << 16) + (quint64(pPacket->dp.time[2]) << 32);
-		
+
+	setHeadertime(pPacket->dp.time[0] + (quint64(pPacket->dp.time[1]) << 16) + (quint64(pPacket->dp.time[2]) << 32));
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 
 	m_packages++;
