@@ -59,7 +59,7 @@ isEmpty(TARGETPATH) {
 }
 
 isEmpty(QWT_ROOT) {
-	QWT_ROOT 	= /usr/local/qwt-5.2.1
+	QWT_ROOT 	= /usr
 }
 
 isEmpty(QWTINCLUDE) {
@@ -74,20 +74,14 @@ target.path	= $${TARGETPATH}
 
 contains(CONFIG, bit64) {
 	DEFINES	+= HAVE_BIT64
-	isEmpty(QWTLIBS) {
-		QWTLIBS	= $${QWT_ROOT}/lib64
-	}
-	isEmpty(TARGETLIBPATH) {
-		TARGETLIBPATH = $${TARGETPATH}/lib64
-	}
 }
-else {
-	isEmpty(QWTLIBS) {
-		QWTLIBS	= $${QWT_ROOT}/lib
-	}
-	isEmpty(TARGETLIBPATH) {
-		TARGETLIBPATH = $${TARGETPATH}/lib
-	}
+
+isEmpty(QWTLIBS) {
+	QWTLIBS	= $${QWT_ROOT}/lib
+}
+
+isEmpty(TARGETLIBPATH) {
+	TARGETLIBPATH = $${TARGETPATH}/lib
 }
 
 QWTLIBS		= -L$${QWTLIBS} -l$${QWTLIB}
@@ -105,12 +99,7 @@ contains(INTERFACE, TACO) {
 	}
 
 	isEmpty(TACOLIBS) {
-		contains(CONFIG, bit64) {
-			TACOLIBS	= -L$${TACO_ROOT}/lib64
-		}
-		else {
-			TACOLIBS	= -L$${TACO_ROOT}/lib
-		}
+		TACOLIBS	= -L$${TACO_ROOT}/lib
 	}
 	TACOLIBS	+= -lTACOExtensions -ltaco++ -llog4taco -llog4cpp
 	INCLUDEPATH 	+= $${TACO_ROOT}/include

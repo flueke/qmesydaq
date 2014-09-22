@@ -166,7 +166,7 @@ INCLUDEPATH	+= diskspace
 DEPENDPATH	+= diskspace
 
 isEmpty(BOOST_LIBS) {
-	BOOST_LIBS	=  -lboost_filesystem$$MT -lboost_system$$MT
+	BOOST_LIBS	=  -lboost_filesystem -lboost_system
 }
 
 LIBS		+= $${BOOST_LIBS}
