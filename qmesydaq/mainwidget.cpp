@@ -96,8 +96,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 				| Qt::WindowMaximizeButtonHint);
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.beginGroup("Plot");
-	m_dataFrame->move(settings.value("pos", QPoint(0, 0)).toPoint());
-	m_dataFrame->resize(settings.value("size", QSize(600, 600)).toSize());
+	m_dataFrame->restoreGeometry(settings.value("geometry").toByteArray());
 	settings.endGroup();
 
 	m_dataFrame->setObjectName(QString::fromUtf8("m_dataFrame"));
@@ -1876,10 +1875,7 @@ void MainWidget::closeEvent(QCloseEvent *)
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.beginGroup("Plot");
-	settings.setValue("pos", m_dataFrame->pos());
-	QSize s = m_dataFrame->size();
-	QSize fs = m_dataFrame->frameSize();
-	settings.setValue("size", QSize(s.width(), fs.height()));
+	settings.setValue("geometry", m_dataFrame->saveGeometry());
 	settings.endGroup();
 }
 
