@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -155,9 +155,9 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 	m_Spectrum[Diffractogram] = m_Hist[PositionHistogram]->xSumSpectrum();
 	m_Spectrum[TubeSpectrum] = m_Hist[PositionHistogram]->ySumSpectrum();
 	if (m_Spectrum[SingleTubeSpectrum])
-		m_Spectrum[SingleTubeSpectrum]->resize(16);
+		m_Spectrum[SingleTubeSpectrum]->resize(m_tubeMapping.size());
 	else
-		m_Spectrum[SingleTubeSpectrum] = new Spectrum(16);
+		m_Spectrum[SingleTubeSpectrum] = new Spectrum(m_tubeMapping.size());
 }
 
 /*!
@@ -1026,26 +1026,13 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
 // BUG is reported
-					if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0)
+					if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0 && m_mesydaq->capabilities(mod, true) == TPA)
 					{
 						MSG_WARNING << tr("GHOST EVENT: SlotID %1 Mod %2").arg(slotId).arg(id);
 						continue;
 					}
 					if (moduleID != TYPE_MDLL)
 					{
-						if (chan >= m_tubeMapping.size())
-						{
-							MSG_ERROR << m_tubeMapping;
-							MSG_ERROR << chan << " " << m_tubeMapping.size();
-							continue;
-						}
-						quint16 tmpChan(chan);
-						chan = m_tubeMapping.at(chan);
-						if (chan == 0xFFFF)
-						{
-							MSG_ERROR << tmpChan << " -> " << chan << " " << m_tubeMapping;
-							continue;
-						}
 						if (m_mesydaq->capabilities(mod, true) != TPA && m_mesydaq->getMode(mod, id))
 						{
 // If the modules are not able to transfer the position and amplitude simultaneously
@@ -1058,24 +1045,31 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						if (moduleID == TYPE_MSTD16)
 						{
 #if 0
-							MSG_INFO << tr("MSTD-16 event : chan : %1 : pos : %2 : id : %3").arg(chan).arg(pos).arg(id);
+							MSG_INFO << tr("MSTD-16 event : id: %3, chan : %1 : pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp);
 #endif
 							quint16 lchan = chan << 1;	// each tube has two channels
-							lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
-#if defined(_MSC_VER)
-#	pragma message("TODO left/right")
-#else
-#	warning TODO left/right
-#endif
-							amp &= 0x1FF;			// in MSB of amp is the information left/right
+							if (m_mesydaq->version(mod, id) <= 6.03)
+								lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+							else
+								lchan += pos;
+							amp &= 0x1FF;				// in MSB of amp is the information left/right
 #if 0
 							MSG_DEBUG << tr("Put this event into channel : %1").arg(chan);
 #endif
+							lchan = mapTube(lchan);
+							if (lchan == 0xFFFF)
+								continue;
 							if (m_Spectrum[SingleTubeSpectrum])
 								m_Spectrum[SingleTubeSpectrum]->incVal(lchan);
 #if 0
 							MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
 #endif
+						}
+						else
+						{
+							chan = mapTube(chan);
+							if (chan == 0xFFFF)
+								continue;
 						}
 					}
 					neutrons++;
@@ -1128,6 +1122,20 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	}
 	else
 		MSG_INFO << tr("buffer type : %1").arg(pPacket->dp.bufferType);
+}
+
+quint16 Measurement::mapTube(const quint16 tube)
+{
+	if (tube >= m_tubeMapping.size())
+	{
+		MSG_ERROR << m_tubeMapping;
+		MSG_ERROR << tube << " " << m_tubeMapping.size();
+		return 0xFFFF;
+	}
+	quint16 tmpTube = m_tubeMapping.at(tube);
+	if (tmpTube == 0xFFFF)
+		MSG_ERROR << tube << " -> " << tmpTube << " " << m_tubeMapping;
+	return tmpTube;
 }
 
 bool Measurement::acqListfile() const

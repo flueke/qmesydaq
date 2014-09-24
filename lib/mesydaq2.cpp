@@ -1,6 +1,6 @@
 /****************************************************************************
- *   Copyright (C) 2008-2013 by Gregor Montermann <g.montermann@mesytec.com>*
- *   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>      *
+ *   Copyright (C) 2008-2014 by Gregor Montermann <g.montermann@mesytec.com>*
+ *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>      *
  *                                                                          *
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
@@ -1967,6 +1967,13 @@ void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool his
 QString Mesydaq2::libVersion(void) const
 {
 	return QString(VERSION);
+}
+
+float Mesydaq2::version(quint16 mcpd, quint8 mpsd)
+{
+	if (m_mcpd.contains(mcpd))
+		return m_mcpd[mcpd]->version(mpsd);
+	return 0.0;
 }
 
 /*! \brief store header for list mode file

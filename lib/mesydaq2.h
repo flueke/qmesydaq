@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -164,6 +164,8 @@ public:
 	quint16 getAuxTimer(quint16 mod, quint16 timer);
 
 	quint64 getParameter(quint16 mod, quint16 param);
+
+	float version(quint16 mod, quint8 addr);
 
 	void setRunId(quint32 runid);
 

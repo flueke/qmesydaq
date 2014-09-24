@@ -431,10 +431,12 @@ void MainWidget::startStopSlot(bool checked)
 			QString sName;
 			if (interface)
 				sName = interface->getHistogramFileName();
-			if (!sName.isEmpty())
-				autoSaveHistogram->setChecked(true);
-			else
+			if (sName.isEmpty())
 				sName = m_meas->getHistfilename();
+#ifdef USE_CARESS
+			else
+				autoSaveHistogram->setChecked(true);
+#endif
 			if (!sName.isEmpty())
 			{
 				if (!sName.endsWith(".mtxt"))
