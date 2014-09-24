@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>171</height>
+    <height>170</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,7 +56,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="pulserGroupBox">
      <property name="title">
       <string>Pulser</string>
@@ -196,12 +196,25 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>&amp;Close</string>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -222,29 +235,13 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>clicked(QAbstractButton*)</signal>
-   <receiver>MPSDPulser</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>322</x>
-     <y>166</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>309</x>
-     <y>193</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>module</sender>
    <signal>valueChanged(int)</signal>
    <receiver>MPSDPulser</receiver>
    <slot>displayMPSDSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>543</x>
+     <x>487</x>
      <y>30</y>
     </hint>
     <hint type="destinationlabel">
@@ -260,7 +257,7 @@
    <slot>setMCPD(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>272</x>
+     <x>244</x>
      <y>30</y>
     </hint>
     <hint type="destinationlabel">
@@ -378,6 +375,22 @@
     <hint type="destinationlabel">
      <x>274</x>
      <y>85</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MPSDPulser</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>516</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>507</x>
+     <y>-10</y>
     </hint>
    </hints>
   </connection>
