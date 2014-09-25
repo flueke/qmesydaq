@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2008-2013 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *   Copyright (C) 2009-2010 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *

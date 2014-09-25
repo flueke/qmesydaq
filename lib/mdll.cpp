@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2009-2013 by Gregor Montermann, mesytec GmbH & Co. KG   *
+ *   Copyright (C) 2009-2014 by Gregor Montermann, mesytec GmbH & Co. KG   *
  *      g.montermann@mesytec.com                                           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,10 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-// #include <sys/socket.h>
-// #include <netinet/in.h>
-// #include <sys/types.h>
-// #include <arpa/inet.h>
 
 #include "mdll.h"
 #include "mdefines.h"
