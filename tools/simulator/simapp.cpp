@@ -357,7 +357,7 @@ SimApp::SimApp(int &argc, char **argv)
 			qDebug() << arglist;
 			if (arglist.size() > 1)
 			{
-				id = arglist[0].toInt();
+				id = arglist[1].toInt();
 				if (id < 0 || id > 255)
 				{
 					qDebug() << "invalid id";
