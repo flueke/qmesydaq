@@ -1050,6 +1050,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 							quint16 lchan = chan << 1;	// each tube has two channels
 							if (m_mesydaq->version(mod, id) <= 6.03)
 								lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+							else if (m_mesydaq->getMode(mod, id))
+								lchan += (amp >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
 							else
 								lchan += pos;
 							amp &= 0x1FF;				// in MSB of amp is the information left/right
