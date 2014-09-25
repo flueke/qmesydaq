@@ -460,6 +460,7 @@ quint16 Mesydaq2::width(void)
 		for (int i = 0; i < n; ++i)
 			m_tubeMapping.append(i);
 	}
+	w = m_tubeMapping.size() - m_tubeMapping.count(0xFFFF);
 	return w;
 }
 

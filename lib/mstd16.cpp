@@ -85,8 +85,8 @@ void MSTD16::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool pres
 QList<quint16> MSTD16::getHistogramList(void)
 {
 	QList<quint16> result;
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 16; ++i)
 		if (m_histogram[i])
-			result << (i * 2) << (i * 2 + 1);
+			result << i;
 	return result;
 }

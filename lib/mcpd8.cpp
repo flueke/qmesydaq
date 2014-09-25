@@ -2660,8 +2660,9 @@ QVector<quint16> MCPD8::getTubeMapping()
         QList<quint16> tmpList = it->getHistogramList();
         MSG_INFO << tmpList;
         quint16 busNr = it->busNumber();
-        if (result.size() < busNr * 8 && tmpList.size() > 0)
-            result.insert(result.size(), busNr * 8 - result.size(), 0xFFFF);
+        quint16 buswidth = busNr * (it->type() == TYPE_MSTD16 ? 16 : 8);
+        if (result.size() < buswidth && tmpList.size() > 0)
+            result.insert(result.size(), buswidth - result.size(), 0xFFFF);
         foreach(quint16 i, tmpList)
             result.append(n++);
     }

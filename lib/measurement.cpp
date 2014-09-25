@@ -155,9 +155,9 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 	m_Spectrum[Diffractogram] = m_Hist[PositionHistogram]->xSumSpectrum();
 	m_Spectrum[TubeSpectrum] = m_Hist[PositionHistogram]->ySumSpectrum();
 	if (m_Spectrum[SingleTubeSpectrum])
-		m_Spectrum[SingleTubeSpectrum]->resize(m_tubeMapping.size());
+		m_Spectrum[SingleTubeSpectrum]->resize(w);
 	else
-		m_Spectrum[SingleTubeSpectrum] = new Spectrum(m_tubeMapping.size());
+		m_Spectrum[SingleTubeSpectrum] = new Spectrum(w);
 }
 
 /*!
