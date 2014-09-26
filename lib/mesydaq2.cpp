@@ -749,10 +749,8 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 				}
 				setCounterCell(iId, j, cells[0], cells[1]);
 			}
-
 			setTimingSetup(iId, settings.value("master", "true").toBool(), settings.value("terminate", "true").toBool(),
 				settings.value("extsync", "false").toBool());
-		
 		}
 		else
 			MSG_FATAL << tr("MCPD id %1 with address %2 was not correctly initialized").arg(iId).arg(IP);

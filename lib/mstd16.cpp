@@ -37,10 +37,7 @@ MSTD16::MSTD16(quint8 id, QObject *parent)
 	m_active.resize(16);
 	m_histogram.resize(16);
 	for (int i = 0; i < m_histogram.size(); ++i)
-	{
-		m_active[i] = true;
-		m_histogram[i] = true;
-	}
+		m_active[i] = m_histogram[i] = false;
 }
 
 /*!

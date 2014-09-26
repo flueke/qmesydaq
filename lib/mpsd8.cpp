@@ -47,10 +47,7 @@ MPSD8::MPSD8(quint8 id, QObject *parent)
 	m_active.resize(8);
 	m_histogram.resize(8);
 	for (int i = 0; i < m_histogram.size(); ++i)
-	{
-		m_active[i] = true;
-		m_histogram[i] = true;
-	}
+		m_active[i] = m_histogram[i] = false;
 	m_mcpdId = reinterpret_cast<MCPD8 *>(parent)->getId();
 	for (quint8 c = 0; c < 9; c++)
 	{
