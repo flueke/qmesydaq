@@ -160,7 +160,7 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QGroupBox" name="buttonGroup4">
+       <widget class="QGroupBox" name="positionGroup">
         <property name="title">
          <string>Position</string>
         </property>

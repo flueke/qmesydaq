@@ -127,21 +127,30 @@ void MPSDPulser::updatePulser()
 		ampl = (quint8) pulsAmp2->text().toInt(&ok);
 
 	quint16 pos = MIDDLE;
-	int modType = m_theApp->getModuleId(mod, id);
+	int modType = m_theApp->getModuleId(id, mod);
 
-	if (pulsLeft->isChecked())
-		pos = (modType != TYPE_MSTD16) ? LEFT : RIGHT;
-	else if (pulsRight->isChecked())
-		pos = (modType != TYPE_MSTD16) ? RIGHT : LEFT;
-	else if (pulsMid->isChecked())
-		pos = MIDDLE;
+	if (modType == TYPE_MSTD16)
+	{
+		// RIGHT is for the 'even' channels (0, 2, 4, ...) and LEFT for the 'odd' channels (1, 3, 5, ... )
+		pos = chan % 2 ? LEFT : RIGHT;
+		chan /= 2;
+	}
+	else
+	{
+		if (pulsLeft->isChecked())
+			pos = LEFT;
+		else if (pulsRight->isChecked())
+			pos = RIGHT;
+		else if (pulsMid->isChecked())
+			pos = MIDDLE;
+	}
 
 	bool pulse = pulserButton->isChecked();
 	if (pulse)
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
 	else
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
-
+	MSG_INFO << tr("MPSDPulser::updatePulser : id = %1, mod = %2, chan = %3, pos = %4, amp = %5, on = %6").arg(id).arg(mod).arg(chan).arg(pos).arg(ampl).arg(pulse);
 	m_theApp->setPulser(id, mod, chan, pos, ampl, pulse);
 }
 
@@ -224,7 +233,8 @@ void MPSDPulser::display()
 
 	int modType = m_theApp->getModuleId(mod, id);
 	MSG_DEBUG << mod << " " << id << " modType " << modType;
-	pulsMid->setVisible(modType != TYPE_MSTD16);
+	positionGroup->setVisible(modType != TYPE_MSTD16);
+	pulsChan->setMaximum(modType == TYPE_MSTD16 ? 15 : 7);
 
 // pulser:  on/off
 	bool pulser = m_theApp->isPulserOn(mod, id);
