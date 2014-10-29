@@ -1,6 +1,6 @@
 ############################################################################
 #   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>
-#   Copyright (C) 2009-2013 by Jens Krüger <jens.krueger@frm2.tum.de>
+#   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
 #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
-#                                                                         
+#
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the
 #   Free Software Foundation, Inc.,
@@ -19,7 +19,7 @@
 ############################################################################
 
 isEmpty(VERSION) {
-	VERSION	= 0.0.4 
+	VERSION	= 0.0.5
 }
 isEmpty(SRCBASE) {
 	SRCBASE = .
@@ -36,12 +36,12 @@ INSTALLS	= target
 # CARESS	work as CARESS server
 # TCP		work as TCP server
 #
-# INTERFACE	= 
+# INTERFACE	=
 
 #
 # for 64 bit machines add bit64
 #
-CONFIG		+= debug 
+CONFIG		+= debug
 
 # QMAKE_CXXFLAGS	+= -fstack-check
 # QMAKE_LFLAGS	+= --stack=0x1000000
@@ -89,10 +89,11 @@ QWTINCLUDES 	= $${QWTINCLUDE}
 
 INCLUDEPATH 	+= $${QWTINCLUDES} $${SRCBASE}/lib
 DEPENDPATH  	+= $${QWTINCLUDES}
-LIBS        	+= $${QWTLIBS} -L$${SRCBASE}/lib -lmesydaq
+LIBS        	+= $${QWTLIBS}
+MESYDAQ_LIBS	= -L$${SRCBASE}/lib -lmesydaq
 
 contains(INTERFACE, TACO) {
-	DEFINES		+= HAVE_CONFIG_H 
+	DEFINES		+= HAVE_CONFIG_H
         DEFINES		+= USE_TACO=1
 	isEmpty(TACO_ROOT) {
 		TACO_ROOT	= /opt/taco

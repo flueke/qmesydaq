@@ -169,5 +169,7 @@ isEmpty(BOOST_LIBS) {
 	BOOST_LIBS	=  -lboost_filesystem -lboost_system
 }
 
+LIBS		+= $${MESYDAQ_LIBS}
 LIBS		+= $${BOOST_LIBS}
 
+message($${LIBS})

@@ -36,3 +36,5 @@ SOURCES 	+= main.cpp
 QT 		+= network
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

@@ -43,3 +43,5 @@ HEADERS		+= utils.h simmcpd8.h simapp.h
 INSTALLS	= target
 
 target.path	= $${TARGETPATH}/bin
+
+LIBS		+= $${MESYDAQ_LIBS}

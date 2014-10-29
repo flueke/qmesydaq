@@ -36,6 +36,8 @@ DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
 
 # Input
-SOURCES 	+= main.cpp 
+SOURCES 	+= main.cpp
 
-INSTALLS	= 
+INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

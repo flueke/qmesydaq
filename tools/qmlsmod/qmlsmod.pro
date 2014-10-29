@@ -41,3 +41,5 @@ SOURCES 	+= main.cpp
 INSTALLS        = target
 
 target.path     = $${TARGETPATH}/bin
+
+LIBS		+= $${MESYDAQ_LIBS}
