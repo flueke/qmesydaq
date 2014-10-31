@@ -34,3 +34,4 @@ SOURCES		= \
 		rate_plot.cpp \
 		main.cpp
 
+LIBS		= $${QWTLIBS}

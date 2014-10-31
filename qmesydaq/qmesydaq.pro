@@ -144,6 +144,10 @@ SOURCES 	+= main.cpp \
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
 
+! isEmpty(LIBS) {
+	error("Please do not set the LIBS variable : " $${LIBS})
+}
+
 contains(INTERFACE, TACO) {
 	DEPENDPATH	+= $${SRCBASE}/interfaces/taco
 	INCLUDEPATH	+= $${SRCBASE}/interfaces/taco
@@ -170,7 +174,7 @@ isEmpty(BOOST_LIBS) {
 }
 
 LIBS		+= $${MESYDAQ_LIBS}
+LIBS		+= $${QWTLIBS}
 LIBS		+= $${BOOST_LIBS}
-LIBS		= -L$${SRCBASE}/lib $${LIBS}
 
 message($${LIBS})

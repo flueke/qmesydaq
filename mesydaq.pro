@@ -53,3 +53,7 @@ package.depends = $${DISTFILES}
 
 QMAKE_EXTRA_TARGETS += package
 
+! isEmpty(LIBS) {
+	error("Please do not set the LIBS variable : " $${LIBS})
+}
+

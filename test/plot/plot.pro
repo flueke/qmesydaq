@@ -49,3 +49,5 @@ CONFIG		+= debug
 FORMS		+= plotwidget.ui
 
 INSTALLS	=
+
+LIBS		+= $${QWTLIBS}

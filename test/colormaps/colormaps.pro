@@ -42,3 +42,5 @@ CONFIG		+= debug
 FORMS		+= 
 
 INSTALLS	=
+
+LIBS		+= $${QWTLIBS}
