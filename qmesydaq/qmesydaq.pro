@@ -171,5 +171,6 @@ isEmpty(BOOST_LIBS) {
 
 LIBS		+= $${MESYDAQ_LIBS}
 LIBS		+= $${BOOST_LIBS}
+LIBS		= -L$${SRCBASE}/lib $${LIBS}
 
 message($${LIBS})
