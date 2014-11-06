@@ -25,205 +25,264 @@
 #include "logging.h"
 #include "mpsd8.h"
 
+class M2D : public QObject
+{
+	Q_OBJECT
+
+public:
+	M2D(quint8, QObject *parent = 0)
+		: QObject(parent)
+	{}
+
+	~M2D() {}
+
+	static M2D *create(int, int, QObject * = 0);
+
+	//! \return the ID of the MDLL
+	virtual quint8 	getModuleId(void) = 0;
+
+	//! \return the type of the module as number
+	virtual int type(void) = 0;
+
+	//! \return the type of the MDLL as string
+	virtual QString getType(void) = 0;
+
+	virtual bool	active(void) {return true;}
+
+	virtual void	setActive(bool) {}
+
+	// bool	active(quint16);
+
+	// void	setActive(quint16, bool);
+
+	virtual bool	histogram(void) {return true;}
+
+	virtual void	setHistogram(bool) {}
+
+	// bool	histogram(quint16);
+
+	// void	setHistogram(quint16, bool);
+
+	virtual QList<quint16> getHistogramList(void) = 0;
+
+	virtual QList<quint16> getActiveList(void) = 0;
+
+	//! returns the number of bins
+	virtual quint16 bins() {return 960;}
+
+	//! returns the number of the bus
+	quint8 busNumber(void) {return 0;}
+
+	virtual quint16 capabilities(void) const {return TPA;}
+
+protected:
+	//! MCPD-8 id
+	quint8 		m_mcpdId;
+};
+
 /**
  * \class MDLL
  * \short representation of MDLL module
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MDLL : public QObject
+class MDLL : public M2D
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    MDLL(quint8, QObject * = 0);
+	MDLL(quint8, QObject * = 0);
 
-    ~MDLL();
+	~MDLL();
 
-    static MDLL *create(int, int, QObject * = 0);
+	//! \return the ID of the MDLL
+	quint8 	getModuleId(void) {return TYPE_MDLL;}
 
-    // bool	active(void);
+	//! \return the type of the MDLL as string
+	QString getType(void) {return tr("MDLL");}
 
-    // bool	active(quint16);
+	//! \return the type of the MPSD as number
+	int type(void) {return TYPE_MDLL;}
 
-    // void	setActive(bool act);
+	virtual QList<quint16> getHistogramList(void);
 
-    // void	setActive(quint16, bool);
+	virtual QList<quint16> getActiveList(void);
 
-    // bool	histogram(void);
+	//! \return is the module online or not
+	bool online(void);
 
-    // bool	histogram(quint16);
+	void setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY, bool preset);
 
-    // void	setHistogram(bool hist);
+	quint8 getSpectrum(quint8 val);
 
-    // void	setHistogram(quint16, bool);
+	void setThresholds(quint8 thresh_x, quint8 thresh_y, quint8 thresh_a, bool preset = false);
 
-    // QList<quint16> getHistogramList(void);
+	/*!
+         * \param val
+         * \return the threshold
+	*/
+	quint8 getThreshold(quint8 val)
+	{
+		return m_thresh[val][1];
+	}
 
-    // QList<quint16> getActiveList(void);
+	void setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset);
 
-    //! \return the ID of the MDLL
-    quint8 	getModuleId(void) {return m_mdllId;}
+	/*!
+	 * \param val
+	 * \return the timing window
+	 */
+	quint16 getTimingWindow(quint8 val)
+	{
+		return m_timingWindow[val][1];
+	}
 
-    //! \return the type of the MDLL as string
-    QString getType(void) {return tr("MDLL");}
+	void setEnergyWindow(quint8 elo, quint8 ehi, bool preset);
 
-    //! \return the type of the MPSD as number
-    int type(void) {return TYPE_MDLL;}
+	/*!
+	 * \param val
+	 * \return the energy window
+	 */
+	quint8 getEnergyWindow(quint8 val)
+	{
+		return m_energyWindow[val][1];
+	}
 
-    //! \return is the module online or not
-    bool online(void);
+	void setDataset(quint8 set, bool preset = false);
 
-    void setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY, bool preset);
+	/*!
+	 * \return the data set type
+	 */
+	quint8 getDataset(void)
+	{
+		return m_dataset[1];
+	}
 
-    quint8 getSpectrum(quint8 val);
+	// Pulser related methods
+	void	setPulser(quint8 pos = 2, quint8 ampl = 3, quint8 on = 0, bool preset = false);
 
-    void setThresholds(quint8 thresh_x, quint8 thresh_y, quint8 thresh_a, bool preset = false);
+	//! return the pulser position
+	quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
 
-    /*!
-        \param val
-        \return the threshold
-     */
-    quint8 getThreshold(quint8 val) 
-    {
-        return m_thresh[val][1];
-    }
+	//! return the pulser amplitude
+	quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
 
-    void setTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi, bool preset);
+	//! \return is the pulser on
+	bool isPulserOn(bool preset = false) {return m_pulser[preset];};
 
-    /*!
-        \param val
-        \return the timing window
-     */
-    quint16 getTimingWindow(quint8 val) 
-    {
-        return m_timingWindow[val][1];
-    }
-
-    void setEnergyWindow(quint8 elo, quint8 ehi, bool preset);
-
-    /*!
-        \param val
-        \return the energy window
-     */
-    quint8 getEnergyWindow(quint8 val) 
-    {
-        return m_energyWindow[val][1];
-    }
-
-    void setDataset(quint8 set, bool preset = false);
-
-    /*!
-         \return the data set type
-     */
-    quint8 getDataset(void) 
-    {
-        return m_dataset[1];
-    }
-
-    // Pulser related methods
-    void	setPulser(quint8 pos = 2, quint8 ampl = 3, quint8 on = 0, bool preset = false);
-
-    //! return the pulser position
-    quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
-
-    //! return the pulser amplitude
-    quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
-
-    //! \return is the pulser on
-    bool isPulserOn(bool preset = false) {return m_pulser[preset];};
-
-    //! initialises the MDLL
-    void initMdll(void);
+	//! initialises the MDLL
+	void init(void);
 
 
 // Mode related methods
-    /**
-     * sets the mode E_x_y / E_tx_ty
-     *
-     * \param timing true = E_tx_ty, false = E_x_y
-     * \param preset ????
-     * \see getMode
-     */
-    void	setMode(bool timing, bool preset = false) {m_timingMode[preset] = timing;}
+	/**
+	 * sets the mode E_x_y / E_tx_ty
+	 *
+	 * \param timing true = E_tx_ty, false = E_x_y
+	 * \param preset ????
+	 * \see getMode
+	 */
+	void	setMode(bool timing, bool preset = false) {m_timingMode[preset] = timing;}
 
-    /**
-     * gets the mode E_x_y / E_tx_ty
-     *
-     * \param preset ????
-     * \return timing true = E_tx_ty, false = E_x_y
-     * \see setMode
-     */
-    bool	getMode(bool preset = false) {return m_timingMode[preset];}
+	/**
+	 * gets the mode E_x_y / E_tx_ty
+	 *
+	 * \param preset ????
+	 * \return timing true = E_tx_ty, false = E_x_y
+	 * \see setMode
+	 */
+	bool	getMode(bool preset = false) {return m_timingMode[preset];}
 
 #if 0
 // Internal registers related methods
-    virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
+	virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
 
-    /**
-     * get the value of the internal registers
-     *
-     * \param reg register number
-     * \param preset ????
-     * \return value of the register
-     * \see setInternalreg
-     */
-    quint16	getInternalreg(quint8 reg, bool preset = false) {return m_internalReg[reg][preset];}
+	/**
+	 * get the value of the internal registers
+	 *
+	 * \param reg register number
+	 * \param preset ????
+	 * \return value of the register
+	 * \see setInternalreg
+	 */
+	quint16	getInternalreg(quint8 reg, bool preset = false) {return m_internalReg[reg][preset];}
 #endif
 
-    //! returns the number of bins
-    virtual quint16 bins() {return 960;}
-
-    //! returns the number of the bus
-    quint8 busNumber(void) {return 0;}
-
-    virtual QList<quint16> getHistogramList(void);
-
-    virtual quint16 capabilities(void) const {return TPA;}
 protected:
-    // quint8	calcThreshval(quint8 thr);
+	// quint8	calcThreshval(quint8 thr);
+
 public:
-    // quint8	calcThreshpoti(quint8 tval);
+	// quint8	calcThreshpoti(quint8 tval);
 
 private:
-    //! MCPD-8 id
-    quint8 		m_mcpdId;
+	//! timing mode
+	bool	m_timingMode[2];
 
-protected:
-    //! MDLL id
-    quint8 		m_mdllId;
+	// bool	m_active;
 
-    //! timing mode
-    bool		m_timingMode[2];
+	// bool	m_histogram;
 
-    // bool		m_active;
+	//! MDLL specific parameters:
 
-    // bool		m_histogram;
+	//! thresholds for x, y and anode CFD
+	quint8	m_thresh[3][2];
 
-    //! MDLL specific parameters:
+	//! delay offsets for x and y
+	quint8	m_shift[2][2];
+	//! delay range (scaling) for x and y
+	quint8	m_scale[2][2];
 
-    //! thresholds for x, y and anode CFD
-    quint8 		m_thresh[3][2];
+	//! software windows for timing sum [xlo, xhi], [ylo, yhi]
+	quint16	m_timingWindow[4][2];
+	//! software window for energy
+	quint8	m_energyWindow[2][2];
 
-    //! delay offsets for x and y
-    quint8      m_shift[2][2];
-    //! delay range (scaling) for x and y
-    quint8      m_scale[2][2];
+	//! data set to be transmitted: 0={X, Y, E}, 1={tsumX, tsumY, E}
+	quint8	m_dataset[2];
 
-    //! software windows for timing sum [xlo, xhi], [ylo, yhi]
-    quint16     m_timingWindow[4][2];
-    //! software window for energy
-    quint8      m_energyWindow[2][2];
+	//! Pulser amplitude
+	quint8	m_pulsAmp[2];
+	//! Pulser position
+	quint8	m_pulsPos[2];
+	//! Pulser
+	quint8	m_pulser[2];
+};
 
-    //! data set to be transmitted: 0={X, Y, E}, 1={tsumX, tsumY, E}
-    quint8      m_dataset[2];
+/**
+ * \class MWPCHR
+ * \short representation of MWPCHR module
+ *
+ * \author Jens Krüger <jens.krueger@frm2.tum.de>
+ */
+class MWPCHR : public M2D
+{
+	Q_OBJECT
 
-    //! Pulser amplitude
-    quint8		m_pulsAmp[2];
-    //! Pulser position
-    quint8 		m_pulsPos[2];
-    //! Pulser
-    quint8 		m_pulser[2];
+public:
+	MWPCHR(quint8, QObject * = 0);
+
+	~MWPCHR();
+
+	//! \return the ID of the MDLL
+	quint8 	getModuleId(void) {return TYPE_MWPCHR;}
+
+	//! \return the type of the MDLL as string
+	QString getType(void) {return tr("MWPCHR");}
+
+	//! \return the type of the MPSD as number
+	int type(void) {return TYPE_MWPCHR;}
+
+	//! \return is the module online or not
+	bool online(void);
+
+	bool isPulserOn(bool = false) {return false;}
+
+	//! initialises the MWPCHR
+	void init(void);
+
+	virtual QList<quint16> getHistogramList(void);
+
+	virtual QList<quint16> getActiveList(void);
 };
 
 #endif

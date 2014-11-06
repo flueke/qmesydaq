@@ -63,6 +63,7 @@ void MdllSetup::setMCPD(int /* id */)
 	checkChannel1Use->setChecked(m_theApp->active(id, mid, 0));
 	checkChannel1Histogram->setChecked(m_theApp->histogram(id, mid, 0));
 #endif
+	displaySlot(devid->value());
 }
 
 /*!
@@ -140,6 +141,13 @@ void MdllSetup::setEnergySlot()
  */
 void MdllSetup::displaySlot(int id)
 {
+	bool mdll = m_theApp->getModuleId(id, 0) == TYPE_MDLL;
+	tabWidget->setTabEnabled(tabWidget->indexOf(dataTab), mdll);
+	tabWidget->setTabEnabled(tabWidget->indexOf(hardwareTab), mdll);
+//	dataTab->setVisible(mdll);
+//	hardwareTab->setVisible(mdll);
+	if (!mdll)
+		return;
 // dataset:
 	if(m_theApp->getMdllDataset(id))
 	{

@@ -727,7 +727,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 #endif
 		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized())
 		{
-//			setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
+			setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
 			for (int j = 0; j < 4; ++j)
 			{
 				setAuxTimer(iId, j, settings.value(QString("auxtimer%1").arg(j), "0").toUInt());

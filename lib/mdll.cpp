@@ -28,9 +28,8 @@
     constructor
     \param parent
  */
-MDLL::MDLL(quint8 , QObject *parent)
-    : QObject(parent)
-    , m_mdllId(TYPE_MDLL)
+MDLL::MDLL(quint8 bus, QObject *parent)
+    : M2D(bus, parent)
 {
     for(quint8 pre = 0; pre < 2; ++pre)
     {
@@ -64,23 +63,6 @@ MDLL::~MDLL()
 }
 
 /*!
-    \fn MDLL *MDLL::create(int bus, int typ, QObject *parent)
-
-    factory to create a module
-
-    \param bus
-    \param typ
-    \param parent
-
-    \return pointer to new created module
- */
-MDLL *MDLL::create(int bus, int typ, QObject *parent)
-{
-    Q_UNUSED(typ);
-    return new MDLL(bus, parent);
-}
-
-/*!
     \fn MDLL::setThresholds(quint8 threshX, quint8 threshY, quint8 threshA, bool preset)
 
     \ sets the threshold values for X, Y, A CFDs
@@ -110,7 +92,7 @@ void MDLL::setThresholds(quint8 threshX, quint8 threshY, quint8 threshA, bool pr
 /*!
     \fn MDLL::setSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY, bool preset)
 
-    \ sets the shift (delay offstes) and scale (delay range) values for X, Y
+    \ sets the shift (delay offsets) and scale (delay range) values for X, Y
     \param shiftX offset for X
     \param shiftY offset for Y
     \param scaleX delay range for X
@@ -273,6 +255,23 @@ quint8 MDLL::getSpectrum(quint8 val)
     \return the list of channels used in histograms
  */
 QList<quint16> MDLL::getHistogramList(void)
+{
+    QList<quint16> result;
+
+// MDLL has fixed channels
+    for(quint16 i = 0; i < 960; i++)
+        result << i;
+    return result;
+}
+
+/*!
+    \fn QList<quint16> MCPD8::getHistogramList(void)
+
+    return the list of channels used in histograms
+
+    \return the list of channels used in histograms
+ */
+QList<quint16> MDLL::getActiveList(void)
 {
     QList<quint16> result;
 

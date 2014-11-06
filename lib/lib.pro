@@ -82,7 +82,9 @@ SOURCES 	+= stdafx.cpp \
 		   mpsd8sadc.cpp \
 		   mstd16.cpp \
 		   mdll.cpp \
+		   mwpchr.cpp \
 		   mpsdfactory.cpp \
+		   m2dfactory.cpp \
 		   networkdevice.cpp \
 		   mappeddetector.cpp \
 		   editormemory.cpp

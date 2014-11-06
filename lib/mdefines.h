@@ -201,6 +201,7 @@
 #define	TYPE_MSTD16		104
 #define	TYPE_MPSD8P		105	
 #define TYPE_MDLL		35
+#define TYPE_MWPCHR		110	// Multi wire proportional chamber high resolution (DEL-FRMII)
 
 // TX modes
 #define	P			1

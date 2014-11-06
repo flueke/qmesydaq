@@ -24,7 +24,7 @@
 #include "mcpd.h"
 
 class MPSD8;
-class MDLL;
+class M2D;
 class QTimer;
 
 /**
@@ -399,7 +399,7 @@ private:
 	QMap<int, MPSD8 *> m_mpsd;
 	
 	//! possibly connected MDLL
-	QMap<int, MDLL *> m_mdll;
+	QMap<int, M2D *> m_mdll;
 
 	//! the header time stamp
 	quint64		m_headertime;

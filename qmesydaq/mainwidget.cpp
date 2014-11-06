@@ -1703,16 +1703,13 @@ void MainWidget::setupModule(quint8 id)
 */
 void MainWidget::setupModule(void)
 {
+	QDialog *d;
 	if (m_meas->setupType() != Measurement::Mdll)
-	{
-		ModuleSetup d(m_theApp, this);
-		d.exec();
-	}
+		d = new ModuleSetup(m_theApp, this);
 	else
-	{
-		MdllSetup d(m_theApp, this);
-		d.exec();
-	}
+		d = new MdllSetup(m_theApp, this);
+	d->exec();
+	delete d;
 }
 
 /*!

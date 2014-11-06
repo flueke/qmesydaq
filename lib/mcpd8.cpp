@@ -413,13 +413,13 @@ bool MCPD8::readId(void)
 #   warning TODO if the configuration has changed
 #endif
     //! \todo if the configuration has changed
-    if (m_awReadId[0] == TYPE_MDLL)
+    if (m_awReadId[0] == TYPE_MDLL || m_awReadId[0] == TYPE_MWPCHR)
     {
-        QMap<int, MDLL *>::iterator it = m_mdll.find(0);
+        QMap<int, M2D *>::iterator it = m_mdll.find(0);
         if (it == m_mdll.end())
         {
             MSG_DEBUG << tr("new MDLL detected");
-            m_mdll[0] = MDLL::create(0, m_awReadId[0], this);
+            m_mdll[0] = M2D::create(0, m_awReadId[0], this);
         }
         else if ((*it)->type() != m_awReadId[0])
         {
@@ -427,7 +427,7 @@ bool MCPD8::readId(void)
             // delete m_mpsd[c];
             m_mdll.remove(0);
             if (m_awReadId[0] != 0)
-                m_mdll[0] = MDLL::create(0, m_awReadId[0], this);
+                m_mdll[0] = M2D::create(0, m_awReadId[0], this);
         }
     }
     else
@@ -638,15 +638,19 @@ bool MCPD8::setThreshold(quint16 addr, quint8 thresh)
  */
 bool MCPD8::setMdllThresholds(quint8 threshX, quint8 threshY, quint8 threshA)
 {
-    MSG_DEBUG << tr("SETMDLLTHRESHS %1").arg(m_byId);
-    QMutexLocker locker(m_pCommandMutex);
-    m_mdll[0]->setThresholds(threshX, threshY, threshA, 1);
-    initCmdBuffer(SETMDLLTHRESHS);
-    m_cmdBuf.data[0] = threshX;
-    m_cmdBuf.data[1] = threshY;
-    m_cmdBuf.data[2] = threshA;
-    finishCmdBuffer(3);
-    return sendCommand(true);
+	if (m_mdll[0]->type() == TYPE_MDLL)
+	{
+		MSG_DEBUG << tr("SETMDLLTHRESHS %1").arg(m_byId);
+		QMutexLocker locker(m_pCommandMutex);
+		reinterpret_cast<MDLL *>(m_mdll[0])->setThresholds(threshX, threshY, threshA, 1);
+		initCmdBuffer(SETMDLLTHRESHS);
+		m_cmdBuf.data[0] = threshX;
+		m_cmdBuf.data[1] = threshY;
+		m_cmdBuf.data[2] = threshA;
+		finishCmdBuffer(3);
+		return sendCommand(true);
+	}
+	return true;
 }
 
 /*!
@@ -660,16 +664,20 @@ bool MCPD8::setMdllThresholds(quint8 threshX, quint8 threshY, quint8 threshA)
  */
 bool MCPD8::setMdllSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 {
-    MSG_DEBUG << tr("SETMDLLSPECTRUM %1").arg(m_byId);
-    QMutexLocker locker(m_pCommandMutex);
-    m_mdll[0]->setSpectrum(shiftX, shiftY, scaleX, scaleY, 1);
-    initCmdBuffer(SETMDLLSPECTRUM);
-    m_cmdBuf.data[0] = shiftX;
-    m_cmdBuf.data[1] = shiftY;
-    m_cmdBuf.data[2] = scaleX;
-    m_cmdBuf.data[3] = scaleY;
-    finishCmdBuffer(4);
-    return sendCommand(true);
+	if (m_mdll[0]->type() == TYPE_MDLL)
+	{
+		MSG_DEBUG << tr("SETMDLLSPECTRUM %1").arg(m_byId);
+		QMutexLocker locker(m_pCommandMutex);
+		reinterpret_cast<MDLL *>(m_mdll[0])->setSpectrum(shiftX, shiftY, scaleX, scaleY, 1);
+		initCmdBuffer(SETMDLLSPECTRUM);
+		m_cmdBuf.data[0] = shiftX;
+		m_cmdBuf.data[1] = shiftY;
+		m_cmdBuf.data[2] = scaleX;
+		m_cmdBuf.data[3] = scaleY;
+		finishCmdBuffer(4);
+		return sendCommand(true);
+	}
+	return true;
 }
 
 /*!
@@ -680,13 +688,17 @@ bool MCPD8::setMdllSpectrum(quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 
  */
 bool MCPD8::setMdllDataset(quint8 set)
 {
-    MSG_DEBUG << tr("SETMDLLDATASET %1").arg(m_byId);
-    QMutexLocker locker(m_pCommandMutex);
-    m_mdll[0]->setDataset(set, true);
-    initCmdBuffer(SETMDLLDATASET);
-    m_cmdBuf.data[0] = set;
-    finishCmdBuffer(1);
-    return sendCommand(true);
+	if (m_mdll[0]->type() == TYPE_MDLL)
+	{
+		MSG_DEBUG << tr("SETMDLLDATASET %1").arg(m_byId);
+		QMutexLocker locker(m_pCommandMutex);
+		reinterpret_cast<MDLL *>(m_mdll[0])->setDataset(set, true);
+		initCmdBuffer(SETMDLLDATASET);
+		m_cmdBuf.data[0] = set;
+		finishCmdBuffer(1);
+		return sendCommand(true);
+	}
+	return true;
 }
 
 /*!
@@ -700,18 +712,22 @@ bool MCPD8::setMdllDataset(quint8 set)
  */
 bool MCPD8::setMdllTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
 {
-    MSG_DEBUG << tr("SETMDLLACQSET %1").arg(m_byId);
-    QMutexLocker locker(m_pCommandMutex);
-    m_mdll[0]->setTimingWindow(xlo, xhi, ylo, yhi, 1);
-    initCmdBuffer(SETMDLLACQSET);
-    m_cmdBuf.data[0] = 0;
-    m_cmdBuf.data[1] = 0;
-    m_cmdBuf.data[2] = xlo;
-    m_cmdBuf.data[3] = xhi;
-    m_cmdBuf.data[4] = ylo;
-    m_cmdBuf.data[5] = yhi;
-    finishCmdBuffer(6);
-    return sendCommand(true);
+	if (m_mdll[0]->type() == TYPE_MDLL)
+	{
+		MSG_DEBUG << tr("SETMDLLACQSET %1").arg(m_byId);
+		QMutexLocker locker(m_pCommandMutex);
+		reinterpret_cast<MDLL *>(m_mdll[0])->setTimingWindow(xlo, xhi, ylo, yhi, 1);
+		initCmdBuffer(SETMDLLACQSET);
+		m_cmdBuf.data[0] = 0;
+		m_cmdBuf.data[1] = 0;
+		m_cmdBuf.data[2] = xlo;
+		m_cmdBuf.data[3] = xhi;
+		m_cmdBuf.data[4] = ylo;
+		m_cmdBuf.data[5] = yhi;
+		finishCmdBuffer(6);
+		return sendCommand(true);
+	}
+	return true;
 }
 
 /*!
@@ -725,16 +741,20 @@ bool MCPD8::setMdllTimingWindow(quint16 xlo, quint16 xhi, quint16 ylo, quint16 y
  */
 bool MCPD8::setMdllEnergyWindow(quint8 elo, quint8 ehi)
 {
-    MSG_DEBUG << tr("SETMDLLEWINDOW %1").arg(m_byId);
-    QMutexLocker locker(m_pCommandMutex);
-    m_mdll[0]->setEnergyWindow(elo, ehi, 1);
-    initCmdBuffer(SETMDLLEWINDOW);
-    m_cmdBuf.data[0] = elo;
-    m_cmdBuf.data[1] = ehi;
-    m_cmdBuf.data[2] = 0;
-    m_cmdBuf.data[3] = 0;
-    finishCmdBuffer(4);
-    return sendCommand(true);
+	if (m_mdll[0]->type() == TYPE_MDLL)
+	{
+		MSG_DEBUG << tr("SETMDLLEWINDOW %1").arg(m_byId);
+		QMutexLocker locker(m_pCommandMutex);
+		reinterpret_cast<MDLL *>(m_mdll[0])->setEnergyWindow(elo, ehi, 1);
+		initCmdBuffer(SETMDLLEWINDOW);
+		m_cmdBuf.data[0] = elo;
+		m_cmdBuf.data[1] = ehi;
+		m_cmdBuf.data[2] = 0;
+		m_cmdBuf.data[3] = 0;
+		finishCmdBuffer(4);
+		return sendCommand(true);
+	}
+	return true;
 }
 
 /*!
@@ -761,9 +781,9 @@ quint8 MCPD8::getThreshold(quint16 addr)
  */
 quint8 MCPD8::getMdllThreshold(quint8 val)
 {
-    if (m_mdll.find(0) != m_mdll.end())
-        return m_mdll[0]->getThreshold(val);
-    return 0;
+	if (m_mdll.find(0) != m_mdll.end() && m_mdll[0]->type() == TYPE_MDLL)
+		return reinterpret_cast<MDLL *>(m_mdll[0])->getThreshold(val);
+	return 0;
 }
 
 /*!
@@ -774,9 +794,9 @@ quint8 MCPD8::getMdllThreshold(quint8 val)
  */
 quint8 MCPD8::getMdllSpectrum(quint8 val)
 {
-    if (m_mdll.find(0) != m_mdll.end())
-        return m_mdll[0]->getSpectrum(val);
-    return 0;
+	if (m_mdll.find(0) != m_mdll.end() && m_mdll[0]->type() == TYPE_MDLL)
+		return reinterpret_cast<MDLL *>(m_mdll[0])->getSpectrum(val);
+	return 0;
 }
 
 /*!
@@ -787,9 +807,9 @@ quint8 MCPD8::getMdllSpectrum(quint8 val)
  */
 quint16 MCPD8::getMdllTimingWindow(quint8 val)
 {
-    if (m_mdll.find(0) != m_mdll.end())
-            return m_mdll[0]->getTimingWindow(val);
-    return 0;
+	if (m_mdll.find(0) != m_mdll.end() && m_mdll[0]->type() == TYPE_MDLL)
+		return reinterpret_cast<MDLL *>(m_mdll[0])->getTimingWindow(val);
+	return 0;
 }
 
 /*!
@@ -800,9 +820,9 @@ quint16 MCPD8::getMdllTimingWindow(quint8 val)
  */
 quint8 MCPD8::getMdllEnergyWindow(quint8 val)
 {
-    if (m_mdll.find(0) != m_mdll.end())
-            return m_mdll[0]->getEnergyWindow(val);
-    return 0;
+	if (m_mdll.find(0) != m_mdll.end() && m_mdll[0]->type() == TYPE_MDLL)
+		return reinterpret_cast<MDLL *>(m_mdll[0])->getEnergyWindow(val);
+	return 0;
 }
 
 /*!
@@ -812,9 +832,9 @@ quint8 MCPD8::getMdllEnergyWindow(quint8 val)
  */
 quint8 MCPD8::getMdllDataset(void)
 {
-    if (m_mdll.find(0) != m_mdll.end())
-            return m_mdll[0]->getDataset();
-    return 0;
+	if (m_mdll.find(0) != m_mdll.end() && m_mdll[0]->type() == TYPE_MDLL)
+		return reinterpret_cast<MDLL *>(m_mdll[0])->getDataset();
+	return 0;
 }
 
 /*!
@@ -825,21 +845,21 @@ quint8 MCPD8::getMdllDataset(void)
  */
 quint8 MCPD8::getMdllPulser(quint8 val)
 {
-    if (m_mdll.find(0) != m_mdll.end())
+    if (m_mdll.find(0) != m_mdll.end() && m_mdll[0]->type() == TYPE_MDLL)
     {
         switch(val)
         {
             case 0:
-                if(m_mdll[0]->isPulserOn())
+                if(reinterpret_cast<MDLL *>(m_mdll[0])->isPulserOn())
                     return 1;
                 else
                     return 0;
                 break;
             case 1:
-                return m_mdll[0]->getPulsAmp();
+                return reinterpret_cast<MDLL *>(m_mdll[0])->getPulsAmp();
                 break;
             case 2:
-                return m_mdll[0]->getPulsPos();
+                return reinterpret_cast<MDLL *>(m_mdll[0])->getPulsPos();
                 break;
         }
     }
@@ -927,13 +947,13 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
         if (amp > 3)
             amp = 3;
         m_cmdBuf.data[1] = amp;
-        m_mdll[0]->setPulser(pos, amp, onoff, 1);
+        reinterpret_cast<MDLL *>(m_mdll[0])->setPulser(pos, amp, onoff, 1);
         initCmdBuffer(SETMDLLPULSER);
         m_cmdBuf.data[0] = onoff;
         m_cmdBuf.data[2] = pos;
         finishCmdBuffer(3);
     }
-    else
+    else if (getModuleId(addr) != TYPE_MWPCHR)
     {
         if (m_mpsd.find(addr) == m_mpsd.end())
             return false;
@@ -1879,8 +1899,9 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 break;
 // MDLL commands:
             case SETMDLLTHRESHS:
+		if (m_mdll[0]->type() == TYPE_MDLL)
 		{
-			ptrMDLL = m_mdll[0];
+			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
 			MSG_DEBUG << tr("MDLL command : SETMDLLTHRESHS");
 			quint8 thresh[3];
 			for (quint8 c = 0; c < 3; c++)
@@ -1900,9 +1921,10 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		}
 		break;
             case SETMDLLSPECTRUM:
+		if (m_mdll[0]->type() == TYPE_MDLL)
                 {
 			MSG_DEBUG << tr("MDLL command : SETMDLLSPECTRUM");
-			ptrMDLL = m_mdll[0];
+			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
 			quint8 spect[4];
 			for(quint8 c = 0; c < 4; c++)
 			{
@@ -1918,12 +1940,13 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					spect[c] = pMdp->data[c];
 			}
 			ptrMDLL->setSpectrum(spect[0], spect[1], spect[2], spect[3], false);
-                }
+		}
                 break;
             case SETMDLLPULSER:
+		if (m_mdll[0]->type() == TYPE_MDLL)
                 {
 			MSG_DEBUG << tr("MDLL command : SETMDLLPULSER");
-			ptrMDLL = m_mdll[0];
+			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
 			quint8 puls[3];
 
 			quint8 val = ptrMDLL->isPulserOn(true);
@@ -1963,9 +1986,10 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 }
                 break;
             case SETMDLLDATASET:
+		if (m_mdll[0]->type() == TYPE_MDLL)
                 {
 			MSG_DEBUG << tr("MDLL command : SETMDLLDATASET");
-			ptrMDLL = m_mdll[0];
+			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
 			quint8 set;
 			if (pMdp->data[0] != ptrMDLL->getDataset())
 			{
@@ -1981,9 +2005,10 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 }
                 break;
             case SETMDLLACQSET:
+		if (m_mdll[0]->type() == TYPE_MDLL)
                 {
 			MSG_DEBUG << tr("MDLL command : SETMDLLACQSET");
-			ptrMDLL = m_mdll[0];
+			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
 			quint16 tsum[4];
 			for(quint8 c = 0; c < 4; c++)
 			{
@@ -2002,9 +2027,10 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 }
                 break;
             case SETMDLLEWINDOW:
+		if (m_mdll[0]->type() == TYPE_MDLL)
                 {
 			MSG_DEBUG << tr("MDLL command : SETMDLLEWINDOW");
-			ptrMDLL = m_mdll[0];
+			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
 			quint8 e[2];
 			for(quint8 c = 0; c < 2; c++)
 			{
@@ -2232,7 +2258,7 @@ quint16 MCPD8::bins()
 
 // mdll has fixed bins
     if(m_mdll.contains(0))
-            return 960;
+            return m_mdll[0]->type() == TYPE_MDLL ? 960 : 1024;
 
     for (quint8 i = 0; i < 8; ++i)
         if (m_mpsd.find(i) != m_mpsd.end() && getModuleId(i))
@@ -2568,25 +2594,23 @@ QList<quint16> MCPD8::getHistogramList(void)
 
 // MDLL has fixed channels
     if(m_mdll.contains(0))
+        result = m_mdll[0]->getHistogramList();
+    else
     {
-        for(quint16 i = 0; i < 960; i++)
-            result << i;
-        return result;
-    }
-
-    foreach(MPSD8 *it, m_mpsd)
-    {
-        Q_ASSERT_X(it != NULL, "MCPD8::getHistogramList", "one of the MPSD's is NULL");
-        QList<quint16> tmpHistList = it->getHistogramList();
-        foreach(quint16 hit, tmpHistList)
-	{
+        foreach(MPSD8 *it, m_mpsd)
+        {
+            Q_ASSERT_X(it != NULL, "MCPD8::getHistogramList", "one of the MPSD's is NULL");
+            QList<quint16> tmpHistList = it->getHistogramList();
+            foreach(quint16 hit, tmpHistList)
+	    {
 #if 0
-	    quint16 busNr = it->busNumber();
-            for (quint16 i = result.size(); i < (busNr  * (it->getModuleId() == TYPE_MSTD16 ? 16 :8)); ++i)
-                result.append(0);
+	        quint16 busNr = it->busNumber();
+                for (quint16 i = result.size(); i < (busNr  * (it->getModuleId() == TYPE_MSTD16 ? 16 :8)); ++i)
+                    result.append(0);
 #endif
-            result.append(hit + it->busNumber() * (it->getModuleId() == TYPE_MSTD16 ? 16 :8));
-	}
+                result.append(hit + it->busNumber() * (it->getModuleId() == TYPE_MSTD16 ? 16 : 8));
+	    }
+        }
     }
     qStableSort(result);
     return result;
@@ -2644,27 +2668,29 @@ quint16 MCPD8::getTxMode(quint8 mod)
 QVector<quint16> MCPD8::getTubeMapping()
 {
     QVector<quint16> result;
+    quint16 n(0);
 
 // MDLL has fixed channels
-    if(m_mdll.contains(0))
+    if (m_mdll.contains(0))
     {
-        for(quint16 i = 0; i < 960; i++)
-            result << i;
-        return result;
-    }
-
-    quint16 n(0);
-    foreach(MPSD8 *it, m_mpsd)
-    {
-        Q_ASSERT_X(it != NULL, "MCPD8::getTubeMapping", "one of the MPSD's is NULL");
-        QList<quint16> tmpList = it->getHistogramList();
-        MSG_INFO << tmpList;
-        quint16 busNr = it->busNumber();
-        quint16 buswidth = busNr * (it->type() == TYPE_MSTD16 ? 16 : 8);
-        if (result.size() < buswidth && tmpList.size() > 0)
-            result.insert(result.size(), buswidth - result.size(), 0xFFFF);
+	QList<quint16> tmpList = m_mdll[0]->getHistogramList();
         foreach(quint16 i, tmpList)
             result.append(n++);
+    }
+    else
+    {
+        foreach(MPSD8 *it, m_mpsd)
+        {
+            Q_ASSERT_X(it != NULL, "MCPD8::getTubeMapping", "one of the MPSD's is NULL");
+            QList<quint16> tmpList = it->getHistogramList();
+            MSG_INFO << tmpList;
+            quint16 busNr = it->busNumber();
+            quint16 buswidth = busNr * (it->type() == TYPE_MSTD16 ? 16 : 8);
+            if (result.size() < buswidth && tmpList.size() > 0)
+                result.insert(result.size(), buswidth - result.size(), 0xFFFF);
+            foreach(quint16 i, tmpList)
+                result.append(n++);
+        }
     }
     return result;
 }

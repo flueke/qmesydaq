@@ -1616,6 +1616,7 @@ void Measurement::updateSetupType(void)
 					if (m_mesydaq->active(mod, j))
 						setSetupType(Mstd);
 					break;
+				case TYPE_MWPCHR :
 				case TYPE_MDLL :
 					if (m_mesydaq->active(mod, j))
 						setSetupType(Mdll);
