@@ -1378,9 +1378,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>comgain</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>ModuleSetup</receiver>
+   <slot>displaySlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>239</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>147</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>displaySlot(int)</slot>
+  <slot>displayMPSDSlot(int)</slot>
+  <slot>displayMCPDSlot(int)</slot>
   <slot>setModeSlot()</slot>
   <slot>setPulserSlot()</slot>
   <slot>readRegisterSlot()</slot>
