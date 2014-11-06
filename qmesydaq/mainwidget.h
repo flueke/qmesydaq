@@ -225,6 +225,8 @@ private:
 
 	QString selectHistogramfile(QString sName);
 
+	void	updateMeasurement(void);
+
 private:
 	//! The MesyDaq object
 	Mesydaq2		*m_theApp;

@@ -1595,6 +1595,14 @@ bool Measurement::loadSetup(const QString &name)
 
 	storeLastFile();
 
+	updateSetupType();
+// Calibration file must be read after hardware configuration
+	readCalibration(sz, true);
+	return true;
+}
+
+void Measurement::updateSetupType(void)
+{
 	setSetupType(Mpsd);
 
 	QList<int> mcpdList = m_mesydaq->mcpdId();
@@ -1631,9 +1639,6 @@ bool Measurement::loadSetup(const QString &name)
 	}
 	m_width = m_mesydaq->width();
 	m_height = m_mesydaq->height();
-// Calibration file must be read after hardware configuration
-	readCalibration(sz, true);
-	return true;
 }
 
 /*!

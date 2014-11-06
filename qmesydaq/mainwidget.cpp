@@ -933,7 +933,11 @@ void MainWidget::loadConfiguration(const QString& sFilename)
 					tr("The list mode file storing file path<br><b>%1</b><br>does not exists!").arg(m_meas->getListfilepath()));
 	configfilename->setText(m_meas->getConfigfilename());
 	acquireListFile->setChecked(m_meas->acqListfile());
+	updateMeasurement();
+}
 
+void MainWidget::updateMeasurement(void)
+{
 	QSettings settings(m_meas->getConfigfilename(), QSettings::IniFormat);
 	settings.beginGroup("MESYDAQ");
 	acquireListFile->setChecked(settings.value("listmode", true).toBool());
@@ -1630,10 +1634,11 @@ void MainWidget::addMCPD(void)
 	ModuleWizard d("192.168.168.121", quint16(0), this); // m_theApp);
 	if (d.exec() == QDialog::Accepted)
 	{
-//		m_theApp->addMCPD(d.id(), d.ip());
 		QMetaObject::invokeMethod(m_theApp, "addMCPD", Qt::BlockingQueuedConnection, Q_ARG(quint8, d.id()), Q_ARG(QString, d.ip()));
-		init();
+		m_theApp->scanPeriph(d.id());
 		m_theApp->setTimingSetup(d.id(), d.master(), d.terminate(), d.externsync());
+		m_meas->updateSetupType();
+		updateMeasurement();
 	}
 }
 

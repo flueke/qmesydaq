@@ -434,11 +434,16 @@ public:
 	}
 
 	/**
-         * sets the setup type of the found configuration
+         * sets the setup type
 	 *
 	 * \param val setup type
 	 */
 	void setSetupType(const Setup val);
+
+	/**
+	 * sets the setup type corresponding to the found configuration
+	 */
+	void updateSetupType(void);
 
 	//! \return get access to the hardware layer
 	Mesydaq2 *getMesydaq() {return m_mesydaq;}
