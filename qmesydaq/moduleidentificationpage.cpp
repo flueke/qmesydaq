@@ -42,7 +42,7 @@ ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
 	, m_bOldValid(false)
 {
 	setupUi(this);
-	registerField("ipaddress*", moduleIPInput);
+	registerField("ipaddress*", moduleIPInput, "address", "signalTextChanged(QLineEdit *)");
 	registerField("moduleid*", moduleIDInput);
 	initialize();
 	m_pThreadMutex = new QMutex();
