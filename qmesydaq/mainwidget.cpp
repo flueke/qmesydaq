@@ -1677,15 +1677,18 @@ void MainWidget::setupCARESS(void)
  */
 void MainWidget::toolPulser(void)
 {
-	if (m_meas->setupType() != Measurement::Mdll)
+	if (m_meas->setupType() == Measurement::Mdll)
 	{
 		if (!m_pulserDialog)
-			m_pulserDialog = new MPSDPulser(m_theApp, this);
+			m_pulserDialog = new MdllPulser(m_theApp, this);
 	}
 	else
 	{
 		if (!m_pulserDialog)
-			m_pulserDialog = new MdllPulser(m_theApp, this);
+			m_pulserDialog = new MPSDPulser(m_theApp, this);
+		connect(m_pulserDialog, SIGNAL(pulserTest(bool)), startStopButton, SLOT(setChecked(bool)));
+		connect(m_pulserDialog, SIGNAL(pulserTest(bool)), this, SLOT(startStopSlot(bool)));
+		connect(m_pulserDialog, SIGNAL(clear()), clearAll, SLOT(animateClick()));
 	}
 	if (m_pulserDialog)
 		m_pulserDialog->show();
@@ -1937,7 +1940,7 @@ void MainWidget::customEvent(QEvent *e)
 			break;
 		case CommandEvent::C_STOP:
 			if (startStopButton->isChecked())
-			startStopButton->click();
+				startStopButton->click();
 			break;
 		case CommandEvent::C_CLEAR:
 			clearAll->animateClick();

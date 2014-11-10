@@ -43,3 +43,9 @@ tools/simulator/simulator
 interfaces/caress/corbadevice.h
 interfaces/caress/corbadeviceSK.cpp
 
+qled/example/example
+qled/example/moc_dialog.cpp
+qled/example/ui_dialog.h
+qled/plugin/moc_qledplugin.cpp
+qled/src/moc_qled.cpp
+

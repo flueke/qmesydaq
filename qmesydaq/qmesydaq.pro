@@ -23,11 +23,16 @@ SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
 
+isEmpty(QLEDLIBS) {
+	QLEDLIBS	= -L$${SRCBASE}/qled/src -lqled
+	QLEDINCLUDE	= $${SRCBASE}/qled/src
+}
+
 TEMPLATE 	= app
 TARGET 		= qmesydaq
 
 DEPENDPATH 	+= . $${SRCBASE}/test/plot $${SRCBASE}/lib
-INCLUDEPATH 	+= . $${SRCBASE}
+INCLUDEPATH 	+= . $${SRCBASE} $${QLEDINCLUDE}
 
 SUBDIRS		+= diskspace
 
@@ -173,6 +178,7 @@ isEmpty(BOOST_LIBS) {
 	BOOST_LIBS	=  -lboost_filesystem -lboost_system
 }
 
+LIBS		+= $${QLEDLIBS}
 LIBS		+= $${MESYDAQ_LIBS}
 LIBS		+= $${QWTLIBS}
 LIBS		+= $${BOOST_LIBS}

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,84 +17,37 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MPSD_PULSER_H
-#define MPSD_PULSER_H
 
-#include <QDialog>
-#include "ui_mpsdpulser.h"
 #include "pulsertest.h"
+#include "mdefines.h"
+#include "mesydaq2.h"
 
-class Mesydaq2;
-
-/*!
-    \class ModuleSetup
-
-    \short This class handles the setup dialog for setting up the MPSD modules
-
-    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+/**
+ * create a list of all actions to set the pulser on/off over the whole set of settings:
+ * - all found MCPD
+ *   - all found MPSD
+ *   	- all positions
+ *   	  - all amplitude values (30, 60)
  */
-class MPSDPulser : public QDialog, public Ui_MPSDPulser
+QList<puls> PulserTest::sequence(Mesydaq2 *mesy)
 {
-	Q_OBJECT
-public:
-	MPSDPulser(Mesydaq2 *, QWidget * = 0);
-
-public:
-	void setModule(int);
-
-public slots:
-	void setMCPD(int = -1);
-
-signals:
-	void pulserTest(bool);
-
-	void clear();
-
-protected:
-	void closeEvent(QCloseEvent *);
-
-private slots:
-	void displayMCPDSlot(int = -1);
-
-	void displayMPSDSlot(int = -1);
-
-	void amplitudeChanged(int);
-
-	void setPulser(int);
-
-	void setPulserPosition(bool);
-
-	void setChannel(int);
-
-	void pulserTestSlot(bool onoff);
-
-	void pulserTestFinished()
+	QList<puls> retVal;
+	QList<quint8> amps;
+	amps << 30 << 60;
+	QList<int> m_mcpd = mesy->mcpdId();
+	QList<int> positions;
+	positions << LEFT << MIDDLE << RIGHT;
+	foreach(int mod, m_mcpd)
 	{
-		pulserTest(false);
+		QList<int> mpsd = mesy->mpsdId(mod);
+		foreach(int addr, mpsd)
+			for (quint8 channel = 0; channel < 8; ++channel)
+				foreach (quint8 position, positions)
+					foreach(quint8 amp, amps)
+					{
+						puls p = {mod, addr, channel, position, amp, 125};
+						retVal << p;
+					}
 	}
-
-	void nextStep();
-
-	void pulserOn();
-
-	void pulserOff();
-
-private:
-	void updatePulser();
-
-	void display();
-
-private:
-	//! The MesyDaq objext
-	Mesydaq2		*m_theApp;
-
-	//! guard to disable the updates of the pulser
-	bool			m_enabled;
-
-	//!
-	QList<puls>		m_pulses;
-
-	//!
-	QList<puls>::iterator	m_it;
-};
-#endif
+	return retVal;
+}

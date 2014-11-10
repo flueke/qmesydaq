@@ -18,14 +18,20 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.44.0
+VERSION		= 0.47.0
 
 include (mesydaqconfig.pri)
 
 TEMPLATE 	= subdirs
 CONFIG		+= ordered edist
 
-SUBDIRS		+= lib interfaces qmesydaq tools test
+SUBDIRS		+= lib interfaces tools test
+
+isEmpty(QLEDLIBS) {
+	SUBDIRS		+= qled
+}
+
+SUBDIRS		+= qmesydaq
 
 TARGET		= mesydaq
 

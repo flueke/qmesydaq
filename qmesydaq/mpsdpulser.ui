@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>170</height>
+    <height>231</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Pulser ... </string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
@@ -61,7 +61,7 @@
      <property name="title">
       <string>Pulser</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_19">
+     <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -103,7 +103,7 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="1" colspan="2">
        <widget class="QGroupBox" name="buttonGroup5">
         <property name="title">
          <string>Amplitude (0...255)</string>
@@ -159,7 +159,20 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="2" column="1">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>175</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="3">
        <widget class="QGroupBox" name="positionGroup">
         <property name="title">
          <string>Position</string>
@@ -192,6 +205,63 @@
         </layout>
        </widget>
       </item>
+      <item row="1" column="0" colspan="4">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" colspan="2">
+       <widget class="QPushButton" name="automaticPulserTest">
+        <property name="text">
+         <string>Automatic pulser test</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLed" name="qLed">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Binary Led</string>
+        </property>
+        <property name="whatsThis">
+         <string>Led widget</string>
+        </property>
+        <property name="value">
+         <bool>false</bool>
+        </property>
+        <property name="onColor">
+         <enum>QLed::Yellow</enum>
+        </property>
+        <property name="offColor">
+         <enum>QLed::Grey</enum>
+        </property>
+        <property name="shape">
+         <enum>QLed::Circle</enum>
+        </property>
+        <property name="blink" stdset="0">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -221,6 +291,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QLed</class>
+   <extends>QWidget</extends>
+   <header>qled.h</header>
+  </customwidget>
   <customwidget>
    <class>ModuleSpinBox</class>
    <extends>QSpinBox</extends>
@@ -268,9 +343,9 @@
   </connection>
   <connection>
    <sender>pulserButton</sender>
-   <signal>clicked(bool)</signal>
+   <signal>stateChanged(int)</signal>
    <receiver>MPSDPulser</receiver>
-   <slot>setPulser(bool)</slot>
+   <slot>setPulser(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>22</x>
@@ -385,12 +460,172 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>516</x>
-     <y>156</y>
+     <x>549</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel">
      <x>507</x>
-     <y>-10</y>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>devid</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>412</x>
+     <y>170</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>180</x>
+     <y>19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>module</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>502</x>
+     <y>166</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsChan</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>103</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsampRadio1</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>469</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>buttonGroup5</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>454</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>248</x>
+     <y>126</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsLeft</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>483</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsMid</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>168</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>452</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulsRight</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>526</x>
+     <y>160</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>513</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pulserButton</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>30</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>automaticPulserTest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>qLed</receiver>
+   <slot>setValue(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>531</x>
+     <y>166</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>53</x>
+     <y>172</y>
     </hint>
    </hints>
   </connection>

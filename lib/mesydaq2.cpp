@@ -2027,3 +2027,11 @@ QVector<quint16> Mesydaq2::getTubeMapping()
 		width();
 	return m_tubeMapping;
 }
+
+QList<int> Mesydaq2::mcpdId(void)
+{
+	MSG_NOTICE << "Mesydaq2::mcpdId : " << m_mcpd.size();
+	QList<int> st = m_mcpd.keys();
+	qSort(st);
+	return st;
+}

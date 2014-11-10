@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,84 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MPSD_PULSER_H
-#define MPSD_PULSER_H
 
-#include <QDialog>
-#include "ui_mpsdpulser.h"
-#include "pulsertest.h"
+#ifndef PULSER_TEST_H
+#define PULSER_TEST_H
+
+#include <QList>
 
 class Mesydaq2;
 
-/*!
-    \class ModuleSetup
-
-    \short This class handles the setup dialog for setting up the MPSD modules
-
-    \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
- */
-class MPSDPulser : public QDialog, public Ui_MPSDPulser
+struct puls
 {
-	Q_OBJECT
-public:
-	MPSDPulser(Mesydaq2 *, QWidget * = 0);
-
-public:
-	void setModule(int);
-
-public slots:
-	void setMCPD(int = -1);
-
-signals:
-	void pulserTest(bool);
-
-	void clear();
-
-protected:
-	void closeEvent(QCloseEvent *);
-
-private slots:
-	void displayMCPDSlot(int = -1);
-
-	void displayMPSDSlot(int = -1);
-
-	void amplitudeChanged(int);
-
-	void setPulser(int);
-
-	void setPulserPosition(bool);
-
-	void setChannel(int);
-
-	void pulserTestSlot(bool onoff);
-
-	void pulserTestFinished()
-	{
-		pulserTest(false);
-	}
-
-	void nextStep();
-
-	void pulserOn();
-
-	void pulserOff();
-
-private:
-	void updatePulser();
-
-	void display();
-
-private:
-	//! The MesyDaq objext
-	Mesydaq2		*m_theApp;
-
-	//! guard to disable the updates of the pulser
-	bool			m_enabled;
-
-	//!
-	QList<puls>		m_pulses;
-
-	//!
-	QList<puls>::iterator	m_it;
+	quint16	mod;
+	quint8	addr;
+	quint8	channel;
+	quint8	position;
+	quint8	amp;
+	int	onTime;
 };
+
+class PulserTest
+{
+	PulserTest() {}
+public:
+	static QList<puls> sequence(Mesydaq2 *);
+};
+
 #endif

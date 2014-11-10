@@ -19,7 +19,7 @@
 ############################################################################
 
 
-VERSION		= 1.34.3
+VERSION		= 1.35.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -51,6 +51,7 @@ HEADERS 	+= stdafx.h \
 		   mcpd8.h \
 		   mdefines.h \
 		   measurement.h \
+		   pulsertest.h \
 		   mesydaq2.h \
 		   mpsd8.h \
 		   mstd16.h \
@@ -75,6 +76,7 @@ SOURCES 	+= stdafx.cpp \
 		   mcpd8.cpp \
 		   mcpd2.cpp \
 		   measurement.cpp \
+		   pulsertest.cpp \
 		   mesydaq2.cpp \
 		   mpsd8.cpp \
 		   mpsd8p.cpp \

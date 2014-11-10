@@ -203,12 +203,7 @@ public:
 	quint16 numMCPD(void) {return m_mcpd.size();}
 
 	//! \return list containing the found MCPD's
-	QList<int> mcpdId(void) 
-	{
-		QList<int> st = m_mcpd.keys();
-		qSort(st);
-		return st;
-	}
+	QList<int> mcpdId(void);
 
         /**
          * gets the list of available MPSD's connected with the MCPD

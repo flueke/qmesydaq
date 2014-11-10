@@ -17,11 +17,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <QApplication>
+#include <QCoreApplication>
+#include <QTimer>
 
 #include "mdefines.h"
 #include "mpsdpulser.h"
 #include "mesydaq2.h"
+#include "pulsertest.h"
 
 #include "logging.h"
 
@@ -50,6 +52,7 @@ MPSDPulser::MPSDPulser(Mesydaq2 *mesy, QWidget *parent)
 	QPoint pos = settings.value("PulserDialog/pos", QPoint(0, 0)).toPoint();
 	if (pos != QPoint(0, 0))
 		move(pos);
+	connect(automaticPulserTest, SIGNAL(clicked(bool)), this, SLOT(pulserTestSlot(bool)));
 }
 
 void MPSDPulser::closeEvent(QCloseEvent *)
@@ -71,11 +74,11 @@ void MPSDPulser::amplitudeChanged(int amp)
 }
 
 /*!
-    \fn void MPSDPulser::setPulser(bool)
+    \fn void MPSDPulser::setPulser(int)
 
     callback to handle the change of the pulser on/off
 */
-void MPSDPulser::setPulser(bool onoff)
+void MPSDPulser::setPulser(int onoff)
 {
 	MSG_DEBUG << onoff;
 	updatePulser();
@@ -272,4 +275,60 @@ void MPSDPulser::display()
 	else
 		pulsAmp2->setValue((int)m_theApp->getPulsAmp(mod, id));
 	m_enabled = true;
+}
+
+void MPSDPulser::pulserTestSlot(bool onoff)
+{
+	MSG_ERROR << "pulser test : " << onoff;
+	if (onoff)
+		emit clear();
+	emit pulserTest(onoff);
+	if (onoff)
+	{
+		m_pulses = PulserTest::sequence(m_theApp);
+		m_it = m_pulses.begin();
+		QTimer::singleShot(0, this, SLOT(nextStep()));
+	}
+	else
+		m_it = m_pulses.end();
+}
+
+void MPSDPulser::nextStep()
+{
+	if (m_it != m_pulses.end())
+	{
+		pulserButton->setCheckState(Qt::Unchecked);
+		devid->setValue(m_it->mod);
+		module->setValue(m_it->addr);
+		pulsChan->setValue(m_it->channel);
+		pulsampRadio1->setChecked(true);
+		pulsAmp1->setValue(m_it->amp);
+		switch (m_it->position)
+		{
+			case LEFT:
+				pulsLeft->setChecked(true);
+				break;
+			case MIDDLE:
+				pulsMid->setChecked(true);
+				break;
+			case RIGHT:
+				pulsRight->setChecked(true);
+				break;
+		}
+		pulserButton->setCheckState(Qt::Checked);
+		QTimer::singleShot(m_it->onTime, this, SLOT(pulserOff()));
+		++m_it;
+	}
+	else if (automaticPulserTest->isChecked())
+		automaticPulserTest->animateClick();
+}
+
+void MPSDPulser::pulserOn()
+{
+}
+
+void MPSDPulser::pulserOff()
+{
+	pulserButton->setCheckState(Qt::Unchecked);
+	QTimer::singleShot(0, this, SLOT(nextStep()));
 }
