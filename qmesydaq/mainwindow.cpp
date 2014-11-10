@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent)
 #else
 	setWindowTitle("QMesyDAQ " __DATE__);
 #endif
-
 	m_mesy = new Mesydaq2();
 	m_main = new MainWidget(m_mesy, this);
 	setCentralWidget(m_main);
@@ -63,14 +62,17 @@ MainWindow::MainWindow(QWidget *parent)
 	actionTACO->setVisible(false);
 	actionTCP->setVisible(false);
 	actionCARESS->setVisible(false);
+	actionGeneral->setVisible(false);
+	actionHistogram_Mapping->setVisible(false);
+	actionNewSetup->setVisible(false);
+	action_Save_Config_File->setVisible(false);
+	action_Load_Config_File->setVisible(false);
+	actionLoad_Calibration_File->setVisible(false);
 #if USE_TACO
-	actionTACO->setVisible(true);
 	connect(actionTACO, SIGNAL(triggered()), m_main, SLOT(setupTACO()));
 #elif USE_TCP
-	actionTCP->setVisible(true);
 	connect(actionTCP, SIGNAL(triggered()), m_main, SLOT(setupTCP()));
 #elif USE_CARESS
-	actionCARESS->setVisible(true);
 	connect(actionCARESS, SIGNAL(triggered()), m_main, SLOT(setupCARESS()));
 #endif
 	connect(actionAddMCPD, SIGNAL(triggered()), m_main, SLOT(addMCPD()));
@@ -97,8 +99,6 @@ MainWindow::MainWindow(QWidget *parent)
 	statusBar()->addPermanentWidget(m_daqStatus);
 	statusBar()->addPermanentWidget(m_pulserStatus);
 	statusBar()->addPermanentWidget(m_mode);
-
-	menuRemoteInterface->setEnabled(false);
 
 	restoreSettings();
 }
@@ -157,7 +157,7 @@ void MainWindow::saveSettings()
 	settings.setValue("config/writeprotect", m_mesy->getWriteProtection());
 	if (actionExpert->isChecked())
 		settings.setValue("config/accesslevel", MainWidget::Expert);
-	else if (actionUser->isChecked())
+	else if (actionSuperUser->isChecked())
 		settings.setValue("config/accesslevel", MainWidget::SuperUser);
 	else
 		settings.setValue("config/accesslevel", MainWidget::User);
@@ -179,7 +179,14 @@ void MainWindow::selectUser(void)
 {
 	actionExpert->setChecked(false);
 	actionSuperUser->setChecked(false);
-	menuRemoteInterface->setEnabled(false);
+	actionSetupMCPD->setVisible(false);
+	actionAddMCPD->setVisible(false);
+	actionModule->setVisible(false);
+	actionGeneral->setVisible(false);
+	actionNewSetup->setVisible(false);
+	action_Save_Config_File->setVisible(false);
+	action_Load_Config_File->setVisible(false);
+	actionLoad_Calibration_File->setVisible(false);
 #if USE_TACO
 	actionTACO->setVisible(false);
 #endif
@@ -194,14 +201,20 @@ void MainWindow::selectExpert(void)
 	{
 		actionUser->setChecked(false);
 		actionSuperUser->setChecked(false);
-		menuRemoteInterface->setEnabled(false);
+		actionSetupMCPD->setVisible(false);
+		actionAddMCPD->setVisible(false);
+		actionModule->setVisible(true);
+		actionGeneral->setVisible(true);
+		actionNewSetup->setVisible(false);
+		action_Save_Config_File->setVisible(true);
+		action_Load_Config_File->setVisible(true);
+		actionLoad_Calibration_File->setVisible(true);
 #if USE_TACO
 		actionTACO->setVisible(false);
 #endif
 		actionPulser->setVisible(true);
 		actionPulser->setEnabled(true);
 		actionHistogram_Mapping->setVisible(true);
-		actionHistogram_Mapping->setEnabled(true);
 		m_main->selectUserMode(MainWidget::Expert);
 	}
 	else
@@ -214,15 +227,20 @@ void MainWindow::selectSuperuser(void)
 	{
 		actionUser->setChecked(false);
 		actionExpert->setChecked(false);
-		menuRemoteInterface->setEnabled(true);
+		actionSetupMCPD->setVisible(true);
+		actionAddMCPD->setVisible(true);
+		actionModule->setVisible(true);
+		actionGeneral->setVisible(true);
+		actionNewSetup->setVisible(true);
+		action_Save_Config_File->setVisible(true);
+		action_Load_Config_File->setVisible(true);
+		actionLoad_Calibration_File->setVisible(true);
 #if USE_TACO
 		actionTACO->setVisible(true);
-		actionTACO->setEnabled(true);
 #endif
 		actionPulser->setVisible(true);
 		actionPulser->setEnabled(true);
 		actionHistogram_Mapping->setVisible(true);
-		actionHistogram_Mapping->setEnabled(true);
 		m_main->selectUserMode(MainWidget::SuperUser);
 	}
 	else

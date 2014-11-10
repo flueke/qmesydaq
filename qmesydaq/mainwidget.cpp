@@ -1806,15 +1806,14 @@ void MainWidget::mappingChanged()
 		MapCorrection* pCorrection(m_meas->posHistMapCorrection());
 		UserMapCorrection* pUserCorrection = dynamic_cast<UserMapCorrection*>(pCorrection);
 		LinearMapCorrection* pLinearCorrection = dynamic_cast<LinearMapCorrection*>(pCorrection);
-		if (pMainWindow->actionUser->isChecked() || pMainWindow->actionSuperUser->isChecked())
+		if (pMainWindow->actionExpert->isChecked() || pMainWindow->actionSuperUser->isChecked())
 		{
 			if (pLinearCorrection != NULL)
 				bVisible = true;
 			else if (pUserCorrection != NULL)
 				bVisible = (pUserCorrection->getMESFData() != NULL);
+			pMainWindow->actionHistogram_Mapping->setVisible(bVisible);
 		}
-		pMainWindow->actionHistogram_Mapping->setVisible(bVisible);
-		pMainWindow->actionHistogram_Mapping->setEnabled(bVisible);
 	}
 }
 
