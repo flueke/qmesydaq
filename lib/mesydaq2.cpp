@@ -276,16 +276,18 @@ void Mesydaq2::stoppedDaq(void)
 
     'adds' another MCPD to this class
 
-    \param byId     the ID of the MCPD
-    \param szMcpdIp the IP address of the MCPD
-    \param wPort    the port number to send data and cmds
-    \param szHostIp IP address to get data and cmd answers back
+    \param byId      the ID of the MCPD
+    \param szMcpdIp  the IP address of the MCPD
+    \param wPort     the port number to send cmd (and data if no explicit data port is given)
+    \param szDatatIp the IP address of the data sending MCPD (optional)
+    \param wDataPort the port number of the data sending port of the MCPD (optional)
+    \param szHostIp  IP address to get data and cmd answers back
 */
-void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szHostIp)
+void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szDataIp, quint16 wDataPort, QString szHostIp)
 {
 	if (m_mcpd.contains(byId))
 		return;
-	MCPD8 *tmp = new MCPD8(byId, szMcpdIp, wPort, szHostIp);
+	MCPD8 *tmp = new MCPD8(byId, szMcpdIp, wPort, szDataIp, wDataPort, szHostIp);
 	if (tmp)
 	{
 		connect(tmp, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
@@ -719,11 +721,13 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			dataPort = 0;
 
 #if 1
-		addMCPD(iId, IP, port > 0 ? port : cmdPort, cmdIP);
+		addMCPD(iId, IP, port > 0 ? port : cmdPort, dataIP, dataPort, cmdIP);
 #else
 		QMetaObject::invokeMethod(this, "addMCPD", Qt::BlockingQueuedConnection,
-					  Q_ARG(quint16, iId), Q_ARG(QString, IP),
-					  Q_ARG(quint16, port > 0 ? port : cmdPort), Q_ARG(QString, cmdIP));
+					  Q_ARG(quint16, iId),
+					  Q_ARG(QString, IP), Q_ARG(quint16, port > 0 ? port : cmdPort),
+					  Q_ARG(QString, dataIP), Q_ARG(quint16, dataPort),
+					  Q_ARG(QString, cmdIP));
 #endif
 		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized())
 		{

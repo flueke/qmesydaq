@@ -241,7 +241,7 @@ public slots:
 	//! analysis thread end
 	void threadExit(void);
 
-	void addMCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = "0.0.0.0");
+	void addMCPD(quint8, QString = "192.168.168.121", quint16 = 54321, QString = QString::null, quint16 = 0, QString = "0.0.0.0");
 
 	void writeRegister(quint16 id, quint16 reg, quint16 val);
 

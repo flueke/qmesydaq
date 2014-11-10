@@ -30,14 +30,15 @@ class QTimer;
 /**
  * \short representation of MCPD-8 central module
  *
- * \author Gregor Montermann <g.montermann@mesytec.com>, Lutz Rossa <rossa@helmholtz-berlin.de>
+ * \author Gregor Montermann <g.montermann@mesytec.com>
+ * \author Lutz Rossa <rossa@helmholtz-berlin.de>
  */
 class LIBQMESYDAQ_EXPORT MCPD8 : public MCPD
 {
 	Q_OBJECT
 
 public:
-	MCPD8(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szHostIp = QString::null, bool bTestOnly = false);
+	MCPD8(quint8, QString = "192.168.168.121", quint16 = 54321, QString = QString::null, quint16 = 0, QString = QString::null, bool = false);
 
 	virtual ~MCPD8();
 

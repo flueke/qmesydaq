@@ -38,12 +38,14 @@
  *
  * \param byId       ID of the MCPD
  * \param szMcpdIp   IP address of MCPD-8 (default 192.168.168.121)
- * \param wPort      UDP port of MCPD-8
+ * \param wPort      UDP port of MCPD-8 (default 54321)
+ * \param szMcpdDataIp  optional different IP address of the MCPD data
+ * \param wDataPort     optional different UDP port of the MCPD data
  * \param sourceIP   host IP address to bind to
  * \param bTestOnly  do not initialize, read version only
  */
-MCPD8::MCPD8(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szHostIp /*= QString::null*/, bool bTestOnly /*= false*/)
-    : MCPD(byId, szMcpdIp, wPort, QString::null, 0, szHostIp)
+MCPD8::MCPD8(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, quint16 wDataPort, QString szHostIp, bool bTestOnly)
+    : MCPD(byId, szMcpdIp, wPort, szMcpdDataIp, wDataPort, szHostIp)
     , m_bTestOnly(bTestOnly)
     , m_txCmdBufNum(0)
     , m_master(true)

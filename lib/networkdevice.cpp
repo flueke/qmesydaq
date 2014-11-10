@@ -34,12 +34,12 @@ QList<int>		NetworkDevice::m_inUse;
 
     factory method for creating a object of the class
 
-    \param wPort    UDP port number of the communication source
-    \param szHostIp host interface to bind to
+    \param wPort    UDP port number of the communication source (default: 54321)
+    \param szHostIp host interface to bind to (default: 0.0.0.0)
     \return new object of the class
     \see destroy
  */
-NetworkDevice *NetworkDevice::create(quint16 wPort /*= 54321*/, QString szHostIp /*= QString("0.0.0.0")*/)
+NetworkDevice *NetworkDevice::create(quint16 wPort, QString szHostIp)
 {
     QMutexLocker locker(&m_mutex);
     NetworkDevice *tmp;
@@ -91,10 +91,10 @@ void NetworkDevice::destroy(NetworkDevice *nd)
  * \fn NetworkDevice::NetworkDevice(quint16 wPort = 54321, QString szHostIp = QString("0.0.0.0"))
  * constructor
  *
- * \param wPort      host UDP port to bind to
- * \param szHostIp   host IP address to bind to
+ * \param wPort      host UDP port to bind to (default: 54321)
+ * \param szHostIp   host IP address to bind to (default: 0.0.0.0)
  */
-NetworkDevice::NetworkDevice(quint16 wPort /*= 54321*/, QString szHostIp /*= QString("0.0.0.0")*/)
+NetworkDevice::NetworkDevice(quint16 wPort, QString szHostIp)
     : m_pThread(NULL)
     , m_bFlag(false)
     , m_szHostIp(szHostIp)
@@ -142,7 +142,6 @@ void NetworkDevice::destroySocket()
     m_sock = NULL;
     m_bFlag = false;
 }
-
 
 /*!
  * \fn NetworkDevice::createSocket(void)
@@ -216,6 +215,7 @@ bool NetworkDevice::connect_handler(QHostAddress source, quint16 wPort, NetworkD
     h.pParam = pParam;
 #endif
     m_aHandler.append(h);
+    MSG_ERROR << "have " << m_aHandler.size() << " handlers installed";
     return true;
 }
 
@@ -308,7 +308,7 @@ void NetworkDevice::readSocketData(void)
     // read socket data into receive buffer and notify
     if (m_sock->hasPendingDatagrams())
     {
-//      MSG_DEBUG << tr("%1(%2) : NetworkDevice::readSocketData()").arg(ip()).arg(port();
+//      MSG_ERROR << tr("%1(%2) : NetworkDevice::readSocketData()").arg(ip()).arg(port());
         qint64 maxsize = m_sock->pendingDatagramSize();
         if (maxsize > 0)
         {
@@ -319,7 +319,7 @@ void NetworkDevice::readSocketData(void)
             bLostPacket = (len > 0);
             if (len != -1)
             {
-                // MSG_DEBUG << tr("%1(%2) : ID = %3 read datagram : %4 from %5 bytes").arg(fromAddress.toString()).arg(fromPort).arg(recBuf.deviceId).arg(len).arg(maxsize);
+                // MSG_ERROR << tr("%1(%2) : ID = %3 read datagram : %4 from %5 bytes").arg(fromAddress.toString()).arg(fromPort).arg(recBuf->mdp.deviceId).arg(len).arg(maxsize);
                 // MSG_DEBUG << tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(recBuf.bufferNumber).arg(recBuf.cmd).arg(recBuf.deviceStatus);
                 // quint64 tim = recBuf.time[0] + recBuf.time[1] * 0x10000ULL + recBuf.time[2] * 0x100000000ULL;
                 // MSG_DEBUG << tr("%1(%2) : read time : %3").arg(ip()).arg(port()).arg(tim);

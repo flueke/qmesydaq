@@ -21,18 +21,19 @@
 #include "logging.h"
 #include "stdafx.h"
 
-/** \fn MCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szMcpdDataIp = QString::null, quint16 wDataPort = 0, QString szSourceIp = QString::null)
+/** \fn MCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szMcpdDataIp = QString::null,
+ * 		quint16 wDataPort = 0, QString szSourceIp = QString::null)
  *
  *  Initialize base class for a MCPD.
  *
  *  \param byId          id of the MCPD
- *  \param szMcpdIp      IP address of the MCPD
- *  \param wPort         UDP port of the MCPD
+ *  \param szMcpdIp      IP address of the MCPD, default: 192.168.168.121
+ *  \param wPort         UDP port of the MCPD, default: 54321
  *  \param szMcpdDataIp  optional different IP address of the MCPD data
  *  \param wDataPort     optional different UDP port of the MCPD data
  *  \param szSourceIp    optional host IP address
  */
-MCPD::MCPD(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szMcpdDataIp /*= QString::null*/, quint16 wDataPort /*= 0*/, QString szSourceIp /*= QString::null*/)
+MCPD::MCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, quint16 wDataPort, QString szSourceIp)
     : m_iErrorCounter(0)
     , m_pNetwork(NULL)
     , m_pDataNetwork(NULL)
@@ -60,15 +61,15 @@ MCPD::MCPD(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort 
     m_pCommunicationMutex = new QMutex;
     m_pCommandMutex = new QMutex;
     m_pNetwork = NetworkDevice::create(m_wPort, szSourceIp);
-    bResult = m_pNetwork->connect_handler(QHostAddress(m_szMcpdIp), wPort,&staticAnalyzeBuffer, this);
+    bResult = m_pNetwork->connect_handler(QHostAddress(m_szMcpdIp), wPort, &staticAnalyzeBuffer, this);
     if (!m_szMcpdDataIp.isEmpty() || m_wDataPort != 0)
     {
         if (m_szMcpdDataIp.isEmpty())
             m_szMcpdDataIp = m_szMcpdIp;
         if (m_wDataPort == 0)
             m_wDataPort = wPort;
-        m_pDataNetwork = NetworkDevice::create(m_wDataPort, szSourceIp);
-        bResult &= m_pDataNetwork->connect_handler(QHostAddress(szMcpdDataIp), wDataPort, &staticAnalyzeBuffer, this);
+        // m_pDataNetwork = NetworkDevice::create(m_wDataPort, szSourceIp);
+        bResult &= m_pNetwork->connect_handler(QHostAddress(szMcpdDataIp), wDataPort, &staticAnalyzeBuffer, this);
     }
 
     //! this is normally true and only false, if there is already such a MCPD
