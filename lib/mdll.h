@@ -280,9 +280,12 @@ public:
 	//! initialises the MWPCHR
 	void init(void);
 
-	virtual QList<quint16> getHistogramList(void);
+	QList<quint16> getHistogramList(void);
 
-	virtual QList<quint16> getActiveList(void);
+	QList<quint16> getActiveList(void);
+
+	//! returns the number of bins
+	quint16 bins() {return 1024;}
 };
 
 #endif

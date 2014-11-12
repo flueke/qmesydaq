@@ -1007,10 +1007,18 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					chan = amp;
 					amp = val;
 				}
-				if (pos > 959)
+				if (pPacket->dp.bufferType == 0x0002)
 				{
-					// MSG_ERROR << tr("POSITION > 959 : %1").arg(pos);
-					continue;
+					if (pos >= m_mesydaq->height())
+						continue;
+				}
+				else
+				{
+					if (pos >= 960)
+					{
+						// MSG_ERROR << tr("POSITION > 959 : %1").arg(pos);
+						continue;
+					}
 				}
 				if (mode() == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
