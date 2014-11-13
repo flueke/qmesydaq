@@ -131,7 +131,8 @@ bool MCPD8::init(void)
                 case TYPE_NOMODULE :
                     break;
                 case TYPE_MPSD8SADC:
-                    modus = TP;
+		    if (modus == TPA)
+                        modus = TP;
                     break;
                 default:
                     modus = P;
@@ -139,10 +140,11 @@ bool MCPD8::init(void)
             }
         }
     MSG_NOTICE << tr("setting modus : %1").arg(modus);
-// Register 103 is the TX mode register
-// set tx capability
     if (m_mdll.isEmpty())
-        writeRegister(103, modus);
+    {
+        if (setTxMode(modus))
+            getTxMode();
+    }
     if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
         return false;
     MSG_NOTICE << tr("using modus : %1").arg(getTxMode());
@@ -318,6 +320,27 @@ bool MCPD8::setId(quint8 mcpdid)
 }
 
 /*!
+ * \fn bool MCPD8::setTxMode(const quint16 cap)
+ *
+ * sets the transmission protocol
+ *
+ *  \param mode the new transmission mode of the MCPD
+ *  \return true if operation was succesful or not
+ */
+bool MCPD8::setTxMode(const quint16 mode)
+{
+// Register 103 is the TX mode register
+// set tx capability
+// 	writeRegister(103, cap);
+	MSG_DEBUG << tr("SETCAPABILITIES %1 : %2").arg(m_byId).arg(mode);
+	QMutexLocker locker(m_pCommandMutex);
+	initCmdBuffer(SETCAPABILITIES);
+	m_cmdBuf.data[0] = mode;
+        finishCmdBuffer(1);
+        return sendCommand(true);
+}
+
+/*!
     \fn MCPD8::capabilities(const bool cached)
 
     read out the capabilities register of the MCPD
@@ -329,18 +352,21 @@ quint16 MCPD8::capabilities(const bool cached)
 {
     if (!cached)
     {
-        readRegister(102);
-        if (!m_capabilities)
-        {
-            MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
-            QMutexLocker locker(m_pCommandMutex);
-            initCmdBuffer(GETCAPABILITIES);
-            finishCmdBuffer(0);
-            sendCommand(false);
-        }
+	if (!m_capabilities)
+	{
+            if (m_mdll.isEmpty())
+            {
+                MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
+//		m_capabilities = readRegister(102); // or register 103?
+                QMutexLocker locker(m_pCommandMutex);
+                initCmdBuffer(GETCAPABILITIES);
+                finishCmdBuffer(0);
+                sendCommand(false);
+            }
+            else
+                m_capabilities = TPA;
+	}
     }
-    if (!m_mdll.isEmpty())
-        m_capabilities = TPA;
     return m_capabilities;
 }
 
@@ -456,7 +482,7 @@ bool MCPD8::readId(void)
 /*!
     \fn MCPD8::scanPeriph(void)
 
-    scans the peripherial module (all connected MPSD-8/8+ and MSTD-16) and their properties 
+    scans the peripherial module (all connected MPSD-8/8+ and MSTD-16) and their properties
 
     \return true if operation was succesful or not
     \see getModuleId, readId
@@ -497,7 +523,15 @@ bool MCPD8::scanPeriph(void)
                 tmpFloat += (tmp >> 8);
                 m_mpsd[mod]->setVersion(tmpFloat);
                 MSG_INFO << tr("Module (ID %1): Version number : %2").arg(mod).arg(tmpFloat, 0, 'f', 2);
-        	m_mpsd[mod]->setCapabilities(readPeriReg(mod, 0));
+		switch (m_mpsd[mod]->type())
+		{
+			case TYPE_MPSD8P:
+			case TYPE_MPSD8SADC:
+                            m_mpsd[mod]->setCapabilities(readPeriReg(mod, 0));
+			    break;
+			default:
+		            m_mpsd[mod]->setCapabilities(P);
+                }
             }
         return true;
     }
@@ -2383,10 +2417,10 @@ void MCPD8::initModule(quint8 id)
     setMode(id, false);
 
 // now set tx capabilities, if id == 105
-    if(getModuleId(id) == 105)
+    if(getModuleId(id) == TYPE_MPSD8P)
     {
         // write register 1
-        writePeriReg(id, 1, 4);
+        writePeriReg(id, 1, TPA);
     }
 }
 
@@ -2650,15 +2684,11 @@ quint8 MCPD8::numModules(void)
 
 quint16 MCPD8::getTxMode()
 {
-    readRegister(103);
-    if (!m_txMode)
-    {
-        MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
-        QMutexLocker locker(m_pCommandMutex);
-        initCmdBuffer(GETCAPABILITIES);
-        finishCmdBuffer(0);
-        sendCommand(false);
-    }
+    MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
+    QMutexLocker locker(m_pCommandMutex);
+    initCmdBuffer(GETCAPABILITIES);
+    finishCmdBuffer(0);
+    sendCommand(false);
     return m_txMode;
 }
 

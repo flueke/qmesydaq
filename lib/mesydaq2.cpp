@@ -961,6 +961,21 @@ quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
 		return 0;
 	return m_mcpd[id]->capabilities(cached);
 }
+
+/*!
+ * \fn quint16 Mesydaq2::getTxMode(quint16 id)
+ * reads the current set transmission mod of the central module
+ *
+ *  \param id number of the MCPD
+ *  \return the central module transmission mode
+ */
+quint16 Mesydaq2::getTxMode(quint16 id)
+{
+	if (m_mcpd.empty())
+		return 0;
+	return m_mcpd[id]->getTxMode();
+}
+
 /*!
     \fn Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 

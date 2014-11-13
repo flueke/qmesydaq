@@ -85,6 +85,8 @@ public:
 
 	quint16 capabilities(quint16 id, const bool);
 
+	quint16 getTxMode(quint16 id);
+
 // list mode oriented methods
 	/**
 	 * sets the file name of a list mode data file

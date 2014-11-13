@@ -237,6 +237,8 @@ public:
 
 	bool setStream(quint16 strm);
 
+	bool setTxMode(quint16 mode);
+
 	quint16 capabilities(const bool);
 
 	quint16 capabilities(quint8 mod);
