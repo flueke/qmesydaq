@@ -963,6 +963,20 @@ histogram file</string>
               </widget>
              </item>
              <item>
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>TX Mode:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="txMode">
+               <property name="text">
+                <string>TPA</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="label">
                <property name="text">
                 <string>Firmware-Version</string>

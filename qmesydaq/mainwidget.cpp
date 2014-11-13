@@ -870,6 +870,16 @@ void MainWidget::displayMpsdSlot(int iModule)
 	MSG_ERROR << tr("%1 %2").arg(cap).arg(tmp);
 	capabilities->setText(tmp);
 
+	quint16 txmod = m_theApp->getTxMode(mod);
+	if (txmod & TPA)
+		tmp = "TPA";
+	else if (txmod & TP)
+		tmp = "TP";
+	else if (txmod & P)
+		tmp = "P";
+	MSG_ERROR << tr("%1 %2").arg(txmod).arg(tmp);
+	txMode->setText(tmp);
+
 // Status display:
 	moduleStatus0->update(m_theApp->getModuleType(mod, 0), m_theApp->getModuleVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));
 	moduleStatus1->update(m_theApp->getModuleType(mod, 1), m_theApp->getModuleVersion(mod, 1), m_theApp->online(mod, 1), m_theApp->histogram(mod, 1), m_theApp->active(mod, 1));
