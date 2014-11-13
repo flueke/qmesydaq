@@ -529,6 +529,9 @@ bool MCPD8::scanPeriph(void)
 			case TYPE_MPSD8SADC:
                             m_mpsd[mod]->setCapabilities(readPeriReg(mod, 0));
 			    break;
+                        case TYPE_NOMODULE:
+                            m_mpsd[mod]->setCapabilities(0);
+                            break;
 			default:
 		            m_mpsd[mod]->setCapabilities(P);
                 }
@@ -2694,7 +2697,16 @@ quint16 MCPD8::getTxMode()
 
 quint16 MCPD8::getTxMode(quint8 mod)
 {
-	return readPeriReg(mod, 1);
+        switch (m_mpsd[mod]->type())
+        {
+                case TYPE_MPSD8P:
+                case TYPE_MPSD8SADC:
+                        return readPeriReg(mod, 1);
+                case TYPE_NOMODULE:
+                        return 0;
+                default:
+                        return P;
+        }
 }
 
 QVector<quint16> MCPD8::getTubeMapping()

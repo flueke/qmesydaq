@@ -46,6 +46,20 @@ const char *g_szShortUsage = "[-v]";
 
 const char *g_szLongUsage = "  -v print the version number";
 
+QString modeToString(int mode)
+{
+	switch (mode)
+	{
+		case TPA:
+			return "TPA";
+		case TP:
+			return "TP";
+		case P:
+			return "P";
+		default:
+			return "unknown";
+	}
+}
 
 int main(int argc, char **argv)
 {
@@ -80,11 +94,13 @@ int main(int argc, char **argv)
 	MCPD8 *m = new MCPD8(id, ip);
 
 	QTextStream cout(stderr);
-	cout << QObject::tr("%2 : MCPD : %1 (id=%3), cap: %4: TX mode: %5\n").arg(m->version()).arg(m->ip()).arg(id).arg(m->capabilities(false)).arg(m->getTxMode());
+
+	cout << QObject::tr("%2 : MCPD : %1 (id=%3), cap: %4: TX mode: %5\n").arg(m->version()).arg(m->ip()).arg(id)
+					.arg(modeToString(m->capabilities(false))).arg(modeToString(m->getTxMode()));
 
 	for (quint8 i = 0; i < 8; ++i)
 		cout << QObject::tr("module %1 (%4): id: %2, version: %3, capabilities: %5, mode: %6\n").arg(i + 1).arg(m->getModuleId(i)).
-			arg(m->version(i), 0, 'f', 2).arg(m->getModuleType(i)).arg(m->capabilities(i)).arg(m->getTxMode(i));
+			arg(m->version(i), 0, 'f', 2).arg(m->getModuleType(i)).arg(modeToString(m->capabilities(i))).arg(modeToString(m->getTxMode(i)));
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
