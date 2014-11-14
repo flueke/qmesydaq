@@ -992,6 +992,15 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				quint16 chan = modChan + (mod << 6);
 				quint16 amp = ((pPacket->dp.data[counter+2] & 0x7F) << 3) + ((pPacket->dp.data[counter+1] >> 13) & 0x7),
 					pos = (pPacket->dp.data[counter+1] >> 3) & 0x3FF;
+				quint16 moduleID = m_mesydaq->getModuleId(mod, id);
+//
+// old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
+//
+				if (moduleID == TYPE_MPSD8OLD)
+				{
+					amp >>= 2;
+					pos >>= 2;
+				}
 				if (pPacket->dp.bufferType == 0x0002)
 				{
 //
@@ -1022,15 +1031,6 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				}
 				if (mode() == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
-					quint16 moduleID = m_mesydaq->getModuleId(mod, id);
-//
-// old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
-//
-				        if (moduleID == TYPE_MPSD8OLD)
-					{
-						amp >>= 2;
-						pos >>= 2;
-					}
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
 // BUG is reported
