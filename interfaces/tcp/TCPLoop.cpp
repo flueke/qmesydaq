@@ -266,7 +266,7 @@ void TCPLoop::histogram(void)
 	{
 // 1 1 1 value
 		tmpList = m_interface->readDiffractogram();
-//        	tmp.push_back(tmpList.count());
+//		tmp.push_back(tmpList.count());
 //		tmp.push_back(1);
 //		tmp.push_back(1);
 	}
@@ -283,7 +283,7 @@ QString TCPLoop::formatHistogram(quint32 width, quint32 height, const QList<quin
 	QString s;
 	QString t;
 	// Title
-	t = 	"mesydaq3 Histogram File    " + QDateTime::currentDateTime().toString ("dd.MM.yy  hh:mm:ss") + "\r\n"
+	t =	"mesydaq3 Histogram File    " + QDateTime::currentDateTime().toString ("dd.MM.yy  hh:mm:ss") + "\r\n"
 		"\r\n"
 		"Comment:\r\n"
 //      t += view->comment->text ();

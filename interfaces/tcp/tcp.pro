@@ -18,15 +18,15 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION 	= 0.5.0
+VERSION 	= 0.5.1
 SRCBASE		= ../..
 
 include($${SRCBASE}/mesydaqconfig.pri)
 
-TEMPLATE 	= lib
-TARGET 		= tcpInterface
-DEPENDPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
-INCLUDEPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
+TEMPLATE	= lib
+TARGET		= tcpInterface
+DEPENDPATH	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
+INCLUDEPATH	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
 
 LIBS		+= $${TACOLIBS}
 
@@ -37,10 +37,10 @@ CONFIG		+= create_prl
 target.path	= $${TARGETLIBPATH}
 
 # Input
-HEADERS 	+= remoteserver.h \
+HEADERS		+= remoteserver.h \
 		TCPLoop.h
 
-SOURCES 	+= remoteserver.cpp \
+SOURCES		+= remoteserver.cpp \
 		TCPLoop.cpp
-		
+
 

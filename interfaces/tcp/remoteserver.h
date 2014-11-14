@@ -120,7 +120,7 @@ private slots:
 	void parseInput(const QString &line);
 
 private:
-	RemoteSocket 	*m_socket;
+	RemoteSocket	*m_socket;
 
 };
 

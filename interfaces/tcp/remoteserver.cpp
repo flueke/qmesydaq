@@ -20,9 +20,9 @@
 #include "logging.h"
 
 /*!
-    constructor 
+    constructor
 
-    \param parent 
+    \param parent
  */
 RemoteSocket::RemoteSocket(QObject *parent)
 	: QTcpSocket(parent)
@@ -46,8 +46,8 @@ void RemoteSocket::sendClient(const QString &val)
     \fn void RemoteSocket::readClient(void)
 
     callback to read a line from the client.
-  
-    It only reads data from the client if a line is complete (including the 
+
+    It only reads data from the client if a line is complete (including the
     EOL).
  */
 void RemoteSocket::readClient(void)
@@ -59,12 +59,12 @@ void RemoteSocket::readClient(void)
 	}
 }
 
-/*! 
+/*!
     constructor
 
     \param parent
  */
-RemoteServer::RemoteServer(QObject *parent) 
+RemoteServer::RemoteServer(QObject *parent)
 	: QTcpServer(parent)
 	, m_socket(NULL)
 {
@@ -73,9 +73,9 @@ RemoteServer::RemoteServer(QObject *parent)
 
 /*!
     \fn void RemoteServer::sendAnswer(const QString &val)
-    
+
     callback to send a string to the client
-   
+
     \param val answer string
  */
 void RemoteServer::sendAnswer(const QString &val)
@@ -92,6 +92,7 @@ void RemoteServer::sendAnswer(const QString &val)
  */
 void RemoteServer::incomingConnection(int socketId)
 {
+	MSG_ERROR << "New connection is requested";
 	if (m_socket)
 		destroySocket();
 	m_socket = new RemoteSocket(this);
@@ -114,6 +115,7 @@ void RemoteServer::destroySocket()
 		m_socket->deleteLater();
 	}
 	m_socket = NULL;
+	MSG_ERROR << "Connection to peer closed";
 }
 
 /*!
@@ -149,7 +151,7 @@ void RemoteServer::destroySocket()
 
     for actions and settings it returns the strings MESYDAQ OK" or "MESYDAQ NOTOK"
     depending on the input data. If all was fine the the OK is sent otherwise NOTOK.
-     
+
     \param line input line to parse
 */
 void RemoteServer::parseInput(const QString &line)
@@ -163,7 +165,7 @@ void RemoteServer::parseInput(const QString &line)
 	if (tmp.endsWith("\r"))
 		tmp.remove(tmp.length() - 1, 1);
 	MSG_DEBUG << tr("parseInput : %1").arg(tmp);
-		
+
 	QStringList l = tmp.split(' ', QString::SkipEmptyParts);
 	if (l.length() > 1 && l.at(0) == "MESYDAQ")
 	{
@@ -241,7 +243,7 @@ void RemoteServer::parseInput(const QString &line)
 				{
 					emit timer();
 					return;
-				}	
+				}
 				else if (val == "EVENT")
 				{
 					emit event();
