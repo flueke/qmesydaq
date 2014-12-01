@@ -83,7 +83,7 @@ public:
 	quint64 value(const quint16 index);
 
 	/*!
-	   \return the width of the histogram
+	   \return the width of the spectrum
 	*/
 	quint16	width(void) const
 	{
