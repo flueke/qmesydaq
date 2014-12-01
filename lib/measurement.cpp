@@ -1012,9 +1012,10 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 // amplitude (8 bit) is at MPSD "chan" data
 //
 					chan = (id << 5) + slotId;
-					quint16 val = chan;
-					chan = amp;
-					amp = val;
+					quint16 val = pos;
+					pos = amp;
+					amp = chan;
+					chan = val;
 				}
 				if (pPacket->dp.bufferType == 0x0002)
 				{
