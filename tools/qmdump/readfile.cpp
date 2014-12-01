@@ -255,10 +255,10 @@ bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 		dataBuf.bufferType = sep2;
 		dataBuf.headerLength = sep3;
 		dataBuf.bufferNumber = sep4;
-		ok = (dataBuf.bufferLength < 730);
+		ok = (dataBuf.bufferLength <= 750);
 		if (ok)
 		{
-			int buflen = (dataBuf.bufferLength - 4) * sizeof(quint16); 
+			int buflen = (dataBuf.bufferLength - 4) * sizeof(quint16);
 			char *pD = (char *)&dataBuf.runID;
 			ok = datStream.readRawData(pD, buflen) == buflen;
 			if (ok)
