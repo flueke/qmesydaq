@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -740,13 +740,13 @@ void Measurement::writeHistograms(const QString &name)
 
 	QFile f;
 	f.setFileName(name);
-	if (f.open(QIODevice::WriteOnly)) 
+	if (f.open(QIODevice::WriteOnly))
 	{    // file opened successfully
-		QTextStream t( &f );        // use a text stream
-		t << "# filename = " << name;
+		QTextStream t(&f);        // use a text stream
+		t << "# filename = " << name << '\r' << '\n';
 		//
 		// write the monitor, events, and timer values after a '#' char
-		// 
+		//
 		for (quint8 i = MON1ID; i <= MON4ID; ++i)
 			t << "# monitor " << (i + 1) << " = " << m_counter[i]->value() << '\r' << '\n';
 		t << "# events = " << m_counter[EVID]->value() << '\r' << '\n';
