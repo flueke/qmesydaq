@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2009-2014 Jens Krüger
+// Copyright (C) 2009-2015 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -128,6 +128,10 @@ private:
 	DevULong			m_runid;
 
 	DevULong			m_histo;
+
+	bool				m_writeListmode;
+
+	bool				m_writeHistogram;
 };
 
 #endif // MESY_D_A_Q_DETECTOR_DETECTOR_H

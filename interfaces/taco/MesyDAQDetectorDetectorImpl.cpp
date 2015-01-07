@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2009-2014 Jens Krüger
+// Copyright (C) 2009-2015 Jens Krüger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 #endif
 		updateResource<std::string>("lastlistfile", m_listFilename);
 		m_interface->setListFileName(m_listFilename.c_str());
+		m_interface->setListMode(m_writeListmode, true);
 #if 1
 		m_histFilename = incNumber(m_histFilename);
 #else
@@ -59,6 +60,8 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 #endif
 		updateResource<std::string>("lasthistfile", m_histFilename);
 		m_interface->setHistogramFileName(m_histFilename.c_str());
+		m_interface->setHistogramMode(m_writeHistogram);
+		INFO_STREAM << "interface::start()" << ENDLOG;
 		m_interface->start();
 	}
 	catch (::TACO::Exception &e)
@@ -318,6 +321,29 @@ void MesyDAQ::Detector::Detector::deviceUpdate(void) throw (::TACO::Exception)
 		{
 			throw_exception(e, "could not update 'histogram' ");
 		}
+	if (resourceUpdateRequest("writelistmode"))
+		try
+		{
+			std::string tmp = queryResource<std::string>("writelistmode");
+			if (!tmp.empty())
+				m_writeListmode = queryResource<bool>("writelistmode");
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'writelistmode' ");
+		}
+	if (resourceUpdateRequest("writehistogram"))
+		try
+		{
+			std::string tmp = queryResource<std::string>("writehistogram");
+			if (!tmp.empty())
+				m_writeHistogram = queryResource<bool>("writehistogram");
+		}
+		catch (::TACO::Exception &e)
+		{
+			throw_exception(e, "could not update 'writehistogram' ");
+		}
+
 	::TACO::Server::deviceUpdate();
 }
 
@@ -392,6 +418,24 @@ void MesyDAQ::Detector::Detector::deviceQueryResource(void) throw (::TACO::Excep
 		catch (TACO::Exception &e)
 		{
 			throw_exception(e, "Could not query resource 'lasthistfile' ");
+		}
+	if (resourceQueryRequest("writelistmode"))
+		try
+		{
+			updateResource<bool>("writelistmode", m_writeListmode);
+		}
+		catch (TACO::Exception &e)
+		{
+			throw_exception(e, "Could not query resource 'writelistmode' ");
+		}
+	if (resourceQueryRequest("writehistogram"))
+		try
+		{
+			updateResource<bool>("writehistogram", m_writeHistogram);
+		}
+		catch (TACO::Exception &e)
+		{
+			throw_exception(e, "Could not query resource 'writehistogram' ");
 		}
 
 	TACO::Server::deviceQueryResource();
