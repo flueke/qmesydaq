@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@hmi.de>                  *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -351,6 +351,35 @@ void QMesyDAQDetectorInterface::setListFileName(const QString name)
 }
 
 /*!
+    enable/disable the histogram file save
+
+    \param bEnable
+ */
+void QMesyDAQDetectorInterface::setHistogramMode(bool bEnable)
+{
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_SET_SAVEHISTOGRAM, QList<QVariant>() << bEnable);
+	m_mutex.unlock();
+}
+
+/*!
+    return, if listmode is enabled or not
+
+    \return is listmode enabled
+ */
+bool QMesyDAQDetectorInterface::getHistogramMode(void)
+{
+	bool bHistogramActive;
+
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_GET_SAVEHISTOGRAM);
+	bHistogramActive = m_boolean;
+	m_mutex.unlock();
+	return bHistogramActive;
+}
+
+
+/*!
     enable/disable the listmode
 
     \param bEnable
@@ -576,6 +605,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 						m_bWriteProtectFiles = false;
 					m_eventReceived = true;
 					break;
+				case CommandEvent::C_GET_SAVEHISTOGRAM:
+					m_boolean = args[0].toBool();
+					m_eventReceived = true;
+					break;
 				case CommandEvent::C_COUNTER_SELECTED:
 					m_counter = args[0].toUInt();
 					m_eventReceived = true;
@@ -613,6 +646,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_SET_PRESELECTION:
 				case CommandEvent::C_SELECT_COUNTER:
 				case CommandEvent::C_SET_LISTMODE:
+				case CommandEvent::C_SET_SAVEHISTOGRAM:
 				case CommandEvent::C_UPDATEMAINWIDGET:
 				case CommandEvent::C_SET_RUNID:
 				case CommandEvent::C_SET_LISTHEADER:
