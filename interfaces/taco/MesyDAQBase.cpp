@@ -73,7 +73,7 @@ MesyDAQ::Base::Base(const std::string& name, DevLong& error) throw (::TACO::Exce
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 	try
 	{
-		deviceInit();
+		// deviceInit();
 		if (Server::deviceState() != ::TACO::State::INIT)
 			setDeviceState(::TACO::State::DEVICE_NORMAL);
 		logStream->noticeStream() << GetClassName() << " : " << deviceName() << " : init complete." << log4cpp::eol;

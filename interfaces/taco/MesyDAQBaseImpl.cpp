@@ -99,6 +99,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 		try
 		{
 			m_listFilename = queryResource<std::string>("lastlistfile");
+			ERROR_STREAM << deviceName() << " " << m_listFilename << ENDLOG;
 			if (m_listFilename == "")
 				m_listFilename = "tacolistfile00000.mdat";
 			if (!m_interface)
@@ -114,6 +115,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 		try
 		{
 			m_histFilename = queryResource<std::string>("lasthistfile");
+			ERROR_STREAM << deviceName() << " " << m_histFilename << ENDLOG;
 			if (m_histFilename == "")
 				m_histFilename = "tacohistfile00000.mtxt";
 			if (!m_interface)
@@ -237,9 +239,12 @@ void MesyDAQ::Base::deviceQueryResource(void) throw (::TACO::Exception)
 	if (resourceQueryRequest("lastlistfile"))
 		try
 		{
+#if 0
 			if (m_interface->getListFileName().isEmpty())
 				m_interface->setListFileName(m_listFilename.c_str());
 			updateResource<std::string>("lastlistfile", m_interface->getListFileName().toStdString());
+#endif
+			updateResource<std::string>("lastlistfile", m_listFilename);
 		}
 		catch (TACO::Exception &e)
 		{
@@ -248,10 +253,14 @@ void MesyDAQ::Base::deviceQueryResource(void) throw (::TACO::Exception)
 	if (resourceQueryRequest("lasthistfile") || resourceQueryRequest("lastbinnedfile"))
 		try
 		{
+#if 0
 			if (m_interface->getHistogramFileName().isEmpty())
 				m_interface->setHistogramFileName(m_histFilename.c_str());
 			updateResource<std::string>("lasthistfile", m_interface->getHistogramFileName().toStdString());
 			updateResource<std::string>("lastbinnedfile", m_interface->getHistogramFileName().toStdString());
+#endif
+			updateResource<std::string>("lasthistfile", m_histFilename);
+			updateResource<std::string>("lastbinnedfile", m_histFilename);
 		}
 		catch (TACO::Exception &e)
 		{
