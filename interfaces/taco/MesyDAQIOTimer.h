@@ -30,13 +30,7 @@
 
 // TACODEVEL CODEGEN INCLUDES END
 
-#if SIZEOF_UNSIGNED_LONG == 4
-typedef unsigned long DevULong;
-#else
-typedef unsigned int DevULong;
-#endif
-
-class QMesyDAQDetectorInterface;
+#include "MesyDAQBase.h"
 
 namespace MesyDAQ {
 	namespace IO {
@@ -48,7 +42,7 @@ class MesyDAQ::IO::Timer
 	// TACODEVEL CODEGEN BASE CLASSES BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-	: public ::TACO::Server
+	: public Base
 
 	// TACODEVEL CODEGEN BASE CLASSES END
 
@@ -126,13 +120,6 @@ private:
 
 	static void tacoRead(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception);
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
-
-	std::string incNumber(const std::string &);
-
-private:
-	QMesyDAQDetectorInterface	*m_interface;
-
-	std::string			m_listFilename;
 };
 
 #endif // MESY_D_A_Q_I_O_TIMER_H

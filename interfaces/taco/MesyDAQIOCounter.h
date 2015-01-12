@@ -30,13 +30,7 @@
 
 // TACODEVEL CODEGEN INCLUDES END
 
-#if SIZEOF_UNSIGNED_LONG == 4
-typedef unsigned long DevULong;
-#else
-typedef unsigned int DevULong;
-#endif
-
-class QMesyDAQDetectorInterface;
+#include "MesyDAQBase.h"
 
 namespace MesyDAQ {
 	namespace IO {
@@ -48,7 +42,7 @@ namespace MesyDAQ {
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
 class MesyDAQ::IO::Counter
-	: public ::TACO::Server
+	: public Base
 
 	// TACODEVEL CODEGEN BASE CLASSES END
 
@@ -135,14 +129,8 @@ private:
 	static void tacoSetPreselection(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception);
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
 
-	std::string incNumber(const std::string &);
-
 private:
-	QMesyDAQDetectorInterface	*m_interface;
-
 	DevULong			m_channel;
-
-	std::string			m_listFilename;
 };
 
 #endif // MESY_D_A_Q_I_O_COUNTER_H

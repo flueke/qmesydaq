@@ -39,11 +39,11 @@
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
 MesyDAQ::IO::Counter::Counter(const std::string& name, DevLong& error) throw (::TACO::Exception)
-	: ::TACO::Server(name, error)
+	: Base(name, error)
 
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS END
 
-	, m_interface(NULL)
+	, m_channel(0)
 
 	/* , MyFirstBaseClass(), MySecondBaseClass(), ... */
 
@@ -68,13 +68,6 @@ MesyDAQ::IO::Counter::Counter(const std::string& name, DevLong& error) throw (::
 	setDeviceVersion(VERSION);
 
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE END
-
-	addResource("channel", D_LONG_TYPE, "number of the monitor/chopper input channel");
-	addResource("lastlistfile", D_STRING_TYPE, "name of the last/currently used list mode data file");
-
-	MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-	if (app)
-		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.

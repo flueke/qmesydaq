@@ -39,17 +39,10 @@
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
 MesyDAQ::Detector::Detector::Detector(const std::string& name, DevLong& error) throw (::TACO::Exception)
-	: ::TACO::Server(name, error)
+	: Base(name, error)
 
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS END
 
-	, m_interface(NULL)
-	, m_runid(0)
-	, m_histo(0)
-	, m_writeListmode(true)
-	, m_writeHistogram(true)
-
-	/* , MyFirstBaseClass(), MySecondBaseClass(), ... */
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 {
@@ -65,19 +58,6 @@ MesyDAQ::Detector::Detector::Detector(const std::string& name, DevLong& error) t
 	setDeviceVersion(VERSION);
 
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE END
-
-	addResource("lastlistfile", D_STRING_TYPE, "name of the last/currently used list mode data file");
-	addResource("lasthistfile", D_STRING_TYPE, "name of the last/currently used histogram data file");
-	addResource("lastbinnedfile", D_STRING_TYPE, "name of the last/currently used (binned) histogram data file");
-	addResource("writelistmode", D_BOOLEAN_TYPE, "write listmode data");
-	addResource("writehistogram", D_BOOLEAN_TYPE, "write histogram data");
-	addResource("runid", D_ULONG_TYPE, "name of the last/currently used histogram data (binned) file");
-	addResource("histogram", D_STRING_TYPE, "type of the histogram (raw|mapped|amplitude)");
-	addResource("configfile", D_STRING_TYPE, "currently used configuration file");
-
-	MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-	if (app)
-		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 	try

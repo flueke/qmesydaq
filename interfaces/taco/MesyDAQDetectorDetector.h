@@ -30,13 +30,7 @@
 
 // TACODEVEL CODEGEN INCLUDES END
 
-#if SIZEOF_UNSIGNED_LONG == 4
-typedef unsigned long DevULong;
-#else
-typedef unsigned int DevULong;
-#endif
-
-class QMesyDAQDetectorInterface;
+#include "MesyDAQBase.h"
 
 namespace MesyDAQ {
 	namespace Detector {
@@ -48,11 +42,10 @@ namespace MesyDAQ {
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
 class MesyDAQ::Detector::Detector
-	: public ::TACO::Server
+	: public Base
 
 	// TACODEVEL CODEGEN BASE CLASSES END
 
-	/* , MyFirstBaseClass, MySecondBaseClass, ... */
 	// TACODEVEL CODEGEN METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 {
@@ -110,28 +103,6 @@ private:
 	void deviceInit(void) throw (::TACO::Exception);
 
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
-
-private:
-	std::string incNumber(const std::string &);
-
-	std::string runNumber(const std::string &val);
-
-private:
-	QMesyDAQDetectorInterface	*m_interface;
-
-	std::string			m_listFilename;
-
-	std::string			m_histFilename;
-
-	std::string			m_binnedFilename;
-
-	DevULong			m_runid;
-
-	DevULong			m_histo;
-
-	bool				m_writeListmode;
-
-	bool				m_writeHistogram;
 };
 
 #endif // MESY_D_A_Q_DETECTOR_DETECTOR_H

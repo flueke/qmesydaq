@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION 	= 1.8.1
+VERSION 	= 1.9.0
 SRCBASE		= ../..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -37,6 +37,7 @@ HEADERS 	+= MesyDAQDetectorDetector.h \
 		MesyDAQIOCounter.h \
 		MesyDAQIOTimer.h \
 		MesyDAQServer.h \
+		MesyDAQBase.h \
 		TACOLoop.h \
 		taco_utils.h
 
@@ -46,6 +47,8 @@ SOURCES 	+= MesyDAQDetectorDetector.cpp \
 		MesyDAQIOCounterImpl.cpp \
 		MesyDAQIOTimer.cpp \
 		MesyDAQIOTimerImpl.cpp \
+		MesyDAQBase.cpp \
+		MesyDAQBaseImpl.cpp \
 		startup.cpp \
 		TACOLoop.cpp \
 		device_server.c

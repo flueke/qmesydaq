@@ -39,11 +39,9 @@
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
 MesyDAQ::IO::Timer::Timer(const std::string& name, DevLong& error) throw (::TACO::Exception)
-	: ::TACO::Server(name, error)
+	: Base(name, error)
 
 	// TACODEVEL CODEGEN BASE CLASS CONSTRUCTOR CALLS END
-
-	, m_interface(NULL)
 
 	/* , MyFirstBaseClass(), MySecondBaseClass(), ... */
 
@@ -66,12 +64,6 @@ MesyDAQ::IO::Timer::Timer(const std::string& name, DevLong& error) throw (::TACO
 	setDeviceVersion(VERSION);
 
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE END
-
-	addResource("lastlistfile", D_STRING_TYPE, "name of the last/currently used list mode data file");
-
-	MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-	if (app)
-		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
