@@ -113,8 +113,8 @@ DevVoid MesyDAQ::IO::Timer::clear() throw (::TACO::Exception)
 	{
 		if (!m_interface)
 			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
-			m_interface->resume();
+		if (isMaster())
+			m_interface->clear();
 	}
 	catch (::TACO::Exception &e)
 	{
