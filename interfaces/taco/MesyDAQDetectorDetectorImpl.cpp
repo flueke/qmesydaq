@@ -202,6 +202,7 @@ void MesyDAQ::Detector::Detector::deviceInit(void) throw (::TACO::Exception)
 //		Server::deviceUpdate("runid");
 //		Server::deviceUpdate("histogram");
 //		Server::deviceUpdate("configfile");
+		m_interface->init();
 		setDeviceState(::TACO::State::DEVICE_NORMAL);
 	}
 	catch (const ::TACO::Exception &e)

@@ -55,7 +55,7 @@ void MesyDAQ::Base::deviceInit(void) throw (::TACO::Exception)
 //		Server::deviceUpdate("configfile");
 		if (!m_interface)
 			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-		m_interface->init();
+//		m_interface->init();
 	}
 	catch (const ::TACO::Exception &e)
 	{
