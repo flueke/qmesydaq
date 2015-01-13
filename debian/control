@@ -1,0 +1,35 @@
+Source: qmesydaq
+Section: misc
+Priority: extra
+Maintainer: Jens Krüger<jens.krueger@tum.de>
+Build-Depends: debhelper (>= 8.0.0),
+ pkg-config,
+ git,
+ gdb,
+ libboost-filesystem1.49-dev,
+ libqt4-dev,
+ qt4-qmake,
+ libqtwebkit-dev,
+ libqwt5-qt4-dev,
+ taco-common-detector-dev
+Standards-Version: 3.9.3
+
+Package: qmesydaq
+Section: misc
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libboost-filesystem1.49.0,
+ taco-common-detector,
+ libqt4-gui,
+ libqtwebkit4,
+ libqwt5-qt4
+Description: General tool to control the MesyTec electronics
+
+Package: qmesydaq-dbg
+Section: misc
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ taco-common-detector-dbg,
+ libqt4-dbg,
+ libqtwebkit4-dbg
+Description: Debug symbols for qmesydaq

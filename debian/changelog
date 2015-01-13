@@ -1,0 +1,1227 @@
+qmesydaq (0.50.0) UNRELEASED; urgency=low
+
+  [ Jens Krueger ]
+  * First check in (save current state)
+  * add list of ignored files
+  * Next step in enrolling spaghetti code
+  * new class for the software counters
+  * add two structures for the neutron and trigger events
+  * add counter.h
+  * go more to a MVC
+  * implementation of the counter in a seperate file
+  * improve the counter, and enroll the code further
+  * change copyright information
+  * change copyright information
+  * change copyright information
+  * change copyright information
+  * reduce debugging output
+  * change version information
+  * change order of defines
+  * add 'calcMeanRate' method
+  * change copyrights
+  * change version handling, remove unknown connections
+  * change copyrights
+  * initialize variables
+  * improve the MVC design
+  * use quint64 instead of ulong
+  * add a debug information from the histogram
+  * add method for access to data
+  * copy data out of the histogram
+  * rearrange methods
+  * reduce debug output
+  * reduce debug output
+  * disable drawing
+  * derive from MesydaqObject instead of QObject
+  * derive from MesydaqObject instead of QObject
+  * Rearrange the slots
+  * FIX: typo
+  * remove empty line
+  * improve UI
+  * FIX: read of configuration
+  * FIX: hide of the channel display if the common gain check box is activated
+  * connect the file actions to the right slots of the main widget
+  * improve debug output
+  * add output of the histograms and disable the sliding mean value calculation
+  * complete documentation
+  * set the information about the pulser in 'red'
+  * draw some data
+  * improve ui
+  * delete timer if exists
+  * delete timer if exists
+  * implement the copy method in the right way
+  * simplify the histogram only a read histogram (2D) and a sum spectrum
+  * count the sent and received packages and commands and read out the times
+  * improve user interface
+  * change type due range overflow (never ending loop)
+  * add statistics output
+  * allow access to the data
+  * allow statistics output
+  * separate the CARESS specific part from the 'Measurement' object
+  * complete the command handling
+  * separate the CARESS specific part from the 'Measurement' object
+  * add the zooming capability to the plot widget
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@61 71953026-4e7b-de11-b703-00e01807f32f
+  * change the 'pulser' button to not checked if clicked all pulsers off
+  * add counter/timer preset functionality, timer not good implemented
+  * change the implementation of the timer
+  * change the spinbox for the time
+  * change the internal presentation of the time from sec to msec
+  * add consts for the different types of MPSD's
+  * FIX: start QTimer only if a limit(preset) is set
+  * prepare separation of MPSD-8 and MPSD-8+ modules
+  * add desktop file for the KDE environment
+  * add monitor/chopper inputs 3 and 4
+  * add debugging output
+  * add the output of the monitor/chopper inputs 3/4
+  * change loop variables
+  * add all monitor inputs
+  * improve UI
+  * fixes #2
+  * fix typo
+  * change the interface for getting mean and sigma, fix problem with the m_meanPos
+  * remove debugging output
+  * add methods for getting mean values and deviations
+  * change the handling for time dependent actions
+  * display mean values and deviations improve the time dependent action handling
+  * add additional copyright
+  * add some addition methods for getting informations for displaying data
+  * add a class for displaying the diffractogram (histogram) data
+  * add histogramm plot
+  * add MPSD8+ specific parts
+  * add some parentheses (gcc suggested it)
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@90 71953026-4e7b-de11-b703-00e01807f32f
+  * add MPSD8+ specific part
+  * reorder methods
+  * improve doc
+  * move initialization of the MPSD's to the MCPD class
+  * add access methods to IP address and port
+  * Fix: size of histogram was independent of the number of MCPDS
+  * change title text
+  * enable all spinboxes for the MCPD selection
+  * prepare MCPD related spinboxes for use of more than 1 MCPD
+  * prepare for use of more than 1 MCPD
+  * prepare a base class for all remote controllers like CARESS, TACO, ...
+  * control interface for TACO
+  * control interface for TACO
+  * control interface for CARESS
+  * control interface for TACO
+  * control interface for TACO
+  * remove the config.h include
+  * remove the config.h include
+  * remove the config.h include
+  * add a control interface depending on external configuration
+  * improve the building depending on configuration
+  * template for config file
+  * fix: wrong list size
+  * remove TACO includes and depends
+  * fix: warning to an unused parameter value
+  * change the visibilty of the MCPDS's ID to private
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@117 71953026-4e7b-de11-b703-00e01807f32f
+  * typo
+  * rearrange the code, create a separate library and test programs
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@120 71953026-4e7b-de11-b703-00e01807f32f
+  * add the display of the firmware version of the MCPD-8
+  * FIX: wrong id used to get the firmware version
+  * add query for firmware version of each MCPD-8, set additional IP and port for the sources
+  * first test to use the Mesydaq2 class
+  * display the detected module types as text not as number
+  * change the first visible tab
+  * use QVector instead of dynamic allocated data
+  * use a member variable instead of a dynamic allocated object for the sum spectrum
+  * prepare a more complex calculation of the height of the histogram
+  * use a QMap for storing the line spectra
+  * move the packet check from Mesydaq to the NetworkDevice class
+  * remove the public access to the MPSD8 members
+  * remove the public access to the MCPD members
+  * remove the limit numbers for the MCPD's
+  * remove the limit numbers for the MCPD's
+  * complete the doxygen generateable documentation
+  * complete doc
+  * complete doc
+  * complete doc
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@140 71953026-4e7b-de11-b703-00e01807f32f
+  * complete doc
+  * complete doc
+  * complete doc
+  * complete doc
+  * complete doc
+  * complete doc
+  * add debug
+  * fix: wrong size of floating mean value vector, maximum position detection of the histogram
+  * check the indices before accessing to the data
+  * change the default IP adresses
+  * add debug option
+  * add a special spinbox for the detected MPSD modules on a MCPD
+  * add a special spinbox for the detected MPSD modules on a MCPD
+  * get the MPSD module version
+  * display the MPSD module version too
+  * change the process to create and destroy a network device (prepare the setup of one NIC and a switch/hup behind it)
+  * Fix: wrong calculation of firmware version
+  * add some tools
+  * add commandline parameter for the IP address
+  * add command line parameters for current and new address
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@161 71953026-4e7b-de11-b703-00e01807f32f
+  * improve the signal/slots for the display of the MPSD's
+  * improve the signal/slots for the display of the MPSD's
+  * change the IP addresses
+  * add test for acquire into a list mode file
+  * add tools dir
+  * add default value in contructor and change parameter names
+  * change parameter names, fix wrong list file writing
+  * change the condition to decide timer/counter
+  * typo
+  * improve handling
+  * start the slaves at first and than the master (also in case of continue) and vice versa during the stop
+  * change parameter names, add methods for the readout of the capabilities of MCPD, MPSD
+  * change parameter names, add methods for the readout of the capabilities of MCPD, MPSD, fix some minor problems
+  * change signature of the sendBuffer method
+  * change signature of the sendBuffer method
+  * implement a factory for a single Network device
+  * move the packet number check from network device to the MCPD object
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@179 71953026-4e7b-de11-b703-00e01807f32f
+  * remove debug output
+  * enable multiple configurations for networking: 1NIC, Switch, multiple MCPD or multiple NIC and MCPD, and mixtures of all
+  * remove default setup
+  * change display level of some messages
+  * change display level of some messages
+  * add methods to query the IP address and the Command port of the MCPD
+  * change display level of some messages
+  * change display level of some messages
+  * add methods for determination of the termination of the MCPD on the sync bus
+  * display the current set values for the master/slave configuration on the sync bus
+  * fix initialisation
+  * fix initialisation
+  * improve handling of the gain values real/poti
+  * improve save and load of the configuration
+  * add the module number in the output if some packages are missed
+  * improve the startup, read the last config file used last time
+  * add my special test program
+  * simplify clean up code
+  * add some configuration parameters
+  * add a slot for checking that a file name is set for list mode acquiring if the list mode is set
+  * remove the buttons for save/load of configuration and histograms
+  * fix: get the right data from the histogram to display
+  * change the log message for missed packets
+  * fix: determination of the channel, workaround for the bug, that the first neutron is a 'phantom'
+  * remove unneeded code
+  * enable linear/logarithmic scale for spectra display
+  * FIX: wrong number of MPSD per MCPD
+  * complete load/save setup
+  * fix some handling errors
+  * remove useless connection
+  * new class diagram picture
+  * FIX: counter cell list init if not in config file
+  * FIX: Ghost events on some MCPD's
+  * add tool to set the id
+  * improve speed for display: use QHash instead of QMap
+  * change slot if the value for the MPSD has changed
+  * improve the slots for changing the display of MCPD and MPSD
+  * add some informations about slot and id if a 'ghost neutron' occurs
+  * fix: writing/reading of list mode data files
+  * change the member 'cmd' to 'runID' according to doc
+  * add date to the logging output
+  * make the protocol method to a static method
+  * change the '*' to '<<', and the '+' to '|' operation
+  * improve plot speed for histograms in case of low number of tubes
+  * fix: setting of the MCPD id
+  * change format
+  * reduces debugging output
+  * fix: wrong check
+  * enable processing events after a lot of events
+  * enable logarithmic data display (set values of 0 to 0.1) for the display
+  * change the behaviour in case of using list mode data. ask always for a file name if start is pressed and listmode data files are required, if the measurement is stop the file name will be cleared.
+  * small changes
+  * add printing, exporting to pdf, and display of amp data versus tube
+  * speed up the data analysis due remove some protocol calls
+  * add some code for changing some data due to wrong cabling
+  * fix loading and storing configuration
+  * add a spinbox for the MCPD selection
+  * add a spinbox for the MCPD selection
+  * add a spinbox for the MCPD selection
+  * use some more curves to display spectra
+  * fix: some bugs for displaying the right informations about the versions add: preparing the display of more than one spectrum of a MPSD
+  * clear all spectra too in case of clearing the histogram
+  * clear all histograms before reading a list mode file
+  * fix: problem with queue for the rates
+  * fix: writing of the histograms
+  * put the amplitude values to the amplitude place in the event structure to avoid dependencies during the replay of files
+  * FIX: version of the MCPD for TPA mode
+  * add the capability check for the MPSD-8 modules
+  * add installation
+  * add installation
+  * select plastique style for display, to get the same results at all system (HACK)
+  * workaround to write smaller histogram files
+  * install dir lib
+  * FIX: increasing size of histogram during writing
+  * FIX: wrong modus for modules MCPD-8(8.17) and MPSD-8+
+  * fixes: #8, #9
+  * increase the maximum number of events, and change the number of events for up/down in the spinbox per click
+  * fix: #7 timer
+  * Fixes : #12
+  * improve replay of the listmode files
+  * Fix: #13
+  * FIX: #13
+  * set the default numbers of the MCPD-8 to 0
+  * stop the current measurement before reading a list mode file
+  * FIX: add missing 'DEBUG' define
+  * prepare of reloading histograms
+  * remove debug output
+  * #15: first implementation
+  * Simplify code of reading a histogram file, does not fix problems with reading old histogram files
+  * do not set all gains individually if common gain is selected
+  * simplify code for setting of gain (common/not common)
+  * check the time and values for rate calculations
+  * change detection of external events, the header contains the values from the package end
+  * - add a area to display the status permanent - fix: #20 - change the cursor in the data display to a cross and add   the current position as permanent display - remove the selection of the list mode file name it will be   asked before start
+  * FIX: calculation of MCPD version number
+  * add svg export
+  * add the display of counts in the ROI in case of displaying histogram data
+  * add the svn revision number to the software version number
+  * display the current counts of the single channel selected to display
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@279 71953026-4e7b-de11-b703-00e01807f32f
+  * implements 1. of #14
+  * FIX: missing repaint behind the splash screen
+  * improve data display handling
+  * change initialization order
+  * FIX: order of initialization
+  * detect the old MPSD-8 (ID = 1) too
+  * remove some debugging output
+  * simplify code
+  * add a remote control interface
+  * move the remote control interfaces to separate dirs
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@290 71953026-4e7b-de11-b703-00e01807f32f
+  * create a separate dir for the remote interfaces
+  * remove the Qt3 dependency
+  * First running TACO interface
+  * begin of integration of MCPD-2 modules
+  * begin of integration of MCPD-2 modules
+  * add the remote control interface
+  * add the remote control interface
+  * add separate configuration file
+  * debug output changed
+  * display the last events too
+  * add dynamic display detection depending on detected module types
+  * FIX: multiple stops from the counter/timers and some restarts of them
+  * add TACO libs
+  * add the TACO libs
+  * add detection of 64 bit
+  * add 64 bit support
+  * add 64 bit support
+  * change log level
+  * - reduce debug output due to differences in time differences, ignore differences = 1 - FIX: no handling of events in mode of replaying list mode files
+  * add a redraw of data after replaying list mode files
+  * improve configuration
+  * improve config
+  * change x/y axes in the histogram plot
+  * add the calculation of gain and threshold for the old (SPODI) modules
+  * add the calculation of gain and threshold for the old (SPODI) modules
+  * add the 'calculation' of a diffractogram
+  * add display of diffractogram, all channels of a module
+  * display the data during the reading of the list mode files
+  * set the right channels for the histogram
+  * first version of remote settings of a list file name
+  * first version of remote settings of a list file name
+  * first version of remote settings of a list file name
+  * new version
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@324 71953026-4e7b-de11-b703-00e01807f32f
+  * CHANGE : - copyright informations
+  * CHANGE : move startup.cpp from qmesydaq to interfaces/taco directory
+  * CHANGE : - remote control interface
+  * CHANGE : - remote control interface
+  * ADD : - new author Alexander Lenz
+  * CHANGE : - printer object to a pointer
+  * CHANGE : - enable the splash screen again
+  * CHANGE : - enable full functionality
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@333 71953026-4e7b-de11-b703-00e01807f32f
+  * REMOVE : - old interface
+  * REMOVE : - old remote interface
+  * CHANGES : - put the mainwindow on stack instead of heap
+  * git-svn-id: https://trac.frm2.tum.de/qmesydaq/trunk@337 71953026-4e7b-de11-b703-00e01807f32f
+  * CHANGE : - remove the unused parameters
+  * FIX: - segfault
+  * first running TACO version
+  * CHANGE : - set a attribute for  immediate generation of the UI
+  * CHANGE : - add a object definition
+
+  [ Alexander Lenz ]
+  * CHANGE:	- QtInterface::waitForEvent(): Redundant LoopObject casts removed
+  * ADD:	- Resume implementation 	- Clear: missing implementation
+
+  [ Jens Krueger ]
+  * ADD : - setting of the listfilename automatically if is it         selected
+  * REMOVE : - useless warning
+  * CHANGE : - make the LoopObject abstract
+  * ADD : - callback if the interface threads terminates unexpected
+  * ADD : - call back if the remote thread terminates unexpected       - set the listmode option read from config file, default is on
+  * FIX : - some problems with the list mode file name
+  * CHANGE : - rename all MPSD related entries to Module          - remove the MCPD-8 dependencies
+  * ADD : - MSTD-16 module
+  * use MSTD-16 class
+  * add protocol output if buffer type > 1
+  * add all empty packages for the time
+  * clear all counters in case of 'clear'. set timer as default preset
+  * CHANGE : - about dialog, add mesytec logo, reorganize the people
+  * FIX: - compile error for Qt versions < 4.5.0
+  * CHANGE : - add a spectrum for the MSTD-16 (tubeSpectrum)
+  * CHANGE : - TACO device name
+  * FIX: - read back of the spectrum was wrong
+  * change the properties
+  * add patch sent by M. Drochner
+  * Change version number.
+  * small changes in formatting source code
+  * default no interface
+  * The argc argument is a reference. This was the reason for some crashes on 64bit machines. ????
+  * FIX: input of the IP addresses.
+  * Put the IP address in a separate widget.
+  * New version number.
+  * Put the IP address in a separate widget.
+  * Install some tools and improve the usage.
+  * Change the parameter handling. Add the module id to the output.
+  * Change the command line parameter handling. Add the id numbers in output.
+  * Change the command line parameter handling. Add the new IP address to the output.
+  * Add new tool to set the master/slave and terminate.
+
+  [ Lutz Rossa ]
+  * add CARESS interface
+
+  [ Jens Krueger ]
+  * Clean up the interface definition. Remove the TACO specific implementation.
+  * Use the new defined interface definition.
+  * Add the '-v' option to print a version number. Add to the output the human readable type of the modules.
+  * add the '-v' option to print out the version.
+  * add the '-v' option to get information about the version.
+  * update the version info
+  * Add list of ignored files
+  * complete list of ignored files
+  * Fix typo
+  * Move the file configuration to the menu.
+  * Change the user interface.
+  * complete list of ignored files
+
+  [ Lutz Rossa ]
+  * changes: - add possible mapping and correction of histogram data - change configuration file format to original MesyDAQ file, because it is   better human readable - re-connect some signals to slot which got lost with r388 TODO: - add a display for such data like histogram only - testing with a realistic instrument setup - CARESS mapping format may be changed in next weeks ...
+
+  [ Jens Krueger ]
+  * Fix wrong include file.
+  * Change the output of the module name. Add the module type for the DNS modules.
+  * Fix problems with installation in wrong path in case of 64bit systems.
+  * Add a separate version number to the tools.
+  * add separate version number.
+  * use the new lib function to determine the module name
+  * Fix: the version number contains more than one digit
+
+  [ Lutz Rossa ]
+  * - CARESS mapping supports compressed lines - use VERSION from project file - use SETPROTOCOL to set cmd+data ip to "this PC" only and give MCPD-8 some   time for flashing data
+
+  [ Jens Krueger ]
+  * Workaround for setting of protocol parameters.
+
+  [ Lutz Rossa ]
+  * reactivate full SETPROTOCOL command, but give flash memory 3 extra seconds
+  * fix saving configuration file
+
+  [ Jens Krueger ]
+  * rename tool 'qmlmod' to 'qmlsmod'.
+  * Change the entries in status tab.
+  * Extend the general setup.
+  * add the MCPD8 of DNS type.
+  * Add the 'online' methods.
+  * move some of the setup methods.
+  * Fix compilation bug due to wrong include.
+  * Add the version number into the pro file.
+  * Change the detection of the terminate state.
+  * Change the configuration file handling.
+  * Reconnect some SIGNAL/SLOT connections.
+  * Add a wizard to add a new module.
+  * change storage of cmd ip/port and data ip/port
+  * Add the master/slave settings to the wizard.
+  * complete the documentation.
+
+  [ Lutz Rossa ]
+  * interfaces/caress:     add VERSION number to CARESS interface lib/networkdevice.cpp: try to fix sporadic SIGSEGV add program exit lib/inifile.cpp:       support older Qt versions than 4.7
+  * lib: - fixed SIGSEGV at program end (inconsistent MCPD and NetworkDevice lists) qmesydaq: - allow update of CARESS status tab in main widget - allow to load no, last or command line specified configuration file - load configuration files with a signal CARESS interface: - wait for signal of QApplication now - update CARESS status tab in main widget
+  * fix some of the display problems after r418
+
+  [ Jens Krueger ]
+  * Check pointer before deleting and init pointer with NULL again.
+  * add the TCP remote interface as dummy interface.
+  * Change the tab text of measurement data.
+  * Begin of integration of the MDLL specific parts.
+  * Add the configuration part for TCP remote interface.
+  * Add a special widget for the preset values.
+  * Add a preset widget for double values.
+  * Add some signals and slots.
+  * Use the preset and double preset widgets.
+  * Fixes the automatic change of master/terminate.
+  * Add destructor documentation
+  * Beautify the code a little bit.
+  * Cleanup the methods and members.
+  * Fix compile bug due to change of timer preset.
+  * Change the user interface.
+  * Histogram writing and displaying fixed.
+  * Complete the documentation.
+  * Repair the rescan of the modules.
+  * complete the TODO list
+
+  [ Lutz Rossa ]
+  * update doxygen documentation
+
+  [ Jens Krueger ]
+  * Use constants for checking bits.
+  * Fix core dump during the report output.
+  * Change the define names.
+  * Also enable monitor 3 and 4 as masters.
+  * Change the version number.
+  * dummy.
+  * Fix problems with missing events from aux timers.
+  * Display the right settings for aux timers.
+  * Reduce default debug output.
+  * Fix problem with number of arguments.
+  * Store the last general setup at right position.
+  * Scan over all tubes in the display.
+  * Enable autoresize of the histogram, spectrum.
+  * Handle reading of histogram and list mode files.
+  * Complete list of authors.
+  * Change reading/writing of config files.
+  * use QSetting class for reading and writing config files.
+  * reformat code.
+  * Configuration moved from mesydaq2 to measurement
+
+  [ Lutz Rossa ]
+  * UDP socket which sends the same data as would be written to a list mode file - new items in configuration INI file in section "MESYDAQ"   repeatersource (string): source IP address/host name of interface to bind to   repeatertarget (string): target IP address or host name to send the data   repeaterport  (quint16): UDP target port - IP adresses may be the loop back interface or an existing IP address - source may be also "0.0.0.0" (IPv4) or "::" (IPv6) --> any interface - target may be also a broadcast address, e.g. "172.25.255.255"
+  * allow to enable/disable data repeater UDP socket with new item in configuration INI file in section "MESYDAQ":   repeaterenable (bool)
+  * try to divide GUI from data acquisition using extra QThreads
+  * change logging: - remove class MesydaqObject - use macros "MSG_*" which can be used like "qDebug()" - use consistent timestamps and logging levels - print source file name and line number for debugging - timestamps and source-location printing is switchable via command line
+  * revert qmesydaqconfig.pri to r461
+  * bug fix: reallow acquiring list files
+  * allow local adjustments to override global configuration
+
+  [ Jens Krueger ]
+  * Remove unused header file.
+  * remove unused header file
+  * remove unused header file
+  * Fix typo
+  * Add missing <QDebug> header file
+  * Fix typo
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * beautify code
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * remove unused header files
+  * Prepare compiling with MSVC 10
+  * Prepare compiling with MSVC 10
+  * Change version number
+  * Prepare compiling with MSVC 10
+  * Prepare compiling with MSVC 10
+  * Prepare compiling with MSVC 10
+  * Prepare compiling with MSVC 10
+  * Prepare compiling with MSVC 10
+  * Remove unused header files
+  * Remove unused header files, enable the MSVC compiler.
+  * change the default size
+
+  [ Lutz Rossa ]
+  * allow CARESS interface to be independent of Qt network module
+
+  [ Jens Krueger ]
+  * FIX: parameter values given by -option=value contain the '=' too.
+  * Add compatiblity to Qt version 4.5.
+  * FIX: start numbering of the module entries with 0
+  * FIX: clear the detector data list before adding data.
+  * Fix typo.
+  * Add a test program for the histogram mapping.
+  * Change properties
+  * Beautify of code
+  * Fix some problems with not initialised pointers and wrong values. Now it could be work in expected way.
+  * Change the test program to a better test algorithm.
+  * Integration of the MDLL
+  * Add list of ignored files.
+  * Introduce a list of histograms and spectra to be more flexible for new type of spectra and histograms.
+  * Move the save of settings to the close window event instead of destructor.
+  * Change the application name to QMesyDAQ.
+  * Move the save of settings to the close window event instead of destructor.
+  * Start in Histogram mode as default.
+  * Add parameter type (void)
+  * Fix the problem with the MPSD changing.
+  * Add a test program to measure the filling time of histogram and spectra.
+  * Improve the speed of filling data into the histogram and spectra.
+  * Fix the setting of the spectra width. The size for the data was resized but not the information about the size.
+  * Add the display of counts for - the ROI in case of histogram - total counts in case of diffractogram - total counts in a tube in case of display a single tube - total counts in case of a display all spectra in a MPSD
+  * Reduce the precision of the time to 1 digit after the point.
+  * Update statistics only in case of selected tab 'Statistics'.
+  * Remove the 'read' interface, which was nothing else but readDiffractogram. The TACO interface has to be changed too.
+  * Change due to the commit 535.
+  * Set the data size in the histogram read of the Remote interface to the right value. There was a height of 1 added.
+  * Add documentation of the TACO interface.
+  * Add configuration of the TACO interface.
+  * Add doc of the TCP server object
+  * Add doc
+  * Use the sources of the histogram and correction map instead of the libraries. This is better for testing of modified sources.
+
+  [ Lutz Rossa ]
+  * - command line use in CARESS interface: use option for CORBA name like TACO - fix bug while reading timer value via external interface - fix some warnings
+
+  [ Jens Krueger ]
+  * Add the dynamic scaling for the histograms in case of zooming into the data. The color scale will be the same but the values for min and max are changed.
+  * Add some additional checks for NULL pointers.
+  * Add some additional checks for NULL pointers.
+  * Change the loglevel for the output of the range information
+  * Set a minimum size.
+  * Fix: double header in file.
+  * Extend message with the block number.
+  * Add the qmdump tool.
+  * add missed doc.
+  * Due to a variable header length the reading was not successful. Now it will be read until the line starts with 'header length'.
+  * Due to a variable header length the reading was not successful. Now it will be read until the line starts with 'header length'.
+  * The events for will be counted over the whole file, and for each package the events will be counted by type and written.
+  * Rename 'Mesydaq2MainWidget' to 'MainWidget'.
+  * increase version number
+  * Add a tool to fix wrong list mode files.
+  * Add the fixlmfile tool
+  * Remove the Mpsd affinity from the lib.
+  * Add dummy files. Implementation will follow next.
+  * Change 'getMdllId' to 'getModuleId'.
+  * Extent the preset widgets with current values and rates.
+  * Add a password dialog
+  * Adopt to the changed preset widget interfaces.
+  * Adopt to the changed preset widget interfaces.
+  * Adopt to the changed preset widget interfaces.
+  * Change class name from Mesydaq2MainWindow to MainWindow.
+  * Use Qt floating rectangle structure instead of Qwt's version.
+  * Forgot the parameter type change in doc.
+  * Prepare the different mode of users. - normal user - expert user - super user
+  * Fix warnings.
+  * Implement first functionality for the different user levels.
+  * Add capability to load a calibration file.
+  * Use defined variables.
+  * Remove not used classes.
+  * Beautify code.
+  * Beautify output and code.
+  * Improve the speed during the read of list mode files.
+  * Improve the arrangement of the elements.
+  * Set the label for events/monitors/timers/... and their rate values invisible.
+  * New algorithm to read the list mode files.
+  * Check the pointer for the timer before delete. So will be a NULL pointer deletion avoided.
+  * Change the password dialog title.
+  * Add some documents.
+  * Complete doc.
+  * Display the version number with 2 digits
+  * improve the layout of the MDLL setup dialog
+  * Change the display of the version number.
+  * Remove the getMdllId method from interface and use the getModuleId calls instead.
+  * Add a tool to create data packages.
+  * Change the mainwidget behaviour.
+  * Add a possibility to fire events from list mode file.
+  * Improve qmfire tool.
+  * Add timing function for more detailed information.
+  * Use references instead of whole objects.
+  * Improve testing to get more reliable results.
+  * Use symbolic constants instead of numbers.
+  * Fix: rearrangement of the MDLL was wrong.
+  * Add a feature request to the TODO list.
+  * Complete list of ignored files.
+  * Add a tab in the mainwidget to display free disk spaces.
+  * Add some new spectra types.
+  * Switch also the MDLL pulser off.
+  * Unify the access to MPSD and MDLL.
+  * Fix bugs introduced in reversion 605.
+  * Always signal a replot if the listmode file checkbox has changed.
+  * Change version number.
+  * Add a test module to test the different displays.
+  * Use the user specific configuration to build.
+  * FIX: problem with scaling after changing the display mode.
+  * Split into definition and implementation.
+  * Change the interface of plot class.
+  * Split the color table into more sections.
+  * Allow up to 8 curves simultaneously.
+  * Create a separate plot widget.
+  * Add some new TACO devices: IOCounter and IOTimer
+  * Make the pulser flexible to MSTD-16/MPSD-8 modules.
+  * Add a new test tool.
+  * Update doc to version 1.9.
+  * Fix: Problems with calculations of min/max in ROI.
+  * Fix: Problems with zooming in the plotting area.
+  * Use QButtonGroup.
+  * Create standard color maps for the histogram display.
+  * Add the calibration for the tubes into the lib.
+  * A lot of changes to improve the code.
+  * Version 1.9 of doc.
+  * Fix: Ticket #33
+  * Remove the QwtPlotPanner option.
+  * Remove temporary variable.
+  * Change the version numbers.
+  * Complete the documentation.
+  * Complete the documentation.
+  * Complete the documentation.
+  * Add the position display for the plot.
+  * FIX: #33 (MPSD-8+ and do not send amplitude data)
+  * Create a default linear correction map.
+  * Use C constructs.
+  * Repair the logging problem introduced anytime.
+  * Change the reloading of the listmode file.
+  * Add a test tool to convert listmode to histogram files.
+  * fix a runtime bug during the resizing of the histogram.
+  * Ignore ghost events (neutrons).
+  * Improve performance during the replay of listmode files.
+  * Remove a removed file from the project.
+  * Fix runtime error caused due to the change to C structures.
+  * Add test tool to read histogram files.
+  * Add missing lib search path.
+  * Add the view to the position corrected histograms.
+  * Fix: #33 MPSD / MDLL readout problems
+  * Fix: #34 too much debugging output
+  * Fix: #35 Suprising behavior after installation
+  * Create a separate window to plot the data.
+
+  [ Lutz Rossa ]
+  * - observe orientation for mapped histograms - for Non-Win32: #include <unistd.h>   (Qt 4.8 does not include it) - fix bug in CARESS parser for mapping information
+
+  [ Jens Krueger ]
+  * Add a tool to dump the listmode files got from MSTD-16 modules.
+  * Fix problem with display of stepped curves.
+  * Changes to handle the MSTD-16 modules too.
+  * FIX wrong behaviour if module not online.
+  * Reorganize access to version, capabilities.
+  * FIX wrong calculation of the right and bottom position.
+  * Introduce a setup type.
+  * Switch to enum from bool type variables.
+  * Add missing implementations of changing scaling type variable.
+  * Add the information about the Plot widget.
+  * Create a separate window for the data plot.
+  * Create a separate window for the data plot.
+  * Remove debug output.
+  * Move the plot window to a separate widget.
+  * Move some code parts from the main to the plot widget.
+  * Implement MSTD specific setup.
+  * Remove size and window handling from the Plot widget.
+  * Fix the problems with zooming.
+  * Create a better layout of the measurement tab.
+  * Do not ignore neutrons in listmode files.
+  * Store the last positions and size of the windows.
+  * Forgot to increase the version number.
+  * Change x/y.
+  * Fix the include of data via active/inactive settings of channels.
+  * Fix the histogram size transfer.
+  * Enable the lin/log scaling again.
+  * Enabled/disable the selection of MCPD,MPSD,channel, ...
+  * Add a channel to react on zoomings inside the plot
+  * Fix: wrong order of parameters for remapping.
+  * Add a resource 'lastbinnedfile'.
+  * FIX: wrong calculation of the counts in selected region
+  * Fix target path.
+  * Fix problems with 'lasthistfile' and 'lastbinnedfile' resources.
+  * Some cosmetics.
+  * Put more configuration into the 'qmesydaqconfig.pri' file.
+  * TYPO: fix bug in documentation.
+  * FIX: segfault if no MCPD was configured and networking parameters are set
+  * Remove used zoomer pointer.
+  * Change the copyright notice.
+  * Disable the configuration of modules and MCPD
+  * FIX: check the connected modules/MDLL
+  * Put generated files into hidden directories.
+  * Enable/disable MCPD/module spin boxes automatically.
+  * Restore last run id number
+  * Improve the configuration.
+  * Fix some problems with empty histogram/spectrum
+  * Improve the doc and fix some typos.
+  * Overwrite the setting of a value to a cell.
+  * Complete the documentation.
+  * If a MDLL was found all pixels are active.
+  * Enable the remapping of histogram and list mode files.
+  * Synchronize version numbers.
+  * Complete doc.
+  * Add a check if the position inside the tube is > 959.
+  * Add new tool to test the reading of listmode files.
+  * Set the installation path
+  * Complete the documentation
+  * First steps to create a complete distro.
+  * Add the loading of a lookup table correction file.
+  * Move the print/export functions to the Plot widget.
+  * Change the text at the plot buttons.
+  * Add an automatic generation of version number.
+  * Status update
+  * Add the 'Jet' colormap
+  * Automatic storing of histogram files.
+  * Add the 'Hsv' and 'Hot' colormaps.
+  * Add some new colormaps.
+  * Add the color widget.
+  * Change the code for new widgets.
+  * Prepare a runtime setting of the colormap.
+  * FIX: switch of histogram type did not change the data
+  * FIX: timer problems
+  * Move the check for 'old' packages.
+  * Fix problem with right setting of run ID.
+  * Add the counter/timer information
+  * Improve the creation of the revision info.
+  * Set the run ID via remote interface.
+  * Use run ID for counting of measuring files.
+  * FIX: get the run ID via remote interface hangs app
+  * Change the start and stop of the measurement.
+  * Only the master MCPD has the current run ID.
+  * Display the loaded list mode file.
+  * Disable the file loading during a started measurement.
+  * Use internally functions instead of variables.
+  * FIX: wrong status during the replay of list mode files.
+  * FIX: setting/reading of the run ID
+  * FIX: segfault due to invalid pointer to mapped histogram.
+  * Change project name.
+  * Add package generation script.
+  * Catch exception in case of not accessible dir.
+  * Add file name into the histogram header.
+  * Add a new standard mapping for the MDLL module.
+  * Fix: Problems with boost filesystem version 3
+
+  [ Lutz Rossa ]
+  * - extend run id to 32 bits - use auto-increment setting for run id (Configuration->General Setup) - set run id via CARESS interface - make project files more readable - TODO: test directory has missing source files
+  * revert to r751, sorry
+
+  [ Jens Krueger ]
+  * FIX: disabled MCPD spin box.
+  * Update list of ignored files.
+  * Update list of ignored files.
+  * Update list of ignored files.
+  * Revert to state revision 751
+  * Revert to state of revision 751
+  * Revert to state of revision 751
+  * Revert to state of revision 751
+  * Revert to state of revision 751
+  * Revert to state of revision 751
+  * Revert to state of revision 751
+  * Update list of ignored files
+  * Update list of ignored files
+  * Update list of ignored files
+  * Add the calibration table description.
+  * Fix some doc typo.
+  * Only master MCPD react on start, stop, cont, and reset.
+  * Complete the doc.
+  * Start to create a more complete documentation.
+  * Fix some doc typo.
+  * Create a check for the histogram mapping
+
+  [ Jens Krüger ]
+  * [TEST] test for a rate meter plot.
+
+  [ Björn Pedersen ]
+  * [BUILD] create a tarball
+
+  [ Jens Krüger ]
+  * Complete list of authors.
+
+  [ Lutz Rossa ]
+  * correct email
+
+  [ Jens Krüger ]
+  * Change some information.
+  * Add an entry into the status bar.
+  * FIX: doubled actions
+
+  [ Lutz Rossa ]
+  * initialize more pointers and fix logic in "resizeHistogram"
+  * fix mapping bug in CARESS interface
+  * use tabs instead of spaces
+
+  [ Jens Krüger ]
+  * FIX: wrong amplitude calculation for the MDLL.
+
+  [ Lutz Rossa ]
+  * connect to signal later; do not trigger the signal while initializing the dialog
+
+  [ Gregor Montermann ]
+  * External synchronisation of MCPD-8.
+
+  [ Jens Krüger ]
+  * TOOLS: The qmlsmod tool displays capabilities
+  * Add information about the current set TX mode of MCPD and MPSD
+  * Set the transfer mode also for the MPSD8SADC modules
+  * Reformat text (using tabs)
+
+  [ Jens Krueger ]
+  * Overcome problem with register reading command of the MCPD-8
+  * QMSETIP: set the data sink and cmd sink to sending IP
+  * FIX: starting of MCPD's (master and slaves)
+
+  [ Jens Krüger ]
+  * FIX: The MCPD does not support start/stop over sync line
+  * Remove some debug messages
+  * Add get method for the protocol parameters
+  * FIX: setup of the protocol for all modules
+  * FIX: setup of the protocol for all modules
+  * Add the library version to the "About" dialog.
+  * Add the list of files to be ignored by git.
+  * Complete the doc.
+  * Complete the TACO interface.
+  * FIX: wrong widget for the module id.
+  * Increase the version number.
+
+  [ Lutz Rossa ]
+  * improve external synchronisation at HZB: deactivate 4th monitor instead of 3rd
+  * [CARESS] Improve the config parser
+  * Adding the header size inside the list mode file on request
+  * improve replaying files with interface-special headers: search for magic bytes
+
+  [ Jens Krüger ]
+  * FIX: typo in variable name
+
+  [ Lutz Rossa ]
+  * fix bug with CARESS after changing master counter
+  * ignore QtCreator and CORBA intermediate files
+  * fix typo
+  * simplify platform dependent code
+  * add logging helper for hex dumps
+  * rename parameters
+  * rename variable
+
+  [ Jens Krüger ]
+  * Add missing description
+
+  [ Lutz Rossa ]
+  * only one event loop
+  * clean up
+  * improve wizard for new MCPDs
+
+  [ Jenkins ]
+  * Add ../lib to depends-path
+
+  [ Lutz Rossa ]
+  * retry failed MCPD-8 commands
+  * calculate mean rate not so often (10Hz)
+  * document interface commands
+  * try to synchronize with MCPDs due sleeping (this will be solved later)
+  * add simulator
+  * synchronize interface commands and clear source
+  * Correct a parameter description
+  * Remove a annoying compiler warning
+  * Synchronize acquisition status with hardware
+  * reformat source file
+  * Add a write protection for data files option
+  * user interaction when overwriting files and suggest histogram file names from list mode name
+
+  [ Jens Krüger ]
+  * Add the simulator executable to the list of ignored files.
+
+  [ Lutz Rossa ]
+  * Display current list mode file name
+  * Allow to write histogram files, generate special V4 file names
+  * Remote command to ask for program/library versions
+  * Remove some unused parts of code.
+
+  [ Jens Krüger ]
+  * Protect the list of MCPD's
+  * Code cleanup (reduce the number of warning messages)
+
+  [ Lutz Rossa ]
+  * fix command line handling bug in logging module
+  * change simulator
+
+  [ Jens Krüger ]
+  * Simplify the calculation of the argument values
+  * Reformat the code
+  * Code clean up
+  * Change/Add copyright information
+  * Logging: use the 'tr' method of the QObject
+
+  [ Lutz Rossa ]
+  * fix bug with multiple MCPDs (from change Ie533c59e965c025f28444185093606e4f1eed396)
+
+  [ Jens Krüger ]
+  * Fix a compiler warning about comparison signed - unsigned
+  * Simulator: Rename the application variable
+  * Simulator: rework of the SimApp class
+  * FIX: wrong numbers of args in log message
+  * Add a thread testing program.
+
+  [ Lutz Rossa ]
+  * add an option to do faster simulation which is less random
+
+  [ Jens Krüger ]
+  * Create a more flexible selection of the boost libraries
+  * FIX: wrong counting of the data buffer number
+  * FIX: debug message was not right formatted.
+  * FIX: list mode file settings were not taken from config file
+  * TESTS: add a histogramming tester
+  * Fix: build in not source directories fails
+  * FIX: workaround for a buggy ld tool
+  * Move from QwtDoubleRect type to the Qt QRectF type
+  * Update copyright info and fix version and install target
+  * Increase the event rate.
+  * Add a usage method
+  * FIX: wrong display of number of missed packages
+  * Start/Stop timer to generate events via the timerEvent callback
+
+  [ Lutz Rossa ]
+  * FIX: always update packet counter (updates I591827be27f429edfbc0640dd6f85b1337302afa)
+
+  [ Jens Krüger ]
+  * FIX: configuration file options are ignored
+  * Increase the version number
+  * Add the MDLL spectra.
+  * Combine setups for MPSD and MDLL modules.
+  * Allow more then 2^16 - 1 packages as preselection.
+
+  [ Lutz Rossa ]
+  * do not kill timer for packet generation at 2nd start (simulation with 2 MCPDs)
+  * avoid Qt's foreach, because it seems to have threading problems
+
+  [ Jens Krüger ]
+  * Display the number of missed data packages
+  * Introduce an additional parameter 'ppe'
+  * Display the real time after starting the data acquisiton
+  * Remove some foreach loops for the MCPD list
+  * FIX: sometimes does the preset value not react
+
+  [ Lutz Rossa ]
+  * work around the different QWT versions 5 and 6
+
+  [ Jens Krüger ]
+  * Add the portability to Qt 4.6 (CentOS 6.4)
+  * Allow host specific TACO installation.
+
+  [ Lutz Rossa ]
+  * accept user selected alternate *new* file
+  * fix CARESS halt/continue problem with QMesyDAQ as master counter
+  * fix race condition in logging handlers
+
+  [ Jens Krüger ]
+  * Allow separate settings of the TACO library path.
+  * Remote interface allows selection to read the histogram data
+  * Create an access to the used library versions
+  * Add resource 'histogram' to select the histogram data
+  * Allow host specific lib target
+  * Allow higher rate values.
+  * Change the storage and reload of the cmd/data ip config
+  * Switch pulser on/off if toggle the pulser checkbox
+  * Forgotten version change added.
+  * Fixes: Display of all spectra per module does not work
+  * Remove the generation of the revision.h file
+  * Add an menu entry to configure the TACO devices.
+  * LIB: use enums instead of numbers.
+  * LIB: Improve the log message if setting the poti of the pulser
+  * Add a separate menu entry for the pulser in the tools menu
+
+  [ Lutz Rossa ]
+  * ignore SIGPIPE signal on *nix and do not abort with a broken connection
+
+  [ Jens Krüger ]
+  * Add the TACO device config dialog
+  * Modify the pulser dialog for the MDLL
+  * Add the init method to the remote interface.
+  * FIX: pulser state will not updated if all pulser switched off
+  * Restore the last position of the pulser dialog.
+  * Generate a simplified logo for the application
+  * Add the requirements for building the TACO remote interface
+  * Use application information for the read/write of settings.
+  * Store and restore the last settings of the mode
+
+  [ Josef Heinen ]
+  * Changes to compile it successful on Mac OS X systems.
+
+  [ Jens Krüger ]
+  * FIXES: The switching between position and amplitude
+  * Simulator: Add the simulation for the MSTD-16
+  * Enable the use of thresholds also for the histograms.
+  * Reenabling the display of the counts in the zoomed area.
+
+  [ Lutz Rossa ]
+  * fix two memory leaks
+  * fix segmenation fault while histogram readout with MSTD-16
+  * space changes
+  * fix a bug and some possible memory leaks
+
+  [ Jens Krüger ]
+  * [INTERFACE:TACO] Code clean up.
+  * [INTERFACE:TCP] Implement the TCP interface
+  * Ignore *.patch files in git
+
+  [ Lutz Rossa ]
+  * interactive mapping editor for position corrected histogram
+
+  [ Jens Krüger ]
+  * FIX: wrong mail address
+  * Add authors of the histogram mapping editor to the about info
+  * Add the setup dialogs for the TCP and CARESS (empty) remote interfaces.
+
+  [ Lutz Rossa ]
+  * show CARESS connection status in main widgets "CARESS" tab
+
+  [ Jens Krüger ]
+  * [LIB] fix: Read the calibration file after configuration
+  * Add the amplitude values to the amplitude spectrum in case of MDLL
+  * [GUI] Change the default tab for the MDLL setup
+  * Reformat code
+  * Add the view of the amplitude spectra for the MDLL modules
+  * [GUI] Change the entries for the spectra depending on setup
+  * [FIX] Calculation of the number of spectra
+
+  [ Christian Randau ]
+  * Some changes to compile it under Windows with VS.
+
+  [ Jens Krüger ]
+  * [GUI] Change the plot description depending on displayed data
+  * [GUI] Remove some compiler warnings
+  * FIX: Do not compile automatically the test projects
+
+  [ Lutz Rossa ]
+  * handle CARESS master as expected after configuration change
+
+  [ jkrueger ]
+  * [TCP] The setting of the presets has changed
+  * [TCP] log the histogram size if transferred to the client
+  * [TCP] The histogram sending did not respect the width of the histogram
+
+  [ Jens Krüger ]
+  * Reduce number of the same call to (hopefully) speed up histogramming
+  * Clean up code
+
+  [ Christian Randau ]
+  * A lot of small changes for VS.
+
+  [ Jens Krüger ]
+  * [WIP] Introduce mapping of selected tubes
+  * Fix: Scanning over tubes is only allowed in single spectra mode
+  * Make cppcheck a little bit happier
+  * Code cleanup.
+  * Code cleanup
+  * Create a new IP widget
+  * Reformat some code parts.
+  * FIX: Could not change the module number in the main widgets 'Modules' tab.
+  * FIX: the gain/thresholds for the modules were not always set
+  * FIX: The lin/log scale switching does not work for module spectra display
+  * Adopt to Qt 4.6 version
+  * Fix: crash after dechecking the 'sum spectra' box after startup
+  * [TACO] The interface should not shutdown the process
+  * Fix help text, the option --mstd was missing
+  * Add a menu entry to report a bug
+  * Add missed guard in the web browser header file
+  * Inform the user about not existing histogram/list mode file pathes
+  * Split test data from real data
+  * Fix: Enable the module selection list depending on the emptyness
+  * Remote configuration file loading
+
+  [ Lutz Rossa ]
+  * allow automatically saving histogram files after stop
+
+  [ Jens Krüger ]
+  * Reformat code
+  * Fix a source formatting issue.
+  * Reduces the number of monitors displayed in case of MDLL measurements
+  * Improve the simulator
+  * Histogram combining added
+  * Fix: mapping of the channels for the MSTD-16 module
+  * Enable the mapping configuration for the MSTD-16 module
+  * [QMDUMP] add an option to print out the neutron positions
+  * [QMDUMP] Add output of the channel from the tube
+
+  [ Lutz Rossa ]
+  * allow resolution steps in CARESS interface
+
+  [ Jens Krüger ]
+  * [SIMULATOR] allow empty MCPD8
+  * Fix: Crash if one of the MCPD-8 does not have any connected MPSD
+  * Fix: setting of pulser for non existing MPSD
+  * Fix: Disable histogram settings for an empty MCPD
+  * Fix: Switching from display all spectra per MPSD to sum spectra
+  * Do not generate a separate spectrum for the left/right part of MSTD16
+  * Fix: Bug 1416
+  * Fix: Not visible close button of the module setup dialog
+
+  [ Lutz Rossa ]
+  * use mean acquisition time for SPODI@FRM-2 in text file
+
+  [ Jens Krüger ]
+  * Fix Gain setting after switching of the MCPD is not correct
+  * Fix mapping of the tubes for SPODI setup
+  * Fix: formatting of the histogram data file was not correct
+
+  [ Lutz Rossa ]
+  * New version of scanning through channels
+
+  [ Jens Krüger ]
+  * Cleanup the code to make cppcheck happier
+  * Add some scripts to start different simulations
+  * Modify versions to prepare the 0.40 release
+  * [TACO] Add the start/stop/resume functionality for the timer/counter
+
+  [ Lutz Rossa ]
+  * SPODI@FRM-2 changes: allow "RESOSTEP 1" and fix compiler warning
+
+  [ Jens Krüger ]
+  * Fix: let the thresholds and gains back to 0..255 values
+  * Modify release number
+  * [SIMULATOR] set the MPSD types via command line
+  * [QMESYDAQ] Better display of MPSD type
+  * FIX: Display of the MDLL capabilities are TP but should be TPA
+  * [SIMULATOR] do not reset the clock before starting
+  * [MISC] A better simulator setting for the MDLL testing
+  * [SIMULATOR] Add a header time to the command packages
+  * Update the header time with every received package
+  * FIX: amplitude display for older modules
+  * [PLOT] Fix: The plot window size grows with every restart
+  * [GUI] disable the default behaviour of 'close' button in pulser setup
+  * [LIB] allow multiple MSTD-16
+
+  [ Lutz Rossa ]
+  * fix ID parsing bug from I43d6443953ec4c202c01d6ec70d5ff5f2976a19d
+
+  [ Jens Krüger ]
+  * Update the copyright information
+  * Detect tube for the MSTD-16 also in amplitude mode.
+  * Rework the configuration files.
+  * Fix calculation of real spectrum width
+  * Sane handling of different setups with different modules
+  * Create a MSTD-16 specific pulser setup
+  * Fixes some building problems due to wrong library searching
+
+  [ Christian Felder ]
+  * qmesydaq.pro: Ensure that local libraries will be linked first.
+
+  [ Jens Krüger ]
+  * BUILD: abort with an error message if LIBS variable is set externally
+  * FIX the configuration setup for the MPSD
+  * FIX the display of the gain if the gains are not equally configured per module
+  * The value of the ipaddress widget is now accessible
+  * Reimplement the adding of a new MCPD
+  * Integrate the MWPCHR module
+  * [DOC] update the documentation
+  * GUI: Improve the access handling
+  * [LIB] enable the usage of a different data port
+  * FIX allow all events with the pos in height of the setup
+  * FIX: set/read of the transmission capabilities
+  * Display the current transmission mode between MCPD and modules
+  * QMLSMOD: print the TX capabilities and modes as text
+  * LIB: Shift the pos/amp of old MPSD neutron events earlier
+  * Add the automatic pulser test
+  * Set the release number to 0.50.0
+  * Fix: typo
+  * FIX: The size of the package could be 750 words
+  * FIX: Calculation of the X and Y position for the MDLL
+
+  [ Lutz Rossa ]
+  * fix missing header size (bug in I4124fb66069f71ecd62652e16005b681086f0456)
+
+  [ Jens Krüger ]
+  * FIX: missing newline in histogram file header
+  * TACO: enable the auto save histogram file option
+  * Enable/Disable the auto save histogram remotely
+  * TACO: Fix clear command of the Timer channel
+  * Simplify the resource handling by introducing a base class
+  * TACO: Improve start of the timer and counter
+  * TACO: save the resources for the list/hist files
+
+  [ Alexander Lenz ]
+  * [WIP] Build debian package
+
+ -- Jens Krueger <jens.krueger@frm2.tum.de>  Wed, 14 Jan 2015 13:56:22 +0100
