@@ -272,6 +272,8 @@ private:
 	Measurement::HistogramType	m_histoType;
 
 	QDialog 		*m_pulserDialog;
-};	
+
+	bool			m_remoteStart;
+};
 
 #endif

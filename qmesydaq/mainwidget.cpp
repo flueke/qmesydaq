@@ -81,6 +81,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_histogram(NULL)
 	, m_histoType(Measurement::PositionHistogram)
 	, m_pulserDialog(NULL)
+	, m_remoteStart(true)
 {
 	setupUi(this);
 #ifndef USE_CARESS
@@ -394,6 +395,7 @@ void MainWidget::startStopSlot(bool checked)
 		m_meas->setHistfilename("");
 		checkListfilename(acquireListFile->isChecked());
 		checkHistogramFilename(autoSaveHistogram->isChecked());
+		m_remoteStart = false;
 		// get timing binwidth
 		// m_theApp->setTimingwidth(timingBox->value());
 
@@ -522,10 +524,10 @@ void MainWidget::checkListfilename(bool checked)
 		{
 			QMesyDAQDetectorInterface *interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 			if (interface)
-                name = interface->getListFileName();
+				name = interface->getListFileName();
 		}
 
-		if (name.isEmpty())
+		if (name.isEmpty() && !m_remoteStart)
 		{
 			name = selectListfile();
 			bAsk = false;
@@ -600,7 +602,7 @@ void MainWidget::checkHistogramFilename(bool bEnabled)
 			sFilename = pInterface->getHistogramFileName();
 	}
 
-	if (sFilename.isEmpty())
+	if (sFilename.isEmpty() && !m_remoteStart)
 	{
 		sFilename = selectHistogramfile(QString::null);
 		bAsk = false;
@@ -1934,6 +1936,7 @@ void MainWidget::customEvent(QEvent *e)
 		case CommandEvent::C_RESUME:
 			if (!startStopButton->isChecked())
 			{
+				m_remoteStart = true;
 				startStopButton->click();
 				QCoreApplication::processEvents();
 			}
