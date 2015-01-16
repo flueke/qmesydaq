@@ -133,6 +133,11 @@ contains(INTERFACE, TACO) {
 	message("build the TACO remote interface")
 }
 
+contains(INTERFACE, TANGO) {
+        DEFINES		+= USE_TANGO=1
+	message("build the TANGO remote interface")
+}
+
 contains(INTERFACE, CARESS) {
 # the CARESS interface needs the omniORB CORBA implementation
 #   please look at  http://omniorb.sourceforge.net/
@@ -154,10 +159,10 @@ contains(INTERFACE, TCP) {
 	message("build the TCP remote interface")
 }
 
-interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP")
+interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERFACE, "TCP") $$find(INTERFACE, "TANGO")
 !count(interfaces, 0) {
         !count(interfaces, 1) {
-		error("you may either use TACO, TCP, _or_ CARESS or nothing as remote interface")
+		error("you may either use TACO, TANGO, TCP, _or_ CARESS or nothing as remote interface")
 	}
 }
 

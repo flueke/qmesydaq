@@ -71,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
 	actionLoad_Calibration_File->setVisible(false);
 #if USE_TACO
 	connect(actionTACO, SIGNAL(triggered()), m_main, SLOT(setupTACO()));
+#elif USE_TANGO
+
 #elif USE_TCP
 	connect(actionTCP, SIGNAL(triggered()), m_main, SLOT(setupTCP()));
 #elif USE_CARESS

@@ -42,3 +42,7 @@ SUBDIRS		+= caress
 contains(INTERFACE, TCP) {
 SUBDIRS		+= tcp
 }
+
+contains(INTERFACE, TANGO) {
+SUBDIRS		+= tango
+}

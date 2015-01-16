@@ -177,6 +177,15 @@ contains(INTERFACE, TACO) {
 	LIBS		+= -L$${SRCBASE}/interfaces/taco -ltacoInterface $${TACOLIBS} $${LIBS}
 }
 
+contains(INTERFACE, TANGO) {
+	DEPENDPATH	+= $${SRCBASE}/interfaces/tango
+	INCLUDEPATH	+= $${SRCBASE}/interfaces/tango
+	INCLUDEPATH	+= $${SRCBASE}/interfaces/tango
+	LIBS		+= -L$${SRCBASE}/interfaces/tango -ltangoInterface $${LIBS}
+	CONFIG		+= link_pkgconfig
+	PKGCONFIG	= tango
+}
+
 contains(INTERFACE, CARESS) {
 	DEPENDPATH	+= $${SRCBASE}/interfaces/caress
 	INCLUDEPATH	+= $${SRCBASE}/interfaces/caress

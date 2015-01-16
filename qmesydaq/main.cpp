@@ -26,6 +26,8 @@
 
 #if USE_TACO
 #	include "TACOLoop.h"
+#elif USE_TANGO
+#	include "TANGOLoop.h"
 #elif USE_CARESS
 #	include "CARESSLoop.h"
 #elif USE_TCP
@@ -35,11 +37,15 @@
 const char* g_szShortUsage =
 #if USE_TACO
 	"[-n=<nethost>] "
+#elif USE_TANGO
+	"[-n=<tango_host>] "
 #endif
 	"[-f|--file|--config|-nf|--nofile|--noconfig]";
 const char* g_szLongUsage =
 #if USE_TACO
 	"  -n=<nethost> set environment variable NETHOST\n"
+#elif USE_TANGO
+	"  -n=<tango_host> set environment variable TANGO_HOST\n"
 #elif USE_CARESS
 	"  -n=<name>    use this name in CORBA name service\n"
 #endif
@@ -99,6 +105,10 @@ int main(int argc, char **argv)
 		if (szArgument == "-n")
 			setenv("NETHOST", szParameter.toStdString().c_str(), 1);
 		else
+#elif USE_TANGO
+		if (szArgument == "-n")
+			setenv("TANGO_HOST", szParameter.toStdString().c_str(), 1);
+		else
 #endif
 		if (szArgument == "-f" || szArgument == "--file" || szArgument == "--config")
 		{
@@ -118,12 +128,21 @@ int main(int argc, char **argv)
 #if USE_TACO
 	if (!getenv("NETHOST"))
 	{
-		MSG_DEBUG << QObject::tr("Environment variable \"NETHOST\" is not set");
-		MSG_DEBUG << QObject::tr("You may set it explicitly in the command shell");
-		MSG_DEBUG << QObject::tr("or by using command line option -n='nethost.domain'");
+		MSG_ERROR << QObject::tr("Environment variable \"NETHOST\" is not set");
+		MSG_ERROR << QObject::tr("You may set it explicitly in the command shell");
+		MSG_ERROR << QObject::tr("or by using command line option -n='nethost.domain'");
 	}
 	else
 		loop = new TACOLoop;
+#elif USE_TANGO
+	if (!getenv("TANGO_HOST"))
+	{
+		MSG_ERROR << QObject::tr("Environment variable \"TANGO_HOST\" is not set");
+		MSG_ERROR << QObject::tr("You may set it explicitly in the command shell");
+		MSG_ERROR << QObject::tr("or by using command line option -n='tango_host:port'");
+	}
+	else
+		loop = new TANGOLoop;
 #elif USE_CARESS
 	loop = new CARESSLoop(argList);
 #elif USE_TCP

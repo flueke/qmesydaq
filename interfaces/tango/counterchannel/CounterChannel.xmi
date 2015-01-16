@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="ASCII"?>
+<pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
+  <classes name="CounterChannel" pogoRevision="9.4">
+    <description description="Base class for channels that control monitor or single detector counts." title="" sourcePath="/home/jkrueger/sources/qmesydaq/interfaces/tango/counterchannel" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+      <inheritances classname="Device_Impl" sourcePath=""/>
+      <inheritances classname="MLZDevice" sourcePath="../defs"/>
+      <inheritances classname="DetectorChannel" sourcePath="/home/jkrueger/sources/qmesydaq/interfaces/tango/defs"/>
+      <identification contact="at frm2.tum.de - alexander.lenz" author="alexander.lenz" emailDomain="frm2.tum.de" classFamily="CounterTimer" siteSpecific="" platform="All Platforms" bus="Not Applicable" manufacturer="none" reference=""/>
+    </description>
+    <deviceProperties name="channel" description="What monitor input is used.">
+      <type xsi:type="pogoDsl:UShortType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>0</DefaultPropValue>
+    </deviceProperties>
+    <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device state">
+        <type xsi:type="pogoDsl:StateType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true"/>
+    </commands>
+    <commands name="Status" description="This command gets the device status (stored in its device_status data member) and returns it to the caller." execMethod="dev_status" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device status">
+        <type xsi:type="pogoDsl:ConstStringType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true"/>
+    </commands>
+    <commands name="On" description="Switches the main function of the device on." execMethod="on" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>MOVING</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>UNKNOWN</excludedStates>
+    </commands>
+    <commands name="Off" description="Switches the main function of the device off." execMethod="off" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>INIT</excludedStates>
+    </commands>
+    <commands name="GetProperties" description="Server command to request properties." execMethod="get_properties" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:StringArrayType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+    </commands>
+    <commands name="SetProperties" description="Server command to set properties." execMethod="set_properties" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:StringArrayType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>MOVING</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>UNKNOWN</excludedStates>
+    </commands>
+    <commands name="Reset" description="Resets the device to overcome a FAULT state." execMethod="reset" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+    </commands>
+    <commands name="Start" description="Starts the acquisition." execMethod="start" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>OFF</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>UNKNOWN</excludedStates>
+    </commands>
+    <commands name="Stop" description="Stops a running acquisition." execMethod="stop" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>OFF</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>UNKNOWN</excludedStates>
+    </commands>
+    <commands name="Clear" description="Clears all values of the detector." execMethod="clear" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>OFF</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>UNKNOWN</excludedStates>
+    </commands>
+    <commands name="Resume" description="Resumes a stopped data aquisition." execMethod="resume" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>OFF</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>UNKNOWN</excludedStates>
+    </commands>
+    <commands name="Prepare" description="Prepares the acquisition, so that a Start command can start it immediately." execMethod="prepare" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <excludedStates>OFF</excludedStates>
+      <excludedStates>MOVING</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>UNKNOWN</excludedStates>
+    </commands>
+    <attributes name="version" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true">
+      <dataType xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <properties description="This attribute contains the version of the device, its parent devices (recursively) and all the build dates for them." label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+    </attributes>
+    <attributes name="active" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true">
+      <dataType xsi:type="pogoDsl:BooleanType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <status abstract="false" inherited="true" concrete="true"/>
+      <properties description="If this channel can finish the measurement when preselection is reached." label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>UNKNOWN</readExcludedStates>
+      <writeExcludedStates>OFF</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>INIT</writeExcludedStates>
+      <writeExcludedStates>UNKNOWN</writeExcludedStates>
+    </attributes>
+    <attributes name="value" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:ULongType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Current counter value." label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+    </attributes>
+    <attributes name="preselection" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" memorizedAtInit="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:ULongType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Current preset value." label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <writeExcludedStates>OFF</writeExcludedStates>
+    </attributes>
+    <states name="ON" description="The main function of the device is on and ready.">
+      <status abstract="false" inherited="true" concrete="true"/>
+    </states>
+    <states name="OFF" description="The main function of the device is off.">
+      <status abstract="false" inherited="true" concrete="true"/>
+    </states>
+    <states name="MOVING" description="The hardware is moving (in case of a motor for example), or the detector is acquiring.">
+      <status abstract="false" inherited="true" concrete="true"/>
+    </states>
+    <states name="FAULT" description="An error occurred which could not been handled.&#xA;&#xA;This can be a hardware error, a communication error or even a programming error.">
+      <status abstract="false" inherited="true" concrete="true"/>
+    </states>
+    <states name="INIT" description="The device is initializing the communication to the hardware and the hardware itself.">
+      <status abstract="false" inherited="true" concrete="true"/>
+    </states>
+    <states name="ALARM" description="The alarm was caused because of reaching limits, dangerous position or similar circumstances.">
+      <status abstract="false" inherited="true" concrete="true"/>
+    </states>
+    <states name="UNKNOWN" description="The device state cannot be interpreted, so it is unkown.">
+      <status abstract="false" inherited="true" concrete="true"/>
+    </states>
+    <preferences docHome="./doc_html" makefileHome="/usr/share/pogo/preferences"/>
+  </classes>
+</pogoDsl:PogoSystem>
