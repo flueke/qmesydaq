@@ -1706,10 +1706,6 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         MPSD8	*ptrMPSD;
         MDLL    *ptrMDLL;
 
-        quint16 chksum = pMdp->headerChksum;
-        if (chksum != calcChksum(pPacket))
-            MSG_INFO << tr("cmd packet (cmd = %1, size = %2) is not valid (CHKSUM error) %3 != (expected) %4").
-		    arg(pMdp->cmd).arg(pMdp->bufferLength).arg(chksum).arg(calcChksum(pPacket));
         switch (pMdp->cmd)
         {
             case RESET:
