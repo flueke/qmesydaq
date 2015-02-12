@@ -2511,14 +2511,17 @@ void MainWidget::selectUserMode(int val)
 		case MainWidget::User :
 			realTimeLabel->setHidden(true);
 			slidingFrame->setHidden(true);
+			deltaTimingBox->setHidden(true);
 			break;
 		case MainWidget::Expert:
 			realTimeLabel->setVisible(true);
 			slidingFrame->setHidden(true);
+			deltaTimingBox->setHidden(true);
 			break;
 		case MainWidget::SuperUser:
 			realTimeLabel->setVisible(true);
 			slidingFrame->setVisible(true);
+			deltaTimingBox->setVisible(true);
 			break;
 		default:
 			break;

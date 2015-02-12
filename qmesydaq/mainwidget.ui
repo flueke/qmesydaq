@@ -734,7 +734,7 @@ histogram file</string>
            </size>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="statusMeasTab">
            <attribute name="title">
@@ -831,7 +831,7 @@ histogram file</string>
              </layout>
             </item>
             <item row="1" column="0" colspan="4">
-             <widget class="QGroupBox" name="groupBox20">
+             <widget class="QGroupBox" name="deltaTimingBox">
               <property name="title">
                <string>Timing Delta Histogram</string>
               </property>
