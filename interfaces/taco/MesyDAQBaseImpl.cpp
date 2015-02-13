@@ -36,7 +36,18 @@
 
 #include "QMesydaqDetectorInterface.h"
 
-#include "libgen.h"
+#include <libgen.h>
+
+#if 0
+#	include "measurement.h"
+#else
+//! Defines the histogram type
+enum HistogramType {
+	PositionHistogram = 0,		//!< raw position histogram
+	AmplitudeHistogram,		//!< raw amplitude histogram
+	CorrectedPositionHistogram,	//!< corrected position histogram
+};
+#endif
 
 void MesyDAQ::Base::deviceInit(void) throw (::TACO::Exception)
 {
@@ -151,11 +162,11 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 		{
 			std::string tmp = queryResource<std::string>("histogram");
 			if (tmp == "mapped")
-				m_histo = 2;
+				m_histo = CorrectedPositionHistogram;
 			else if (tmp == "amplitude")
-				m_histo = 1;
+				m_histo = AmplitudeHistogram;
 			else
-				m_histo = 0;
+				m_histo = PositionHistogram;
 		}
 		catch (::TACO::Exception &e)
 		{
@@ -199,10 +210,10 @@ void MesyDAQ::Base::deviceQueryResource(void) throw (::TACO::Exception)
 				default:
 					updateResource<std::string>("histogram", "raw");
 					break;
-				case 1:
+				case AmplitudeHistogram:
 					updateResource<std::string>("histogram", "amplitude");
 					break;
-				case 2:
+				case CorrectedPositionHistogram:
 					updateResource<std::string>("histogram", "mapped");
 					break;
 			}

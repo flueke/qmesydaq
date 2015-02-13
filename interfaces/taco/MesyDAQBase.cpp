@@ -62,7 +62,7 @@ MesyDAQ::Base::Base(const std::string& name, DevLong& error) throw (::TACO::Exce
 	addResource("lastbinnedfile", D_STRING_TYPE, "name of the last/currently used (binned) histogram data file");
 	addResource("writelistmode", D_BOOLEAN_TYPE, "write listmode data");
 	addResource("writehistogram", D_BOOLEAN_TYPE, "write histogram data");
-	addResource("runid", D_ULONG_TYPE, "name of the last/currently used histogram data (binned) file");
+	addResource("runid", D_ULONG_TYPE, "number of the last/currently data acquisition run");
 	addResource("histogram", D_STRING_TYPE, "type of the histogram (raw|mapped|amplitude)");
 	addResource("configfile", D_STRING_TYPE, "currently used configuration file");
 
