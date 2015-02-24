@@ -356,7 +356,7 @@ bool MCPD2::setGain(quint16 addr, quint8 chan, quint8 gainval)
 
     m_mpsd[addr]->setGain(chan, gainval, 1);
     QMutexLocker locker(m_pCommandMutex);
-    initCmdBuffer(SETGAIN);
+    initCmdBuffer(SETGAIN_MPSD);
     m_cmdBuf.data[0] = addr;
     m_cmdBuf.data[1] = chan;
     m_cmdBuf.data[2] = gainval;
@@ -1180,7 +1180,7 @@ bool MCPD2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
             case GETPARAM:
                 MSG_ERROR << tr("not handled command : GETPARAM");
                 break;
-            case SETGAIN: // extract the set gain values:
+            case SETGAIN_MPSD: // extract the set gain values:
                 if(pMdp->bufferLength == 21) // set common gain
                 {
                     for (quint8 c = 0; c < 8; c++)

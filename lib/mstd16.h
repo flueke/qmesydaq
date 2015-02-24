@@ -46,6 +46,9 @@ public:
 
 //	virtual QList<quint16> getActiveList(void);
 
+	//! \return the number of available channels
+	virtual quint8	getChannels() const {return 16;}
+
 protected:
 
 };

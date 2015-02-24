@@ -954,8 +954,15 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 			// pPacket->data[1] = source;
 			break;
 //		case GETPARAM:
-		case SETGAIN:
-			logmsg(pMCPD8, "SETGAIN addr=%d chan=%d gain=%d", pPacket->data[0], pPacket->data[1], pPacket->data[2]);
+		case SETGAIN_MPSD:
+			logmsg(pMCPD8, "SETGAIN_MPSD addr=%d chan=%d gain=%d", pPacket->data[0], pPacket->data[1], pPacket->data[2]);
+			pPacket->bufferLength = wBufferLen;
+			// pPacket->data[0] = addr;
+			// pPacket->data[1] = chan;
+			// pPacket->data[2] = gainval;
+			break;
+		case SETGAIN_MSTD:
+			logmsg(pMCPD8, "SETGAIN_MSTD addr=%d chan=%d gain=%d", pPacket->data[0], pPacket->data[1], pPacket->data[2]);
 			pPacket->bufferLength = wBufferLen;
 			// pPacket->data[0] = addr;
 			// pPacket->data[1] = chan;

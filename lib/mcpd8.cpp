@@ -542,83 +542,85 @@ bool MCPD8::scanPeriph(void)
 }
 
 /*!
-    \fn MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
+	\fn MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 
-    sets the gain to a poti value
+	sets the gain to a poti value
 
-    \param addr number of the module
-    \param chan channel number of the module
-    \param gainval poti value of the gain
-    \return true if operation was succesful or not
-    \see getGain
+	\param addr number of the module
+	\param chan channel number of the module
+	\param gainval poti value of the gain
+	\return true if operation was succesful or not
+	\see getGain
  */
 bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
-    if (!m_mpsd.size() || m_mpsd.find(addr) == m_mpsd.end())
-        return false;
-    if (chan > 8)
-        chan = 8;
+	if (!m_mpsd.size() || m_mpsd.find(addr) == m_mpsd.end())
+			return false;
+	if (chan > m_mpsd[addr]->getChannels())
+		chan = m_mpsd[addr]->getChannels();
 
-    MSG_DEBUG << tr("SETGAIN %1, addr %2, chan %3, val %4").arg(m_byId).arg(addr).arg(chan).arg(gainval);
-    QMutexLocker locker(m_pCommandMutex);
-    m_mpsd[addr]->setGain(chan, gainval, 1);
-    initCmdBuffer(SETGAIN);
-    m_cmdBuf.data[0] = addr;
-    m_cmdBuf.data[1] = chan;
-    m_cmdBuf.data[2] = gainval;
-    MSG_FATAL << tr("set gain to potival: %1").arg(m_cmdBuf.data[2]);
-    finishCmdBuffer(3);
-    return sendCommand(true);
+	MSG_DEBUG << tr("SETGAIN_%1 %2, addr %3, chan %4, val %5")
+				.arg(m_mpsd[addr]->getType())
+				.arg(m_byId).arg(addr).arg(chan).arg(gainval);
+	QMutexLocker locker(m_pCommandMutex);
+	m_mpsd[addr]->setGain(chan, gainval, 1);
+	initCmdBuffer(m_mpsd[addr]->type() == TYPE_MSTD16 ? SETGAIN_MSTD : SETGAIN_MPSD);
+	m_cmdBuf.data[0] = addr;
+	m_cmdBuf.data[1] = chan;
+	m_cmdBuf.data[2] = gainval;
+	MSG_FATAL << tr("set gain to potival: %1").arg(m_cmdBuf.data[2]);
+	finishCmdBuffer(3);
+	return sendCommand(true);
 }
 
 /*!
-    \fn MCPD8::getGainPoti(quint16 addr,  quint8 chan)
+	\fn MCPD8::getGainPoti(quint16 addr,  quint8 chan)
 
-    gets the currently set gain value for a special module and channel
+	gets the currently set gain value for a special module and channel
 
-    if the channel number is greater 7 than all channels of the module
-    will be set
+	if the channel number is greater 7 or 15 than all channels of the module
+	will be set (MSTD-16 has 16 channels, others have 8)
 
-    \param addr number of the module
-    \param chan number of the channel of the module
-    \return poti value of the gain
-    \see setGain
-    \see getGainPoti
+	\param addr number of the module
+	\param chan number of the channel of the module
+	\return poti value of the gain
+	\see setGain
+	\see getGainPoti
  */
 quint8 MCPD8::getGainPoti(quint16 addr,  quint8 chan)
 {
-    if (m_mpsd.find(addr) != m_mpsd.end())
-    {
-        if (chan > 7)
-            chan = 8;
-        return m_mpsd[addr]->getGainpoti(chan, 0);
-    }
-    return 0;
+	if (m_mpsd.find(addr) != m_mpsd.end())
+	{
+		if (chan > m_mpsd[addr]->getChannels())
+			chan = m_mpsd[addr]->getChannels();
+		return m_mpsd[addr]->getGainpoti(chan, 0);
+	}
+	return 0;
 }
 
 /*!
-    \fn float MCPD8::getGainVal(quint16 addr,  quint8 chan)
+	\fn float MCPD8::getGainVal(quint16 addr,  quint8 chan)
 
-    gets the currently set gain value for a special module and channel
+	gets the currently set gain value for a special module and channel
 
-    if the channel number is greater 7 than all channels of the module
-    will be set
+	if the channel number is greater 7 or 15 than all channels of the module
+	will be set (MSTD-16 has 16 channels, others have 8)
 
-    \param addr number of the module
-    \param chan number of the channel of the module
-    \return poti value of the gain
-    \see setGain
-    \see getGainPoti
+	\param addr number of the module
+	\param chan number of the channel of the module
+	\return poti value of the gain
+	\see setGain
+	\see getGainPoti
  */
 float MCPD8::getGainVal(quint16 addr,  quint8 chan)
 {
-    if (m_mpsd.find(addr) != m_mpsd.end())
-    {
-        if (chan > 7)
-            chan = 8;
-        return m_mpsd[addr]->getGainval(chan, 0);
-    }
-    return 0;
+	if (m_mpsd.find(addr) != m_mpsd.end())
+	{
+		if (chan > m_mpsd[addr]->getChannels())
+			chan = m_mpsd[addr]->getChannels();
+		return m_mpsd[addr]->getGainval(chan, 0);
+	}
+	return 0;
 }
 
 /*!
@@ -1598,14 +1600,14 @@ tryagain:
             CMD(RESET); CMD(START); CMD(STOP); CMD(CONTINUE); CMD(SETID);
             CMD(SETPROTOCOL); CMD(SETTIMING); CMD(SETCLOCK); CMD(SETRUNID);
             CMD(SETCELL); CMD(SETAUXTIMER); CMD(SETPARAM); CMD(GETPARAM);
-            CMD(SETGAIN); CMD(SETTHRESH); CMD(SETPULSER); CMD(SETMODE);
+            CMD(SETGAIN_MPSD); CMD(SETTHRESH); CMD(SETPULSER); CMD(SETMODE);
             CMD(SETDAC); CMD(SENDSERIAL); CMD(READSERIAL); CMD(SCANPERI);
             CMD(GETCAPABILITIES); CMD(SETCAPABILITIES); CMD(WRITEFPGA);
             CMD(WRITEREGISTER); CMD(READREGISTER); CMD(READFPGA); CMD(SETPOTI);
             CMD(GETPOTI); CMD(READID); CMD(DATAREQUEST); CMD(QUIET);
             CMD(GETVER); CMD(READPERIREG); CMD(WRITEPERIREG); CMD(SETMDLLTHRESHS);
             CMD(SETMDLLSPECTRUM); CMD(SETMDLLPULSER); CMD(SETMDLLDATASET);
-            CMD(SETMDLLACQSET); CMD(SETMDLLEWINDOW);
+            CMD(SETMDLLACQSET); CMD(SETMDLLEWINDOW); CMD(SETGAIN_MSTD);
 #undef CMD
             default: szCmd="???"; break;
             }
@@ -1785,46 +1787,47 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			setParameter(3, val);
                 }
                 break;
-            case SETGAIN: // extract the set gain values:
-		if (pMdp->bufferLength == 21) // set common gain
-                {
-                    for(quint8 c = 0; c < 8; c++)
-                    {
-			ptrMPSD = m_mpsd[pMdp->data[0]];
-			if(pMdp->data[2 + c] != ptrMPSD->getGainpoti(c, 1))
-                        {
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-					arg(8 * pMdp->deviceId + pMdp->data[0]).arg(c).arg(pMdp->data[2 + c]).arg(ptrMPSD->getGainpoti(c, 1));
-				// set back to received value
-				ptrMPSD->setGain(8, (quint8)pMdp->data[c + 2], 0);
-                        }
-                    }
-		    ptrMPSD->setGain(8, (quint8)pMdp->data[2], 0);
-                }
-		else// set one channel
-		{
-			ptrMPSD = m_mpsd[pMdp->data[0]];
-			if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
-			{
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-					arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
-			// set back to received value
-			}
-			ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
-		}
-                break;
-            case SETTHRESH: // extract the set thresh value:
-		ptrMPSD = m_mpsd[pMdp->data[0]];
-		if (pMdp->data[1] != ptrMPSD->getThreshold(1))
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("Error setting threshold, mod %1, is: %2, should be: %3").
-				arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(ptrMPSD->getThreshold(1));
-		}
-		ptrMPSD->setThreshold(pMdp->data[1], 0);
-                break;
+			case SETGAIN_MPSD: // extract the set gain values:
+			case SETGAIN_MSTD:
+				if (pMdp->bufferLength == 21) // set common gain
+				{
+					for(quint8 c = 0; c < 8; c++)
+					{
+						ptrMPSD = m_mpsd[pMdp->data[0]];
+						if(pMdp->data[2 + c] != ptrMPSD->getGainpoti(c, 1))
+						{
+							bAnswerOk = false;
+							MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
+								arg(8 * pMdp->deviceId + pMdp->data[0]).arg(c).arg(pMdp->data[2 + c]).arg(ptrMPSD->getGainpoti(c, 1));
+							// set back to received value
+							ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[c + 2], 0);
+						}
+					}
+					ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[2], 0);
+				}
+				else// set one channel
+				{
+					ptrMPSD = m_mpsd[pMdp->data[0]];
+					if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
+					{
+						bAnswerOk = false;
+						MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
+							arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
+						// set back to received value
+					}
+					ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
+				}
+				break;
+			case SETTHRESH: // extract the set thresh value:
+				ptrMPSD = m_mpsd[pMdp->data[0]];
+				if (pMdp->data[1] != ptrMPSD->getThreshold(1))
+				{
+					bAnswerOk = false;
+					MSG_ERROR << tr("Error setting threshold, mod %1, is: %2, should be: %3").
+						arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(ptrMPSD->getThreshold(1));
+				}
+				ptrMPSD->setThreshold(pMdp->data[1], 0);
+				break;
             case SETPULSER:
 		ptrMPSD = m_mpsd[pMdp->data[0]];
 		if(pMdp->data[3] != ptrMPSD->getPulsPoti(1))
@@ -2393,14 +2396,14 @@ void MCPD8::initModule(quint8 id)
 //! \todo gain initialization
 #if 0
     quint8 	start = 8,
-        stop = 9;
+		stop = 9;
 
     // gains:
     if(!myMpsd[id]->comGain())
     {
         // iterate through all channels
         start = 0;
-        stop = 8;
+	stop = myMpsd[id]->getChannels();
     }
     for (quint8 c = start; c < stop; ++c)
         m_mcpd[id]->setGain(c, myMpsd[id]->getGainpoti(c, 1));

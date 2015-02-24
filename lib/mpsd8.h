@@ -26,7 +26,7 @@
 
 /**
  * \class MPSD8
- * \short representation of MPSD-8 peripheral module 
+ * \short representation of MPSD-8 peripheral module
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
@@ -42,19 +42,19 @@ public:
 
 	static MPSD8 *create(int, int, QObject * = 0);
 
-	virtual bool	active(void); 
+	virtual bool	active(void);
 
 	virtual bool	active(quint16);
 
-	virtual void	setActive(bool act); 
+	virtual void	setActive(bool act);
 
 	virtual void	setActive(quint16, bool);
 
-	bool	histogram(void); 
+	bool	histogram(void);
 
 	bool	histogram(quint16);
 
-	void	setHistogram(bool hist); 
+	void	setHistogram(bool hist);
 
 	void	setHistogram(quint16, bool);
 
@@ -77,7 +77,7 @@ public:
 // Pulser related methods
 	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 	virtual void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
-	
+
 	/**
 	 * get the pulser position
 	 *
@@ -89,7 +89,7 @@ public:
 	 * \see setPulserPoti
 	 */
 	virtual quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
-	
+
 	/**
 	 * get the pulser amplitude
 	 *
@@ -101,11 +101,11 @@ public:
 	 * \see setPulserPoti
 	 */
 	quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
-	
+
 	/**
 	 * get the pulser channel
 	 *
-         * \return pulser channel 
+         * \return pulser channel
 	 * \see getPulsPos
 	 * \see getPulsAmp
 	 * \see getPulsPoti
@@ -113,11 +113,11 @@ public:
 	 * \see setPulserPoti
 	 */
 	quint8	getPulsChan(bool preset = false) {return m_pulsChan[preset];}
-	
+
 	/**
 	 * get the pulser poti
 	 *
-         * \return pulser poti 
+         * \return pulser poti
 	 * \see getPulsPos
 	 * \see getPulsAmp
 	 * \see getPulsChan
@@ -166,7 +166,12 @@ public:
 	 * \see setGain
 	 * \see getGainval
 	 */
-	quint8	getGainpoti(quint8 chan, bool preset = false) {return m_gainPoti[chan][preset];}
+	virtual quint8	getGainpoti(quint8 chan, bool preset = false)
+	{
+		if (chan > getChannels())
+			chan = getChannels();
+		return m_gainPoti[chan][preset];
+	}
 
 	/**
 	 * get the user value for the gain
@@ -175,14 +180,16 @@ public:
 	 * \see setGain
 	 * \see getGainpoti
 	 */
-	float	getGainval(quint8 chan, bool preset = false) 
+	virtual float	getGainval(quint8 chan, bool preset = false)
 	{
+		if (chan > getChannels())
+			chan = getChannels();
 		MSG_DEBUG << tr("gain val %1 %2").arg(chan).arg(m_gainVal[chan][preset]);
 		return m_gainVal[chan][preset];
 	}
 
 	//! \return use the same gain for all channels ?
-	bool	comGain() {return m_comgain;}
+	virtual bool	comGain() {return m_comgain;}
 
 // Mode related methods
 	/**
@@ -207,7 +214,7 @@ public:
 	virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
 
 	/**
-	 * get the value of the internal registers 
+	 * get the value of the internal registers
 	 *
 	 * \param reg register number
 	 * \param preset ????
@@ -215,30 +222,33 @@ public:
 	 * \see setInternalreg
 	 */
 	quint16	getInternalreg(quint8 reg, bool preset = false) {return m_internalReg[reg][preset];}
-	
+
 	virtual quint8	calcGainpoti(float fval);
 
         //! returns the number of bins per module
 	virtual quint16 bins() {return 960;}
 
-	//! returns the number of the bus 
-	quint8 busNumber(void) {return m_busNum;} 
+	//! returns the number of the bus
+	quint8 busNumber(void) {return m_busNum;}
 
 // version related methods
-        //! return version as float value major.minor
+	//! return version as float value major.minor
 	float	version(void) const {return m_version;}
 
-        //! sets the version as float value major.minor
+	//! sets the version as float value major.minor
 	//! \param val
-        void	setVersion(const float val) {m_version = val;}
+	void	setVersion(const float val) {m_version = val;}
 
 // capabilities related methods
-        //! return capabilities
+	//! return capabilities
 	virtual quint16 capabilities(void) const {return m_capabilities;}
 
-        //! sets the capabilities
+	//! sets the capabilities
 	//! \param val
-        void	setCapabilities(const quint16 val) {m_capabilities = val;}
+	void	setCapabilities(const quint16 val) {m_capabilities = val;}
+
+	//! \return the number of available channels
+	virtual quint8	getChannels() const { return 8; }
 
 protected:
 	virtual float	calcGainval(quint8 ga);
@@ -251,15 +261,15 @@ public:
 protected:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
-	
+
 	//! MPSD-8 id
 	quint8 		m_mpsdId;
 
-	//! Gain poti values 
-	quint8 		m_gainPoti[9][2];
-	
+	//! Gain poti values
+	quint8 		m_gainPoti[17][2];
+
 	//! Gain values
-	float 		m_gainVal[9][2];
+	float 		m_gainVal[17][2];
 
 	//! Common gain
 	bool 		m_comgain;
@@ -282,12 +292,12 @@ protected:
 	//! Pulser channel
 	quint8 		m_pulsChan[2];
 
-	//! Pulser 
+	//! Pulser
 	quint8 		m_pulser[2];
 
 private:
 	//! amplitude mode
-	bool		m_ampMode[2]; 
+	bool		m_ampMode[2];
 
 protected:
 	//! the bus number ????
@@ -310,21 +320,21 @@ private:
 /**
  * \class NoModule
  * \short representation of not extisting module
- * 
+ *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
 class LIBQMESYDAQ_EXPORT NoModule : public MPSD8
 {
 	Q_OBJECT
 public:
-	/*! 
+	/*!
 	   constructor
 
 	   /param id
 	   /param parent
 	 */
-	NoModule(quint8 id, QObject *parent = 0) 
-		: MPSD8(id, parent) 
+	NoModule(quint8 id, QObject *parent = 0)
+		: MPSD8(id, parent)
 	{
 		m_mpsdId = 0;
 		setHistogram(false);
@@ -354,11 +364,11 @@ public:
 
 //	virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
 };
- 
+
 
 /**
  * \class MPSD8old
- * \short representation of old MPSD-8 peripheral module 
+ * \short representation of old MPSD-8 peripheral module
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
@@ -400,7 +410,7 @@ private:
 
 /**
  * \class MPSD8plus
- * \short representation of MPSD-8+ peripheral module 
+ * \short representation of MPSD-8+ peripheral module
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
@@ -437,12 +447,12 @@ private:
 	float 		m_p2;
 };
 
-/** 
+/**
  * \class MPSD8SingleADC
  * \short representation of the MPSD-8 pheripheral module with a single ADC like at DNS
  *
  * \author Jens Krueger <jens.krueger@frm2.tum.de>
- */ 
+ */
 class LIBQMESYDAQ_EXPORT MPSD8SingleADC : public MPSD8
 {
 	Q_OBJECT

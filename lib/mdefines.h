@@ -69,7 +69,7 @@
 #define SETAUXTIMER 		10
 #define SETPARAM 		11
 #define GETPARAM 		12
-#define SETGAIN 		13
+#define SETGAIN_MPSD		13
 #define SETTHRESH 		14
 #define SETPULSER 		15
 #define SETMODE 		16
@@ -79,6 +79,7 @@
 #define SCANPERI 		20
 #define GETCAPABILITIES		22
 #define SETCAPABILITIES		23
+#define SETGAIN_MSTD		26
 
 //
 // internal commands for the MCPD-8

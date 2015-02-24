@@ -277,7 +277,7 @@ typedef struct _PRESET_PACKET
 const quint8 DATAREQUEST = 0;
 const quint8 DAQSTART = 1;
 const quint8 DAQSTOP = 2;
-const quint8 SETGAIN = 3;
+const quint8 SETGAIN_MPSD = 3;
 const quint8 SETTHRESH = 4;
 const quint8 SETPULSER = 5;
 const quint8 SETMODE = 6;
@@ -300,8 +300,9 @@ const quint8 DAQPAUSE = 22;
 const quint8 DAQCONTINUE = 23;
 const quint8 PRESET = 24;
 const quint8 ENDCMD = 25;
+const quint8 SETGAIN_MSTD = 26;
 #endif
- 
+
 // definitions for CPU register addresses
 const quint8 STAW = 0;
 const quint8 STAR = 2;

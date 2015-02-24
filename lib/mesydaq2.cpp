@@ -777,8 +777,9 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		}
 		int iMCPDId = iId / 8;
 		int j = iId % 8;
-		quint8 	gains[8],
-			threshold;
+		quint8 	gains[16],
+			threshold,
+			channels(8);
 		bool 	comgain(true);
 
 		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
@@ -789,10 +790,13 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 				case TYPE_MDLL :
 				case TYPE_NOMODULE :
 					break;
+				case TYPE_MSTD16:
+					channels = 16;
+					/*no break*/
 				default:
-					for (int k = 0; k < 8; ++k)
+					for (int k = 0; k < channels; ++k)
 						gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
-					for (int k = 0; k < (moduleID == TYPE_MSTD16 ? 16 : 8); ++k)
+					for (int k = 0; k < channels; ++k)
 					{
 						setActive(iMCPDId, j, k, settings.value(QString("active%1").arg(k), "true").toBool());
 						setHistogram(iMCPDId, j, k, settings.value(QString("histogram%1").arg(k), "true").toBool());
@@ -800,16 +804,16 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 
 					threshold = settings.value("threshold", "22").toUInt();
 
-					for (int k = 0; k < 8; ++k)
+					for (int k = 0; k < channels; ++k)
 						if (gains[0] != gains[k])
 						{
 							comgain = false;
 							break;
 						}
 					if (comgain)
-						setGain(iMCPDId, j, 8, gains[0]);
+						setGain(iMCPDId, j, channels, gains[0]);
 					else
-						for (int k = 0; k < 8; ++k)
+						for (int k = 0; k < channels; ++k)
 							setGain(iMCPDId, j, k, gains[k]);
 					setThreshold(iMCPDId, j, threshold);
 					break;
@@ -1719,8 +1723,8 @@ quint64 Mesydaq2::getParameter(quint16 id, quint16 param)
 
     gets the currently set gain value for a special module and channel
 
-    if the channel number is greater 7 than all channels of the module
-    will be set
+    if the channel number is greater 7 or 15 than all channels of the module
+    will be set (MSTD-16 has 16 channels, others have 8 channels)
 
     \param id number of the MCPD
     \param addr number of the module

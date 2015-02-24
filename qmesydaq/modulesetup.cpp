@@ -132,10 +132,11 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
  */
 void ModuleSetup::setGainSlot()
 {
-	bool ok;
-	quint16 chan = comgain->isChecked() ? 8 : channel->text().toUInt(&ok, 0),
-		id = (quint16) devid->value(),
+	bool	ok;
+	quint16 id = (quint16) devid->value(),
 		addr = module->value();
+	int	modType = m_theApp->getModuleId(id, addr);
+	quint16 chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->text().toUInt(&ok, 0);
 	float 	gainval = gain->value();
 
 #if 0
@@ -298,11 +299,10 @@ void ModuleSetup::displayMPSDSlot(int id)
  */
 void ModuleSetup::displaySlot()
 {
-	quint8 chan = comgain->isChecked() ? 8 : channel->value();
-
 	quint8 mod = devid->value();
 	quint8 id = module->value();
 	int modType = m_theApp->getModuleId(mod, id);
+	quint8 chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->value();
 	MSG_DEBUG << mod << " " << id << " modType " << modType;
 	Ui_ModuleSetup::pos->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
 	Ui_ModuleSetup::amp->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
