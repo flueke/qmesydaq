@@ -132,13 +132,17 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
  */
 void ModuleSetup::setGainSlot()
 {
-	bool	ok;
+	bool ok;
 	quint16 chan = comgain->isChecked() ? 8 : channel->text().toUInt(&ok, 0),
 		id = (quint16) devid->value(),
 		addr = module->value();
-	float 	gainval = gain->text().toFloat(&ok);
+	float 	gainval = gain->value();
 
+#if 0
 	m_theApp->setGain(id, addr, chan, gainval);
+#else
+	m_theApp->setGain(id, addr, chan, quint8(gainval));
+#endif
 }
 
 /*!
@@ -148,10 +152,9 @@ void ModuleSetup::setGainSlot()
  */
 void ModuleSetup::setThresholdSlot()
 {
-	bool 	ok;
 	quint16 id = (quint16) devid->value();
 	quint16 addr = module->value();
-	quint16 thresh = threshold->text().toUInt(&ok, 0);
+	quint16 thresh = threshold->value();
 
 	m_theApp->setThreshold(id, addr, thresh);
 }
@@ -312,10 +315,14 @@ void ModuleSetup::displaySlot()
 	}
 
 // gain:
-	gain->setText(tr("%1").arg(double(m_theApp->getGain(mod, id, chan)), 4, 'f', 2));
+	gain->blockSignals(true);
+	gain->setValue(m_theApp->getGain(mod, id, chan));
+	gain->blockSignals(false);
 
 // threshold:
-	threshold->setText(tr("%1").arg(m_theApp->getThreshold(mod, id)));
+	threshold->blockSignals(true);
+	threshold->setValue(m_theApp->getThreshold(mod, id));
+	threshold->blockSignals(false);
 
 // mode
 	if (m_theApp->getMode(mod, id))

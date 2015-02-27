@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
-    <height>296</height>
+    <width>784</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -170,11 +170,17 @@
            </widget>
           </item>
           <item row="0" column="5">
-           <widget class="QLineEdit" name="gain">
-            <property name="text">
-             <string>1</string>
+           <widget class="QDoubleSpinBox" name="gain">
+            <property name="text" stdset="0">
+             <string>128,00</string>
             </property>
-            <property name="cursorPosition">
+            <property name="maximum">
+             <double>255.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>128.000000000000000</double>
+            </property>
+            <property name="cursorPosition" stdset="0">
              <number>0</number>
             </property>
            </widget>
@@ -233,9 +239,15 @@
            </widget>
           </item>
           <item row="1" column="5">
-           <widget class="QLineEdit" name="threshold">
-            <property name="text">
-             <string>20</string>
+           <widget class="QDoubleSpinBox" name="threshold">
+            <property name="text" stdset="0">
+             <string>20,00</string>
+            </property>
+            <property name="maximum">
+             <double>255.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>20.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -1188,7 +1200,7 @@
   </connection>
   <connection>
    <sender>gain</sender>
-   <signal>returnPressed()</signal>
+   <signal>editingFinished()</signal>
    <receiver>setGain</receiver>
    <slot>click()</slot>
    <hints>
@@ -1220,7 +1232,7 @@
   </connection>
   <connection>
    <sender>threshold</sender>
-   <signal>returnPressed()</signal>
+   <signal>editingFinished()</signal>
    <receiver>setThreshold</receiver>
    <slot>click()</slot>
    <hints>
