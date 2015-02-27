@@ -1731,7 +1731,11 @@ quint64 Mesydaq2::getParameter(quint16 id, quint16 param)
 float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 {
 	if (m_mcpd.contains(id))
+#if 0
 		return m_mcpd[id]->getGainVal(addr, chan);
+#else
+		return m_mcpd[id]->getGainPoti(addr, chan);
+#endif
 	MSG_DEBUG << tr("getGain not found id %1").arg(id);
 	return 0;
 }
