@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>858</width>
-    <height>684</height>
+    <height>710</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -734,7 +734,7 @@ histogram file</string>
            </size>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="statusMeasTab">
            <attribute name="title">
@@ -875,33 +875,95 @@ histogram file</string>
               <height>251</height>
              </rect>
             </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="title">
              <string>Module status</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_9">
              <item row="0" column="0">
-              <widget class="ModuleStatus" name="moduleStatus0" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus0" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="0" column="1">
-              <widget class="ModuleStatus" name="moduleStatus1" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus1" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="0" column="2">
-              <widget class="ModuleStatus" name="moduleStatus2" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus2" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="0" column="3">
-              <widget class="ModuleStatus" name="moduleStatus3" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus3" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="0" column="4">
-              <widget class="ModuleStatus" name="moduleStatus4" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus4" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="0" column="5">
-              <widget class="ModuleStatus" name="moduleStatus5" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus5" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="0" column="6">
-              <widget class="ModuleStatus" name="moduleStatus6" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus6" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item row="0" column="7">
-              <widget class="ModuleStatus" name="moduleStatus7" native="true"/>
+              <widget class="ModuleStatus" name="moduleStatus7" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
