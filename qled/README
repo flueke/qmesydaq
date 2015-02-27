@@ -2,7 +2,7 @@ This is a modified version of the original qled library from P. Sereno.
 
 The code was a little bit rearranged into src, plugin, and example library.
 The example code was extended to show all possibilities of the library.
-A blink option was introduced into the QLed widget to simulatio blinking
+A blink option was introduced into the QLed widget to simulate blinking
 LED's by the widget itself.
 
 Jens Krüger <jens.krueger@frm2.tum.de>
