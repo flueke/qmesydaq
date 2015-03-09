@@ -112,8 +112,9 @@ public:
 	enum Setup {
 		Mpsd = 0,	//!< MPSD in standard configuration in a 2D arrangement
 		Mdll,		//!< MDLL connected
-		Mstd,		//!< MSTD-16 
-	};	
+		Mdll2,		//!< MWPCHR connected
+		Mstd,		//!< MSTD-16
+	};
 
 public:
 	Measurement(Mesydaq2 *mesy, QObject *parent = 0);

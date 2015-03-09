@@ -850,6 +850,10 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 				MSG_ERROR << tr("MDLL Map correction");
 				m_posHistMapCorrection = new MdllMapCorrection(QSize(480, 480/* m_width, m_height */));
 				break;
+			case Mdll2:
+				MSG_ERROR << tr("MWPCHR Map correction");
+				m_posHistMapCorrection = new MdllMapCorrection(QSize(256, 256/* m_width, m_height */));
+				break;
 			default:
 				MSG_ERROR << tr("Linear Map correction");
 #if defined(_MSC_VER)
@@ -1626,6 +1630,9 @@ void Measurement::updateSetupType(void)
 						setSetupType(Mstd);
 					break;
 				case TYPE_MWPCHR :
+					if (m_mesydaq->active(mod, j))
+						setSetupType(Mdll2);
+					break;
 				case TYPE_MDLL :
 					if (m_mesydaq->active(mod, j))
 						setSetupType(Mdll);
@@ -1642,7 +1649,7 @@ void Measurement::updateSetupType(void)
 		else
 			m_Spectrum[SingleTubeSpectrum] = new Spectrum(16);
 	}
-	else if (m_setup == Mdll)
+	else if (m_setup == Mdll || m_setup == Mdll2)
 	{
 		if (!m_Spectrum[AmplitudeSpectrum])
 			m_Spectrum[AmplitudeSpectrum] = new Spectrum();
