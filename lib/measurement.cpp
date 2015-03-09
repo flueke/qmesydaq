@@ -1597,7 +1597,7 @@ bool Measurement::loadSetup(const QString &name)
 			DEBUGLEVEL = NOTICE;
 		else if (sz.contains("details", Qt::CaseInsensitive) || sz.contains("info", Qt::CaseInsensitive))
 			DEBUGLEVEL = INFO;
-		else if (sz.contains("debug", Qt::CaseInsensitive) || sz.contains("debug", Qt::CaseInsensitive))
+		else if (sz.contains("debug", Qt::CaseInsensitive))
 			DEBUGLEVEL = DEBUG;
 	}
 //	m_acquireListfile = settings.value("listmode", "true").toBool();
