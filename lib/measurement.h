@@ -73,9 +73,9 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 	Q_PROPERTY(quint16 m_width READ width)
 
 public:
-	//! Defines the current mode values of a measurement 
+	//! Defines the current mode values of a measurement
 	enum Mode {
-		DataAcquisition = 0, 	//!< data will be taken from the hardware
+		DataAcquisition = 0,	//!< data will be taken from the hardware
 		ReplayListFile,		//!< data will be taken from a list mode file
 		HistogramLoad,		//!< data will be taken from a histogram file
 	};
@@ -88,11 +88,11 @@ public:
 	};
 
 	//! Defines the spectrum type
-        
+
 	enum SpectrumType {
 		TimeSpectrum = 0,	//!< ???
 		Diffractogram,		//!< spectrum over all vertical rows
-		TubeSpectrum,		//!< spectrum along a tube 
+		TubeSpectrum,		//!< spectrum along a tube
 		XSpectrum,		//!< ???
 		YSpectrum,		//!< ???
 		EnergySpectrum,		//!< ???
@@ -103,7 +103,7 @@ public:
 
 	//! Defines the DAQ status
 	enum Status {
-		Idle = IDLE,	//!< no acquistion 
+		Idle = IDLE,	//!< no acquistion
 		Started,	//!< data acquisition is requested to run
 		Stopped,	//!< data acquisition is requested to stop
 	};
@@ -169,79 +169,79 @@ public:
 	//! \returns the number of counts in the defined ROI
 	quint64	getROICounts(void) const;
 
-	void 	setROI(const QRectF &r);
+	void	setROI(const QRectF &r);
 
         QRect	getROI(void) const;
 
-	/** 
+	/**
 		gets the value of the defined monitor 1
 		\todo monitor mapping configuration
-		\return counter value for the monitor 1 
+		\return counter value for the monitor 1
 	 */
-	quint64	mon1() const 
+	quint64	mon1() const
 	{
 		return m_counter[MON1ID]->value();
 	}
 
-	/** 
+	/**
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
-		\return counter value for the monitor 2 
+		\return counter value for the monitor 2
 	 */
-	quint64	mon2() const 
+	quint64	mon2() const
 	{
 		return m_counter[MON2ID]->value();
 	}
-	
-	/** 
+
+	/**
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
-		\return counter value for the monitor 2 
+		\return counter value for the monitor 2
 	 */
-	quint64	mon3() const 
+	quint64	mon3() const
 	{
 		return m_counter[MON3ID]->value();
 	}
-	
-	/** 
+
+	/**
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
-		\return counter value for the monitor 2 
+		\return counter value for the monitor 2
 	 */
-	quint64	mon4() const 
+	quint64	mon4() const
 	{
 		return m_counter[MON4ID]->value();
 	}
-	
-	/** 
+
+	/**
 		gets the value of the defined event counter
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	events() const 
+	quint64	events() const
 	{
 		return m_counter[EVID]->value();
 	}
 
-	/** 
+	/**
 		gets the value of the timer
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	timer() const 
+	quint64	timer() const
 	{
 		return m_counter[TIMERID]->value();
 	}
 
-	/** 
+	/**
 		gets the number of all events in the selected ROI
 		\todo counter mapping configuration
-		\return events in ROI 
+		\return events in ROI
 	 */
 	quint64 eventsInROI(const HistogramType t);
 
 	//! \return time of the last header read from interface
-	quint64 getHeadertime(void) const 
+	quint64 getHeadertime(void) const
 	{
 		return m_headertime;
 	}
@@ -286,8 +286,8 @@ public:
 // run ID oriented methods
 	//! \return the current run ID
 	quint32 runId(void) const
-	{ 
-		return m_mesydaq->runId(); 
+	{
+		return m_mesydaq->runId();
 	}
 
 	/*!
@@ -318,11 +318,11 @@ public:
 	void setWriteProtection(bool b) {m_mesydaq->setWriteProtection(b);}
 
 	//! returns the current operation mode
-	Mode mode(void) const 
+	Mode mode(void) const
 	{
 		return m_mode;
 	}
-	
+
 	//! returns the current operation state
 	Status status(void) const
 	{
@@ -341,7 +341,7 @@ public:
 	void setCalibrationfilename(const QString &name);
 
 	//! \return name of the current calibration data file
-	QString getCalibrationfilename(void) const 
+	QString getCalibrationfilename(void) const
 	{
 		return m_calibrationfilename;
 	}
@@ -352,10 +352,10 @@ public:
 	 *
 	 * \param path to the histogram data files
 	 */
-	void setHistfilepath(const QString &path); 
+	void setHistfilepath(const QString &path);
 
 	//! \return path to store all histogram data files
-	QString getHistfilepath(void) const 
+	QString getHistfilepath(void) const
 	{
 		return m_histPath;
 	}
@@ -368,7 +368,7 @@ public:
 	void setHistfilename(const QString &name);
 
 	//! \return name of the current histogram data file
-	QString getHistfilename(void) const 
+	QString getHistfilename(void) const
 	{
 		return m_histfilename;
 	}
@@ -382,7 +382,7 @@ public:
 	void setListfilepath(const QString &path);
 
 	//! \return path to store all list mode data files
-	QString getListfilepath(void) const 
+	QString getListfilepath(void) const
 	{
 		return m_listPath;
 	}
@@ -406,10 +406,10 @@ public:
 	 *
 	 * \param path to the config files
 	 */
-	void setConfigfilepath(const QString &path); 
+	void setConfigfilepath(const QString &path);
 
 	//! \return path to store all config files
-	QString getConfigfilepath(void) const 
+	QString getConfigfilepath(void) const
 	{
 		return m_configPath;
 	}
@@ -429,7 +429,7 @@ public:
 	bool saveSetup(const QString &name);
 
         //! returns the current setup type of the configuration
-	Setup setupType(void) const 
+	Setup setupType(void) const
 	{
 		return m_setup;
 	}
@@ -491,13 +491,13 @@ private:
 
 private:
 	//! separator in the list mode data file
-	static const quint16  	sep0 = 0x0000;
+	static const quint16	sep0 = 0x0000;
 	//! separator in the list mode data file
-	static const quint16  	sep5 = 0x5555;    
+	static const quint16	sep5 = 0x5555;
 	//! separator in the list mode data file
-	static const quint16  	sepA = 0xAAAA;
+	static const quint16	sepA = 0xAAAA;
 	//! separator in the list mode data file
-	static const quint16  	sepF = 0xFFFF;
+	static const quint16	sepF = 0xFFFF;
 
 	//! Access to hardware
 	Mesydaq2	*m_mesydaq;
@@ -512,22 +512,22 @@ private:
 	MapCorrection   *m_posHistMapCorrection;
 
 	//! time stamp for the start of measurement
-	quint64 	m_starttime_msec;
-	
+	quint64		m_starttime_msec;
+
 	//! time for the duration of measurement
-	quint64 	m_meastime_msec;
+	quint64		m_meastime_msec;
 
 	//! current state of measurement
-	Status 		m_status;
+	Status		m_status;
 
 	//! are we only or not
-	bool 		m_online;
-	
+	bool		m_online;
+
 	//! it's set to true and nothing else ????
-	bool 		m_working; 		
+	bool		m_working;
 
 	//! stores the info whether it will be controlled remotely or not
-	bool 		m_remote;
+	bool		m_remote;
 
 	//! stores the header timer of the current data package
 	quint64		m_headertime;
@@ -535,11 +535,11 @@ private:
 	//! definitions of the counters
 	QHash<int, MesydaqCounter *>	m_counter; // [TIMERID + 1];
 
-	//! timer for the ratemeter 
+	//! timer for the ratemeter
 	int		m_rateTimer;
 
 	//! timer for online checking
-	int 		m_onlineTimer;
+	int		m_onlineTimer;
 
 	//! stores the ROI
 	QRect		m_roi;
@@ -557,25 +557,25 @@ private:
 	Mode		m_mode;
 
 	//! currently used histogram file
-	QString 	m_histfilename;
+	QString		m_histfilename;
 
 	//! histogram data file name path
-	QString 	m_histPath;
+	QString		m_histPath;
 
 	//! list mode data file name path
-	QString 	m_listPath;
+	QString		m_listPath;
 
 	//! config file name path
-	QString 	m_configPath;
+	QString		m_configPath;
 
 	//! currently used config file
-	QFileInfo 	m_configfile;
+	QFileInfo	m_configfile;
 
 	//! currently used calibration file
 	QString		m_calibrationfilename;
 
 	//! number of triggers
-	quint64 	g_triggers;
+	quint64		g_triggers;
 
 	//! number of neutrons
 	quint64		m_neutrons;

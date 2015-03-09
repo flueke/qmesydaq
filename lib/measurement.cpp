@@ -195,7 +195,7 @@ void Measurement::destroyHistogram(void)
 	if (m_Spectrum[Diffractogram])
 		delete m_Spectrum[Diffractogram];
 	m_Spectrum[Diffractogram] = NULL;
-	
+
 	if (m_Spectrum[TubeSpectrum])
 		delete m_Spectrum[TubeSpectrum];
 	m_Spectrum[TubeSpectrum] = NULL;
@@ -234,7 +234,7 @@ QString Measurement::version() const
 */
 void Measurement::timerEvent(QTimerEvent *event)
 {
-	int id = event->timerId(); 
+	int id = event->timerId();
 	if (id == m_rateTimer)
 		calcRates();
 	else if (id == m_onlineTimer)
@@ -245,9 +245,9 @@ void Measurement::timerEvent(QTimerEvent *event)
 }
 /*!
     \fn Measurement::setCurrentTime(quint64 msecs)
-  
+
     sets the current time for the measurement
-    the timer will be updated during the events 
+    the timer will be updated during the events
 
     \param msecs current time in ms
  */
@@ -255,7 +255,7 @@ void Measurement::setCurrentTime(quint64 msecs)
 {
 	if(status() == Started)
 	{
-    		m_meastime_msec = msecs - m_starttime_msec;
+		m_meastime_msec = msecs - m_starttime_msec;
 		for (quint8 i = 0; i < TIMERID; ++i)
 			m_counter[i]->setTime(m_meastime_msec);
 		m_counter[TIMERID]->setTime(msecs);
@@ -318,15 +318,15 @@ void Measurement::requestStop()
 
 /*!
     \fn Measurement::stop()
-    
+
     really stop the measurement
  */
 void Measurement::stop()
 {
 	if (status() != Idle)
-	{ 
+	{
 		if (status() == Started)
-			m_mesydaq->stop(); 
+			m_mesydaq->stop();
 		quint64 time = m_mesydaq->time();
 		foreach (MesydaqCounter *c, m_counter)
 			c->stop(time);
@@ -338,7 +338,7 @@ void Measurement::stop()
 		}
 	}
 	m_status = Idle;
-} 
+}
 
 /*!
     \fn Measurement::cont()
@@ -365,7 +365,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
 		if (val == 0)
 			m_counter[cNum]->reset();
 		else
-   			m_counter[cNum]->set(val);
+			m_counter[cNum]->set(val);
 // is counter master and is limit reached?
 		if(m_counter[cNum]->isStopped() && status() != Stopped)
 		{
@@ -442,11 +442,11 @@ quint8 Measurement::isOk(void) const
 	if (m_online)
 	{
 		if (m_working)
-    			ret = 0;
-    		else 
-    			ret = 1;
-   	}
-    	return ret;
+			ret = 0;
+		else
+			ret = 1;
+	}
+	return ret;
 }
 
 /*!
@@ -479,12 +479,12 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 		MSG_NOTICE << tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? "master" : "slave");
 		if (mast)
 		{
-    			// clear all other master flags
+			// clear all other master flags
 			foreach(MesydaqCounter *c, m_counter)
 				c->setMaster(false);
-    		}
-    		m_counter[cNum]->setMaster(mast);
-    		m_counter[cNum]->setLimit(prval);
+		}
+		m_counter[cNum]->setMaster(mast);
+		m_counter[cNum]->setLimit(prval);
 	}
 }
 
@@ -507,7 +507,7 @@ quint64 Measurement::getPreset(quint8 cNum)
 /*!
     \fn Measurement::setListmode(bool truth)
 
-    sets the list mode 
+    sets the list mode
 
     \param truth list mode
  */
@@ -544,7 +544,7 @@ void Measurement::setRemote(bool truth)
     \fn Measurement::remoteStart(void) const
 
      gets information whether the remote control is switched on or not
-	
+
      \return status of remote control
  */
 bool Measurement::remoteStart(void) const
@@ -554,7 +554,7 @@ bool Measurement::remoteStart(void) const
 
 /*!
     \fn Measurement::isMaster(const quint8 cNum) const
-    
+
     is counter master or not
 
     \param cNum number of the counter
@@ -757,17 +757,17 @@ void Measurement::writeHistograms(const QString &name)
 		if (m_Hist[PositionHistogram])
 		{
 			t << "position data: 1 row title (8 x 8 detectors), position data in columns" << '\r' << '\n';
-    			t << m_Hist[PositionHistogram]->format() << '\r' << '\n';
+			t << m_Hist[PositionHistogram]->format() << '\r' << '\n';
 		}
 		if (m_Hist[AmplitudeHistogram])
 		{
 			t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns" << '\r' << '\n';
-    			t << m_Hist[AmplitudeHistogram]->format() << '\r' << '\n';
+			t << m_Hist[AmplitudeHistogram]->format() << '\r' << '\n';
 		}
 		if (m_Hist[CorrectedPositionHistogram])
 		{
 			t << "corrected position data: 1 row title (8 x 8 detectors), position data in columns" << '\r' << '\n';
-    			t << m_Hist[CorrectedPositionHistogram]->format() << '\r' << '\n';
+			t << m_Hist[CorrectedPositionHistogram]->format() << '\r' << '\n';
 		}
 		f.close();
 		if (getWriteProtection())
@@ -790,8 +790,8 @@ void Measurement::readHistograms(const QString &name)
         setListfilename("");
 	QFile f;
 	f.setFileName(name);
-	if (f.open(QIODevice::ReadOnly)) 
-	{    
+	if (f.open(QIODevice::ReadOnly))
+	{
 		m_mode = HistogramLoad;
 // use a text stream
 		QTextStream t(&f);
@@ -817,8 +817,8 @@ void Measurement::readHistograms(const QString &name)
 					else if (list[0] == "amplitude/energy")
 						fillHistogram(t, m_Hist[AmplitudeHistogram]);
 				}
-			}	
-			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), 
+			}
+			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(),
 					m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 			// create the mapped histogram
 			reinterpret_cast<MappedHistogram *>(m_Hist[CorrectedPositionHistogram])->setHistogram(m_Hist[PositionHistogram]);
@@ -844,7 +844,7 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 		delete m_posHistMapCorrection;
 	if (m_calibrationfilename.isEmpty())
 	{
-		switch (setupType()) 
+		switch (setupType())
 		{
 			case Mdll:
 				MSG_ERROR << tr("MDLL Map correction");
@@ -896,7 +896,7 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 		lines << tmp;
 
 	MSG_INFO << tr("Resize histogram to %1, %2").arg(tubes).arg(lines.size());
-	
+
 	hist->resize(tubes, lines.size());
 
 	for (int j = 0; j < lines.size(); ++j)
@@ -921,7 +921,7 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
  */
 void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
-	ulong 	data;
+	ulong	data;
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
 	quint16	monitorTriggers = 0;
@@ -942,7 +942,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		quint32 datalen = (pPacket->dp.bufferLength - pPacket->dp.headerLength) / 3;
 //
 // status Idle is for replaying files
-// 
+//
 		for(quint32 counter = 0, i = 0; i < datalen && (status() == Started || status() == Idle); ++i, counter += 3)
 		{
 			tim = pPacket->dp.data[counter + 1] & 0x7;
@@ -1009,7 +1009,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				{
 //
 // in MDLL, data format is different:
-// The position inside the PSD is used as y direction 
+// The position inside the PSD is used as y direction
 // Therefore the x position of the MDLL has to be used as channel
 // the y position as position and the channel value is the amplitude value
 // y position (10 bit) is at MPSD "Amplitude" data
@@ -1107,7 +1107,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			}
 		}
 #if 0
- 		MSG_DEBUG << tr("# : %1 has %2 trigger events and %3 neutrons").arg(pd.bufferNumber).arg(triggers).arg(neutrons);
+		MSG_DEBUG << tr("# : %1 has %2 trigger events and %3 neutrons").arg(pd.bufferNumber).arg(triggers).arg(neutrons);
 		MSG_DEBUG << tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pd.bufferNumber)
 					.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);
 #endif
@@ -1132,7 +1132,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					setCounter(i, var);
 				}
 			}
-		}		
+		}
 #endif
 	}
 	else
@@ -1174,8 +1174,8 @@ bool Measurement::acqListfile() const
     If after the block do not follow 0x0000 0xFFFF 0x5555 0xAAAA (block separator)
     the data file is corrupted
 
-    \param datStream data stream 
-    \param dataBuf data buffer, will be filled 
+    \param datStream data stream
+    \param dataBuf data buffer, will be filled
 
     \return true if block complete otherwise false
  */
@@ -1249,7 +1249,7 @@ void Measurement::readListfile(const QString &readfilename)
 	QFile datfile;
 	datfile.setFileName(readfilename);
 	if (!datfile.open(QIODevice::ReadOnly))
-		return; 
+		return;
 
 	m_mode = ReplayListFile;
 	m_status = Started;
@@ -1349,7 +1349,7 @@ void Measurement::readListfile(const QString &readfilename)
 	foreach(MesydaqCounter *c, m_counter)
 		c->reset();
 
-	QChar 		c('0');
+	QChar		c('0');
 	QSharedDataPointer<SD_PACKET> dataBuf(new SD_PACKET);
 
 // header separator : sep0 sep5 sepA sepF
@@ -1385,7 +1385,7 @@ void Measurement::readListfile(const QString &readfilename)
 	MSG_ERROR << tr("End replay");
 	MSG_ERROR << tr("Found %1 data packages").arg(blocks);
 	MSG_ERROR << tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
-	resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(), 
+	resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(),
 			m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 	QCoreApplication::processEvents();
 	m_status = Idle;
@@ -1395,7 +1395,7 @@ void Measurement::readListfile(const QString &readfilename)
     \fn Measurement::getMean(const HistogramType t, float &mean, float &sigma)
 
     gives the mean value and the standard deviation of the last position events
-  
+
     \param t type of the requested histogram
     \param mean mean value
     \param sigma standard deviation
@@ -1439,14 +1439,14 @@ void Measurement::getMean(const SpectrumType t, float &mean, float &sigma)
     \fn void Measurement::setROI(QRectF r)
 
     define a region of interest (ROI) for counting all events in it
- 
+
     \param r rectangle as ROI
     \see getROI
  */
 void Measurement::setROI(const QRectF &r)
 {
 	int x = floor(r.x()),	// to ensure, that we always in the left column
-	    y = floor(r.y()),	// or bottom row 
+	    y = floor(r.y()),	// or bottom row
 	    w = round(r.width()),	// we should use the best fit
 	    h = round(r.height());
 	m_roi = QRect(x, y, w, h);
@@ -1474,28 +1474,28 @@ void Measurement::setListFileHeader(const QByteArray& header, bool bInsertHeader
 		m_mesydaq->setListFileHeader(header, bInsertHeaderLength);
 }
 
-void Measurement::setConfigfilepath(const QString &path) 
+void Measurement::setConfigfilepath(const QString &path)
 {
 	QFileInfo fi(path);
-	if (fi.exists() && fi.isDir()) 
+	if (fi.exists() && fi.isDir())
 		m_configPath = path;
 	else
 		m_configPath = QDir::currentPath();
 }
 
-void Measurement::setListfilepath(const QString &path) 
+void Measurement::setListfilepath(const QString &path)
 {
 	QFileInfo fi(path);
-	if (fi.exists() && fi.isDir()) 
+	if (fi.exists() && fi.isDir())
 		m_listPath = path;
 	else
 		m_listPath = QDir::currentPath();
 }
 
-void Measurement::setHistfilepath(const QString &path) 
+void Measurement::setHistfilepath(const QString &path)
 {
 	QFileInfo fi(path);
-	if (fi.exists() && fi.isDir()) 
+	if (fi.exists() && fi.isDir())
 		m_histPath = path;
 	else
 		m_histPath = QDir::currentPath();
@@ -1512,21 +1512,21 @@ void Measurement::setListfilename(const QString &name)
 	}
 }
 
-void Measurement::setHistfilename(const QString &name) 
+void Measurement::setHistfilename(const QString &name)
 {
 	m_histfilename = name;
 	if(!m_histfilename.isEmpty() && m_histfilename.indexOf(".mtxt") == -1)
 		m_histfilename.append(".mtxt");
 }
-     
-void Measurement::setCalibrationfilename(const QString &name) 
+
+void Measurement::setCalibrationfilename(const QString &name)
 {
 	m_calibrationfilename = name;
 	if (!m_calibrationfilename.isEmpty() && m_calibrationfilename.indexOf(".mcal") == -1 &&
 		m_calibrationfilename.indexOf(".txt") == -1 && m_calibrationfilename.indexOf(".mesf") == -1)
 		m_calibrationfilename.append(".mcal");
 }
-     
+
 void Measurement::setConfigfilename(const QString &name)
 {
 	if (name.isEmpty())
@@ -1567,7 +1567,7 @@ bool Measurement::loadSetup(const QString &name)
 	if (getConfigfilename().isEmpty())
 		return false;
 
-	bool 		bOK(false);
+	bool		bOK(false);
 
 	MSG_NOTICE << tr("Reading configfile '%1'").arg(getConfigfilename());
 
@@ -1587,17 +1587,17 @@ bool Measurement::loadSetup(const QString &name)
 	}
 	else
 	{
-		if (sz.contains("fatal", Qt::CaseInsensitive)) 
+		if (sz.contains("fatal", Qt::CaseInsensitive))
 			DEBUGLEVEL = FATAL;
-		else if (sz.contains("error", Qt::CaseInsensitive)) 
+		else if (sz.contains("error", Qt::CaseInsensitive))
 			DEBUGLEVEL = ERROR;
 		else if (sz.contains("standard", Qt::CaseInsensitive) || sz.contains("warning", Qt::CaseInsensitive) || sz.contains("default", Qt::CaseInsensitive))
 			DEBUGLEVEL = WARNING;
-		else if (sz.contains("notice", Qt::CaseInsensitive)) 
+		else if (sz.contains("notice", Qt::CaseInsensitive))
 			DEBUGLEVEL = NOTICE;
-		else if (sz.contains("details", Qt::CaseInsensitive) || sz.contains("info", Qt::CaseInsensitive)) 
+		else if (sz.contains("details", Qt::CaseInsensitive) || sz.contains("info", Qt::CaseInsensitive))
 			DEBUGLEVEL = INFO;
-		else if (sz.contains("debug", Qt::CaseInsensitive) || sz.contains("debug", Qt::CaseInsensitive)) 
+		else if (sz.contains("debug", Qt::CaseInsensitive) || sz.contains("debug", Qt::CaseInsensitive))
 			DEBUGLEVEL = DEBUG;
 	}
 //	m_acquireListfile = settings.value("listmode", "true").toBool();
@@ -1625,7 +1625,7 @@ void Measurement::updateSetupType(void)
 		for (int j = 0; j < 8; ++j)
 			switch (m_mesydaq->getModuleId(mod, j))
 			{
-				case TYPE_MSTD16 :  
+				case TYPE_MSTD16 :
 					if (m_mesydaq->active(mod, j))
 						setSetupType(Mstd);
 					break;
@@ -1640,7 +1640,6 @@ void Measurement::updateSetupType(void)
 				default:
 					break;
 			}
-		
 	}
 	if (m_setup == Mstd)
 	{
@@ -1684,7 +1683,7 @@ bool Measurement::saveSetup(const QString &name)
 	if(name.isEmpty())
 		m_configfile.setFile("mesycfg.mcfg");
 	m_configfile.setFile(name);
-  
+
 	if(m_configfile.fileName().indexOf(".mcfg") == -1)
 		m_configfile.setFile(m_configfile.absoluteFilePath().append(".mcfg"));
 
