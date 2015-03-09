@@ -203,7 +203,7 @@ void MainWindow::selectExpert(void)
 		actionSuperUser->setChecked(false);
 		actionSetupMCPD->setVisible(false);
 		actionAddMCPD->setVisible(false);
-		actionModule->setVisible(true);
+		actionModule->setVisible(m_main->setupType() != Measurement::Mdll2);
 		actionGeneral->setVisible(true);
 		actionNewSetup->setVisible(false);
 		action_Save_Config_File->setVisible(true);
@@ -212,8 +212,8 @@ void MainWindow::selectExpert(void)
 #if USE_TACO
 		actionTACO->setVisible(false);
 #endif
-		actionPulser->setVisible(true);
-		actionPulser->setEnabled(true);
+		actionPulser->setVisible(m_main->setupType() != Measurement::Mdll2);
+		actionPulser->setEnabled(m_main->setupType() != Measurement::Mdll2);
 		actionHistogram_Mapping->setVisible(true);
 		m_main->selectUserMode(MainWidget::Expert);
 	}
@@ -229,7 +229,7 @@ void MainWindow::selectSuperuser(void)
 		actionExpert->setChecked(false);
 		actionSetupMCPD->setVisible(true);
 		actionAddMCPD->setVisible(true);
-		actionModule->setVisible(true);
+		actionModule->setVisible(m_main->setupType() != Measurement::Mdll2);
 		actionGeneral->setVisible(true);
 		actionNewSetup->setVisible(true);
 		action_Save_Config_File->setVisible(true);
@@ -238,8 +238,8 @@ void MainWindow::selectSuperuser(void)
 #if USE_TACO
 		actionTACO->setVisible(true);
 #endif
-		actionPulser->setVisible(true);
-		actionPulser->setEnabled(true);
+		actionPulser->setVisible(m_main->setupType() != Measurement::Mdll2);
+		actionPulser->setEnabled(m_main->setupType() != Measurement::Mdll2);
 		actionHistogram_Mapping->setVisible(true);
 		m_main->selectUserMode(MainWidget::SuperUser);
 	}
