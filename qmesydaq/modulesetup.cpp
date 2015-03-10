@@ -35,16 +35,6 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 {
 	setupUi(this);
 
-	QList<int> mcpdList = m_theApp->mcpdId();
-	bool noModule = mcpdList.isEmpty();
-	tabWidget->setDisabled(noModule);
-
-	devid->setMCPDList(mcpdList);
-	QList<int> modules = m_theApp->mpsdId(devid->value());
-	module->setModuleList(modules);
-	module->setDisabled(modules.empty());
-	histogramGroupBox->setDisabled(modules.empty());
-
 	m_label[0] = labelChannel_1;
 	m_label[1] = labelChannel_2;
 	m_label[2] = labelChannel_3;
@@ -96,12 +86,6 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	m_active[14] = checkChannel15Use;
 	m_active[15] = checkChannel16Use;
 
-	for (int i = 0; i < 16; ++i)
-	{
-		m_histogram[i]->setChecked(m_theApp->histogram(devid->value(), module->value(), i));
-		m_active[i]->setChecked(m_theApp->active(devid->value(), module->value(), i));
-	}
-
 	QObject::connect(checkChannel1Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram1(bool)));
 	QObject::connect(checkChannel2Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram2(bool)));
 	QObject::connect(checkChannel3Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram3(bool)));
@@ -121,6 +105,22 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
+
+	QList<int> mcpdList = m_theApp->mcpdId();
+	bool noModule = mcpdList.isEmpty();
+	tabWidget->setDisabled(noModule);
+
+	devid->setMCPDList(mcpdList);
+	QList<int> modules = m_theApp->mpsdId(devid->value());
+	module->setModuleList(modules);
+	module->setDisabled(modules.empty());
+	histogramGroupBox->setDisabled(modules.empty());
+
+	for (int i = 0; i < 16; ++i)
+	{
+		m_histogram[i]->setChecked(m_theApp->histogram(devid->value(), module->value(), i));
+		m_active[i]->setChecked(m_theApp->active(devid->value(), module->value(), i));
+	}
 
 	displaySlot();
 }
