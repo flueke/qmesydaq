@@ -200,15 +200,15 @@ bool MCPD8::reset(void)
  */
 bool MCPD8::start(void)
 {
-    bool bResult = true;
-    if (isMaster() || (version() < 9.6))
+    bool bResult(true);
+    if (isMaster() || (version() < 9.9))
     {
-        MSG_DEBUG << tr("START %1").arg(m_byId);
-        QMutexLocker locker(m_pCommandMutex);
-        initCmdBuffer(START);
-        finishCmdBuffer(0);
-        bResult = sendCommand(false);
-        MSG_DEBUG << tr("START %1, result %2").arg(m_byId).arg(bResult);
+	MSG_DEBUG << tr("START %1").arg(m_byId);
+	QMutexLocker locker(m_pCommandMutex);
+	initCmdBuffer(START);
+	finishCmdBuffer(0);
+	bResult = sendCommand(false);
+	MSG_DEBUG << tr("START %1, result %2").arg(m_byId).arg(bResult);
     }
     return bResult;
 }
@@ -224,15 +224,15 @@ bool MCPD8::start(void)
  */
 bool MCPD8::stop(void)
 {
-    bool bResult = true;
-    if (isMaster() || (version() < 9.6))
+    bool bResult(true);
+    if (isMaster() || (version() < 9.9))
     {
-        MSG_DEBUG << tr("STOP %1").arg(m_byId);
-        QMutexLocker locker(m_pCommandMutex);
-        initCmdBuffer(STOP);
-        finishCmdBuffer(0);
-        bResult = sendCommand(false);
-        MSG_DEBUG << tr("STOP %1, result %2").arg(m_byId).arg(bResult);
+	MSG_DEBUG << tr("STOP %1").arg(m_byId);
+	QMutexLocker locker(m_pCommandMutex);
+	initCmdBuffer(STOP);
+	finishCmdBuffer(0);
+	bResult = sendCommand(false);
+	MSG_DEBUG << tr("STOP %1, result %2").arg(m_byId).arg(bResult);
     }
     return bResult;
 }
