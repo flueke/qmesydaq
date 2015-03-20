@@ -936,13 +936,16 @@ void MainWidget::newSetupSlot()
 void MainWidget::loadConfiguration(const QString& sFilename)
 {
 	init();
-	m_meas->loadSetup(sFilename);
-	if (!QDir(m_meas->getHistfilepath()).exists())
-		QMessageBox::warning(this, tr("No histogram storing file path"),
-					tr("The histogram storing file path<br><b>%1</b><br>does not exists!").arg(m_meas->getHistfilepath()));
-	if (!QDir(m_meas->getListfilepath()).exists())
-		QMessageBox::warning(this, tr("No list mode file storing file path"),
-					tr("The list mode file storing file path<br><b>%1</b><br>does not exists!").arg(m_meas->getListfilepath()));
+	if (!sFilename.isEmpty())
+	{
+		m_meas->loadSetup(sFilename);
+		if (!QDir(m_meas->getHistfilepath()).exists())
+			QMessageBox::warning(this, tr("No histogram storing file path"),
+						tr("The histogram storing file path<br><b>%1</b><br>does not exists!").arg(m_meas->getHistfilepath()));
+		if (!QDir(m_meas->getListfilepath()).exists())
+			QMessageBox::warning(this, tr("No list mode file storing file path"),
+						tr("The list mode file storing file path<br><b>%1</b><br>does not exists!").arg(m_meas->getListfilepath()));
+	}
 	configfilename->setText(m_meas->getConfigfilename());
 	acquireListFile->setChecked(m_meas->acqListfile());
 	updateMeasurement();

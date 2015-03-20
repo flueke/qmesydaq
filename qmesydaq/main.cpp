@@ -163,8 +163,7 @@ int main(int argc, char **argv)
 	app.processEvents();
 
 	// load configuration
-	if (!szLoadConfiguration.isEmpty())
-		mainWin.doLoadConfiguration(szLoadConfiguration);
+	mainWin.doLoadConfiguration(szLoadConfiguration);
 
 	mainWin.updateStatusBar();
 
