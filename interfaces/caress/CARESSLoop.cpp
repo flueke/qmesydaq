@@ -1023,6 +1023,12 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 							sName="scratch-file"; // scratch measurement
 						sName.append(".md2"); // different extension
 					}
+					else if (m_sInstrument.compare("V15",Qt::CaseInsensitive)==0)
+					{
+						// TODO: switch to next list mode file, if maximum file size is reached
+						//                 run   step  part (max file size wrap around counter)
+						sName.sprintf("V15_%010d_S%03d_P01.mts",m_lRunNo,m_lStepNo);
+					}
 					else
 					{
 						if (m_lMesrCount>0)
