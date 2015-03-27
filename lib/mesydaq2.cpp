@@ -241,6 +241,7 @@ void Mesydaq2::startedDaq(void)
 	{
 		m_datfile.setFileName(m_listfilename);
 		m_datfile.open(QIODevice::WriteOnly);
+		m_datStream.resetStatus();
 		m_datStream.setDevice(&m_datfile);
 		writeListfileHeader();
 		writeHeaderSeparator();
@@ -263,6 +264,7 @@ void Mesydaq2::stoppedDaq(void)
 	writeClosingSignature();
 	if(m_acquireListfile && m_datfile.isOpen())
 	{
+		m_datStream.unsetDevice();
 		m_datfile.close();
 		if (m_bWriteProtect)
 			m_datfile.setPermissions(m_datfile.permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
