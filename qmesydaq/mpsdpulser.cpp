@@ -279,13 +279,14 @@ void MPSDPulser::display()
 
 void MPSDPulser::pulserTestSlot(bool onoff)
 {
+	bool ok;
 	MSG_ERROR << "pulser test : " << onoff;
-	if (onoff)
-		emit clear();
+//	if (onoff)
+//		emit clear();
 	emit pulserTest(onoff);
 	if (onoff)
 	{
-		m_pulses = PulserTest::sequence(m_theApp);
+		m_pulses = PulserTest::sequence(m_theApp, testAmp1->text().toInt(&ok), testAmp2->text().toInt(&ok));
 		m_it = m_pulses.begin();
 		QTimer::singleShot(0, this, SLOT(nextStep()));
 	}
@@ -295,6 +296,7 @@ void MPSDPulser::pulserTestSlot(bool onoff)
 
 void MPSDPulser::nextStep()
 {
+	bool ok;
 	if (m_it != m_pulses.end())
 	{
 		pulserButton->setCheckState(Qt::Unchecked);
@@ -320,7 +322,16 @@ void MPSDPulser::nextStep()
 		++m_it;
 	}
 	else if (automaticPulserTest->isChecked())
-		automaticPulserTest->animateClick();
+	{
+		if(infiniteBox->isChecked())
+		{
+			m_pulses = PulserTest::sequence(m_theApp, testAmp1->text().toInt(&ok), testAmp2->text().toInt(&ok));
+			m_it = m_pulses.begin();
+			QTimer::singleShot(0, this, SLOT(nextStep()));
+		}
+		else
+			automaticPulserTest->animateClick();
+	}
 }
 
 void MPSDPulser::pulserOn()

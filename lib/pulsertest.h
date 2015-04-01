@@ -39,7 +39,7 @@ class PulserTest
 {
 	PulserTest() {}
 public:
-	static QList<puls> sequence(Mesydaq2 *);
+	static QList<puls> sequence(Mesydaq2 *, quint8 amp1 = 30, quint8 amp2 = 60);
 };
 
 #endif

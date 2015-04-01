@@ -29,11 +29,12 @@
  *   	- all positions
  *   	  - all amplitude values (30, 60)
  */
-QList<puls> PulserTest::sequence(Mesydaq2 *mesy)
+QList<puls> PulserTest::sequence(Mesydaq2 *mesy, quint8 amp1, quint8 amp2)
 {
+	qDebug("Pulsertest");
 	QList<puls> retVal;
 	QList<quint8> amps;
-	amps << 30 << 60;
+	amps << amp1 << amp2;
 	QList<int> m_mcpd = mesy->mcpdId();
 	QList<int> positions;
 	positions << LEFT << MIDDLE << RIGHT;
