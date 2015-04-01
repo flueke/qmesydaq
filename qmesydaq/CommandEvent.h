@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@hmi.de>                  *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -68,6 +68,7 @@ public:
 		C_GET_CONFIGFILE,      // return the current load configuration file
 		C_SET_SAVEHISTOGRAM,   // set auto saving histogram after stop; args: auto save histogram enabled
 		C_GET_SAVEHISTOGRAM,   // get auto saving histogram after stop; no args; result: boolean
+		C_SET_STREAMWRITER,    // set stream writer class to write list mode files to
 	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());

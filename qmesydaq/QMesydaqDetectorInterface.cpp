@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@hmi.de>                  *
- *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -48,6 +48,11 @@ QMesyDAQDetectorInterface::QMesyDAQDetectorInterface(QObject *receiver, QObject 
 	, m_boolean(false)
 	, m_bWriteProtectFiles(false) // write protect data files
 {
+}
+
+bool QMesyDAQDetectorInterface::doLoop() const
+{
+	return m_bDoLoop;
 }
 
 /*!
@@ -198,7 +203,7 @@ double QMesyDAQDetectorInterface::preSelection(int id)
 }
 
 /*!
-     return the size of the histogram 
+     return the size of the histogram
 
      \param width
      \param height
@@ -290,7 +295,7 @@ const MapCorrection* QMesyDAQDetectorInterface::getMappingCorrection()
  */
 void QMesyDAQDetectorInterface::setMappingCorrection(const MapCorrection& map)
 {
-	if (!map.isValid()) 
+	if (!map.isValid())
 		return;
 	MapCorrection *pMap(NULL);
 	m_mutex.lock();
@@ -330,12 +335,28 @@ const MappedHistogram *QMesyDAQDetectorInterface::getMappedHistogram()
 }
 
 /*!
+    \return name of the histogram data file
+ */
+QString QMesyDAQDetectorInterface::getHistogramFileName(void) const
+{
+	return m_histFileName;
+}
+
+/*!
     sets the histogram file name
     \param name histogram file name
  */
 void QMesyDAQDetectorInterface::setHistogramFileName(const QString name)
 {
 	m_histFileName = name;
+}
+
+/*!
+    \return name of the list mode data file
+ */
+QString QMesyDAQDetectorInterface::getListFileName(void) const
+{
+	return m_listFileName;
 }
 
 /*!
@@ -414,7 +435,7 @@ void QMesyDAQDetectorInterface::setListFileHeader(const void* pData, int iLength
 }
 
 /*!
-    
+
     \param iWidth
     \param iHeight
     \param iRunNo
@@ -500,10 +521,18 @@ QString QMesyDAQDetectorInterface::getConfigurationFileName(void)
 	return configFile;
 }
 
+
+void QMesyDAQDetectorInterface::setStreamWriter(StreamWriter *pStreamWriter)
+{
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_SET_STREAMWRITER, QList<QVariant>() << ((quint64)pStreamWriter));
+	m_mutex.unlock();
+}
+
 /*!
     \fn void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 
-    handles the custom events 
+    handles the custom events
 
     \param e custom event structure
  */
@@ -556,12 +585,12 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					{
 						switch (i)
 						{
-							case 0: 
-								m_width = it->toUInt(); 
-								m_height = 0; 
+							case 0:
+								m_width = it->toUInt();
+								m_height = 0;
 								break;
-							case 1: 
-								m_height = it->toUInt(); 
+							case 1:
+								m_height = it->toUInt();
 								break;
 							default: break;
 						}
@@ -630,7 +659,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_VERSIONTEXT:
 					m_sVersion = QString("QMesyDAQ version unknown");
 					m_eventReceived = true;
-				        break;
+					break;
 				case CommandEvent::C_QUIT:
 					m_bDoLoop = false;
 					break;
@@ -647,6 +676,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_UPDATEMAINWIDGET:
 				case CommandEvent::C_SET_RUNID:
 				case CommandEvent::C_SET_LISTHEADER:
+				case CommandEvent::C_SET_STREAMWRITER:
 					m_eventReceived = true;
 					break;
 				default:

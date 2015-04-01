@@ -1,6 +1,6 @@
 /****************************************************************************
  *   Copyright (C) 2008-2015 by Gregor Montermann <g.montermann@mesytec.com>*
- *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>      *
+ *   Copyright (C) 2009-2015 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>      *
  *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>      *
  *                                                                          *
  *   This program is free software; you can redistribute it and/or modify   *
@@ -23,6 +23,7 @@
 #include "mdefines.h"
 #include "mesydaq2.h"
 #include "datarepeater.h"
+#include "streamwriter.h"
 #include "mcpd8.h"
 #include "logging.h"
 #include "stdafx.h"
@@ -38,6 +39,7 @@ Mesydaq2::Mesydaq2()
 	, m_bRunAck(false)
 	, m_acquireListfile(false)
 	, m_autoSaveHistogram(false)
+	, m_pDatStream(NULL)
 	, m_listfilename("")
 	, m_timingwidth(1)
 	, m_bInsertHeaderLength(true)
@@ -54,6 +56,7 @@ Mesydaq2::Mesydaq2()
 	connect(m_pThread, SIGNAL(finished()), this, SLOT(threadExit()), Qt::DirectConnection);
 	m_pThread->start(QThread::HighestPriority);
 	m_pDatSender = new DataRepeater;
+	m_pDatStream = new StreamWriter;
 }
 
 //! destructor
@@ -62,6 +65,7 @@ Mesydaq2::~Mesydaq2()
 	m_pThread->quit();
 	m_pThread->wait();
 	delete m_pThread;
+	delete m_pDatStream;
 	delete m_pDatSender;
 }
 
@@ -253,14 +257,11 @@ void Mesydaq2::autoSaveHistogram(bool yesno)
  */
 void Mesydaq2::startedDaq(void)
 {
-	if(m_acquireListfile && !m_datfile.isOpen())
+	if (m_acquireListfile && !m_bRunAck)
 	{
-		m_datfile.setFileName(m_listfilename);
-		m_datfile.open(QIODevice::WriteOnly);
-		m_datStream.resetStatus();
-		m_datStream.setDevice(&m_datfile);
-		writeListfileHeader();
-		writeHeaderSeparator();
+		if (!m_pDatStream)
+			setStreamWriter(new StreamWriter);
+		m_pDatStream->setFile(m_listfilename);
 	}
 	m_bRunAck = true;
 	MSG_ERROR << tr("daq started");
@@ -277,14 +278,7 @@ void Mesydaq2::startedDaq(void)
  */
 void Mesydaq2::stoppedDaq(void)
 {
-	writeClosingSignature();
-	if(m_acquireListfile && m_datfile.isOpen())
-	{
-		m_datStream.unsetDevice();
-		m_datfile.close();
-		if (m_bWriteProtect)
-			m_datfile.setPermissions(m_datfile.permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
-	}
+	m_pDatStream->close();
 	m_bRunAck = false;
 	MSG_DEBUG << tr("daq stopped");
 }
@@ -330,11 +324,11 @@ void Mesydaq2::writeListfileHeader(void)
 {
 	if (m_datHeader.isEmpty())
 	{
-		QTextStream txtStr(&m_datfile);
-		txtStr << QString("mesytec psd listmode data\n");
-		txtStr << QString("header length: %1 lines \n").arg(2);
+		m_pDatStream->writeRawData(QString("mesytec psd listmode data\n"));
+		m_pDatStream->writeRawData(QString("header length: %1 lines \n").arg(2));
 
-		m_pDatSender->WriteData(QByteArray("DATA\n"));
+		if (m_bRunning && !m_bRunAck)
+			m_pDatSender->WriteData(QByteArray("DATA\n"));
 	}
 	else
 	{
@@ -359,9 +353,10 @@ void Mesydaq2::writeListfileHeader(void)
 		}
 		else
 			header1 = m_datHeader;
-		if (m_datfile.isOpen())
-			m_datfile.write(header1);
-		m_pDatSender->WriteData(header1);
+		if (m_pDatStream->isOpen())
+			m_pDatStream->writeRawData(header1);
+		if (m_bRunning && !m_bRunAck)
+			m_pDatSender->WriteData(header1);
 	}
 }
 
@@ -378,9 +373,10 @@ void Mesydaq2::writeListfileHeader(void)
 void Mesydaq2::writeHeaderSeparator(void)
 {
 	//const unsigned short awBuffer[] = {sep0, sep5, sepA, sepF};
-	if (m_datfile.isOpen())
-		m_datStream << sep0 << sep5 << sepA << sepF;
-	//m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer));
+	if (m_pDatStream->isOpen())
+		*m_pDatStream << sep0 << sep5 << sepA << sepF;
+	//if (m_bRunning && !m_bRunAck)
+	//	m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer));
 }
 
 
@@ -396,8 +392,8 @@ void Mesydaq2::writeHeaderSeparator(void)
 void Mesydaq2::writeBlockSeparator(void)
 {
 	const unsigned short awBuffer[] = {sep0, sepF, sep5, sepA};
-	if (m_datfile.isOpen())
-		m_datStream << sep0 << sepF << sep5 << sepA;
+	if (m_pDatStream->isOpen())
+		*m_pDatStream << sep0 << sepF << sep5 << sepA;
 	m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer));
 }
 
@@ -412,9 +408,23 @@ void Mesydaq2::writeBlockSeparator(void)
 void Mesydaq2::writeClosingSignature(void)
 {
 	const unsigned short awBuffer[] = {sepF, sepA, sep5, sep0};
-	if (m_datfile.isOpen())
-		m_datStream << sepF << sepA << sep5 << sep0;
-	m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer), true);
+	if (m_pDatStream->isOpen())
+		*m_pDatStream << sepF << sepA << sep5 << sep0;
+	if (!m_bRunning && m_bRunAck)
+		m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer), true);
+}
+
+/*!
+    \fn Mesydaq2::writeProtectFile(QIODevice* pIODevice)
+ */
+void Mesydaq2::writeProtectFile(QIODevice* pIODevice)
+{
+	if (m_bWriteProtect)
+	{
+		QFile* pFile(dynamic_cast<QFile*>(pIODevice));
+		if (pFile)
+			pFile->setPermissions(pFile->permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
+	}
 }
 
 /*!
@@ -1843,6 +1853,7 @@ void Mesydaq2::setRunId(quint32 runid)
 {
 	MSG_NOTICE << tr("Mesydaq2::setRunId(%1)").arg(runid);
 	m_runId = runid;
+	m_pDatStream->setRunId(m_runId);
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 		if (it.value()->isMaster())
 		{
@@ -1893,7 +1904,6 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		}
 		if(m_acquireListfile)
 		{
-			const quint16 *pD = static_cast<const quint16 *>(&dp->bufferLength);
 			if (dp->bufferLength == 0)
 			{
 				MSG_ERROR << tr("BUFFER with length 0");
@@ -1908,15 +1918,11 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				MSG_ERROR << tr("BUFFER with length %1").arg(dp->bufferLength);
 				return;
 			}
-			m_datStream << dp->bufferLength;
-			m_datStream << dp->bufferType;
-			m_datStream << dp->headerLength;
-			m_datStream << dp->bufferNumber;
-			for(quint16 i = 4; i < dp->bufferLength; i++)
-				m_datStream << pD[i];
+			*m_pDatStream << dp;
 		}
 		m_pDatSender->WriteData(&dp->bufferLength, dp->bufferLength, true);
 		writeBlockSeparator();
+
 //		MSG_DEBUG << tr("------------------");
 		MSG_DEBUG << tr("buffer : length : %1 type : %2").arg(dp->bufferLength).arg(dp->bufferType);
 		if(dp->bufferType < 0x0003)
@@ -2158,6 +2164,26 @@ bool Mesydaq2::isSynced() const
 		if (!pMCPD->isSynced())
 			return false;
 	return true;
+}
+
+void Mesydaq2::setStreamWriter(StreamWriter* pStreamWriter)
+{
+	if (m_pDatStream != NULL)
+	{
+		disconnect(m_pDatStream, SIGNAL(preCloseFile()), this, SLOT(writeClosingSignature()));
+		disconnect(m_pDatStream, SIGNAL(closedFile(QIODevice*)), this, SLOT(writeProtectFile(QIODevice*)));
+		disconnect(m_pDatStream, SIGNAL(openedFile()), this, SLOT(writeListfileHeader()));
+		disconnect(m_pDatStream, SIGNAL(openedFile()), this, SLOT(writeHeaderSeparator()));
+		delete m_pDatStream;
+	}
+	m_pDatStream = pStreamWriter;
+	if (m_pDatStream != NULL)
+	{
+		connect(m_pDatStream, SIGNAL(preCloseFile()), this, SLOT(writeClosingSignature()), Qt::DirectConnection);
+		connect(m_pDatStream, SIGNAL(closedFile(QIODevice*)), this, SLOT(writeProtectFile(QIODevice*)), Qt::DirectConnection);
+		connect(m_pDatStream, SIGNAL(openedFile()), this, SLOT(writeListfileHeader()), Qt::DirectConnection);
+		connect(m_pDatStream, SIGNAL(openedFile()), this, SLOT(writeHeaderSeparator()), Qt::DirectConnection);
+	}
 }
 
 void Mesydaq2::setListfilename(const QString &name)

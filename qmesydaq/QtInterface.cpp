@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@hmi.de>                  *
- *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -133,7 +133,7 @@ void QtInterface::postRequestCommand(CommandEvent::Command cmd, QList<QVariant> 
 			CMD(C_SET_LISTHEADER) CMD(C_MAPCORRECTION) CMD(C_MAPPEDHISTOGRAM) CMD(C_UPDATEMAINWIDGET)
 			CMD(C_QUIT) CMD(C_SET_RUNID) CMD(C_GET_RUNID) CMD(C_GET_LISTMODE) CMD(C_COUNTER_SELECTED)
 			CMD(C_VERSIONTEXT) CMD(C_INIT) CMD(C_SET_CONFIGFILE) CMD(C_GET_CONFIGFILE)
-			CMD(C_SET_SAVEHISTOGRAM) CMD(C_GET_SAVEHISTOGRAM)
+			CMD(C_SET_SAVEHISTOGRAM) CMD(C_GET_SAVEHISTOGRAM) CMD(C_SET_STREAMWRITER)
 #undef CMD
 			default: szCmd="???"; break;
 		}

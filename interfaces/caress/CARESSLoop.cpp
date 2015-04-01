@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
- *   Copyright (C) 2009-2010 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2010 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -57,6 +57,7 @@
 #include "mapcorrect.h"
 #include "mapcorrectparser.h"
 #include "logging.h"
+#include "streamwriter.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -239,6 +240,7 @@ public:
 
 private:
 	MultipleLoopApplication* m_theApp;
+	FilePartsStream*	m_pStreamWriter;
 	QDateTime		m_dtLastCall;			//!< last CORBA call to this interface
 	QMutex			m_mutex;
 
@@ -561,6 +563,9 @@ CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
 	memset(&m_lId[0],0,sizeof(m_lId));
 	memset(&m_b64Bit[0],0,sizeof(m_b64Bit));
 	memset(&m_szErrorMessage[0],0,sizeof(m_szErrorMessage));
+
+	QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+	pInterface->setStreamWriter(new FilePartsStream);
 }
 
 //! \brief destructor
@@ -659,6 +664,11 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 		QMesyDAQDetectorInterface* pInterface=NULL;
 		if (m_theApp!=NULL)
 			pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
+		if (!m_pStreamWriter)
+		{
+			m_pStreamWriter = new FilePartsStream;
+			pInterface->setStreamWriter(m_pStreamWriter);
+		}
 
 		while (ptr1[0]!=' ' && ptr1[0]!='\t' && ptr1[0]!='\0') ++ptr1;
 		i=ptr1-config_line;
@@ -1027,7 +1037,7 @@ CARESS::ReturnType CORBADevice_i::start_module(CORBA::Long kind,
 					{
 						// TODO: switch to next list mode file, if maximum file size is reached
 						//                 run   step  part (max file size wrap around counter)
-						sName.sprintf("V15_%010d_S%03d_P01.mts",m_lRunNo,m_lStepNo);
+						sName.sprintf("V15_%010ld_S%03ld_P%%02p.mts",m_lRunNo,m_lStepNo);
 					}
 					else
 					{
@@ -1535,8 +1545,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					MSG_DEBUG << "load time scale/factor " << m_dblTimerScale;
 				}
 				// list mode
-				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-						 iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
+				else if (iNameLen==8 && strncasecmp(pStart,"listmode",8)==0)
 				{
 					int iValueLen=p2-p1;
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
@@ -1551,8 +1560,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
 				}
 				// list file
-				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-						 ((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
+				else if (((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
 						 (iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
@@ -1567,8 +1575,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
 				}
 				// histogram mode
-				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-						 ((iNameLen==9 && strncasecmp(pStart,"histomode",9)==0) ||
+				else if (((iNameLen==9 && strncasecmp(pStart,"histomode",9)==0) ||
 						  (iNameLen==9 && strncasecmp(pStart,"histogram",9)==0) ||
 						  (iNameLen==13 && strncasecmp(pStart,"histogrammode",13)==0)))
 				{
@@ -1585,8 +1592,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 						pInterface->setHistogramFileName(QString());
 				}
 				// histogram file
-				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-						 ((iNameLen==9 && strncasecmp(pStart,"histofile",9)==0) ||
+				else if (((iNameLen==9 && strncasecmp(pStart,"histofile",9)==0) ||
 						  (iNameLen==13 && strncasecmp(pStart,"histogramfile",13)==0)))
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
@@ -1598,8 +1604,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - histogramfile=" << m_sHistofile.toLatin1().constData();
 				}
 				// use gzip for ascii detector data (readblock-kind==1)
-				else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-						 ((iNameLen==4 && strncasecmp(pStart,"gzip",4)==0) ||
+				else if (((iNameLen==4 && strncasecmp(pStart,"gzip",4)==0) ||
 						  (iNameLen==7 && strncasecmp(pStart,"usegzip",7)==0) ||
 						  (iNameLen==8 && strncasecmp(pStart,"use-gzip",8)==0) ||
 						  (iNameLen==8 && strncasecmp(pStart,"use_gzip",8)==0) ||
@@ -1639,8 +1644,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 		}
 
 		while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
-		if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-			(pStart+8)<pEnd && strncasecmp(pStart,"listmode",8)==0)
+		if ((pStart+8)<pEnd && strncasecmp(pStart,"listmode",8)==0)
 		{
 			pStart+=8;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1651,8 +1655,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			else if ((pStart+3)<pEnd && strncasecmp(pStart,"off",3)==0) m_bListmode=false;
 			pInterface->setListMode(m_bListmode,true);
 		}
-		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-				 (((pStart+8)<pEnd && strncasecmp(pStart,"listfile",8)==0) || ((pStart+12)<pEnd && strncasecmp(pStart,"listmodefile",12)==0)))
+		else if (((pStart+8)<pEnd && strncasecmp(pStart,"listfile",8)==0) || ((pStart+12)<pEnd && strncasecmp(pStart,"listmodefile",12)==0))
 		{
 			pStart+=(strncasecmp(pStart+4,"m",1)==0) ? 12 : 8;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1665,10 +1668,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			pInterface->setListFileName(m_sListfile);
 			pInterface->setListMode(m_bListmode,true);
 		}
-		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-				 (((pStart+9)<pEnd && strncasecmp(pStart,"histomode",9)==0) ||
-				  ((pStart+9)<pEnd && strncasecmp(pStart,"histogram",9)==0) ||
-				  ((pStart+13)<pEnd && strncasecmp(pStart,"histogrammode",13)==0)))
+		else if (((pStart+9)<pEnd && strncasecmp(pStart,"histomode",9)==0) ||
+				 ((pStart+9)<pEnd && strncasecmp(pStart,"histogram",9)==0) ||
+				 ((pStart+13)<pEnd && strncasecmp(pStart,"histogrammode",13)==0))
 		{
 			pStart+=(strncasecmp(pStart+9,"m",1)==0) ? 13 : 9;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1680,9 +1682,8 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			if (!m_bHistogram)
 				pInterface->setHistogramFileName(QString());
 		}
-		else if ((iDevice==QMESYDAQ_HISTOGRAM || iDevice==QMESYDAQ_DIFFRACTOGRAM || iDevice==QMESYDAQ_SPECTROGRAM) &&
-				 (((pStart+9)<pEnd && strncasecmp(pStart,"histofile",9)==0) ||
-				  ((pStart+13)<pEnd && strncasecmp(pStart,"histogramfile",13)==0)))
+		else if (((pStart+9)<pEnd && strncasecmp(pStart,"histofile",9)==0) ||
+				 ((pStart+13)<pEnd && strncasecmp(pStart,"histogramfile",13)==0))
 		{
 			pStart+=(strncasecmp(pStart+5,"g",1)==0) ? 13 : 9;
 			while (pStart<pEnd && (pStart[0]==' ' || pStart[0]=='\t')) ++pStart;
@@ -1877,6 +1878,102 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			delete pParser;
 			pParser=new CaressMapCorrectionV4(false);
 			bInsertHeaderLength=false;
+		}
+		if (m_sInstrument.compare("V15",Qt::CaseInsensitive)==0)
+		{
+			// parse V15 header, search "[CAR_]" section and
+			// use "File_Size_Max", "Data_Dir", "File_Base_Name"
+			QString szHeader(QString::fromLocal8Bit((const char*)pData,(int)uLength));
+			int iIndex;
+			bool bCarSection=false;
+			quint64 qwMaxFileSize=0;
+			QString szListmodeDir,szListmodeFile;
+			while (!szHeader.isEmpty())
+			{
+				QString szLine;
+				for (iIndex=0; iIndex<szHeader.size(); ++iIndex)
+				{
+					if (szHeader[iIndex]==QChar('\r') || szHeader[iIndex]==QChar('\n'))
+					{
+						szLine=szHeader.left(iIndex);
+						szHeader.remove(0,iIndex+1);
+						break;
+					}
+				}
+				if (szLine.isNull())
+				{
+					szLine=szHeader;
+					szHeader.clear();
+				}
+				if (szLine.isEmpty())
+					continue;
+				while (szLine.startsWith(' ') || szLine.startsWith('\t'))
+					szLine.remove(0,1);
+				if (szLine.startsWith('['))
+				{
+					bCarSection=szLine.startsWith("[CAR_]",Qt::CaseInsensitive);
+					continue;
+				}
+				if (!bCarSection)
+					continue;
+
+				iIndex=szLine.indexOf('=');
+				if (iIndex++<0)
+					continue;
+				while (iIndex<szLine.size() && (szLine[iIndex]==QChar(' ') ||szLine[iIndex]==QChar('\r')))
+					++iIndex;
+				QStringList aszList=szLine.mid(iIndex).split(' ',QString::SkipEmptyParts);
+				if (aszList.isEmpty())
+					continue;
+				QString szValue(aszList.first());
+				iIndex=szValue.indexOf(QChar(';'));
+				if (iIndex>=0)
+					szValue.remove(iIndex,szValue.size()-iIndex);
+				if (szValue.isEmpty())
+					continue;
+
+				if (szLine.startsWith("File_Size_Max",Qt::CaseInsensitive))
+				{
+					QByteArray abyValue(szValue.toLocal8Bit());
+					const char* pValue(abyValue.constData());
+					char* pEnd;
+					quint64 qwFileSize;
+					int iShift=0;
+					while (pValue[0]=='0' && pValue[1]>='0' && pValue[1]<='9')
+						++pValue;
+					pEnd=(char*)pValue;
+					qwFileSize=strtoull(pValue,&pEnd,0);
+					if (pEnd!=NULL && pValue<pEnd)
+					{
+						if (*pEnd=='T' || *pEnd=='t') { iShift=40; ++pEnd; }
+						if (*pEnd=='G' || *pEnd=='g') { iShift=30; ++pEnd; }
+						if (*pEnd=='M' || *pEnd=='m') { iShift=20; ++pEnd; }
+						if (*pEnd=='K' || *pEnd=='k') { iShift=10; ++pEnd; }
+						if (*pEnd=='B' || *pEnd=='b') ++pEnd;
+						if (*pEnd=='\0')
+							qwMaxFileSize=qwFileSize << iShift;
+					}
+				}
+				if (szLine.startsWith("Data_Dir",Qt::CaseInsensitive))
+					szListmodeDir=szValue;
+				if (szLine.startsWith("File_Base_Name",Qt::CaseInsensitive))
+					szListmodeFile=szValue;
+			}
+			if (m_pStreamWriter)
+				m_pStreamWriter->setMaxFileSize(qwMaxFileSize);
+			if (!szListmodeFile.isEmpty())
+			{
+				if (!szListmodeDir.isEmpty())
+				{
+					if (!szListmodeDir.endsWith('/'))
+						szListmodeDir.append('/');
+					szListmodeFile.prepend(szListmodeDir);
+				}
+				szListmodeFile.append("_P%02p.mts");
+				m_sListfile=szListmodeFile;
+				pInterface->setListFileName(szListmodeFile);
+				pInterface->setListMode(m_bListmode,true);
+			}
 		}
 		if (pParser==NULL)
 			pParser=new CaressMapCorrectionDefault();

@@ -37,6 +37,7 @@
 
 class MPSD8;
 class DataRepeater;
+class StreamWriter;
 
 /**
  * \short Mesydaq DAQ object (without any graphical frontend)
@@ -92,6 +93,8 @@ public:
 	quint16 getTxMode(quint16 id, quint8 mod);
 
 // list mode oriented methods
+	void setStreamWriter(StreamWriter* pStreamWriter);
+
 	/**
 	 * sets the file name of a list mode data file
 	 *
@@ -101,14 +104,6 @@ public:
 
 	//! \return name of the current list mode data file
 	QString getListfilename() const;
-
-	void writeListfileHeader(void);
-
-	void writeClosingSignature(void);
-
-	void writeBlockSeparator(void);
-
-	void writeHeaderSeparator(void);
 
 	void setListFileHeader(const QByteArray& header, bool bInsertHeaderLength);
 
@@ -344,6 +339,16 @@ public slots:
 
 	void allPulserOff();
 
+	void writeListfileHeader(void);
+
+	void writeClosingSignature(void);
+
+	void writeProtectFile(QIODevice* pIODevice);
+
+	void writeBlockSeparator(void);
+
+	void writeHeaderSeparator(void);
+
 	virtual void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 	/**
@@ -423,8 +428,7 @@ private:
 	//! currently used list mode file
 	QString		m_listfilename;
 
-	QFile		m_datfile;
-	QDataStream	m_datStream;
+	StreamWriter*	m_pDatStream;
 	DataRepeater*	m_pDatSender;
 
 	quint8		m_timingwidth;

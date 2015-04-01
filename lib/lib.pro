@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 1.56.3
+VERSION		= 1.57.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -62,7 +62,8 @@ HEADERS 	+= stdafx.h \
 		   structures.h \
 		   calibration.h \
 		   mappeddetector.h \
-		   editormemory.h
+		   editormemory.h \
+		   streamwriter.h
 
 SOURCES 	+= stdafx.cpp \
 		   counter.cpp \
@@ -94,4 +95,5 @@ SOURCES 	+= stdafx.cpp \
 		   networkdevice.cpp \
 		   mappeddetector.cpp \
 		   editormemory.cpp \
-		   calibration.cpp
+		   calibration.cpp \
+		   streamwriter.cpp

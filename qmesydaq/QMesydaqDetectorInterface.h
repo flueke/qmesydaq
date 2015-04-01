@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008-2014 by Lutz Rossa <rossa@hmi.de>                  *
- *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -30,6 +30,7 @@
 
 class MapCorrection;
 class MappedHistogram;
+class StreamWriter;
 
 /*!
     \class QMesyDAQDetectorInterface
@@ -41,11 +42,11 @@ class MappedHistogram;
 class QMesyDAQDetectorInterface : public QtInterface
 {
 	Q_OBJECT
-	
+
 	//! the name of the list mode data file
 	Q_PROPERTY(QString m_listFileName READ getListFileName WRITE setListFileName)
 
-        //! the name of the histogram data file
+	//! the name of the histogram data file
 	Q_PROPERTY(QString m_histFileName READ getHistogramFileName WRITE setHistogramFileName)
 
 	//! is the event loop running
@@ -55,10 +56,10 @@ class QMesyDAQDetectorInterface : public QtInterface
 	Q_PROPERTY(double m_preSelection READ preSelection WRITE setPreSelection)
 
 public:
-        QMesyDAQDetectorInterface(QObject *receiver = 0, QObject *parent = 0);
+	QMesyDAQDetectorInterface(QObject *receiver = 0, QObject *parent = 0);
 
 	//! \return whether looping
-	bool doLoop() const { return m_bDoLoop; }
+	bool doLoop() const;
 
 	void start();
 	void stop();
@@ -90,16 +91,14 @@ public:
 	bool getHistogramMode(void);
 	void setHistogramMode(bool bEnable);
 
-	//! \return name of the list mode data file
-        QString getListFileName(void) const {return m_listFileName;}
-        void setListFileName(const QString name);
+	QString getListFileName(void) const;
+	void setListFileName(const QString name);
 
 	//! \brief store header for list mode file
 	void setListFileHeader(const void* pData, int iLength, bool bInsertHeaderLength);
 
-	//! \return name of the histogram data file
-        QString getHistogramFileName(void) const {return m_histFileName;}
-        void setHistogramFileName(const QString name);
+	QString getHistogramFileName(void) const;
+	void setHistogramFileName(const QString name);
 
 	void updateMainWidget(int iWidth, int iHeight, int iRunNo, const QString& sActive);
 	void updateMainWidget(const QString& sWidth, const QString& sHeight, const QString& sRunNo, const QString& sActive);
@@ -118,6 +117,9 @@ public:
 	//! returns the current runid
 	quint32 getRunID(bool *pbAutoIncrement = NULL);
 
+	//! set stream writer class to write list mode files to
+	void setStreamWriter(StreamWriter *pStreamWriter);
+
 	//! return QMesyDAQ and library version text
 	QString getVersionText();
 
@@ -134,10 +136,10 @@ private:
 	bool                    m_bDoLoop;
 
 	//! preselection value
-	double 			m_preSelection;
+	double			m_preSelection;
 
 	//! counter value
-	double 			m_counter;
+	double			m_counter;
 
 	//! with
 	quint16			m_width;
@@ -149,31 +151,31 @@ private:
 	QList<quint64>		m_values;
 
 	//! ????
-	QObject*                m_pObject;
+	QObject			*m_pObject;
 
 	//! stores the current state
-	int 			m_status;
+	int			m_status;
 
 	//! name of the current listmode file
 	QString			m_listFileName;
 
 	//! name of the current histogram file
-	QString 		m_histFileName;
+	QString			m_histFileName;
 
 	//! QMesyDAQ and library version
-	QString             m_sVersion;
+	QString			m_sVersion;
 
 	//! current run ID
 	quint32			m_runid;
 
 	//! is listmode enabled / auto increment run number
-	bool                m_boolean;
+	bool			m_boolean;
 
 	//! write protect data files?
-	bool                m_bWriteProtectFiles;
+	bool			m_bWriteProtectFiles;
 
 	//! name of the configuration file
-	QString             m_configFile;
+	QString			m_configFile;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -59,6 +59,7 @@
 #include "tcpsetup.h"
 #include "caresssetup.h"
 #include "ConfigFileDialog.h"
+#include "streamwriter.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -2512,6 +2513,9 @@ void MainWidget::customEvent(QEvent *e)
 				bool bAutoSaveHistogram = autoSaveHistogram->isChecked();
 				answer << bAutoSaveHistogram;
 			}
+			break;
+		case CommandEvent::C_SET_STREAMWRITER:
+			m_meas->getMesydaq()->setStreamWriter(dynamic_cast<StreamWriter *>((QObject*)args[0].toULongLong()));
 			break;
 		case CommandEvent::C_UPDATEMAINWIDGET:
 			if (args.count() >= 4)
