@@ -989,15 +989,15 @@ void MainWidget::updateMeasurement(void)
 		dispSpectra->setText(tr("Spectra"));
 	}
 	dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
-	moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
-	moduleStatus2->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
-	moduleStatus3->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
-	moduleStatus4->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
-	moduleStatus5->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
-	moduleStatus6->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
-	moduleStatus7->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
+	moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	moduleStatus2->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	moduleStatus3->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	moduleStatus4->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	moduleStatus5->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	moduleStatus6->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	moduleStatus7->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
 // MDLL has only three monitor inputs
-	monitor4Preset->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2);
+	monitor4Preset->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
 	monitor4Preset->setChecked(false);
 	if (m_meas->setupType() == Measurement::Mstd)
 	{
@@ -1487,7 +1487,7 @@ void MainWidget::draw(void)
 	switch (m_mode)
 	{
 		case Plot::Histogram :
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2)
+			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
 			{
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
@@ -1501,7 +1501,7 @@ void MainWidget::draw(void)
 			break;
 		case Plot::Diffractogram :
 			spec = m_meas->spectrum(Measurement::Diffractogram);
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2)
+			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
@@ -1509,7 +1509,7 @@ void MainWidget::draw(void)
 			countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
 			break;
 		case Plot::SingleSpectrum :
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2)
+			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
 			{
 				spec = m_meas->spectrum(Measurement::AmplitudeSpectrum);
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "amplitude");
@@ -1522,7 +1522,7 @@ void MainWidget::draw(void)
 			countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
 			break;
 		case Plot::Spectrum :
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() != Measurement::Mdll2)
+			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "Y (channel)");
 			if(dispAll->isChecked())
 			{
