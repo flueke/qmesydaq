@@ -295,7 +295,6 @@ void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szD
 		connect(tmp, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
 		connect(tmp, SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 		connect(tmp, SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
-		connect(tmp, SIGNAL(newCmdPackageReceived()), this, SLOT(cmdPackageReceived()));
 		connect(tmp, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
 		m_mcpd.insert(byId, tmp);
 	}
