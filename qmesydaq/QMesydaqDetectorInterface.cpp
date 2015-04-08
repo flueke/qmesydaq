@@ -99,10 +99,9 @@ void QMesyDAQDetectorInterface::resume()
  */
 double QMesyDAQDetectorInterface::readCounter(int id)
 {
-	double r(0.0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_READ_COUNTER, QList<QVariant>() << id);
-	r = m_counter;
+	double r = m_counter;
 	m_mutex.unlock();
 	return r;
 }
@@ -176,10 +175,9 @@ void QMesyDAQDetectorInterface::setPreSelection(int id, double value)
  */
 double QMesyDAQDetectorInterface::preSelection()
 {
-	double r(0.0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_PRESELECTION);
-	r = m_preSelection;
+	double r = m_preSelection;
 	m_mutex.unlock();
 	return r;
 }
@@ -192,10 +190,9 @@ double QMesyDAQDetectorInterface::preSelection()
  */
 double QMesyDAQDetectorInterface::preSelection(int id)
 {
-	double r(0.0);
 	m_mutex.lock();
 	postRequestCommand(CommandEvent::C_PRESELECTION, QList<QVariant>() << id);
-	r = m_preSelection;
+	double r = m_preSelection;
 	m_mutex.unlock();
 	return r;
 }

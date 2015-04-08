@@ -39,6 +39,6 @@ M2D *M2D::create(int bus, int typ, QObject *parent)
 		case TYPE_MWPCHR :
 			return new MWPCHR(bus, parent);
 		default :
-			return (M2D *)new NoModule(bus, parent);
+			return reinterpret_cast<M2D *>(new NoModule(bus, parent));
 	}
 }

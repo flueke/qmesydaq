@@ -135,7 +135,7 @@ void MPSDPulser::updatePulser()
 	if (modType == TYPE_MSTD16)
 	{
 		// RIGHT is for the 'even' channels (0, 2, 4, ...) and LEFT for the 'odd' channels (1, 3, 5, ... )
-		pos = chan % 2 ? LEFT : RIGHT;
+		pos = (chan % 2) ? LEFT : RIGHT;
 		chan /= 2;
 	}
 	else
