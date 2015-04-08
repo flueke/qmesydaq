@@ -18,7 +18,10 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.47.0
+exists(.git) {
+	system(git describe > version)
+}
+VERSION		= $$system(cat version)
 
 include (mesydaqconfig.pri)
 
@@ -40,9 +43,16 @@ INCLUDEPATH 	+= . qmesydaq lib
 
 DISTFILES	+= AUTHORS \
 		COPYING \
+		NEWS \
+		README \
+		TODO \
 		qmesydaq.desktop \
+		mesydaq.pro \
 		mesydaqconfig.pri \
-		config.h
+		QMesyDAQ.sln \
+		config.h \
+		Doxyfile \
+		edist.prf
 
 dox.target = doc
 dox.commands = doxygen Doxyfile; \
@@ -53,8 +63,11 @@ dox.depends =
 QMAKE_EXTRA_TARGETS += dox
 
 package.target	= dist
-package.commands = git archive --prefix=qmesydaq-$${VERSION}/ --format=tar HEAD | gzip  > qmesydaq-$${VERSION}.tar.gz || \
-	 echo \"dist is currently only enable for git checkouts\"; for i in $${SUBDIRS} ; do echo $${LITERAL_DOLLAR}$${LITERAL_DOLLAR}i; done && touch qmesydaq-$${VERSION}.tar.gz
+unix: package.commands = @git archive --prefix=qmesydaq-$${VERSION}/ --format=tar HEAD $${SUBDIRS} debian doc misc $${DISTFILES} > qmesydaq-$${VERSION}.tar && \
+         mkdir qmesydaq-$${VERSION} && cp -a version qmesydaq-$${VERSION} && tar rf qmesydaq-$${VERSION}.tar qmesydaq-$${VERSION}/version && gzip -f qmesydaq-$${VERSION}.tar && \
+	 rm -rf qmesydaq-$${VERSION} || \
+	 echo \"dist is currently only enable for git checkouts\"
+#	 for i in $${SUBDIRS} ; do echo $${LITERAL_DOLLAR}$${LITERAL_DOLLAR}i; done && touch qmesydaq-$${VERSION}.tar.gz
 package.depends = $${DISTFILES}
 
 QMAKE_EXTRA_TARGETS += package
