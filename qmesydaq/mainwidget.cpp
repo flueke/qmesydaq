@@ -527,13 +527,16 @@ void MainWidget::checkListfilename(bool checked)
 				name = interface->getListFileName();
 		}
 
-		if (name.isEmpty() && !m_remoteStart)
+		if (m_remoteStart)
+		{
+			if (!name.isEmpty())
+				name = m_meas->getListfilepath() + "/" + name;
+		}
+		else if (name.isEmpty())
 		{
 			name = selectListfile();
 			bAsk = false;
 		}
-		else
-			name = m_meas->getListfilepath() + "/" + name;
 
 		if (!name.isEmpty() && QFile::exists(name))
 		{
