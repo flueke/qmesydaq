@@ -29,6 +29,7 @@ TARGET 		= loadsetup
 QT		+= core network
 
 CONFIG		+= debug
+CONFIG		+= link_prl
 
 DEPENDPATH 	+= .
 INCLUDEPATH 	+= .

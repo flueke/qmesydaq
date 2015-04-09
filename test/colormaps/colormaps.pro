@@ -27,6 +27,7 @@ TEMPLATE 	= app
 TARGET 		= colormaps
 DEPENDPATH 	+= . $${SRCBASE}/qmesydaq 
 INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
+CONFIG		+= link_prl
 
 SOURCES 	+= main.cpp \
 		selectcolorbox.cpp \

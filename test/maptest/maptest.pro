@@ -28,6 +28,8 @@ TARGET 		= maptest
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
 
+CONFIG		+= link_prl
+
 SUBDIRS		+= listfile
 
 QT		+= core network

@@ -30,6 +30,8 @@ INCLUDEPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
 
 LIBS		+= $${TACOLIBS}
 
+CONFIG		+= create_prl
+
 target.path	= $${TARGETLIBPATH}
 
 # Input

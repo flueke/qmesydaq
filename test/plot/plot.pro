@@ -27,6 +27,7 @@ TEMPLATE 	= app
 TARGET 		= plot
 DEPENDPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib $${SRCBASE}/qmesydaq
+CONFIG		+= link_prl
 
 SOURCES 	+= main.cpp \
 		plot.cpp \

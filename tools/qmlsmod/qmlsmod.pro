@@ -28,7 +28,7 @@ TARGET 		= qmlsmod
 
 QT		+= core network
 
-CONFIG		+= debug console
+CONFIG		+= debug console link_prl
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib

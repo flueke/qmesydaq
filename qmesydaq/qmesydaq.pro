@@ -34,6 +34,8 @@ TARGET 		= qmesydaq
 DEPENDPATH 	+= . $${SRCBASE}/test/plot $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE} $${QLEDINCLUDE}
 
+CONFIG		+= link_prl
+
 SUBDIRS		+= diskspace
 
 INSTALLS	= target

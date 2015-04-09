@@ -11,6 +11,8 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += . ../../qmesydaq
 
+CONFIG	+= link_prl
+
 # Input
 
 FORMS	= ../../qmesydaq/ipaddresswidget.ui

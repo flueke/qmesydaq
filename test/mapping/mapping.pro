@@ -27,6 +27,7 @@ TEMPLATE 	= app
 TARGET 		= mapping 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
+CONFIG		+= link_prl
 
 SUBDIRS		+= listfile
 

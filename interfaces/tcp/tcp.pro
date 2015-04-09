@@ -32,6 +32,8 @@ LIBS		+= $${TACOLIBS}
 
 QT		+= network
 
+CONFIG		+= create_prl
+
 target.path	= $${TARGETLIBPATH}
 
 # Input

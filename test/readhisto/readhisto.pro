@@ -35,6 +35,7 @@ SOURCES 	+= main.cpp
 HEADERS 	+= 
 
 CONFIG		+= debug
+CONFIG		+= link_prl
 
 FORMS		+= 
 

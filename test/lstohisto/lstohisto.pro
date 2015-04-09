@@ -27,6 +27,7 @@ TEMPLATE 	= app
 TARGET 		= lstohisto
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
+CONFIG		+= link_prl
 
 LIBS		+= -L$${SRCBASE}/lib -lmesydaq
 

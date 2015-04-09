@@ -34,6 +34,7 @@ QT		+= core network
 QT		-= gui
 
 CONFIG		+= debug
+CONFIG		+= link_prl
 
 SOURCES 	+= main.cpp
 

@@ -31,6 +31,7 @@ INCLUDEPATH 	+= . $${SRCBASE}/lib
 QT		+= core network
 
 CONFIG		+= debug # release
+CONFIG		+= link_prl
 
 # Input
 SOURCES 	+= main.cpp \

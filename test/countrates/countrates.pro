@@ -24,6 +24,7 @@ SRCBASE		= ../..
 include($${SRCBASE}/mesydaqconfig.pri)
 
 TARGET       	= countrates
+CONFIG		+= link_prl
 
 INSTALLS	=
 

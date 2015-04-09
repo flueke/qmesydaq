@@ -29,6 +29,7 @@ QT		+= core network
 
 CONFIG		-= release warn_off
 CONFIG		+= debug warn_on console
+CONFIG		+= link_prl
 
 DEPENDPATH	+= . $${SRCBASE}/lib
 INCLUDEPATH	+= . $${SRCBASE}/lib

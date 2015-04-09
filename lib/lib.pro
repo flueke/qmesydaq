@@ -32,6 +32,8 @@ LIBS		-= -lmesydaq
 
 INSTALLS	= target
 
+CONFIG		+= create_prl
+
 target.path	= $${TARGETLIBPATH}
 
 QT 		+= core network

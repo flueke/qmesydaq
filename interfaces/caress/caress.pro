@@ -31,6 +31,8 @@ INCLUDEPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
 
 LIBS		+= $${CARESSLIBS}
 
+CONFIG		+= create_prl
+
 target.path	= $${TARGETLIBPATH}
 
 DISTFILES       += corbadevice.idl

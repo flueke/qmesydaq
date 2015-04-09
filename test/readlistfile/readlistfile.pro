@@ -25,6 +25,7 @@ include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= readlistfile
+CONFIG		+= link_prl
 
 QT		+= core network
 

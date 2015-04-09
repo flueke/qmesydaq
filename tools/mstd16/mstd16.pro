@@ -28,7 +28,7 @@ TARGET 		= mstd16
 
 QT		+= core network
 
-CONFIG		+= debug
+CONFIG		+= debug link_prl
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
