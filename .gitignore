@@ -9,6 +9,7 @@ revision.h
 .ui/
 lib*.so
 lib*.so.*
+lib*.prl
 mesydaqconfig_*.pri
 mesydaq.pro.user
 qrc_*.cpp
