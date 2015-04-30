@@ -1064,21 +1064,29 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 							if (m_mesydaq->version(mod, id) <= 6.03)
 								lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
 							else if (m_mesydaq->getMode(mod, id))
+							{
 								lchan += (amp >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+//								MSG_DEBUG << "amp " << amp << "-" << (amp >> 9) << "-" << lchan;
+							}
 							else
-								lchan += pos;
-							amp &= 0x1FF;				// in MSB of amp is the information left/right
-#if 0
-							MSG_DEBUG << tr("Put this event into channel : %1").arg(chan);
-#endif
+							{
+								lchan += (pos >> 9) & 0x1;
+//								MSG_DEBUG << "pos " << pos << "-" << (pos >> 9) << "-" << lchan;
+							}
+							amp &= 0x1FF;		// in MSB of amp is the information left/right
 							lchan = mapTube(lchan);
+#if 0
+							MSG_DEBUG << tr("MSTD-16 event : id: %3, chan : %1 : lchan : %5 :pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp).arg(lchan);
+							MSG_DEBUG << tr("Put this event into channel : %1").arg(lchan);
+#endif
 							if (lchan == 0xFFFF)
 								continue;
 							if (m_Spectrum[SingleTubeSpectrum])
 								m_Spectrum[SingleTubeSpectrum]->incVal(lchan);
 #if 0
-							MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
+							MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(lchan));
 #endif
+							chan = lchan;
 						}
 						else
 						{
