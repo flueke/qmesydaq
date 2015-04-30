@@ -985,11 +985,13 @@ void MainWidget::updateMeasurement(void)
 	else if (m_meas->setupType() == Measurement::Mstd)
 	{
 		dispMstdSpectrum->setText(tr("Single spectrum"));
+		dispChan->setMaximum(15);
 	}
 	else
 	{
 		dispDiffractogram->setText(tr("Diffractogram"));
 		dispSpectra->setText(tr("Spectra"));
+		dispChan->setMaximum(7);
 	}
 	dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
 	moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
