@@ -324,9 +324,17 @@ void ModuleSetup::displaySlot()
 	threshold->setValue(m_theApp->getThreshold(mod, id));
 	threshold->blockSignals(false);
 
-// mode
+// mode:
 	if (m_theApp->getMode(mod, id))
 		amp->setChecked(true);
+
+// histogram/active:
+	int modules = (modType == TYPE_MSTD16) ? 16 : 8;
+	for (int i = 0; i < modules; ++i)
+	{
+		m_histogram[i]->setChecked(m_theApp->active(mod, id, i));
+		m_active[i]->setChecked(m_theApp->histogram(mod, id, i));
+	}
 }
 
 /*!
