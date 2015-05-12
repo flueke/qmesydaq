@@ -103,6 +103,23 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	QObject::connect(checkChannel15Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram15(bool)));
 	QObject::connect(checkChannel16Histogram, SIGNAL(toggled(bool)), this, SLOT(setHistogram16(bool)));
 
+	QObject::connect(checkChannel1Use, SIGNAL(toggled(bool)), this, SLOT(setActive1(bool)));
+	QObject::connect(checkChannel2Use, SIGNAL(toggled(bool)), this, SLOT(setActive2(bool)));
+	QObject::connect(checkChannel3Use, SIGNAL(toggled(bool)), this, SLOT(setActive3(bool)));
+	QObject::connect(checkChannel4Use, SIGNAL(toggled(bool)), this, SLOT(setActive4(bool)));
+	QObject::connect(checkChannel5Use, SIGNAL(toggled(bool)), this, SLOT(setActive5(bool)));
+	QObject::connect(checkChannel6Use, SIGNAL(toggled(bool)), this, SLOT(setActive6(bool)));
+	QObject::connect(checkChannel7Use, SIGNAL(toggled(bool)), this, SLOT(setActive7(bool)));
+	QObject::connect(checkChannel8Use, SIGNAL(toggled(bool)), this, SLOT(setActive8(bool)));
+	QObject::connect(checkChannel9Use, SIGNAL(toggled(bool)), this, SLOT(setActive9(bool)));
+	QObject::connect(checkChannel10Use, SIGNAL(toggled(bool)), this, SLOT(setActive10(bool)));
+	QObject::connect(checkChannel11Use, SIGNAL(toggled(bool)), this, SLOT(setActive11(bool)));
+	QObject::connect(checkChannel12Use, SIGNAL(toggled(bool)), this, SLOT(setActive12(bool)));
+	QObject::connect(checkChannel13Use, SIGNAL(toggled(bool)), this, SLOT(setActive13(bool)));
+	QObject::connect(checkChannel14Use, SIGNAL(toggled(bool)), this, SLOT(setActive14(bool)));
+	QObject::connect(checkChannel15Use, SIGNAL(toggled(bool)), this, SLOT(setActive15(bool)));
+	QObject::connect(checkChannel16Use, SIGNAL(toggled(bool)), this, SLOT(setActive16(bool)));
+
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
 
