@@ -635,12 +635,13 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 					settings.beginGroup(moduleName);
 					settings.setValue("id", i * 8 + j);
 					settings.setValue("threshold", value->getThreshold(j));
-					for (int k = 0; k < 8; ++k)
+					int modules = (moduleID == TYPE_MSTD16 ? 16 : 8);
+					for (int k = 0; k < modules; ++k)
 					{
 						settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
 						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->active(j, k);
 					}
-					for (int k = 0; k < (moduleID == TYPE_MSTD16 ? 16 : 8); ++k)
+					for (int k = 0; k < modules; ++k)
 					{
 						settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
 						settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
