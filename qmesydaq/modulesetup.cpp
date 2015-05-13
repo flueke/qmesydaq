@@ -150,12 +150,11 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 void ModuleSetup::setGainSlot()
 {
 	bool	ok;
-	quint16 id = (quint16) devid->value(),
-		addr = module->value();
-	int	modType = m_theApp->getModuleId(id, addr);
-	quint16 chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->text().toUInt(&ok, 0);
+	quint16	id = (quint16) devid->value();
+	quint16	addr = module->value();
+	quint16	modType = m_theApp->getModuleId(id, addr);
+	quint16	chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->text().toUInt(&ok, 0);
 	float 	gainval = gain->value();
-
 #if 0
 	m_theApp->setGain(id, addr, chan, gainval);
 #else
@@ -225,7 +224,7 @@ void ModuleSetup::setModeSlot()
 	int mod = module->value();
 	if (comAmp->isChecked())
 		mod = 8;
-	m_theApp->setMode(devid->value(), mod, amp->isChecked());
+	m_theApp->setMode(devid->value(), mod, ampMode->isChecked());
 }
 
 /*!
@@ -320,9 +319,9 @@ void ModuleSetup::displaySlot()
 	quint8 id = module->value();
 	int modType = m_theApp->getModuleId(mod, id);
 	quint8 chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->value();
-	MSG_DEBUG << mod << " " << id << " modType " << modType;
-	Ui_ModuleSetup::pos->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
-	Ui_ModuleSetup::amp->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
+	posMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
+	ampMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
+	channel->setMaximum((modType == TYPE_MSTD16 ? 15 : 7));
 
 	for (int i = 8; i < 16; ++i)
 	{
@@ -343,7 +342,7 @@ void ModuleSetup::displaySlot()
 
 // mode:
 	if (m_theApp->getMode(mod, id))
-		amp->setChecked(true);
+		ampMode->setChecked(true);
 
 // histogram/active:
 	int modules = (modType == TYPE_MSTD16) ? 16 : 8;
