@@ -46,6 +46,8 @@ void MCPDSpinBox::setMCPDList(QList<int> modules)
 		setDisabled(true);
 	else
 	{
+		if (!isEnabled())
+			setEnabled(true);
 		qSort(m_mcpdList);
 		setRange(m_mcpdList.first(), m_mcpdList.last());
 		setValue(m_mcpdList.at(0));

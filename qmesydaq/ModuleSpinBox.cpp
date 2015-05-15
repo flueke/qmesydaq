@@ -48,6 +48,8 @@ void ModuleSpinBox::setModuleList(QList<int> modules)
 		setDisabled(true);
 	else
 	{
+		if (!isEnabled())
+			setEnabled(true);
 		if (m_iChangeSteps < 0)
 			setValue(m_modList.last());
 		else
