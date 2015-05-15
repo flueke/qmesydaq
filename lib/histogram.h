@@ -103,7 +103,8 @@ public:
 	void resize(const quint16 bins);
 
 	/*!
-	 * The histogram will be formatted
+	 * The histogram will be formatted. It gives back only a formatted array
+	 * of the data.
 	 *
 	 * \return formatted histogram as string
 	 */
@@ -213,7 +214,22 @@ public:
 
 	void getMean(const quint16 chan, float &mean, float &sigma);
 
+	/*!
+	 * The histogram will be formatted. It gives back only a formatted array
+	 * of the data.
+	 *
+	 * \return formatted histogram as string
+	 */
 	QString format(void);
+
+	/*!
+	 * The histogram will be formatted, with a headline, column numbers, and
+	 * line numbers
+	 *
+	 * \param headline text before the data
+	 * \return formatted histogram as string
+	 */
+	QString format(const QString &headline);
 
 	virtual quint64 value(const quint16 x, const quint16 y) const;
 
@@ -248,6 +264,8 @@ public:
 	void addSlice(const quint16, const quint16, const Histogram &);
 
 private:
+	QString formatLine(const int line);
+
 	/**
 	 * Calculates the maximum position of a tube spectrum
 	 *

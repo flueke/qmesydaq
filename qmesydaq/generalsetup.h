@@ -75,6 +75,10 @@ private slots:
 
 	void selectWriteProtectSlot();
 
+	void selectStandardHistogramFileFormat();
+
+	void selectSimpleHistogramFileFormat();
+
 private:
 	//! store the measurement object
 	Measurement 	*m_meas;

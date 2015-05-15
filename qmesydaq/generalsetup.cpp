@@ -40,6 +40,15 @@ GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
 	runId->setValue(m_meas->runId());
 	runIdAuto->setChecked(m_meas->getAutoIncRunId());
 	writeProtect->setChecked(m_meas->getWriteProtection());
+	switch (m_meas->getHistogramFileFormat())
+	{
+		case Measurement::SimpleFormat:
+			simpleHistogramFileFormat->setChecked(true);
+			break;
+		default:
+		case Measurement::StandardFormat:
+			standardHistogramFileFormat->setChecked(true);
+	}
 }
 
 /*!
@@ -106,4 +115,24 @@ void GeneralSetup::selectAutoIncRunIdSlot()
 void GeneralSetup::selectWriteProtectSlot()
 {
 	m_meas->setWriteProtection(writeProtect->isChecked());
+}
+
+/*!
+ *   \fn void GeneralSetup::selectStandardHistogramFileFormat()
+ *
+ *   callback to select standard histogram file format
+ */
+void GeneralSetup::selectStandardHistogramFileFormat()
+{
+	m_meas->setHistogramFileFormat(Measurement::StandardFormat);
+}
+
+/*!
+ *   \fn void GeneralSetup::selectSimpleHistogramFileFormat()
+ *
+ *   callback to select simple histogram file format
+ */
+void GeneralSetup::selectSimpleHistogramFileFormat()
+{
+	m_meas->setHistogramFileFormat(Measurement::SimpleFormat);
 }

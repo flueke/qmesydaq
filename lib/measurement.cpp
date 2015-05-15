@@ -66,6 +66,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_calibrationfilename("")
 	, m_neutrons(0)
 	, m_setup(Mpsd)
+	, m_histogramFileFormat(StandardFormat)
 {
 	setHistfilepath(getenv("HOME"));
 	setListfilepath(getenv("HOME"));
@@ -80,6 +81,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	setRunId(settings.value("config/lastrunid", "0").toUInt());
 	setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
 	setWriteProtection(settings.value("config/writeprotect", "false").toBool());
+	setHistogramFileFormat(HistogramFileFormat(settings.value("config/histogramfileformat", "0").toInt()));
 
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
 	connect(m_mesydaq, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
@@ -99,6 +101,14 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 
 	m_rateTimer = startTimer(100);	// every 100 ms calculate the rates, was 8 before
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
+}
+
+void Measurement::setHistogramFileFormat(HistogramFileFormat f)
+{
+	m_histogramFileFormat = f;
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
+	settings.setValue("config/histogramfileformat", m_histogramFileFormat);
+	settings.sync();
 }
 
 quint16 Measurement::height(void) const
@@ -743,36 +753,50 @@ void Measurement::writeHistograms(const QString &name)
 	if (f.open(QIODevice::WriteOnly))
 	{    // file opened successfully
 		QTextStream t(&f);        // use a text stream
-		t << "# filename = " << name << '\r' << '\n';
-		//
-		// write the monitor, events, and timer values after a '#' char
-		//
-		for (quint8 i = MON1ID; i <= MON4ID; ++i)
-			t << "# monitor " << (i + 1) << " = " << m_counter[i]->value() << '\r' << '\n';
-		t << "# events = " << m_counter[EVID]->value() << '\r' << '\n';
-		t << "# timer = " << m_counter[TIMERID]->value() << " ms" << '\r' << '\n';
-		// Title
-		t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << '\r' << '\n';
-		t.flush();
-		if (m_Hist[PositionHistogram])
+		switch(m_histogramFileFormat)
 		{
-			t << "position data: 1 row title (8 x 8 detectors), position data in columns" << '\r' << '\n';
-			t << m_Hist[PositionHistogram]->format() << '\r' << '\n';
-		}
-		if (m_Hist[AmplitudeHistogram])
-		{
-			t << "amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns" << '\r' << '\n';
-			t << m_Hist[AmplitudeHistogram]->format() << '\r' << '\n';
-		}
-		if (m_Hist[CorrectedPositionHistogram])
-		{
-			t << "corrected position data: 1 row title (8 x 8 detectors), position data in columns" << '\r' << '\n';
-			t << m_Hist[CorrectedPositionHistogram]->format() << '\r' << '\n';
+			case SimpleFormat:
+				writeSimpleHistogram(t);
+				break;
+			default:
+			case StandardFormat:
+				writeStandardHistograms(t);
+				break;
 		}
 		f.close();
 		if (getWriteProtection())
 			f.setPermissions(f.permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
 	}
+}
+
+void Measurement::writeStandardHistograms(QTextStream &t)
+{
+	QString endLine("\r\n");
+
+	t << "# filename = " << reinterpret_cast<QFile *>(t.device())->fileName() << endLine;
+	//
+	// write the monitor, events, and timer values after a '#' char
+	//
+	for (quint8 i = MON1ID; i <= MON4ID; ++i)
+		t << "# monitor " << (i + 1) << " = " << m_counter[i]->value() << endLine;
+	t << "# events = " << m_counter[EVID]->value() << endLine;
+	t << "# timer = " << m_counter[TIMERID]->value() << " ms" << endLine;
+	// Title
+	t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << endLine;
+	t.flush();
+	if (m_Hist[PositionHistogram])
+		t << m_Hist[PositionHistogram]->format("position data: 1 row title (8 x 8 detectors), position data in columns") << endLine;
+	if (m_Hist[AmplitudeHistogram])
+		t << m_Hist[AmplitudeHistogram]->format("amplitude/energy data: 1 row title (8 x 8 detectors), amplitude data in columns") << endLine;
+	if (m_Hist[CorrectedPositionHistogram])
+		t << m_Hist[CorrectedPositionHistogram]->format("corrected position data: 1 row title (8 x 8 detectors), position data in columns") << endLine;
+}
+
+void Measurement::writeSimpleHistogram(QTextStream &t)
+{
+	QString endLine("\r\n");
+	if (m_Hist[PositionHistogram])
+		t << m_Hist[PositionHistogram]->format(); // << endLine;
 }
 
 /*!

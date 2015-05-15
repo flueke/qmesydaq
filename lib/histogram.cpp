@@ -716,30 +716,33 @@ void Histogram::setAutoResize(const bool resize)
 	}
 }
 
-/*!
-    \fn QString Histogram::format(void)
-
-    The histogram will be formatted
-
-    \return formatted histogram as string
- */
-QString Histogram::format(void)
+QString Histogram::formatLine(const int line)
 {
 	QString t("");
+	for (int j = 0; j < width(); j++)
+		t += QString("\t%1").arg(value(j, line));
+	return t;
+}
 
+QString Histogram::format(void)
+{
+	QString endLine("\r\n");
+	QString t("");
+        for (int i = 0; i < height(); i++)
+                t += formatLine(i) + endLine;
+	return t;
+}
+
+QString Histogram::format(const QString &headline)
+{
+	QString endLine("\r\n");
+	QString t(headline + endLine);
         for (int i = 0; i < width(); ++i)
                 t += QString("\t%1").arg(i);
-        t += "\r\n";
+        t += endLine;
         for (int i = 0; i < height(); i++)
-        {
-                t += QString("%1").arg(i);
-                for (int j = 0; j < width(); j++)
-		{
-                        t += QString("\t%1").arg(value(j, i));
-		}
-                t += "\r\n";
-        }
-        t += "\r\n";
+                t += QString("%1").arg(i) + formatLine(i) + endLine;
+        t += endLine;
         return t;
 }
 

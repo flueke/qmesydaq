@@ -6,14 +6,75 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>532</width>
-    <height>273</height>
+    <width>503</width>
+    <height>395</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>General Setup</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Data file protections</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="writeProtect">
+        <property name="text">
+         <string>write protect data files</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="groupBox15">
+     <property name="title">
+      <string>Run ID</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="runId">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>RUN ID will be transmitted in every data buffer header</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="runIdAuto">
+        <property name="toolTip">
+         <string>increment run ID automatically at every start cmd</string>
+        </property>
+        <property name="text">
+         <string>Auto Incr.</string>
+        </property>
+        <property name="shortcut">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="runIdButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>set Run ID</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -80,62 +141,10 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="3">
-        <widget class="QCheckBox" name="writeProtect">
-          <property name="text">
-            <string>write protect data files</string>
-          </property>
-        </widget>
-      </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox15">
-     <property name="title">
-      <string>Run ID</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_7">
-      <item row="0" column="0">
-       <widget class="QSpinBox" name="runId">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="toolTip">
-         <string>RUN ID will be transmitted in every data buffer header</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="runIdAuto">
-        <property name="toolTip">
-         <string>increment run ID automatically at every start cmd</string>
-        </property>
-        <property name="text">
-         <string>Auto Incr.</string>
-        </property>
-        <property name="shortcut">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="runIdButton">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>set Run ID</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="4" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -143,6 +152,32 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Histogram file format</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="standardHistogramFileFormat">
+        <property name="text">
+         <string>Standard</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="simpleHistogramFileFormat">
+        <property name="text">
+         <string>Simple</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -156,8 +191,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>418</x>
-     <y>236</y>
+     <x>427</x>
+     <y>385</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -172,8 +207,8 @@
    <slot>selectListpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>511</x>
-     <y>55</y>
+     <x>482</x>
+     <y>59</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -188,8 +223,8 @@
    <slot>selectHistpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>511</x>
-     <y>87</y>
+     <x>482</x>
+     <y>93</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -204,8 +239,8 @@
    <slot>selectConfigpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>511</x>
-     <y>119</y>
+     <x>482</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -220,8 +255,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>418</x>
-     <y>236</y>
+     <x>427</x>
+     <y>385</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -236,8 +271,8 @@
    <slot>setRunIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>382</x>
-     <y>177</y>
+     <x>482</x>
+     <y>337</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -252,8 +287,8 @@
    <slot>selectAutoIncRunIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
+     <x>196</x>
+     <y>334</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -266,6 +301,48 @@
    <signal>clicked()</signal>
    <receiver>GeneralSetup</receiver>
    <slot>selectWriteProtectSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>40</x>
+     <y>264</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>standardHistogramFileFormat</sender>
+   <signal>clicked()</signal>
+   <receiver>GeneralSetup</receiver>
+   <slot>selectStandardHistogramFileFormat()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>59</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>simpleHistogramFileFormat</sender>
+   <signal>clicked()</signal>
+   <receiver>GeneralSetup</receiver>
+   <slot>selectSimpleHistogramFileFormat()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>493</x>
+     <y>213</y>
+    </hint>
+   </hints>
   </connection>
  </connections>
  <slots>
@@ -275,5 +352,7 @@
   <slot>setRunIdSlot()</slot>
   <slot>selectAutoIncRunIdSlot()</slot>
   <slot>selectWriteProtectSlot()</slot>
+  <slot>selectStandardHistogramFileFormat()</slot>
+  <slot>selectSimpleHistogramFileFormat()</slot>
  </slots>
 </ui>

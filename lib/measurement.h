@@ -48,6 +48,7 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 	Q_ENUMS(HistogramType)
 	Q_ENUMS(SpectrumType)
 	Q_ENUMS(Status)
+	Q_ENUMS(HistogramFileFormat)
 
 	//! stores the current mode of the measurement
 	Q_PROPERTY(Mode m_mode READ mode)
@@ -85,6 +86,12 @@ public:
 		PositionHistogram = 0,		//!< raw position histogram
 		AmplitudeHistogram,		//!< raw amplitude histogram
 		CorrectedPositionHistogram,	//!< corrected position histogram
+	};
+
+	//! Defines the histogram output format
+	enum HistogramFileFormat {
+		StandardFormat = 0,		//!< standard QMesyDAQ format
+		SimpleFormat, 			//!< only data output
 	};
 
 	//! Defines the spectrum type
@@ -317,6 +324,12 @@ public:
 	//! write protect closed files
 	void setWriteProtection(bool b) {m_mesydaq->setWriteProtection(b);}
 
+	//! \return write protect closed files is enabled
+	HistogramFileFormat getHistogramFileFormat() const {return m_histogramFileFormat;}
+
+	//! write protect closed files
+	void setHistogramFileFormat(HistogramFileFormat f);
+
 	//! returns the current operation mode
 	Mode mode(void) const
 	{
@@ -479,6 +492,10 @@ protected:
 	void timerEvent(QTimerEvent *event);
 
 private:
+	void writeStandardHistograms(QTextStream &t);
+
+	void writeSimpleHistogram(QTextStream &t);
+
 	void fillHistogram(QTextStream &t, Histogram *hist);
 
 	void destroyHistogram(void);
@@ -584,6 +601,8 @@ private:
 
 	//! mapping vector for the histogrammed tubes
 	QVector<quint16> m_tubeMapping;
+
+	HistogramFileFormat  m_histogramFileFormat;
 };
 
 #endif
