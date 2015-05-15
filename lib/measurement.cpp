@@ -816,6 +816,8 @@ void Measurement::readHistograms(const QString &name)
 						fillHistogram(t, m_Hist[PositionHistogram]);
 					else if (list[0] == "amplitude/energy")
 						fillHistogram(t, m_Hist[AmplitudeHistogram]);
+					else if (list[0] == "corrected")
+						fillHistogram(t, m_Hist[CorrectedPositionHistogram]);
 				}
 			}
 			resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(),
