@@ -467,7 +467,7 @@ QList<quint16> MPSD8::getHistogramList(void)
 	QList<quint16> result;
 	for (int i = 0; i < m_histogram.size(); ++i)
 		result << (m_histogram[i] ? i : 0xFFFF);
-	while(!result.isEmpty() && result.last() == 0xFFFF)
+	while (!result.isEmpty() && result.last() == 0xFFFF)
 		result.takeLast();
 	return result;
 }

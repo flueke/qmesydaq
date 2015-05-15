@@ -626,7 +626,9 @@ void Measurement::clearAllHist(void)
  */
 void Measurement::clearChanHist(quint16 chan)
 {
-	quint16 line = m_tubeMapping.at(chan);
+	quint16 line = mapTube(chan);
+	if (line == 0xFFFF)
+		return;
 	if (m_Hist[PositionHistogram])
 		m_Hist[PositionHistogram]->clear(line);
 	if (m_Hist[AmplitudeHistogram])
@@ -660,8 +662,9 @@ void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const qui
  */
 Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 {
-	if (m_Hist[t])
-		return m_Hist[t]->spectrum(m_tubeMapping.at(line));
+	quint16 tmpLine = mapTube(line);
+	if (m_Hist[t] && tmpLine != 0xFFFF)
+		return m_Hist[t]->spectrum(tmpLine);
 	else
 		return NULL;
 }
@@ -1175,13 +1178,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
 quint16 Measurement::mapTube(const quint16 tube)
 {
-	if (tube >= m_tubeMapping.size())
-	{
-		MSG_ERROR << m_tubeMapping;
-		MSG_ERROR << tube << " " << m_tubeMapping.size();
-		return 0xFFFF;
-	}
-	quint16 tmpTube = m_tubeMapping.at(tube);
+	quint16 tmpTube = mapTube(tube);
 	if (tmpTube == 0xFFFF)
 		MSG_ERROR << tube << " -> " << tmpTube << " " << m_tubeMapping;
 	return tmpTube;
@@ -1451,7 +1448,10 @@ void Measurement::getMean(const HistogramType t, float &mean, float &sigma)
  */
 void Measurement::getMean(const HistogramType t, quint16 chan, float &mean, float &sigma)
 {
-	m_Hist[t]->getMean(m_tubeMapping.at(chan), mean, sigma);
+	quint16 tmpChan = mapTube(chan);
+	if (tmpChan != 0xFFFF)
+		m_Hist[t]->getMean(tmpChan, mean, sigma);
+	mean = sigma = 0.0;
 }
 
 /**
