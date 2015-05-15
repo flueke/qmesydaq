@@ -2708,7 +2708,7 @@ quint16 MCPD8::getTxMode(quint8 mod)
         }
 }
 
-QVector<quint16> MCPD8::getTubeMapping()
+QVector<quint16> MCPD8::getTubeMapping(void)
 {
     QVector<quint16> result;
     quint16 n(0);
@@ -2732,7 +2732,7 @@ QVector<quint16> MCPD8::getTubeMapping()
             if (result.size() < buswidth && tmpList.size() > 0)
                 result.insert(result.size(), buswidth - result.size(), 0xFFFF);
             foreach(quint16 i, tmpList)
-                result.append(n++);
+                result.append((i != 0xFFFF) ? n++ : i);
         }
     }
     return result;
