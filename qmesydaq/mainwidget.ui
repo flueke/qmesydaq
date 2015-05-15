@@ -1260,7 +1260,7 @@ histogram file</string>
          </widget>
         </item>
         <item>
-         <widget class="ChannelSpinBox" name="dispChan">
+         <widget class="ModuleSpinBox" name="dispChan">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -2850,6 +2850,22 @@ histogram file</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dispMpsd</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>setChannels(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>253</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>428</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>redraw()</signal>
@@ -2885,6 +2901,7 @@ histogram file</string>
   <slot>changeRoiY(const int)</slot>
   <slot>changeRoiWidth(const int)</slot>
   <slot>changeRoiHeight(const int)</slot>
+  <slot>setChannels(int)</slot>
  </slots>
  <buttongroups>
   <buttongroup name="displayModeButtonGroup"/>

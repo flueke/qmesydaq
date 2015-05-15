@@ -1527,6 +1527,8 @@ void MainWidget::setDisplayMode(int val)
 			{
 				if (dispAllChannels->isChecked())
 					m_dataFrame->setDisplayMode(Plot::ModuleSpectrum);
+				else
+					setChannels(dispMpsd->value());
 			}
 			break;
 		case Plot::Histogram:
@@ -2652,7 +2654,10 @@ void MainWidget::dispAllChannelsChanged(bool val)
 void MainWidget::sumSpectra(bool val)
 {
 	if (!val)
+	{
 		displayMcpdSlot(dispMcpd->value());
+		setChannels(dispMpsd->value());
+	}
 	else
 		dispAllChannels->setChecked(false);
 	emit redraw();
@@ -2729,4 +2734,14 @@ void MainWidget::changeRoiHeight(const int val)
 	else
 		m_roi[m_histoType].setHeight(val);
 	draw();
+}
+
+void MainWidget::setChannels(int mod)
+{
+	if (!dispAllChannels->isChecked())
+	{
+		int id = dispMcpd->value();
+		QList<int> modList = m_theApp->channelId(id, mod);
+		dispChan->setModuleList(modList);
+	}
 }

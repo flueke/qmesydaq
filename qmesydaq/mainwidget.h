@@ -222,6 +222,8 @@ private slots:
 
 	void changeRoiHeight(const int);
 
+	void setChannels(int);
+
 private:
 	void 	dispFiledata(void);
 
