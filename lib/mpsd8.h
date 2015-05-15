@@ -295,7 +295,6 @@ protected:
 	//! Pulser
 	quint8 		m_pulser[2];
 
-private:
 	//! amplitude mode
 	bool		m_ampMode[2];
 

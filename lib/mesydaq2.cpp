@@ -634,6 +634,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 
 					settings.beginGroup(moduleName);
 					settings.setValue("id", i * 8 + j);
+					settings.setValue("ampmode", value->getMode(j));
 					settings.setValue("threshold", value->getThreshold(j));
 					int modules = (moduleID == TYPE_MSTD16 ? 16 : 8);
 					for (int k = 0; k < modules; ++k)
@@ -781,7 +782,8 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		quint8 	gains[16],
 			threshold,
 			channels(8);
-		bool 	comgain(true);
+		bool	comgain(true);
+		bool	ampmode(true);
 
 		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
 		{
@@ -804,6 +806,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 					}
 
 					threshold = settings.value("threshold", "22").toUInt();
+					ampmode = settings.value("ampmode", "true").toBool();
 
 					for (int k = 0; k < channels; ++k)
 						if (gains[0] != gains[k])
@@ -817,6 +820,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 						for (int k = 0; k < channels; ++k)
 							setGain(iMCPDId, j, k, gains[k]);
 					setThreshold(iMCPDId, j, threshold);
+					setMode(iMCPDId, j, ampmode);
 					break;
 			}
 		}
