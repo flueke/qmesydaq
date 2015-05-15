@@ -965,7 +965,7 @@ void Mesydaq2::setTimingwidth(quint8 width)
  */
 quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
 {
-	if (m_mcpd.empty())
+	if (m_mcpd.empty() || !m_mcpd.contains(id))
 		return 0;
 	return m_mcpd[id]->capabilities(cached);
 }
@@ -979,7 +979,7 @@ quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
  */
 quint16 Mesydaq2::getTxMode(quint16 id)
 {
-	if (m_mcpd.empty())
+	if (m_mcpd.empty() || !m_mcpd.contains(id))
 		return 0;
 	return m_mcpd[id]->getTxMode();
 }
