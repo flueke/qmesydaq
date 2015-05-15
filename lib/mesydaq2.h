@@ -213,6 +213,15 @@ public:
          */
 	QList<int> mpsdId(const int id);
 
+        /**
+         * gets the list of available channels of a MPSD
+         *
+         * \param id id of the MCPD
+	 * \param mod id of the MPSD at MCPD
+         * \return list of id numbers
+	 */
+	QList<int> channelId(const int id, const int mod);
+
 	bool isMaster(quint16 mod);
 
 	bool isExtsynced(quint16 mod);

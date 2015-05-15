@@ -148,7 +148,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="channel">
+             <widget class="ModuleSpinBox" name="channel">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -1074,7 +1074,7 @@
    <sender>channel</sender>
    <signal>valueChanged(int)</signal>
    <receiver>ModuleSetup</receiver>
-   <slot>displayMPSDSlot(int)</slot>
+   <slot>displaySlot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>90</x>

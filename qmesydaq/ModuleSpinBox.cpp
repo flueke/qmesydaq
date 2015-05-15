@@ -56,6 +56,7 @@ void ModuleSpinBox::setModuleList(QList<int> modules)
 			setValue(m_modList.first());
 		qSort(m_modList);
 		setRange(m_modList.first(), m_modList.last());
+		setValue(m_modList.first());
 	}
 }
 

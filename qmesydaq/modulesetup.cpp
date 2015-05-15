@@ -139,6 +139,8 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 		m_active[i]->setChecked(m_theApp->active(devid->value(), module->value(), i));
 	}
 
+	channel->setModuleList(m_theApp->channelId(devid->value(), module->value()));
+
 	displaySlot();
 }
 
@@ -305,6 +307,7 @@ void ModuleSetup::displayMPSDSlot(int id)
 {
 	if (id < 0)
 		id = 0;
+	channel->setModuleList(m_theApp->channelId(devid->value(), id));
 	displaySlot();
 }
 
@@ -321,7 +324,7 @@ void ModuleSetup::displaySlot()
 	quint8 chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->value();
 	posMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
 	ampMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
-	channel->setMaximum((modType == TYPE_MSTD16 ? 15 : 7));
+//	channel->setMaximum((modType == TYPE_MSTD16 ? 15 : 7));
 
 	for (int i = 8; i < 16; ++i)
 	{
