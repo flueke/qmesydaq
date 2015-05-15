@@ -2051,3 +2051,11 @@ QList<int> Mesydaq2::mcpdId(void)
 	qSort(st);
 	return st;
 }
+
+QList<int> Mesydaq2::mpsdId(const int id)
+{
+	QList<int> modList;
+	if (m_mcpd.contains(id))
+		modList = m_mcpd[id]->mpsdId();
+	return modList;
+}

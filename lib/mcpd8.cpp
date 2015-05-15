@@ -2737,3 +2737,12 @@ QVector<quint16> MCPD8::getTubeMapping(void)
     }
     return result;
 }
+
+QList<int> MCPD8::mpsdId(void)
+{
+	QList<int> modList;
+	for (int i = 0; i < 8; ++i)
+		if (getModuleId(i))
+			modList << i;
+	return modList;
+}

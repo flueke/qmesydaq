@@ -273,14 +273,7 @@ public:
          *
          * \return list of id numbers
          */
-	QList<int> mpsdId()
-	{
-    		QList<int> modList;
-    		for (int i = 0; i < 8; ++i)
-        		if (getModuleId(i))
-            			modList << i;
-		return modList;
-	}	
+	QList<int> mpsdId(void);
 
 public slots:
 	//! analyse network packet

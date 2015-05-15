@@ -208,16 +208,10 @@ public:
         /**
          * gets the list of available MPSD's connected with the MCPD
          *
-         * \param id id of the 
+         * \param id id of the MCPD
          * \return list of id numbers
          */
-	QList<int> mpsdId(const int id)
-	{
-    		QList<int> modList;
-		if (m_mcpd.contains(id))
-        		modList = m_mcpd[id]->mpsdId();
-		return modList;
-	}	
+	QList<int> mpsdId(const int id);
 
 	bool isMaster(quint16 mod);
 
