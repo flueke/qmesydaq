@@ -15,6 +15,8 @@ CONFIG	+= link_prl
 
 # Input
 
+INSTALLS =
+
 FORMS	= ../../qmesydaq/ipaddresswidget.ui
 
 HEADERS = ../../qmesydaq/ipaddresswidget.h
