@@ -100,6 +100,8 @@ MainWindow::MainWindow(QWidget *parent)
 	statusBar()->addPermanentWidget(m_pulserStatus);
 	statusBar()->addPermanentWidget(m_mode);
 
+	m_wsTool = new WebsiteTool("https://forge.frm2.tum.de/redmine/projects/qmesydaq");
+
 	restoreSettings();
 }
 
@@ -287,6 +289,5 @@ void MainWindow::runningState(bool started)
  */
 void MainWindow::bugReport(void)
 {
-	WebsiteTool t("https://forge.frm2.tum.de/redmine/projects/qmesydaq");
-	t.exec();
+	m_wsTool->show();
 }

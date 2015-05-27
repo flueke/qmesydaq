@@ -31,6 +31,7 @@ class MainWidget;
 class Mesydaq2;
 class QCloseEvent;
 class StatusBarEntry;
+class WebsiteTool;
 
 /**
  * \short Application Main Window
@@ -107,6 +108,8 @@ private:
 	StatusBarEntry	*m_mode;
 
 	StatusBarEntry	*m_sync;
+
+	WebsiteTool	*m_wsTool;
 };
 
 #endif // _MAINWINDOW_H

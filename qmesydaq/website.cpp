@@ -18,3 +18,19 @@
  ***************************************************************************/
 
 #include "website.h"
+
+
+WebsiteTool::WebsiteTool(const QString &site, QWidget *parent)
+	: QDialog(parent)
+{
+	setupUi(this);
+//	site = settings.get('url', '');
+	if (!site.isEmpty())
+		webView->load(QUrl(site));
+}
+
+void WebsiteTool::closeEvent(QCloseEvent *event)
+{
+	hide();
+	event->ignore();
+}

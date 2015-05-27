@@ -31,21 +31,10 @@ class WebsiteTool : public QDialog, public Ui_WebsiteTool
 {
 	Q_OBJECT
 public:
-    	WebsiteTool(const QString &site, QWidget *parent = NULL)
-		: QDialog(parent)
-	{
-		setupUi(this);
-//		site = settings.get('url', '');
-		if (!site.isEmpty())
-			webView->load(QUrl(site));
-	}
+	WebsiteTool(const QString &site, QWidget *parent = NULL);
 
 protected:
-	void closeEvent(QCloseEvent * /* event */)
-	{
-        	deleteLater();
-        	accept();
-	}
+	void closeEvent(QCloseEvent *event);
 };
 
 #endif
