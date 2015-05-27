@@ -24,6 +24,7 @@
 #include <QSettings>
 #include <QEventLoop>
 #include <QThread>
+#include <QFileInfo>
 
 #include "TCPLoop.h"
 #include "logging.h"
@@ -40,6 +41,7 @@ TCPLoop::TCPLoop(QtInterface * /* interface */)
 	, m_runid(0)
 	, m_histo(0)
 	, m_thread(NULL)
+	, m_settings(NULL)
 {
 	setObjectName("TCPLoop");
 	m_thread = new QThread;
@@ -55,6 +57,12 @@ TCPLoop::~TCPLoop()
 		m_thread->wait();
 		delete m_thread;
 		m_thread = NULL;
+	}
+	if (m_settings)
+	{
+		m_settings->endGroup();
+		delete m_settings;
+		m_settings = NULL;
 	}
 }
 
@@ -72,12 +80,11 @@ void TCPLoop::runLoop()
 		return;
 	}
 
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
-	settings.beginGroup("TCP");
-	m_tcpport = settings.value("port", "14716").toUInt();
-	m_runid = settings.value("runid", "0").toUInt();
-	m_histo = settings.value("histogramtype", "0").toUInt();
-	settings.endGroup();
+	m_settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+	m_settings->beginGroup("TCP");
+	m_tcpport = m_settings->value("port", "14716").toUInt();
+	m_runid = m_settings->value("runid", "0").toUInt();
+	m_histo = m_settings->value("histogramtype", "0").toUInt();
 
 	m_server = new RemoteServer(/* this */);
 	if (!m_server->listen(QHostAddress::Any, m_tcpport))
@@ -97,11 +104,27 @@ void TCPLoop::runLoop()
 		connect(m_server, SIGNAL(timer()), this, SLOT(timer()), Qt::DirectConnection);
 		connect(m_server, SIGNAL(event()), this, SLOT(event()), Qt::DirectConnection);
 		connect(m_server, SIGNAL(monitor(const quint8)), this, SLOT(monitor(const quint8)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(histogram(bool)), this, SLOT(histogram(bool)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(histogram(const QString &)), this, SLOT(histogram(const QString &)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(listmode(void)), this, SLOT(listmode(void)),  Qt::DirectConnection);
+		connect(m_server, SIGNAL(listmode(bool)), this, SLOT(listmode(bool)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(listmode(const QString &)), this, SLOT(listmode(const QString &)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(histogramFile(void)), this, SLOT(histogramFile(void)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(histogramType(void)), this, SLOT(histogramType(void)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(histogramType(const QString &)), this, SLOT(histogramType(const QString &)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(histogramSave(void)), this, SLOT(histogramSave(void)), Qt::DirectConnection);
+		connect(m_server, SIGNAL(listmodeFile(void)), this, SLOT(listmodeFile(void)), Qt::DirectConnection);
+		if (m_interface)
+		{
+			m_interface->setHistogramFileName(m_settings->value("lasthistofile", "tcphistfile00000.mtxt").toString());
+			m_interface->setListFileName(m_settings->value("lastlistfile", "tcplistfile00000.mdat").toString());
+		}
+
 		MSG_ERROR << "TCPLoop: start event loop";
 		do
 		{
 			app->processEvents(QEventLoop::AllEvents, 10);
-		}while (true);
+		} while (true);
 	}
 }
 
@@ -109,15 +132,23 @@ void TCPLoop::start(void)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
-#if 0
-	m_listFilename = incNumber(m_listFilename);
-//	updateResource<std::string>("lastlistfile", m_listFilename);
-	m_interface->setListFileName(m_listFilename.c_str());
 
-	m_histFilename = incNumber(m_histFilename);
-//	updateResource<std::string>("lasthistfile", m_histFilename);
-	m_interface->setHistogramFileName(m_histFilename.c_str());
-#endif
+	if (m_interface->getListMode())
+	{
+		QString listFile = m_interface->getListFileName();
+		listFile = incNumber(listFile);
+		m_interface->setListFileName(listFile);
+		m_settings->setValue("lastlistfile", listFile);
+	}
+
+	if (m_interface->getHistogramMode())
+	{
+		QString histFile = m_interface->getHistogramFileName();
+		histFile = incNumber(histFile);
+		m_interface->setHistogramFileName(histFile);
+		m_settings->setValue("lasthistofile", histFile);
+	}
+
 	m_interface->start();
 }
 
@@ -189,15 +220,11 @@ void TCPLoop::histogram(void)
 // complete histogram
 	if (1)
 	{
-
+		MSG_DEBUG << "HISTOGRAM TYPE " << m_histo;
 		QSize s = m_interface->readHistogramSize(m_histo);
 		width = s.width();
 		height = s.height();
 		tmpList = m_interface->readHistogram(m_histo);
-
-//		tmp.push_back(s.width());
-//		tmp.push_back(s.height());
-//		tmp.push_back(1);
 	}
 // spectrogram
 	else
@@ -278,4 +305,136 @@ void TCPLoop::monitor(const quint8 mon)
 	quint64 tmp = m_interface->readCounter(mon - 1);
 	s.setNum(tmp);
 	m_server->sendAnswer(s + "\n");
+}
+
+void TCPLoop::histogram(bool writeHistogram)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	m_interface->setHistogramMode(writeHistogram);
+}
+
+void TCPLoop::histogram(const QString &histogramfile)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	m_interface->setHistogramFileName(histogramfile);
+	m_settings->setValue("lasthistofile", histogramfile);
+}
+
+void TCPLoop::sendOnOff(bool val)
+{
+	m_server->sendAnswer(QString(val ? "ON" : "OFF") + '\n');
+}
+
+void TCPLoop::listmode(void)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	bool tmp = m_interface->getListMode();
+	sendOnOff(tmp);
+}
+
+void TCPLoop::listmode(bool writeListmode)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	m_interface->setListMode(writeListmode, true);
+}
+
+void TCPLoop::listmode(const QString &listmodefile)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	m_interface->setListFileName(listmodefile);
+	m_settings->setValue("lastlistfile", listmodefile);
+}
+
+void TCPLoop::histogramFile(void)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	QString file = m_interface->getHistogramFileName();
+	m_server->sendAnswer(file + '\n');
+}
+
+void TCPLoop::histogramType(void)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	switch (m_histo)
+	{
+		case CorrectedPositionHistogram:
+			m_server->sendAnswer("MAPPED\n");
+			break;
+		case AmplitudeHistogram:
+			m_server->sendAnswer("AMPLITUDE\n");
+			break;
+		case PositionHistogram:
+			m_server->sendAnswer("RAW\n");
+			break;
+		default:
+			m_server->sendAnswer("MESYDAQ NOTOK\n");
+	}
+}
+
+void TCPLoop::histogramType(const QString &type)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	QString tmp = type.toUpper();
+	if (tmp == "MAPPED")
+		m_histo = CorrectedPositionHistogram;
+	else if (tmp == "AMPLITUDE")
+		m_histo = AmplitudeHistogram;
+	else if (tmp == "RAW")
+		m_histo = PositionHistogram;
+	else
+	{
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+		return;
+	}
+	m_settings->setValue("histogramtype", m_histo);
+}
+
+void TCPLoop::histogramSave(void)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	bool tmp = m_interface->getHistogramMode();
+	sendOnOff(tmp);
+}
+
+void TCPLoop::listmodeFile(void)
+{
+	if (!m_interface)
+		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	QString listfile = m_interface->getListFileName();
+	m_server->sendAnswer(listfile + '\n');
+}
+
+QString TCPLoop::incNumber(const QString &val)
+{
+	QString tmpString(val);
+	QFileInfo fi(val);
+	QString baseName = fi.baseName();
+	QString ext(fi.completeSuffix());
+	if (fi.completeSuffix().isEmpty())
+		ext = "mdat";
+	long currIndex(0);
+	if (baseName.length() > 5)
+	{
+		currIndex = baseName.mid(baseName.length() - 5).toLong();
+		if (currIndex)
+			baseName.truncate(baseName.length() - 5);
+	}
+	QString tmp = QString::number(++currIndex);
+	int pos = tmpString.indexOf(baseName);
+	pos += baseName.length();
+	tmpString.truncate(pos);
+	for (int i = tmp.length(); i < 5; ++i)
+		tmpString += '0';
+	tmpString += tmp;
+	tmpString += '.' + ext;
+	return tmpString;
 }

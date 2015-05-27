@@ -132,6 +132,18 @@ void RemoteServer::destroySocket()
 		MESYDAQ GET TIMER -> timer
 		MESYDAQ GET EVENT -> events over all
 		MESYDAQ GET MONITOR[1|2] -> monitors
+	configs:
+		MESYDAQ CONFIG LISTMODE [ON|OFF] -> switches save listmode data on|off
+		MESYDAQ CONFIG LISTMODE FILE file -> sets the listmode file name to file
+		MESYDAQ CONFIG HISTOGRAM [ON|OFF] -> switches save histogram data on|off
+		MESYDAQ CONFIG HISTOGRAM FILE file -> sets the histogram file name to file
+		MESYDAQ CONFIG HISTOGRAM TYPE [RAW|MAPPED|AMPLITUDE] -> sets the type for histogram reading
+	configs read:
+	        MESYDAQ CONFIG LISTMODE -> [ON|OFF]
+		MESYDAQ CONFIG LISTMODE FILE -> filename
+		MESYDAQ CONFIG HISTOGRAM -> [ON|OFF]
+		MESYDAQ CONFIG HISTOGRAM TYPE -> [RAW|MAPPED|AMPLITUDE]
+		MESYDAQ CONFIG HISTOGRAM FILE -> filename
 
     for actions and settings it returns the strings MESYDAQ OK" or "MESYDAQ NOTOK"
     depending on the input data. If all was fine the the OK is sent otherwise NOTOK.
@@ -234,6 +246,83 @@ void RemoteServer::parseInput(const QString &line)
 					quint8 i = val.right(1).toInt();
 					MSG_ERROR << val << " " << i;
 					emit monitor(i);
+					return;
+				}
+				else
+					syntaxOk = false;
+			}
+			else
+				syntaxOk = false;
+		}
+		else if (cmd == "CONFIG")
+		{
+			if (l.length() > 3)
+			{
+				QString val = l.at(2);
+				if (val == "HISTOGRAM")
+				{
+					val = l.at(3);
+					if (val == "ON" || val == "OFF")
+					{
+						emit histogram(val == "ON");
+					}
+					else if (val == "FILE")
+					{
+						if (l.length() > 4)
+							emit histogram(l.at(4));
+						else
+						{
+							emit histogramFile();
+							return;
+						}
+					}
+					else if (val == "TYPE")
+					{
+						if (l.length() > 4)
+							emit histogramType(l.at(4));
+						else
+						{
+							emit histogramType();
+							return;
+						}
+					}
+					else
+						syntaxOk = false;
+				}
+				else if (val == "LISTMODE")
+				{
+					val = l.at(3);
+					if (val == "ON" || val == "OFF")
+					{
+						emit listmode(val == "ON");
+					}
+					else if (val == "FILE")
+					{
+						if (l.length() > 4)
+							emit listmode(l.at(4));
+						else
+						{
+							emit listmodeFile();
+							return;
+						}
+					}
+					else
+						syntaxOk = false;
+				}
+				else
+					syntaxOk = false;
+			}
+			else if (l.length() > 2)
+			{
+				QString val = l.at(2);
+				if (val == "HISTOGRAM")
+				{
+					emit histogramSave();
+					return;
+				}
+				else if (val == "LISTMODE")
+				{
+					emit listmode();
 					return;
 				}
 				else

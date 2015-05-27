@@ -78,6 +78,26 @@ signals :
 
 	void histogram(void);
 
+	void histogram(bool);
+
+	void histogram(const QString &);
+
+	void histogramFile(void);
+
+	void histogramType(void);
+
+	void histogramType(const QString &);
+
+	void histogramSave(void);
+
+	void listmode(void);
+
+	void listmode(bool);
+
+	void listmode(const QString &);
+
+	void listmodeFile(void);
+
 	void sendClient(const QString &);
 
 private slots:

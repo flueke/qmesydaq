@@ -84,7 +84,7 @@ public:
 	void setMappingCorrection(const MapCorrection& map);
 	const MappedHistogram* getMappedHistogram();
 
-	bool getListMode(bool* pbWriteProtect = NULL);
+	bool getListMode(bool *pbWriteProtect = NULL);
 	void setListMode(bool bEnable, bool bWriteProtection = false);
 
 	bool getHistogramMode(void);

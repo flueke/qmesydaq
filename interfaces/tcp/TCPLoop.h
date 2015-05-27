@@ -31,6 +31,18 @@ class QtInterface;
 class RemoteServer;
 class QMesyDAQDetectorInterface;
 class QThread;
+class QSettings;
+
+#if 0
+#	include "measurement.h"
+#else
+//! Defines the histogram type
+enum HistogramType {
+	PositionHistogram = 0,		//!< raw position histogram
+	AmplitudeHistogram,		//!< raw amplitude histogram
+	CorrectedPositionHistogram,	//!< corrected position histogram
+};
+#endif
 
 /**
   \short TCP loop to manange incoming TCP requests
@@ -71,6 +83,16 @@ private slots:
 	void timer(void);
 	void event(void);
 	void monitor(const quint8);
+	void histogram(bool);
+	void histogram(const QString &);
+	void listmode(void);
+	void listmode(bool);
+	void listmode(const QString &);
+	void histogramFile(void);
+	void histogramType(void);
+	void histogramType(const QString &);
+	void histogramSave(void);
+	void listmodeFile(void);
 
 protected:
 	//! thread  loop
@@ -78,6 +100,10 @@ protected:
 
 private:
 	QString formatHistogram(quint32 width, quint32 height, const QList<quint64> histo);
+
+	QString incNumber(const QString &val);
+
+	void sendOnOff(bool);
 
 private:
 	//! TCP server object
@@ -100,6 +126,8 @@ private:
 	quint32				m_histo;
 
 	QThread				*m_thread;
+
+	QSettings			*m_settings;
 };
 
 #endif // TACOLOOP_H
