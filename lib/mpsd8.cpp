@@ -485,3 +485,41 @@ QList<quint16> MPSD8::getActiveList(void)
 			result << i;
 	return result;
 }
+
+quint8 MPSD8::getGainpoti(quint8 chan, bool preset)
+{
+	if (chan > getChannels())
+		chan = getChannels();
+	if (chan >= getChannels()) // common gain
+	{
+		QList<quint16> aList = getActiveList();
+		if (!aList.isEmpty())	// some of the channels in use
+		{
+			quint8 poti = m_gainPoti[aList.first()][preset];
+			for (int i = 0; i < aList.size(); ++i)
+				if (m_gainPoti[aList.at(i)][preset] != poti)	// one of the potis differs from others
+					return m_gainPoti[chan][preset];
+			return poti;
+		}
+	}
+	return m_gainPoti[chan][preset];
+}
+
+float MPSD8::getGainval(quint8 chan, bool preset)
+{
+	if (chan > getChannels())
+		chan = getChannels();
+	if (chan >= getChannels()) // common gain
+	{
+		QList<quint16> aList = getActiveList();
+		if (!aList.isEmpty())	// some of the channels in use
+		{
+			float gain = m_gainVal[aList.first()][preset];
+			for (int i = 0; i < aList.size(); ++i)
+				if (m_gainVal[aList.at(i)][preset] != gain)
+					return m_gainVal[chan][preset];
+			return gain;
+		}
+	}
+	return m_gainVal[chan][preset];
+}

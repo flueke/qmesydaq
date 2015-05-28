@@ -166,12 +166,7 @@ public:
 	 * \see setGain
 	 * \see getGainval
 	 */
-	virtual quint8	getGainpoti(quint8 chan, bool preset = false)
-	{
-		if (chan > getChannels())
-			chan = getChannels();
-		return m_gainPoti[chan][preset];
-	}
+	virtual quint8	getGainpoti(quint8 chan, bool preset = false);
 
 	/**
 	 * get the user value for the gain
@@ -180,13 +175,7 @@ public:
 	 * \see setGain
 	 * \see getGainpoti
 	 */
-	virtual float	getGainval(quint8 chan, bool preset = false)
-	{
-		if (chan > getChannels())
-			chan = getChannels();
-		MSG_DEBUG << tr("gain val %1 %2").arg(chan).arg(m_gainVal[chan][preset]);
-		return m_gainVal[chan][preset];
-	}
+	virtual float	getGainval(quint8 chan, bool preset = false);
 
 	//! \return use the same gain for all channels ?
 	virtual bool	comGain() {return m_comgain;}
