@@ -1173,7 +1173,7 @@ bool MCPD8::getParameter(void)
 }
 
 /*!
-    \fn bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
+    \fn bool MCPD8::setProtocol(const QString &addr, const QString &datasink, const quint16 dataport, const QString& cmdsink, const quint16 cmdport)
 
     configures the MCPD for the communication it will set the IP address of the module, the IP address and ports of the data and command sink
 
@@ -1275,7 +1275,7 @@ bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quin
 
     \see setProtocol
  */
-void MCPD8::getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const
+void MCPD8::getProtocol(QString &ip, QString &cmdip, quint16 &cmdport, QString &dataip, quint16 &dataport) const
 {
     ip = m_szMcpdIp;
     cmdip = m_szMcpdIp;
@@ -1290,7 +1290,7 @@ void MCPD8::getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& 
     \param addr ????
     \see setProtocol
  */
-void MCPD8::getProtocol(quint16 * addr)
+void MCPD8::getProtocol(quint16 *addr)
 {
     quint32 cmdIP = QHostAddress(m_szMcpdIp).toIPv4Address();
     quint32 ownIP = QHostAddress(m_szMcpdIp).toIPv4Address();
