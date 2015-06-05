@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PresetWidget</class>
- <widget class="QWidget" name="PresetWidget">
+ <class>MonitorPresetWidget</class>
+ <widget class="QWidget" name="MonitorPresetWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>32</height>
+    <width>786</width>
+    <height>43</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,18 +20,6 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>9</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="minimumSize">
@@ -119,6 +107,62 @@
     </widget>
    </item>
    <item row="0" column="5">
+    <widget class="QLabel" name="mcpdLabel">
+     <property name="text">
+      <string>MCDP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="6">
+    <widget class="MCPDSpinBox" name="mcpdSpinBox"/>
+   </item>
+   <item row="0" column="7">
+    <widget class="QLabel" name="inputLabel">
+     <property name="text">
+      <string>Input</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8">
+    <widget class="QComboBox" name="inputComboBox">
+     <item>
+      <property name="text">
+       <string>--- ignored ---</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Monitor/Chopper 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Monitor/Chopper 2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Monitor/Chopper 3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Monitor/Chopper 4</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Digital Input 1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Digital Input 2</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="9">
     <widget class="QLabel" name="currentValue">
      <property name="minimumSize">
       <size>
@@ -134,7 +178,20 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
+   <item row="0" column="10">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="11">
     <widget class="QLabel" name="rate">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -156,19 +213,6 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="6">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
   </layout>
  </widget>
  <resources/>
@@ -176,7 +220,7 @@
   <connection>
    <sender>presetButton</sender>
    <signal>clicked(bool)</signal>
-   <receiver>PresetWidget</receiver>
+   <receiver>MonitorPresetWidget</receiver>
    <slot>presetCheckClicked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -192,7 +236,7 @@
   <connection>
    <sender>resetButton</sender>
    <signal>clicked()</signal>
-   <receiver>PresetWidget</receiver>
+   <receiver>MonitorPresetWidget</receiver>
    <slot>resetButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -205,9 +249,53 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>mcpdSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MonitorPresetWidget</receiver>
+   <slot>mcpdChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>391</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>inputComboBox</sender>
+   <signal>activated(int)</signal>
+   <receiver>MonitorPresetWidget</receiver>
+   <slot>inputChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>527</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <customwidgets>
+  <customwidget>
+   <class>MCPDSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>MCPDSpinBox.h</header>
+   <slots>
+    <slot>steps(int)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <slots>
-  <signal>resetButtonClicked()</signal>
-  <signal>presetCheckClicked(bool)</signal>
+  <slot>resetButtonClicked()</slot>
+  <slot>presetCheckClicked(bool)</slot>
+  <slot>mcpdChanged(int)</slot>
+  <slot>inputChanged(int)</slot>
  </slots>
 </ui>

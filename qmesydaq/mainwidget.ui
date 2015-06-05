@@ -470,28 +470,28 @@ histogram file</string>
                </widget>
               </item>
               <item>
-               <widget class="PresetWidget" name="monitor1Preset" native="true">
+               <widget class="MonitorPresetWidget" name="monitor1Preset" native="true">
                 <property name="label" stdset="0">
                  <string>Monitor 1</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="PresetWidget" name="monitor2Preset" native="true">
+               <widget class="MonitorPresetWidget" name="monitor2Preset" native="true">
                 <property name="label" stdset="0">
                  <string>Monitor 2</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="PresetWidget" name="monitor3Preset" native="true">
+               <widget class="MonitorPresetWidget" name="monitor3Preset" native="true">
                 <property name="label" stdset="0">
                  <string>Monitor 3</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="PresetWidget" name="monitor4Preset" native="true">
+               <widget class="MonitorPresetWidget" name="monitor4Preset" native="true">
                 <property name="label" stdset="0">
                  <string>Monitor 4</string>
                 </property>
@@ -1741,6 +1741,16 @@ histogram file</string>
    <slots>
     <signal>presetClicked(bool)</signal>
     <signal>resetClicked()</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>MonitorPresetWidget</class>
+   <extends>QWidget</extends>
+   <header>monitorpresetwidget.h</header>
+   <slots>
+    <signal>presetClicked(bool)</signal>
+    <signal>resetClicked()</signal>
+    <signal>mappingChanged(int, int)</signal>
    </slots>
   </customwidget>
  </customwidgets>

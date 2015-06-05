@@ -196,10 +196,15 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	timerPreset->setLabel(tr("Timer"));
 	eventsPreset->setLabel(tr("Events"));
 
-	monitor1Preset->setLabel(tr("Monitor 1"));
-	monitor2Preset->setLabel(tr("Monitor 2"));
-	monitor3Preset->setLabel(tr("Monitor 3"));
-	monitor4Preset->setLabel(tr("Monitor 4"));
+	m_monitorPresets.append(monitor1Preset);
+	m_monitorPresets.append(monitor2Preset);
+	m_monitorPresets.append(monitor3Preset);
+	m_monitorPresets.append(monitor4Preset);
+	for (int i = 0; i < m_monitorPresets.size(); ++i)
+	{
+		m_monitorPresets.at(i)->setLabel(tr("Monitor %1").arg(i + 1));
+		m_monitorPresets.at(i)->configureMapping(0, i);
+	}
 
 	selectUserMode(User);
 	setDisplayMode(Plot::Histogram);
@@ -285,6 +290,8 @@ void MainWidget::init()
 		disconnect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
 		disconnect(m_meas, SIGNAL(mappingChanged()), this, SLOT(mappingChanged()));
 		disconnect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
+		for (int i = 0; i < m_monitorPresets.size(); ++i)
+			disconnect(m_monitorPresets.at(i), SIGNAL(mappingChanged(quint16, qint8, qint8)), m_meas, SLOT(setMonitorMapping(quint16, qint8, qint8)));
 		delete m_meas;
 	}
 	m_meas = NULL;
@@ -298,6 +305,8 @@ void MainWidget::init()
 	dispMcpd->setMCPDList(mcpdList);
 	devid_2->setMCPDList(mcpdList);
 	paramId->setMCPDList(mcpdList);
+	for (int i = 0; i < m_monitorPresets.size(); ++i)
+		m_monitorPresets.at(i)->setMCPDList(mcpdList);
 	startStopButton->setDisabled(true);
 	acquireListFile->setDisabled(true);
 	autoSaveHistogram->setDisabled(true);
@@ -310,6 +319,8 @@ void MainWidget::init()
 	connect(m_meas, SIGNAL(stopSignal(bool)), startStopButton, SLOT(animateClick()));
 	connect(m_meas, SIGNAL(mappingChanged()), this, SLOT(mappingChanged()), Qt::QueuedConnection);
 	connect(dispMcpd, SIGNAL(valueChanged(int)), this, SLOT(displayMcpdSlot(int)));
+	for (int i = 0; i < m_monitorPresets.size(); ++i)
+		connect(m_monitorPresets.at(i), SIGNAL(mappingChanged(quint16, qint8, qint8)), m_meas, SLOT(setMonitorMapping(quint16, qint8, qint8)));
 	displayMcpdSlot(dispMcpd->value());
 #if 0
 	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
@@ -405,14 +416,11 @@ void MainWidget::startStopSlot(bool checked)
 			m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), true);
 		if(m_meas->isMaster(EVID))
 			m_meas->setPreset(EVID, eventsPreset->presetValue(), true);
-		if(m_meas->isMaster(MON1ID))
-			m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
-		if(m_meas->isMaster(MON2ID))
-			m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
-		if(m_meas->isMaster(MON3ID))
-			m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
+		for (int i = 0; i < 3; ++i)
+			if(m_meas->isMaster(i))
+				m_meas->setPreset(i, m_monitorPresets.at(i)->presetValue(), true);
 		if(m_meas->isMaster(MON4ID) && (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2))
-			m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
+			m_meas->setPreset(MON4ID, m_monitorPresets.at(MON4ID)->presetValue(), true);
 		startStopButton->setText("Stop");
 		// set device id to 0 -> will be filled by mesydaq for master
 		m_meas->start();
@@ -970,6 +978,14 @@ void MainWidget::loadConfiguration(const QString& sFilename)
 	configfilename->setText(m_meas->getConfigfilename());
 	acquireListFile->setChecked(m_meas->acqListfile());
 	updateMeasurement();
+	for (int i = 0; i < m_monitorPresets.size(); ++i)
+	{
+		QPair<int, int> p = m_meas->monitorMapping(i);
+		if (p == QPair<int, int>(-1, -1))
+			m_monitorPresets.at(i)->configureMapping(0, i);
+		else
+			m_monitorPresets.at(i)->configureMapping(p.first, p.second);
+	}
 }
 
 void MainWidget::updateMeasurement(void)
@@ -986,6 +1002,8 @@ void MainWidget::updateMeasurement(void)
 	devid_2->setMCPDList(mcpdList);
 	devid_2->setDisabled(mcpdList.empty());
 	paramId->setMCPDList(mcpdList);
+	for (int i = 0; i < m_monitorPresets.size(); ++i)
+		m_monitorPresets.at(i)->setMCPDList(mcpdList);
 	startStopButton->setDisabled(mcpdList.empty());
 	acquireListFile->setDisabled(mcpdList.empty());
 	autoSaveHistogram->setDisabled(mcpdList.empty());
@@ -1027,8 +1045,8 @@ void MainWidget::updateMeasurement(void)
 	moduleStatus6->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
 	moduleStatus7->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
 // MDLL has only three monitor inputs
-	monitor4Preset->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
-	monitor4Preset->setChecked(false);
+	m_monitorPresets.at(MON4ID)->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	m_monitorPresets.at(MON4ID)->setChecked(false);
 	if (m_meas->setupType() == Measurement::Mstd || m_meas->getPsdArrangement() == Measurement::Line)
 	{
 		dispSingleSpectrum->setChecked(true);
@@ -1221,10 +1239,8 @@ void MainWidget::ePresetSlot(bool pr)
 	if(pr)
 	{
 		timerPreset->setChecked(false);
-		monitor1Preset->setChecked(false);
-		monitor2Preset->setChecked(false);
-		monitor3Preset->setChecked(false);
-		monitor4Preset->setChecked(false);
+		for (int i = 0; i < m_monitorPresets.size(); ++i)
+			m_monitorPresets.at(i)->setChecked(false);
 	}
 	eventsPreset->setChecked(pr);
 	m_meas->setPreset(EVID, eventsPreset->presetValue(), pr);
@@ -1242,10 +1258,8 @@ void MainWidget::tPresetSlot(bool pr)
 	if(pr)
 	{
 		eventsPreset->setChecked(false);
-		monitor1Preset->setChecked(false);
-		monitor2Preset->setChecked(false);
-		monitor3Preset->setChecked(false);
-		monitor4Preset->setChecked(false);
+		for (int i = 0; i < m_monitorPresets.size(); ++i)
+			m_monitorPresets.at(i)->setChecked(false);
 	}
 	timerPreset->setChecked(pr);
 	m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), pr);
@@ -1264,12 +1278,11 @@ void MainWidget::m1PresetSlot(bool pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
-		monitor2Preset->setChecked(false);
-		monitor3Preset->setChecked(false);
-		monitor4Preset->setChecked(false);
+		for (int i = 0; i < m_monitorPresets.size(); ++i)
+			m_monitorPresets.at(i)->setChecked(false);
 	}
-	monitor1Preset->setChecked(pr);
-	m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), pr);
+	m_monitorPresets.at(MON1ID)->setChecked(pr);
+	m_meas->setPreset(MON1ID, m_monitorPresets.at(MON1ID)->presetValue(), pr);
 }
 
 /*!
@@ -1285,12 +1298,11 @@ void MainWidget::m2PresetSlot(bool pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
-		monitor1Preset->setChecked(false);
-		monitor3Preset->setChecked(false);
-		monitor4Preset->setChecked(false);
+		for (int i = 0; i < m_monitorPresets.size(); ++i)
+			m_monitorPresets.at(i)->setChecked(false);
 	}
-	monitor2Preset->setChecked(pr);
-	m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), pr);
+	m_monitorPresets.at(MON2ID)->setChecked(pr);
+	m_meas->setPreset(MON2ID, m_monitorPresets.at(MON2ID)->presetValue(), pr);
 }
 
 /*!
@@ -1306,12 +1318,11 @@ void MainWidget::m3PresetSlot(bool pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
-		monitor1Preset->setChecked(false);
-		monitor2Preset->setChecked(false);
-		monitor4Preset->setChecked(false);
+		for (int i = 0; i < m_monitorPresets.size(); ++i)
+			m_monitorPresets.at(i)->setChecked(false);
 	}
-	monitor3Preset->setChecked(pr);
-	m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), pr);
+	m_monitorPresets.at(MON3ID)->setChecked(pr);
+	m_meas->setPreset(MON3ID, m_monitorPresets.at(MON3ID)->presetValue(), pr);
 }
 
 /*!
@@ -1327,14 +1338,13 @@ void MainWidget::m4PresetSlot(bool pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
-		monitor1Preset->setChecked(false);
-		monitor2Preset->setChecked(false);
-		monitor3Preset->setChecked(false);
+		for (int i = 0; i < m_monitorPresets.size(); ++i)
+			m_monitorPresets.at(i)->setChecked(false);
 	}
 	if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
 	{
-		monitor4Preset->setChecked(pr);
-		m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), pr);
+		m_monitorPresets.at(MON4ID)->setChecked(pr);
+		m_meas->setPreset(MON4ID, m_monitorPresets.at(MON4ID)->presetValue(), pr);
 	}
 }
 
@@ -1348,20 +1358,18 @@ void MainWidget::updatePresets(void)
 	// presets
 	timerPreset->setPresetValue(m_meas->getPreset(TIMERID));
 	eventsPreset->setPresetValue(m_meas->getPreset(EVID));
-	monitor1Preset->setPresetValue(m_meas->getPreset(MON1ID));
-	monitor2Preset->setPresetValue(m_meas->getPreset(MON2ID));
-	monitor3Preset->setPresetValue(m_meas->getPreset(MON3ID));
+	for (int i = 0; i < 3; ++i)
+		m_monitorPresets.at(i)->setPresetValue(m_meas->getPreset(i));
 	if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
-		monitor4Preset->setPresetValue(m_meas->getPreset(MON4ID));
+		m_monitorPresets.at(MON4ID)->setPresetValue(m_meas->getPreset(MON4ID));
 
 	// check for master preset counter
 	timerPreset->setChecked(m_meas->isMaster(TIMERID));
 	eventsPreset->setChecked(m_meas->isMaster(EVID));
-	monitor1Preset->setChecked(m_meas->isMaster(MON1ID));
-	monitor2Preset->setChecked(m_meas->isMaster(MON2ID));
-	monitor3Preset->setChecked(m_meas->isMaster(MON3ID));
+	for (int i = 0; i < 3; ++i)
+		m_monitorPresets.at(i)->setChecked(m_meas->isMaster(i));
 	if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
-		monitor4Preset->setChecked(m_meas->isMaster(MON4ID));
+		m_monitorPresets.at(MON4ID)->setChecked(m_meas->isMaster(MON4ID));
 }
 
 /*!
@@ -2069,17 +2077,13 @@ void MainWidget::customEvent(QEvent *e)
 					switch (id)
 					{
 						case M1CT:
-							value = monitor1Preset->presetValue();
-							break;
 						case M2CT:
-							value = monitor2Preset->presetValue();
-							break;
 						case M3CT:
-							value = monitor3Preset->presetValue();
+							value = m_monitorPresets.at(id)->presetValue();
 							break;
 						case M4CT:
 							if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
-								value = monitor4Preset->presetValue();
+								value = m_monitorPresets.at(id)->presetValue();
 							break;
 						case EVCT:
 							value = eventsPreset->presetValue();
@@ -2114,17 +2118,13 @@ void MainWidget::customEvent(QEvent *e)
 				switch (id)
 				{
 					case M1CT:
-						value = monitor1Preset->isChecked();
-						break;
 					case M2CT:
-						value = monitor2Preset->isChecked();
-						break;
 					case M3CT:
-						value = monitor3Preset->isChecked();
+						value = m_monitorPresets.at(id)->isChecked();
 						break;
 					case M4CT:
 						if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
-							value = monitor4Preset->isChecked();
+							value = m_monitorPresets.at(id)->isChecked();
 						break;
 					case EVCT:
 						value = eventsPreset->isChecked();
@@ -2143,20 +2143,18 @@ void MainWidget::customEvent(QEvent *e)
 				bool bEnabled(true);
 				if (args.count() > 1 && args[1].canConvert(QVariant::Bool))
 					bEnabled = args[1].toBool();
-				switch (args[0].toInt())
+				int id(args[0].toInt());
+				switch (id)
 				{
 					case M1CT:
-						monitor1Preset->setChecked(bEnabled);
-						break;
 					case M2CT:
-						monitor2Preset->setChecked(bEnabled);
-						break;
 					case M3CT:
-						monitor3Preset->setChecked(bEnabled);
+						m_monitorPresets.at(id)->setChecked(bEnabled);
+						break;
 						break;
 					case M4CT:
 						if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
-							monitor4Preset->setChecked(bEnabled);
+							m_monitorPresets.at(id)->setChecked(bEnabled);
 						break;
 					case EVCT:
 						eventsPreset->setChecked(bEnabled);
@@ -2168,25 +2166,19 @@ void MainWidget::customEvent(QEvent *e)
 				if (args.count() > 2 && args[2].canConvert(QVariant::Double))
 				{
 					double dblPreset = args[2].toDouble();
-					switch (args[0].toInt())
+					switch (id)
 					{
 						case M1CT:
-							monitor1Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON1ID, monitor1Preset->presetValue(), true);
-							break;
 						case M2CT:
-							monitor2Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON2ID, monitor2Preset->presetValue(), true);
-							break;
 						case M3CT:
-							monitor3Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON3ID, monitor3Preset->presetValue(), true);
+							m_monitorPresets.at(id)->setPresetValue(dblPreset);
+							m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), true);
 							break;
 						case M4CT:
 							if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
 							{
-								monitor4Preset->setPresetValue(dblPreset);
-								m_meas->setPreset(MON4ID, monitor4Preset->presetValue(), true);
+								m_monitorPresets.at(id)->setPresetValue(dblPreset);
+								m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), true);
 							}
 							break;
 						case EVCT:
@@ -2210,22 +2202,16 @@ void MainWidget::customEvent(QEvent *e)
 					switch (id)
 					{
 						case M1CT:
-							monitor1Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON1ID, dblPreset, true);
-							break;
 						case M2CT:
-							monitor2Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON2ID, dblPreset, true);
-							break;
 						case M3CT:
-							monitor3Preset->setPresetValue(dblPreset);
-							m_meas->setPreset(MON3ID, dblPreset, true);
+							m_monitorPresets.at(id)->setPresetValue(dblPreset);
+							m_meas->setPreset(id, dblPreset, true);
 							break;
 						case M4CT:
 							if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
 							{
-								monitor4Preset->setPresetValue(dblPreset);
-								m_meas->setPreset(MON4ID, dblPreset, true);
+								m_monitorPresets.at(id)->setPresetValue(dblPreset);
+								m_meas->setPreset(id, dblPreset, true);
 							}
 							break;
 						case EVCT:
@@ -2610,18 +2596,24 @@ void MainWidget::selectUserMode(int val)
 			extendedStatusBox->setHidden(true);
 			deltaTimingBox->setHidden(true);
 			roiBox->setHidden(true);
+			for (int i = 0; i < m_monitorPresets.size(); ++i)
+				m_monitorPresets.at(i)->setConfigureMode(false);
 			break;
 		case MainWidget::Expert:
 			realTimeLabel->setVisible(true);
 			extendedStatusBox->setHidden(true);
 			deltaTimingBox->setHidden(true);
 			roiBox->setHidden(true);
+			for (int i = 0; i < m_monitorPresets.size(); ++i)
+				m_monitorPresets.at(i)->setConfigureMode(true);
 			break;
 		case MainWidget::SuperUser:
 			realTimeLabel->setVisible(true);
 			extendedStatusBox->setVisible(true);
 			deltaTimingBox->setVisible(true);
 			roiBox->setVisible(true);
+			for (int i = 0; i < m_monitorPresets.size(); ++i)
+				m_monitorPresets.at(i)->setConfigureMode(true);
 			break;
 		default:
 			break;

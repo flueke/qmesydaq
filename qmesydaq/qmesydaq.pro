@@ -62,6 +62,7 @@ HEADERS 	+= mainwidget.h \
 		ipaddresswidget.h \
 		presetwidget.h \
 		doublepresetwidget.h \
+		monitorpresetwidget.h \
 		generalsetup.h \
 		mcpdsetup.h \
 		modulestatus.h \
@@ -92,6 +93,7 @@ FORMS 		+= mainwidget.ui \
 		generalsetup.ui \
 		mcpdsetup.ui \
 		presetwidget.ui \
+		monitorpresetwidget.ui \
 		doublepresetwidget.ui \
 		modulestatus.ui \
 		modulewizard.ui \
@@ -124,6 +126,7 @@ SOURCES 	+= main.cpp \
 		MultipleLoopApplication.cpp \
 		ipaddresswidget.cpp \
 		presetwidget.cpp \
+		monitorpresetwidget.cpp \
 		doublepresetwidget.cpp \
 		generalsetup.cpp \
 		mcpdsetup.cpp \

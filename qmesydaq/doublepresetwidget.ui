@@ -173,7 +173,7 @@
  <connections>
   <connection>
    <sender>presetButton</sender>
-   <signal>toggled(bool)</signal>
+   <signal>clicked(bool)</signal>
    <receiver>DoublePresetWidget</receiver>
    <slot>presetCheckClicked(bool)</slot>
    <hints>

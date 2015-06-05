@@ -1012,7 +1012,12 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				triggers++;
 				quint8 dataId = (pPacket->dp.data[counter + 2] >> 8) & 0x0F;
 				data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
-				switch(dataId)
+				if (dataId >= EVID)
+				{
+					++counterTriggers;
+					MSG_ERROR << tr("counter %1 : %2").arg(dataId).arg(i);
+				}
+				else switch (dataId = monitorMapping(mod, dataId))
 				{
 					case MON1ID :
 					case MON2ID :
@@ -1037,8 +1042,6 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						MSG_DEBUG << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
 						break;
 					default:
-						++counterTriggers;
-						MSG_ERROR << tr("counter %1 : %2").arg(dataId).arg(i);
 						break;
 				}
 			}
@@ -1642,6 +1645,7 @@ bool Measurement::loadSetup(const QString &name)
 		else if (sz.contains("debug", Qt::CaseInsensitive))
 			DEBUGLEVEL = DEBUG;
 	}
+
 //	m_acquireListfile = settings.value("listmode", "true").toBool();
 	sz = settings.value("calibrationfile", "").toString();
 	settings.endGroup();
@@ -1651,6 +1655,15 @@ bool Measurement::loadSetup(const QString &name)
 	storeLastFile();
 
 	updateSetupType();
+
+	settings.beginGroup("MESYDAQ");
+	for (int j = 0; j < 4; ++j)
+	{
+		QPoint p = settings.value(QString("monitor%1").arg(j), QPoint(0, j)).toPoint();
+		setMonitorMapping(p.x(), p.y(), j);
+	}
+	settings.endGroup();
+
 // Calibration file must be read after hardware configuration
 	readCalibration(sz, true);
 	return true;
@@ -1739,6 +1752,11 @@ bool Measurement::saveSetup(const QString &name, const QString &comment)
 	settings.setValue("debugLevel", QString("%1").arg(debug[DEBUGLEVEL]));
 	settings.setValue("calibrationfile", m_calibrationfilename);
 	settings.setValue("psdarrangement", m_psdArrangement);
+	for (int j = 0; j < 4; ++j)
+	{
+		QPair<int, int> p = monitorMapping(j);
+		settings.setValue(QString("monitor%1").arg(j), QPoint(p.first, p.second));
+	}
 	settings.endGroup();
 
 	UserMapCorrection* pUserMapCorrection(dynamic_cast<UserMapCorrection*>(m_posHistMapCorrection));
@@ -1914,4 +1932,24 @@ quint16 Measurement::calculateChannel(const quint16 mcpd, const quint8 mpsd, con
 Measurement::Arrangement Measurement::getPsdArrangement(void) const
 {
 	return m_psdArrangement;
+}
+
+void Measurement::setMonitorMapping(quint16 id, qint8 input, qint8 channel)
+{
+	QList<int> mcpd = m_mesydaq->mcpdId();
+	if (mcpd.contains(id))
+		if (input < 0)
+			m_monitorMap.remove(channel);
+		else
+			m_monitorMap[channel] = QPair<int, int>(id, input);
+}
+
+qint8 Measurement::monitorMapping(quint16 id, qint8 input) const
+{
+	return m_monitorMap.key(QPair<int, int>(id, input), -1);
+}
+
+QPair<int, int> Measurement::monitorMapping(quint8 channel) const
+{
+	return m_monitorMap.value(channel, QPair<int, int>(-1, -1));
 }

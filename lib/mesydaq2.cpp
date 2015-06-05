@@ -753,7 +753,8 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 					  Q_ARG(QString, dataIP), Q_ARG(quint16, dataPort),
 					  Q_ARG(QString, cmdIP));
 #endif
-		if (dynamic_cast<MCPD *>(m_mcpd[iId]) != NULL && m_mcpd[iId]->isInitialized())
+		MCPD8 *pMCPD = m_mcpd[iId];
+		if (dynamic_cast<MCPD *>(pMCPD) != NULL && pMCPD->isInitialized())
 		{
 			setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
 			for (int j = 0; j < 4; ++j)
@@ -762,8 +763,8 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 				setParamSource(iId, j, settings.value(QString("paramsource%1").arg(j), QString("%1").arg(j)).toUInt());
 			}
 
-//			m_mcpd[iId]->setActive(loadSetupBoolean(pSection, szPrefix + "active", true));
-//			m_mcpd[iId]->setHistogram(loadSetupBoolean(pSection, szPrefix + "histogram", true));
+//			pMCPD->setActive(loadSetupBoolean(pSection, szPrefix + "active", true));
+//			pMCPD->setHistogram(loadSetupBoolean(pSection, szPrefix + "histogram", true));
 
 			for (int j = 0; j < 8; ++j)
 			{

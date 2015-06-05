@@ -297,6 +297,8 @@ private:
 	UserLevel		m_userLevel;
 
 	QRect			m_roi[3];
+
+	QList<MonitorPresetWidget *>	m_monitorPresets;
 };
 
 #endif

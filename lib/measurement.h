@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QRect>
 #include <QFileInfo>
+#include <QMap>
+#include <QPair>
 
 #include "libqmesydaq_global.h"
 #include "counter.h"
@@ -414,12 +416,21 @@ public:
 	//! \return the calculated channel number from the given mcpd, mpsd/mstd, channel
 	quint16 calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel);
 
+	//! \return mapping of digital MCPD inputs to monitor counters
+	qint8 monitorMapping(quint16 id, qint8 input) const;
+
+	//! \return the mapping of the digital inputs for the monitor number 'channel'
+	QPair<int, int> monitorMapping(quint8 channel) const;
+
 public slots:
 	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 	void calcRates();
 
 	void setHeadertime(quint64 ht);
+
+	//! \brief set mapping of digital MCPD inputs to monitor counters
+	void setMonitorMapping(quint16 id, qint8 input, qint8 channel);
 
 private slots:
 	void requestStop(void);
@@ -551,6 +562,8 @@ private:
 	HistogramFileFormat  m_histogramFileFormat;
 
 	Arrangement	m_psdArrangement;
+
+	QMap<int, QPair<int, int> >	m_monitorMap;
 };
 
 #endif
