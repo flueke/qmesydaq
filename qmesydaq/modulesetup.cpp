@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Module Public License as published by  *
@@ -154,8 +154,7 @@ void ModuleSetup::setGainSlot()
 	bool	ok;
 	quint16	id = (quint16) devid->value();
 	quint16	addr = module->value();
-	quint16	modType = m_theApp->getModuleId(id, addr);
-	quint16	chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->text().toUInt(&ok, 0);
+	quint16	chan = comgain->isChecked() ? m_theApp->getChannels(id, addr) : channel->text().toUInt(&ok, 0);
 	float 	gainval = gain->value();
 #if 0
 	m_theApp->setGain(id, addr, chan, gainval);
@@ -258,18 +257,14 @@ void ModuleSetup::setMCPD(int id)
 	module->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
 	int mid = module->value();
+	int channels = m_theApp->getChannels(id, mid);
 
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 16; ++i)
 	{
-		m_active[i]->setChecked(m_theApp->active(id, mid, i));
-		m_histogram[i]->setChecked(m_theApp->histogram(id, mid, i));
+		bool bEnabled(i < channels);
+		m_active[i]->setChecked(bEnabled && m_theApp->active(id, mid, i));
+		m_histogram[i]->setChecked(bEnabled && m_theApp->histogram(id, mid, i));
 	}
-	if (m_theApp->getModuleId(id, mid) == TYPE_MSTD16)
-		for (int i = 8; i < 16; ++i)
-		{
-			m_active[i]->setChecked(m_theApp->active(id, mid, i));
-			m_histogram[i]->setChecked(m_theApp->histogram(id, mid, i));
-		}
 
 	displayMCPDSlot();
 }
@@ -320,18 +315,26 @@ void ModuleSetup::displaySlot()
 {
 	quint8 mod = devid->value();
 	quint8 id = module->value();
+	quint8 channels = m_theApp->getChannels(mod, id);
 	int modType = m_theApp->getModuleId(mod, id);
-	quint8 chan = comgain->isChecked() ? (modType == TYPE_MSTD16 ? 16 : 8) : channel->value();
+	quint8 chan = comgain->isChecked() ? channels : channel->value();
 	posMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
 	ampMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
-//	channel->setMaximum((modType == TYPE_MSTD16 ? 15 : 7));
 
-	for (int i = 8; i < 16; ++i)
+	for (int i = 0; i < 16; ++i)
 	{
-		m_label[i]->setVisible(modType == TYPE_MSTD16);
-		m_histogram[i]->setVisible(modType == TYPE_MSTD16);
-		m_active[i]->setVisible(modType == TYPE_MSTD16);
+		bool bVisible(i < channels);
+		m_label[i]->setVisible(bVisible);
+		m_histogram[i]->setVisible(bVisible);
+		m_active[i]->setVisible(bVisible);
 	}
+
+// channel:
+	channel->blockSignals(true);
+	if (channel->value() >= channels)
+		channel->setValue(channels - 1);
+	channel->setMaximum(channels - 1);
+	channel->blockSignals(false);
 
 // gain:
 	gain->blockSignals(true);
@@ -348,8 +351,7 @@ void ModuleSetup::displaySlot()
 		ampMode->setChecked(true);
 
 // histogram/active:
-	int modules = (modType == TYPE_MSTD16) ? 16 : 8;
-	for (int i = 0; i < modules; ++i)
+	for (int i = 0; i < 16 && i < channels; ++i)
 	{
 		m_histogram[i]->setChecked(m_theApp->active(mod, id, i));
 		m_active[i]->setChecked(m_theApp->histogram(mod, id, i));
