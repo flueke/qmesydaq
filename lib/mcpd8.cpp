@@ -280,6 +280,25 @@ quint8 MCPD8::getModuleId(quint8 addr)
 }
 
 /*!
+    \fn MCPD8::getChannels(quint8 addr)
+
+    get the channel count of the MPSD. If MPSD not exists it will return 0.
+
+    \param addr module number
+    \return channel count
+ */
+quint8 MCPD8::getChannels(quint8 addr)
+{
+// MDLL is always located at address 0
+    if (m_mdll.contains(addr))
+        return m_mdll[addr]->bins();
+    if (m_mpsd.contains(addr))
+        return m_mpsd[addr]->getChannels();
+    else
+        return 0;
+}
+
+/*!
     \fn bool MCPD8::online(quint8)
 
     returns whether the module with id was found and online or not

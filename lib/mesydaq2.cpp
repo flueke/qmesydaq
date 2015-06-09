@@ -636,7 +636,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 					settings.setValue("id", i * 8 + j);
 					settings.setValue("ampmode", value->getMode(j));
 					settings.setValue("threshold", value->getThreshold(j));
-					int modules = (moduleID == TYPE_MSTD16 ? 16 : 8);
+					int modules = value->getChannels(j);
 					for (int k = 0; k < modules; ++k)
 					{
 						settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
