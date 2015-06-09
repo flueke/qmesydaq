@@ -488,9 +488,10 @@ QList<quint16> MPSD8::getActiveList(void)
 
 quint8 MPSD8::getGainpoti(quint8 chan, bool preset)
 {
-	if (chan > getChannels())
-		chan = getChannels();
-	if (chan >= getChannels()) // common gain
+	quint8 channels(getChannels());
+	if (chan > channels)
+		chan = channels;
+	if (chan == channels) // common gain
 	{
 		QList<quint16> aList = getActiveList();
 		if (!aList.isEmpty())	// some of the channels in use
@@ -507,9 +508,10 @@ quint8 MPSD8::getGainpoti(quint8 chan, bool preset)
 
 float MPSD8::getGainval(quint8 chan, bool preset)
 {
-	if (chan > getChannels())
-		chan = getChannels();
-	if (chan >= getChannels()) // common gain
+	quint8 channels(getChannels());
+	if (chan > channels)
+		chan = channels;
+	if (chan == channels) // common gain
 	{
 		QList<quint16> aList = getActiveList();
 		if (!aList.isEmpty())	// some of the channels in use

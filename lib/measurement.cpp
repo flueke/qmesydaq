@@ -1110,12 +1110,14 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 #endif
 							if (lchan == 0xFFFF)
 								continue;
-							if (m_Spectrum[SingleTubeSpectrum])
-								m_Spectrum[SingleTubeSpectrum]->incVal(lchan);
-#if 0
-							MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(lchan));
-#endif
 							chan = lchan;
+							if (m_Spectrum[SingleTubeSpectrum])
+							{
+								m_Spectrum[SingleTubeSpectrum]->incVal(chan);
+#if 0
+								MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
+#endif
+							}
 						}
 						else
 						{
