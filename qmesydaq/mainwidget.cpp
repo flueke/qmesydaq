@@ -765,8 +765,9 @@ void MainWidget::clearAllSlot()
 */
 void MainWidget::clearMcpdSlot()
 {
-	quint32 start = dispMcpd->value() * 64;
-	for(quint32 i = start; i < start + 64; i++)
+	quint32 start = m_theApp->startChannel(dispMcpd->value());
+	quint32 size = m_theApp->width(dispMcpd->value());
+	for(quint32 i = start; i < start + size; ++i)
 		m_meas->clearChanHist(i);
 	emit redraw();
 }
@@ -774,17 +775,19 @@ void MainWidget::clearMcpdSlot()
 /*!
     \fn void MainWidget::clearMpsdSlot()
 
+
     callback to clear the MPSD list
 */
 void MainWidget::clearMpsdSlot()
 {
-	quint32 start = dispMpsd->value() * 8 + dispMcpd->value() * 64;
+	quint32 start = m_theApp->startChannel(dispMcpd->value());
+	start += m_theApp->width(dispMcpd->value(), dispMpsd->value());
+	quint32 size = m_theApp->getChannels(dispMcpd->value(), dispMpsd->value());
 //	MSG_DEBUG << tr("clearMpsd: %1").arg(start);
-	for(quint32 i = start; i < start + 8; i++)
+	for(quint32 i = start; i < start + size; ++i)
 		m_meas->clearChanHist(i);
 	emit redraw();
 }
-
 /*!
     \fn void MainWidget::clearChanSlot()
 
@@ -1557,7 +1560,8 @@ void MainWidget::draw(void)
 				}
 				else if (dispAllChannels->isChecked())
 				{
-					quint32 chan = dispMcpd->value() * 64 + dispMpsd->value() * 8;
+					quint32 chan = m_theApp->startChannel(dispMcpd->value());
+					chan += m_theApp->getChannels(dispMcpd->value(), dispMpsd->value());
 					labelCountsInROI->setText(tr("Counts in MCPD: %1 MPSD: %2").arg(dispMcpd->value()).arg(dispMpsd->value()));
 					quint64 counts(0);
 					for (int i = 7; i >= 0; --i)

@@ -436,6 +436,7 @@ quint16 Mesydaq2::height(void)
 quint16 Mesydaq2::width(void)
 {
 	quint16 n(0);
+	const quint16 mcpdWidth(64);
 	m_tubeMapping.clear();
 
 	quint16 w(0);
@@ -449,10 +450,10 @@ quint16 Mesydaq2::width(void)
 				if (tmpList[i] != 0xFFFF)
 					tmpList[i] += n;
 		int l = it.key();
-		if (n != l * 64)
+		if (n != l * mcpdWidth)
 		{
-			MSG_ERROR << "Must insert from " << n << " to " << (l * 64);
-			m_tubeMapping.insert(m_tubeMapping.size(), (l * 64) - m_tubeMapping.size(), 0xFFFF);
+			MSG_ERROR << "Must insert from " << n << " to " << (l * mcpdWidth);
+			m_tubeMapping.insert(m_tubeMapping.size(), (l * mcpdWidth) - m_tubeMapping.size(), 0xFFFF);
 		}
 		m_tubeMapping += tmpList;
 		if (!m_tubeMapping.empty())
@@ -461,7 +462,7 @@ quint16 Mesydaq2::width(void)
 	MSG_INFO << "Found " << w << " tubes to histogram";
 	if (n == 0)
 	{
-		w = n = 128;
+		w = n = mcpdWidth;
 		for (int i = 0; i < n; ++i)
 			m_tubeMapping.append(i);
 	}
@@ -2084,4 +2085,20 @@ QList<int> Mesydaq2::channelId(const int id, const int mod)
 		if (m_mcpd[id]->getModuleId(mod))
 			channelList = m_mcpd[id]->channelId(mod);
 	return channelList;
+}
+
+quint16 Mesydaq2::startChannel(quint16 id)
+{
+	quint16 start(0);
+	for (quint16 i = 0; i < id; ++i)
+		start += width(i);
+	return start;
+}
+
+quint16 Mesydaq2::width(quint16 id, quint16 end)
+{
+	quint16 size(0);
+	for (int i = 0; i < end; ++i)
+		size += getChannels(id, i);
+	return size;
 }

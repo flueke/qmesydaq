@@ -648,7 +648,7 @@ void Measurement::clearChanHist(quint16 chan)
  */
 void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan)
 {
-	quint16 line = mcpd * 64 + mpsd * 8 + chan;
+	quint16 line = chan + m_mesydaq->startChannel(mcpd) + m_mesydaq->width(mcpd, mpsd);
 	clearChanHist(line);
 }
 /*!
@@ -682,7 +682,7 @@ Spectrum *Measurement::data(const HistogramType t, const quint16 line)
  */
 Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan)
 {
-	quint16 line = mcpd * 64 + mpsd * 8 + chan;
+	quint16 line = chan + m_mesydaq->startChannel(mcpd) + m_mesydaq->width(mcpd, mpsd);
 	return data(t, line);
 }
 

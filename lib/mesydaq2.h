@@ -239,6 +239,24 @@ public:
 	//! Helper function which returns the version number string
 	QString libVersion(void) const;
 
+	/**
+	 * Helper function, which returns the start channel of a MCPD
+	 * in the histogram for given MCPD id
+	 *
+	 * \param id id of the MCPD
+	 */
+	quint16 startChannel(quint16 id);
+
+	/**
+	 * Helper function which returns the "width" of a MCPD in the
+	 * histogram. The width is the number of channels in the histogram
+	 * which are connected withe the MCPD
+	 *
+	 * \param id id of the MCPD
+	 * \param end id of the last used MPSD channel
+	 */
+	quint16 width(quint16 id, quint16 end = 8);
+
 public slots:
 	//! analysis thread end
 	void threadExit(void);
