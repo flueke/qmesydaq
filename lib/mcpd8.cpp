@@ -1000,9 +1000,9 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
             return false;
         if (addr > 7)
             addr = 7;
-        if (chan > 8)
-            chan = 8;
-        if (chan == 8)
+        if (chan > m_mpsd[addr]->getChannels())
+            chan = m_mpsd[addr]->getChannels();
+        if (chan == m_mpsd[addr]->getChannels())
         {
 #if defined(_MSC_VER)
 #			pragma message("TODO common pulser handling")
@@ -1010,7 +1010,7 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
 #			warning TODO common pulser handling
 #endif
 //! \todo common pulser handling
-            for (int i = 0; i < 8; ++i)
+            for (int i = 0; i < chan; ++i)
                 m_mpsd[addr]->setPulser(i, pos, amp, onoff, 1);
         }
         else
@@ -2643,10 +2643,10 @@ QList<quint16> MCPD8::getHistogramList(void)
 	    {
 #if 0
 	        quint16 busNr = it->busNumber();
-                for (quint16 i = result.size(); i < (busNr  * (it->getModuleId() == TYPE_MSTD16 ? 16 :8)); ++i)
+                for (quint16 i = result.size(); i < (busNr  * it->getChannels()); ++i)
                     result.append(0);
 #endif
-                result.append(hit + it->busNumber() * (it->getModuleId() == TYPE_MSTD16 ? 16 : 8));
+                result.append(hit + it->busNumber() * it->getChannels());
 	    }
         }
     }
@@ -2728,7 +2728,7 @@ QVector<quint16> MCPD8::getTubeMapping(void)
             QList<quint16> tmpList = it->getHistogramList();
             MSG_INFO << tmpList;
             quint16 busNr = it->busNumber();
-            quint16 buswidth = busNr * (it->type() == TYPE_MSTD16 ? 16 : 8);
+            quint16 buswidth = busNr * it->getChannels();
             if (result.size() < buswidth && tmpList.size() > 0)
                 result.insert(result.size(), buswidth - result.size(), 0xFFFF);
             foreach(quint16 i, tmpList)
