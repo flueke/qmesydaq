@@ -131,6 +131,8 @@ public:
 
 	quint8 getModuleId(quint16 mod, quint8 addr);
 
+	quint8 getChannels(quint16 mod, quint8 addr);
+
 	quint8 getMdllDataset(quint16 id);
 
 	quint16 getMdllTimingWindow(quint16 id, quint8 val);

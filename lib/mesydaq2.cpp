@@ -1456,6 +1456,22 @@ quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
 }
 
 /*!
+    \fn quint8 Mesydaq2::getChannels(quint16 id, quint8 addr)
+
+    get the channel count of the MPSD. If MPSD not exists it will return 0.
+
+    \param id number of the MCPD
+    \param addr module number
+    \return channel count
+ */
+quint8 Mesydaq2::getChannels(quint16 id, quint8 addr)
+{
+	if (m_mcpd.contains(id))
+		return m_mcpd[id]->getChannels(addr);
+	return 0;
+}
+
+/*!
     \fn quint8 Mesydaq2::getMdllDataset(quint16 id)
 
     get dataset setting of the MDLL. E, X, Y / E, tX, tY
