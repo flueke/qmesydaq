@@ -2784,6 +2784,10 @@ QVector<quint16> MCPD8::getTubeMapping(void)
             quint16 buswidth = busNr * it->getChannels();
             if (result.size() < buswidth && tmpList.size() > 0)
                 result.insert(result.size(), buswidth - result.size(), 0xFFFF);
+	    if (tmpList.size() != it->getChannels())
+		    for (int i = 0; i < tmpList.size(); ++i)
+			    if (tmpList.at(i) != i)
+				    tmpList.insert(i, 0xFFFF);
             foreach(quint16 i, tmpList)
                 result.append((i != 0xFFFF) ? n++ : i);
         }

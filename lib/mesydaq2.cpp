@@ -452,7 +452,7 @@ quint16 Mesydaq2::height(void)
 quint16 Mesydaq2::width(void)
 {
 	quint16 n(0);
-	const quint16 mcpdWidth(64);
+	const quint16 mcpdWidth(128);
 	m_tubeMapping.clear();
 
 	quint16 w(0);
@@ -468,7 +468,7 @@ quint16 Mesydaq2::width(void)
 		int l = it.key();
 		if (n != l * mcpdWidth)
 		{
-			MSG_ERROR << "Must insert from " << n << " to " << (l * mcpdWidth);
+			MSG_ERROR << tr("Must insert from %1 to %2").arg(m_tubeMapping.size()).arg(l * mcpdWidth);
 			m_tubeMapping.insert(m_tubeMapping.size(), (l * mcpdWidth) - m_tubeMapping.size(), 0xFFFF);
 		}
 		m_tubeMapping += tmpList;
@@ -483,6 +483,7 @@ quint16 Mesydaq2::width(void)
 			m_tubeMapping.append(i);
 	}
 	w = m_tubeMapping.size() - m_tubeMapping.count(0xFFFF);
+	MSG_NOTICE << tr("Found %1 tubes to histogram (%2 - %3)").arg(w).arg(m_tubeMapping.size()).arg(m_tubeMapping.count(0xFFFF));
 	return w;
 }
 

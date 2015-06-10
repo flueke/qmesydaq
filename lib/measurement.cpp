@@ -696,7 +696,7 @@ Spectrum *Measurement::data(const HistogramType t, const quint16 line)
  */
 Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan)
 {
-	quint16 line = chan + m_mesydaq->startChannel(mcpd) + m_mesydaq->width(mcpd, mpsd);
+	quint16 line = calculateChannel(mcpd, mpsd, chan); // chan + m_mesydaq->startChannel(mcpd) + m_mesydaq->width(mcpd, mpsd);
 	return data(t, line);
 }
 
@@ -1173,7 +1173,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
 				}
 				else
-					MSG_WARNING << tr("Neutron for an inactive channel %1 %2 %3").arg(mod).arg(id).arg(modChan);
+					MSG_DEBUG << tr("Neutron for an inactive channel %1 %2 %3").arg(mod).arg(id).arg(modChan);
 			}
 		}
 #if 0
@@ -1905,7 +1905,10 @@ quint32 Measurement::runId(void) const
 
 quint16 Measurement::calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel)
 {
-	return mcpd * 64 + mpsd * 8 + channel;
+	if (m_setup == Mpsd)
+		return mcpd * 64 + mpsd * 8 + channel;
+	else
+		return mcpd * 128 + mpsd * 16 + channel;
 }
 
 Measurement::Arrangement Measurement::getPsdArrangement(void) const
