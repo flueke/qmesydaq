@@ -602,6 +602,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 			int moduleID = value->getModuleId(j);
 			switch (moduleID)
 			{
+				case TYPE_MWPCHR:
 				case TYPE_NOMODULE :
 					break;
 				case TYPE_MDLL:
