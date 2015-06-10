@@ -65,6 +65,7 @@ MCPD8::MCPD8(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp,
     , m_version(-1.0)
     , m_capabilities(0)
     , m_txMode(0)
+    , m_fpgaVersion(-1.0)
 {
     stdInit();
     memset(&m_cmdBuf, 0, sizeof(m_cmdBuf));
@@ -376,11 +377,15 @@ quint16 MCPD8::capabilities(const bool cached)
             if (m_mdll.isEmpty())
             {
                 MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
-//		m_capabilities = readRegister(102); // or register 103?
+#if 0
+		m_capabilities = readRegister(102);
+		m_txMode = readRegister(103);
+#else
                 QMutexLocker locker(m_pCommandMutex);
                 initCmdBuffer(GETCAPABILITIES);
                 finishCmdBuffer(0);
                 sendCommand(false);
+#endif
             }
             else
                 m_capabilities = TPA;
@@ -412,6 +417,16 @@ quint16 MCPD8::capabilities(quint8 mod)
 float MCPD8::version(void)
 {
     return m_version;
+}
+
+/*!
+    \fn float MCPD8::fpgaVersion(void)
+    \return version of the FPGA inside the MCPD whereas the integral places represents the major
+            number and the decimal parts the minor number
+ */
+float MCPD8::fpgaVersion(void)
+{
+    return m_fpgaVersion;
 }
 
 /*!
@@ -1933,11 +1948,15 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 MSG_ERROR << tr("not handled command : QUIET");
                 break;
             case GETVER:
-		m_version = pMdp->data[1];
-		while (m_version > 1)
+                m_version = pMdp->data[1];
+                while (m_version > 1)
                     m_version /= 10.;
-		m_version += pMdp->data[0];
-		MSG_DEBUG << tr("Modul (ID %1): Version number : %2").arg(m_byId).arg(m_version, 0, 'f', 2);
+                m_version += pMdp->data[0];
+                m_fpgaVersion = pMdp->data[2] & 0xFF;
+                while (m_fpgaVersion > 1)
+                    m_fpgaVersion /= 10.;
+                m_fpgaVersion += pMdp->data[2] >> 8;
+                MSG_DEBUG << tr("Modul (ID %1): Version number : %2, FPGA version : %3").arg(m_byId).arg(m_version, 0, 'f', 2).arg(m_fpgaVersion, 0, 'f', 2);
                 break;
             case READPERIREG:
 		ptrMPSD = m_mpsd[pMdp->data[0]];

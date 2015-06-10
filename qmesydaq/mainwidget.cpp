@@ -865,7 +865,7 @@ void MainWidget::displayMpsdSlot(int iModule)
 	if (iModule < 0)
 		mod = devid_2->value();
 // firmware version
-	firmwareVersion->setText(tr("%1").arg(m_theApp->getFirmware(mod), 0, 'f', 2));
+	firmwareVersion->setText(tr("%1 (FPGA: %2)").arg(m_theApp->getFirmware(mod), 0, 'f', 2).arg(m_theApp->getFpga(mod), 0, 'f', 2));
 // MCPD capabilities
 	QString tmp("");
 	quint16 cap = m_theApp->capabilities(mod, true);

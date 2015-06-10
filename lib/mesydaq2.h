@@ -201,6 +201,8 @@ public:
 
 	float getFirmware(quint16 mod);
 
+	float getFpga(quint16 mod);
+
 	//! \return number of MCPD's
 	quint16 numMCPD(void) {return m_mcpd.size();}
 

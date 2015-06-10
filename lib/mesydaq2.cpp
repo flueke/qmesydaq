@@ -201,6 +201,20 @@ float Mesydaq2::getFirmware(quint16 id)
 }
 
 /*!
+    \fn float Mesydaq2::getFpga(quint16 id)
+
+    gets the FPGA version of a MCPD
+
+    \param id number of the MCPD
+    \return the FPGA version as float value, if MCPD does not exist 0
+*/
+float Mesydaq2::getFpga(quint16 id)
+{
+	if (!m_mcpd.contains(id))
+		return 0;
+	return m_mcpd[id]->fpgaVersion();
+}
+/*!
     \fn Mesydaq2::acqListfile(bool yesno)
 
     enables the writing of list mode file

@@ -95,8 +95,8 @@ int main(int argc, char **argv)
 
 	QTextStream cout(stderr);
 
-	cout << QObject::tr("%2 : MCPD : %1 (id=%3), cap: %4: TX mode: %5\n").arg(m->version()).arg(m->ip()).arg(id)
-					.arg(modeToString(m->capabilities(false))).arg(modeToString(m->getTxMode()));
+	cout << QObject::tr("%2 : MCPD : %1 (FPGA: %6, id=%3), cap: %4: TX mode: %5\n").arg(m->version()).arg(m->ip()).arg(id)
+					.arg(modeToString(m->capabilities(false))).arg(modeToString(m->getTxMode())).arg(m->fpgaVersion());
 
 	for (quint8 i = 0; i < 8; ++i)
 		cout << QObject::tr("module %1 (%4): id: %2, version: %3, capabilities: %5, mode: %6\n").arg(i + 1).arg(m->getModuleId(i)).

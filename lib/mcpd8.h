@@ -228,7 +228,9 @@ public:
 
 	quint16 readRegister(quint16 reg);
 
-	float version(void); 
+	float version(void);
+
+	float fpgaVersion(void);
 
 	float version(quint16 mod);
 
@@ -421,8 +423,12 @@ private:
 
 	//! Tx mode
 	quint16		m_txMode;
+
 	//! READID data
 	quint16		m_awReadId[8];
+
+	//! FPGA version
+	float		m_fpgaVersion;
 };
 
 #endif
