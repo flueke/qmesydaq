@@ -1077,12 +1077,16 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					{
 						if (m_mesydaq->capabilities(mod, true) != TPA && m_mesydaq->getMode(mod, id))
 						{
+// Amplitude must be different from 0 !!
+							if (amp == 0)
+							{
 // If the modules are not able to transfer the position and amplitude simultaneously
 // and the amplitude mode is enabled, the amplitude is in the field for the position
 // given !
-							quint16 val = pos;
-							pos = amp;
-							amp = val;
+								quint16 val = pos;
+								pos = amp;
+								amp = val;
+							}
 						}
 						if (moduleID == TYPE_MSTD16)
 						{
