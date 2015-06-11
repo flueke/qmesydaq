@@ -163,7 +163,7 @@ void analyzeBuffer(const DATA_PACKET &pd, bool printPos, bool printChannel = tru
 #endif
 				if (printPos)
 				{
-					MSG_ERROR << "pos : " << pos;
+					MSG_ERROR << "pos : " << pos << " amp : " << amp;
 					if (printChannel)
 						MSG_ERROR << "channel : " << chan;
 				}
