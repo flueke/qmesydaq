@@ -106,7 +106,7 @@ Header data dictionary:
 
                     bit 0: 1 = DAQ running, 0 = DAQ stopped
 
-                    bit 1: 1 = sync OK, 0 = sync error
+                    bit 3: 0 = sync OK, 1 = sync error
 :Header Timestamp:  48 bits current status of the synchronized system timer
                     (100 ns timing resolution). Represents the value of the
                     system timer at the moment of the buffer opening. All events
