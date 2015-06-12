@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -232,6 +233,8 @@ public:
 
 	bool isTerminated(quint16 mod);
 
+	bool isSynced() const;
+
 	quint16 width(void);
 
 	quint16 height(void);
@@ -331,6 +334,16 @@ public slots:
 
 	virtual void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
+	/**
+	 * will be emitted if the MCPD's has lost his sync (lost = true)
+	 * or if it was resynchronized (lost = false)
+	 *
+	 * \param id id of the MCPD the connection
+	 * \param bLost true=lost  false=resynced
+	 */
+	void lostSync(quint16 id, bool bLost);
+
+public:
 	bool status(bool *pbAck = NULL) const;
 
 	QVector<quint16> getTubeMapping();
@@ -355,6 +368,15 @@ signals:
 
 	//! a new header time received
 	void headerTimeChanged(quint64);
+
+	/**
+	 * will be emitted if one of the MCPD's has lost his sync (bLost = true)
+         * or was resynchronized (bLost = false)
+	 *
+	 * \param id id of the MCPD lost the connection
+	 * \param bLost true=lost  false=resynced
+	 */
+	void syncLost(quint16 id, bool bLost);
 
 protected:
 	void timerEvent(QTimerEvent *event);

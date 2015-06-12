@@ -1135,6 +1135,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					if (m_Hist[PositionHistogram])
 						m_Hist[PositionHistogram]->incVal(chan, pos);
 					if (m_Hist[AmplitudeHistogram])
+					{
 						if (pPacket->dp.bufferType == 0x0002)
 						{
 							m_Hist[AmplitudeHistogram]->addValue(chan, pos, amp);
@@ -1142,6 +1143,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						}
 						else
 							m_Hist[AmplitudeHistogram]->incVal(chan, amp);
+					}
 					if (m_Hist[CorrectedPositionHistogram])
 						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
 				}

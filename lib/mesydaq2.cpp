@@ -1,6 +1,7 @@
 /****************************************************************************
  *   Copyright (C) 2008-2014 by Gregor Montermann <g.montermann@mesytec.com>*
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>      *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>      *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>      *
  *                                                                          *
  *   This program is free software; you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
@@ -310,6 +311,7 @@ void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szD
 		connect(tmp, SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 		connect(tmp, SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 		connect(tmp, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
+		connect(tmp, SIGNAL(lostSync(quint16, bool)), this, SLOT(lostSync(quint16, bool)));
 		m_mcpd.insert(byId, tmp);
 	}
 }
@@ -2115,4 +2117,18 @@ quint16 Mesydaq2::width(quint16 id, quint16 end)
 	for (int i = 0; i < end; ++i)
 		size += getChannels(id, i);
 	return size;
+}
+
+void Mesydaq2::lostSync(quint16 id, bool bLost)
+{
+	MSG_NOTICE << tr("MODULE : %1 %2").arg(id).arg(bLost ? "lost sync" : "resynchronized");
+	emit syncLost(id, bLost);
+}
+
+bool Mesydaq2::isSynced() const
+{
+	foreach (const MCPD8 *pMCPD, m_mcpd)
+		if (!pMCPD->isSynced())
+			return false;
+	return true;
 }

@@ -1,5 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Lutz Rossa <rossa@helmholtz-berlin.de>          *
+ *   Copyright (C) 2014-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2014-2015 by Jens Krüger <jens.krueger@frm2.tum.de>  *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -45,6 +46,7 @@ MCPD::MCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, q
     , m_pCommunicationMutex(NULL)
     , m_pCommandMutex(NULL)
     , m_bBaseMcpdInitialized(false)
+    , m_bIsSynced(true)
     , m_pThread(NULL)
     , m_pPacketMutex(NULL)
 {
@@ -136,19 +138,34 @@ void MCPD::disconnect_handler(analyzeBufferFunction pFunction)
     }
 }
 
-/** \fn void MCPD::staticAnalyzeBuffer(void* pPacket, void* pParam)
+/** \fn void MCPD::staticAnalyzeBuffer(void *pPacket, void *pParam)
  *
  *  \param pPacket  pointer to MCPD packet
  *  \param pParam   pointer to MCPD instance
  */
-void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void* pParam)
+void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void *pParam)
 {
     if (pPacket.constData() == NULL || pParam == NULL)
         return;
 
-    MCPD* pMcpd(static_cast<MCPD *>(pParam));
+    MCPD *pMcpd(static_cast<MCPD *>(pParam));
     if (!pMcpd->m_bBaseMcpdInitialized)
         return;
+
+    if ((pPacket.constData()->mdp.deviceStatus & 0b1000))
+    {
+        MSG_NOTICE << tr("MODULE : %1 lost sync").arg(pPacket.constData()->mdp.deviceId);
+        MSG_NOTICE << tr("STATUS : 0x%1").arg(pPacket.constData()->mdp.deviceStatus, 4, 16, QChar('0'));
+        if (pMcpd->m_bIsSynced)
+            emit pMcpd->lostSync(pPacket.constData()->mdp.deviceId, true);
+        pMcpd->m_bIsSynced = false;
+    }
+    else
+    {
+        if (!pMcpd->m_bIsSynced)
+            emit pMcpd->lostSync(pPacket.constData()->mdp.deviceId, false);
+        pMcpd->m_bIsSynced = true;
+    }
     for (;;)
     {
         pMcpd->m_pPacketMutex->lock();
@@ -166,6 +183,14 @@ void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void* pPar
     pMcpd->m_pPacketMutex->unlock();
 }
 
+/** \fn bool MCPD::isSynced() const
+ *
+ *  \return if MCPD is synchronized with other MCPDs
+ */
+bool MCPD::isSynced() const
+{
+  return m_bIsSynced;
+}
 
 /** \fn MCPDThread::MCPDThread(MCPD* pMcpd)
  *

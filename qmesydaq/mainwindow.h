@@ -82,6 +82,9 @@ private slots:
 	//! callback if the bug report is selected
 	void	bugReport(void);
 
+	//! callback after a MCPD lost its sync or got resynchronized
+	void	lostSync(quint16 id, bool bLost);
+
 protected:
 	void closeEvent(QCloseEvent *event);
 
@@ -108,6 +111,8 @@ private:
 	StatusBarEntry	*m_mode;
 
 	StatusBarEntry	*m_sync;
+
+	StatusBarEntry	*m_lostSync;
 
 	WebsiteTool	*m_wsTool;
 };

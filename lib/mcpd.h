@@ -1,5 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2013-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2013-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2014-2015 by Jens Krüger <jens.krueger@frm2.tum.de>  *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -48,6 +49,7 @@ class LIBQMESYDAQ_EXPORT MCPD : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(MCPD)
     Q_PROPERTY(bool initialized READ isInitialized)
+    Q_PROPERTY(bool synced READ isSynced)
 public:
     //! type of handler for data packets
     typedef void (*analyzeBufferFunction)(MCPD* pMcpd, QSharedDataPointer<SD_PACKET> pMdpPacket, void* pParam);
@@ -57,6 +59,7 @@ public:
     virtual ~MCPD();
 
     virtual bool isInitialized() const {return m_bBaseMcpdInitialized;}
+    virtual bool isSynced() const;
     virtual int errorCount(bool bClear = false)
     {
 	    int r(m_iErrorCounter);
@@ -87,6 +90,17 @@ public:
      * \return port number of the command port
      */
     quint16 port(void) {return m_wPort;}
+
+signals:
+
+    /**
+     * will be emitted if the MCPD's has lost his sync (lost = true)
+     * or if it was resynchronized (lost = false)
+     *
+     * \param id id of the MCPD the connection
+     * \param bLost true=lost  false=resynced
+     */
+    void lostSync(quint16 id, bool bLost);
 
 protected:
     //! analyse a network packet, \return true to prevent calling other packet handlers
@@ -134,6 +148,9 @@ private:
 
     //! true, if base class was successful initialized
     bool m_bBaseMcpdInitialized;
+
+    //! true, if MCPD is synchronized with other MCPDs
+    bool m_bIsSynced;
 
     //! worker thread
     MCPDThread* m_pThread;

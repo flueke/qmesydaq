@@ -89,12 +89,16 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(m_main, SIGNAL(started(bool)), actionSetupMCPD, SLOT(setDisabled(bool)));
 	connect(m_main, SIGNAL(started(bool)), actionAddMCPD, SLOT(setDisabled(bool)));
 	connect(m_main, SIGNAL(started(bool)), this, SLOT(runningState(bool)));
+	connect(m_mesy, SIGNAL(syncLost(quint16, bool)), this, SLOT(lostSync(quint16, bool)));
 
 	m_daqStatus = new StatusBarEntry("DAQ stopped");
 	m_pulserStatus = new StatusBarEntry("Pulser off");
 	m_mode = new StatusBarEntry("Position Mode");
 	m_sync = new StatusBarEntry("Internal");
+	m_lostSync = new StatusBarEntry("<font color=\"#FF0000\"><b>sync lost</b></font>");
+	m_lostSync->hide();
 
+	statusBar()->addPermanentWidget(m_lostSync);
 	statusBar()->addPermanentWidget(m_sync);
 	statusBar()->addPermanentWidget(m_daqStatus);
 	statusBar()->addPermanentWidget(m_pulserStatus);
@@ -282,6 +286,18 @@ void MainWindow::runningState(bool started)
 		m_daqStatus->setText("DAQ started");
 	else
 		m_daqStatus->setText("DAQ stopped");
+}
+
+/*!
+     will be called, if the MCPD's has lost his sync (lost = true)
+     or if it was resynchronized (lost = false)
+
+     \param id id of the MCPD the connection
+     \param bLost true=lost  false=resynced
+ */
+void MainWindow::lostSync(quint16 id, bool bLost)
+{
+	m_lostSync->setVisible(!m_mesy->isSynced());
 }
 
 /*!
