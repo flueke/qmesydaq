@@ -1186,7 +1186,7 @@ quint16 Measurement::mapTube(const quint16 tube)
 {
 	quint16 tmpTube = m_tubeMapping.value(tube, 0xFFFF);
 	if (tmpTube == 0xFFFF)
-		MSG_ERROR << tube << " -> " << tmpTube << " " << m_tubeMapping;
+		MSG_NOTICE << tube << " -> " << tmpTube << " " << m_tubeMapping;
 	return tmpTube;
 }
 
