@@ -801,7 +801,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			threshold,
 			channels(8);
 		bool	comgain(true);
-		bool	ampmode(true);
+		bool	ampmode(false);
 
 		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
 		{
@@ -813,7 +813,8 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 					break;
 				case TYPE_MSTD16:
 					channels = 16;
-					/*no break*/
+					ampmode = true;
+					/* no break */
 				default:
 					for (int k = 0; k < channels; ++k)
 						gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
@@ -824,7 +825,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 					}
 
 					threshold = settings.value("threshold", "22").toUInt();
-					ampmode = settings.value("ampmode", "true").toBool();
+					ampmode = settings.value("ampmode", ampmode ? "true" : "false").toBool();
 
 					for (int k = 0; k < channels; ++k)
 						if (gains[0] != gains[k])

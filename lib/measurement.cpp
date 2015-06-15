@@ -1068,14 +1068,14 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
 // BUG is reported
-					if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0 && m_mesydaq->capabilities(mod, true) == TPA)
+					if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0 && (m_mesydaq->capabilities(mod, true) & TPA))
 					{
 						MSG_WARNING << tr("GHOST EVENT: SlotID %1 Mod %2").arg(slotId).arg(id);
 						continue;
 					}
 					if (moduleID != TYPE_MDLL)
 					{
-						if (m_mesydaq->capabilities(mod, true) != TPA && m_mesydaq->getMode(mod, id))
+						if (!(m_mesydaq->capabilities(mod, true) & TPA) && m_mesydaq->getMode(mod, id))
 						{
 // Amplitude must be different from 0 !!
 							if (amp == 0)
