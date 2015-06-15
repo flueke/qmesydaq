@@ -35,6 +35,7 @@ class MesydaqHistogramData;
 class Histogram;
 class Mesydaq2;
 class EditorMemory;
+class SetupComment;
 
 /**
     \short Main Widget in the application

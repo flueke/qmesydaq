@@ -378,7 +378,7 @@ public:
 
 	bool loadSetup(const QString &name);
 
-	bool saveSetup(const QString &name);
+	bool saveSetup(const QString &name, const QString &comment = "QMesyDAQ configuration file");
 
         //! returns the current setup type of the configuration
 	Setup setupType(void) const;

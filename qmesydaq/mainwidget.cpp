@@ -58,6 +58,7 @@
 #include "tacosetup.h"
 #include "tcpsetup.h"
 #include "caresssetup.h"
+#include "ConfigFileDialog.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
@@ -926,9 +927,14 @@ void MainWidget::scanPeriSlot(bool real)
 */
 void MainWidget::saveSetupSlot()
 {
-	QString name = QFileDialog::getSaveFileName(this, tr("Save Config File..."), m_meas->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
-	if (!name.isEmpty())
-		m_meas->saveSetup(name);
+	ConfigFileDialog *d = new ConfigFileDialog(this, tr("Save Config File..."), m_meas->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
+	if (d->exec() == QDialog::Accepted)
+	{
+		QString name = d->selectedFiles().value(0);
+		if (!name.isEmpty())
+			m_meas->saveSetup(name, d->comment());
+	}
+	delete d;
 }
 
 /*!

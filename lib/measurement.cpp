@@ -1683,7 +1683,7 @@ void Measurement::updateSetupType(void)
     \param name file name
     \return true if successfully saved otherwise false
  */
-bool Measurement::saveSetup(const QString &name)
+bool Measurement::saveSetup(const QString &name, const QString &comment)
 {
 	static const QString debug[] = {"FATAL",
 				"ERROR",
@@ -1703,7 +1703,7 @@ bool Measurement::saveSetup(const QString &name)
 	QSettings settings(m_configfile.absoluteFilePath(), QSettings::IniFormat);
 
 	settings.beginGroup("MESYDAQ");
-	settings.setValue("comment", "QMesyDAQ configuration file");
+	settings.setValue("comment", comment);
 	settings.setValue("date", QDateTime::currentDateTime().toString(Qt::ISODate));
 	settings.setValue("histogramPath", m_histPath);
 	settings.setValue("listfilePath", m_listPath);

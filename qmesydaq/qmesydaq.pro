@@ -84,7 +84,8 @@ HEADERS 	+= mainwidget.h \
 		tcpsetup.h \
 		diskspace/diskspace.h \
 		website.h \
-		data.h
+		data.h \
+		ConfigFileDialog.h
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -146,7 +147,8 @@ SOURCES 	+= main.cpp \
 		tcpsetup.cpp \
 		diskspace/diskspace.cpp \
 		website.cpp \
-		data.cpp
+		data.cpp \
+		ConfigFileDialog.cpp
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
