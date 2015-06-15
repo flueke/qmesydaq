@@ -1921,6 +1921,15 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 }
                 MSG_ERROR << tr("GETCAPABILITIES %1").arg(m_reg);
                 break;
+            case SETCAPABILITIES:
+                if(pMdp->data[0] == m_txMode)
+                        MSG_DEBUG << tr("MCPD txMode set to %1").arg(m_txMode);
+                else
+                {
+                        MSG_ERROR << tr("Error setting MCPD txMode to %1, is now: %2").arg(m_txMode).arg(pMdp->data[0]);
+                        m_txMode = pMdp->data[0];
+                }
+                break;
             case READREGISTER:
 		for (int i = 0; i < (pMdp->bufferLength - pMdp->headerLength); ++i)
 			MSG_FATAL << tr("READREGISTER : %1 = %2").arg(i).arg(pMdp->data[i]);
