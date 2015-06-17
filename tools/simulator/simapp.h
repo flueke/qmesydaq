@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <QHostAddress>
 #include <QVector>
+#include <QSharedMemory>
 #include "structures.h"
 
 class QTimerEvent;
@@ -54,6 +55,10 @@ private:
 	quint64 GetClock(void);
 
 	void usage(const QString &);
+
+	bool setMasterClock(const quint64);
+
+	quint64 readMasterClock(void);
 
 private:
 	//! default: MCPD has 64 channels (8 full MPSDs)
@@ -117,6 +122,12 @@ private:
 
 	// MPSD8 type
 	quint16            m_wMpsdType;
+
+	// master/slave
+	bool		   m_bMaster;
+
+	// Shared memory for master clock
+	QSharedMemory	   m_masterClock;
 };
 
 #endif /* __SIMAPP_H__ */

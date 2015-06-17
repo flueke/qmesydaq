@@ -276,6 +276,7 @@ SimApp::SimApp(int &argc, char **argv)
 	, m_bMdll(false)
 	, m_bMstd(false)
 	, m_wMpsdType(TYPE_MPSD8)
+	, m_bMaster(true)
 {
 	bool bWidth(false);
 	int i;
@@ -569,6 +570,7 @@ SimApp::SimApp(int &argc, char **argv)
 	qDebug() << "Spectrum computed";
 	m_aiPoints.clear();
 	GeneratePoints();
+	m_masterClock.setKey("QMesyDAQ/MasterClock");
 	qDebug() << "Ready";
 }
 
@@ -871,6 +873,45 @@ void SimApp::timerEvent(QTimerEvent *)
 	}
 }
 
+bool SimApp::setMasterClock(const quint64 mc)
+{
+	logmsg(NULL, "Set master clock %ld", mc);
+	if (m_masterClock.isAttached())
+		m_masterClock.detach();
+	bool ok = m_masterClock.create(sizeof(m_qwMasterOffset), QSharedMemory::ReadWrite);
+	if (!ok && m_masterClock.error() == QSharedMemory::AlreadyExists)
+		ok = m_masterClock.attach();
+	if (ok)
+	{
+		m_masterClock.lock();
+		quint64 *to = (quint64 *)m_masterClock.data();
+		memcpy(to, &mc, sizeof(mc));
+		m_masterClock.unlock();
+		return true;
+	}
+	else
+		logmsg(NULL, "set master clock : Error %d", m_masterClock.error());
+	return false;
+}
+
+quint64 SimApp::readMasterClock(void)
+{
+	quint64 mc(0);
+	bool ok = m_masterClock.isAttached();
+	if (!ok)
+		ok = m_masterClock.attach();
+	if (ok)
+	{
+		m_masterClock.lock();
+		quint64 *from = (quint64 *)m_masterClock.data();
+		memcpy(&mc, from, sizeof(mc));
+		m_masterClock.unlock();
+	}
+	else
+		logmsg(NULL, "read master clock : Error %d", m_masterClock.error());
+	return mc;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8,
 //                           QHostAddress &sender, quint16 &senderPort)
@@ -918,7 +959,19 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 			pPacket->data[10], pPacket->data[11], pPacket->data[12], pPacket->data[13]);
 			break;
 		case SETTIMING: // master, termination, external synchronisation
-			logmsg(pMCPD8, "SETTIMING");
+			m_bMaster = pPacket->data[0];
+			logmsg(pMCPD8, "SETTIMING: %d", m_bMaster);
+			if (m_bMaster)
+			{
+				logmsg(pMCPD8, "SETTIMING (master) %ld", m_qwMasterOffset);
+				setMasterClock(m_qwMasterOffset);
+				logmsg(pMCPD8, "SETTIMING (master) %ld", readMasterClock());
+			}
+			else
+			{
+				m_qwMasterOffset = readMasterClock();
+				logmsg(pMCPD8, "SETTIMING (slave) %ld", m_qwMasterOffset);
+			}
 			break;
 		case SETRUNID:
 			m_wRunId = pPacket->data[0];
