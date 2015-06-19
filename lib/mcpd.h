@@ -58,15 +58,9 @@ public:
 
     virtual ~MCPD();
 
-    virtual bool isInitialized() const {return m_bBaseMcpdInitialized;}
+    virtual bool isInitialized() const;
     virtual bool isSynced() const;
-    virtual int errorCount(bool bClear = false)
-    {
-	    int r(m_iErrorCounter);
-	    if (bClear)
-		    m_iErrorCounter = 0;
-	    return r;
-    }
+    virtual int errorCount(bool bClear = false);
 
     //! connect a new data packet handler to this MCPD
     bool connect_handler(analyzeBufferFunction pFunction, void* pParam = NULL);
@@ -75,21 +69,21 @@ public:
     void disconnect_handler(analyzeBufferFunction pFunction);
 
     //! \return the ID of this MCPD
-    quint8 getId(void) {return m_byId;}
+    quint8 getId(void) const;
 
     /**
      * gets the address of the MCPD module
      *
      * \return IP address of the MCPD
      */
-    QString ip(void) {return m_szMcpdIp;}
+    QString ip(void) const;
 
     /**
      * gets the command port of the MCPD
      *
      * \return port number of the command port
      */
-    quint16 port(void) {return m_wPort;}
+    quint16 port(void) const;
 
 signals:
 

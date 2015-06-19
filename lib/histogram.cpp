@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -255,6 +255,36 @@ quint64 Spectrum::value(const quint16 index)
 	if (index < m_width)
 		return m_data[index];
 	return 0;
+}
+
+quint64 Spectrum::max()
+{
+	return m_width ? m_data[m_maximumPos] : 0;
+}
+
+quint16 Spectrum::maxpos(void) const
+{
+	return m_maximumPos;
+}
+
+quint64 Spectrum::getTotalCounts(void) const
+{
+	return m_totalCounts;
+}
+
+quint16	Spectrum::width(void) const
+{
+	return m_width;
+}
+
+bool Spectrum::autoResize(void) const
+{
+	return m_autoResize;
+}
+
+void Spectrum::setAutoResize(const bool resize)
+{
+	m_autoResize = resize;
 }
 
 /*!
@@ -801,4 +831,29 @@ void Histogram::addSlice(const quint16 n, const quint16 d, const Histogram &h)
 	for (int i = 0; i < h.width(); ++i, col += d)
 		for (int j = 0; j < h.height(); ++j)
 			setValue(col, j, h.value(i, j));
+}
+
+Spectrum *Histogram::xSumSpectrum(void)
+{
+	return &m_xSumSpectrum;
+}
+
+Spectrum *Histogram::ySumSpectrum(void)
+{
+	return &m_ySumSpectrum;
+}
+
+quint16 Histogram::maxpos(void) const
+{
+	return m_maximumPos;
+}
+
+quint16 Histogram::width(void) const
+{
+	return m_width;
+}
+
+bool Histogram::autoResize(void) const
+{
+	return m_autoResize;
 }

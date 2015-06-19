@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -169,4 +169,14 @@ quint8 MPSD8plus::calcPulsAmp(quint8 val, float gv)
 		pamp++;
 	MSG_ERROR << tr("pulspoti: %1, pulsamp: %2").arg(val).arg(pamp);
 	return pamp;
+}
+
+QString MPSD8plus::getType(void) const
+{
+	return tr("MPSD-8+");
+}
+
+int MPSD8plus::type(void) const
+{
+	return TYPE_MPSD8P;
 }

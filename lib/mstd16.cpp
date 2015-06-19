@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -87,4 +87,19 @@ QList<quint16> MSTD16::getHistogramList(void)
 		if (m_histogram[i])
 			result << i;
 	return result;
+}
+
+QString MSTD16::getType(void) const
+{
+	return tr("MSTD-16");
+}
+
+int MSTD16::type(void) const
+{
+	return TYPE_MSTD16;
+}
+
+quint8	MSTD16::getChannels() const
+{
+	return 16;
 }

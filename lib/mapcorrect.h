@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
- *   Copyright (C) 2011-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -63,13 +63,7 @@ public:
 	};
 
 	//! default constructor
-	MapCorrection()
-		: QObject()
-		, m_bNoMapping(false)
-		, m_iOrientation(MapCorrection::OrientationUp)
-		, m_iCorrection(MapCorrection::CorrectSourcePixel)
-	{
-	}
+	MapCorrection();
 
 	MapCorrection(const MapCorrection& src);
 
@@ -82,19 +76,13 @@ public:
 		\param iOrientation
 		\param iCorrection
 	 */
-	MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-		: QObject()
-	{
-		initialize(size.width(), size.height(), iOrientation, iCorrection);
-	}
+	MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection);
 
 	//! destructor
-	virtual ~MapCorrection()
-	{
-	}
+	virtual ~MapCorrection();
 
 	//! \return whether no mapping
-	bool isNoMap() const { return m_bNoMapping; }
+	bool isNoMap() const;
 
 	bool isValid() const;
 
@@ -109,10 +97,7 @@ public:
 		\param iOrientation
 		\param iCorrection
 	 */
-	void initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-	{
-		initialize(size.width(),size.height(),iOrientation,iCorrection);
-	}
+	void initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection);
 
 	void setMappedRect(const QRect& mapRect);
 
@@ -121,10 +106,10 @@ public:
 	bool map(const QRect& src, const QPoint& dst, float dblCorrection);
 
 	//! \return the correction map
-	const QRect& getMapRect() const { return m_mapRect; }
+	const QRect& getMapRect() const;
 
 	//! \return the source mapping size
-	QSize getSourceSize() const { return m_rect.size(); }
+	QSize getSourceSize() const;
 
 	bool getMap(const QPoint& src, QPoint& dst, float& dblCorrection) const;
 
@@ -139,15 +124,7 @@ public:
 
 		\return true if mapping was successful
 	*/
-	bool getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const
-	{
-		QPoint 	s(iSrcX, iSrcY),
-				d;
-		bool r = getMap(s,d,dblCorrection);
-		iDstX = d.x();
-		iDstY = d.y();
-		return r;
-	}
+	bool getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const;
 
 	void mirrorVertical();
 
@@ -158,23 +135,12 @@ public:
 	void rotateRight();
 
 	//! \return an empty mapping
-	static MapCorrection noMap()
-	{
-		MapCorrection r;
-		r.m_bNoMapping = true;
-		return r;
-	}
+	static MapCorrection noMap();
 
-	void setOrientation(Orientation x)
-	{
-		m_iOrientation = x;
-	}
+	void setOrientation(Orientation x);
 
 	//! \return the orientation of the mapping
-	enum Orientation orientation(void)
-	{
-		return m_iOrientation;
-	}
+	enum Orientation orientation(void);
 
 protected:
 	//! do not apply mapping
@@ -208,10 +174,7 @@ class LIBQMESYDAQ_EXPORT LinearMapCorrection : public MapCorrection
 {
 public:
 	//! default constructor
-	LinearMapCorrection()
-		: MapCorrection()
-	{
-	}
+	LinearMapCorrection();
 
 	/**
 	 * constructor
@@ -220,31 +183,7 @@ public:
 	 * \param destSize
 	 * \param iOrientation
 	 */
-	LinearMapCorrection(const QSize &srcSize, const QSize &destSize, const enum Orientation iOrientation = MapCorrection::OrientationUp)
-		: MapCorrection(srcSize, iOrientation, MapCorrection::CorrectSourcePixel)
-	{
-		int iDstHeight(destSize.height());
-		int iSrcHeight(srcSize.height());
-		int iDstWidth(destSize.width());
-		int iSrcWidth(srcSize.width());
-
-		setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
-
-		for (int i = 0; i < iDstHeight; ++i)
-		{
-			int iStartY = (iSrcHeight * i) / iDstHeight;
-			int iEndY   = (iSrcHeight * (i + 1)) / iDstHeight;
-			for(int k = iStartY; k < iEndY; ++k)
-				for (int j = 0; j < iDstWidth; ++j)
-				{
-					int iStartX = (iSrcWidth * j) / iDstWidth;
-					int iEndX   = (iSrcWidth * (j + 1)) / iDstWidth;
-					QPoint pt(j, i);
-					for (; iStartX < iEndX; ++iStartX)
-						map(QPoint(iStartX, k), pt, 1.0);
-				}
-		}
-	}
+	LinearMapCorrection(const QSize &srcSize, const QSize &destSize, const enum Orientation iOrientation = MapCorrection::OrientationUp);
 };
 
 #endif /* __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__ */

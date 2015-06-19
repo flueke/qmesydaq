@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
- *   Copyright (C) 2011-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -38,11 +38,13 @@ class LIBQMESYDAQ_EXPORT MappedHistogram : public Histogram
 	Q_OBJECT
 public:
 	MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHistogram = NULL);
+
 	MappedHistogram(const MappedHistogram& src);
+
 	MappedHistogram& operator=(const MappedHistogram& src);
 
 	//! destructor
-	virtual ~MappedHistogram() {}
+	virtual ~MappedHistogram();
 
 	/*!
 	    set new histogram and possible new mapping (generate a new mapped copy of the source)
@@ -57,22 +59,16 @@ public:
 
 	    \param pSrc pointer to existing source histogram
 	*/
-	void setHistogram(Histogram *pSrc)
-	{
-		setMapCorrection(NULL, pSrc);
-	}
+	void setHistogram(Histogram *pSrc);
 
 	//! \return sum of all events after correction
 	quint64 getCorrectedTotalCounts(void);
 
 	//! \return the maximum value of this histogram
-	virtual quint64 max() const
-	{
-		return m_iMaxPos >= 0 && m_iMaxPos < m_adblData.count() ? ((quint64)m_adblData[m_iMaxPos]) : 0;
-	}
+	virtual quint64 max() const;
 
 	//! \return the number of the first tube containing the maximum value
-	virtual quint16 maxpos() const { return m_iMaxPos; }
+	virtual quint16 maxpos() const;
 
 	virtual quint64 value(quint16 x, quint16 y) const;
 
@@ -89,7 +85,7 @@ public:
 	//! \brief clear this histogram
 	virtual void clear(void);
 
-	MapCorrection* getMapCorrection() { return m_pMapCorrection; }
+	MapCorrection *getMapCorrection() const;
 
 private:
 	//! pointer to mapping information

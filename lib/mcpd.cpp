@@ -189,7 +189,35 @@ void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void *pPar
  */
 bool MCPD::isSynced() const
 {
-  return m_bIsSynced;
+    return m_bIsSynced;
+}
+
+bool MCPD::isInitialized() const
+{
+    return m_bBaseMcpdInitialized;
+}
+
+int MCPD::errorCount(bool bClear)
+{
+    int r(m_iErrorCounter);
+    if (bClear)
+        m_iErrorCounter = 0;
+    return r;
+}
+
+quint8 MCPD::getId(void) const
+{
+    return m_byId;
+}
+
+QString MCPD::ip(void) const
+{
+    return m_szMcpdIp;
+}
+
+quint16 MCPD::port(void) const
+{
+    return m_wPort;
 }
 
 /** \fn MCPDThread::MCPDThread(MCPD* pMcpd)

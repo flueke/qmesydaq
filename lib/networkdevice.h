@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -65,10 +65,10 @@ public:
 	bool sendBuffer(const QString &szTargetIp, quint16 wPort, const MDP_PACKET2 &packet);
 
 	//! \return IP address of the target
-	QString ip() {return m_szHostIp;}
+	QString ip() const;
 
 	//! \return port number of the communication target
-	quint16 port() {return m_wPort;}
+	quint16 port() const;
 
 public slots:
 	//! handles the action if some data reach the socket for incoming data

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -524,4 +524,109 @@ float MPSD8::getGainval(quint8 chan, bool preset)
 		}
 	}
 	return m_gainVal[chan][preset];
+}
+
+quint8 MPSD8::getModuleId(void) const
+{
+	return m_mpsdId;
+}
+
+QString MPSD8::getType(void) const
+{
+	return tr("MPSD-8");
+}
+
+int MPSD8::type(void) const
+{
+	return TYPE_MPSD8;
+}
+
+quint8 MPSD8::getPulsPos(bool preset) const
+{
+	return m_pulsPos[preset];
+}
+
+quint8 MPSD8::getPulsAmp(bool preset) const
+{
+	return m_pulsAmp[preset];
+}
+
+quint8 MPSD8::getPulsChan(bool preset) const
+{
+	return m_pulsChan[preset];
+}
+
+quint8 MPSD8::getPulsPoti(bool preset) const
+{
+	return m_pulsPoti[preset];
+}
+
+bool MPSD8::isPulserOn() const
+{
+	return m_pulser[0];
+}
+
+quint8 MPSD8::getThreshold(bool preset) const
+{
+	return m_threshVal[preset];
+}
+
+quint8 MPSD8::getThreshpoti(bool preset) const
+{
+	return m_threshPoti[preset];
+}
+
+bool MPSD8::comGain() const
+{
+	return m_comgain;
+}
+
+void MPSD8::setMode(bool amplitude, bool preset)
+{
+	m_ampMode[preset] = amplitude;
+}
+
+bool MPSD8::getMode(bool preset) const
+{
+	return m_ampMode[preset];
+}
+
+quint16 MPSD8::getInternalreg(quint8 reg, bool preset) const
+{
+	return m_internalReg[reg][preset];
+}
+
+quint16 MPSD8::bins() const
+{
+	return 960;
+}
+
+quint8 MPSD8::busNumber(void) const
+{
+	return m_busNum;
+}
+
+float MPSD8::version(void) const
+{
+	return m_version;
+}
+
+void MPSD8::setVersion(const float val)
+{
+	m_version = val;
+}
+
+quint16 MPSD8::capabilities(void) const
+{
+	return m_capabilities;
+}
+
+void MPSD8::setCapabilities(const quint16 val)
+{
+	m_capabilities = val;
+}
+
+quint8 MPSD8::getChannels() const
+{
+	return 8;
 }

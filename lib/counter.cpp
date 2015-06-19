@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,7 +21,7 @@
 #include "counter.h"
 #include "logging.h"
 
-MesydaqCounter :: MesydaqCounter() 
+MesydaqCounter :: MesydaqCounter()
 	: QObject()
 	, m_value(0)
 	, m_lastValue(0)
@@ -63,21 +63,26 @@ void MesydaqCounter::set(quint64 val)
 	m_value = m_offset + val - m_start;
 }
 
-bool MesydaqCounter::isStopped(void) 
+bool MesydaqCounter::isStopped(void)
 {
 	if (!m_limit)
 		return false;
 	return (m_value >= m_limit);
 }
 
-void MesydaqCounter::setMaster(const bool val) 
+void MesydaqCounter::setMaster(const bool val)
 {
 	m_master = val;
 	if (!m_master)
 		setLimit(0);
 }
 
-void MesydaqCounter::reset(void) 
+bool MesydaqCounter::isMaster(void)
+{
+	return m_master;
+}
+
+void MesydaqCounter::reset(void)
 {
 	m_value = 0;
 	m_offset = 0;
@@ -140,6 +145,26 @@ quint64 MesydaqCounter::rate()
 	return m_meanRate;
 }
 
+MesydaqCounter::operator quint64()
+{
+	return value();
+}
+
+void MesydaqCounter::setLimit(quint64 val)
+{
+	m_limit = m_master ? val : 0;
+}
+
+quint64 MesydaqCounter::limit(void)
+{
+	return m_limit;
+}
+
+quint64 MesydaqCounter::value(void)
+{
+	return m_value;
+}
+
 MesydaqTimer::MesydaqTimer()
 	: MesydaqCounter()
 {
@@ -152,7 +177,7 @@ void MesydaqTimer::start(quint64 val)
 	MSG_INFO << tr("timer start");
 }
 
-quint64 MesydaqTimer::value(void) 
+quint64 MesydaqTimer::value(void)
 {
 	return m_value;
 }

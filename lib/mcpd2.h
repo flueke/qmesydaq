@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
- *   Copyright (C) 2013-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2013-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -61,21 +61,21 @@ public:
 	bool setTimingSetup(bool master, bool term);
 
 	//! \return whether this MCPD is configured as master or not
-	bool isMaster(void) {return m_master;}
+	bool isMaster(void) const;
 
 	//! \return whether this MCPD is terminated on the synchronization bus or not
-	bool isTerminated(void) {return m_term;}
+	bool isTerminated(void) const;
 
 	bool setMasterClock(quint64);
 
 	//! returns the number of received data packages
-	quint64 receivedData() {return m_dataRxd;} 
+	quint64 receivedData() const;
 
 	//! returns the number of received cmd answer packages
-	quint64 receivedCmds() {return m_cmdRxd;} 
+	quint64 receivedCmds() const;
 
-	//! returns the number of sent cmd packages 
-	quint64 sentCmds() {return m_cmdTxd;} 
+	//! returns the number of sent cmd packages
+	quint64 sentCmds() const;
 
 // commands: General MCPD-8 settings
 	bool setCounterCell(quint16 source, quint16 trigger, quint16 compare);
@@ -105,7 +105,7 @@ public:
 
 	bool setThreshold(quint16 addr, quint8 thresh);
 
-	//! \todo implementation 
+	//! \todo implementation
 	quint8 getThresholdPoti(quint16 addr);
 
 	quint8 getThreshold(quint16 addr);
@@ -118,9 +118,9 @@ public:
 
 	quint8	getPulsPos(quint8 addr, bool preset = false);
 
-	quint8	getPulsAmp(quint8 addr, bool preset = false); 
+	quint8	getPulsAmp(quint8 addr, bool preset = false);
 
-	quint8	getPulsChan(quint8 addr, bool preset = false); 
+	quint8	getPulsChan(quint8 addr, bool preset = false);
 
 	bool setMode(quint16 addr, bool mode);
 
@@ -147,12 +147,12 @@ public:
 
 	quint16 readRegister(quint16 reg);
 
-	float version(void); 
+	float version(void);
 
 	float version(quint16 mod);
 
 	//! \return number of modules found
-	quint8 numModules(void) {return m_mpsd.size();}
+	quint8 numModules(void) const;
 
 	bool init(void);
 
@@ -168,12 +168,12 @@ public:
 	 * \return ???
 	 * \see setStream
 	 */
-	bool getStream(void) {return m_stream;}
+	bool getStream(void) const;
 
 //	bool serialize(QDataStream ds);
 
 	//! \return the current time of the MCPD in msec
-	quint64 time(void) {return m_timemsec;}
+	quint64 time(void) const;
 
 	bool setRunId(quint32 runid);
 
@@ -183,7 +183,7 @@ public:
 	 * \return run ID
 	 * \see setRunId
 	 */
-	quint32 getRunId(void) {return m_runId;}
+	quint32 getRunId(void) const;
 
 public slots:
 	//! analyse network packet
@@ -194,13 +194,13 @@ private slots:
 //	void commTimeout(void);
 
 signals:
-	//! this will be emitted if the MCPD-8 was started 
+	//! this will be emitted if the MCPD-8 was started
 	void startedDaq(void);
 
-	//! this will be emitted if the MCPD-8 was stopped 
+	//! this will be emitted if the MCPD-8 was stopped
 	void stoppedDaq(void);
 
-	//! this will be emitted if the MCPD-8 was continued 
+	//! this will be emitted if the MCPD-8 was continued
 	void continuedDaq(void);
 
 	/**
@@ -211,7 +211,7 @@ signals:
 	void analyzeDataBuffer(QSharedDataPointer<SD_PACKET> pd);
 
 private:
-	void communicate(bool yesno) {m_bCommActive = yesno;}
+	void communicate(bool yesno);
 
 	void initCmdBuffer(quint8);
 

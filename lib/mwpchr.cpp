@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -159,3 +159,33 @@ void MWPCHR::serialize(QFile *fi)
         t << '\r' << '\n';
 }
 #endif
+
+quint8 MWPCHR::getModuleId(void) const
+{
+	return TYPE_MWPCHR;
+}
+
+QString MWPCHR::getType(void) const
+{
+	return tr("MWPCHR");
+}
+
+int MWPCHR::type(void) const
+{
+	return TYPE_MWPCHR;
+}
+
+bool MWPCHR::isPulserOn(bool) const
+{
+	return false;
+}
+
+quint16 MWPCHR::bins() const
+{
+	return 1024;
+}
+
+quint16 MWPCHR::channels() const
+{
+	return 1024;
+}

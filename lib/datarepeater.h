@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -61,16 +61,16 @@ public:
   virtual ~DataRepeater();
 
   //! read, if class is enabled or not
-  bool GetEnabled() const { return m_pSocket!=NULL; }
+  bool GetEnabled() const;
 
   //! read source host address
-  QHostAddress GetSource() const { return m_Source; }
+  QHostAddress GetSource() const;
 
   //! read target host address
-  QHostAddress GetTarget() const { return m_Target; }
+  QHostAddress GetTarget() const;
 
   //! read target UDP port
-  quint16 GetPort() const { return m_wPort; }
+  quint16 GetPort() const;
 
   //! enable or disable this class
   void SetEnabled(bool bEnable);
@@ -88,7 +88,7 @@ public:
   void SetTarget(const QString &target, quint16 port = DEFAULTPORT);
 
   //! store or send data to target (short data: store only and start timer)
-  void WriteData(const QByteArray &data, bool doSend = false) { WriteData(data.data(),data.count(),doSend); }
+  void WriteData(const QByteArray &data, bool doSend = false);
 
   //! store or send data to target (short data: store only and start timer)
   void WriteData(const void* ptr, int length, bool doSend = false);

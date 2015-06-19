@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -63,13 +63,13 @@ public:
 	virtual QList<quint16> getActiveList(void);
 
 	//! \return the ID of the MPSD
-	quint8 	getModuleId(void) {return m_mpsdId;}
+	quint8 	getModuleId(void) const;
 
 	//! \return the type of the MPSD as string
-	virtual QString getType(void) {return tr("MPSD-8");}
+	virtual QString getType(void) const;
 
 	//! \return the type of the MPSD as number
-	virtual int type(void) {return TYPE_MPSD8;}
+	virtual int type(void) const;
 
 	//! \return is the module online or not
 	virtual bool online(void);
@@ -88,7 +88,7 @@ public:
 	 * \see setPulser
 	 * \see setPulserPoti
 	 */
-	virtual quint8	getPulsPos(bool preset = false) {return m_pulsPos[preset];}
+	virtual quint8	getPulsPos(bool preset = false) const;
 
 	/**
 	 * get the pulser amplitude
@@ -100,7 +100,7 @@ public:
 	 * \see setPulser
 	 * \see setPulserPoti
 	 */
-	quint8	getPulsAmp(bool preset = false) {return m_pulsAmp[preset];}
+	quint8	getPulsAmp(bool preset = false) const;
 
 	/**
 	 * get the pulser channel
@@ -112,7 +112,7 @@ public:
 	 * \see setPulser
 	 * \see setPulserPoti
 	 */
-	quint8	getPulsChan(bool preset = false) {return m_pulsChan[preset];}
+	quint8	getPulsChan(bool preset = false) const;
 
 	/**
 	 * get the pulser poti
@@ -124,10 +124,10 @@ public:
 	 * \see setPulser
 	 * \see setPulserPoti
 	 */
-	quint8	getPulsPoti(bool preset = false) {return m_pulsPoti[preset];}
+	quint8	getPulsPoti(bool preset = false) const;
 
 	//! \return is the pulser on
-	bool	isPulserOn() {return m_pulser[0];}
+	bool	isPulserOn() const;
 
 // Threshold related methods
 	virtual void	setThreshold(quint8 threshold, bool preset = false);
@@ -142,7 +142,7 @@ public:
 	 * \see setThreshpoti
 	 * \see getThreshpoti
 	 */
-	quint8	getThreshold(bool preset = false) {return m_threshVal[preset];}
+	quint8	getThreshold(bool preset = false) const;
 
 	/**
  	 * gets the threshold poti value
@@ -153,7 +153,7 @@ public:
 	 * \see setThreshpoti
 	 * \see getThreshold
 	 */
-	quint8	getThreshpoti(bool preset = false) {return m_threshPoti[preset];}
+	quint8	getThreshpoti(bool preset = false) const;
 
 // Gain related methods
 	virtual void	setGain(quint8 channel, float gainv, bool preset = false);
@@ -178,7 +178,7 @@ public:
 	virtual float	getGainval(quint8 chan, bool preset = false);
 
 	//! \return use the same gain for all channels ?
-	virtual bool	comGain() {return m_comgain;}
+	virtual bool	comGain() const;
 
 // Mode related methods
 	/**
@@ -188,7 +188,7 @@ public:
 	 * \param preset ????
 	 * \see getMode
 	 */
-	void	setMode(bool amplitude, bool preset = false) {m_ampMode[preset] = amplitude;}
+	void	setMode(bool amplitude, bool preset = false);
 
 	/**
 	 * gets the mode amplitude/position
@@ -197,7 +197,7 @@ public:
 	 * \return amplitude true = amplitude, false = position
 	 * \see setMode
 	 */
-	bool	getMode(bool preset = false) {return m_ampMode[preset];}
+	bool	getMode(bool preset = false) const;
 
 // Internal registers related methods
 	virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
@@ -210,34 +210,34 @@ public:
 	 * \return value of the register
 	 * \see setInternalreg
 	 */
-	quint16	getInternalreg(quint8 reg, bool preset = false) {return m_internalReg[reg][preset];}
+	quint16	getInternalreg(quint8 reg, bool preset = false) const;
 
 	virtual quint8	calcGainpoti(float fval);
 
         //! returns the number of bins per module
-	virtual quint16 bins() {return 960;}
+	virtual quint16 bins() const;
 
 	//! returns the number of the bus
-	quint8 busNumber(void) {return m_busNum;}
+	quint8 busNumber(void) const;
 
 // version related methods
 	//! return version as float value major.minor
-	float	version(void) const {return m_version;}
+	float	version(void) const;
 
 	//! sets the version as float value major.minor
 	//! \param val
-	void	setVersion(const float val) {m_version = val;}
+	void	setVersion(const float val);
 
 // capabilities related methods
 	//! return capabilities
-	virtual quint16 capabilities(void) const {return m_capabilities;}
+	virtual quint16 capabilities(void) const;
 
 	//! sets the capabilities
 	//! \param val
-	void	setCapabilities(const quint16 val) {m_capabilities = val;}
+	void	setCapabilities(const quint16 val);
 
 	//! \return the number of available channels
-	virtual quint8	getChannels() const { return 8; }
+	virtual quint8	getChannels() const;
 
 protected:
 	virtual float	calcGainval(quint8 ga);
@@ -321,25 +321,20 @@ public:
 	   /param id
 	   /param parent
 	 */
-	NoModule(quint8 id, QObject *parent = 0)
-		: MPSD8(id, parent)
-	{
-		m_mpsdId = 0;
-		setHistogram(false);
-	}
+	NoModule(quint8 id, QObject *parent = 0);
 
-	void	setActive(bool) {MPSD8::setActive(false);}
+	void	setActive(bool);
 
-	void	setActive(quint16 chan, bool) {MPSD8::setActive(chan, false);}
+	void	setActive(quint16 chan, bool);
 
 	//! \return the type of the MPSD as string
-	virtual QString getType(void) {return tr("-");}
+	virtual QString getType(void) const;
 
 	//! \return the type of the MPSD as number
-	virtual int type(void) {return TYPE_NOMODULE;}
+	virtual int type(void) const;
 
 	//! \return is the module online or not
-	virtual bool online(void) {return false;}
+	virtual bool online(void) const;
 
 //	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 //	virtual void	setPulserPoti(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
@@ -367,7 +362,7 @@ public:
 	MPSD8old(quint8 id, QObject *parent = 0);
 
         //! returns the number of bins per module
-	quint16 bins() {return 255;}
+	quint16 bins() const;
 
 	void 	setGain(quint8 channel, float gainv, bool preset = false);
 	void	setThreshold(quint8 threshold, bool preset = false);
@@ -376,10 +371,10 @@ public:
 	quint8	calcThreshpoti(quint8 tval);		// mainwidget.cpp
 
 	//! \return the type of the MPSD as string
-	QString getType(void) {return tr("MPSD-8 (old)");}
+	QString getType(void) const;
 
 	//! \return the type of the MPSD as number
-	virtual int type(void) {return TYPE_MPSD8OLD;}
+	virtual int type(void) const;
 
 protected:
 	float	calcGainval(quint8 ga);
@@ -409,10 +404,10 @@ public:
 	MPSD8plus(quint8 id, QObject *parent = 0);
 
 	//! \return the type of the MPSD as string
-	QString getType(void) {return tr("MPSD-8+");}
+	QString getType(void) const;
 
 	//! \return the type of the MPSD as number
-	virtual int type(void) {return TYPE_MPSD8P;}
+	virtual int type(void) const;
 
 	void 	setGain(quint8 channel, float gainv, bool preset = false);
 	void	setThreshold(quint8 threshold, bool preset = false);
@@ -448,10 +443,10 @@ public:
 	MPSD8SingleADC(quint8 id, QObject *parent = 0);
 
 	//! \return the type of the MPSD as string
-	QString getType(void) {return tr("MPSD-8 (single ADC)");}
+	QString getType(void) const;
 
 	//! \return the type of the MPSD as number
-	virtual int type(void) {return TYPE_MPSD8SADC;}
+	virtual int type(void) const;
 };
 
 #endif

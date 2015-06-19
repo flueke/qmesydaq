@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -142,4 +142,19 @@ quint8	MPSD8old::calcThreshval(quint8 thr)
 #endif
 //	MSG_ERROR << tr("threshpoti: %1, threshval: %2").arg(t).arg(thr);
 	return t;
+}
+
+quint16 MPSD8old::bins() const
+{
+	return 255;
+}
+
+QString MPSD8old::getType(void) const
+{
+	return tr("MPSD-8 (old)");
+}
+
+int MPSD8old::type(void) const
+{
+	return TYPE_MPSD8OLD;
 }

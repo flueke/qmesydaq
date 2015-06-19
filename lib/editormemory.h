@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
+ *   Copyright (C) 2013-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
  *                    Eric Faustmann <eric.faustmann@helmholtz-berlin.de>, *
  *                    Damian Rhein <damian.rhein@helmholtz-berlin.de>      *
  *                                                                         *
@@ -42,40 +42,40 @@ public:
 	EditorMemory& operator=(const EditorMemory& src);
 
 	//! returns the number of mapped channels
-	int getChannelCount() const { return m_aTubes.size(); }
+	int getChannelCount() const;
 
 	//! returns the mapped channel data
-	QVector<MappedDetector>& getTubes() { return m_aTubes; }
+	QVector<MappedDetector>& getTubes();
 
 	//! returns the mapped channel read only data
-	const QVector<MappedDetector>& getTubes() const { return m_aTubes; }
+	const QVector<MappedDetector>& getTubes() const;
 
 	//! returns the configuration file path
-	QString getPath() const { return m_sPath; }
+	QString getPath() const;
 
 	//! sets the configuration file path
-	void setPath(QString sPath) { m_sPath=sPath; }
+	void setPath(const QString &sPath);
 
 	//! returns the orientation of the histogram
-	enum MapCorrection::Orientation getOrientation(void) const { return m_iOrientation; }
+	enum MapCorrection::Orientation getOrientation(void) const;
 
 	//! sets the orientation of the histogram
-	void setOrientation(MapCorrection::Orientation iOrientation) { m_iOrientation = iOrientation; }
+	void setOrientation(MapCorrection::Orientation iOrientation);
 
 	//! resizes the number of mapped channels
-	void tubesResize(int iNumTubes) { m_aTubes.resize(iNumTubes); }
+	void tubesResize(int iNumTubes);
 
 	//! reads the "changed" flag
-	bool changed() const { return m_bChanged; }
+	bool changed() const;
 
 	//! set the "changed" flag
-	void setChanged(bool bChanged = true) { m_bChanged = bChanged; }
+	void setChanged(bool bChanged = true);
 
 	//! save to previously defined file
 	void save();
 
 	//! save to specified file
-	bool saveToPath(QString sPath);
+	bool saveToPath(const QString &sPath);
 
 	//! load from previously defined file
 	bool load();

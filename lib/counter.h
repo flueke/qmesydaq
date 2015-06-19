@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -62,7 +62,7 @@ public:
 	 * this operator returns the current value of the counter
 	 * \see value
 	 */
-	operator quint64() {return value();}
+	operator quint64 ();
 
 	//! checks whether the the limit is reached or not
 	bool isStopped(void);
@@ -83,16 +83,16 @@ public:
 	 *
 	 * \param val counter limit, if the value is zero no limit will be set
 	 */
-	virtual void setLimit(quint64 val) {m_limit = m_master ? val : 0;}
+	virtual void setLimit(quint64 val);
 
 	//! \return the current counter limit if limit is 0 no limit is set
-	quint64 limit(void) {return m_limit;}
+	quint64 limit(void);
 
 	//! \return current counter value
-	virtual quint64 value(void) {return m_value;}
+	virtual quint64 value(void);
 
 	//! \return whether this counter is master or not
-	bool isMaster(void) {return m_master;}
+	bool isMaster(void);
 
 	/**
 	 * Sets this counter as master or slave. If the counter is not master

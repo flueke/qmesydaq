@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -2806,4 +2806,59 @@ QList<int> MCPD8::channelId(const int mod)
 				channelList.append(i);
 	}
 	return channelList;
+}
+
+bool MCPD8::isMaster(void) const
+{
+	return m_master;
+}
+
+bool MCPD8::isTerminated(void) const
+{
+	return isMaster() ? true : m_term;
+}
+
+bool MCPD8::isExtsynced(void) const
+{
+	return m_extsync;
+}
+
+quint64 MCPD8::receivedData() const
+{
+	return m_dataRxd;
+}
+
+quint64 MCPD8::missedData() const
+{
+	return m_dataMissed;
+}
+
+quint64 MCPD8::receivedCmds() const
+{
+	return m_cmdRxd;
+}
+
+quint64 MCPD8::sentCmds() const
+{
+	return m_cmdTxd;
+}
+
+bool MCPD8::getStream(void) const
+{
+	return m_stream;
+}
+
+quint64 MCPD8::time(void) const
+{
+	return m_timemsec;
+}
+
+quint32 MCPD8::getRunId(void) const
+{
+	return m_runId;
+}
+
+void MCPD8::setBuffer(quint8 index, quint16 value)
+{
+	m_cmdBuf.data[index] = value;
 }

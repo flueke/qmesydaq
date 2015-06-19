@@ -19,7 +19,7 @@
 ############################################################################
 
 
-VERSION		= 1.50.1
+VERSION		= 1.51.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -71,6 +71,7 @@ SOURCES 	+= stdafx.cpp \
 		   histogram.cpp \
 		   logging.cpp \
 		   mapcorrect.cpp \
+		   linearmapcorrect.cpp \
 		   usermapcorrect.cpp \
 		   mdllcorrect.cpp \
 		   mappedhistogram.cpp \
@@ -85,10 +86,13 @@ SOURCES 	+= stdafx.cpp \
 		   mpsd8old.cpp \
 		   mpsd8sadc.cpp \
 		   mstd16.cpp \
+		   m2d.cpp \
 		   mdll.cpp \
 		   mwpchr.cpp \
+		   nomodule.cpp \
 		   mpsdfactory.cpp \
 		   m2dfactory.cpp \
 		   networkdevice.cpp \
 		   mappeddetector.cpp \
-		   editormemory.cpp
+		   editormemory.cpp \
+		   calibration.cpp

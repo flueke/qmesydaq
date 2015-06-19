@@ -18,41 +18,51 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "pulsertest.h"
-#include "mdefines.h"
-#include "mesydaq2.h"
+#include "mdll.h"
 
-PulserTest::PulserTest()
+M2D::M2D(quint8, QObject *parent)
+	: QObject(parent)
 {
 }
 
-/**
- * create a list of all actions to set the pulser on/off over the whole set of settings:
- * - all found MCPD
- *   - all found MPSD
- *   	- all positions
- *   	  - all amplitude values (30, 60)
- */
-QList<puls> PulserTest::sequence(Mesydaq2 *mesy, quint8 amp1, quint8 amp2)
+M2D::~M2D()
 {
-	qDebug("Pulsertest");
-	QList<puls> retVal;
-	QList<quint8> amps;
-	amps << amp1 << amp2;
-	QList<int> m_mcpd = mesy->mcpdId();
-	QList<int> positions;
-	positions << LEFT << MIDDLE << RIGHT;
-	foreach(int mod, m_mcpd)
-	{
-		QList<int> mpsd = mesy->mpsdId(mod);
-		foreach(int addr, mpsd)
-			for (quint8 channel = 0; channel < 8; ++channel)
-				foreach (quint8 position, positions)
-					foreach(quint8 amp, amps)
-					{
-						puls p = {mod, addr, channel, position, amp, 125};
-						retVal << p;
-					}
-	}
-	return retVal;
+}
+
+bool M2D::active(void) const
+{
+	return true;
+}
+
+void M2D::setActive(bool)
+{
+}
+
+bool M2D::histogram(void) const
+{
+	return true;
+}
+
+void M2D::setHistogram(bool)
+{
+}
+
+quint16 M2D::bins() const
+{
+	return 960;
+}
+
+quint16 M2D::channels() const
+{
+	return 960;
+}
+
+quint8 M2D::busNumber(void) const
+{
+	return 0;
+}
+
+quint16 M2D::capabilities(void) const
+{
+	return TPA;
 }

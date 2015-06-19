@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -340,4 +340,29 @@ void DataRepeater::readyRead()
   while (m_pSocket->hasPendingDatagrams())
     m_pSocket->readDatagram(&buffer[0],sizeof(buffer));
 #endif
+}
+
+bool DataRepeater::GetEnabled() const
+{
+  return m_pSocket!=NULL;
+}
+
+QHostAddress DataRepeater::GetSource() const
+{
+  return m_Source;
+}
+
+QHostAddress DataRepeater::GetTarget() const
+{
+  return m_Target;
+}
+
+quint16 DataRepeater::GetPort() const
+{
+  return m_wPort;
+}
+
+void DataRepeater::WriteData(const QByteArray &data, bool doSend)
+{
+  WriteData(data.data(),data.count(),doSend);
 }

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
+ *   Copyright (C) 2013-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
  *                    Eric Faustmann <eric.faustmann@helmholtz-berlin.de>, *
  *                    Damian Rhein <damian.rhein@helmholtz-berlin.de>      *
  *                                                                         *
@@ -64,7 +64,7 @@ bool EditorMemory::load()
 	return loadFromPath(toPath(QFileDialog::getOpenFileName(m_pParent, QString("Load"), QString(""), QString("Mesydaq mapping editor file(*.mesf)"))));
 }
 
-bool EditorMemory::saveToPath(QString sPath)
+bool EditorMemory::saveToPath(const QString &sPath)
 {
 	setPath(sPath);
 
@@ -223,4 +223,54 @@ void EditorMemory::getNextNumber(QStringList &asParts, float &fNumber)
 		fNumber = sNumber.toFloat(&bOK);
 	if (!bOK || fNumber < 0.0)
 		fNumber = 1.0;
+}
+
+int EditorMemory::getChannelCount() const
+{
+	return m_aTubes.size();
+}
+
+QVector<MappedDetector>& EditorMemory::getTubes()
+{
+	return m_aTubes;
+}
+
+const QVector<MappedDetector>& EditorMemory::getTubes() const
+{
+	return m_aTubes;
+}
+
+QString EditorMemory::getPath() const
+{
+	return m_sPath;
+}
+
+void EditorMemory::setPath(const QString &sPath)
+{
+	m_sPath = sPath;
+}
+
+enum MapCorrection::Orientation EditorMemory::getOrientation(void) const
+{
+	return m_iOrientation;
+}
+
+void EditorMemory::setOrientation(MapCorrection::Orientation iOrientation)
+{
+	m_iOrientation = iOrientation;
+}
+
+void EditorMemory::tubesResize(int iNumTubes)
+{
+	m_aTubes.resize(iNumTubes);
+}
+
+bool EditorMemory::changed() const
+{
+	return m_bChanged;
+}
+
+void EditorMemory::setChanged(bool bChanged)
+{
+	m_bChanged = bChanged;
 }

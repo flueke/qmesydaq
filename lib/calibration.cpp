@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2015 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2011-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,42 +17,80 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "calibration.h"
 
-#include "pulsertest.h"
-#include "mdefines.h"
-#include "mesydaq2.h"
-
-PulserTest::PulserTest()
+TubeRange::TubeRange()
+	: m_min(0.0)
+	, m_max(0.0)
 {
 }
 
-/**
- * create a list of all actions to set the pulser on/off over the whole set of settings:
- * - all found MCPD
- *   - all found MPSD
- *   	- all positions
- *   	  - all amplitude values (30, 60)
- */
-QList<puls> PulserTest::sequence(Mesydaq2 *mesy, quint8 amp1, quint8 amp2)
+TubeRange::TubeRange(qreal min, qreal max)
+	: m_min(min)
+	, m_max(max)
 {
-	qDebug("Pulsertest");
-	QList<puls> retVal;
-	QList<quint8> amps;
-	amps << amp1 << amp2;
-	QList<int> m_mcpd = mesy->mcpdId();
-	QList<int> positions;
-	positions << LEFT << MIDDLE << RIGHT;
-	foreach(int mod, m_mcpd)
+}
+
+TubeRange::TubeRange(qreal min)
+	: m_min(min)
+	, m_max(min)
+{
+}
+
+TubeRange::TubeRange(const TubeRange &tr)
+	: m_min(tr.m_min)
+	, m_max(tr.m_max)
+{
+}
+
+void TubeRange::setMax(const qreal max)
+{
+	m_max = max;
+}
+
+qreal TubeRange::start(void) const
+{
+	return m_min;
+}
+
+qreal TubeRange::height(void) const
+{
+	return m_max - m_min;
+}
+
+TubeCorrection::TubeCorrection()
+	: m_calibScale(1.0)
+	, m_shift(0)
+	, m_detStart(0)
+	, m_detEnd(0)
+{
+}
+
+TubeCorrection::TubeCorrection(const TubeRange &detRange, const TubeRange &tubeRange)
+{
+	m_calibScale = detRange.height() / tubeRange.height();
+	m_detStart = detRange.start();
+	m_detEnd = m_detStart + detRange.height();
+	m_shift = tubeRange.start() - m_detStart;
+}
+
+TubeCorrection::TubeCorrection(const TubeCorrection &tc)
+{
+	m_calibScale = tc.m_calibScale;
+	m_shift = tc.m_shift;
+	m_detStart = tc.m_detStart;
+	m_detEnd = tc.m_detEnd;
+}
+
+quint32 TubeCorrection::calibrate(const qint32 pos)
+{
+	if (m_calibScale == 1.0)
+		return pos;
+	qint32 target = pos - m_shift;
+	if (target >= qint32(m_detStart) && target <= qint32(m_detEnd))
 	{
-		QList<int> mpsd = mesy->mpsdId(mod);
-		foreach(int addr, mpsd)
-			for (quint8 channel = 0; channel < 8; ++channel)
-				foreach (quint8 position, positions)
-					foreach(quint8 amp, amps)
-					{
-						puls p = {mod, addr, channel, position, amp, 125};
-						retVal << p;
-					}
+		return  quint32(::round(m_calibScale * (pos - m_shift)));
 	}
-	return retVal;
+	else
+		return -1;
 }

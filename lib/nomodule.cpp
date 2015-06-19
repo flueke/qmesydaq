@@ -18,41 +18,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "pulsertest.h"
-#include "mdefines.h"
-#include "mesydaq2.h"
+#include "mpsd8.h"
 
-PulserTest::PulserTest()
+NoModule::NoModule(quint8 id, QObject *parent)
+	: MPSD8(id, parent)
 {
+	m_mpsdId = 0;
+	setHistogram(false);
 }
 
-/**
- * create a list of all actions to set the pulser on/off over the whole set of settings:
- * - all found MCPD
- *   - all found MPSD
- *   	- all positions
- *   	  - all amplitude values (30, 60)
- */
-QList<puls> PulserTest::sequence(Mesydaq2 *mesy, quint8 amp1, quint8 amp2)
+void NoModule::setActive(bool)
 {
-	qDebug("Pulsertest");
-	QList<puls> retVal;
-	QList<quint8> amps;
-	amps << amp1 << amp2;
-	QList<int> m_mcpd = mesy->mcpdId();
-	QList<int> positions;
-	positions << LEFT << MIDDLE << RIGHT;
-	foreach(int mod, m_mcpd)
-	{
-		QList<int> mpsd = mesy->mpsdId(mod);
-		foreach(int addr, mpsd)
-			for (quint8 channel = 0; channel < 8; ++channel)
-				foreach (quint8 position, positions)
-					foreach(quint8 amp, amps)
-					{
-						puls p = {mod, addr, channel, position, amp, 125};
-						retVal << p;
-					}
-	}
-	return retVal;
+	MPSD8::setActive(false);
+}
+
+void NoModule::setActive(quint16 chan, bool)
+{
+	MPSD8::setActive(chan, false);
+}
+
+QString NoModule::getType(void) const
+{
+	return tr("-");
+}
+
+int NoModule::type(void) const
+{
+	return TYPE_NOMODULE;
+}
+
+bool NoModule::online(void) const
+{
+	return false;
 }

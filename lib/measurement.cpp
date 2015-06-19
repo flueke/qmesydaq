@@ -1766,3 +1766,138 @@ Histogram *Measurement::hist(const HistogramType t) const
 {
 	return m_Hist[t];
 }
+
+quint64	Measurement::mon1() const
+{
+	return m_counter[MON1ID]->value();
+}
+
+quint64	Measurement::mon2() const
+{
+	return m_counter[MON2ID]->value();
+}
+
+quint64	Measurement::mon3() const
+{
+	return m_counter[MON3ID]->value();
+}
+
+quint64	Measurement::mon4() const
+{
+	return m_counter[MON4ID]->value();
+}
+
+quint64 Measurement::events() const
+{
+	return m_counter[EVID]->value();
+}
+
+quint64	Measurement::timer() const
+{
+	return m_counter[TIMERID]->value();
+}
+
+quint64 Measurement::getHeadertime(void) const
+{
+	return m_headertime;
+}
+
+void Measurement::setHeadertime(quint64 ht)
+{
+	m_headertime = ht;
+}
+
+MapCorrection *&Measurement::posHistMapCorrection()
+{
+	return m_posHistMapCorrection;
+}
+
+Mesydaq2 *Measurement::getMesydaq() const
+{
+	return m_mesydaq;
+}
+
+Measurement::Setup Measurement::setupType(void) const
+{
+	return m_setup;
+}
+
+QString Measurement::getConfigfilepath(void) const
+{
+	return m_configPath;
+}
+
+QString Measurement::getListfilename(void) const
+{
+	return m_mesydaq ? m_mesydaq->getListfilename() : "";
+}
+
+QString Measurement::getListfilepath(void) const
+{
+	return m_listPath;
+}
+
+QString Measurement::getHistfilename(void) const
+{
+	return m_histfilename;
+}
+
+QString Measurement::getHistfilepath(void) const
+{
+	return m_histPath;
+}
+
+QString Measurement::getCalibrationfilename(void) const
+{
+	return m_calibrationfilename;
+}
+
+bool Measurement::hwstatus(bool *pbAck) const
+{
+	return m_mesydaq->status(pbAck);
+}
+
+Measurement::Mode Measurement::mode(void) const
+{
+	return m_mode;
+}
+
+Measurement::Status Measurement::status(void) const
+{
+	return m_status;
+}
+
+bool Measurement::getWriteProtection() const
+{
+	return m_mesydaq->getWriteProtection();
+}
+
+void Measurement::setWriteProtection(bool b)
+{
+	m_mesydaq->setWriteProtection(b);
+}
+
+Measurement::HistogramFileFormat Measurement::getHistogramFileFormat() const
+{
+	return m_histogramFileFormat;
+}
+
+void Measurement::setRunId(const quint32 runid)
+{
+	m_mesydaq->setRunId(runid);
+}
+
+bool Measurement::getAutoIncRunId() const
+{
+	return m_mesydaq->getAutoIncRunId();
+}
+
+void Measurement::setAutoIncRunId(bool b)
+{
+	m_mesydaq->setAutoIncRunId(b);
+}
+
+quint32 Measurement::runId(void) const
+{
+	return m_mesydaq->runId();
+}

@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
- *   Copyright (C) 2011-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,6 +25,14 @@
 /***************************************************************************
  * histogram mapping and correction data
  ***************************************************************************/
+MapCorrection::MapCorrection()
+	: QObject()
+	, m_bNoMapping(false)
+	, m_iOrientation(MapCorrection::OrientationUp)
+	, m_iCorrection(MapCorrection::CorrectSourcePixel)
+{
+}
+
 /*!
 	copy constructor
 
@@ -55,6 +63,21 @@ MapCorrection& MapCorrection::operator=(const MapCorrection& src)
 	m_aptMap = src.m_aptMap;
 	m_afCorrection = src.m_afCorrection;
 	return *this;
+}
+
+MapCorrection::MapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+	: QObject()
+{
+	initialize(size.width(), size.height(), iOrientation, iCorrection);
+}
+
+MapCorrection::~MapCorrection()
+{
+}
+
+bool MapCorrection::isNoMap() const
+{
+	return m_bNoMapping;
 }
 
 //! \return true if mapping was initialized
@@ -488,4 +511,47 @@ void MapCorrection::rotateRight()
 	m_mapRect.setHeight(iMapW);
 	if (bRotateCorrection)
 		m_afCorrection = afCorrection;
+}
+
+void MapCorrection::initialize(const QSize& size, enum Orientation iOrientation, enum CorrectionType iCorrection)
+{
+	initialize(size.width(),size.height(),iOrientation,iCorrection);
+}
+
+const QRect& MapCorrection::getMapRect() const
+{
+	return m_mapRect;
+}
+
+QSize MapCorrection::getSourceSize() const
+{
+	return m_rect.size();
+}
+
+bool MapCorrection::getMap(int iSrcX, int iSrcY, int &iDstX, int &iDstY, float &dblCorrection) const
+{
+	QPoint 	s(iSrcX, iSrcY),
+		d;
+	bool r = getMap(s,d,dblCorrection);
+	iDstX = d.x();
+	iDstY = d.y();
+	return r;
+}
+
+MapCorrection MapCorrection::noMap()
+{
+	MapCorrection r;
+	r.m_bNoMapping = true;
+	return r;
+}
+
+void MapCorrection::setOrientation(MapCorrection::Orientation x)
+{
+	m_iOrientation = x;
+}
+
+	//! \return the orientation of the mapping
+enum MapCorrection::Orientation MapCorrection::orientation(void)
+{
+	return m_iOrientation;
 }

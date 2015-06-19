@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2009 by Jens Krüger <jens.krueger@frm2.tum.de>          *
- *   Copyright (C) 2011-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -49,6 +49,10 @@ MappedHistogram::MappedHistogram(const MappedHistogram &src)
 	, m_adblData(src.m_adblData)
 	, m_dblTotalCounts(src.m_dblTotalCounts)
 	, m_iMaxPos(src.m_iMaxPos)
+{
+}
+
+MappedHistogram::~MappedHistogram()
 {
 }
 
@@ -280,6 +284,26 @@ void MappedHistogram::clear(void)
 		m_adblData[i] = 0.0;
 	m_dblTotalCounts = 0.0;
 	m_iMaxPos=-1;
+}
+
+void MappedHistogram::setHistogram(Histogram *pSrc)
+{
+	setMapCorrection(NULL, pSrc);
+}
+
+quint64 MappedHistogram::max() const
+{
+	return (m_iMaxPos >= 0 && m_iMaxPos < m_adblData.count()) ? quint64(m_adblData[m_iMaxPos]) : 0;
+}
+
+quint16 MappedHistogram::maxpos() const
+{
+	return m_iMaxPos;
+}
+
+MapCorrection *MappedHistogram::getMapCorrection() const
+{
+	return m_pMapCorrection;
 }
 
 #if 0

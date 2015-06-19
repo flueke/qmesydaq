@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
- *   Copyright (C) 2013-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2013-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -45,7 +45,7 @@ public:
 	virtual bool isInitialized() const;
 
         //! \return whether the whole MCPD should integrated into the histogram
-	bool histogram(void); 
+	bool histogram(void);
 
 	void setHistogram(bool hist);
 
@@ -58,7 +58,7 @@ public:
 	bool histogram(quint16 id, quint16 chan);
 
         //! \return whether the whole MCPD is in use or not
-	bool active(void); 
+	bool active(void);
 
 	bool active(quint16 id);
 
@@ -101,27 +101,27 @@ public:
 	bool setTimingSetup(bool master, bool term, bool extsync);
 
 	//! \return whether this MCPD is configured as master or not
-	bool isMaster(void) {return m_master;}
+	bool isMaster(void) const;
 
 	//! \return whether this MCPD is terminated on the synchronization bus or not
-	bool isTerminated(void) {return isMaster() ? true : m_term;}
+	bool isTerminated(void) const;
 
 	//! \return whether this MCPD has enabled external sync
-	bool isExtsynced(void) {return m_extsync;}
+	bool isExtsynced(void) const;
 
 	bool setMasterClock(quint64);
 
 	//! returns the number of received data packages
-	quint64 receivedData() {return m_dataRxd;} 
+	quint64 receivedData() const;
 
 	//! returns the number of missed data packages
-	quint64 missedData() {return m_dataMissed;}
+	quint64 missedData() const;
 
 	//! returns the number of received cmd answer packages
-	quint64 receivedCmds() {return m_cmdRxd;} 
+	quint64 receivedCmds() const;
 
-	//! returns the number of sent cmd packages 
-	quint64 sentCmds() {return m_cmdTxd;} 
+	//! returns the number of sent cmd packages
+	quint64 sentCmds() const;
 
 // commands: General MCPD-8 settings
 	bool setCounterCell(quint16 source, quint16 trigger, quint16 compare);
@@ -189,9 +189,9 @@ public:
 
 	quint8	getPulsPos(quint8 addr, bool preset = false);
 
-	quint8	getPulsAmp(quint8 addr, bool preset = false); 
+	quint8	getPulsAmp(quint8 addr, bool preset = false);
 
-	quint8	getPulsChan(quint8 addr, bool preset = false); 
+	quint8	getPulsChan(quint8 addr, bool preset = false);
 
 	bool setMode(quint16 addr, bool mode);
 
@@ -235,7 +235,7 @@ public:
 	float version(quint16 mod);
 
 	//! \return number of modules found
-	quint8 numModules(void); // {return m_mpsd.size();}
+	quint8 numModules(void);
 
 	bool init(void);
 
@@ -253,12 +253,12 @@ public:
 	 * \return ???
 	 * \see setStream
 	 */
-	bool getStream(void) {return m_stream;}
+	bool getStream(void) const;
 
 //	bool serialize(QDataStream ds);
 
 	//! \return the current time of the MCPD in msec
-	quint64 time(void) {return m_timemsec;}
+	quint64 time(void) const;
 
 	bool setRunId(quint32 runid);
 
@@ -268,7 +268,7 @@ public:
 	 * \return run ID
 	 * \see setRunId
 	 */
-	quint32 getRunId(void) {return m_runId;}
+	quint32 getRunId(void) const;
 
 	quint16 bins();
 
@@ -290,13 +290,13 @@ private slots:
 	// void commTimeout(void);
 
 signals:
-	//! this will be emitted if the MCPD-8 was started 
+	//! this will be emitted if the MCPD-8 was started
 	void startedDaq(void);
 
-	//! this will be emitted if the MCPD-8 was stopped 
+	//! this will be emitted if the MCPD-8 was stopped
 	void stoppedDaq(void);
 
-	//! this will be emitted if the MCPD-8 was continued 
+	//! this will be emitted if the MCPD-8 was continued
 	void continuedDaq(void);
 
 	/**
@@ -322,10 +322,7 @@ protected:
             \param index
             \param value
          */
-	void setBuffer(quint8 index, quint16 value)
-	{
-		m_cmdBuf.data[index] = value;
-	}
+	void setBuffer(quint8 index, quint16 value);
 
 private:
 	quint16 calcChksum(const MDP_PACKET &buffer);
@@ -409,7 +406,7 @@ private:
 	//! the header time in ms
 	quint64		m_timemsec;
 
-	//! the firmware version 
+	//! the firmware version
 	float		m_version;
 
 	//! last register read value

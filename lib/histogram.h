@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -62,13 +62,13 @@ public:
 	void clear(void);
 
 	//! \return the maximum value of the spectrum
-	quint64 max() {return m_width ? m_data[m_maximumPos] : 0;}
+	quint64 max();
 
 	//! \return the first position of the maximum value of the spectrum
-	quint16 maxpos(void) const {return m_maximumPos;}
+	quint16 maxpos(void) const;
 
 	//! \return sum of counts in the spectrum
-	quint64 getTotalCounts(void) const {return m_totalCounts;}
+	quint64 getTotalCounts(void) const;
 
 	float mean(float &s);
 
@@ -85,10 +85,7 @@ public:
 	/*!
 	   \return the width of the spectrum
 	*/
-	quint16	width(void) const
-	{
-		return m_width;
-	}
+	quint16	width(void) const;
 
 	void setWidth(const quint16 w);
 
@@ -111,13 +108,13 @@ public:
 	QString format(void);
 
 	//! \return auto resizing of the spectrum
-	bool autoResize(void) const {return m_autoResize;}
+	bool autoResize(void) const;
 
 	/**
 	 * sets the autoresizing capability of the spectrum
 	 * \param resize
 	 */
-	void setAutoResize(const bool resize) {m_autoResize = resize;}
+	void setAutoResize(const bool resize);
 
 private:
 	void calcFloatingMean(const quint16 bin);
@@ -196,17 +193,17 @@ public:
 	Spectrum *spectrum(const quint16 channel);
 
 	//! \return the x sum spectrum
-	Spectrum *xSumSpectrum(void) {return &m_xSumSpectrum;}
+	Spectrum *xSumSpectrum(void);
 
 	//! \return the y sum spectrum
-	Spectrum *ySumSpectrum(void) {return &m_ySumSpectrum;}
+	Spectrum *ySumSpectrum(void);
 
 	quint64 max(const quint16 channel) const;
 
 	virtual quint64 max(void) const;
 
 	//! \return the number of the first tube containing the maximum value
-	virtual quint16 maxpos(void) const {return m_maximumPos;}
+	virtual quint16 maxpos(void) const;
 
 	quint16 maxpos(const quint16 channel) const;
 
@@ -238,14 +235,14 @@ public:
 	void setHeight(const quint16 h);
 
 	//! /return the width of the histogram
-	virtual quint16 width(void) const {return m_width;}
+	virtual quint16 width(void) const;
 
 	void setWidth(const quint16);
 
 	void resize(const quint16 w, const quint16 h);
 
 	//! \return auto resizing of the spectrum
-	bool autoResize(void) const {return m_autoResize;}
+	bool autoResize(void) const;
 
 	/**
 	 * sets the autoresizing capability of the spectrum

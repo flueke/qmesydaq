@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,4 +31,14 @@ MPSD8SingleADC::MPSD8SingleADC(quint8 id, QObject *parent)
 	: MPSD8(id, parent)
 {
 	m_mpsdId = TYPE_MPSD8SADC;
+}
+
+QString MPSD8SingleADC::getType(void) const
+{
+	return tr("MPSD-8 (single ADC)");
+}
+
+int MPSD8SingleADC::type(void) const
+{
+	return TYPE_MPSD8SADC;
 }

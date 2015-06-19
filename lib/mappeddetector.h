@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013-2014 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
+ *   Copyright (C) 2013-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
  *                    Eric Faustmann <eric.faustmann@helmholtz-berlin.de>, *
  *                    Damian Rhein <damian.rhein@helmholtz-berlin.de>      *
  *                                                                         *
@@ -34,22 +34,27 @@
 class LIBQMESYDAQ_EXPORT MappedDetector
 {
 public:
-	MappedDetector() { clr(); }
-	MappedDetector(int iStartInput, int iEndInput, int iStartOutput, int iEndOutput, float fFactor)
-		{ set(iStartInput, iEndInput, iStartOutput, iEndOutput, fFactor); }
-	MappedDetector(const MappedDetector &src) { set(src); }
+	MappedDetector();
 
-	inline int   getStartInput()  const { return m_iStartInput; }
-	inline int   getEndInput()    const { return m_iEndInput; }
-	inline int   getStartOutput() const { return m_iStartOutput; }
-	inline int   getEndOutput()   const { return m_iEndOutput; }
-	inline float getFactor()      const { return m_fFactor; }
+	MappedDetector(int iStartInput, int iEndInput, int iStartOutput, int iEndOutput, float fFactor);
 
-	inline void clr() { set(-1, -1, -1, -1, 0.0); }
-	inline void operator=(const MappedDetector &src) { set(src); }
+	MappedDetector(const MappedDetector &src);
 
-	inline void set(const MappedDetector &src)
-		{ set(src.m_iStartInput, src.m_iEndInput, src.m_iStartOutput, src.m_iEndOutput, src.m_fFactor); }
+	int   getStartInput()  const;
+
+	int   getEndInput()    const;
+
+	int   getStartOutput() const;
+
+	int   getEndOutput()   const;
+
+	float getFactor()      const;
+
+	void clr();
+
+	void operator=(const MappedDetector &src);
+
+	inline void set(const MappedDetector &src);
 
 	void set(int iStartInput, int iEndInput, int iStartOutput, int iEndOutput, float fFactor);
 
@@ -69,13 +74,13 @@ private:
 class ListedMappedDetector : public MappedDetector
 {
 public:
-	ListedMappedDetector() : MappedDetector(), m_iChannelNr(0) {}
-	ListedMappedDetector(const MappedDetector &src, int iChannelNr)
-		: MappedDetector(src), m_iChannelNr(iChannelNr) {}
+	ListedMappedDetector();
 
-	int getChannelNumber() const { return m_iChannelNr; }
+	ListedMappedDetector(const MappedDetector &src, int iChannelNr);
 
-	void setChannelNumber(int nr) { m_iChannelNr=nr; }
+	int getChannelNumber() const;
+
+	void setChannelNumber(int nr);
 
 private:
 	int m_iChannelNr;

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -35,22 +35,19 @@ public:
 	MSTD16(quint8 id, QObject *parent = 0);
 
 	//! \return the type of the MPSD as string
-	QString getType(void) {return tr("MSTD-16");}
+	QString getType(void) const;
 
 	//! \return the type of the MPSD as number
-	virtual int type(void) {return TYPE_MSTD16;}
+	virtual int type(void) const;
 
-	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
+	virtual void setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);
 
 	virtual QList<quint16> getHistogramList(void);
 
 //	virtual QList<quint16> getActiveList(void);
 
 	//! \return the number of available channels
-	virtual quint8	getChannels() const {return 16;}
-
-protected:
-
+	virtual quint8 getChannels() const;
 };
 
 #endif

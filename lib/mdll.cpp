@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2009-2014 by Gregor Montermann, mesytec GmbH & Co. KG   *
+ *   Copyright (C) 2009-2015 by Gregor Montermann, mesytec GmbH & Co. KG   *
  *      g.montermann@mesytec.com                                           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -370,3 +370,63 @@ void MDLL::serialize(QFile *fi)
         t << '\r' << '\n';
 }
 #endif
+
+quint8 MDLL::getModuleId(void) const
+{
+	return TYPE_MDLL;
+}
+
+QString MDLL::getType(void) const
+{
+	return tr("MDLL");
+}
+
+int MDLL::type(void) const
+{
+	return TYPE_MDLL;
+}
+
+quint8 MDLL::getThreshold(quint8 val) const
+{
+	return m_thresh[val][1];
+}
+
+quint16 MDLL::getTimingWindow(quint8 val) const
+{
+	return m_timingWindow[val][1];
+}
+
+quint8 MDLL::getEnergyWindow(quint8 val) const
+{
+	return m_energyWindow[val][1];
+}
+
+quint8 MDLL::getDataset(void) const
+{
+	return m_dataset[1];
+}
+
+quint8 MDLL::getPulsPos(bool preset) const
+{
+	return m_pulsPos[preset];
+}
+
+quint8 MDLL::getPulsAmp(bool preset) const
+{
+	return m_pulsAmp[preset];
+}
+
+bool MDLL::isPulserOn(bool preset) const
+{
+	return m_pulser[preset];
+}
+
+void MDLL::setMode(bool timing, bool preset)
+{
+	m_timingMode[preset] = timing;
+}
+
+bool MDLL::getMode(bool preset) const
+{
+	return m_timingMode[preset];
+}

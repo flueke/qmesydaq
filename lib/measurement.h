@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -185,60 +185,42 @@ public:
 		\todo monitor mapping configuration
 		\return counter value for the monitor 1
 	 */
-	quint64	mon1() const
-	{
-		return m_counter[MON1ID]->value();
-	}
+	quint64	mon1() const;
 
 	/**
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2
 	 */
-	quint64	mon2() const
-	{
-		return m_counter[MON2ID]->value();
-	}
+	quint64	mon2() const;
 
 	/**
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2
 	 */
-	quint64	mon3() const
-	{
-		return m_counter[MON3ID]->value();
-	}
+	quint64	mon3() const;
 
 	/**
 		gets the value of the defined monitor 2
 		\todo monitor mapping configuration
 		\return counter value for the monitor 2
 	 */
-	quint64	mon4() const
-	{
-		return m_counter[MON4ID]->value();
-	}
+	quint64	mon4() const;
 
 	/**
 		gets the value of the defined event counter
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	events() const
-	{
-		return m_counter[EVID]->value();
-	}
+	quint64	events() const;
 
 	/**
 		gets the value of the timer
 		\todo counter mapping configuration
 		\return counter value for the event counter
 	 */
-	quint64	timer() const
-	{
-		return m_counter[TIMERID]->value();
-	}
+	quint64	timer() const;
 
 	/**
 		gets the number of all events in the selected ROI
@@ -248,10 +230,7 @@ public:
 	quint64 eventsInROI(const HistogramType t);
 
 	//! \return time of the last header read from interface
-	quint64 getHeadertime(void) const
-	{
-		return m_headertime;
-	}
+	quint64 getHeadertime(void) const;
 
 	void writeHistograms(const QString &name);
 
@@ -281,7 +260,7 @@ public:
 	Spectrum *spectrum(const SpectrumType t);
 
 	//! \return the mapping and correction data for position histogram
-	MapCorrection *&posHistMapCorrection() {return m_posHistMapCorrection;}
+	MapCorrection *&posHistMapCorrection();
 
 	void getMean(const HistogramType t, float &, float &);
 	void getMean(const HistogramType t, quint16, float &, float &);
@@ -292,58 +271,40 @@ public:
 
 // run ID oriented methods
 	//! \return the current run ID
-	quint32 runId(void) const
-	{
-		return m_mesydaq->runId();
-	}
+	quint32 runId(void) const;
 
 	/*!
             sets the runid for the measurement
             \param runid
 	 */
-	void setRunId(const quint32 runid)
-	{
-		m_mesydaq->setRunId(runid);
-	}
+	void setRunId(const quint32 runid);
 
 	//! \return selection, if run id should incremented automatically
-	bool getAutoIncRunId() const
-	{
-		return m_mesydaq->getAutoIncRunId();
-	}
+	bool getAutoIncRunId() const;
 
 	//! select, if run id should incremented automatically
-	void setAutoIncRunId(bool b)
-	{
-		m_mesydaq->setAutoIncRunId(b);
-	}
+	void setAutoIncRunId(bool b);
 
 	//! \return write protect closed files is enabled
-	bool getWriteProtection() const {return m_mesydaq->getWriteProtection();}
+	bool getWriteProtection() const;
 
 	//! write protect closed files
-	void setWriteProtection(bool b) {m_mesydaq->setWriteProtection(b);}
+	void setWriteProtection(bool b);
 
 	//! \return write protect closed files is enabled
-	HistogramFileFormat getHistogramFileFormat() const {return m_histogramFileFormat;}
+	HistogramFileFormat getHistogramFileFormat() const;
 
 	//! write protect closed files
 	void setHistogramFileFormat(HistogramFileFormat f);
 
 	//! returns the current operation mode
-	Mode mode(void) const
-	{
-		return m_mode;
-	}
+	Mode mode(void) const;
 
 	//! returns the current operation state
-	Status status(void) const
-	{
-		return m_status;
-	}
+	Status status(void) const;
 
 	//! \returns return hardware acquisition status
-	bool hwstatus(bool *pbAck = NULL) const {return m_mesydaq->status(pbAck);}
+	bool hwstatus(bool *pbAck = NULL) const;
 
 // calibration file oriented methods
 	/**
@@ -354,10 +315,7 @@ public:
 	void setCalibrationfilename(const QString &name);
 
 	//! \return name of the current calibration data file
-	QString getCalibrationfilename(void) const
-	{
-		return m_calibrationfilename;
-	}
+	QString getCalibrationfilename(void) const;
 
 // histogram file oriented methods
 	/**
@@ -368,10 +326,7 @@ public:
 	void setHistfilepath(const QString &path);
 
 	//! \return path to store all histogram data files
-	QString getHistfilepath(void) const
-	{
-		return m_histPath;
-	}
+	QString getHistfilepath(void) const;
 
 	/**
 	 * sets the file name of a histogram data file
@@ -381,10 +336,7 @@ public:
 	void setHistfilename(const QString &name);
 
 	//! \return name of the current histogram data file
-	QString getHistfilename(void) const
-	{
-		return m_histfilename;
-	}
+	QString getHistfilename(void) const;
 
 // list mode oriented methods
 	/**
@@ -395,10 +347,7 @@ public:
 	void setListfilepath(const QString &path);
 
 	//! \return path to store all list mode data files
-	QString getListfilepath(void) const
-	{
-		return m_listPath;
-	}
+	QString getListfilepath(void) const;
 
 	/**
 	 * sets the list mode file name
@@ -408,10 +357,7 @@ public:
 	void setListfilename(const QString &name);
 
 	//! \return name of the current list mode data file
-	QString getListfilename(void) const
-	{
-		return m_mesydaq ? m_mesydaq->getListfilename() : "";
-	}
+	QString getListfilename(void) const;
 
 // configuration file oriented methods
 	/**
@@ -422,10 +368,7 @@ public:
 	void setConfigfilepath(const QString &path);
 
 	//! \return path to store all config files
-	QString getConfigfilepath(void) const
-	{
-		return m_configPath;
-	}
+	QString getConfigfilepath(void) const;
 
 	/**
 	 * sets the config file name
@@ -442,10 +385,7 @@ public:
 	bool saveSetup(const QString &name);
 
         //! returns the current setup type of the configuration
-	Setup setupType(void) const
-	{
-		return m_setup;
-	}
+	Setup setupType(void) const;
 
 	/**
          * sets the setup type
@@ -460,17 +400,14 @@ public:
 	void updateSetupType(void);
 
 	//! \return get access to the hardware layer
-	Mesydaq2 *getMesydaq() {return m_mesydaq;}
+	Mesydaq2 *getMesydaq() const;
 
 public slots:
 	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
 	void calcRates();
 
-	void setHeadertime(quint64 ht)
-	{
-		m_headertime = ht;
-	}
+	void setHeadertime(quint64 ht);
 
 private slots:
 	void requestStop(void);

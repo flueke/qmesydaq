@@ -1,5 +1,5 @@
 /****************************************************************************
- *   Copyright (C) 2008-2014 by Gregor Montermann <g.montermann@mesytec.com>*
+ *   Copyright (C) 2008-2015 by Gregor Montermann <g.montermann@mesytec.com>*
  *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>      *
  *   Copyright (C) 2011-2015 by Lutz Rossa <rossa@helmholtz-berlin.de>      *
  *                                                                          *
@@ -99,7 +99,7 @@ quint64 Mesydaq2::receivedCmds(void)
 }
 
 //! \return number of sent cmd packages for the whole setup
-quint64 Mesydaq2::sentCmds(void) 
+quint64 Mesydaq2::sentCmds(void)
 {
 	quint64 cmdTxd = 0;
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -150,7 +150,7 @@ void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
 /*!
     \fn Mesydaq2::isMaster(quint16 mod)
     \param mod number of the MCPD
-    \return is the MCPD master or not 
+    \return is the MCPD master or not
 */
 bool Mesydaq2::isMaster(quint16 mod)
 {
@@ -174,7 +174,7 @@ bool Mesydaq2::isExtsynced(quint16 mod)
 /*!
     \fn Mesydaq2::isTerminated(quint16 mod)
     \param mod number of the MCPD
-    \return is the MCPD terminated or not 
+    \return is the MCPD terminated or not
 */
 bool Mesydaq2::isTerminated(quint16 mod)
 {
@@ -555,7 +555,7 @@ void Mesydaq2::scanPeriph(quint16 id)
     Note: MesyDAQ INI file format is not used correctly, because the section
 	  names are not unique: imagine you don't have a single MCPD-8 + MPSD-8 ...
 
-    \param settings 
+    \param settings
     \return true if successfully saved otherwise false
  */
 bool Mesydaq2::saveSetup(QSettings &settings)
@@ -568,9 +568,9 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 	settings.setValue("repeaterport", m_pDatSender->GetPort());
 	settings.setValue("repeaterenable", m_pDatSender->GetEnabled() ? "true" : "false");
 	settings.endGroup();
-	
+
 	int i = 0;
-	foreach(MCPD8 *value, m_mcpd) 
+	foreach(MCPD8 *value, m_mcpd)
 	{
 		QString mcpdName = QString("MCPD-%1").arg(i);
 
@@ -607,7 +607,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 		for (int j = 0; j < 8; ++j)
 		{
 			quint16 cells[2];
-	    		value->getCounterCell(j, &cells[0]);
+			value->getCounterCell(j, &cells[0]);
 			settings.setValue(QString("counterCell%1").arg(j), QString("%1 %2").arg(cells[0]).arg(cells[1]));
 		}
 		settings.endGroup();
@@ -685,13 +685,13 @@ bool Mesydaq2::saveSetup(QSettings &settings)
     \note MesyDAQ INI file format is not used correctly, because the section
 	  names are not unique: imagine you don't have a single MCPD-8 + MPSD-8 ...
 
-    \param settings 
+    \param settings
     \return true if successfully loaded otherwise false
  */
 bool Mesydaq2::loadSetup(QSettings &settings)
 {
-	int 		nMcpd(0);
-	bool 		bOK(false);
+	int		nMcpd(0);
+	bool		bOK(false);
 
 	foreach (MCPD8* value, m_mcpd)
 		delete value;
@@ -797,7 +797,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		}
 		int iMCPDId = iId / 8;
 		int j = iId % 8;
-		quint8 	gains[16],
+		quint8	gains[16],
 			threshold,
 			channels(8);
 		bool	comgain(true);
@@ -865,10 +865,10 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized() &&
 		    getModuleId(iMCPDId, 0) == TYPE_MDLL)
 		{
-			quint8 	thresh[3], 
-				shift[2], 
-				scale[2], 
-				dataset, 
+			quint8	thresh[3],
+				shift[2],
+				scale[2],
+				dataset,
 				ewindow[2];
 			quint16 twindow[4];
 
@@ -917,7 +917,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 {
 #if 0
-	if (event->timerId() == m_checkTimer)	
+	if (event->timerId() == m_checkTimer)
 		checkMcpd(0);
 #endif
 }
@@ -956,7 +956,7 @@ void Mesydaq2::allPulserOff()
     \fn Mesydaq2::setTimingwidth(quint8 width)
 
     defines a timing width ????
- 
+
     \todo not really implemented
 
     \param width ????
@@ -965,7 +965,7 @@ void Mesydaq2::setTimingwidth(quint8 width)
 {
 	m_timingwidth = width;
 	if(width > 48)
-    		m_timingwidth = 48;
+		m_timingwidth = 48;
 #if defined (_MSC_VER)
 #	pragma message("ToDo")
 #else
@@ -974,7 +974,7 @@ void Mesydaq2::setTimingwidth(quint8 width)
 //! \todo set the timing width of the histogram
 #if 0
 	if (m_hist)
-   		m_hist->setWidth(m_timingwidth); 
+		m_hist->setWidth(m_timingwidth);
 #endif
 }
 
@@ -1031,7 +1031,7 @@ quint16 Mesydaq2::getTxMode(quint16 id, quint8 mod)
     \param reg number of the register
     \return content of the register
     \see writePeriReg
- 
+
  */
 quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 {
@@ -1165,7 +1165,7 @@ void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QStrin
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
-}	
+}
 
 /*!
     \fn void Mesydaq2::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const
@@ -1388,11 +1388,11 @@ void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint8 thresh)
 /*!
     \overload Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 
-    set the threshold value 
+    set the threshold value
 
     \param id number of the MCPD
     \param addr number of the module
-    \param thresh threshold value 
+    \param thresh threshold value
     \see getThresh
 */
 void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
@@ -1737,7 +1737,7 @@ quint16 Mesydaq2::getParamSource(quint16 id, quint16 param)
 		return m_mcpd[id]->getParamSource(param);
 	return 0;
 }
-	
+
 /*!
     \fn Mesydaq2::getAuxTimer(quint16 id, quint16 timer)
 
@@ -1823,7 +1823,7 @@ quint32 Mesydaq2::runId(void)
 	//! and the configuration will not be reloaded
 	foreach (MCPD8* value, m_mcpd)
 		if (value->isMaster())
-			return value->getRunId(); 
+			return value->getRunId();
 #endif
 }
 /*!
@@ -1865,7 +1865,7 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			MSG_FATAL << tr("OLD PACKAGE : %1 < %2").arg(headertime / 10000).arg(m_starttime_msec);
 			return;
 		}
-		
+
 		quint16 mod = dp->deviceId;
 //		m_runID = dp->runID;
 		quint32 datalen = (dp->bufferLength - dp->headerLength) / 3;
@@ -2146,4 +2146,60 @@ bool Mesydaq2::isSynced() const
 		if (!pMCPD->isSynced())
 			return false;
 	return true;
+}
+
+void Mesydaq2::setListfilename(const QString &name)
+{
+	m_listfilename = name;
+}
+
+QString Mesydaq2::getListfilename() const
+{
+	return m_listfilename;
+}
+
+const QByteArray& Mesydaq2::getListFileHeader() const
+{
+	return m_datHeader;
+}
+
+bool Mesydaq2::getAutoIncRunId() const
+{
+	return m_bAutoIncRunId;
+}
+
+void Mesydaq2::setAutoIncRunId(bool b)
+{
+	m_bAutoIncRunId = b;
+}
+
+bool Mesydaq2::getWriteProtection() const
+{
+	return m_bWriteProtect;
+}
+
+void Mesydaq2::setWriteProtection(bool b)
+{
+	m_bWriteProtect = b;
+}
+
+quint16 Mesydaq2::numMCPD(void) const
+{
+	return m_mcpd.size();
+}
+
+bool Mesydaq2::acqListfile() const
+{
+	return m_acquireListfile;
+}
+
+bool Mesydaq2::autoSaveHistogram() const
+{
+	return m_autoSaveHistogram;
+}
+
+void Mesydaq2::setHeadertime(quint64 ht)
+{
+	emit headerTimeChanged(ht);
+	emit newCmdPackageReceived();
 }
