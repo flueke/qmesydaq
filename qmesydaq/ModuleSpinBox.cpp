@@ -107,7 +107,10 @@ void ModuleSpinBox::stepBy(int steps)
 		else
 		{
 			QList<int>::const_iterator it = qLowerBound(m_modList, pos);
-			setValue(*it);
+			if (*it < pos)
+				setValue(*it);
+			else if (it != m_modList.begin())
+				setValue(*(--it));
 		}
 	}
 }
