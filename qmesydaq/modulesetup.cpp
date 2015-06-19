@@ -133,12 +133,6 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	module->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
 
-	for (int i = 0; i < 16; ++i)
-	{
-		m_histogram[i]->setChecked(m_theApp->histogram(devid->value(), module->value(), i));
-		m_active[i]->setChecked(m_theApp->active(devid->value(), module->value(), i));
-	}
-
 	channel->setModuleList(m_theApp->channelId(devid->value(), module->value()));
 
 	displaySlot();
@@ -256,15 +250,6 @@ void ModuleSetup::setMCPD(int id)
 	module->setModuleList(modules);
 	module->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
-	int mid = module->value();
-	int channels = m_theApp->getChannels(id, mid);
-
-	for (int i = 0; i < 16; ++i)
-	{
-		bool bEnabled(i < channels);
-		m_active[i]->setChecked(bEnabled && m_theApp->active(id, mid, i));
-		m_histogram[i]->setChecked(bEnabled && m_theApp->histogram(id, mid, i));
-	}
 
 	displayMCPDSlot();
 }
@@ -353,8 +338,10 @@ void ModuleSetup::displaySlot()
 // histogram/active:
 	for (int i = 0; i < 16 && i < channels; ++i)
 	{
-		m_histogram[i]->setChecked(m_theApp->active(mod, id, i));
-		m_active[i]->setChecked(m_theApp->histogram(mod, id, i));
+		bool bHistogram = m_theApp->histogram(mod, id, i);
+		m_histogram[i]->setChecked(bHistogram);
+		m_active[i]->setChecked(m_theApp->active(mod, id, i));
+		m_active[i]->setVisible(bHistogram);
 	}
 }
 
