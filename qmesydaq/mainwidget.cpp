@@ -81,7 +81,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_histogram(NULL)
 	, m_histoType(Measurement::PositionHistogram)
 	, m_pulserDialog(NULL)
-	, m_remoteStart(true)
+	, m_remoteStart(false)
 {
 	setupUi(this);
 #ifndef USE_CARESS
@@ -517,41 +517,41 @@ void MainWidget::checkListfilename(bool checked)
 {
 	if (checked)
 	{
-		QString name(QString::null);
-		MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-		bool bAsk = true;
-		if(app)
-		{
-			QMesyDAQDetectorInterface *interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
-			if (interface)
-				name = interface->getListFileName();
-		}
-
+		QString sFilename(QString::null);
+		bool bAsk(true);
 		if (m_remoteStart)
 		{
-			if (!name.isEmpty())
-				name = m_meas->getListfilepath() + "/" + name;
+			MultipleLoopApplication *pApp(dynamic_cast<MultipleLoopApplication*>(QApplication::instance()));
+			if (pApp)
+			{
+				QMesyDAQDetectorInterface *interface(dynamic_cast<QMesyDAQDetectorInterface *>(pApp->getQtInterface()));
+				if (interface)
+					sFilename = interface->getListFileName();
+				if (!sFilename.isEmpty())
+					sFilename = m_meas->getListfilepath() + "/" + sFilename;
+			}
 		}
-		else if (name.isEmpty())
+		else
 		{
-			name = selectListfile();
+			sFilename = selectListfile();
 			bAsk = false;
 		}
 
-		if (!name.isEmpty() && QFile::exists(name))
+		if (!sFilename.isEmpty() && QFile::exists(sFilename))
 		{
 			// files exists
-			if (bAsk && m_meas->getWriteProtection()) // ask user for other file name
-				name = selectListfile();
-			if (!name.isEmpty() && QFile::exists(name) && !QFile::remove(name)) // try to delete file or do not acquire list file
-				name.clear();
+			if (bAsk && m_meas->getWriteProtection()) // ask user for another file name
+				sFilename = selectListfile();
+			// try to delete file or do not acquire list file
+			if (!sFilename.isEmpty() && QFile::exists(sFilename) && !QFile::remove(sFilename))
+				sFilename.clear();
 		}
 
-		if(!name.isEmpty())
-			m_theApp->setListfilename(name);
+		if(!sFilename.isEmpty())
+			m_theApp->setListfilename(sFilename);
 		else
 		{
-			MSG_DEBUG << tr("disable list file");
+			MSG_DEBUG << tr("disable auto write list mode file");
 			acquireListFile->setChecked(false);
 		}
 	}
@@ -590,43 +590,46 @@ QString MainWidget::selectHistogramfile(QString sName)
 
     \param bEnabled
 */
-void MainWidget::checkHistogramFilename(bool bEnabled)
+void MainWidget::checkHistogramFilename(bool checked)
 {
- 	if (!bEnabled)
-		return;
-
-	QString sFilename(QString::null);
-	MultipleLoopApplication *pApp(dynamic_cast<MultipleLoopApplication*>(QApplication::instance()));
-	bool bAsk = true;
-	if (pApp)
+ 	if (checked)
 	{
-		QMesyDAQDetectorInterface *pInterface = dynamic_cast<QMesyDAQDetectorInterface*>(pApp->getQtInterface());
-		if (pInterface)
-			sFilename = pInterface->getHistogramFileName();
-	}
+		QString sFilename(QString::null);
+		bool bAsk(true);
+		if (m_remoteStart)
+		{
+			MultipleLoopApplication *pApp(dynamic_cast<MultipleLoopApplication *>(QApplication::instance()));
+			if (pApp)
+			{
+				QMesyDAQDetectorInterface *pInterface(dynamic_cast<QMesyDAQDetectorInterface*>(pApp->getQtInterface()));
+				if (pInterface)
+					sFilename = pInterface->getHistogramFileName();
+				if (!sFilename.isEmpty())
+					sFilename = m_meas->getHistfilepath() + "/" + sFilename;
+			}
+		}
+		else
+		{
+			sFilename = selectHistogramfile(QString::null);
+			bAsk = false;
+		}
 
-	if (sFilename.isEmpty() && !m_remoteStart)
-	{
-		sFilename = selectHistogramfile(QString::null);
-		bAsk = false;
-	}
-	else
-		sFilename = m_meas->getHistfilepath() + "/" + sFilename;
-
-	if (!sFilename.isEmpty() && QFile::exists(sFilename))
-	{
-		// files exists
-		if (bAsk && m_meas->getWriteProtection()) // ask user for other file name
-			sFilename = selectHistogramfile(sFilename);
-		if (!sFilename.isEmpty() && QFile::exists(sFilename) && !QFile::remove(sFilename)) // try to delete file or do not acquire list file
-			sFilename.clear();
-	}
-
-	m_meas->setHistfilename(sFilename);
-	if (sFilename.isEmpty())
-	{
-		MSG_DEBUG << tr("disable autosaving histogram file");
-		autoSaveHistogram->setChecked(false);
+		if (!sFilename.isEmpty() && QFile::exists(sFilename))
+		{
+			// files exists
+			if (bAsk && m_meas->getWriteProtection()) // ask user for another file name
+				sFilename = selectHistogramfile(sFilename);
+			// try to delete file or do not write histogram file
+			if (!sFilename.isEmpty() && QFile::exists(sFilename) && !QFile::remove(sFilename))
+				sFilename.clear();
+		}
+		if (!sFilename.isEmpty())
+			m_meas->setHistfilename(sFilename);
+		else
+		{
+			MSG_DEBUG << tr("disable autosaving histogram file");
+			autoSaveHistogram->setChecked(false);
+		}
 	}
 	emit redraw();
 }
