@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008 by Lutz Rossa <rossa@hmi.de>                       *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -92,6 +92,7 @@ void TCPLoop::runLoop()
 	else
 	{
 		m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
+		connect(m_server, SIGNAL(help()), this, SLOT(help()), Qt::DirectConnection);
 		connect(m_server, SIGNAL(start()), this, SLOT(start()), Qt::DirectConnection);
 		connect(m_server, SIGNAL(stop()), this, SLOT(stop()), Qt::DirectConnection);
 		connect(m_server, SIGNAL(clear()), this, SLOT(clear()), Qt::DirectConnection);
@@ -126,6 +127,40 @@ void TCPLoop::runLoop()
 			app->processEvents(QEventLoop::AllEvents, 10);
 		} while (true);
 	}
+}
+
+void TCPLoop::help(void)
+{
+	m_server->sendAnswer("MESYDAQ HELP\n"
+	"at the moment are the following commands implemented:\n"
+	"actions:\n"
+	"\tMESYDAQ [START|STOP|CLEAR|RESET]\n"
+	"sets:\n"
+	"\tMESYDAQ [TIMER|EVENT|MONITOR1|MONITOR2] PRESETVAL\n"
+	"queries:\n"
+	"\tMESYDAQ STATUS -> MESYDAQ [STARTED|STOPPED]\n"
+	"\n"
+	"\tMESYDAQ GET HISTOGRAM -> Histogram in Mesytec histogram format\n"
+	"\tMESYDAQ GET TIMER -> timer\n"
+	"\tMESYDAQ GET EVENT -> events over all\n"
+	"\tMESYDAQ GET MONITOR[1|2] -> monitors\n"
+	"configs set:\n"
+	"\tMESYDAQ CONFIG LISTMODE [ON|OFF] -> switches save listmode data on|off\n"
+	"\tMESYDAQ CONFIG LISTMODE FILE file -> sets the listmode file name to file\n"
+	"\n"
+	"\tMESYDAQ CONFIG HISTOGRAM [ON|OFF] -> switches save histogram data on|off\n"
+	"\tMESYDAQ CONFIG HISTOGRAM FILE file -> sets the histogram file name to file\n"
+	"\tMESYDAQ CONFIG HISTOGRAM TYPE [RAW|MAPPED|AMPLITUDE] -> sets the type for histogram reading\n"
+	"configs read:\n"
+	"\tMESYDAQ CONFIG LISTMODE -> [ON|OFF]\n"
+	"\tMESYDAQ CONFIG LISTMODE FILE -> filename\n"
+	"\n"
+	"\tMESYDAQ CONFIG HISTOGRAM -> [ON|OFF]\n"
+	"\tMESYDAQ CONFIG HISTOGRAM TYPE -> [RAW|MAPPED|AMPLITUDE]\n"
+	"\tMESYDAQ CONFIG HISTOGRAM FILE -> filename\n"
+	"help:\n"
+	"\tMESYDAQ HELP\n"
+	);
 }
 
 void TCPLoop::start(void)

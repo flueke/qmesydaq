@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2011-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -120,8 +120,8 @@ void RemoteServer::destroySocket()
     \fn void RemoteServer::parseInput(const QString &line)
 
     callback to parse the input line an react on the data
-   
-    add the moment are the following commands implemented
+
+    at the moment are the following commands implemented
 	actions:
 		MESYDAQ [START|STOP|CLEAR|RESET]
 	sets:
@@ -144,6 +144,8 @@ void RemoteServer::destroySocket()
 		MESYDAQ CONFIG HISTOGRAM -> [ON|OFF]
 		MESYDAQ CONFIG HISTOGRAM TYPE -> [RAW|MAPPED|AMPLITUDE]
 		MESYDAQ CONFIG HISTOGRAM FILE -> filename
+	help:
+		MESYDAQ HELP
 
     for actions and settings it returns the strings MESYDAQ OK" or "MESYDAQ NOTOK"
     depending on the input data. If all was fine the the OK is sent otherwise NOTOK.
@@ -168,7 +170,11 @@ void RemoteServer::parseInput(const QString &line)
 		QString cmd = l.at(1);
 		MSG_DEBUG << tr("command : %1").arg(cmd);
 
-		if (cmd == "START")
+		if (cmd == "HELP")
+		{
+			emit help();
+		}
+		else if (cmd == "START")
 		{
 			emit start();
 		}
