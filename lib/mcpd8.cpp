@@ -113,7 +113,7 @@ bool MCPD8::init(void)
 
     MSG_NOTICE << tr("capabilities : %1").arg(cap);
 
-    if (m_version < 8.18)
+    if (m_version < 8.18 || m_fpgaVersion < 5.0)
         modus = TP;
 
     for (quint8 c = 0; c < 8; c++)
