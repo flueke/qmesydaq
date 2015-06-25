@@ -88,6 +88,8 @@ public:
 
 	quint16 getTxMode(quint16 id);
 
+	quint16 getTxMode(quint16 id, quint8 mod);
+
 // list mode oriented methods
 	/**
 	 * sets the file name of a list mode data file

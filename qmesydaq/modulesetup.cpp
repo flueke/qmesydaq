@@ -131,6 +131,8 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	QList<int> modules = m_theApp->mpsdId(devid->value());
 	module->setModuleList(modules);
 	module->setDisabled(modules.empty());
+	ampdiscGroup->setDisabled(modules.empty());
+	modeGroup->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
 
 	channel->setModuleList(m_theApp->channelId(devid->value(), module->value()));
@@ -249,6 +251,8 @@ void ModuleSetup::setMCPD(int id)
 	QList<int> modules = m_theApp->mpsdId(id);
 	module->setModuleList(modules);
 	module->setDisabled(modules.empty());
+	modeGroup->setDisabled(modules.empty());
+	ampdiscGroup->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
 
 	displayMCPDSlot();
@@ -272,6 +276,8 @@ void ModuleSetup::displayMCPDSlot(int id)
 			modList << i;
 	module->setModuleList(modList);
 	module->setDisabled(modList.empty());
+	modeGroup->setDisabled(modList.empty());
+	ampdiscGroup->setDisabled(modList.empty());
 	histogramGroupBox->setDisabled(modList.empty());
 	displaySlot();
 }
@@ -301,10 +307,8 @@ void ModuleSetup::displaySlot()
 	quint8 mod = devid->value();
 	quint8 id = module->value();
 	quint8 channels = m_theApp->getChannels(mod, id);
-	int modType = m_theApp->getModuleId(mod, id);
 	quint8 chan = comgain->isChecked() ? channels : channel->value();
-	posMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
-	ampMode->setEnabled(modType != TYPE_MPSD8P && modType != TYPE_MDLL);
+	modeGroup->setEnabled(module->isEnabled() && m_theApp->getTxMode(mod, id) != TPA);
 
 	for (int i = 0; i < 16; ++i)
 	{

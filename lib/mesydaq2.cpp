@@ -1008,6 +1008,20 @@ quint16 Mesydaq2::getTxMode(quint16 id)
 }
 
 /*!
+ * \fn quint16 Mesydaq2::getTxMode(quint16 id, quint8 mod)
+ * reads the current set transmission mod of the central module
+ *
+ *  \param id number of the MCPD
+ *  \return the central module transmission mode
+ */
+quint16 Mesydaq2::getTxMode(quint16 id, quint8 mod)
+{
+	if (m_mcpd.empty() || !m_mcpd.contains(id))
+		return 0;
+	return m_mcpd[id]->getTxMode(mod);
+}
+
+/*!
     \fn Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 
     reads the content of a register in a module

@@ -110,7 +110,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QGroupBox" name="groupBox13">
+        <widget class="QGroupBox" name="ampdiscGroup">
          <property name="title">
           <string>Amplifiers, Discriminator</string>
          </property>
