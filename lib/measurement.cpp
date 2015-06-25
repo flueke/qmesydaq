@@ -308,7 +308,6 @@ void Measurement::start()
 		c->start(m_starttime_msec);
 		MSG_INFO<< tr("counter %1 value : %2 limit : %3").arg(*c).arg(c->value()).arg(c->limit());
 	}
-	setROI(QRectF(0, 0, m_mesydaq->width(), m_mesydaq->height()));
 }
 
 /*!
@@ -851,7 +850,6 @@ void Measurement::readHistograms(const QString &name)
 					m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 			// create the mapped histogram
 			reinterpret_cast<MappedHistogram *>(m_Hist[CorrectedPositionHistogram])->setHistogram(m_Hist[PositionHistogram]);
-			setROI(QRectF(0, 0, width(), height()));
 		}
 		f.close();
 	}
@@ -1477,36 +1475,9 @@ void Measurement::getMean(const SpectrumType t, float &mean, float &sigma)
 	mean = m_Spectrum[t]->mean(sigma);
 }
 
-/*!
-    \fn void Measurement::setROI(QRectF r)
-
-    define a region of interest (ROI) for counting all events in it
-
-    \param r rectangle as ROI
-    \see getROI
- */
-void Measurement::setROI(const QRectF &r)
+quint64 Measurement::eventsInROI(const HistogramType t, const QRect &roi)
 {
-	int x = floor(r.x()),	// to ensure, that we always in the left column
-	    y = floor(r.y()),	// or bottom row
-	    w = round(r.width()),	// we should use the best fit
-	    h = round(r.height());
-	m_roi = QRect(x, y, w, h);
-}
-/*!
-    \fn QRectF Measurement::getROI(void) const
-
-    \return the "region of interest"
-    \see getROI
- */
-QRect Measurement::getROI(void) const
-{
-	return m_roi;
-}
-
-quint64 Measurement::eventsInROI(const HistogramType t)
-{
-	quint64 tmp = m_Hist[t]->getCounts(m_roi);
+	quint64 tmp = m_Hist[t]->getCounts(roi);
 	return tmp;
 }
 

@@ -29,7 +29,6 @@
 
 class QTimer;
 
-class Zoomer;
 class MesydaqPlotSpectrogram;
 class MesydaqSpectrumData;
 class MesydaqHistogramData;
@@ -276,6 +275,12 @@ private:
 	QDialog 		*m_pulserDialog;
 
 	bool			m_remoteStart;
+
+#if QWT_VERSION >= 0x060000
+	QRectF 			m_zoomedRect;
+#else
+	QwtDoubleRect 		m_zoomedRect;
+#endif
 };
 
 #endif

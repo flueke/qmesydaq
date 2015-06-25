@@ -190,6 +190,8 @@ public:
 
 	quint64 getCounts(const QRect &r) const;
 
+	quint64 getCounts(const QRectF &r) const;
+
 	Spectrum *spectrum(const quint16 channel);
 
 	//! \return the x sum spectrum

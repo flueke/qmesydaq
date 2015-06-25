@@ -567,6 +567,7 @@ quint64 Histogram::getTotalCounts(void) const
  */
 quint64 Histogram::getCounts(const QRect &region) const
 {
+	MSG_DEBUG << "getCounts(" << region << ")";
 	quint64 tmp(0);
 	int h = region.y() + region.height();
 	int w = region.x() + region.width();
@@ -580,6 +581,50 @@ quint64 Histogram::getCounts(const QRect &region) const
 	return tmp;
 }
 
+/*!
+    \fn quint64 Histogram::getCounts(const QRectF &region) const
+
+    Returns the number of events in the region given by the parameter region. Since the
+    given region contains floating point numbers but the histogram has only discrete steps
+    in x and y direction a cutting must be performed. The resulting counts are coming from
+    all entries lying completely inside the region. If the region is smaller than 1 pixel
+    in the histogram the only pixel value is taken.
+
+    \param region region of interest
+    \return the number of events in the region
+ */
+quint64 Histogram::getCounts(const QRectF &r) const
+{
+	MSG_DEBUG << "getCounts(" << r << ")";
+	int 	x = ceil(r.x()),   	// to ensure, that we always on the left edge
+		y = ceil(r.y()),   	// or bottom edge of the full pixel
+		w = floor(r.x() + r.width()) - x,	// This should be the right edge
+		h = floor(r.y() + r.height()) - y;	// or top edge of the pixel
+	if (w < 1)		// we are inside one pixel
+	{
+		w = 1;
+		if (r.width() > 1 || ceil(r.x()) == floor(r.x() + r.width()))
+		{
+			if (fabs(r.x() - x) > fabs(r.x() + r.width() - x))	// take the pixel with the bigger part
+				x -= 1;
+		}
+		else
+			x -= 1;
+	}
+	if (h < 1)		// we are inside one pixel
+	{
+		h = 1;
+		if (r.height() > 1 || ceil(r.y()) == floor(r.y() + r.height()))
+		{
+			if (fabs(r.y() - y) > fabs(r.x() + r.height() - y))	// take the pixel with the bigger part
+				y -= 1;
+		}
+		else
+			y -= 1;
+	}
+	QRect region(x, y, w, h);
+	return getCounts(region);
+}
 /*!
     \fn Histogram::spectrum(const quint16 channel)
 

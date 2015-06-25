@@ -176,10 +176,6 @@ public:
 	//! \returns the number of counts in the defined ROI
 	quint64	getROICounts(void) const;
 
-	void	setROI(const QRectF &r);
-
-        QRect	getROI(void) const;
-
 	/**
 		gets the value of the defined monitor 1
 		\todo monitor mapping configuration
@@ -227,7 +223,7 @@ public:
 		\todo counter mapping configuration
 		\return events in ROI
 	 */
-	quint64 eventsInROI(const HistogramType t);
+	quint64 eventsInROI(const HistogramType t, const QRect &roi);
 
 	//! \return time of the last header read from interface
 	quint64 getHeadertime(void) const;
@@ -494,9 +490,6 @@ private:
 
 	//! timer for online checking
 	int		m_onlineTimer;
-
-	//! stores the ROI
-	QRect		m_roi;
 
 	//! contains the number of received data packages
 	quint32		m_packages;

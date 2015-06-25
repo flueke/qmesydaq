@@ -361,8 +361,7 @@ void MainWidget::zoomed(const QRectF &rect)
 			w,
 			h;
 		rect.getRect(&x, &y, &w, &h);
-
-		m_meas->setROI(QRectF(x, y, w, h));
+		m_zoomedRect = QRectF(x, y, w, h);
 		emit redraw();
 	}
 }
@@ -750,7 +749,7 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 void MainWidget::clearAllSlot()
 {
 	m_meas->clearAllHist();
-	m_meas->setROI(QRectF(0, 0, 0, 0));
+	m_zoomedRect = QRectF(0, 0, 0, 0);
 	m_meas->setHistfilename("");
 	m_meas->clearCounter(TIMERID);
 	m_meas->clearCounter(EVID);
@@ -823,7 +822,7 @@ void MainWidget::replayListfileSlot()
 #if 0
 		m_meas->setROI(QRectF(0, 0, m_meas->width(), m_meas->height()));
 #else
-		m_meas->setROI(QRectF(0, 0, 0, 0));
+		m_zoomedRect = QRectF(0, 0, 0, 0);
 #endif
 		m_dispTimer = startTimer(1000);
 		m_theApp->setListfilename(QFileInfo(name).fileName());
@@ -1491,8 +1490,8 @@ void MainWidget::draw(void)
 		m_dataFrame->setAxisScale(QwtPlot::yRight, 0, 1.0);
 		return;
 	}
-	if (m_meas->getROI().isEmpty())
-		m_meas->setROI(QRectF(0, 0, width(), height()));
+	if (m_zoomedRect.isEmpty())
+		m_zoomedRect = QRectF(0, 0, width(), height());
 	Spectrum *spec(NULL);
 	Histogram *histogram(NULL);
 	switch (m_mode)
@@ -1504,11 +1503,11 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
 			}
 			histogram = m_meas->hist(Measurement::HistogramType(m_histoType));
-			histogram->calcMinMaxInROI(m_meas->getROI());
+			histogram->calcMinMaxInROI(m_zoomedRect);
 			m_histData->setData(histogram);
 			m_dataFrame->setHistogramData(m_histData);
 			labelCountsInROI->setText(tr("Counts in ROI"));
-			countsInROI->setText(tr("%1").arg(histogram->getCounts(m_meas->getROI())));
+			countsInROI->setText(tr("%1").arg(histogram->getCounts(m_zoomedRect)));
 			break;
 		case Plot::Diffractogram :
 			spec = m_meas->spectrum(Measurement::Diffractogram);
