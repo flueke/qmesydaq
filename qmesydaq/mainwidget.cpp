@@ -959,6 +959,8 @@ void MainWidget::loadConfiguration(const QString& sFilename)
 		if (!QDir(m_meas->getListfilepath()).exists())
 			QMessageBox::warning(this, tr("No list mode file storing file path"),
 						tr("The list mode file storing file path<br><b>%1</b><br>does not exists!").arg(m_meas->getListfilepath()));
+		QSettings settings(sFilename, QSettings::IniFormat);
+		configComment->setText(settings.value("MESYDAQ/comment", "QMesyDAQ configuration file").toString());
 	}
 	configfilename->setText(m_meas->getConfigfilename());
 	acquireListFile->setChecked(m_meas->acqListfile());
