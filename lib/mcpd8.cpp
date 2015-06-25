@@ -106,14 +106,15 @@ bool MCPD8::init(void)
     if(m_mdll.find(0) != m_mdll.end())
             return true;
 
-    int modus = TPA;
     quint16 cap = capabilities(false);
+    MSG_NOTICE << tr("capabilities : %1").arg(cap);
+
     if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
         return false;
 
-    MSG_NOTICE << tr("capabilities : %1").arg(cap);
+    int modus = getTxMode();
 
-    if (m_version < 8.18 || m_fpgaVersion < 5.0)
+    if (modus == TPA && (m_version < 8.18 || m_fpgaVersion < 5.0))
         modus = TP;
 
     for (quint8 c = 0; c < 8; c++)
