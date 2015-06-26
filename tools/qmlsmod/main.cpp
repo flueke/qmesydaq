@@ -46,6 +46,21 @@ const char *g_szShortUsage = "[-v]";
 
 const char *g_szLongUsage = "  -v print the version number";
 
+QString capToString(int cap)
+{
+	QStringList ret;
+	QTextStream cout(stderr);
+	if (!(cap & 0b111))
+		return "unknown";
+	if (cap & 0b100)
+		ret << "TPA";
+	if (cap & 0b010)
+		ret << "TP";
+	if (cap & 0b001)
+		ret << "P";
+	return ret.join("|");
+}
+
 QString modeToString(int mode)
 {
 	switch (mode)
@@ -96,11 +111,11 @@ int main(int argc, char **argv)
 	QTextStream cout(stderr);
 
 	cout << QObject::tr("%2 : MCPD : %1 (FPGA: %6, id=%3), cap: %4: TX mode: %5\n").arg(m->version()).arg(m->ip()).arg(id)
-					.arg(modeToString(m->capabilities(false))).arg(modeToString(m->getTxMode())).arg(m->fpgaVersion());
+					.arg(capToString(m->capabilities(false))).arg(modeToString(m->getTxMode())).arg(m->fpgaVersion());
 
 	for (quint8 i = 0; i < 8; ++i)
 		cout << QObject::tr("module %1 (%4): id: %2, version: %3, capabilities: %5, mode: %6\n").arg(i + 1).arg(m->getModuleId(i)).
-			arg(m->version(i), 0, 'f', 2).arg(m->getModuleType(i)).arg(modeToString(m->capabilities(i))).arg(modeToString(m->getTxMode(i)));
+			arg(m->version(i), 0, 'f', 2).arg(m->getModuleType(i)).arg(capToString(m->capabilities(i))).arg(modeToString(m->getTxMode(i)));
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
