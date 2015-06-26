@@ -416,6 +416,9 @@ void MainWidget::startStopSlot(bool checked)
 		startStopButton->setText("Stop");
 		// set device id to 0 -> will be filled by mesydaq for master
 		m_meas->start();
+		Histogram *h = m_meas->hist(m_histoType);
+		m_roi[m_histoType] = QRect(0, 0, h->width(), h->height());
+		setHistogramType(m_histoType);
 		m_time.restart();
 		m_dispTimer = startTimer(500);
 	}
@@ -1023,6 +1026,12 @@ void MainWidget::updateMeasurement(void)
 		dispMstdSpectrum->setChecked(true);
 		setDisplayMode(Plot::SingleSpectrum);
 	}
+	for (int i = 0; i < 3; ++i)
+	{
+		Histogram *h = m_meas->hist(Measurement::HistogramType(i));
+		m_roi[i] = QRect(0, 0, h->width(), h->height());
+	}
+	setHistogramType(Measurement::PositionHistogram);
 	emit redraw();
 }
 
@@ -1100,8 +1109,19 @@ void MainWidget::drawOpData()
 		else if(specialBox->isChecked())
 			m_meas->getMean(Measurement::TimeSpectrum, mean, sigma);
 	}
-	meanText->setText(tr("%1").arg(mean, 3, 'f', 1));
-	sigmaText->setText(tr("%1").arg(sigma, 3, 'f', 1));
+	if (m_userLevel == MainWidget::SuperUser)
+	{
+		meanText->setText(tr("%1").arg(mean, 3, 'f', 1));
+		sigmaText->setText(tr("%1").arg(sigma, 3, 'f', 1));
+		QRect r = roi();
+		if (!r.isEmpty())
+		{
+			Histogram *histogram = m_meas->hist(Measurement::HistogramType(m_histoType));
+			roiCount->setText(tr("%1").arg(histogram->getCounts(r)));
+		}
+		else
+			roiCount->setText("0");
+	}
 
 // pulser warning
 	if(m_theApp->isPulserOn())
@@ -1417,22 +1437,43 @@ void MainWidget::mpsdCheck(int mod)
 void MainWidget::setHistogramType(int val)
 {
 	m_histoType = Measurement::HistogramType(val);
-#if 0
-	switch (val)
+	switch (m_histoType)
 	{
 		case Measurement::PositionHistogram :
 		case Measurement::AmplitudeHistogram:
 		case Measurement::CorrectedPositionHistogram:
 			{
+				// Change the ROI settings
+				Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+
+				roiX->blockSignals(true);
+				roiY->blockSignals(true);
+				roiWidth->blockSignals(true);
+				roiHeight->blockSignals(true);
+
+				roiX->setMaximum(h->width() - 1);
+				roiX->setValue(m_roi[m_histoType].x());
+				roiY->setMaximum(h->height() - 1);
+				roiY->setValue(m_roi[m_histoType].y());
+				roiWidth->setMaximum(h->width() - m_roi[m_histoType].x());
+				roiWidth->setValue(m_roi[m_histoType].width());
+				roiHeight->setMaximum(h->height() - m_roi[m_histoType].y());
+				roiHeight->setValue(m_roi[m_histoType].height());
+
+				roiHeight->blockSignals(false);
+				roiWidth->blockSignals(false);
+				roiY->blockSignals(false);
+				roiX->blockSignals(false);
+#if 0
                 		m_histogram = m_meas->hist(Measurement::HistogramType(val));
                 		m_histData->setData(m_histogram);
                 		m_dataFrame->setHistogramData(m_histData);
+#endif
 			}
 			break;
 		default :
 			break;
 	}
-#endif
 	emit redraw();
 }
 
@@ -1516,7 +1557,7 @@ void MainWidget::draw(void)
 			histogram->calcMinMaxInROI(m_zoomedRect);
 			m_histData->setData(histogram);
 			m_dataFrame->setHistogramData(m_histData);
-			labelCountsInROI->setText(tr("Counts in ROI"));
+			labelCountsInROI->setText(tr("Counts in displayed region"));
 			countsInVOI->setText(tr("%1").arg(histogram->getCounts(m_zoomedRect)));
 			break;
 		case Plot::Diffractogram :
@@ -2547,20 +2588,24 @@ void MainWidget::selectUserMode(int val)
 			realTimeLabel->setHidden(true);
 			extendedStatusBox->setHidden(true);
 			deltaTimingBox->setHidden(true);
+			roiBox->setHidden(true);
 			break;
 		case MainWidget::Expert:
 			realTimeLabel->setVisible(true);
 			extendedStatusBox->setHidden(true);
 			deltaTimingBox->setHidden(true);
+			roiBox->setHidden(true);
 			break;
 		case MainWidget::SuperUser:
 			realTimeLabel->setVisible(true);
 			extendedStatusBox->setVisible(true);
 			deltaTimingBox->setVisible(true);
+			roiBox->setVisible(true);
 			break;
 		default:
 			break;
 	}
+	m_userLevel = UserLevel(val);
 }
 
 /*!
@@ -2592,4 +2637,77 @@ void MainWidget::sumSpectra(bool val)
 	else
 		dispAllChannels->setChecked(false);
 	emit redraw();
+}
+
+QRect MainWidget::roi(void)
+{
+	QRect r(0, 0, 0, 0);
+	if (m_userLevel == MainWidget::SuperUser)
+	{
+		r.setX(roiX->value());
+		r.setY(roiY->value());
+		r.setWidth(roiWidth->value());
+		r.setHeight(roiHeight->value());
+	}
+	return r;
+}
+
+void MainWidget::changeRoiX(const int val)
+{
+	m_roi[m_histoType].setX(val);
+	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int newVal = roiWidth->value() + val;
+	roiWidth->setMaximum(h->width() - val);
+	if (newVal > h->width() && val > m_roi[m_histoType].x())
+		roiWidth->setValue(roiWidth->maximum());
+	else
+	{
+		m_roi[m_histoType].setWidth(roiWidth->value());
+		draw();
+	}
+}
+
+void MainWidget::changeRoiY(const int val)
+{
+	m_roi[m_histoType].setY(val);
+	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int newVal = roiHeight->value() + val;
+	roiHeight->setMaximum(h->height() - val);
+	if (newVal > h->height() && val > m_roi[m_histoType].y())
+		roiHeight->setValue(roiHeight->maximum());
+	else
+	{
+		m_roi[m_histoType].setHeight(roiHeight->value());
+		draw();
+	}
+}
+
+void MainWidget::changeRoiWidth(const int val)
+{
+	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int newVal = roiY->value() + val;
+	if (newVal > h->width())
+	{
+		roiWidth->setMaximum(h->width() - roiX->value());
+		roiWidth->setValue(roiWidth->maximum());
+		m_roi[m_histoType].setWidth(roiWidth->value());
+	}
+	else
+		m_roi[m_histoType].setWidth(val);
+	draw();
+}
+
+void MainWidget::changeRoiHeight(const int val)
+{
+	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int newVal = roiX->value() + val;
+	if (newVal > h->height())
+	{
+		roiHeight->setMaximum(h->height() - roiY->value());
+		roiHeight->setValue(roiHeight->maximum());
+		m_roi[m_histoType].setHeight(roiHeight->value());
+	}
+	else
+		m_roi[m_histoType].setHeight(val);
+	draw();
 }

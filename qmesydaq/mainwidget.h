@@ -214,6 +214,14 @@ private slots:
 
         void dispAllChannelsChanged(bool);
 
+	void changeRoiX(const int);
+
+	void changeRoiY(const int);
+
+	void changeRoiWidth(const int);
+
+	void changeRoiHeight(const int);
+
 private:
 	void 	dispFiledata(void);
 
@@ -228,6 +236,8 @@ private:
 	QString selectHistogramfile(QString sName);
 
 	void	updateMeasurement(void);
+
+	QRect	roi(void);
 
 private:
 	//! The MesyDaq object
@@ -282,6 +292,9 @@ private:
 #else
 	QwtDoubleRect 		m_zoomedRect;
 #endif
+	UserLevel		m_userLevel;
+
+	QRect			m_roi[3];
 };
 
 #endif
