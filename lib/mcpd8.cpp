@@ -113,6 +113,11 @@ bool MCPD8::init(void)
         return false;
 
     int modus = getTxMode();
+    if (modus == 0)
+    {
+        MSG_ERROR << "TX mode not set init with TPA";
+        modus = TPA;
+    }
 
     if (modus == TPA && (m_version < 8.18 || m_fpgaVersion < 5.0))
         modus = TP;
