@@ -31,7 +31,7 @@ void ConfigFileDialog::init(void)
 	setAcceptMode(AcceptSave);
 	setDefaultSuffix("mcfg");
 
-	QGridLayout *grid = reinterpret_cast<QGridLayout *>(layout());
+	QGridLayout *grid = dynamic_cast<QGridLayout *>(layout());
 	int rowCount = grid->rowCount();
 	QWidget *w00 = grid->itemAtPosition(rowCount - 2, 0)->widget();
 	QWidget *w10 = grid->itemAtPosition(rowCount - 1, 0)->widget();
