@@ -83,6 +83,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	, m_histoType(Measurement::PositionHistogram)
 	, m_pulserDialog(NULL)
 	, m_remoteStart(false)
+	, m_zoomedRect(0, 0, 0, 0)
 {
 	setupUi(this);
 #ifndef USE_CARESS
@@ -1458,6 +1459,7 @@ void MainWidget::setDisplayMode(int val)
 {
 	m_mode = Plot::Mode(val);
 	m_dataFrame->setDisplayMode(m_mode);
+	m_zoomedRect = QRectF();
 	switch(m_mode)
 	{
 		case Plot::Spectrum:
@@ -1498,8 +1500,6 @@ void MainWidget::draw(void)
 		m_dataFrame->setAxisScale(QwtPlot::yRight, 0, 1.0);
 		return;
 	}
-	if (m_zoomedRect.isEmpty())
-		m_zoomedRect = QRectF(0, 0, width(), height());
 	Spectrum *spec(NULL);
 	Histogram *histogram(NULL);
 	switch (m_mode)
@@ -1511,20 +1511,24 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
 			}
 			histogram = m_meas->hist(Measurement::HistogramType(m_histoType));
+			if (m_zoomedRect.isEmpty())
+				m_zoomedRect = QRectF(0, 0, histogram->width(), histogram->height());
 			histogram->calcMinMaxInROI(m_zoomedRect);
 			m_histData->setData(histogram);
 			m_dataFrame->setHistogramData(m_histData);
 			labelCountsInROI->setText(tr("Counts in ROI"));
-			countsInROI->setText(tr("%1").arg(histogram->getCounts(m_zoomedRect)));
+			countsInVOI->setText(tr("%1").arg(histogram->getCounts(m_zoomedRect)));
 			break;
 		case Plot::Diffractogram :
 			spec = m_meas->spectrum(Measurement::Diffractogram);
+			if (m_zoomedRect.isEmpty())
+				m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
 			labelCountsInROI->setText(tr("Counts"));
-			countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
+			countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
 			break;
 		case Plot::SingleSpectrum :
 			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
@@ -1534,10 +1538,12 @@ void MainWidget::draw(void)
 			}
 			else
 				spec = m_meas->spectrum(Measurement::SingleTubeSpectrum);
+			if (m_zoomedRect.isEmpty())
+				m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
 			labelCountsInROI->setText(tr("Counts"));
-			countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
+			countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
 			break;
 		case Plot::Spectrum :
 			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
@@ -1550,10 +1556,12 @@ void MainWidget::draw(void)
 					spec = m_meas->data(Measurement::AmplitudeHistogram);
 				else
 					spec = m_meas->data(Measurement::CorrectedPositionHistogram);
+				if (m_zoomedRect.isEmpty())
+					m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 				m_data->setData(spec);
 				labelCountsInROI->setText(tr("Counts"));
 				m_dataFrame->setSpectrumData(m_data);
-				countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
+				countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
 			}
 			else
 			{
@@ -1563,10 +1571,12 @@ void MainWidget::draw(void)
 				if (specialBox->isChecked())
 				{
 					spec = m_meas->spectrum(Measurement::TimeSpectrum);
+					if (m_zoomedRect.isEmpty())
+						m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 					m_data->setData(spec);
 
 					labelCountsInROI->setText(tr("Time"));
-					countsInROI->setText(tr("%1").arg(spec->getTotalCounts()));
+					countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
 				}
 				else if (dispAllChannels->isChecked())
 				{
@@ -1581,10 +1591,14 @@ void MainWidget::draw(void)
 						else
 							spec = m_meas->data(Measurement::AmplitudeHistogram, chan + i);
 						if (spec)
-							counts += spec->getTotalCounts();
+						{
+							if (m_zoomedRect.isEmpty())
+								m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+							counts += spec->getCounts(m_zoomedRect);
+						}
 						m_specData[i]->setData(spec);
 						m_dataFrame->setSpectrumData(m_specData[i], i);
-						countsInROI->setText(tr("%1").arg(counts));
+						countsInVOI->setText(tr("%1").arg(counts));
 					}
 				}
 				else
@@ -1595,10 +1609,12 @@ void MainWidget::draw(void)
 						spec = m_meas->data(Measurement::PositionHistogram, dispMcpd->value(), dispMpsd->value(), dispChan->value());
 					else
 						spec = m_meas->data(Measurement::AmplitudeHistogram, dispMcpd->value(), dispMpsd->value(), dispChan->value());
+					if (m_zoomedRect.isEmpty())
+						m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 					m_data->setData(spec);
 					if (spec)
-						counts = spec->getTotalCounts();
-					countsInROI->setText(tr("%1").arg(counts));
+						counts = spec->getCounts(m_zoomedRect);
+					countsInVOI->setText(tr("%1").arg(counts));
 					m_dataFrame->setSpectrumData(m_data);
 				}
 			}

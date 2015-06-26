@@ -70,6 +70,9 @@ public:
 	//! \return sum of counts in the spectrum
 	quint64 getTotalCounts(void) const;
 
+	//! \return sum of counst in the spectrum range
+	quint64 getCounts(const QRectF &) const;
+
 	float mean(float &s);
 
 //	quint64 operator[](quint16 index) {return m_data[index];}
@@ -80,7 +83,7 @@ public:
 	 * \param index position inside the spectrum for the required counts
 	 * \return the number of neutrons
 	 */
-	quint64 value(const quint16 index);
+	quint64 value(const quint16 index) const;
 
 	/*!
 	   \return the width of the spectrum

@@ -144,7 +144,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="countsInROI">
+         <widget class="QLabel" name="countsInVOI">
           <property name="text">
            <string>0</string>
           </property>

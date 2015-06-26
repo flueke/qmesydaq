@@ -250,7 +250,7 @@ void Spectrum::resize(const quint16 bins)
 	m_width = bins;
 }
 
-quint64 Spectrum::value(const quint16 index)
+quint64 Spectrum::value(const quint16 index) const
 {
 	if (index < m_width)
 		return m_data[index];
@@ -270,6 +270,29 @@ quint16 Spectrum::maxpos(void) const
 quint64 Spectrum::getTotalCounts(void) const
 {
 	return m_totalCounts;
+}
+
+quint64 Spectrum::getCounts(const QRectF &r) const
+{
+	quint64 sum(0);
+	MSG_DEBUG << "getCounts(" << r << ")";
+	int 	x = ceil(r.x()),   			// to ensure, that we always on the left edge
+		w = floor(r.x() + r.width()) - x;	// This should be the right edge
+	if (w < 1)		// we are inside one pixel
+	{
+		w = 1;
+		if (r.width() > 1 || ceil(r.x()) == floor(r.x() + r.width()))
+		{
+			if (fabs(r.x() - x) > fabs(r.x() + r.width() - x))	// take the pixel with the bigger part
+				x -= 1;
+		}
+		else
+			x -= 1;
+	}
+	w += x;
+	for (int i = x; i < w; ++i)
+		sum += value(i);
+	return sum;
 }
 
 quint16	Spectrum::width(void) const
