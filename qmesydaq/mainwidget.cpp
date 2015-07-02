@@ -1026,6 +1026,8 @@ void MainWidget::updateMeasurement(void)
 		dispMstdSpectrum->setChecked(true);
 		setDisplayMode(Plot::SingleSpectrum);
 	}
+	else
+		setDisplayMode(Plot::Histogram);
 	for (int i = 0; i < 3; ++i)
 	{
 		Histogram *h = m_meas->hist(Measurement::HistogramType(i));
@@ -1506,12 +1508,12 @@ void MainWidget::setDisplayMode(int val)
 	{
 		case Plot::Spectrum:
 			dispAll->setEnabled(true);
+			dispMcpd->setDisabled(dispAll->isChecked());
+			dispMpsd->setDisabled(dispAll->isChecked());
+			dispChan->setDisabled(dispAll->isChecked());
+			dispAllChannels->setDisabled(dispAll->isChecked());
 			if (!dispAll->isChecked())
 			{
-				dispMcpd->setEnabled(true);
-				dispMpsd->setEnabled(true);
-				dispChan->setEnabled(true);
-				dispAllChannels->setEnabled(true);
 				if (dispAllChannels->isChecked())
 					m_dataFrame->setDisplayMode(Plot::ModuleSpectrum);
 			}
