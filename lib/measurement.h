@@ -49,6 +49,7 @@ class LIBQMESYDAQ_EXPORT Measurement : public QObject
 	Q_ENUMS(SpectrumType)
 	Q_ENUMS(Status)
 	Q_ENUMS(HistogramFileFormat)
+	Q_ENUMS(TubeArrangement)
 
 	//! stores the current mode of the measurement
 	Q_PROPERTY(Mode m_mode READ mode)
@@ -105,6 +106,7 @@ public:
 		EnergySpectrum,		//!< ???
 		AmplitudeSpectrum,	//!< Spectrum of the amplitudes (esp. for MDLL)
 		SingleTubeSpectrum,	//!< for MSTD-16
+		SingleLineSpectrum,	//!< Single tubes are arranged in a line instead of an array
 		NoSpectrum,		//!< Do not change this entry, this must be the last entry
 	};
 
@@ -121,6 +123,11 @@ public:
 		Mdll,		//!< MDLL connected
 		Mdll2,		//!< MWPCHR connected
 		Mstd,		//!< MSTD-16
+	};
+
+	enum Arrangement {
+		Square = 0,	//!< MPSD arranged in 2D
+		Line,		//!< MSPD arranged in a single line
 	};
 
 public:
@@ -287,11 +294,17 @@ public:
 	//! write protect closed files
 	void setWriteProtection(bool b);
 
-	//! \return write protect closed files is enabled
+	//! \return histogram file format
 	HistogramFileFormat getHistogramFileFormat() const;
 
-	//! write protect closed files
+	//! select histogram file format
 	void setHistogramFileFormat(HistogramFileFormat f);
+
+	//! select the PSD arrangement
+	void setPsdArrangement(Arrangement a);
+
+	//! \return PSD arrangement
+	Arrangement getPsdArrangement(void) const;
 
 	//! returns the current operation mode
 	Mode mode(void) const;
@@ -536,6 +549,8 @@ private:
 	QVector<quint16> m_tubeMapping;
 
 	HistogramFileFormat  m_histogramFileFormat;
+
+	Arrangement	m_psdArrangement;
 };
 
 #endif

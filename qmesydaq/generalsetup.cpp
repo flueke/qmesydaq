@@ -22,6 +22,7 @@
 
 #include "generalsetup.h"
 #include "measurement.h"
+#include "logging.h"
 
 /*!
     constructor
@@ -49,6 +50,20 @@ GeneralSetup::GeneralSetup(Measurement *meas, QWidget *parent)
 		case Measurement::StandardFormat:
 			standardHistogramFileFormat->setChecked(true);
 	}
+	histogramFileformatButtonGroup->setId(standardHistogramFileFormat, Measurement::StandardFormat);
+	histogramFileformatButtonGroup->setId(simpleHistogramFileFormat, Measurement::SimpleFormat);
+	switch (m_meas->getPsdArrangement())
+	{
+		default:
+		case Measurement::Square:
+			tube2D->setChecked(true);
+			break;
+		case Measurement::Line:
+			tube1D->setChecked(true);
+			break;
+	}
+	arrangementButtonGroup->setId(tube2D, Measurement::Square);
+	arrangementButtonGroup->setId(tube1D, Measurement::Line);
 }
 
 /*!
@@ -117,22 +132,12 @@ void GeneralSetup::selectWriteProtectSlot()
 	m_meas->setWriteProtection(writeProtect->isChecked());
 }
 
-/*!
- *   \fn void GeneralSetup::selectStandardHistogramFileFormat()
- *
- *   callback to select standard histogram file format
- */
-void GeneralSetup::selectStandardHistogramFileFormat()
+int GeneralSetup::getArrangement(void) const
 {
-	m_meas->setHistogramFileFormat(Measurement::StandardFormat);
+	return arrangementButtonGroup->checkedId();
 }
 
-/*!
- *   \fn void GeneralSetup::selectSimpleHistogramFileFormat()
- *
- *   callback to select simple histogram file format
- */
-void GeneralSetup::selectSimpleHistogramFileFormat()
+int GeneralSetup::getHistogramFileFormat(void) const
 {
-	m_meas->setHistogramFileFormat(Measurement::SimpleFormat);
+	return histogramFileformatButtonGroup->checkedId();
 }

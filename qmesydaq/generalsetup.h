@@ -56,6 +56,12 @@ public:
 	//! \return write protect closed files
 	bool getWriteProtection(void)  {return writeProtect->isChecked();}
 
+	//! \return MPSD detector arrangement
+	int getArrangement(void) const;
+
+	//! \return histogram file format
+	int getHistogramFileFormat(void) const;
+
 	/*!
 	    set the last run id
             \param val
@@ -74,10 +80,6 @@ private slots:
 	void selectAutoIncRunIdSlot();
 
 	void selectWriteProtectSlot();
-
-	void selectStandardHistogramFileFormat();
-
-	void selectSimpleHistogramFileFormat();
 
 private:
 	//! store the measurement object

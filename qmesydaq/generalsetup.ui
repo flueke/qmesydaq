@@ -7,74 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>503</width>
-    <height>395</height>
+    <height>483</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>General Setup</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Data file protections</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="writeProtect">
-        <property name="text">
-         <string>write protect data files</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QGroupBox" name="groupBox15">
-     <property name="title">
-      <string>Run ID</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_7">
-      <item row="0" column="0">
-       <widget class="QSpinBox" name="runId">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="toolTip">
-         <string>RUN ID will be transmitted in every data buffer header</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="runIdAuto">
-        <property name="toolTip">
-         <string>increment run ID automatically at every start cmd</string>
-        </property>
-        <property name="text">
-         <string>Auto Incr.</string>
-        </property>
-        <property name="shortcut">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="runIdButton">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string>set Run ID</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -145,6 +84,51 @@
     </widget>
    </item>
    <item row="4" column="0">
+    <widget class="QGroupBox" name="groupBox15">
+     <property name="title">
+      <string>Run ID</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="runId">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>RUN ID will be transmitted in every data buffer header</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="runIdAuto">
+        <property name="toolTip">
+         <string>increment run ID automatically at every start cmd</string>
+        </property>
+        <property name="text">
+         <string>Auto Incr.</string>
+        </property>
+        <property name="shortcut">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="runIdButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>set Run ID</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -168,6 +152,9 @@
         <property name="checked">
          <bool>true</bool>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">histogramFileformatButtonGroup</string>
+        </attribute>
        </widget>
       </item>
       <item row="0" column="1">
@@ -175,6 +162,57 @@
         <property name="text">
          <string>Simple</string>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">histogramFileformatButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Data file protections</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="writeProtect">
+        <property name="text">
+         <string>write protect data files</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="tubeArrangementBox">
+     <property name="title">
+      <string>Arrangement of the tubes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="tube2D">
+        <property name="text">
+         <string>2D detector</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">arrangementButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="tube1D">
+        <property name="text">
+         <string>1D detector</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">arrangementButtonGroup</string>
+        </attribute>
        </widget>
       </item>
      </layout>
@@ -312,38 +350,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>standardHistogramFileFormat</sender>
-   <signal>clicked()</signal>
-   <receiver>GeneralSetup</receiver>
-   <slot>selectStandardHistogramFileFormat()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>59</x>
-     <y>196</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>7</x>
-     <y>210</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>simpleHistogramFileFormat</sender>
-   <signal>clicked()</signal>
-   <receiver>GeneralSetup</receiver>
-   <slot>selectSimpleHistogramFileFormat()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>296</x>
-     <y>193</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>493</x>
-     <y>213</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>selectListpathSlot()</slot>
@@ -352,7 +358,9 @@
   <slot>setRunIdSlot()</slot>
   <slot>selectAutoIncRunIdSlot()</slot>
   <slot>selectWriteProtectSlot()</slot>
-  <slot>selectStandardHistogramFileFormat()</slot>
-  <slot>selectSimpleHistogramFileFormat()</slot>
  </slots>
+ <buttongroups>
+  <buttongroup name="arrangementButtonGroup"/>
+  <buttongroup name="histogramFileformatButtonGroup"/>
+ </buttongroups>
 </ui>

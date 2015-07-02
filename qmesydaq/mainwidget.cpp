@@ -144,7 +144,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	displayModeButtonGroup->setId(dispSpectra, Plot::Spectrum);
 	displayModeButtonGroup->setId(dispHistogram, Plot::Histogram);
 	displayModeButtonGroup->setId(dispDiffractogram, Plot::Diffractogram);
-	displayModeButtonGroup->setId(dispMstdSpectrum, Plot::SingleSpectrum);
+	displayModeButtonGroup->setId(dispSingleSpectrum, Plot::SingleSpectrum);
 
 	versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
 	LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
@@ -660,14 +660,14 @@ void MainWidget::updateDisplay(void)
 		cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
 		cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
 	}
+	if (!m_meas)
+		return;
 	if (statusTab->tabText(ci) == tr("Disk space"))
 	{
 		listModeFileDir->setText(m_meas->getListfilepath());
 		DiskSpace ds(m_meas->getListfilepath());
 		listModeFileDirSpace->setText(QString("%1 GB").arg(ds.availableGB()));
 	}
-	if (!m_meas)
-		return;
 	hTimeText->setText(buildTimestring(m_meas->getHeadertime(), true));
 	mTimeText->setText(buildTimestring(m_meas->timer(), /*getMeastime(),*/ false));
 
@@ -992,17 +992,23 @@ void MainWidget::updateMeasurement(void)
 	displayGroupBox->setDisabled(mcpdList.empty());
 	statusMeasTab->setDisabled(mcpdList.empty());
 	statusModuleTab->setDisabled(mcpdList.empty());
-	dispMstdSpectrum->setVisible(m_meas->setupType() != Measurement::Mpsd);
+	dispSingleSpectrum->setVisible(m_meas->setupType() != Measurement::Mpsd || m_meas->getPsdArrangement() == Measurement::Line);
 	if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
 	{
-		dispMstdSpectrum->setText(tr("Amplitude spectrum"));
+		dispSingleSpectrum->setText(tr("Amplitude spectrum"));
 		dispDiffractogram->setText(tr("Projection to X"));
 		dispSpectra->setText(tr("Projection to Y"));
 	}
 	else if (m_meas->setupType() == Measurement::Mstd)
 	{
-		dispMstdSpectrum->setText(tr("Single spectrum"));
+		dispSingleSpectrum->setText(tr("Single spectrum"));
 		dispChan->setMaximum(15);
+	}
+	else if (m_meas->getPsdArrangement() == Measurement::Line)
+	{
+		dispSingleSpectrum->setText(tr("Full spectrum"));
+		dispSpectra->setText(tr("Spectra"));
+		dispChan->setMaximum(7);
 	}
 	else
 	{
@@ -1010,7 +1016,8 @@ void MainWidget::updateMeasurement(void)
 		dispSpectra->setText(tr("Spectra"));
 		dispChan->setMaximum(7);
 	}
-	dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd);
+	dispDiffractogram->setHidden(m_meas->getPsdArrangement() == Measurement::Line);
+	dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd || m_meas->getPsdArrangement() == Measurement::Line);
 	moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
 	moduleStatus2->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
 	moduleStatus3->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
@@ -1021,13 +1028,16 @@ void MainWidget::updateMeasurement(void)
 // MDLL has only three monitor inputs
 	monitor4Preset->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
 	monitor4Preset->setChecked(false);
-	if (m_meas->setupType() == Measurement::Mstd)
+	if (m_meas->setupType() == Measurement::Mstd || m_meas->getPsdArrangement() == Measurement::Line)
 	{
-		dispMstdSpectrum->setChecked(true);
+		dispSingleSpectrum->setChecked(true);
 		setDisplayMode(Plot::SingleSpectrum);
 	}
 	else
+	{
+		dispHistogram->setChecked(true);
 		setDisplayMode(Plot::Histogram);
+	}
 	for (int i = 0; i < 3; ++i)
 	{
 		Histogram *h = m_meas->hist(Measurement::HistogramType(i));
@@ -1093,7 +1103,7 @@ void MainWidget::drawOpData()
 	// display mean and sigma:
 	if(dispAll->isChecked())
 	{
-		if(dispAllPos->isChecked())
+		if (dispAllPos->isChecked())
 			m_meas->getMean(Measurement::PositionHistogram, mean, sigma);
 		else if (dispAllAmpl->isChecked())
 			m_meas->getMean(Measurement::AmplitudeHistogram, mean, sigma);
@@ -1103,7 +1113,7 @@ void MainWidget::drawOpData()
 	else
 	{
 		quint16 channel = m_meas->calculateChannel(dispMcpd->value(), dispMpsd->value(), dispChan->value());
-		if(dispAllPos->isChecked())
+		if (dispAllPos->isChecked())
 			m_meas->getMean(Measurement::PositionHistogram, channel, mean, sigma);
 		else if (dispAllAmpl->isChecked())
 			m_meas->getMean(Measurement::AmplitudeHistogram, channel, mean, sigma);
@@ -1580,6 +1590,8 @@ void MainWidget::draw(void)
 				spec = m_meas->spectrum(Measurement::AmplitudeSpectrum);
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "amplitude");
 			}
+			else if (m_meas->getPsdArrangement() == Measurement::Line)
+				spec = m_meas->spectrum(Measurement::SingleLineSpectrum);
 			else
 				spec = m_meas->spectrum(Measurement::SingleTubeSpectrum);
 			if (m_zoomedRect.isEmpty())
@@ -1861,6 +1873,9 @@ void MainWidget::setupGeneral()
 		m_meas->setRunId(d.lastRunId());
 		m_meas->setAutoIncRunId(d.getAutoIncRunId());
 		m_meas->setWriteProtection(d.getWriteProtection());
+		m_meas->setHistogramFileFormat(Measurement::HistogramFileFormat(d.getHistogramFileFormat()));
+		m_meas->setPsdArrangement(Measurement::Arrangement(d.getArrangement()));
+		updateMeasurement();
 	}
 }
 

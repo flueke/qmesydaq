@@ -67,6 +67,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_neutrons(0)
 	, m_setup(Mpsd)
 	, m_histogramFileFormat(StandardFormat)
+	, m_psdArrangement(Square)
 {
 	setHistfilepath(getenv("HOME"));
 	setListfilepath(getenv("HOME"));
@@ -109,6 +110,11 @@ void Measurement::setHistogramFileFormat(HistogramFileFormat f)
         QSettings settings(QSettings::IniFormat, QSettings::UserScope, "MesyTec", "QMesyDAQ");
 	settings.setValue("config/histogramfileformat", m_histogramFileFormat);
 	settings.sync();
+}
+
+void Measurement::setPsdArrangement(Arrangement a)
+{
+	m_psdArrangement = a;
 }
 
 quint16 Measurement::height(void) const
@@ -170,6 +176,10 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 		m_Spectrum[SingleTubeSpectrum]->resize(w);
 	else
 		m_Spectrum[SingleTubeSpectrum] = new Spectrum(w);
+	if (m_Spectrum[SingleLineSpectrum])
+		m_Spectrum[SingleLineSpectrum]->resize(w * h);
+	else
+		m_Spectrum[SingleLineSpectrum] = new Spectrum(w * h);
 }
 
 /*!
@@ -203,6 +213,9 @@ void Measurement::destroyHistogram(void)
 	if (m_Spectrum[AmplitudeSpectrum])
 		delete m_Spectrum[AmplitudeSpectrum];
 	m_Spectrum[AmplitudeSpectrum] = NULL;
+	if (m_Spectrum[SingleLineSpectrum])
+		delete m_Spectrum[SingleLineSpectrum];
+	m_Spectrum[SingleLineSpectrum] = NULL;
 #if 0
 	if (m_Spectrum[Diffractogram])
 		delete m_Spectrum[Diffractogram];
@@ -717,6 +730,18 @@ Spectrum *Measurement::spectrum(const SpectrumType t)
 		case TubeSpectrum :
 			if (m_Spectrum[TubeSpectrum]->width() > 0)
 				return m_Spectrum[TubeSpectrum];
+			break;
+		case SingleLineSpectrum :
+			{
+				int pos = 0;
+				for (int i = 0; i < m_Hist[PositionHistogram]->width(); ++i)
+				{
+					Spectrum *spec = m_Hist[PositionHistogram]->spectrum(i);
+					for (int j = 0; j < spec->width(); ++j, ++pos)
+						m_Spectrum[SingleLineSpectrum]->setValue(pos, spec->value(j));
+				}
+			}
+			return m_Spectrum[SingleLineSpectrum];
 			break;
 		case SingleTubeSpectrum :
 			if (m_Spectrum[SingleTubeSpectrum] && m_Spectrum[SingleTubeSpectrum]->width() > 0)
@@ -1594,6 +1619,7 @@ bool Measurement::loadSetup(const QString &name)
 	m_histPath = settings.value("histogramPath", home).toString();
 	m_listPath = settings.value("listfilePath", home).toString();
 	QString sz = settings.value("debugLevel", QString("%1").arg(WARNING)).toString();
+	m_psdArrangement = Arrangement(settings.value("psdarrangement", "0").toInt());
 	int n = sz.toInt(&bOK);
 	if (bOK)
 	{
@@ -1712,6 +1738,7 @@ bool Measurement::saveSetup(const QString &name, const QString &comment)
 	settings.setValue("listfilePath", m_listPath);
 	settings.setValue("debugLevel", QString("%1").arg(debug[DEBUGLEVEL]));
 	settings.setValue("calibrationfile", m_calibrationfilename);
+	settings.setValue("psdarrangement", m_psdArrangement);
 	settings.endGroup();
 
 	UserMapCorrection* pUserMapCorrection(dynamic_cast<UserMapCorrection*>(m_posHistMapCorrection));
@@ -1879,4 +1906,9 @@ quint32 Measurement::runId(void) const
 quint16 Measurement::calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel)
 {
 	return mcpd * 64 + mpsd * 8 + channel;
+}
+
+Measurement::Arrangement Measurement::getPsdArrangement(void) const
+{
+	return m_psdArrangement;
 }
