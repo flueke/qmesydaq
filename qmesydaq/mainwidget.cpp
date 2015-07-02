@@ -1100,12 +1100,13 @@ void MainWidget::drawOpData()
 	}
 	else
 	{
+		quint16 channel = m_meas->calculateChannel(dispMcpd->value(), dispMpsd->value(), dispChan->value());
 		if(dispAllPos->isChecked())
-			m_meas->getMean(Measurement::PositionHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
+			m_meas->getMean(Measurement::PositionHistogram, channel, mean, sigma);
 		else if (dispAllAmpl->isChecked())
-			m_meas->getMean(Measurement::AmplitudeHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
+			m_meas->getMean(Measurement::AmplitudeHistogram, channel, mean, sigma);
 		else if (dispAllCorrectedPos->isChecked())
-			m_meas->getMean(Measurement::CorrectedPositionHistogram, dispMpsd->value() * 8 + dispChan->value(), mean, sigma);
+			m_meas->getMean(Measurement::CorrectedPositionHistogram, channel, mean, sigma);
 		else if(specialBox->isChecked())
 			m_meas->getMean(Measurement::TimeSpectrum, mean, sigma);
 	}

@@ -124,14 +124,10 @@ void Spectrum::calcMaximumPosition(const quint16 bin)
 
 void Spectrum::calcFloatingMean(const quint16 bin)
 {
-#if defined(_MSC_VER)
-#	pragma message("TODO mean value determination")
-#else
-#	warning TODO mean value determination
-#endif
-//! \todo mean value determination
+	// Fill the ring buffer with a size of 256
 	m_floatingMean[m_meanPos & 0xFF] = bin;
 	++m_meanPos;
+	// collect the number of used cells in the ring buffer
 	if(m_meanCount < 255)
 		++m_meanCount;
 }
@@ -202,14 +198,14 @@ void Spectrum::clear(void)
 float Spectrum::mean(float &s)
 {
 	float m = 0;
-	if(m_meanCount > 0)
+	if (m_meanCount > 0)
 	{
-		for(quint8 c = 0; c < m_meanCount; ++c)
+		for (quint8 c = 0; c < m_meanCount; ++c)
 			m += m_floatingMean[c];
 		m /= m_meanCount;
 
 		// calculate sigma
-		for(quint8 c = 0; c < m_meanCount; c++)
+		for (quint8 c = 0; c < m_meanCount; c++)
 		{
 			float tmp = m_floatingMean[c] - m;
 			s += tmp * tmp;
@@ -701,7 +697,7 @@ quint16 Histogram::maxpos(const quint16 channel) const
  */
 void Histogram::getMean(const quint16 chan, float &m, float &s)
 {
-	if (chan < m_height && m_data && m_data[chan])
+	if (chan < m_width && m_data && m_data[chan])
 		m = m_data[chan]->mean(s);
 	else
 		m = s = 0.0;

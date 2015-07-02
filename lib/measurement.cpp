@@ -161,6 +161,8 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 		delete m_Hist[CorrectedPositionHistogram];
 	m_Hist[CorrectedPositionHistogram] = new MappedHistogram(m_posHistMapCorrection, m_Hist[PositionHistogram]);
 
+	if (m_Spectrum[TimeSpectrum])
+		delete m_Spectrum[TimeSpectrum];
 	m_Spectrum[TimeSpectrum] = NULL;
 	m_Spectrum[Diffractogram] = m_Hist[PositionHistogram]->xSumSpectrum();
 	m_Spectrum[TubeSpectrum] = m_Hist[PositionHistogram]->ySumSpectrum();
@@ -1457,7 +1459,8 @@ void Measurement::getMean(const HistogramType t, quint16 chan, float &mean, floa
 	quint16 tmpChan = mapTube(chan);
 	if (tmpChan != 0xFFFF)
 		m_Hist[t]->getMean(tmpChan, mean, sigma);
-	mean = sigma = 0.0;
+	else
+		mean = sigma = 0.0;
 }
 
 /**
@@ -1871,4 +1874,9 @@ void Measurement::setAutoIncRunId(bool b)
 quint32 Measurement::runId(void) const
 {
 	return m_mesydaq->runId();
+}
+
+quint16 Measurement::calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel)
+{
+	return mcpd * 64 + mpsd * 8 + channel;
 }

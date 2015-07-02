@@ -398,6 +398,9 @@ public:
 	//! \return get access to the hardware layer
 	Mesydaq2 *getMesydaq() const;
 
+	//! \return the calculated channel number from the given mcpd, mpsd/mstd, channel
+	quint16 calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel);
+
 public slots:
 	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 

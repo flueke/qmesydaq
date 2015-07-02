@@ -295,7 +295,7 @@ void MainWindow::runningState(bool started)
      \param id id of the MCPD the connection
      \param bLost true=lost  false=resynced
  */
-void MainWindow::lostSync(quint16 id, bool bLost)
+void MainWindow::lostSync(quint16 /* id */, bool /* bLost */)
 {
 	m_lostSync->setVisible(!m_mesy->isSynced());
 }
