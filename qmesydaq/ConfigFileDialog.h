@@ -13,7 +13,7 @@ Q_OBJECT
 public:
 	ConfigFileDialog(QWidget *parent, Qt::WindowFlags flags);
 
-	ConfigFileDialog(QWidget *parent = 0, const QString &caption = QString(), const QString &directory = QString(), const QString &filter = QString());
+	ConfigFileDialog(QWidget *parent = 0, const QString &caption = QString(), const QString &directory = QString(), const QString &filter = QString(), const QString &comment = QString());
 
 	virtual ~ConfigFileDialog();
 

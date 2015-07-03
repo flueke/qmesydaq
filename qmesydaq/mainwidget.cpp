@@ -931,7 +931,8 @@ void MainWidget::scanPeriSlot(bool real)
 */
 void MainWidget::saveSetupSlot()
 {
-	ConfigFileDialog *d = new ConfigFileDialog(this, tr("Save Config File..."), m_meas->getConfigfilepath(), tr("mesydaq config files (*.mcfg);;all files (*.*)"));
+	ConfigFileDialog *d = new ConfigFileDialog(this, tr("Save Config File..."), m_meas->getConfigfilepath(),
+							tr("mesydaq config files (*.mcfg);;all files (*.*)"), configComment->text());
 	if (d->exec() == QDialog::Accepted)
 	{
 		QString name = d->selectedFiles().value(0);

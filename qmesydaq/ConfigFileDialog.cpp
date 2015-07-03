@@ -15,10 +15,11 @@ ConfigFileDialog::ConfigFileDialog(QWidget *parent, Qt::WindowFlags flags)
 	init();
 }
 
-ConfigFileDialog::ConfigFileDialog(QWidget *parent, const QString &caption, const QString &directory, const QString &filter)
+ConfigFileDialog::ConfigFileDialog(QWidget *parent, const QString &caption, const QString &directory, const QString &filter, const QString &comment)
 	: QFileDialog(parent, caption, directory, filter)
 {
 	init();
+	m_comment->setText(comment);
 }
 
 ConfigFileDialog::~ConfigFileDialog()
