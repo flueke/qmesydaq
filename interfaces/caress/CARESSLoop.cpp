@@ -294,7 +294,7 @@ static CORBA::Boolean bindObjectToName(CORBA::ORB_ptr orb, CORBA::Object_ptr obj
   \param[in] interface QtInterface for data exchange between QMesyDAQ and CARESS interface
  */
 CARESSLoop::CARESSLoop(QStringList argList, QtInterface *)
-	: m_bDoLoop(true), m_asArguments(argList), m_pIdleThread(NULL)
+	: m_bDoLoop(true), m_asArguments(argList), m_pDevice(NULL), m_pIdleThread(NULL)
 {
 	setObjectName("CARESSLoop");
 #ifdef Q_OS_UNIX

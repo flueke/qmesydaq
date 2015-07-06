@@ -183,7 +183,6 @@ MapCorrection CaressMapCorrectionDefault::parseCaressMapCorrection(const QString
 	const QChar* pStart=mapping.constData();
 	const QChar* pEOL;
 	const QChar* pEnd=pStart+mapping.count();
-	const QChar* p;
 	QList<mapstorage> aMappings;
 	int i,j,iLine;
 	bool bDetSection=true;
@@ -193,7 +192,7 @@ MapCorrection CaressMapCorrectionDefault::parseCaressMapCorrection(const QString
 	for (iLine=1; pStart<pEnd; ++iLine, pStart=pEOL+1)
 	{
 		bool bCorrE=false;
-		p=NULL;
+		const QChar* p=NULL;
 		for (pEOL=pStart; pEOL<pEnd; ++pEOL)
 		{
 			if (*pEOL=='\r' || *pEOL=='\n') break;
@@ -413,17 +412,17 @@ MapCorrection CaressMapCorrectionDefault::parseCaressMapCorrection(const QString
 MapCorrection CaressMapCorrectionV4::parseCaressMapCorrection(const QString& mapping, int iSrcWidth, int iSrcHeight, int iDstWidth, int iDstHeight)
 {
 	MapCorrection result;
-	const QChar* pStart=mapping.constData();
-	const QChar* pEOL;
-	const QChar* pEnd=pStart+mapping.count();
-	const QChar* p;
 //	QList<mapstorage> aMappings;
-	int i,j,iLine;
-	bool bDetSection=false;
-	QHash<QString,QString> hsData;
 
 	result.setNoMap();
 #if 0
+	QHash<QString,QString> hsData;
+	bool bDetSection=false;
+	int i,j,iLine;
+	const QChar* pEOL;
+	const QChar* p;
+	const QChar* pStart=mapping.constData();
+	const QChar* pEnd=pStart+mapping.count();
 	if (iSrcWidth<1 || iSrcHeight<1) return result;
 
 	for (iLine=1; pStart<pEnd; ++iLine, pStart=pEOL+1)
