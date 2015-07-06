@@ -190,7 +190,7 @@ int device_server (char *server_name, char *pers_name, int m_opt, int s_opt, int
 	long			prog_number=0,
 				status;
 	DevLong			error = 0;
-	int			pid = 0;
+	// int			pid = 0;
 	short			i;
 
 	if (strlen(server_name) >= DS_NAME_LENGTH)
@@ -246,6 +246,7 @@ int device_server (char *server_name, char *pers_name, int m_opt, int s_opt, int
  *  and create device server network name
  */
 
+#if 0
 #if defined (WIN32)
 	pid = _getpid ();
 #elif !defined (vxworks)
@@ -253,6 +254,7 @@ int device_server (char *server_name, char *pers_name, int m_opt, int s_opt, int
 #else  /* !vxworks */
 	pid = taskIdSelf ();
 #endif /* !vxworks */
+#endif
 /*
  * M. Diehl, 22.7.1999
  * We have to take care here, since hostname might be set to the FQDN thus
