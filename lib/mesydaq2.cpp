@@ -808,19 +808,19 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			int moduleID = getModuleId(iMCPDId, j);
 			switch (moduleID)
 			{
-				case TYPE_MDLL :
-				case TYPE_NOMODULE :
+				case TYPE_MDLL:
 					break;
 				case TYPE_MSTD16:
 					channels = 16;
 					ampmode = true;
 					/* no break */
+				case TYPE_NOMODULE:	// If there is no hardware module found it will be assumed, it should be a missed MPSD-8
 				default:
 					for (int k = 0; k < channels; ++k)
 						gains[k] = settings.value(QString("gain%1").arg(k), "92").toUInt();
 					for (int k = 0; k < channels; ++k)
 					{
-						setActive(iMCPDId, j, k, settings.value(QString("active%1").arg(k), "true").toBool());
+						setActive(iMCPDId, j, k, settings.value(QString("active%1").arg(k), moduleID == TYPE_NOMODULE ? "false" : "true").toBool());
 						setHistogram(iMCPDId, j, k, settings.value(QString("histogram%1").arg(k), "true").toBool());
 					}
 
