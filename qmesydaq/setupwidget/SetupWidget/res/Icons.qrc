@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="pc">icons/channel.png</file>
+        <file alias="line">icons/line.png</file>
+        <file alias="load">icons/Load.png</file>
+        <file alias="mcpd">icons/MCPD-8.png</file>
+        <file alias="mpsd">icons/mpsd-8.png</file>
+        <file alias="channel">icons/tube.png</file>
+        <file alias="save">icons/Save.png</file>
+        <file alias="multi">icons/network.ico</file>
+    </qresource>
+</RCC>

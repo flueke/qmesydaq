@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/base">
+        <file alias="line">Base/line.png</file>
+        <file alias="load">Base/Load.png</file>
+        <file alias="save">Base/Save.png</file>
+    </qresource>
+    <qresource prefix="/GSW">
+        <file alias="atom">GSW/atom.png</file>
+        <file alias="module">GSW/module.png</file>
+        <file alias="network">GSW/network.png</file>
+        <file alias="pc">GSW/pc.png</file>
+    </qresource>
+</RCC>
