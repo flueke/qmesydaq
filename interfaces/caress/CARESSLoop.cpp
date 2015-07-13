@@ -726,7 +726,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lHistogramX=0;
 				else if (m_lHistogramX==0 && pInterface!=NULL)
 				{
-					m_lHistogramX=pInterface->readHistogramSize().width();
+					m_lHistogramX=pInterface->readHistogramSize(Measurement::CorrectedPositionHistogram).width();
 				}
 				if (m_lHistogramX<1)
 				{
@@ -739,7 +739,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 					m_lHistogramY=0;
 				else if (m_lHistogramY==0 && pInterface!=NULL)
 				{
-					m_lHistogramY=pInterface->readHistogramSize().height();
+					m_lHistogramY=pInterface->readHistogramSize(Measurement::CorrectedPositionHistogram).height();
 				}
 				if (m_lHistogramY<1)
 				{
@@ -1184,7 +1184,7 @@ CARESS::ReturnType CORBADevice_i::stop_module(CORBA::Long kind,
 						case QMESYDAQ_HISTOGRAM:
 						case QMESYDAQ_DIFFRACTOGRAM:
 						case QMESYDAQ_SPECTROGRAM:
-							m_haResoStep[m_lMesrCount]=pInterface->readHistogram();
+							m_haResoStep[m_lMesrCount]=pInterface->readHistogram(Measurement::CorrectedPositionHistogram);
 							m_hdblResoPos[m_lMesrCount]=m_dblDetPos;
 							break;
 					}
@@ -1855,7 +1855,7 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 			pInterface->setRunID(uRun,false);
 			if (g_iGlobalSyncSleep>0)
 				sleep(g_iGlobalSyncSleep);
-			QSize s=pInterface->readHistogramSize();
+			QSize s=pInterface->readHistogramSize(Measurement::CorrectedPositionHistogram);
 			w=s.width();
 			h=s.height();
 			if (bListMode)
@@ -2041,14 +2041,14 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 				if (m_lMesrCount>0)
 				{
 					// take snapshot of current detector data
-					m_haResoStep[m_lMesrCount]=pInterface->readHistogram();
+					m_haResoStep[m_lMesrCount]=pInterface->readHistogram(Measurement::CorrectedPositionHistogram);
 					m_hdblResoPos[m_lMesrCount]=m_dblDetPos;
 				}
 
 				// read detector data of all resolution steps
 				int i,j,k,iMaxLen=0;
 				quint64 qwTotalSum=0;
-				QSize detSize(pInterface->readHistogramSize());
+				QSize detSize(pInterface->readHistogramSize(Measurement::CorrectedPositionHistogram));
 				for (i=1; i<=m_iMaxResoStep; ++i)
 				{
 					if (m_haResoStep.contains(i))
@@ -2189,13 +2189,13 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 			case QMESYDAQ_HISTOGRAM:
 			{
 				// read detector data of current step
-				QSize s = pInterface->readHistogramSize();
+				QSize s = pInterface->readHistogramSize(Measurement::CorrectedPositionHistogram);
 				quint16 w=s.width(),h=s.height();
 				if (m_lHistogramX==0 && m_lHistogramY==0)
 					end_channel=((CORBA::Long)w)*((CORBA::Long)h);
 				else
 					end_channel=m_lHistogramX*m_lHistogramY;
-				m_aullDetectorData=pInterface->readHistogram();
+				m_aullDetectorData=pInterface->readHistogram(Measurement::CorrectedPositionHistogram);
 				m_iDetectorWidth=w;
 				if (m_iDetectorWidth<1)
 					m_iDetectorWidth=1;
@@ -2731,7 +2731,7 @@ CARESS::Value* CORBADevice_i::get_attribute(CORBA::Long id, const char* name)
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 					if (!pInterface)
 						throw CARESS::ErrorDescription("control interface not initialized");
-					QSize s=pInterface->readHistogramSize();
+					QSize s=pInterface->readHistogramSize(Measurement::CorrectedPositionHistogram);
 					x=s.width();
 					y=s.height();
 				}
