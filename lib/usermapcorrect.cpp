@@ -33,14 +33,14 @@ UserMapCorrection::UserMapCorrection()
 }
 
 UserMapCorrection::UserMapCorrection(const QSize &size, const QString &fName)
-	: MapCorrection(size,MapCorrection::OrientationUp,MapCorrection::CorrectSourcePixel)
+	: MapCorrection(size, MapCorrection::OrientationUp, MapCorrection::CorrectSourcePixel)
 	, m_pEditorMemory(NULL)
 {
 	loadCorrectionFile(fName);
 }
 
 UserMapCorrection::UserMapCorrection(const QSize &size, enum Orientation iOrientation, enum CorrectionType iCorrection)
-	: MapCorrection(size,iOrientation,iCorrection)
+	: MapCorrection(size, iOrientation, iCorrection)
 	, m_pEditorMemory(NULL)
 {
 	m_pEditorMemory = new EditorMemory(NULL, size.width());
@@ -201,8 +201,48 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 	f.setFileName(fName);
 	if (f.open(QIODevice::ReadOnly))
 	{
+		int iDstHeight(0);
+		int iDstWidth(-1);
+		int iSrcHeight(0);
+		int iSrcWidth(0);
+
 		QTextStream t(&f);
 		QString tmp;
+		for (int i = 0; !t.atEnd(); ++i)
+		{
+			tmp = t.readLine();
+			QStringList list = tmp.split(QRegExp("\\s+"));
+			switch (i)
+			{
+				case 0 :
+					if (list.at(0) != "mesydaq")
+						return false;
+					break;
+				case 1 :
+					if (list.at(0) != "position")
+						return false;
+					break;
+				case 2 :
+					if (list.at(0) != "bin")
+						return false;
+					iSrcWidth = iDstWidth = (list.size() - 1) / 2;
+					break;
+				default:
+					iSrcHeight = (i - 2);
+					for (int j = 1; j < list.size() - 1; j += 2)
+					{
+						int y = list.at(j).toInt();
+						if (y > iDstHeight)
+							iDstHeight = y;
+					}
+					break;
+			}
+		}
+		if (iDstHeight)
+			++iDstHeight;
+		if (iDstHeight == 127)	// Special case for the SANS-1 file where max = 126 but 128 bins are needed
+			++iDstHeight;
+		t.seek(0);
 #if 0
 		do
 		{
@@ -210,11 +250,6 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 			MSG_ERROR << tmp;
 		}while (tmp.startsWith("#"));
 #endif
-		int iDstHeight(128);
-		int iDstWidth(128);
-		int iSrcHeight(960);
-		int iSrcWidth(128);
-
 		initialize(iSrcWidth, iSrcHeight, OrientationDownRev, CorrectSourcePixel);
 
 		setMappedRect(QRect(0, 0, iDstWidth, iDstHeight));
