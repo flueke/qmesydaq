@@ -242,6 +242,8 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 			++iDstHeight;
 		if (iDstHeight == 127)	// Special case for the SANS-1 file where max = 126 but 128 bins are needed
 			++iDstHeight;
+		else if (iDstHeight == 240) // Special case for the SPODI instrument where 240 have to be mapped to
+			iDstHeight = 255;   // 255 bins
 		t.seek(0);
 #if 0
 		do
