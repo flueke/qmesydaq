@@ -2110,6 +2110,14 @@ QList<int> Mesydaq2::mpsdId(const int id)
 	return modList;
 }
 
+QList<int> Mesydaq2::histogrammedId(const int id)
+{
+	QList<int> modList;
+	if (m_mcpd.contains(id))
+		modList = m_mcpd[id]->histogrammedId();
+	return modList;
+}
+
 QList<int> Mesydaq2::channelId(const int id, const int mod)
 {
 	QList<int> channelList;

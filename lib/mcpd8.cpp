@@ -2804,6 +2804,15 @@ QList<int> MCPD8::mpsdId(void)
 	return modList;
 }
 
+QList<int> MCPD8::histogrammedId(void)
+{
+	QList<int> modList;
+	for (int i = 0; i < 8; ++i)
+		if (m_mpsd.contains(i) && !m_mpsd[i]->getHistogramList().isEmpty())
+			modList << i;
+	return modList;
+}
+
 QList<int> MCPD8::channelId(const int mod)
 {
 	QList<int> channelList;

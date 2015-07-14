@@ -279,6 +279,13 @@ public:
          */
 	QList<int> mpsdId(void);
 
+        /**
+         * gets the list of histogrammed MPSD's connected with the MCPD
+         *
+         * \return list of id numbers
+         */
+	QList<int> histogrammedId(void);
+
 	QList<int> channelId(int mod);
 
 public slots:

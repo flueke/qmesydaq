@@ -854,7 +854,7 @@ void MainWidget::displayMcpdSlot(int id)
 		return;
 	if (!m_theApp->numMCPD())
 		return;
-	QList<int> modList = m_theApp->mpsdId(id);
+	QList<int> modList = m_theApp->histogrammedId(id);
 	dispMpsd->setModuleList(modList);
 }
 

@@ -220,6 +220,9 @@ public:
          */
 	QList<int> mpsdId(const int id);
 
+	//! \return list of histogrammed MPSD's connected with the MCPD
+	QList<int> histogrammedId(const int id);
+
         /**
          * gets the list of available channels of a MPSD
          *
