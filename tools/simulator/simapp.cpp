@@ -63,6 +63,7 @@ const char *g_szLongUsage =
 		"  --mstd=<bind-ip>:<id>\n"
 		"               bind a MCPD with an MSTD-16 module\n"
 		"  --width=<n>  each MCPD with <n> channels (1..64, default 64)\n"
+		"               if using '--mstd' option (1..128, default 128)\n"
 		"  --height=<n> spectrum height with <n> bins (8..1024, default 960)\n"
 		"  --v4         generate a \"round\" detector like HZB-V4/SANS\n"
 		"  --interval=<n>\n"
@@ -480,7 +481,7 @@ SimApp::SimApp(int &argc, char **argv)
 				m_wSpectrumStart = l - 1;
 			}
 			int l = argList[argList.size() - 1].toInt();
-			if (l < 0 || l > 64)
+			if (l < 0 || l > 128)
 			{
 				qDebug() << "invalid width: " << l;
 				break;
@@ -513,6 +514,12 @@ SimApp::SimApp(int &argc, char **argv)
 			m_bV4 = true;
 		}
 	}
+	if (!m_bMstd && !m_bMdll && m_wSpectrumWidth > 64)
+	{
+		qDebug() << "invalid width: " << m_wSpectrumWidth;
+		usage(argv[0]);
+		return;
+	}
 	if (i < argc)
 	{
 		usage(argv[0]);
@@ -544,8 +551,12 @@ SimApp::SimApp(int &argc, char **argv)
 	if (m_bMdll)
 		szText.sprintf("created a MDLL (width=%u, height=%u) ", m_wSpectrumWidth, m_wSpectrumHeight);
 	else if (m_bMstd)
+	{
 		szText.sprintf("created %d MCPD-8 each with %d MSTD-16 (%u channels)",
-			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, 2 * (m_wSpectrumWidth - m_wSpectrumStart));
+			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 4, (m_wSpectrumWidth - m_wSpectrumStart));
+		m_wSpectrumStart /= 2;
+		m_wSpectrumWidth /= 2;
+	}
 	else if (m_wMpsdType == TYPE_MPSD8SADC)
 		szText.sprintf("created %d MCPD-8 each with %d MPSD-8 DNS type (width=%u height=%u)",
 			m_apMCPD8.size(), (m_wSpectrumWidth - m_wSpectrumStart + 7) >> 3, (m_wSpectrumWidth - m_wSpectrumStart), m_wSpectrumHeight);
