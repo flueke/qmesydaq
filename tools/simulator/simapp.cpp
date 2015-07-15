@@ -1132,7 +1132,10 @@ void SimApp::NewCmdPacket(struct MDP_PACKET *pPacket, SimMCPD8 *pMCPD8, QHostAdd
 					pPacket->data[2] = pPacket->data[0] < (m_wSpectrumWidth >> 3) ? 1 : 0;
 					break;
 				case 2: // MPSD-8 version (5.06)
-					pPacket->data[2] = pPacket->data[0] < (m_wSpectrumWidth >> 3) ? 0x0505 : 0x0000;
+					if (!m_bMstd)
+						pPacket->data[2] = pPacket->data[0] < (m_wSpectrumWidth >> 3) ? 0x0505 : 0x0000;
+					else	// MSTD-16 version (6.04)
+						pPacket->data[2] = pPacket->data[0] < (m_wSpectrumWidth >> 3) ? 0x0603 : 0x0000;
 					break;
 				default: // unknown register
 					pPacket->data[2] = 0x0000;
