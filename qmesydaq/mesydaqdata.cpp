@@ -82,7 +82,15 @@ quint32 MesydaqSpectrumData::max(void)
 		return 0;
 }
 
-MesydaqHistogramData::MesydaqHistogramData() 
+QwtDoubleRect MesydaqSpectrumData::boundingRect() const
+{
+	if (m_spectrum)
+		return QwtData::boundingRect();
+	else
+		return QwtDoubleRect(0.0, 0.1, 1.0, 1.0);
+}
+
+MesydaqHistogramData::MesydaqHistogramData()
 	: QwtRasterData()
 	, m_histogram(NULL)
 	, m_range(QwtDoubleInterval(0, 0))

@@ -70,6 +70,9 @@ public:
 	//! \return the maximum value for the spectrum
 	quint32 max(void);
 
+	//! \return the bounding rectangle of the data.
+	QwtDoubleRect boundingRect() const;
+
 private:
 	//! The spectrum data
 	Spectrum	*m_spectrum;
