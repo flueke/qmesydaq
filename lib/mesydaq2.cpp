@@ -45,6 +45,7 @@ Mesydaq2::Mesydaq2()
 	, m_runId(0)
 	, m_bAutoIncRunId(true)
 	, m_bWriteProtect(false)
+	, m_setup(Mpsd)
 {
 	MSG_NOTICE << tr("running on Qt %1").arg(qVersion());
 	qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
@@ -452,7 +453,7 @@ quint16 Mesydaq2::height(void)
 quint16 Mesydaq2::width(void)
 {
 	quint16 n(0);
-	const quint16 mcpdWidth(128);
+	const quint16 mcpdWidth(m_setup == Mpsd ? 64 : 128);
 	m_tubeMapping.clear();
 
 	quint16 w(0);
@@ -2212,4 +2213,14 @@ void Mesydaq2::setHeadertime(quint64 ht)
 {
 	emit headerTimeChanged(ht);
 	emit newCmdPackageReceived();
+}
+
+void Mesydaq2::setSetupType(const Setup val)
+{
+	m_setup = val;
+}
+
+Setup Mesydaq2::setupType() const
+{
+	return m_setup;
 }

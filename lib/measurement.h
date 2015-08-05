@@ -119,14 +119,6 @@ public:
 		Stopped,	//!< data acquisition is requested to stop
 	};
 
-	//! Defines the setup type
-	enum Setup {
-		Mpsd = 0,	//!< MPSD in standard configuration in a 2D arrangement
-		Mdll,		//!< MDLL connected
-		Mdll2,		//!< MWPCHR connected
-		Mstd,		//!< MSTD-16
-	};
-
 	enum Arrangement {
 		Square = 0,	//!< MPSD arranged in 2D
 		Line,		//!< MSPD arranged in a single line

@@ -419,7 +419,7 @@ void MainWidget::startStopSlot(bool checked)
 		for (int i = 0; i < 3; ++i)
 			if(m_meas->isMaster(i))
 				m_meas->setPreset(i, m_monitorPresets.at(i)->presetValue(), true);
-		if(m_meas->isMaster(MON4ID) && (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2))
+		if(m_meas->isMaster(MON4ID) && (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2))
 			m_meas->setPreset(MON4ID, m_monitorPresets.at(MON4ID)->presetValue(), true);
 		startStopButton->setText("Stop");
 		// set device id to 0 -> will be filled by mesydaq for master
@@ -701,7 +701,7 @@ void MainWidget::updateDisplay(void)
 	monitor3Preset->setValue(m_meas->mon3());
 	monitor3Preset->setRate(m_meas->getRate(MON3ID));
 
-	if(m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+	if(m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 	{
 		monitor4Preset->setValue(m_meas->mon4());
 		monitor4Preset->setRate(m_meas->getRate(MON4ID));
@@ -1011,14 +1011,14 @@ void MainWidget::updateMeasurement(void)
 	displayGroupBox->setDisabled(mcpdList.empty());
 	statusMeasTab->setDisabled(mcpdList.empty());
 	statusModuleTab->setDisabled(mcpdList.empty());
-	dispSingleSpectrum->setVisible(m_meas->setupType() != Measurement::Mpsd || m_meas->getPsdArrangement() == Measurement::Line);
-	if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
+	dispSingleSpectrum->setVisible(m_meas->setupType() != Mpsd || m_meas->getPsdArrangement() == Measurement::Line);
+	if (m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2)
 	{
 		dispSingleSpectrum->setText(tr("Amplitude spectrum"));
 		dispDiffractogram->setText(tr("Projection to X"));
 		dispSpectra->setText(tr("Projection to Y"));
 	}
-	else if (m_meas->setupType() == Measurement::Mstd)
+	else if (m_meas->setupType() == Mstd)
 	{
 		dispSingleSpectrum->setText(tr("Single spectrum"));
 		dispChan->setMaximum(15);
@@ -1036,18 +1036,18 @@ void MainWidget::updateMeasurement(void)
 		dispChan->setMaximum(7);
 	}
 	dispDiffractogram->setHidden(m_meas->getPsdArrangement() == Measurement::Line);
-	dispHistogram->setHidden(m_meas->setupType() == Measurement::Mstd || m_meas->getPsdArrangement() == Measurement::Line);
-	moduleStatus1->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
-	moduleStatus2->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
-	moduleStatus3->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
-	moduleStatus4->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
-	moduleStatus5->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
-	moduleStatus6->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
-	moduleStatus7->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	dispHistogram->setHidden(m_meas->setupType() == Mstd || m_meas->getPsdArrangement() == Measurement::Line);
+	moduleStatus1->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
+	moduleStatus2->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
+	moduleStatus3->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
+	moduleStatus4->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
+	moduleStatus5->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
+	moduleStatus6->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
+	moduleStatus7->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
 // MDLL has only three monitor inputs
-	m_monitorPresets.at(MON4ID)->setHidden(m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2);
+	m_monitorPresets.at(MON4ID)->setHidden(m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2);
 	m_monitorPresets.at(MON4ID)->setChecked(false);
-	if (m_meas->setupType() == Measurement::Mstd || m_meas->getPsdArrangement() == Measurement::Line)
+	if (m_meas->setupType() == Mstd || m_meas->getPsdArrangement() == Measurement::Line)
 	{
 		dispSingleSpectrum->setChecked(true);
 		setDisplayMode(Plot::SingleSpectrum);
@@ -1067,15 +1067,15 @@ void MainWidget::updateMeasurement(void)
 }
 
 /*!
-    \fn Measurement::Setup MainWidget::setupType(void)
+    \fn Setup MainWidget::setupType(void)
 
     \returns the currently configured measurement, the default is the Mpsd mode
  */
-Measurement::Setup MainWidget::setupType(void)
+Setup MainWidget::setupType(void)
 {
 	if (m_meas)
 		return m_meas->setupType();
-	return Measurement::Mpsd;
+	return Mpsd;
 }
 
 /*!
@@ -1341,7 +1341,7 @@ void MainWidget::m4PresetSlot(bool pr)
 		for (int i = 0; i < m_monitorPresets.size(); ++i)
 			m_monitorPresets.at(i)->setChecked(false);
 	}
-	if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+	if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 	{
 		m_monitorPresets.at(MON4ID)->setChecked(pr);
 		m_meas->setPreset(MON4ID, m_monitorPresets.at(MON4ID)->presetValue(), pr);
@@ -1360,7 +1360,7 @@ void MainWidget::updatePresets(void)
 	eventsPreset->setPresetValue(m_meas->getPreset(EVID));
 	for (int i = 0; i < 3; ++i)
 		m_monitorPresets.at(i)->setPresetValue(m_meas->getPreset(i));
-	if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+	if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 		m_monitorPresets.at(MON4ID)->setPresetValue(m_meas->getPreset(MON4ID));
 
 	// check for master preset counter
@@ -1368,7 +1368,7 @@ void MainWidget::updatePresets(void)
 	eventsPreset->setChecked(m_meas->isMaster(EVID));
 	for (int i = 0; i < 3; ++i)
 		m_monitorPresets.at(i)->setChecked(m_meas->isMaster(i));
-	if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+	if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 		m_monitorPresets.at(MON4ID)->setChecked(m_meas->isMaster(MON4ID));
 }
 
@@ -1570,7 +1570,7 @@ void MainWidget::draw(void)
 	switch (m_mode)
 	{
 		case Plot::Histogram :
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
+			if (m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2)
 			{
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
@@ -1588,7 +1588,7 @@ void MainWidget::draw(void)
 			spec = m_meas->spectrum(Measurement::Diffractogram);
 			if (m_zoomedRect.isEmpty())
 				m_zoomedRect = QRectF(0, 0, spec->width(), 1);
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
+			if (m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
@@ -1596,7 +1596,7 @@ void MainWidget::draw(void)
 			countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
 			break;
 		case Plot::SingleSpectrum :
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
+			if (m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2)
 			{
 				spec = m_meas->spectrum(Measurement::AmplitudeSpectrum);
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "amplitude");
@@ -1613,7 +1613,7 @@ void MainWidget::draw(void)
 			countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
 			break;
 		case Plot::Spectrum :
-			if (m_meas->setupType() == Measurement::Mdll || m_meas->setupType() == Measurement::Mdll2)
+			if (m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "Y (channel)");
 			if(dispAll->isChecked())
 			{
@@ -1796,7 +1796,7 @@ void MainWidget::setupCARESS(void)
  */
 void MainWidget::toolPulser(void)
 {
-	if (m_meas->setupType() == Measurement::Mdll)
+	if (m_meas->setupType() == Mdll)
 	{
 		if (!m_pulserDialog)
 			m_pulserDialog = new MdllPulser(m_theApp, this);
@@ -1836,7 +1836,7 @@ void MainWidget::setupModule(quint8 id)
 void MainWidget::setupModule(void)
 {
 	QDialog *d;
-	if (m_meas->setupType() == Measurement::Mdll)
+	if (m_meas->setupType() == Mdll)
 		d = new MdllSetup(m_theApp, this);
 	else
 		d = new ModuleSetup(m_theApp, this);
@@ -2082,7 +2082,7 @@ void MainWidget::customEvent(QEvent *e)
 							value = m_monitorPresets.at(id)->presetValue();
 							break;
 						case M4CT:
-							if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+							if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 								value = m_monitorPresets.at(id)->presetValue();
 							break;
 						case EVCT:
@@ -2123,7 +2123,7 @@ void MainWidget::customEvent(QEvent *e)
 						value = m_monitorPresets.at(id)->isChecked();
 						break;
 					case M4CT:
-						if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+						if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							value = m_monitorPresets.at(id)->isChecked();
 						break;
 					case EVCT:
@@ -2153,7 +2153,7 @@ void MainWidget::customEvent(QEvent *e)
 						break;
 						break;
 					case M4CT:
-						if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+						if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							m_monitorPresets.at(id)->setChecked(bEnabled);
 						break;
 					case EVCT:
@@ -2175,7 +2175,7 @@ void MainWidget::customEvent(QEvent *e)
 							m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), true);
 							break;
 						case M4CT:
-							if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+							if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							{
 								m_monitorPresets.at(id)->setPresetValue(dblPreset);
 								m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), true);
@@ -2208,7 +2208,7 @@ void MainWidget::customEvent(QEvent *e)
 							m_meas->setPreset(id, dblPreset, true);
 							break;
 						case M4CT:
-							if (m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+							if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							{
 								m_monitorPresets.at(id)->setPresetValue(dblPreset);
 								m_meas->setPreset(id, dblPreset, true);
@@ -2253,7 +2253,7 @@ void MainWidget::customEvent(QEvent *e)
 						monitor3Preset->setPresetValue(dblPreset);
 						m_meas->setPreset(MON3ID, dblPreset, true);
 					}
-					else if (monitor4Preset->isChecked() && m_meas->setupType() != Measurement::Mdll && m_meas->setupType() != Measurement::Mdll2)
+					else if (monitor4Preset->isChecked() && m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 					{
 						monitor4Preset->setPresetValue(dblPreset);
 						m_meas->setPreset(MON4ID, dblPreset, true);
@@ -2305,7 +2305,7 @@ void MainWidget::customEvent(QEvent *e)
 			break;
 		case CommandEvent::C_READ_HISTOGRAM_SIZE:
 			{
-				if (m_meas->setupType() == Measurement::Mstd)
+				if (m_meas->setupType() == Mstd)
 				{
 					Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
 					answer << tmpSpectrum->width();
@@ -2336,7 +2336,7 @@ void MainWidget::customEvent(QEvent *e)
 		case CommandEvent::C_READ_HISTOGRAM:
 			{
 				QList<quint64>* tmpData = new QList<quint64>();
-				if (m_meas->setupType() == Measurement::Mstd)
+				if (m_meas->setupType() == Mstd)
 				{
 					Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
 					for (int x = 0; x < tmpSpectrum->width(); ++x)

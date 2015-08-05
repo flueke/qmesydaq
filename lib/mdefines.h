@@ -211,4 +211,12 @@
 
 extern int DEBUGLEVEL;
 
+//! Defines the setup type
+enum Setup {
+	Mpsd = 0,	//!< MPSD in standard configuration in a 2D arrangement
+	Mdll,		//!< MDLL connected
+	Mdll2,		//!< MWPCHR connected
+	Mstd,		//!< MSTD-16
+};
+
 #endif

@@ -61,7 +61,7 @@ public:
 
 	void selectUserMode(int);
 
-	Measurement::Setup setupType(void);
+	Setup setupType(void);
 
 	void 	closeEvent(QCloseEvent *);
 

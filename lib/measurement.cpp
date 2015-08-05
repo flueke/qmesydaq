@@ -1590,6 +1590,7 @@ QString Measurement::getConfigfilename(void) const
 void Measurement::setSetupType(const Setup val)
 {
 	m_setup = val;
+	m_mesydaq->setSetupType(val);
 }
 
 /*!
@@ -1836,7 +1837,7 @@ Mesydaq2 *Measurement::getMesydaq() const
 	return m_mesydaq;
 }
 
-Measurement::Setup Measurement::setupType(void) const
+Setup Measurement::setupType(void) const
 {
 	return m_setup;
 }

@@ -31,6 +31,7 @@
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
+#include "mdefines.h"
 
 #include "mcpd8.h"
 
@@ -267,6 +268,12 @@ public:
 	 */
 	quint16 width(quint16 id, quint16 end = 8);
 
+	//! set setup type
+	void setSetupType(const Setup val);
+
+	//! read setup type
+	Setup setupType() const;
+
 public slots:
 	//! analysis thread end
 	void threadExit(void);
@@ -438,6 +445,9 @@ private:
 
 	//! mapping vector for the histogrammed tubes
 	QVector<quint16> m_tubeMapping;
+
+	//! setup type
+	Setup		m_setup;
 };
 
 
