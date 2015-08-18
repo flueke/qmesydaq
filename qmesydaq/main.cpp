@@ -70,11 +70,11 @@ int main(int argc, char **argv)
 	*stdout = *hf;
 	setvbuf(stdout, NULL, _IONBF, 0);
 #endif
-
 	MultipleLoopApplication app(argc, argv);
 	QStringList 		argList = app.arguments();
 	LoopObject 		*loop(NULL);
 	QString 		szLoadConfiguration(QString::null);
+	Q_INIT_RESOURCE(qled);
 
 	startLogging(g_szShortUsage, g_szLongUsage);
 	for (int i = 1; i < argList.size(); ++i)
