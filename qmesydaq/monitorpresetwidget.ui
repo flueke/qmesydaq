@@ -219,7 +219,7 @@
  <connections>
   <connection>
    <sender>presetButton</sender>
-   <signal>clicked(bool)</signal>
+   <signal>toggled(bool)</signal>
    <receiver>MonitorPresetWidget</receiver>
    <slot>presetCheckClicked(bool)</slot>
    <hints>
