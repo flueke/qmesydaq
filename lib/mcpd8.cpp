@@ -178,6 +178,34 @@ bool MCPD8::init(void)
 }
 
 /*!
+    \fn MCPD8::width(void)
+
+    \returns the number of possible channels
+ */
+int MCPD8::width(void) const
+{
+    int i(0);
+    for (quint8 c = 0; c < 8; c++)
+        if (m_mpsd.find(c) != m_mpsd.end())
+            switch (m_mpsd[c]->getModuleId())
+            {
+                case TYPE_MSTD16:
+		    i += 16;
+		    break;
+                case TYPE_MDLL :
+                    i += 960;
+                    break;
+		case TYPE_MWPCHR:
+		    i += 1024;
+		    break;
+                default:
+		    i += 8;
+		    break;
+	    }
+	return i;
+}
+
+/*!
     \fn MCPD8::reset(void)
     resets the MCPD-8
 

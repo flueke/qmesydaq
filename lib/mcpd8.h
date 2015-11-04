@@ -288,6 +288,8 @@ public:
 
 	QList<int> channelId(int mod);
 
+	int width() const;
+
 public slots:
 	//! analyse network packet
 	virtual bool analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
