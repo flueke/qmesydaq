@@ -1116,8 +1116,8 @@ void MainWidget::applyThreshSlot()
  */
 void MainWidget::drawOpData()
 {
-	float	mean,
-		sigma;
+	float	mean(0),
+		sigma(0);
 
 	// display mean and sigma:
 	if(dispAll->isChecked())

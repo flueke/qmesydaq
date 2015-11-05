@@ -213,6 +213,8 @@ float Spectrum::mean(float &s)
 		s = sqrt(s / m_meanCount);
 		s *= 2.3; // ln(10)
 	}
+	else
+		s = 0.0;
 	return m;
 }
 
