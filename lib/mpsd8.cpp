@@ -63,7 +63,7 @@ MPSD8::MPSD8(quint8 id, QObject *parent)
 		m_threshVal[c] = 10;
 		m_pulsPos[c] = MIDDLE;
 		m_pulsPoti[c] = 128;
-		m_pulsAmp[c] = 128;
+		m_pulsAmp[c] = 40 /* 128 */;
 		m_pulsChan[c] = 255;
 		m_pulser[c] = false;
 		m_ampMode[c] = false;
