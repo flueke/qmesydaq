@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
-    <height>420</height>
+    <width>633</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -646,7 +646,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>ID</string>
+            <string>MCPD</string>
            </property>
           </widget>
          </item>
@@ -763,9 +763,7 @@ parameters</string>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="IPAddressWidget" name="mcpdIPAddress">
-            <zorder>groupBox29</zorder>
-           </widget>
+           <widget class="IPAddressWidget" name="mcpdIPAddress"/>
           </item>
           <item row="0" column="2">
            <widget class="QLabel" name="textLabel1_3_3_2_2">
@@ -793,7 +791,7 @@ parameters</string>
        <item row="1" column="1">
         <widget class="QGroupBox" name="groupBox29">
          <property name="title">
-          <string>MCPD-8 ID</string>
+          <string>ID</string>
          </property>
          <layout class="QGridLayout" name="_7">
           <item row="0" column="0">
