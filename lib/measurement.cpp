@@ -1103,7 +1103,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					}
 					if (moduleID != TYPE_MDLL)
 					{
-						if (!(m_mesydaq->capabilities(mod, true) & TPA) && m_mesydaq->getMode(mod, id))
+						if (!(m_mesydaq->getTxMode(mod, true) & TPA) && m_mesydaq->getMode(mod, id))
 						{
 // Amplitude must be different from 0 !!
 							if (amp == 0)

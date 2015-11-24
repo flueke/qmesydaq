@@ -87,7 +87,7 @@ public:
 
 	quint16 capabilities(quint16 id, const bool);
 
-	quint16 getTxMode(quint16 id);
+	quint16 getTxMode(quint16 id, const bool = false);
 
 	quint16 getTxMode(quint16 id, quint8 mod);
 

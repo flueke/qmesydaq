@@ -112,7 +112,7 @@ bool MCPD8::init(void)
     if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
         return false;
 
-    int modus = getTxMode();
+    int modus = getTxMode(false);
     if (modus == 0)
     {
         MSG_ERROR << "TX mode not set init with TPA";
@@ -150,7 +150,7 @@ bool MCPD8::init(void)
     if (m_mdll.isEmpty())
     {
         if (setTxMode(modus))
-            getTxMode();
+            getTxMode(false);
     }
     if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
         return false;
@@ -2765,13 +2765,16 @@ quint8 MCPD8::numModules(void)
     return n;
 }
 
-quint16 MCPD8::getTxMode()
+quint16 MCPD8::getTxMode(const bool cached)
 {
     MSG_DEBUG << tr("GETCAPABILITIES %1").arg(m_byId);
-    QMutexLocker locker(m_pCommandMutex);
-    initCmdBuffer(GETCAPABILITIES);
-    finishCmdBuffer(0);
-    sendCommand(false);
+    if (!cached)
+    {
+        QMutexLocker locker(m_pCommandMutex);
+        initCmdBuffer(GETCAPABILITIES);
+        finishCmdBuffer(0);
+        sendCommand(false);
+    }
     return m_txMode;
 }
 

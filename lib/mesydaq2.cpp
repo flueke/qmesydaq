@@ -1004,11 +1004,11 @@ quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
  *  \param id number of the MCPD
  *  \return the central module transmission mode
  */
-quint16 Mesydaq2::getTxMode(quint16 id)
+quint16 Mesydaq2::getTxMode(quint16 id, const bool cached)
 {
 	if (m_mcpd.empty() || !m_mcpd.contains(id))
 		return 0;
-	return m_mcpd[id]->getTxMode();
+	return m_mcpd[id]->getTxMode(cached);
 }
 
 /*!

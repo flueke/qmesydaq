@@ -207,7 +207,7 @@ public:
 
 	void initModule(quint8 id);
 
-	quint16 getTxMode();
+	quint16 getTxMode(const bool cached = false);
 
 	quint16 getTxMode(quint8 id);
 
