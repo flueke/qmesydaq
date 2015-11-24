@@ -179,12 +179,14 @@ void MPSDPulser::setModule(int id)
 void MPSDPulser::setMCPD(int id)
 {
 	if (id != -1)
+	{
 		devid->setValue(id);
-	id = devid->value();
-	QList<int> modules = m_theApp->mpsdId(id);
-	module->setModuleList(modules);
-	module->setDisabled(modules.empty());
-	pulserGroupBox->setDisabled(modules.empty());
+		id = devid->value();
+		QList<int> modules = m_theApp->mpsdId(id);
+		module->setModuleList(modules);
+		module->setDisabled(modules.empty());
+		pulserGroupBox->setDisabled(modules.empty());
+	}
 	display();
 }
 
