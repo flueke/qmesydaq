@@ -2780,6 +2780,8 @@ quint16 MCPD8::getTxMode(const bool cached)
 
 quint16 MCPD8::getTxMode(quint8 mod)
 {
+	if (!m_mpsd.contains(mod))
+		return 0;
         switch (m_mpsd[mod]->type())
         {
                 case TYPE_MPSD8P:
