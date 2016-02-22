@@ -553,7 +553,7 @@ void CARESSLoop::idleLoop(void *pParam)
   \param[in] pApp reference to QMesyDAQ application
  */
 CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
-	m_theApp(pApp), m_sInstrument(""), m_lHistogramX(0), m_lHistogramY(0),
+	m_theApp(pApp), m_pStreamWriter(NULL), m_sInstrument(""), m_lHistogramX(0), m_lHistogramY(0),
 	m_lDiffractogramWidth(0), m_lSpectrogramChannel(-1), m_lSpectrogramWidth(0),
 	m_lRunNo(-1), m_lStepNo(0), m_lMesrCount(-1), m_bListmode(false),
 	m_bHistogram(false), m_dblTimerScale(DEFAULTTIMEFACTOR), m_lSourceChannels(-1),
