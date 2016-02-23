@@ -56,7 +56,7 @@ Mesydaq2::Mesydaq2()
 	connect(m_pThread, SIGNAL(finished()), this, SLOT(threadExit()), Qt::DirectConnection);
 	m_pThread->start(QThread::HighestPriority);
 	m_pDatSender = new DataRepeater;
-	m_pDatStream = new StreamWriter;
+	setStreamWriter(new StreamWriter);
 }
 
 //! destructor
