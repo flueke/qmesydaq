@@ -1237,13 +1237,15 @@ void MainWidget::loadCalibrationSlot()
  */
 void MainWidget::ePresetSlot(bool pr)
 {
-	if(pr)
+	eventsPreset->blockSignals(true);
+	if (pr)
 	{
 		timerPreset->setChecked(false);
 		for (int i = 0; i < m_monitorPresets.size(); ++i)
 			m_monitorPresets.at(i)->setChecked(false);
 	}
 	eventsPreset->setChecked(pr);
+	eventsPreset->blockSignals(false);
 	m_meas->setPreset(EVID, eventsPreset->presetValue(), pr);
 }
 
@@ -1256,13 +1258,15 @@ void MainWidget::ePresetSlot(bool pr)
  */
 void MainWidget::tPresetSlot(bool pr)
 {
-	if(pr)
+	timerPreset->blockSignals(true);
+	if (pr)
 	{
 		eventsPreset->setChecked(false);
 		for (int i = 0; i < m_monitorPresets.size(); ++i)
 			m_monitorPresets.at(i)->setChecked(false);
 	}
 	timerPreset->setChecked(pr);
+	timerPreset->blockSignals(false);
 	m_meas->setPreset(TIMERID, quint64(timerPreset->presetValue() * 1000), pr);
 }
 
@@ -1275,15 +1279,18 @@ void MainWidget::tPresetSlot(bool pr)
  */
 void MainWidget::m1PresetSlot(bool pr)
 {
-	if(pr)
+	MonitorPresetWidget* pWidget(m_monitorPresets.at(MON1ID));
+	pWidget->blockSignals(true);
+	if (pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
 		for (int i = 0; i < m_monitorPresets.size(); ++i)
 			m_monitorPresets.at(i)->setChecked(false);
 	}
-	m_monitorPresets.at(MON1ID)->setChecked(pr);
-	m_meas->setPreset(MON1ID, m_monitorPresets.at(MON1ID)->presetValue(), pr);
+	pWidget->setChecked(pr);
+	pWidget->blockSignals(false);
+	m_meas->setPreset(MON1ID, pWidget->presetValue(), pr);
 }
 
 /*!
@@ -1295,15 +1302,18 @@ void MainWidget::m1PresetSlot(bool pr)
  */
 void MainWidget::m2PresetSlot(bool pr)
 {
-	if(pr)
+	MonitorPresetWidget* pWidget(m_monitorPresets.at(MON2ID));
+	pWidget->blockSignals(true);
+	if (pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
 		for (int i = 0; i < m_monitorPresets.size(); ++i)
 			m_monitorPresets.at(i)->setChecked(false);
 	}
-	m_monitorPresets.at(MON2ID)->setChecked(pr);
-	m_meas->setPreset(MON2ID, m_monitorPresets.at(MON2ID)->presetValue(), pr);
+	pWidget->setChecked(pr);
+	pWidget->blockSignals(false);
+	m_meas->setPreset(MON2ID, pWidget->presetValue(), pr);
 }
 
 /*!
@@ -1315,15 +1325,18 @@ void MainWidget::m2PresetSlot(bool pr)
  */
 void MainWidget::m3PresetSlot(bool pr)
 {
-	if(pr)
+	MonitorPresetWidget* pWidget(m_monitorPresets.at(MON3ID));
+	pWidget->blockSignals(true);
+	if (pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
 		for (int i = 0; i < m_monitorPresets.size(); ++i)
 			m_monitorPresets.at(i)->setChecked(false);
 	}
-	m_monitorPresets.at(MON3ID)->setChecked(pr);
-	m_meas->setPreset(MON3ID, m_monitorPresets.at(MON3ID)->presetValue(), pr);
+	pWidget->setChecked(pr);
+	pWidget->blockSignals(false);
+	m_meas->setPreset(MON3ID, pWidget->presetValue(), pr);
 }
 
 /*!
@@ -1335,17 +1348,24 @@ void MainWidget::m3PresetSlot(bool pr)
  */
 void MainWidget::m4PresetSlot(bool pr)
 {
-	if(pr)
+	MonitorPresetWidget* pWidget(NULL);
+	if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
+	{
+		pWidget = m_monitorPresets.at(MON4ID);
+		pWidget->blockSignals(true);
+	}
+	if (pr)
 	{
 		timerPreset->setChecked(false);
 		eventsPreset->setChecked(false);
 		for (int i = 0; i < m_monitorPresets.size(); ++i)
 			m_monitorPresets.at(i)->setChecked(false);
 	}
-	if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
+	if (pWidget)
 	{
-		m_monitorPresets.at(MON4ID)->setChecked(pr);
-		m_meas->setPreset(MON4ID, m_monitorPresets.at(MON4ID)->presetValue(), pr);
+		pWidget->setChecked(pr);
+		pWidget->blockSignals(false);
+		m_meas->setPreset(MON4ID, pWidget->presetValue(), pr);
 	}
 }
 
