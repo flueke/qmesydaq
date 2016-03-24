@@ -263,6 +263,7 @@ protected:
 
 	long			m_lId[QMESYDAQ_MAXDEVICES];		//!< CARESS ids of internal devices
 	bool			m_b64Bit[QMESYDAQ_MAXDEVICES];	//!< 64-bit mode for internal devices
+	bool			m_bAutoScale[QMESYDAQ_MAXDEVICES];	//!< auto scale histo-/diffracto-/spectrogram, if size is different
 	int				m_iMaster;				//!< which internal device is the master counter
 	quint64			m_qwMasterTarget;		//!< target of master counter
 	bool			m_bMasterPause;			//!< CARESS measurement is paused
@@ -562,6 +563,7 @@ CORBADevice_i::CORBADevice_i(MultipleLoopApplication *pApp) :
 {
 	memset(&m_lId[0],0,sizeof(m_lId));
 	memset(&m_b64Bit[0],0,sizeof(m_b64Bit));
+	memset(&m_bAutoScale[0],0,sizeof(m_bAutoScale));
 	memset(&m_szErrorMessage[0],0,sizeof(m_szErrorMessage));
 
 	QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
@@ -691,6 +693,7 @@ CARESS::ReturnType CORBADevice_i::init_module_ex(CORBA::Long kind,
 		if (iDevice!=QMESYDAQ_SPECTROGRAM   && m_lId[QMESYDAQ_SPECTROGRAM]  ==id) m_lId[QMESYDAQ_SPECTROGRAM]  =0;
 		m_lId[iDevice]=0;
 		m_b64Bit[iDevice]=false;
+		m_bAutoScale[iDevice]=false;
 		if (m_iMaster==iDevice)
 		{
 			m_iMaster=-1;
@@ -1560,8 +1563,8 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listmode=" << ((const char*)(m_bListmode?"on":"off"));
 				}
 				// list file
-				else if (((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
-						 (iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0)))
+				else if ((iNameLen==8 && strncasecmp(pStart,"listfile",8)==0) ||
+						 (iNameLen==12 && strncasecmp(pStart,"listmodefile",12)==0))
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 					m_sListfile=QString::fromLatin1(p1,p2-p1).trimmed();
@@ -1575,9 +1578,9 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - listfile=" << m_sListfile.toLatin1().constData();
 				}
 				// histogram mode
-				else if (((iNameLen==9 && strncasecmp(pStart,"histomode",9)==0) ||
-						  (iNameLen==9 && strncasecmp(pStart,"histogram",9)==0) ||
-						  (iNameLen==13 && strncasecmp(pStart,"histogrammode",13)==0)))
+				else if ((iNameLen==9 && strncasecmp(pStart,"histomode",9)==0) ||
+						 (iNameLen==9 && strncasecmp(pStart,"histogram",9)==0) ||
+						 (iNameLen==13 && strncasecmp(pStart,"histogrammode",13)==0))
 				{
 					int iValueLen=p2-p1;
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
@@ -1592,8 +1595,8 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 						pInterface->setHistogramFileName(QString());
 				}
 				// histogram file
-				else if (((iNameLen==9 && strncasecmp(pStart,"histofile",9)==0) ||
-						  (iNameLen==13 && strncasecmp(pStart,"histogramfile",13)==0)))
+				else if ((iNameLen==9 && strncasecmp(pStart,"histofile",9)==0) ||
+						 (iNameLen==13 && strncasecmp(pStart,"histogramfile",13)==0))
 				{
 					QMesyDAQDetectorInterface* pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 					m_sHistofile=QString::fromLatin1(p1,p2-p1).trimmed();
@@ -1604,11 +1607,11 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - histogramfile=" << m_sHistofile.toLatin1().constData();
 				}
 				// use gzip for ascii detector data (readblock-kind==1)
-				else if (((iNameLen==4 && strncasecmp(pStart,"gzip",4)==0) ||
-						  (iNameLen==7 && strncasecmp(pStart,"usegzip",7)==0) ||
-						  (iNameLen==8 && strncasecmp(pStart,"use-gzip",8)==0) ||
-						  (iNameLen==8 && strncasecmp(pStart,"use_gzip",8)==0) ||
-						  (iNameLen==8 && strncasecmp(pStart,"compress",8)==0)))
+				else if ((iNameLen==4 && strncasecmp(pStart,"gzip",4)==0) ||
+						 (iNameLen==7 && strncasecmp(pStart,"usegzip",7)==0) ||
+						 (iNameLen==8 && strncasecmp(pStart,"use-gzip",8)==0) ||
+						 (iNameLen==8 && strncasecmp(pStart,"use_gzip",8)==0) ||
+						 (iNameLen==8 && strncasecmp(pStart,"compress",8)==0))
 				{
 					int iValueLen=p2-p1;
 					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
@@ -1618,6 +1621,25 @@ CARESS::ReturnType CORBADevice_i::loadblock_module(CORBA::Long kind,
 						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
 						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bUseGzip=false;
 					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - gzip=" << ((const char*)(m_bUseGzip?"on":"off"));
+				}
+				// automatic scale histo-/diffracto-/spectrogram, if CARESS size and hardware size are different
+				else if ((iNameLen==5  && strncasecmp(pStart,"scale",5)==0) ||
+						 (iNameLen==9  && strncasecmp(pStart,"autoscale",9)==0) ||
+						 (iNameLen==10 && strncasecmp(pStart,"auto-scale",10)==0) ||
+						 (iNameLen==10 && strncasecmp(pStart,"auto_scale",10)==0) ||
+						 (iNameLen==7  && strncasecmp(pStart,"scaling",7)==0) ||
+						 (iNameLen==11 && strncasecmp(pStart,"autoscaling",11)==0) ||
+						 (iNameLen==12 && strncasecmp(pStart,"auto-scaling",12)==0) ||
+						 (iNameLen==12 && strncasecmp(pStart,"auto_scaling",12)==0))
+				{
+					int iValueLen=p2-p1;
+					if ((iValueLen==3 && strncasecmp(p1,"yes"  ,3)==0) ||
+						(iValueLen==2 && strncasecmp(p1,"on"   ,2)==0) ||
+						(iValueLen==4 && strncasecmp(p1,"true" ,4)==0)) m_bAutoScale[iDevice]=true;
+					else if ((iValueLen==2 && strncasecmp(p1,"no"   ,2)==0) ||
+						(iValueLen==3 && strncasecmp(p1,"off"  ,3)==0) ||
+						(iValueLen==5 && strncasecmp(p1,"false",5)==0)) m_bAutoScale[iDevice]=false;
+					MSG_DEBUG << "device " << g_asDevices[iDevice] << " - autoscale=" << ((const char*)(m_bAutoScale[iDevice]?"on":"off"));
 				}
 			}
 			pStart=p2+1;
@@ -2370,7 +2392,8 @@ CARESS::ReturnType CORBADevice_i::readblock_params(CORBA::Long kind,
 /***************************************************************************
  * histogram readout or read special device data
  ***************************************************************************/
-static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
+static void readblock_module_helper(bool bAutoScale,
+									QList<quint64> src, quint16 srcwidth,
 									QList<quint64>& dst, quint32 dstwidth);
 /*!
   \brief histogram readout or read special device data
@@ -2512,9 +2535,18 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 							// source is smaller height (grow)
 							for (y=0; y<iDetectorHeight; ++y)
 							{
-								int iStartY=(int)((((double)y)*lHistoY)/iDetectorHeight);
-								int iEndY=(int)((((double)y+1.0)*lHistoY)/iDetectorHeight);
+								int iStartY,iEndY;
 								int iStart=m_iDetectorWidth*y;
+								if (m_bAutoScale[iDevice])
+								{
+									iStartY=(int)((((double)y)*lHistoY)/iDetectorHeight);
+									iEndY=(int)((((double)y+1.0)*lHistoY)/iDetectorHeight);
+								}
+								else
+								{
+									iStartY=y;
+									iEndY=y+1;
+								}
 								tmpsrc.clear();
 								tmpdst.clear();
 								for (x=0; x<m_iDetectorWidth; ++x)
@@ -2524,8 +2556,18 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 									else
 										tmpsrc.append(0ULL);
 								}
-								readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
+								readblock_module_helper(m_bAutoScale[iDevice],tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
 								while (iStartY++ < iEndY)
+									dsthistogram.append(tmpdst);
+							}
+							if (!m_bAutoScale[iDevice])
+							{
+								// append zeros
+								tmpdst.clear();
+								tmpdst.reserve(lHistoX);
+								for (x=0; x<lHistoX; ++x)
+									tmpdst.append(0ULL);
+								while (y++ < lHistoY)
 									dsthistogram.append(tmpdst);
 							}
 						}
@@ -2534,8 +2576,17 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 							// source is greater or equal height (shrink)
 							for (y=0; y<lHistoY; ++y)
 							{
-								int iStartY=(int)((((double)y)*iDetectorHeight)/lHistoY);
-								int iEndY=(int)((((double)y+1.0)*iDetectorHeight)/lHistoY);
+								int iStartY,iEndY;
+								if (m_bAutoScale[iDevice])
+								{
+									iStartY=(int)((((double)y)*iDetectorHeight)/lHistoY);
+									iEndY=(int)((((double)y+1.0)*iDetectorHeight)/lHistoY);
+								}
+								else
+								{
+									iStartY=y;
+									iEndY=y+1;
+								}
 								tmpdst.clear();
 								while (iStartY<iEndY)
 								{
@@ -2548,7 +2599,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 										else
 											tmpsrc.append(0ULL);
 									}
-									readblock_module_helper(tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
+									readblock_module_helper(m_bAutoScale[iDevice],tmpsrc,m_iDetectorWidth,tmpdst,lHistoX);
 								}
 								dsthistogram.append(tmpdst);
 							}
@@ -2601,7 +2652,7 @@ CARESS::ReturnType CORBADevice_i::readblock_module(CORBA::Long kind,
 						int i,j;
 						i=(iDevice==QMESYDAQ_DIFFRACTOGRAM) ? m_lDiffractogramWidth : m_lSpectrogramWidth;
 						if (i>0)
-							readblock_module_helper(m_aullDetectorData,m_aullDetectorData.count(),dst,i);
+							readblock_module_helper(m_bAutoScale[iDevice],m_aullDetectorData,m_aullDetectorData.count(),dst,i);
 						else
 							dst=m_aullDetectorData;
 						if (end_channel>(int)dst.count())
@@ -2651,12 +2702,14 @@ end_of_readblock:
 
   grow, copy or shrink a single line of a histogram/diffractogram/spectrogram
   and merge it with a previous line
-  \param[in]     src       source histogram line
-  \param[in]     srcwidth  source histogram width
-  \param[in,out] dst       mapped histogram line
-  \param[in]     dstwidth  mapped histogram width
+  \param[in]     bAutoScale auto scaling: true=grow/shrink, false=append zeros/cut length
+  \param[in]     src        source histogram line
+  \param[in]     srcwidth   source histogram width
+  \param[in,out] dst        mapped histogram line
+  \param[in]     dstwidth   mapped histogram width
  */
-static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
+static void readblock_module_helper(bool bAutoScale,
+									QList<quint64> src, quint16 srcwidth,
 									QList<quint64>& dst, quint32 dstwidth)
 {
 	// scale data line to given size
@@ -2665,9 +2718,19 @@ static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
 		// source is smaller width (grow)
 		for (quint16 x=0; x<srcwidth; ++x)
 		{
-			int iStartX=(int)((((double)x)*dstwidth)/srcwidth);
-			int iEndX=(int)((((double)x+1.0)*dstwidth)/srcwidth);
-			int iSize=iEndX-iStartX;
+			int iStartX,iEndX,iSize;
+			if (bAutoScale)
+			{
+				iStartX=(int)((((double)x)*dstwidth)/srcwidth);
+				iEndX=(int)((((double)x+1.0)*dstwidth)/srcwidth);
+				iSize=iEndX-iStartX;
+			}
+			else
+			{
+				iStartX=x;
+				iEndX=x+1;
+				iSize=1;
+			}
 			quint64 ullValue=src.value(x);
 			quint64 ullMissing=ullValue;
 			ullValue/=iSize;
@@ -2687,14 +2750,26 @@ static void readblock_module_helper(QList<quint64> src, quint16 srcwidth,
 					dst.append(ull);
 			}
 		}
+		if (!bAutoScale) // append zeros
+			while (dst.size() < dstwidth)
+				dst.append(0ULL);
 	}
 	else
 	{
 		// source is greater or equal width (shrink)
 		for (quint32 x=0; x<dstwidth; ++x)
 		{
-			int iStartX=(int)((((double)x)*srcwidth)/dstwidth);
-			int iEndX=(int)((((double)x+1.0)*srcwidth)/dstwidth);
+			int iStartX,iEndX;
+			if (bAutoScale)
+			{
+				iStartX=(int)((((double)x)*srcwidth)/dstwidth);
+				iEndX=(int)((((double)x+1.0)*srcwidth)/dstwidth);
+			}
+			else
+			{
+				iStartX=x;
+				iEndX=x+1;
+			}
 			quint64 ullCount=0;
 			while (iStartX<iEndX)
 				ullCount+=src.value(iStartX++);
