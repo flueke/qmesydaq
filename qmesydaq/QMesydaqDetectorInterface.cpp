@@ -521,6 +521,22 @@ QString QMesyDAQDetectorInterface::getConfigurationFileName(void)
 	return configFile;
 }
 
+void QMesyDAQDetectorInterface::loadCalibrationFile(const QString &calibrationFile)
+{
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_SET_CALIBRATIONFILE, QList<QVariant>() << calibrationFile);
+	m_mutex.unlock();
+}
+
+QString QMesyDAQDetectorInterface::getCalibrationFileName(void)
+{
+	QString calibrationFile;
+	m_mutex.lock();
+	postRequestCommand(CommandEvent::C_GET_CALIBRATIONFILE);
+	calibrationFile = m_calibrationFile;
+	m_mutex.unlock();
+	return calibrationFile;
+}
 
 void QMesyDAQDetectorInterface::setStreamWriter(StreamWriter *pStreamWriter)
 {
@@ -643,6 +659,10 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 					m_sVersion = args[0].toString();
 					m_eventReceived = true;
 					break;
+				case CommandEvent::C_GET_CALIBRATIONFILE:
+					m_calibrationFile = args[0].toString();
+					m_eventReceived = true;
+					break;
 				case CommandEvent::C_GET_CONFIGFILE:
 					m_configFile = args[0].toString();
 					m_eventReceived = true;
@@ -669,6 +689,7 @@ void QMesyDAQDetectorInterface::customEvent(QEvent *e)
 				case CommandEvent::C_CLEAR:
 				case CommandEvent::C_RESUME:
 				case CommandEvent::C_SET_CONFIGFILE:
+				case CommandEvent::C_SET_CALIBRATIONFILE:
 				case CommandEvent::C_SET_PRESELECTION:
 				case CommandEvent::C_SELECT_COUNTER:
 				case CommandEvent::C_SET_LISTMODE:

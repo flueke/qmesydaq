@@ -69,6 +69,8 @@ public:
 		C_SET_SAVEHISTOGRAM,   // set auto saving histogram after stop; args: auto save histogram enabled
 		C_GET_SAVEHISTOGRAM,   // get auto saving histogram after stop; no args; result: boolean
 		C_SET_STREAMWRITER,    // set stream writer class to write list mode files to
+		C_SET_CALIBRATIONFILE, // load a new calibration file
+		C_GET_CALIBRATIONFILE, // return the current load calibration file
 	};
 
 	CommandEvent(Command command, QList<QVariant> args = QList<QVariant>());

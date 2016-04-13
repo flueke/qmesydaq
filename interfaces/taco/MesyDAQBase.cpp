@@ -65,6 +65,7 @@ MesyDAQ::Base::Base(const std::string& name, DevLong& error) throw (::TACO::Exce
 	addResource("runid", D_ULONG_TYPE, "number of the last/currently data acquisition run");
 	addResource("histogram", D_STRING_TYPE, "type of the histogram (raw|mapped|amplitude)");
 	addResource("configfile", D_STRING_TYPE, "currently used configuration file");
+	addResource("calibrationfile", D_STRING_TYPE, "currently used calibration file");
 
 	MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
 	if (app)

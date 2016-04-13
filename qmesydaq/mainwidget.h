@@ -108,6 +108,8 @@ public slots:
 	//! load configuration file
 	void	loadConfiguration(const QString &sFilename);
 
+	void	loadCalibration(const QString &sFilename);
+
 	void	tPresetSlot(bool pr);
 
 	void	tResetSlot();

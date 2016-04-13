@@ -989,6 +989,12 @@ void MainWidget::loadConfiguration(const QString& sFilename)
 	}
 }
 
+void MainWidget::loadCalibration(const QString &sFilename)
+{
+	if (!sFilename.isEmpty())
+		m_meas->readCalibration(sFilename, true);
+}
+
 void MainWidget::updateMeasurement(void)
 {
 	QSettings settings(m_meas->getConfigfilename(), QSettings::IniFormat);
@@ -2429,6 +2435,23 @@ void MainWidget::customEvent(QEvent *e)
 			acquireListFile->setChecked(args[0].toBool());
 			if (args.size() > 1)
 				m_meas->setWriteProtection(args[1].toBool());
+			break;
+		case CommandEvent::C_GET_CALIBRATIONFILE:
+			{
+				QFileInfo fi = m_meas->getCalibrationfilename();
+				answer << fi.fileName();
+			}
+			break;
+		case CommandEvent::C_SET_CALIBRATIONFILE:
+			{
+				// TODO Should we check for an file extension like 'mcfg'?
+				QString fn = args[0].toString();
+				QFileInfo fi(m_meas->getConfigfilepath(), fn);
+				if (fi.isFile() && fi.isReadable())
+					loadCalibration(fi.filePath());
+				else
+					MSG_ERROR << "Could not find : " << fi.absoluteFilePath();
+			}
 			break;
 		case CommandEvent::C_GET_CONFIGFILE:
 			{

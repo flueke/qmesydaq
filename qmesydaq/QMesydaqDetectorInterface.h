@@ -55,6 +55,12 @@ class QMesyDAQDetectorInterface : public QtInterface
 	//! the preselection value
 	Q_PROPERTY(double m_preSelection READ preSelection WRITE setPreSelection)
 
+	//! the configuration file name
+	Q_PROPERTY(QString m_configFile READ getConfigurationFileName WRITE loadConfigurationFile)
+
+	//! the calibration file name
+	Q_PROPERTY(QString m_calibrationFile READ getCalibrationFileName WRITE loadCalibrationFile)
+
 public:
 	QMesyDAQDetectorInterface(QObject *receiver = 0, QObject *parent = 0);
 
@@ -105,6 +111,9 @@ public:
 
 	void loadConfigurationFile(const QString &confFile);
 	QString getConfigurationFileName(void);
+
+	void loadCalibrationFile(const QString &confFile);
+	QString getCalibrationFileName(void);
 
 	/*!
 	 * Sets the run ID
@@ -176,6 +185,9 @@ private:
 
 	//! name of the configuration file
 	QString			m_configFile;
+
+	//! name of the calibration file
+	QString			m_calibrationFile;
 };
 
 #endif // MESYDAQDETECTORQTINTERFACE_H
