@@ -1,4 +1,4 @@
-qmesydaq (0.50.0) UNRELEASED; urgency=low
+qmesydaq (0.50.1) unstable; urgency=low
 
   [ Jens Krueger ]
   * First check in (save current state)
@@ -1224,4 +1224,238 @@ qmesydaq (0.50.0) UNRELEASED; urgency=low
   [ Alexander Lenz ]
   * [WIP] Build debian package
 
- -- Jens Krueger <jens.krueger@frm2.tum.de>  Wed, 14 Jan 2015 13:56:22 +0100
+  [ Jens Krüger ]
+  * Fix: typo
+  * FIX: The size of the package could be 750 words
+  * FIX: Calculation of the X and Y position for the MDLL
+
+  [ Lutz Rossa ]
+  * fix missing header size (bug in I4124fb66069f71ecd62652e16005b681086f0456)
+
+  [ Jens Krüger ]
+  * FIX: missing newline in histogram file header
+  * TACO: enable the auto save histogram file option
+  * Enable/Disable the auto save histogram remotely
+  * TACO: Fix clear command of the Timer channel
+  * Simplify the resource handling by introducing a base class
+  * TACO: Improve start of the timer and counter
+  * TACO: save the resources for the list/hist files
+  * Different behavior on remote/local start
+  * TACO: Init the histogram mode from database
+
+  [ Alexander Lenz ]
+  * Build debian package (Fixes: #1466)
+
+  [ Jens Krüger ]
+  * TACO: Use enum types to select the histogram types
+  * QLED: Fix typo
+  * QMESYDAQ: Module setup uses spinboxes for the gain and threshold
+
+  [ Gregor Montermann ]
+  * Remove cmd checksum check in MCPD-8
+
+  [ Jens Krüger ]
+  * QMESYDAQ: Improve the visibility of the module information
+  * QMESYDAQ: Add missing change in version number
+  * Add a default mapping for the MWPCHR type
+  * Remove some formatting issues
+  * Disable the configuration and pulser setup for the MWPCHR type
+  * Remove doubled check
+
+  [ Lutz Rossa ]
+  * fix bug when load a configuration file after starting with command line option "-nf"
+  * change default file name for EXED
+  * reset file writer stream for every new file
+  * FIX: try to connect to a not existing signal/slot.
+  * fix: Does not show the versions of MPSD-8 (at least this).
+
+  [ Jens Krüger ]
+  * FIX: some of the cppcheck warnings/errors
+  * FIX: wrong initialisation of the module setup
+  * Debian: change copyright and add the installs
+  * LIB: use always the poti values for the gain and threshold
+
+  [ Gregor Montermann ]
+  * Remove timing delta histogram in widget
+
+  [ Gregor Montemann ]
+  * Change the pulser test
+
+  [ Jens Krüger ]
+  * Remove all remaining subversion related files.
+  * Use create_prl/link_prl for the creation and linking of the libs.
+
+  [ Lutz Rossa ]
+  * ignore Qt generated PRL files
+  * fix asking for file name before start
+  * start/stop also the slave MCPD-8 modules
+
+  [ Gregor Montermann ]
+  * GUI: Allow channel 0...15 when displaying MSTD spectra
+  * LIB: change histogramming for MSTD-16
+
+  [ Lutz Rossa ]
+  * handle different gain command for MSTD-16
+
+  [ Jens Krüger ]
+  * Histogram/Active settings display will changed with change of module
+    (Fixes: #2086)
+  * FIX: module settings of histogram/active will not take over (Fixes: #2087)
+
+  [ Gregor Montermann ]
+  * Enable all MSTD channels in setup dialog
+  * Store the gains for all channels in case on an MSTD-16
+
+  [ Jens Krüger ]
+  * Read corrected histogram data too if reading histogram file
+  * Introduce a new histogram file format: Simple Histogram File Format
+  * FIX: crashes during replay list mode files
+  * FIX: tube mapping on sparse modules
+  * FIX: enable the MCPD/ModulSpinBox for of non empty lists
+
+  [ Gregor Montermann ]
+  * MSTD16: amplitude as standard, save to config
+
+  [ Jens Krüger ]
+  * FIX: improve the mapping of the tubes
+  * LIB: move implementation from header to source files
+  * FIX: tube mapping
+
+  [ Alexander Lenz ]
+  * Use git versioning.
+
+  [ Jens Krüger ]
+  * FIX: Do not install test programs
+
+  [ Alexander Lenz ]
+  * [deb] Add qled.so to installed files.
+
+  [ Jens Krüger ]
+  * Make the bug report dialog to a non-modal dialog (Fixes: #2112)
+  * TCP: Enable the autosave of histogram/list mode remotely (Fixes: #2111)
+  * FIX: Settings and display of common gain (Fixes: #2109)
+  * FIX: only display the configured channels
+  * TACO: remove x bit from file
+  * LIB: some code cleanup
+
+  [ Lutz Rossa ]
+  * clean up code
+  * Use channel count
+  * introduce channel count for modules connected to MCPD8
+
+  [ Jens Krüger ]
+  * The MWPCHR type module has no special settings.
+
+  [ Lutz Rossa ]
+  * allow to read module channel count from library
+  * use channel count in module setup window
+  * use channel count in GUI
+
+  [ Jens Krüger ]
+  * Add the FPGA version read out and display
+  * Use sphinx to generate doc
+  * qmdump: print amplitude in case of using option -p
+  * LIB: Workaround for amplitude mode and amplitude has 0 value
+  * LIB: reduce the loglevel
+  * FIX: doc according to the sync bit
+
+  [ Gregor Montermann ]
+  * Implement processing of answer to cmd #23:
+
+  [ Jens Krüger ]
+  * QMesyDAQ: restyle the GUI
+  * Detect loss of sync between the MCPD modules (Fixes: #206)
+
+  [ Lutz Rossa ]
+  * fix amplitude mode for non MSTD-16 modules
+
+  [ Jens Krüger ]
+  * SIMULATOR: synchronize the clocks of the instances
+  * QMesyDAQ: Fix the display of histogram/active
+  * ModuleSpinBox: Fix spinning down issue
+  * FIX: first manual start did not ask for list/histogram file
+  * TCP: Extend the TCP protocol by a help command
+  * LIB: Fix setting of the TX mode for the MPSD-8+
+  * TCP: cleanup code
+  * Enable/disable mode and amplifier/discriminator settings
+  * LIB: Improve the TX mode settings
+  * LIB: Eliminate all inline functions
+  * [WIP] Clean up the code related to the "ROI"
+  * Add a comment into the config file during the save dialog
+  * Display the comment from the configuration file
+  * GUI: change the cast operator
+  * Display counts for the selected zoom area also for the spectra.
+    (Fixes: # 2173)
+  * QMLSMOD: Improve output of the capabilities
+  * LIB: Initialise the TX mode of MCPD8 with TPA in case of not set
+  * Improve the MCPD setup layout
+  * Add an interface to define a region of interest (ROI) (Fixes: #1419)
+  * FIX: calculation of the sliding mean and sigma value
+  * CARESS: Cleanup code to make cppcheck a little bit happier
+  * TACO: Cleanup code to make cppcheck a little bit happier
+  * Fix the display of the MCPD, MPSD, and Channel selection
+  * Add an additional view (Fixes: #2088)
+  * Set the current comment for the setup file into the save dialog
+  * Take the number channels to be histogrammed from setup (Fixes: #1643)
+
+  [ Stefan Rainow ]
+  * Setup: add a graphical drag'n drop setup
+
+  [ Jens Krüger ]
+  * LIB: detection of mapping size from LUT calibration file
+  * LIB: Modify LUT reading for the SPODI instrument
+  * CARESS: Use the mapped histogram in case of reading histogram
+  * LIB: Fix SPODI special case
+  * MSTD-16: set the number of channels per MCPD to 128 (Fixes: #2190)
+  * DISPLAY: select only histogrammed MPSD's
+  * SIMULATOR: set the firmware version for the MSTD to 6.4
+  * FIX: Create reasonable scale in plot window if no data available
+  * FIX: Display only the configured channels
+
+  [ Lutz Rossa ]
+  * Introduce mapping of MCPDs digital inputs to monitor counters
+
+  [ Christian Felder ]
+  * Add Q_INIT_RESOURCE Macro for QLED Library.
+
+  [ Jens Krüger ]
+  * Fix: Remote reset of the preset check button (Fixes: #2458)
+
+  [ Lutz Rossa ]
+  * use specific width of the MCPD-8 depending of the setup
+
+  [ Jens Krüger ]
+  * FIX: Wrong calculation of the tube mapping size (Fixes: #2488)
+  * SIMULATOR: improve width handling
+  * FIX: display of huge sigma values
+  * MCPDSetup: Change some text entries
+  * ModuleSetup: add a horizontal line
+  * LIB: Fix the change amp/position condition
+  * LIB: set default pulser amplitude to 40 for not MPSD8+ modules
+  * QMESYDAQ: Do not change module in pulser dialog
+  * QMESYDAQ: Rearrange the input of the slot
+  * QMESYDAQ: Add a tab to split manual from automatic pulser tests
+
+  [ Lutz Rossa ]
+  * allow automatic file wrapping to next file
+
+  [ Jens Krüger ]
+  * FIX: core dump due to not initialized pointer
+
+  [ Lutz Rossa ]
+  * fix uninitialized variable in CARESS interface
+
+  [ Jens Krüger ]
+  * FIX: missing header in list mode files
+
+  [ Lutz Rossa ]
+  * fix stack overflow while selecting other target counter
+  * CARESS: allow to switch automatic scaling
+
+  [ Jens Krüger ]
+  * TACO: Add the access to the calibration file name
+  * Add the configuration and calibration file name
+
+  [ Jenkins ]
+
+ -- Jenkins <jenkins@debuild.taco.frm2>  Wed, 13 Apr 2016 15:53:07 +0200
