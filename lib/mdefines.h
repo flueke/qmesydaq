@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -165,8 +165,8 @@
 #define M2CT			1
 #define M3CT			2
 #define M4CT			3
-#define EVCT			4
-#define TCT			5
+#define EVCT			100
+#define TCT			101
 #define HISTO			99
 
 // DataID mapping
@@ -178,8 +178,6 @@
 #define TTL2ID			5
 #define ADC1ID			6
 #define ADC2ID			7
-#define EVID			8
-#define TIMERID			9
 
 // Trigger sources
 #define NOTRIGGER		0

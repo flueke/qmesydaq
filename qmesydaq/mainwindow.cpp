@@ -133,7 +133,7 @@ void MainWindow::restoreSettings()
 	m_mesy->setAutoIncRunId(settings.value("config/autoincrunid", "true").toBool());
 	m_mesy->setWriteProtection(settings.value("config/writeprotect", "false").toBool());
 	setGeometry(QRect(pos, size));
-	switch (settings.value("config/accesslevel", 0).toUInt())
+	switch (settings.value("config/accesslevel", MainWidget::User).toUInt())
 	{
 		default:
 		case MainWidget::User:

@@ -118,21 +118,9 @@ public slots:
 
 	void	eResetSlot();
 
-	void	m1PresetSlot(bool pr);
+	void	mPresetSlot(int, bool pr);
 
-	void	m1ResetSlot();
-
-	void	m2PresetSlot(bool pr);
-
-	void	m2ResetSlot();
-
-	void	m3PresetSlot(bool pr);
-
-	void	m3ResetSlot();
-
-	void	m4PresetSlot(bool pr);
-
-	void	m4ResetSlot();
+	void	mResetSlot(int);
 
 #if QWT_VERSION >= 0x060000
 	void	zoomed(const QRectF &rect);

@@ -498,6 +498,20 @@ histogram file</string>
                </widget>
               </item>
               <item>
+               <widget class="MonitorPresetWidget" name="monitor5Preset" native="true">
+                <property name="label" stdset="0">
+                 <string>Monitor 5</string>
+                </property>
+               </widget>
+	      </item>
+              <item>
+               <widget class="MonitorPresetWidget" name="monitor6Preset" native="true">
+                <property name="label" stdset="0">
+                 <string>Monitor 6</string>
+                </property>
+               </widget>
+	      </item>
+              <item>
                <spacer name="verticalSpacer">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -1748,8 +1762,8 @@ histogram file</string>
    <extends>QWidget</extends>
    <header>monitorpresetwidget.h</header>
    <slots>
-    <signal>presetClicked(bool)</signal>
-    <signal>resetClicked()</signal>
+    <signal>presetClicked(int, bool)</signal>
+    <signal>resetClicked(int)</signal>
     <signal>mappingChanged(int, int)</signal>
    </slots>
   </customwidget>
@@ -2126,9 +2140,9 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor1Preset</sender>
-   <signal>presetClicked(bool)</signal>
+   <signal>presetClicked(int, bool)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m1PresetSlot(bool)</slot>
+   <slot>mPresetSlot(int, bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>400</x>
@@ -2142,9 +2156,9 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor1Preset</sender>
-   <signal>resetClicked()</signal>
+   <signal>resetClicked(int)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m1ResetSlot()</slot>
+   <slot>mResetSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>400</x>
@@ -2158,9 +2172,9 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor2Preset</sender>
-   <signal>presetClicked(bool)</signal>
+   <signal>presetClicked(int, bool)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m2PresetSlot(bool)</slot>
+   <slot>mPresetSlot(int, bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>421</x>
@@ -2174,9 +2188,9 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor2Preset</sender>
-   <signal>resetClicked()</signal>
+   <signal>resetClicked(int)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m2ResetSlot()</slot>
+   <slot>mResetSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>421</x>
@@ -2190,9 +2204,9 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor3Preset</sender>
-   <signal>presetClicked(bool)</signal>
+   <signal>presetClicked(int, bool)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m3PresetSlot(bool)</slot>
+   <slot>mPresetSlot(int, bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>421</x>
@@ -2206,9 +2220,9 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor3Preset</sender>
-   <signal>resetClicked()</signal>
+   <signal>resetClicked(int)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m3ResetSlot()</slot>
+   <slot>mResetSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>421</x>
@@ -2222,9 +2236,9 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor4Preset</sender>
-   <signal>presetClicked(bool)</signal>
+   <signal>presetClicked(int, bool)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m4PresetSlot(bool)</slot>
+   <slot>mPresetSlot(int, bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>421</x>
@@ -2238,13 +2252,77 @@ histogram file</string>
   </connection>
   <connection>
    <sender>monitor4Preset</sender>
-   <signal>resetClicked()</signal>
+   <signal>resetClicked(int)</signal>
    <receiver>MainWidget</receiver>
-   <slot>m4ResetSlot()</slot>
+   <slot>mResetSlot(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>421</x>
      <y>605</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>monitor5Preset</sender>
+   <signal>presetClicked(int, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>mPresetSlot(int, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>monitor5Preset</sender>
+   <signal>resetClicked(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>mResetSlot(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>monitor6Preset</sender>
+   <signal>presetClicked(int, bool)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>mPresetSlot(int, bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>monitor6Preset</sender>
+   <signal>resetClicked(int)</signal>
+   <receiver>MainWidget</receiver>
+   <slot>mResetSlot(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>

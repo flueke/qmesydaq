@@ -114,7 +114,11 @@
     </widget>
    </item>
    <item row="0" column="6">
-    <widget class="MCPDSpinBox" name="mcpdSpinBox"/>
+    <widget class="MCPDSpinBox" name="mcpdSpinBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item row="0" column="7">
     <widget class="QLabel" name="inputLabel">
@@ -125,6 +129,9 @@
    </item>
    <item row="0" column="8">
     <widget class="QComboBox" name="inputComboBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <item>
       <property name="text">
        <string>--- ignored ---</string>
@@ -215,6 +222,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MCPDSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>MCPDSpinBox.h</header>
+   <slots>
+    <slot>steps(int)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -282,16 +299,6 @@
    </hints>
   </connection>
  </connections>
- <customwidgets>
-  <customwidget>
-   <class>MCPDSpinBox</class>
-   <extends>QSpinBox</extends>
-   <header>MCPDSpinBox.h</header>
-   <slots>
-    <slot>steps(int)</slot>
-   </slots>
-  </customwidget>
- </customwidgets>
  <slots>
   <slot>resetButtonClicked()</slot>
   <slot>presetCheckClicked(bool)</slot>

@@ -26,8 +26,8 @@ int main(int argc, char **argv)
 
 	meas->loadSetup(sFilename);
 
-	meas->setPreset(TIMERID, quint64(measTime * 1000), true);
-//	meas->setPreset(EVID, eventsPreset->presetValue(), true);
+	meas->setTimerPreset(quint64(measTime * 1000), true);
+//	meas->setEventCounterPreset(eventsPreset->presetValue(), true);
 
 	meas->start();
 

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -89,13 +89,15 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
 	connect(m_mesydaq, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
-	for (quint8 i = 0; i < TIMERID; ++i)
+	m_events = new MesydaqCounter();
+	connect(m_events, SIGNAL(stop()), this, SLOT(requestStop()));
+	m_timer = new MesydaqTimer();
+	connect(m_timer, SIGNAL(stop()), this, SLOT(requestStop()));
+	for (quint8 i = MON1ID; i < ADC1ID; ++i)
 	{
 		m_counter[i] = new MesydaqCounter();
 		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
 	}
-	m_counter[TIMERID] = new MesydaqTimer();
-	connect(m_counter[TIMERID], SIGNAL(stop()), this, SLOT(requestStop()));
 
 	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
 
@@ -283,9 +285,10 @@ void Measurement::setCurrentTime(quint64 msecs)
 	if(status() == Started)
 	{
 		m_meastime_msec = msecs - m_starttime_msec;
-		for (quint8 i = 0; i < TIMERID; ++i)
+		m_events->setTime(m_meastime_msec);
+		for (quint8 i = MON1ID; i < ADC1ID; ++i)
 			m_counter[i]->setTime(m_meastime_msec);
-		m_counter[TIMERID]->setTime(msecs);
+		m_timer->setTime(msecs);
 	}
 }
 
@@ -318,14 +321,16 @@ void Measurement::start()
 	m_mesydaq->start();
 	m_status = Started;
 	m_starttime_msec = m_mesydaq->time();
-	MSG_INFO << tr("event counter limit : %1").arg(m_counter[EVID]->limit());
-	MSG_INFO << tr("timer limit : %1").arg(m_counter[TIMERID]->limit() / 1000);
+	MSG_INFO << tr("event counter limit : %1").arg(m_events->limit());
+	MSG_INFO << tr("timer limit : %1").arg(m_timer->limit() / 1000);
 	foreach (MesydaqCounter *c, m_counter)
 	{
 		c->start(m_starttime_msec);
 		MSG_INFO<< tr("counter %1 value : %2 limit : %3").arg(*c).arg(c->value()).arg(c->limit());
 	}
 	m_lastTriggerTime = 0;
+	m_events->start(m_starttime_msec);
+	m_timer->start(m_starttime_msec);
 }
 
 /*!
@@ -490,6 +495,126 @@ void Measurement::setOnline(bool truth)
 }
 
 /*!
+    \fn quint64 Measurement::getTimerPreset(void) const
+
+    get the preset value of the timer
+    \return preset value
+ */
+quint64 Measurement::getTimerPreset(void) const
+{
+	return m_timer->limit();
+}
+
+/*!
+    \fn void Measurement::setTimerPreset(const quint64 prval, const bool mast)
+
+    sets the timer preset and master counter, all other counters will be set to slave
+    if the timer is set to master
+
+    \param prval preset value
+    \param mast should the counter be master or not
+ */
+void Measurement::setTimerPreset(const quint64 prval, const bool mast)
+{
+	if (mast)
+	{
+		foreach(MesydaqCounter *c, m_counter)
+			c->setMaster(false);
+		m_events->setMaster(false);
+	}
+	m_timer->setMaster(mast);
+	m_timer->setLimit(prval);
+}
+
+/*!
+    \fn Measurement::isTimerMaster(void) const
+
+    is timer master or not
+
+    \return master state
+ */
+bool Measurement::isTimerMaster(void) const
+{
+	return m_timer->isMaster();
+}
+
+/*!
+    \fn Measurement::clearTimer(void)
+
+    resets the timer, clear preset and set value to 0
+ */
+void Measurement::clearTimer(void)
+{
+	m_timer->reset();
+}
+
+/*!
+    \fn quint64 Measurement::getEventCounterPreset(void) const
+
+    get the preset value of the event counter
+    \return preset value
+ */
+quint64 Measurement::getEventCounterPreset(void) const
+{
+	return m_events->limit();
+}
+
+/*!
+    \fn void Measurement::setEventCounterPreset(const quint64 prval, const bool mast)
+
+    sets the event counter preset and master counter, all other counters will be set
+    to slave if the event counter is set to master
+
+    \param prval preset value
+    \param mast should the counter be master or not
+ */
+void Measurement::setEventCounterPreset(const quint64 prval, const bool mast)
+{
+	if (mast)
+	{
+		foreach(MesydaqCounter *c, m_counter)
+			c->setMaster(false);
+		m_events->setMaster(false);
+	}
+	m_timer->setMaster(mast);
+	m_timer->setLimit(prval);
+}
+
+/*!
+    \fn Measurement::isEventCounterMaster(void) const
+
+    is event counter master or not
+
+    \return master state
+ */
+bool Measurement::isEventCounterMaster(void) const
+{
+	return m_events->isMaster();
+}
+
+/*!
+    \fn Measurement::clearEventCounter(void)
+
+    resets the event counter, clear preset and set value to 0
+ */
+void Measurement::clearEventCounter(void)
+{
+	m_timer->reset();
+}
+
+/*!
+    \fn Measurement::getEventCounterRate(void) const
+
+    get the rate of the event counter
+
+    \return counter rate
+ */
+quint64 Measurement::getEventCounterRate(void) const
+{
+	return m_events->rate();
+}
+
+/*!
     \fn Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 
     sets the counter preset and master counter, all other counters will be set to slave
@@ -524,7 +649,7 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
     \param cNum number of the counter
     \return preset value
  */
-quint64 Measurement::getPreset(quint8 cNum)
+quint64 Measurement::getPreset(quint8 cNum) const
 {
 	if(m_counter.contains(cNum))
 		return m_counter[cNum]->limit();
@@ -809,10 +934,10 @@ void Measurement::writeStandardHistograms(QTextStream &t)
 	//
 	// write the monitor, events, and timer values after a '#' char
 	//
-	for (quint8 i = MON1ID; i <= MON4ID; ++i)
+	for (quint8 i = MON1ID; i <= TTL2ID; ++i)
 		t << "# monitor " << (i + 1) << " = " << m_counter[i]->value() << endLine;
-	t << "# events = " << m_counter[EVID]->value() << endLine;
-	t << "# timer = " << m_counter[TIMERID]->value() << " ms" << endLine;
+	t << "# events = " << m_events->value() << endLine;
+	t << "# timer = " << m_timer->value() << " ms" << endLine;
 	t << "# setup file = " << getConfigfilename() << endLine;
 	t << "# calibration file = " << getCalibrationfilename() << endLine;
 	// Title
@@ -1010,14 +1135,15 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			tim += m_headertime;
 // id stands for the trigId and modId depending on the package type
 			quint8 id = (pPacket->dp.data[counter + 2] >> 12) & 0x7;
-			m_counter[TIMERID]->setTime(tim / 10000);
+			m_timer->setTime(tim / 10000);
 // not neutron event (counter, chopper, ...)
 			if((pPacket->dp.data[counter + 2] & TRIGGEREVENTTYPE))
 			{
 				triggers++;
 				quint8 dataId = (pPacket->dp.data[counter + 2] >> 8) & 0x0F;
+				quint8 olddataId = dataId;
 				data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
-				if (dataId >= EVID)
+				if (dataId > ADC2ID)
 				{
 					++counterTriggers;
 					MSG_ERROR << tr("counter %1 : %2").arg(dataId).arg(i);
@@ -1033,7 +1159,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						if (m_counter[dataId]->isTrigger())
 							m_lastTriggerTime = tim;
 #if 0
-						MSG_DEBUG << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
+						MSG_ERROR << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
 #endif
 						break;
 					case TTL1ID :
@@ -1050,9 +1176,12 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					case ADC2ID :
 						++adcTriggers;
 						++(*m_counter[dataId]);
+#if 0
 						MSG_DEBUG << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
+#endif
 						break;
 					default:
+						MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2, %3).").arg(dataId).arg(mod).arg(olddataId);
 						break;
 				}
 			}
@@ -1171,7 +1300,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						}
 					}
 					neutrons++;
-					++(*m_counter[EVID]);
+					++(*m_events);
 					if (m_Hist[PositionHistogram])
 						m_Hist[PositionHistogram]->incVal(chan, pos);
 					if (m_Hist[AmplitudeHistogram])
@@ -1192,14 +1321,14 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			}
 		}
 #if 0
-		MSG_DEBUG << tr("# : %1 has %2 trigger events and %3 neutrons").arg(pd.bufferNumber).arg(triggers).arg(neutrons);
-		MSG_DEBUG << tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pd.bufferNumber)
+		MSG_ERROR << tr("# : %1 has %2 trigger events and %3 neutrons").arg(pPacket->dp.bufferNumber).arg(triggers).arg(neutrons);
+		MSG_ERROR << tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pPacket->dp.bufferNumber)
 					.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);
 #endif
 		m_triggers += triggers;
 		m_neutrons += neutrons;
 #if 0
-		for(int i = 0; i < 4; i++)
+		for(int i = MON1ID; i <= TTL2ID; i++)
 		{
 			quint64 var = 0;
 			for(int j = 0; j < 3; j++)
@@ -1445,7 +1574,7 @@ void Measurement::readListfile(const QString &readfilename)
 		if (getNextBlock(datStream, dataBuf->dp))
 		{
 			quint64 tmp = dataBuf->dp.time[0] + (quint64(dataBuf->dp.time[1]) << 16) + (quint64(dataBuf->dp.time[2]) << 32);
-			m_counter[TIMERID]->start(tmp / 10000);
+			m_timer->start(tmp / 10000);
 			analyzeBuffer(dataBuf);
 			++blocks;
 			++bcount;
@@ -1670,7 +1799,7 @@ bool Measurement::loadSetup(const QString &name)
 	updateSetupType();
 
 	settings.beginGroup("MESYDAQ");
-	for (int j = 0; j < 4; ++j)
+	for (int j = MON1ID; j <= TTL2ID; ++j)
 	{
 		QPoint p = settings.value(QString("monitor%1").arg(j), QPoint(0, j)).toPoint();
 		setMonitorMapping(p.x(), p.y(), j);
@@ -1765,7 +1894,7 @@ bool Measurement::saveSetup(const QString &name, const QString &comment)
 	settings.setValue("debugLevel", QString("%1").arg(debug[DEBUGLEVEL]));
 	settings.setValue("calibrationfile", m_calibrationfilename);
 	settings.setValue("psdarrangement", m_psdArrangement);
-	for (int j = 0; j < 4; ++j)
+	for (int j = MON1ID; j <= TTL2ID; ++j)
 	{
 		QPair<int, int> p = monitorMapping(j);
 		settings.setValue(QString("monitor%1").arg(j), QPoint(p.first, p.second));
@@ -1799,34 +1928,19 @@ Histogram *Measurement::hist(const HistogramType t) const
 	return m_Hist[t];
 }
 
-quint64	Measurement::mon1() const
+quint64	Measurement::mon(const int id) const
 {
-	return m_counter[MON1ID]->value();
-}
-
-quint64	Measurement::mon2() const
-{
-	return m_counter[MON2ID]->value();
-}
-
-quint64	Measurement::mon3() const
-{
-	return m_counter[MON3ID]->value();
-}
-
-quint64	Measurement::mon4() const
-{
-	return m_counter[MON4ID]->value();
+	return m_counter[id]->value();
 }
 
 quint64 Measurement::events() const
 {
-	return m_counter[EVID]->value();
+	return m_events->value();
 }
 
 quint64	Measurement::timer() const
 {
-	return m_counter[TIMERID]->value();
+	return m_timer->value();
 }
 
 quint64 Measurement::getHeadertime(void) const

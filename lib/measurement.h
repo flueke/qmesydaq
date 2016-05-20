@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -155,7 +155,18 @@ public:
 	quint8	isOk(void) const;
 	void	setOnline(const bool truth);
 
-	quint64	getPreset(const quint8 cNum);
+	quint64 getTimerPreset(void) const;
+	void	setTimerPreset(const quint64 prval, const bool mast);
+	bool	isTimerMaster(void) const;
+	void	clearTimer(void);
+
+	quint64 getEventCounterPreset(void) const;
+	void	setEventCounterPreset(const quint64 prval, const bool mast);
+	bool	isEventCounterMaster(void) const;
+	void	clearEventCounter(void);
+	quint64	getEventCounterRate() const;
+
+	quint64	getPreset(const quint8 cNum) const;
 	void	setPreset(const quint8 cNum, const quint64 prval, const bool mast);
 
 	void	setListmode(const bool truth);
@@ -178,32 +189,12 @@ public:
 	quint64	getROICounts(void) const;
 
 	/**
-		gets the value of the defined monitor 1
+		gets the value of the monitor given by id value
 		\todo monitor mapping configuration
-		\return counter value for the monitor 1
+		\param id of the monitor starting with 0
+		\return counter value for the monitor
 	 */
-	quint64	mon1() const;
-
-	/**
-		gets the value of the defined monitor 2
-		\todo monitor mapping configuration
-		\return counter value for the monitor 2
-	 */
-	quint64	mon2() const;
-
-	/**
-		gets the value of the defined monitor 2
-		\todo monitor mapping configuration
-		\return counter value for the monitor 2
-	 */
-	quint64	mon3() const;
-
-	/**
-		gets the value of the defined monitor 2
-		\todo monitor mapping configuration
-		\return counter value for the monitor 2
-	 */
-	quint64	mon4() const;
+	quint64	mon(const int id) const;
 
 	/**
 		gets the value of the defined event counter
@@ -503,6 +494,12 @@ private:
 
 	//! definitions of the counters
 	QHash<int, MesydaqCounter *>	m_counter; // [TIMERID + 1];
+
+	//! overall event counter
+	MesydaqCounter	*m_events;
+
+	//! timer
+	MesydaqCounter	*m_timer;
 
 	//! timer for the ratemeter
 	int		m_rateTimer;

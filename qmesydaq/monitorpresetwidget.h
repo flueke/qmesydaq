@@ -32,11 +32,13 @@ class QMouseEvent;
 
     \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class MonitorPresetWidget : public QWidget, public Ui_MonitorPresetWidget
+class MonitorPresetWidget : public QWidget, protected Ui_MonitorPresetWidget
 {
 	Q_OBJECT
 public:
 	MonitorPresetWidget(QWidget * = 0);
+
+	void setId(const int id);
 
 	void setLabel(const QString &);
 
@@ -54,18 +56,23 @@ public:
 
 	void setConfigureMode(const bool);
 
+	bool isInConfigureMode(void)
+	{
+		return mcpdSpinBox->isEnabled();
+	}
+
 	void configureMapping(const int, const int);
 
 	void setMCPDList(QList<int> modules);
 
 signals:
 	//! this signal will be emitted if the reset button is pressed
-	void resetClicked();
+	void resetClicked(int);
 
 	//! this signal will be emitted if the check button for the master is changed
-	void presetClicked(bool);
+	void presetClicked(int, bool);
 
-	void mappingChanged(quint16, qint8, qint8);
+	void mappingChanged(int, quint16, qint8, qint8);
 
 private slots:
 	void presetCheckClicked(bool);
@@ -78,5 +85,8 @@ private slots:
 
 private:
 	void emitMappingChanged(void);
+
+private:
+	int m_id;
 };
 #endif

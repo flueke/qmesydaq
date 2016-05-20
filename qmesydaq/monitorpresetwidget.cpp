@@ -26,11 +26,23 @@
  */
 MonitorPresetWidget::MonitorPresetWidget(QWidget *parent)
 	: QWidget(parent)
+	, m_id(-1)
 {
 	setupUi(this);
 	setLabel("");
 	setPresetValue(0);
 	setConfigureMode(false);
+}
+
+/*!
+   \fn void MonitorPresetWidget::setId(const int id)
+
+   \parm id
+ */
+
+void MonitorPresetWidget::setId(const int id)
+{
+	m_id = id;
 }
 
 /*!
@@ -125,7 +137,7 @@ bool MonitorPresetWidget::isChecked(void)
 void MonitorPresetWidget::presetCheckClicked(bool val)
 {
 	setChecked(val);
-	emit presetClicked(val);
+	emit presetClicked(m_id, val);
 }
 
 /*!
@@ -136,7 +148,7 @@ void MonitorPresetWidget::presetCheckClicked(bool val)
 void MonitorPresetWidget::resetButtonClicked(void)
 {
 	setPresetValue(0);
-	emit resetClicked();
+	emit resetClicked(m_id);
 }
 
 void MonitorPresetWidget::mcpdChanged(int)
@@ -155,7 +167,7 @@ void MonitorPresetWidget::emitMappingChanged(void)
 	{
 		int i = objectName().mid(7, 1).toInt() - 1; // objectName assumed as monitor[0-9]Preset
 		MSG_DEBUG << tr("emitting %1 : %2 %3 %4").arg(objectName()).arg(mcpdSpinBox->value()).arg(inputComboBox->currentIndex() - 1).arg(i);
-		emit mappingChanged(mcpdSpinBox->value(), inputComboBox->currentIndex() - 1, i); // -1 since the index 0 is for 'not used'
+		emit mappingChanged(m_id, mcpdSpinBox->value(), inputComboBox->currentIndex() - 1, i); // -1 since the index 0 is for 'not used'
 	}
 }
 
