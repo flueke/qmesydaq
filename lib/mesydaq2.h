@@ -27,7 +27,7 @@
 #include <QSettings>
 #include <QFile>
 #include <QSize>
-#include <QVector>
+#include <QMap>
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
@@ -363,7 +363,7 @@ public slots:
 public:
 	bool status(bool *pbAck = NULL) const;
 
-	QVector<quint16> getTubeMapping();
+	QMap<quint16, quint16>& getTubeMapping(void);
 
 signals:
 	/**
@@ -448,7 +448,7 @@ private:
 	bool		m_bWriteProtect;
 
 	//! mapping vector for the histogrammed tubes
-	QVector<quint16> m_tubeMapping;
+	QMap<quint16, quint16>	m_tubeMapping;
 
 	//! setup type
 	Setup		m_setup;

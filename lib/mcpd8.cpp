@@ -2786,9 +2786,9 @@ quint16 MCPD8::getTxMode(quint8 mod)
         }
 }
 
-QVector<quint16> MCPD8::getTubeMapping(void)
+QMap<quint16, quint16> MCPD8::getTubeMapping(void)
 {
-    QVector<quint16> result;
+    QMap<quint16, quint16> result;
     quint16 n(0);
 
 // MDLL has fixed channels
@@ -2796,7 +2796,10 @@ QVector<quint16> MCPD8::getTubeMapping(void)
     {
 	QList<quint16> tmpList = m_mdll[0]->getHistogramList();
         foreach(quint16 i, tmpList)
-            result.append(n++);
+	{
+            result.insert(n, n);
+	    n++;
+	}
     }
     else
     {
@@ -2804,17 +2807,11 @@ QVector<quint16> MCPD8::getTubeMapping(void)
         {
             Q_ASSERT_X(it != NULL, "MCPD8::getTubeMapping", "one of the MPSD's is NULL");
             QList<quint16> tmpList = it->getHistogramList();
-            MSG_INFO << tmpList;
             quint16 busNr = it->busNumber();
             quint16 buswidth = busNr * it->getChannels();
-            if (result.size() < buswidth && tmpList.size() > 0)
-                result.insert(result.size(), buswidth - result.size(), 0xFFFF);
-	    if (tmpList.size() != it->getChannels())
-		    for (int i = 0; i < tmpList.size(); ++i)
-			    if (tmpList.at(i) != i)
-				    tmpList.insert(i, 0xFFFF);
-            foreach(quint16 i, tmpList)
-                result.append((i != 0xFFFF) ? n++ : i);
+	    for (int i = 0; i < tmpList.size(); ++i)
+		if (tmpList.at(i) == i)
+		    result.insert(buswidth + i, buswidth + i);
         }
     }
     return result;

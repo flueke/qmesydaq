@@ -549,11 +549,11 @@ private:
 	Setup		m_setup;
 
 	//! mapping vector for the histogrammed tubes
-	QVector<quint16> m_tubeMapping;
+	QMap<quint16, quint16>	m_tubeMapping;
 
-	HistogramFileFormat  m_histogramFileFormat;
+	HistogramFileFormat	m_histogramFileFormat;
 
-	Arrangement	m_psdArrangement;
+	Arrangement		m_psdArrangement;
 
 	QMap<int, QPair<int, int> >	m_monitorMap;
 
