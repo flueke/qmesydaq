@@ -2322,21 +2322,13 @@ bool MCPD8::setTimingSetup(bool master, bool term, bool extsync)
     {
         term = true;
         if (extsync)
-        {
-#define MONITOR4	3
-#define NOTRIGGER	0
-            setCounterCell(MONITOR4, NOTRIGGER, 0);
-        }
+            setCounterCell(MON4ID, NOTRIGGER, 0);
     }
     MSG_DEBUG << tr("SETTIMING %1, %2, %3, %4").arg(m_byId).arg(master).arg(term).arg(extsync);
     QMutexLocker locker(m_pCommandMutex);
     initCmdBuffer(SETTIMING);
-#if 0
-    m_cmdBuf.data[0] = master;
-#else
 // This enables the external sync capability
     m_cmdBuf.data[0] = master + 2 * extsync;
-#endif
     m_cmdBuf.data[1] = term;
     finishCmdBuffer(2);
     if (sendCommand(true))

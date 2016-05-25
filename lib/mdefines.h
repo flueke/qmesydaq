@@ -181,6 +181,16 @@
 #define EVID			8
 #define TIMERID			9
 
+// Trigger sources
+#define NOTRIGGER		0
+#define AUX1TRIGGER		1
+#define AUX2TRIGGER		2
+#define AUX3TRIGGER		3
+#define AUX4TRIGGER		4
+#define TTL1TRIGGER		5
+#define TTL2TRIGGER		6
+#define COMPARETRIGGER		7
+
 // pulser positions
 #define LEFT			0
 #define RIGHT			1
