@@ -556,6 +556,8 @@ private:
 	Arrangement	m_psdArrangement;
 
 	QMap<int, QPair<int, int> >	m_monitorMap;
+
+	quint64		m_lastTriggerTime;
 };
 
 #endif

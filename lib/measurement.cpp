@@ -69,6 +69,7 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	, m_setup(Mpsd)
 	, m_histogramFileFormat(StandardFormat)
 	, m_psdArrangement(Square)
+	, m_lastTriggerTime(0)
 {
 	setHistfilepath(getenv("HOME"));
 	setListfilepath(getenv("HOME"));
@@ -324,6 +325,7 @@ void Measurement::start()
 		c->start(m_starttime_msec);
 		MSG_INFO<< tr("counter %1 value : %2 limit : %3").arg(*c).arg(c->value()).arg(c->limit());
 	}
+	m_lastTriggerTime = 0;
 }
 
 /*!
@@ -1028,6 +1030,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					case MON4ID :
 						++monitorTriggers;
 						++(*m_counter[dataId]);
+						if (m_counter[dataId]->isTrigger())
+							m_lastTriggerTime = tim;
 #if 0
 						MSG_DEBUG << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
 #endif
@@ -1036,7 +1040,11 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					case TTL2ID :
 						++ttlTriggers;
 						++(*m_counter[dataId]);
-						MSG_DEBUG << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
+						if (m_counter[dataId]->isTrigger())
+							m_lastTriggerTime = tim;
+#if 0
+						MSG_ERROR << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
+#endif
 						break;
 					case ADC1ID :
 					case ADC2ID :
@@ -1051,6 +1059,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 // neutron event:
 			else
 			{
+				tim -= m_lastTriggerTime;
 				quint8 slotId = (pPacket->dp.data[counter + 2] >> 7) & 0x1F;
 				quint8 modChan = (id << 3) + slotId;
 				quint16 chan = modChan + (mod << 6);
