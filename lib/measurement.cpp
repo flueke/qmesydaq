@@ -27,6 +27,7 @@
 #include "measurement.h"
 #include "mdefines.h"
 #include "histogram.h"
+#include "spectrum.h"
 #include "usermapcorrect.h"
 #include "mdllcorrect.h"
 #include "mappedhistogram.h"

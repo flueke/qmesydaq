@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 1.59.0
+VERSION		= 1.61.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -42,6 +42,7 @@ HEADERS 	+= stdafx.h \
 		   libqmesydaq_global.h \
 		   counter.h \
 		   datarepeater.h \
+		   spectrum.h \
 		   histogram.h \
 		   logging.h \
 		   mapcorrect.h \
@@ -68,6 +69,7 @@ HEADERS 	+= stdafx.h \
 SOURCES 	+= stdafx.cpp \
 		   counter.cpp \
 		   datarepeater.cpp \
+		   spectrum.cpp \
 		   histogram.cpp \
 		   logging.cpp \
 		   mapcorrect.cpp \
