@@ -33,6 +33,7 @@ MesydaqCounter :: MesydaqCounter()
 	, m_rateflag(false)
 	, m_meanRate(0)
 	, m_ratepointer(0)
+	, m_trigger(false)
 {
 }
 
@@ -77,9 +78,19 @@ void MesydaqCounter::setMaster(const bool val)
 		setLimit(0);
 }
 
-bool MesydaqCounter::isMaster(void)
+bool MesydaqCounter::isMaster(void) const
 {
 	return m_master;
+}
+
+void MesydaqCounter::setTrigger(const bool val)
+{
+	m_trigger = val;
+}
+
+bool MesydaqCounter::isTrigger(void) const
+{
+	return m_trigger;
 }
 
 void MesydaqCounter::reset(void)

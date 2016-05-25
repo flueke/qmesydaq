@@ -92,7 +92,7 @@ public:
 	virtual quint64 value(void);
 
 	//! \return whether this counter is master or not
-	bool isMaster(void);
+	bool isMaster(void) const;
 
 	/**
 	 * Sets this counter as master or slave. If the counter is not master
@@ -127,6 +127,17 @@ public:
 	 */
 	void calcMeanRate(void);
 
+	//! \return whether this counter is a trigger counter or not
+	bool isTrigger(void) const;
+
+	/**
+	 * Sets this counter as a trigger counter or a normal counter. If the counter is trigger
+	 * the time of all events will be set in respect to this time.
+	 *
+	 * \param val if true then this counter is a trigger counter else not
+	 */
+	void setTrigger(const bool val = true);
+
 signals:
 	//! the counter has to be stopped
 	void stop();
@@ -160,6 +171,8 @@ private:
 	quint64		m_meanRate;
 
 	quint8		m_ratepointer;
+
+	bool		m_trigger;
 };
 
 /**
@@ -184,6 +197,7 @@ public:
 	 * \param val the time in 100ns ticks
 	 */
 	virtual void setTime(quint64 val);
+
 private:
 	quint64		m_start;
 };
