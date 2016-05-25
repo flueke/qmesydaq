@@ -18,27 +18,25 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-SRCBASE		= ..
+VERSION		= 1.0.0
+SRCBASE		= ../..
 
-include($${SRCBASE}/mesydaqconfig.pri)
+include ($${SRCBASE}/mesydaqconfig.pri)
 
-TEMPLATE 	= subdirs
+TEMPLATE 	= app
+TARGET 		= timespectrum
+DEPENDPATH 	+= . $${SRCBASE}/lib
+INCLUDEPATH 	+= . $${SRCBASE}/lib
 
-TARGET 		= 
+LIBS		+= -L$${SRCBASE}/lib -lmesydaq
 
-SUBDIRS	 	+= listfile \
-		dummy \
-		mapping \
-		plot \
-		loadsetup \
-		lstohisto \
-		readhisto \
-		calibration \
-		readlistfile \
-		colormaps \
-		countrates \
-		threads \
-		histogramming \
-		ipaddresswidget \
-		timespectrum
+SOURCES 	+= main.cpp
 
+HEADERS 	+=
+
+CONFIG		+= debug
+CONFIG		+= link_prl
+
+FORMS		+=
+
+INSTALLS	=

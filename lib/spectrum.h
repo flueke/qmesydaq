@@ -153,4 +153,25 @@ private:
 	quint16			m_width;
 };
 
+/**
+ * \short represents a single time spectrum
+ *
+ * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
+ */
+class TimeSpectrum : public Spectrum
+{
+	Q_OBJECT
+public:
+	TimeSpectrum(const quint64 timewidth, const quint16 bins = TIMEBINS);
+
+	void incVal(const quint64 time);
+
+	bool setValue(const quint64 time, const quint64 val);
+
+	bool addValue(const quint64 time, const quint64 val);
+
+private:
+	//! width of a time slice in time units (100ns)
+	quint64		m_time;
+};
 #endif

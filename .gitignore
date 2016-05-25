@@ -30,6 +30,7 @@ test/readlistfile/readlistfile
 test/threads/threads
 test/histogramming/histogramming
 test/ipaddresswidget/ipaddresswidget
+test/timespectrum/timespectrum
 
 tools/fixlmfile/fixlmfile
 tools/mstd16/mstd16

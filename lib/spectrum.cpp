@@ -307,3 +307,68 @@ void Spectrum::setAutoResize(const bool resize)
 {
 	m_autoResize = resize;
 }
+
+/*!
+   constructor
+
+   \param time number of time units for a time channel
+   \param bins number of time channels
+ */
+TimeSpectrum::TimeSpectrum(const quint64 time, const quint16 bins)
+	: Spectrum(bins)
+	, m_time(time)
+{
+}
+
+/*!
+   \fn void TimeSpectrum::incVal(const quint64 time)
+
+   Adds an event to the time channel. From the given time the time channel will be calculated
+   and then the related event counter will be increased.
+
+   \param time time in time units
+ */
+void TimeSpectrum::incVal(const quint64 time)
+{
+	quint16 bin = time / m_time;
+	if (bin < width())
+		Spectrum::incVal(bin);
+}
+
+/*!
+    \fn bool TimeSpectrum::setValue(const quint64 time, const quint64 val)
+
+    Sets the number of events to the time channel. From the given time the time channel will be calculated
+    and then the related event counter will be set.
+
+    \param time time in time units
+    \param val new number of events
+
+    \return setting was succesful or not
+ */
+bool TimeSpectrum::setValue(const quint64 time, const quint64 val)
+{
+	quint16 bin = time / m_time;
+	if (bin < width())
+		return Spectrum::setValue(bin, val);
+	return false;
+}
+
+/*!
+    \fn bool TimeSpectrum::addValue(const quint64 time, const quint64 val)
+
+    Adds a number of events to the time channel. From the given time the time channel will be calculated
+    and then the related event counter will be increased.
+
+    \param time time in time units
+    \param val number of events have to been added
+
+    \return setting was succesful or not
+ */
+bool TimeSpectrum::addValue(const quint64 time, const quint64 val)
+{
+	quint16 bin = time / m_time;
+	if (bin < width())
+		return Spectrum::addValue(bin, val);
+	return false;
+}
