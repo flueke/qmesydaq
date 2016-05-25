@@ -39,12 +39,12 @@ Histogram::Histogram(const quint16 w, const quint16 h)
 	, m_data(NULL)
 	, m_height(0)
 	, m_width(0)
+	, m_xSumSpectrum(NULL)
+	, m_ySumSpectrum(NULL)
 	, m_maximumPos(0)
 	, m_autoResize(false)
 	, m_minROI(0)
 	, m_maxROI(0)
-	, m_xSumSpectrum(NULL)
-	, m_ySumSpectrum(NULL)
 {
 	m_xSumSpectrum = new Spectrum();
 	m_ySumSpectrum = new Spectrum();
@@ -58,12 +58,12 @@ Histogram::Histogram(const Histogram &src)
 	, m_data(NULL)
 	, m_height(0)
 	, m_width(0)
+	, m_xSumSpectrum(NULL)
+	, m_ySumSpectrum(NULL)
 	, m_maximumPos(0)
 	, m_autoResize(false)
 	, m_minROI(0)
 	, m_maxROI(0)
-	, m_xSumSpectrum(NULL)
-	, m_ySumSpectrum(NULL)
 {
 	*this = src;
 }
