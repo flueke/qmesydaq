@@ -470,8 +470,9 @@ Counter, ADC, Timer and Parameter settings:
 
 This command configures the given counter cell:
 
-One of six possible cells is addressed. The value of the according 21 bit counter
-is transmitted as a trigger event when triggered.
+One of six possible counter cells and two possible ADC cells is addressed. The
+value of the according 21 bit counter is transmitted as a trigger event when
+triggered.
 
 Trigger source can be one of the digital inputs, one of the four auxiliary timers
 or a special compare register.
