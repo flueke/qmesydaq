@@ -1847,12 +1847,12 @@ void MainWidget::editHistogramMapping()
 		connect(&d, SIGNAL(applyedData()), this, SIGNAL(redraw()));
 		d.exec();
 		disconnect(&d, SIGNAL(applyedData()), this, SIGNAL(redraw()));
-        if (pDefaultCorrection != NULL && d.hasChanged())
-        {
-		// user has changed the mapping
-		delete pDefaultCorrection;
-		pDefaultCorrection = NULL;
-	}
+		if (pDefaultCorrection != NULL && d.hasChanged())
+		{
+			// user has changed the mapping
+			delete pDefaultCorrection;
+			pDefaultCorrection = NULL;
+		}
 	}
 	MapCorrection* pCorrection(m_meas->posHistMapCorrection());
 	if (pDefaultCorrection != NULL && pCorrection != pDefaultCorrection)
