@@ -362,7 +362,7 @@ void Measurement::stop()
 		quint64 time = m_mesydaq->time();
 		foreach (MesydaqCounter *c, m_counter)
 			c->stop(time);
-		MSG_ERROR << tr("packages : %1 triggers : %2").arg(m_packages).arg(m_triggers);
+		MSG_ERROR << tr("packages : %1 triggers : %2 neutrons : %3").arg(m_packages).arg(m_triggers).arg(m_neutrons);
 		if (m_triggers)
 		{
 			for(int i = 0; i < m_counter.size(); ++i)
