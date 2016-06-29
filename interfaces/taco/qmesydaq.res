@@ -4,10 +4,18 @@ qmesydaq/srv0/device:	test/qmesydaq/det \
 			test/qmesydaq/counter0 \
 			test/qmesydaq/counter1 \
 			test/qmesydaq/counter2 \
-			test/qmesydaq/counter3 
+			test/qmesydaq/counter3
 
 
 test/qmesydaq/det/type:		DetectorDetector
+test/qmesydaq/det/histogram:	mapped
+
+test/qmesydaq/detraw/type:	DetectorDetector
+test/qmesydaq/detraw/histogram:	raw
+
+test/qmesydaq/detamp/type:	DetectorDetector
+test/qmesydaq/detamp/type:	amplitude
+
 test/qmesydaq/timer/type:	IOTimer
 test/qmesydaq/events/type:	IOCounter
 test/qmesydaq/events/channel:	4

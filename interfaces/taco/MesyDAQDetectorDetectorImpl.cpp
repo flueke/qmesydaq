@@ -45,24 +45,20 @@ DevVoid MesyDAQ::Detector::Detector::start() throw (::TACO::Exception)
 	{
 		if (!m_interface)
 			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-#if 1
-		m_listFilename = incNumber(m_listFilename);
-#else
-		m_listFilename = runNumber(m_listFilename);
-#endif
-		updateResource<std::string>("lastlistfile", m_listFilename);
 		m_interface->setListFileName(m_listFilename.c_str());
 		m_interface->setListMode(m_writeListmode, true);
-#if 1
-		m_histFilename = incNumber(m_histFilename);
-#else
-		m_histFilename = runNumber(m_histFilename);
-#endif
-		updateResource<std::string>("lasthistfile", m_histFilename);
+
 		m_interface->setHistogramFileName(m_histFilename.c_str());
 		m_interface->setHistogramMode(m_writeHistogram);
+
 		INFO_STREAM << "interface::start()" << ENDLOG;
 		m_interface->start();
+
+		m_listFilename = incNumber(m_listFilename);
+		updateResource<std::string>("lastlistfile", m_listFilename);
+
+		m_histFilename = incNumber(m_histFilename);
+		updateResource<std::string>("lasthistfile", m_histFilename);
 	}
 	catch (::TACO::Exception &e)
 	{
