@@ -61,7 +61,7 @@ private:
 	QString m_personal;
 
 	//! TACO detector device name, default = "puma/qmesydaq/det"
-	QString m_detDevice;
+	QString m_detDevice[3];
 
 	//! TACO timer device name, default = "puma/qmesydaq/timer"
 	QString m_timerDevice;

@@ -49,7 +49,9 @@ void TACOLoop::runLoop()
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.beginGroup("TACO");
 	m_personal = settings.value("personal", "srv0").toString();
-	m_detDevice = settings.value("detector", "test/qmesydaq/det").toString();
+	m_detDevice[0] = settings.value("detector", "test/qmesydaq/det").toString();
+	m_detDevice[1] = settings.value("raw", "test/qmesydaq/detraw").toString();
+	m_detDevice[2] = settings.value("amplitude", "test/qmesydaq/detamp").toString();
 	m_timerDevice = settings.value("timer", "test/qmesydaq/timer").toString();
 	for (int i = 0; i < 4; ++i)
 		m_counterDevice[i] = settings.value(QString("counter%1").arg(i), QString("test/qmesydaq/counter%1").arg(i)).toString();
@@ -57,7 +59,7 @@ void TACOLoop::runLoop()
 	settings.endGroup();
 
 	QStringList	deviceList;
-	deviceList << m_detDevice << m_timerDevice;
+	deviceList << m_detDevice[0] << m_detDevice[1] << m_detDevice[2] << m_timerDevice;
 	for (int i = 0; i < 5; ++i)
 		deviceList << m_counterDevice[i];
 

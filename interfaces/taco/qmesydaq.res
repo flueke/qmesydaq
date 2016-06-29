@@ -1,4 +1,6 @@
 qmesydaq/srv0/device:	test/qmesydaq/det \
+			test/qmesydaq/detraw \
+			test/qmesydaq/detamp \
 			test/qmesydaq/timer \
 			test/qmesydaq/events \
 			test/qmesydaq/counter0 \
@@ -14,7 +16,7 @@ test/qmesydaq/detraw/type:	DetectorDetector
 test/qmesydaq/detraw/histogram:	raw
 
 test/qmesydaq/detamp/type:	DetectorDetector
-test/qmesydaq/detamp/type:	amplitude
+test/qmesydaq/detamp/histogram:	amplitude
 
 test/qmesydaq/timer/type:	IOTimer
 test/qmesydaq/events/type:	IOCounter
