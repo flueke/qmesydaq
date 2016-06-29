@@ -939,7 +939,10 @@ void Measurement::writeStandardHistograms(QTextStream &t)
 	t << "# events = " << m_events->value() << endLine;
 	t << "# timer = " << m_timer->value() << " ms" << endLine;
 	t << "# setup file = " << getConfigfilename() << endLine;
-	t << "# calibration file = " << getCalibrationfilename() << endLine;
+	if (!getCalibrationfilename().isEmpty())
+		t << "# calibration file = " << getCalibrationfilename() << endLine;
+	if (acqListfile())
+		t << "# listmode file = " << getListfilename() << endLine;
 	// Title
 	t << "mesydaq Histogram File    " << QDateTime::currentDateTime().toString("dd.MM.yy  hh:mm:ss") << endLine;
 	t.flush();
