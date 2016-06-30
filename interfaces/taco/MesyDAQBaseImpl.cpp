@@ -193,6 +193,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 			std::string tmp = queryResource<std::string>("writelistmode");
 			if (!tmp.empty())
 				m_writeListmode = queryResource<bool>("writelistmode");
+			m_interface->setListMode(m_writeListmode, true);
 		}
 		catch (::TACO::Exception &e)
 		{
@@ -204,6 +205,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 			std::string tmp = queryResource<std::string>("writehistogram");
 			if (!tmp.empty())
 				m_writeHistogram = queryResource<bool>("writehistogram");
+			m_interface->setHistogramMode(m_writeHistogram);
 		}
 		catch (::TACO::Exception &e)
 		{
