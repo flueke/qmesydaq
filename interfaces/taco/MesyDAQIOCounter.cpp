@@ -187,7 +187,7 @@ void MesyDAQ::IO::Counter::tacoRead(::TACO::Server *server, DevArgument, DevArgu
 void MesyDAQ::IO::Counter::tacoPreselection(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception)
 {
 	Counter* s = dynamic_cast<Counter*>(server);
-	if (s != 0)
+	if (s == 0)
 		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
 	::TACO::assign(static_cast<DevULong*>(argout), s->preselection());
 }
