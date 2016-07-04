@@ -1058,7 +1058,7 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 	}
 	else
 	{
-		MSG_ERROR << tr("User map correction from file '%1'").arg(m_calibrationfilename);
+		MSG_ERROR << tr("User map correction from file '%1' -> (%2, %3)").arg(m_calibrationfilename).arg(m_width).arg(m_height);
 		m_posHistMapCorrection = new UserMapCorrection(QSize(m_width, m_height), m_calibrationfilename);
 	}
 	emit mappingChanged();
