@@ -2232,6 +2232,7 @@ void MainWidget::customEvent(QEvent *e)
 						value = m_meas->timer() / 1000.0;
 						break;
 					default:
+						value = -1;
 						break;
 				}
 				answer  << value;
