@@ -466,7 +466,7 @@ quint16 Mesydaq2::width(void)
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 	{
 		QMap<quint16, quint16> tmpList = it.value()->getTubeMapping();
-		quint16 lastTube = !m_tubeMapping.empty() ? m_tubeMapping.values().last() : 0;
+		quint16 lastTube = !m_tubeMapping.empty() ? m_tubeMapping.values().last() + 1 : 0;
 		quint16 lastKey = it.key() * 64;
 		for (QMap<quint16, quint16>::iterator jt = tmpList.begin(); jt != tmpList.end(); ++jt)
 			m_tubeMapping.insert(lastKey + jt.key(), lastTube + jt.value());
