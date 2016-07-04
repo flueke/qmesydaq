@@ -20,7 +20,7 @@ test/qmesydaq/detamp/histogram:	amplitude
 
 test/qmesydaq/timer/type:	IOTimer
 test/qmesydaq/events/type:	IOCounter
-test/qmesydaq/events/channel:	4
+test/qmesydaq/events/channel:	100
 test/qmesydaq/counter0/type:	IOCounter
 test/qmesydaq/counter0/channel:	0
 test/qmesydaq/counter1/type:	IOCounter

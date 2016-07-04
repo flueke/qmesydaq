@@ -1,5 +1,5 @@
 // Interface to the QMesyDAQ software
-// Copyright (C) 2012-2014 Jens Krüger
+// Copyright (C) 2012-2014 Jens KrÃ¼ger
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -312,8 +312,8 @@ void MesyDAQ::IO::Counter::deviceUpdate(void) throw (::TACO::Exception)
 		try
 		{
 			DevULong tmp = queryResource<DevULong>("channel");
-			if (tmp > 4)
-				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "channel must be [0..3] for monitor/choppers or 4 for events");
+			if (tmp > 100)
+				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "channel must be [0..99] for monitor/choppers or 100 for events");
 			m_channel = tmp;
 		}
 		catch (::TACO::Exception &e)

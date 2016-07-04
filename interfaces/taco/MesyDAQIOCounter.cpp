@@ -69,6 +69,8 @@ MesyDAQ::IO::Counter::Counter(const std::string& name, DevLong& error) throw (::
 
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE END
 
+	addResource("channel", D_ULONG_TYPE, "Channel number of the counter (100 for events)");
+
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 	try
