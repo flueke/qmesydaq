@@ -576,8 +576,8 @@ void Measurement::setEventCounterPreset(const quint64 prval, const bool mast)
 			c->setMaster(false);
 		m_events->setMaster(false);
 	}
-	m_timer->setMaster(mast);
-	m_timer->setLimit(prval);
+	m_events->setMaster(mast);
+	m_events->setLimit(prval);
 }
 
 /*!
@@ -599,7 +599,7 @@ bool Measurement::isEventCounterMaster(void) const
  */
 void Measurement::clearEventCounter(void)
 {
-	m_timer->reset();
+	m_events->reset();
 }
 
 /*!
