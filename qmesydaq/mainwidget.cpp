@@ -1254,12 +1254,6 @@ void MainWidget::loadCalibrationSlot()
 void MainWidget::ePresetSlot(bool pr)
 {
 	eventsPreset->blockSignals(true);
-	if (pr)
-	{
-		timerPreset->setChecked(false);
-		for (int i = 0; i < m_monitorPresets.size(); ++i)
-			m_monitorPresets.at(i)->setChecked(false);
-	}
 	eventsPreset->setChecked(pr);
 	eventsPreset->blockSignals(false);
 	m_meas->setEventCounterPreset(eventsPreset->presetValue(), pr);
@@ -1275,19 +1269,13 @@ void MainWidget::ePresetSlot(bool pr)
 void MainWidget::tPresetSlot(bool pr)
 {
 	timerPreset->blockSignals(true);
-	if (pr)
-	{
-		eventsPreset->setChecked(false);
-		for (int i = 0; i < m_monitorPresets.size(); ++i)
-			m_monitorPresets.at(i)->setChecked(false);
-	}
 	timerPreset->setChecked(pr);
 	timerPreset->blockSignals(false);
 	m_meas->setTimerPreset(quint64(timerPreset->presetValue() * 1000), pr);
 }
 
 /*!
-   \fn void MainWidget::mPresetSlot(bool pr)
+   \fn void MainWidget::mPresetSlot(int id, bool pr)
 
    callback to enable/disable monitor
 
@@ -1296,13 +1284,6 @@ void MainWidget::tPresetSlot(bool pr)
  */
 void MainWidget::mPresetSlot(int id, bool pr)
 {
-	if (pr)
-	{
-		timerPreset->setChecked(false);
-		eventsPreset->setChecked(false);
-		for (int i = 0; i < m_monitorPresets.size(); ++i)
-			m_monitorPresets.at(i)->setChecked(false);
-	}
 	if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 	{
 		MonitorPresetWidget *pWidget = m_monitorPresets.at(id);
