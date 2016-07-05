@@ -516,12 +516,6 @@ quint64 Measurement::getTimerPreset(void) const
  */
 void Measurement::setTimerPreset(const quint64 prval, const bool mast)
 {
-	if (mast)
-	{
-		foreach(MesydaqCounter *c, m_counter)
-			c->setMaster(false);
-		m_events->setMaster(false);
-	}
 	m_timer->setMaster(mast);
 	m_timer->setLimit(prval);
 }
@@ -570,12 +564,6 @@ quint64 Measurement::getEventCounterPreset(void) const
  */
 void Measurement::setEventCounterPreset(const quint64 prval, const bool mast)
 {
-	if (mast)
-	{
-		foreach(MesydaqCounter *c, m_counter)
-			c->setMaster(false);
-		m_events->setMaster(false);
-	}
 	m_events->setMaster(mast);
 	m_events->setLimit(prval);
 }
@@ -629,12 +617,6 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 	if(m_counter.contains(cNum))
 	{
 		MSG_NOTICE << tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? "master" : "slave");
-		if (mast)
-		{
-			// clear all other master flags
-			foreach(MesydaqCounter *c, m_counter)
-				c->setMaster(false);
-		}
 		m_counter[cNum]->setMaster(mast);
 		m_counter[cNum]->setLimit(prval);
 	}
