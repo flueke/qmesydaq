@@ -1529,6 +1529,7 @@ void MainWidget::draw(void)
 			labelCountsInROI->setText(tr("Counts"));
 			countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
 			break;
+		case Plot::ModuleSpectrum:
 		case Plot::Spectrum :
 			if (m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "Y (channel)");
@@ -1549,6 +1550,8 @@ void MainWidget::draw(void)
 			}
 			else
 			{
+				quint64 counts(0);
+				QString roiText;
 				if (!dispAllChannels->isChecked())
 					for (int i = 1; i < 8; ++i)
 						m_dataFrame->setSpectrumData((SpectrumData *)NULL, i);
@@ -1558,49 +1561,47 @@ void MainWidget::draw(void)
 					if (m_zoomedRect.isEmpty())
 						m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 					m_data->setData(spec);
-
-					labelCountsInROI->setText(tr("Time"));
-					countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
-				}
-				else if (dispAllChannels->isChecked())
-				{
-					quint32 chan = m_theApp->startChannel(dispMcpd->value());
-					chan += m_theApp->getChannels(dispMcpd->value(), dispMpsd->value());
-					labelCountsInROI->setText(tr("Counts in MCPD: %1 MPSD: %2").arg(dispMcpd->value()).arg(dispMpsd->value()));
-					quint64 counts(0);
-					for (int i = 7; i >= 0; --i)
-					{
-						if (dispAllPos->isChecked())
-							spec = m_meas->data(Measurement::PositionHistogram, chan + i);
-						else
-							spec = m_meas->data(Measurement::AmplitudeHistogram, chan + i);
-						if (spec)
-						{
-							if (m_zoomedRect.isEmpty())
-								m_zoomedRect = QRectF(0, 0, spec->width(), 1);
-							counts += spec->getCounts(m_zoomedRect);
-						}
-						m_specData[i]->setData(spec);
-						m_dataFrame->setSpectrumData(m_specData[i], i);
-						countsInVOI->setText(tr("%1").arg(counts));
-					}
+					counts = spec->getCounts(m_zoomedRect);
+					roiText = tr("Time");
 				}
 				else
 				{
-					labelCountsInROI->setText(tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value()));
-					quint64 counts(0);
-					if (dispAllPos->isChecked())
-						spec = m_meas->data(Measurement::PositionHistogram, dispMcpd->value(), dispMpsd->value(), dispChan->value());
+					Measurement::HistogramType histType = dispAllPos->isChecked() ? Measurement::PositionHistogram :
+									      dispAllCorrectedPos->isChecked() ? Measurement::CorrectedPositionHistogram :
+									      Measurement::AmplitudeHistogram;
+					if (dispAllChannels->isChecked())
+					{
+						quint8 chan(m_theApp->getChannels(dispMcpd->value(), dispMpsd->value()));
+						for (quint8 i = 0; i < chan; ++i)
+						{
+							spec = m_meas->data(histType, dispMcpd->value(), dispMpsd->value(), i);
+							m_specData[i]->setData(spec);
+							m_dataFrame->setSpectrumData(m_specData[i], i);
+
+							if (spec)
+							{
+								if (m_zoomedRect.isEmpty())
+									m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+								counts += spec->getCounts(m_zoomedRect);
+							}
+						}
+						roiText = tr("Counts in MCPD: %1 MPSD: %2").arg(dispMcpd->value()).arg(dispMpsd->value());
+					}
 					else
-						spec = m_meas->data(Measurement::AmplitudeHistogram, dispMcpd->value(), dispMpsd->value(), dispChan->value());
-					if (m_zoomedRect.isEmpty())
-						m_zoomedRect = QRectF(0, 0, spec->width(), 1);
-					m_data->setData(spec);
-					if (spec)
-						counts = spec->getCounts(m_zoomedRect);
-					countsInVOI->setText(tr("%1").arg(counts));
-					m_dataFrame->setSpectrumData(m_data);
+					{
+						spec = m_meas->data(histType, dispMcpd->value(), dispMpsd->value(), dispChan->value());
+						m_data->setData(spec);
+						m_dataFrame->setSpectrumData(m_data);
+
+						if (m_zoomedRect.isEmpty())
+							m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+						if (spec)
+							counts = spec->getCounts(m_zoomedRect);
+						roiText = tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value());
+					}
 				}
+				labelCountsInROI->setText(roiText);
+				countsInVOI->setText(tr("%1").arg(counts));
 			}
 // reduce data in case of threshold settings:
 			if (m_dispThresh)
