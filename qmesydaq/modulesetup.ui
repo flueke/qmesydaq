@@ -49,6 +49,9 @@
      </item>
      <item>
       <widget class="ModuleSpinBox" name="module">
+       <property name="wrapping">
+        <bool>true</bool>
+       </property>
        <property name="maximum">
         <number>7</number>
        </property>
@@ -1058,11 +1061,18 @@
    <class>ModuleSpinBox</class>
    <extends>QSpinBox</extends>
    <header>ModuleSpinBox.h</header>
+   <slots>
+    <signal>changeModule(int)</signal>
+    <slot>steps(int)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>MCPDSpinBox</class>
    <extends>QSpinBox</extends>
    <header>MCPDSpinBox.h</header>
+   <slots>
+    <slot>steps(int)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -1416,6 +1426,22 @@
     <hint type="destinationlabel">
      <x>374</x>
      <y>147</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>module</sender>
+   <signal>changeModule(int)</signal>
+   <receiver>devid</receiver>
+   <slot>steps(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>87</x>
+     <y>18</y>
     </hint>
    </hints>
   </connection>

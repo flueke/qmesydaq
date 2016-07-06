@@ -130,7 +130,7 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	devid->setMCPDList(mcpdList);
 	QList<int> modules = m_theApp->mpsdId(devid->value());
 	module->setModuleList(modules);
-	module->setDisabled(modules.empty());
+	module->setDisabled(false);
 	ampdiscGroup->setDisabled(modules.empty());
 	modeGroup->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
@@ -250,7 +250,7 @@ void ModuleSetup::setMCPD(int id)
 	id = devid->value();
 	QList<int> modules = m_theApp->mpsdId(id);
 	module->setModuleList(modules);
-	module->setDisabled(modules.empty());
+	module->setDisabled(false);
 	modeGroup->setDisabled(modules.empty());
 	ampdiscGroup->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
@@ -275,7 +275,7 @@ void ModuleSetup::displayMCPDSlot(int id)
 		if (m_theApp->getModuleId(id, i))
 			modList << i;
 	module->setModuleList(modList);
-	module->setDisabled(modList.empty());
+	module->setDisabled(false);
 	modeGroup->setDisabled(modList.empty());
 	ampdiscGroup->setDisabled(modList.empty());
 	histogramGroupBox->setDisabled(modList.empty());
@@ -308,7 +308,7 @@ void ModuleSetup::displaySlot()
 	quint8 id = module->value();
 	quint8 channels = m_theApp->getChannels(mod, id);
 	quint8 chan = comgain->isChecked() ? channels : channel->value();
-	modeGroup->setEnabled(module->isEnabled() && m_theApp->getTxMode(mod, id) != TPA);
+	modeGroup->setEnabled(!module->empty() && m_theApp->getTxMode(mod, id) != TPA);
 
 	for (int i = 0; i < 16; ++i)
 	{

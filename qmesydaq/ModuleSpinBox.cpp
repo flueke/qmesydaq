@@ -34,6 +34,11 @@ ModuleSpinBox::ModuleSpinBox(QWidget *parent)
 	setWrapping(false);
 }
 
+bool ModuleSpinBox::empty(void) const
+{
+	return m_modList.isEmpty();
+}
+
 /*!
     \fn ModuleSpinBox::setModuleList(QList<int> modules)
 
@@ -44,8 +49,11 @@ ModuleSpinBox::ModuleSpinBox(QWidget *parent)
 void ModuleSpinBox::setModuleList(QList<int> modules)
 {
 	m_modList = modules;
-	if (m_modList.empty())
+	if (empty())
+	{
+		setRange(0, 0);
 		setDisabled(true);
+	}
 	else
 	{
 		if (!isEnabled())
@@ -73,8 +81,8 @@ void ModuleSpinBox::setModuleList(QList<int> modules)
  */
 void ModuleSpinBox::stepBy(int steps)
 {
-	if (m_modList.isEmpty())
-		return;
+//	if (empty()
+//		return;
 	int pos = value() + steps;
 	if (m_modList.contains(pos))
 	{
@@ -85,7 +93,7 @@ void ModuleSpinBox::stepBy(int steps)
 		if (pos > maximum())
 		{
 			setValue(minimum());
-			m_iChangeSteps=steps;
+			m_iChangeSteps = steps;
 			emit changeModule(steps);
 			m_iChangeSteps = 0;
 		}

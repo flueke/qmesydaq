@@ -37,6 +37,8 @@ public:
 
 	virtual void stepBy(int steps);
 
+	bool empty(void) const;
+
 public slots:
 	//! call back for steps up/down
 	void steps(int steps)
