@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Module Public License as published by  *
@@ -58,6 +58,7 @@ void ModuleStatus::update(const QString &type, const float version, const bool o
 	checkHistogramBox->setChecked(histogram);
 	checkActiveBox->setVisible(online);
 	checkActiveBox->setEnabled(online);
+	checkActiveBox->setVisible(online);
 	checkActiveBox->setChecked(online & active);
 	m_online = online;
 }
