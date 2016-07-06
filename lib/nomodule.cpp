@@ -39,7 +39,7 @@ void NoModule::setActive(quint16 chan, bool)
 
 QString NoModule::getType(void) const
 {
-	return tr("-");
+	return tr("");
 }
 
 int NoModule::type(void) const
