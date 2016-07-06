@@ -53,8 +53,11 @@ void ModuleStatus::setLabel(const QString &label)
 void ModuleStatus::update(const QString &type, const float version, const bool online, const bool histogram, const bool active)
 {
 	moduleType->setText(type);
-	moduleVersion->setText(QString("%1").arg(version));
-	moduleStatus->setText(online ? tr("online") : tr(""));
+	if (online)
+		moduleVersion->setText(QString("%1").arg(version));
+	else
+		moduleVersion->setText(QString(""));
+	moduleStatus->setText(online ? tr("online") : tr("N/A"));
 	checkHistogramBox->setChecked(histogram);
 	checkActiveBox->setVisible(online);
 	checkActiveBox->setEnabled(online);
