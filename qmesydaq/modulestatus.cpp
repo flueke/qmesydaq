@@ -97,6 +97,7 @@ void ModuleStatus::setId(const quint8 id)
 void ModuleStatus::histogramSlot(bool val)
 {
 	checkActiveBox->setVisible(m_online);
+	checkActiveBox->setVisible(val & m_online);
 	checkActiveBox->setEnabled(m_online);
 	emit histogram(m_id, val);
 }
