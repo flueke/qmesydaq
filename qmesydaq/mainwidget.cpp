@@ -1383,7 +1383,7 @@ void MainWidget::setHistogramType(int val)
 		case Measurement::CorrectedPositionHistogram:
 			{
 				// Change the ROI settings
-				Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+				Histogram *h = m_meas->hist(m_histoType);
 
 				roiX->blockSignals(true);
 				roiY->blockSignals(true);
@@ -1484,6 +1484,8 @@ void MainWidget::draw(void)
 	}
 	Spectrum *spec(NULL);
 	Histogram *histogram(NULL);
+	quint64 counts(0);
+	QString roiText(tr("Counts"));
 	switch (m_mode)
 	{
 		case Plot::Histogram :
@@ -1492,14 +1494,14 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
 			}
-			histogram = m_meas->hist(Measurement::HistogramType(m_histoType));
+			histogram = m_meas->hist(m_histoType);
 			if (m_zoomedRect.isEmpty())
 				m_zoomedRect = QRectF(0, 0, histogram->width(), histogram->height());
 			histogram->calcMinMaxInROI(m_zoomedRect);
 			m_histData->setData(histogram);
 			m_dataFrame->setHistogramData(m_histData);
-			labelCountsInROI->setText(tr("Counts in displayed region"));
-			countsInVOI->setText(tr("%1").arg(histogram->getCounts(m_zoomedRect)));
+			roiText = tr("Counts in displayed region");
+			counts = histogram->getCounts(m_zoomedRect);
 			break;
 		case Plot::Diffractogram :
 			spec = m_meas->spectrum(Measurement::Diffractogram);
@@ -1509,8 +1511,7 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
-			labelCountsInROI->setText(tr("Counts"));
-			countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
+			counts = spec->getCounts(m_zoomedRect);
 			break;
 		case Plot::SingleSpectrum :
 			if (m_meas->setupType() == Mdll || m_meas->setupType() == Mdll2)
@@ -1526,8 +1527,7 @@ void MainWidget::draw(void)
 				m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
-			labelCountsInROI->setText(tr("Counts"));
-			countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
+			counts = spec->getCounts(m_zoomedRect);
 			break;
 		case Plot::ModuleSpectrum:
 		case Plot::Spectrum :
@@ -1535,23 +1535,15 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "Y (channel)");
 			if(dispAll->isChecked())
 			{
-				if (dispAllPos->isChecked())
-					spec = m_meas->data(Measurement::PositionHistogram);
-				else if (dispAllAmpl->isChecked())
-					spec = m_meas->data(Measurement::AmplitudeHistogram);
-				else
-					spec = m_meas->data(Measurement::CorrectedPositionHistogram);
+				spec = m_meas->data(m_histoType);
 				if (m_zoomedRect.isEmpty())
 					m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 				m_data->setData(spec);
-				labelCountsInROI->setText(tr("Counts"));
 				m_dataFrame->setSpectrumData(m_data);
-				countsInVOI->setText(tr("%1").arg(spec->getCounts(m_zoomedRect)));
+				counts = spec->getCounts(m_zoomedRect);
 			}
 			else
 			{
-				quint64 counts(0);
-				QString roiText;
 				if (!dispAllChannels->isChecked())
 					for (int i = 1; i < 8; ++i)
 						m_dataFrame->setSpectrumData((SpectrumData *)NULL, i);
@@ -1561,20 +1553,17 @@ void MainWidget::draw(void)
 					if (m_zoomedRect.isEmpty())
 						m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 					m_data->setData(spec);
-					counts = spec->getCounts(m_zoomedRect);
 					roiText = tr("Time");
+					counts = spec->getCounts(m_zoomedRect);
 				}
 				else
 				{
-					Measurement::HistogramType histType = dispAllPos->isChecked() ? Measurement::PositionHistogram :
-									      dispAllCorrectedPos->isChecked() ? Measurement::CorrectedPositionHistogram :
-									      Measurement::AmplitudeHistogram;
 					if (dispAllChannels->isChecked())
 					{
 						quint8 chan(m_theApp->getChannels(dispMcpd->value(), dispMpsd->value()));
 						for (quint8 i = 0; i < chan; ++i)
 						{
-							spec = m_meas->data(histType, dispMcpd->value(), dispMpsd->value(), i);
+							spec = m_meas->data(m_histoType, dispMcpd->value(), dispMpsd->value(), i);
 							m_specData[i]->setData(spec);
 							m_dataFrame->setSpectrumData(m_specData[i], i);
 
@@ -1589,7 +1578,7 @@ void MainWidget::draw(void)
 					}
 					else
 					{
-						spec = m_meas->data(histType, dispMcpd->value(), dispMpsd->value(), dispChan->value());
+						spec = m_meas->data(m_histoType, dispMcpd->value(), dispMpsd->value(), dispChan->value());
 						m_data->setData(spec);
 						m_dataFrame->setSpectrumData(m_data);
 
@@ -1600,16 +1589,16 @@ void MainWidget::draw(void)
 						roiText = tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value());
 					}
 				}
-				labelCountsInROI->setText(roiText);
-				countsInVOI->setText(tr("%1").arg(counts));
 			}
 // reduce data in case of threshold settings:
 			if (m_dispThresh)
 				m_dataFrame->setAxisScale(QwtPlot::yLeft, m_dispLoThresh, m_dispHiThresh);
 			break;
 		default:
-            break;
+			break;
 	}
+	labelCountsInROI->setText(roiText);
+	countsInVOI->setText(tr("%1").arg(counts));
 	m_dataFrame->replot();
 	drawOpData();
 	updateDisplay();
