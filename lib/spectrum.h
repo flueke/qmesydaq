@@ -103,10 +103,10 @@ public:
 	void resize(const quint16 bins);
 
 	/*!
-	 * The histogram will be formatted. It gives back only a formatted array
+	 * The spectrum will be formatted. It gives back only a formatted array
 	 * of the data.
 	 *
-	 * \return formatted histogram as string
+	 * \return formatted spectrum as string
 	 */
 	QString format(void);
 
@@ -125,9 +125,9 @@ private:
 	void calcMaximumPosition(const quint16 bin);
 
 	/**
-	 * checks whether the bin is inside the histogram or not.
+	 * checks whether the bin is inside the spectrum or not.
 	 * If the autoresize is set and the bin isn't inside the size
-	 * of the histogram will be resized to the bin number.
+	 * of the spectrum will be resized to the bin number.
 	 *
 	 * \param bin requested bin
 	 */
