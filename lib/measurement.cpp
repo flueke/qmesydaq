@@ -1033,7 +1033,7 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 #if 0
 				m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(128, 128));
 #else
-				m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(m_width, m_height), MapCorrection::OrientationDownRev);
+				m_posHistMapCorrection = new LinearMapCorrection(QSize(m_width, m_height), QSize(m_width, m_height));
 #endif
 				break;
 		}
