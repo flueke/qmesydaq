@@ -380,6 +380,7 @@ quint64 Histogram::getCounts(const QRectF &r) const
 	QRect region(x, y, w, h);
 	return getCounts(region);
 }
+
 /*!
     \fn Histogram::spectrum(const quint16 channel)
 

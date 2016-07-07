@@ -820,10 +820,11 @@ Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const qui
 */
 Spectrum *Measurement::data(const HistogramType t)
 {
+	if (t == CorrectedPositionHistogram)
+		return m_Spectrum[TubeSpectrum];
 	if (m_Hist[t])
 		return m_Hist[t]->ySumSpectrum();
-	else
-		return NULL;
+	return NULL;
 }
 
 /*!

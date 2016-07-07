@@ -73,13 +73,13 @@ public:
 
 	quint64 getCounts(const QRectF &r) const;
 
-	Spectrum *spectrum(const quint16 channel);
+	virtual Spectrum *spectrum(const quint16 channel);
 
 	//! \return the x sum spectrum
-	Spectrum *xSumSpectrum(void);
+	virtual Spectrum *xSumSpectrum(void);
 
 	//! \return the y sum spectrum
-	Spectrum *ySumSpectrum(void);
+	virtual Spectrum *ySumSpectrum(void);
 
 	quint64 max(const quint16 channel) const;
 

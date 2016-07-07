@@ -19,6 +19,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "spectrum.h"
 #include "mappedhistogram.h"
 #include "mapcorrect.h"
 #include "logging.h"
@@ -34,8 +35,10 @@ MappedHistogram::MappedHistogram(MapCorrection *pMapCorrection, Histogram *pHist
 	, m_pMapCorrection(NULL)
 	, m_dblTotalCounts(0.0)
 	, m_iMaxPos(-1)
+	, m_spectrum(NULL)
 {
 	setMapCorrection(pMapCorrection, pHistogram);
+	m_spectrum = new Spectrum(0);
 }
 
 /*!
@@ -54,6 +57,9 @@ MappedHistogram::MappedHistogram(const MappedHistogram &src)
 
 MappedHistogram::~MappedHistogram()
 {
+	if (m_spectrum)
+		delete m_spectrum;
+	m_spectrum = NULL;
 }
 
 /*!
@@ -304,6 +310,25 @@ quint16 MappedHistogram::maxpos() const
 MapCorrection *MappedHistogram::getMapCorrection() const
 {
 	return m_pMapCorrection;
+}
+
+/*!
+    \fn MappedHistogram::spectrum(const quint16 channel)
+
+    \param channel number of the tube
+    \return the spectrum of the tube channel
+ */
+Spectrum *MappedHistogram::spectrum(const quint16 channel)
+{
+	if (m_spectrum)
+	{
+		m_spectrum->clear();
+		if (m_spectrum->width() != m_height)
+			m_spectrum->resize(m_height);
+		for (int i = 0; i < m_height; ++i)
+			m_spectrum->setValue(i, floatValue(channel, i));
+	}
+	return m_spectrum;
 }
 
 #if 0

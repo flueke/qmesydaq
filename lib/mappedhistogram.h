@@ -27,6 +27,7 @@
 
 class LIBQMESYDAQ_EXPORT MappedHistogram;
 class LIBQMESYDAQ_EXPORT MapCorrection;
+class LIBQMESYDAQ_EXPORT Spectrum;
 
 /**
  * \short represents a histogram of mapped and corrected data
@@ -85,6 +86,8 @@ public:
 	//! \brief clear this histogram
 	virtual void clear(void);
 
+	virtual Spectrum *spectrum(const quint16 channel);
+
 	MapCorrection *getMapCorrection() const;
 
 private:
@@ -99,6 +102,8 @@ private:
 
 	//! array position of maximum value
 	int m_iMaxPos;
+
+	Spectrum	*m_spectrum;
 
 #if 0
 	//! remap point using stored orientation
