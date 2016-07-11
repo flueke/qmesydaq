@@ -74,6 +74,14 @@ void MesyDAQ::Base::deviceInit(void) throw (::TACO::Exception)
 	}
 }
 
+void MesyDAQ::Base::deviceReset(void) throw (::TACO::Exception)
+{
+	INFO_STREAM << "MesyDAQ::Base::deviceReset()" << ENDLOG;
+	::TACO::Server::deviceReset();
+	if (::TACO::Server::deviceState() == ::TACO::State::DEVICE_OFF)
+		::TACO::Server::deviceOn();
+}
+
 void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 {
 	INFO_STREAM << "MesyDAQ::Base::deviceUpdate()" << ENDLOG;

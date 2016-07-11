@@ -251,7 +251,7 @@ void MesyDAQ::IO::Timer::deviceInit(void) throw (::TACO::Exception)
 void MesyDAQ::IO::Timer::deviceReset(void) throw (::TACO::Exception)
 {
 	INFO_STREAM << "MesyDAQ::IO::Timer::deviceReset()" << ENDLOG;
-	::TACO::Server::deviceReset();
+	::MesyDAQ::Base::deviceReset();
 }
 
 DevShort MesyDAQ::IO::Timer::deviceState(void) throw (::TACO::Exception)

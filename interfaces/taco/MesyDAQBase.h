@@ -72,6 +72,8 @@ protected:
 
 	virtual void deviceInit(void) throw (::TACO::Exception);
 
+	virtual void deviceReset(void) throw (::TACO::Exception);
+
 private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
