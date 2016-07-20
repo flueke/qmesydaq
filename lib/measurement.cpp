@@ -1022,7 +1022,7 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 				break;
 			case Mdll2:
 				MSG_ERROR << tr("MWPCHR Map correction");
-				m_posHistMapCorrection = new MdllMapCorrection(QSize(256, 256/* m_width, m_height */));
+				m_posHistMapCorrection = new Mdll2MapCorrection(QSize(256, 256/* m_width, m_height */));
 				break;
 			default:
 				MSG_ERROR << tr("Linear Map correction");

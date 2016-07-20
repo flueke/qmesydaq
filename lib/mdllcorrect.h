@@ -46,4 +46,18 @@ public:
 	MdllMapCorrection(const QSize &destSize);
 };
 
+class LIBQMESYDAQ_EXPORT Mdll2MapCorrection : public LinearMapCorrection
+{
+public:
+	//! default constructor
+	Mdll2MapCorrection(void);
+
+	/**
+	 * constructor
+	 *
+	 * \param destSize target size
+	 */
+	Mdll2MapCorrection(const QSize &destSize);
+};
+
 #endif 
