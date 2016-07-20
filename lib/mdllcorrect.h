@@ -40,8 +40,7 @@ public:
 	/**
 	 * constructor
 	 *
-	 * \param destSize
-	 * \param iOrientation
+	 * \param destSize target size
 	 */
 	MdllMapCorrection(const QSize &destSize);
 };
