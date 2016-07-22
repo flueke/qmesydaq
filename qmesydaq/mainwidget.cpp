@@ -24,6 +24,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QSvgGenerator>
+#include <QDir>
 #include <QCoreApplication>
 #include <qwt_plot_curve.h>
 #include <qwt_scale_widget.h>
@@ -462,9 +463,9 @@ void MainWidget::startStopSlot(bool checked)
 				if (!sName.endsWith(".mtxt"))
 					sName.append(".mtxt");
 				m_meas->setHistfilename(sName);
-				if (!sName.startsWith("/"))
+				if (!QDir(sName).isAbsolute())
 				{
-					sName.prepend("/");
+					sName.prepend(QDir::separator());
 					sName.prepend(m_meas->getHistfilepath());
 				}
 				if (autoSaveHistogram->isChecked())
@@ -545,8 +546,8 @@ void MainWidget::checkListfilename(bool checked)
 				QMesyDAQDetectorInterface *interface(dynamic_cast<QMesyDAQDetectorInterface *>(pApp->getQtInterface()));
 				if (interface)
 					sFilename = interface->getListFileName();
-				if (!sFilename.isEmpty())
-					sFilename = m_meas->getListfilepath() + "/" + sFilename;
+				if (!sFilename.isEmpty() && !QDir(sFilename).isAbsolute())
+					sFilename = m_meas->getListfilepath() + QDir::separator() + sFilename;
 			}
 		}
 		else
