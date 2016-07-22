@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "presetwidget.h"
 
+#include "logging.h"
+
 /*!
     constructor
  */

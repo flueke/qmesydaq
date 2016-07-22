@@ -50,6 +50,9 @@ public:
 
 	void setValue(const double = 0);
 
+public slots:
+	void presetCheckClicked(bool);
+
 signals:
         //! this signal is emitted if the reset button is clicked
 	void resetClicked();
@@ -59,8 +62,6 @@ signals:
 
 
 private slots:
-	void presetCheckClicked(bool);
-
 	void resetButtonClicked(void);
 };
 #endif

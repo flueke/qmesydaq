@@ -2060,20 +2060,19 @@ void MainWidget::customEvent(QEvent *e)
 					case M1CT:
 					case M2CT:
 					case M3CT:
-						m_monitorPresets.at(id)->setChecked(bEnabled);
-						break;
+						m_monitorPresets.at(id)->presetCheckClicked(bEnabled);
 						break;
 					case M4CT:
 					case 5:
 					case 6:
 						if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
-							m_monitorPresets.at(id)->setChecked(bEnabled);
+							m_monitorPresets.at(id)->presetCheckClicked(bEnabled);
 						break;
 					case EVCT:
-						eventsPreset->setChecked(bEnabled);
+						eventsPreset->presetCheckClicked(bEnabled);
 						break;
 					case TCT:
-						timerPreset->setChecked(bEnabled);
+						timerPreset->presetCheckClicked(bEnabled);
 						break;
 				}
 				if (args.count() > 2 && args[2].canConvert(QVariant::Double))
@@ -2093,16 +2092,16 @@ void MainWidget::customEvent(QEvent *e)
 							if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							{
 								m_monitorPresets.at(id)->setPresetValue(dblPreset);
-								m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), true);
+								m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), bEnabled);
 							}
 							break;
 						case EVCT:
 							eventsPreset->setPresetValue(dblPreset);
-							m_meas->setEventCounterPreset(eventsPreset->presetValue(), true);
+							m_meas->setEventCounterPreset(eventsPreset->presetValue(), bEnabled);
 							break;
 						case TCT:
 							timerPreset->setPresetValue(dblPreset);
-							m_meas->setTimerPreset(quint64(timerPreset->presetValue() * 1000), true);
+							m_meas->setTimerPreset(quint64(timerPreset->presetValue() * 1000), bEnabled);
 							break;
 					}
 				}

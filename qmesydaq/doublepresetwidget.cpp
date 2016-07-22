@@ -20,6 +20,8 @@
 
 #include "doublepresetwidget.h"
 
+#include "logging.h"
+
 /*!
     constructor
  */

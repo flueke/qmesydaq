@@ -65,6 +65,9 @@ public:
 
 	void setMCPDList(QList<int> modules);
 
+public slots:
+	void presetCheckClicked(bool);
+
 signals:
 	//! this signal will be emitted if the reset button is pressed
 	void resetClicked(int);
@@ -75,8 +78,6 @@ signals:
 	void mappingChanged(int, quint16, qint8, qint8);
 
 private slots:
-	void presetCheckClicked(bool);
-
 	void resetButtonClicked(void);
 
 	void mcpdChanged(int);

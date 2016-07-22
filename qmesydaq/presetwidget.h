@@ -52,6 +52,9 @@ public:
 
 	quint64 presetValue(void);
 
+public slots:
+	void presetCheckClicked(bool);
+
 signals:
 	//! this signal will be emitted if the reset button is pressed
 	void resetClicked();
@@ -61,8 +64,6 @@ signals:
 
 
 private slots:
-	void presetCheckClicked(bool);
-
 	void resetButtonClicked(void);
 };
 #endif
