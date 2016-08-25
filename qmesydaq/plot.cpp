@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -87,8 +87,8 @@ Plot::Plot(QWidget *parent)
 			};
 
 // Insert new curves
-	for (int i = 0; i < 8; ++i)
-		m_curve[i] = new SpectrumCurve(p[i], QString("spectrum_%1").arg(i));
+	for (int i = 0; i < 16; ++i)
+		m_curve[i] = new SpectrumCurve(p[i % 8], QString("spectrum_%1").arg(i));
 
 	m_histogram = new QwtPlotSpectrogram("histogram");
 
@@ -212,7 +212,7 @@ void Plot::setDisplayMode(const Mode &m)
 	if (m_mode ==  m)
 		return;
 	m_mode = m;
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 16; ++i)
 		m_curve[i]->detach();
 	m_histogram->detach();
 
@@ -251,7 +251,7 @@ void Plot::setDisplayMode(const Mode &m)
 			m_curve[0]->attach(this);
 			break;
 		case ModuleSpectrum:
-			for (int i = 1; i < 8; ++i)
+			for (int i = 1; i < 16; ++i)
 				m_curve[i]->attach(this);
 		case Spectrum:
 			enableAxis(QwtPlot::yRight, false);

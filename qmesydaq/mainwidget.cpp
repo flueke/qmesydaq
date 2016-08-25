@@ -176,7 +176,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #endif
 
 	m_data = new MesydaqSpectrumData();
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 16; ++i)
 		m_specData[i] = new MesydaqSpectrumData();
 	m_histData = new MesydaqHistogramData();
 
@@ -233,7 +233,7 @@ MainWidget::~MainWidget()
 	m_dispTimer = 0;
 
 	delete m_data;
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 16; ++i)
 		delete m_specData[i];
 	delete m_histData;
 
