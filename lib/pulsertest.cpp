@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -29,7 +29,7 @@ PulserTest::PulserTest()
 /**
  * create a list of all actions to set the pulser on/off over the whole set of settings:
  * - all found MCPD
- *   - all found MPSD
+ *   - all found MPSD-8 or MSTD-16
  *   	- all positions
  *   	  - all amplitude values (30, 60)
  */
@@ -46,11 +46,11 @@ QList<puls> PulserTest::sequence(Mesydaq2 *mesy, quint8 amp1, quint8 amp2)
 	{
 		QList<int> mpsd = mesy->mpsdId(mod);
 		foreach(int addr, mpsd)
-			for (quint8 channel = 0; channel < 8; ++channel)
+			for (quint8 channel = 0; channel < mesy->getChannels(mod, addr); ++channel)
 				foreach (quint8 position, positions)
 					foreach(quint8 amp, amps)
 					{
-						puls p = {mod, addr, channel, position, amp, 125};
+						puls p = {quint16(mod), quint8(addr), channel, position, amp, 125};
 						retVal << p;
 					}
 	}
