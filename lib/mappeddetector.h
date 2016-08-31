@@ -54,7 +54,7 @@ public:
 
 	void operator=(const MappedDetector &src);
 
-	inline void set(const MappedDetector &src);
+	void set(const MappedDetector &src);
 
 	void set(int iStartInput, int iEndInput, int iStartOutput, int iEndOutput, float fFactor);
 
@@ -69,7 +69,9 @@ private:
 /**
 	\short a single detector tube (map data and channel)
 
-	\author Eric Faustmann <eric.faustmann@helmholtz-berlin.de>, Damian Rhein <damian.rhein@helmholtz-berlin.de>, Lutz Rossa <rossa@helmholtz-berlin.de>
+	\author Eric Faustmann <eric.faustmann@helmholtz-berlin.de>
+        \author	Damian Rhein <damian.rhein@helmholtz-berlin.de>
+        \author	Lutz Rossa <rossa@helmholtz-berlin.de>
 */
 class ListedMappedDetector : public MappedDetector
 {
