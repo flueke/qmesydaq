@@ -109,7 +109,7 @@
    <item row="0" column="5">
     <widget class="QLabel" name="mcpdLabel">
      <property name="text">
-      <string>MCDP</string>
+      <string>MCPD</string>
      </property>
     </widget>
    </item>
