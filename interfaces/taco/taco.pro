@@ -1,6 +1,6 @@
 ############################################################################
 #   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>
-#   Copyright (C) 2009-2015 by Jens Krüger <jens.krueger@frm2.tum.de>
+#   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION 	= 1.12.0
+VERSION 	= 1.12.1
 SRCBASE		= ../..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -41,6 +41,7 @@ HEADERS 	+= MesyDAQDetectorDetector.h \
 		MesyDAQServer.h \
 		MesyDAQBase.h \
 		TACOLoop.h \
+		TACOQMesydaqInterface.h \
 		taco_utils.h
 
 SOURCES 	+= MesyDAQDetectorDetector.cpp \
