@@ -104,6 +104,12 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
 	connect(this, SIGNAL(autoSaveHistogram(bool)), m_mesydaq, SLOT(autoSaveHistogram(bool)));
 
+	for (int j = MON1ID; j <= TTL2ID; ++j)
+	{
+		QPoint p = settings.value(QString("monitor%1").arg(j), QPoint(0, j)).toPoint();
+		setMonitorMapping(p.x(), p.y(), j);
+	}
+
 	m_rateTimer = startTimer(100);	// every 100 ms calculate the rates, was 8 before
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
 }
@@ -2051,10 +2057,12 @@ void Measurement::setMonitorMapping(quint16 id, qint8 input, qint8 channel)
 {
 	QList<int> mcpd = m_mesydaq->mcpdId();
 	if (mcpd.contains(id))
+	{
 		if (input < 0)
 			m_monitorMap.remove(channel);
 		else
 			m_monitorMap[channel] = QPair<int, int>(id, input);
+	}
 }
 
 qint8 Measurement::monitorMapping(quint16 id, qint8 input) const

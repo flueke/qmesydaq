@@ -1006,6 +1006,11 @@ void MainWidget::updateMeasurement(void)
 	acquireListFile->setChecked(settings.value("listmode", true).toBool());
 	autoSaveHistogram->setChecked(settings.value("autosavehistogram", false).toBool());
 	timerPreset->setChecked(settings.value("Preset/time", true).toBool());
+	for (int j = MON1ID; j <= TTL2ID; ++j)
+	{
+		QPoint p = settings.value(QString("monitor%1").arg(j), QPoint(0, j)).toPoint();
+		m_meas->setMonitorMapping(p.x(), p.y(), j);
+	}
 	settings.endGroup();
 
 	QList<int> mcpdList = m_theApp->mcpdId();
