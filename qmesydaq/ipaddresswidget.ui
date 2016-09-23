@@ -31,6 +31,12 @@
    </property>
    <item>
     <widget class="QLineEdit" name="ip1">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>192</string>
      </property>
@@ -54,6 +60,12 @@
    </item>
    <item>
     <widget class="QLineEdit" name="ip2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>168</string>
      </property>
@@ -77,6 +89,12 @@
    </item>
    <item>
     <widget class="QLineEdit" name="ip3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>168</string>
      </property>
@@ -100,6 +118,12 @@
    </item>
    <item>
     <widget class="QLineEdit" name="ip4">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>121</string>
      </property>

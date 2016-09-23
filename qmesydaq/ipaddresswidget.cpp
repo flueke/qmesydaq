@@ -29,6 +29,7 @@
 #include <QFont>
 #include <QLabel>
 #include <QKeyEvent>
+#include <QFontMetrics>
 
 IPAddressWidget::IPAddressWidget(QWidget *parent)
 	: QFrame(parent)
@@ -65,6 +66,10 @@ void IPAddressWidget::init(void)
 	m_pLineEdit[2] = ip3;
 	m_pLineEdit[3] = ip4;
 
+	int w = 2 * frameWidth();
+	QMargins m = layout()->contentsMargins();
+	w += m.left() + m.right();
+	w += 8 * layout()->spacing();
 	for (unsigned int i = 0; i != QT_UTL_IP4_SIZE; ++i)
 	{
 		QLineEdit *pEdit = m_pLineEdit[i];
@@ -78,13 +83,17 @@ void IPAddressWidget::init(void)
 #endif
 		font.setFixedPitch(true);
 		pEdit->setFont(font);
-
+		w += QFontMetrics(pEdit->font()).width("000|");
+		m = pEdit->textMargins();
+		w += m.left() + m.right();
 		QRegExp rx("^(0|[1-9]|[1-9][0-9]|1[0-9][0-9]|2([0-4][0-9]|5[0-5]))$");
 		QValidator *validator = new QRegExpValidator(rx, pEdit);
 		pEdit->setValidator(validator);
 	}
-
-	setMaximumWidth(30 * QT_UTL_IP4_SIZE);
+	w += QFontMetrics(label1->font()).width(".");
+	w += QFontMetrics(label2->font()).width(".");
+	w += QFontMetrics(label2->font()).width(".");
+	setMaximumWidth(w);
 
 	connect(this, SIGNAL(signalTextChanged(QLineEdit *)), this, SLOT(slotTextChanged(QLineEdit *)), Qt::QueuedConnection);
 }
