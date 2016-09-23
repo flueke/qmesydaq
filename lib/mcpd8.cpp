@@ -244,6 +244,7 @@ bool MCPD8::start(void)
 	finishCmdBuffer(0);
 	bResult = sendCommand(false);
 	MSG_DEBUG << tr("START %1, result %2").arg(m_byId).arg(bResult);
+	m_lastDataBufnum = 0;
     }
     return bResult;
 }
