@@ -1220,7 +1220,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				{
 					if (pos >= 960)
 					{
-						// MSG_ERROR << tr("POSITION > 959 : %1").arg(pos);
+						MSG_ERROR << tr("POSITION >= 959 : %1 %2.%3.%4").arg(pos).arg(pPacket->dp.data[counter + 2], 4, 16, QChar('0')).
+							arg(pPacket->dp.data[counter + 1], 4, 16, QChar('0')).arg(pPacket->dp.data[counter], 4, 16, QChar('0'));
 						continue;
 					}
 				}
