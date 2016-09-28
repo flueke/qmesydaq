@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 
 	app.setStyle(new QPlastiqueStyle());
 
-	QPixmap pixmap(":/images/mesytec.jpg");
+	QPixmap pixmap(":/images/mesytec.png");
 
 	QSplashScreen splash(pixmap);
 	splash.show();
