@@ -624,16 +624,20 @@ bool MCPD8::scanPeriph(void)
 bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 {
 	if (!m_mpsd.size() || m_mpsd.find(addr) == m_mpsd.end())
-			return false;
+		return false;
 	if (chan > m_mpsd[addr]->getChannels())
 		chan = m_mpsd[addr]->getChannels();
+	// The old MSTD-16 could only set the gain for two channels simultaneously
+	if (m_mpsd[addr]->type() == TYPE_MSTD16 && version() < 9.9)
+		if (chan > 8)
+			chan /= 2;
 
 	MSG_DEBUG << tr("SETGAIN_%1 %2, addr %3, chan %4, val %5")
 				.arg(m_mpsd[addr]->getType())
 				.arg(m_byId).arg(addr).arg(chan).arg(gainval);
 	QMutexLocker locker(m_pCommandMutex);
 	m_mpsd[addr]->setGain(chan, gainval, 1);
-	initCmdBuffer(m_mpsd[addr]->type() == TYPE_MSTD16 ? SETGAIN_MSTD : SETGAIN_MPSD);
+	initCmdBuffer((m_mpsd[addr]->type() == TYPE_MSTD16 && version() > 9.9) ? SETGAIN_MSTD : SETGAIN_MPSD);
 	m_cmdBuf.data[0] = addr;
 	m_cmdBuf.data[1] = chan;
 	m_cmdBuf.data[2] = gainval;
@@ -1874,17 +1878,26 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					}
 					ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[2], 0);
 				}
-				else// set one channel
+				else // set one channel
 				{
-					ptrMPSD = m_mpsd[pMdp->data[0]];
-					if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
+					// If there was a gain set to module which do not answer right, the data area is empty and this would lead to NULL pointers
+					if (pMdp->bufferLength > pMdp->headerLength)
+					{
+						ptrMPSD = m_mpsd[pMdp->data[0]];
+						if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
+						{
+							bAnswerOk = false;
+							MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
+								arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
+							// set back to received value
+						}
+						ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
+					}
+					else
 					{
 						bAnswerOk = false;
-						MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-							arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
-						// set back to received value
+						MSG_ERROR << tr("Error setting gain, perhaps an MSTD-16 module");
 					}
-					ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
 				}
 				break;
 			case SETTHRESH: // extract the set thresh value:
