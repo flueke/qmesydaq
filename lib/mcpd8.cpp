@@ -1000,6 +1000,8 @@ bool MCPD8::setMode(quint16 addr, bool mode)
 	//! \todo current firmware does not support addr 8 to set all
         for (int i = 0; ret && i < 8; ++i)
 	{
+            if (!m_mpsd.contains(i))
+                return false;
             m_mpsd[i]->setMode(mode, 1);
             initCmdBuffer(SETMODE);
             m_cmdBuf.data[0] = i;
@@ -1010,6 +1012,8 @@ bool MCPD8::setMode(quint16 addr, bool mode)
 	return ret;
     }
 
+    if (!m_mpsd.contains(addr))
+        return false;
     m_mpsd[addr]->setMode(mode, 1);
     initCmdBuffer(SETMODE);
     m_cmdBuf.data[0] = addr;
