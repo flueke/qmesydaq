@@ -2821,6 +2821,7 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
     }
     else
     {
+        quint16 offset(0);
         foreach(MPSD8 *it, m_mpsd)
         {
             Q_ASSERT_X(it != NULL, "MCPD8::getTubeMapping", "one of the MPSD's is NULL");
@@ -2829,7 +2830,8 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
             quint16 buswidth = busNr * it->getChannels();
 	    for (int i = 0; i < tmpList.size(); ++i)
 		if (tmpList.at(i) == i)
-		    result.insert(buswidth + i, buswidth + i);
+		    result.insert(buswidth + i, offset + i);
+	    offset += tmpList.size();
         }
     }
     return result;

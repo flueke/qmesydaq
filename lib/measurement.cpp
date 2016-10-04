@@ -1801,6 +1801,8 @@ bool Measurement::loadSetup(const QString &name)
 
 // Calibration file must be read after hardware configuration
 	readCalibration(sz, true);
+
+	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
 	return true;
 }
 
