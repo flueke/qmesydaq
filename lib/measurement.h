@@ -89,6 +89,7 @@ public:
 		PositionHistogram = 0,		//!< raw position histogram
 		AmplitudeHistogram,		//!< raw amplitude histogram
 		CorrectedPositionHistogram,	//!< corrected position histogram
+		NoHistogram,			//!< Do not chnage this entry, must be the last one!
 	};
 
 	//! Defines the histogram output format
@@ -463,7 +464,7 @@ private:
 	Mesydaq2	*m_mesydaq;
 
 	//! histogram buffer
-	Histogram	*m_Hist[3];
+	Histogram	*m_Hist[NoHistogram];
 
 	//! time spectrum
 	Spectrum	*m_Spectrum[NoSpectrum];
