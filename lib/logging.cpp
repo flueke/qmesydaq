@@ -112,7 +112,7 @@ static QString createMessage(const char *msg, char cLogLevel)
 	else
 		retStr=msg;
 #endif /* MAX_LOGLINE_LENGTH */
-  retStr.append("\r\n");
+	retStr.append("\r\n");
 
 	if (cLogLevel!='\0' && (g_bUseTimestamp || g_bUseSourcefile))
 	{
@@ -121,7 +121,7 @@ static QString createMessage(const char *msg, char cLogLevel)
 		retStr.prepend('[');
 	}
 
-  return retStr;
+	return retStr;
 }
 
 //==================================================================================================================
