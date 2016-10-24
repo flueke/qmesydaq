@@ -40,7 +40,7 @@ Histogram	*m_posHist;
 Histogram	*m_ampHist;
 Spectrum	*m_diffractogram;
 
-void analyzeBuffer(const DATA_PACKET &pd, bool printPos, bool printChannel = true)
+void analyzeBuffer(const DATA_PACKET &pd, bool printPos, bool printTime = false, bool printChannel = true)
 {
 	quint64 tim;
 	quint16 mod = pd.deviceId;
@@ -80,6 +80,8 @@ void analyzeBuffer(const DATA_PACKET &pd, bool printPos, bool printChannel = tru
 			{
 				triggers++;
 				quint8 dataId = (pd.data[counter + 2] >> 8) & 0x0F;
+				if (printTime)
+					MSG_ERROR << QObject::tr("%1 M(%5) %2 %3 %4").arg(mod).arg(tim).arg(headertime).arg(tim - headertime).arg(dataId);
 //				ulong data = ((pd.data[counter + 2] & 0xFF) << 13) + ((pd.data[counter + 1] >> 3) & 0x7FFF);
 //				quint16 time = (quint16)tim;
 				switch(dataId)
@@ -115,6 +117,8 @@ void analyzeBuffer(const DATA_PACKET &pd, bool printPos, bool printChannel = tru
 // neutron event:
 			else
 			{
+				if (printTime)
+					MSG_ERROR << QObject::tr("%1 N %2 %3 %4").arg(mod).arg(tim).arg(headertime).arg(tim - headertime);
 				neutrons++;
 				quint8 slotId = (pd.data[counter + 2] >> 7) & 0x1F;
 				quint8 modChan = (id << 3) + slotId;
@@ -288,7 +292,7 @@ bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 	return ok;
 }
 
-void readListfile(const QString &readfilename, bool printPos)
+void readListfile(const QString &readfilename, bool printPos, bool printTime)
 {
 	QDataStream datStream;
 	QTextStream textStream;
@@ -352,7 +356,7 @@ void readListfile(const QString &readfilename, bool printPos)
 // 				m_counter[TIMERID]->start(tmp / 10000);	// headertime is in 100ns steps
 			}
 // hand over data buffer for processing
-			analyzeBuffer(dataBuf, printPos);
+			analyzeBuffer(dataBuf, printPos, printTime);
 // check for next separator:
 			if(!(bcount % 1000))
 			{

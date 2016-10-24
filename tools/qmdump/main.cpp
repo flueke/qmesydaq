@@ -27,8 +27,9 @@
 #include <mcpd8.h>
 #include <mesydaq2.h>
 #include <mdefines.h>
+#include <logging.h>
 
-void readListfile(const QString &, bool = false);
+void readListfile(const QString &, bool = false, bool = false);
 
 void version(void)
 {
@@ -37,8 +38,10 @@ void version(void)
 
 void help(const QString &program)
 {
-	qDebug() << program << ": [-v] [-h] [-p] list_mode_file";
+	qDebug() << program << ": [-v] [-h] [-p] [-t] [-d] list_mode_file";
 	qDebug() << "       -p - print neutron positions";
+	qDebug() << "       -t - print event timestamp";
+	qDebug() << "       -d - increase debug level";
 	version();
 }
 
@@ -46,11 +49,15 @@ int main(int argc, char **argv)
 {
 	QCoreApplication app(argc, argv);
 
-	DEBUGLEVEL = ERROR /* NOTICE */;
+	int debug = ERROR; /* NOTICE */;
+
+	// qInstallMsgHandler(messageToFile);
 
 	QStringList 	args = app.arguments();
 	QString		fileName;
 	bool		fPrintPos(false);
+	bool		fPrintTime(false);
+
 	if (args.size() > 1)
 	{
 		for (int i = 1; i < args.size(); ++i)
@@ -65,16 +72,26 @@ int main(int argc, char **argv)
 				return 1;
 			}
 			else if (args.at(i) == "-p")
-			{
 				fPrintPos = true;
-			}
+			else if (args.at(i) == "-t")
+				fPrintTime = true;
+		        else if (args.at(i) == "-d")
+				debug += 1;
 			else
 				fileName = args.at(i);
 	}
+	if (fileName.isEmpty())
+	{
+		help(argv[0]);
+		return 1;
+	}
 
-	qDebug() << QObject::tr("Read file : %1 ").arg(fileName);
+// 	startLogging("", "");
+	DEBUGLEVEL = debug;
 
-	readListfile(fileName, fPrintPos);
+	MSG_ERROR << QObject::tr("Read file : %1 ").arg(fileName);
+
+	readListfile(fileName, fPrintPos, fPrintTime);
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
