@@ -1210,15 +1210,12 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					pos = amp;
 					amp = chan;
 					chan = val;
-				}
-				if (pPacket->dp.bufferType == 0x0002)
-				{
 					if (pos >= m_mesydaq->height())
 						continue;
 				}
 				else
 				{
-					if (pos >= 960)
+					if (pos >= 960 && moduleID != TYPE_MSTD16)
 					{
 						MSG_ERROR << tr("POSITION >= 959 : %1 %2.%3.%4").arg(pos).arg(pPacket->dp.data[counter + 2], 4, 16, QChar('0')).
 							arg(pPacket->dp.data[counter + 1], 4, 16, QChar('0')).arg(pPacket->dp.data[counter], 4, 16, QChar('0'));
