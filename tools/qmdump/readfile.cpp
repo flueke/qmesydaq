@@ -167,9 +167,10 @@ void analyzeBuffer(const DATA_PACKET &pd, bool printPos, bool printTime = false,
 #endif
 				if (printPos)
 				{
-					MSG_ERROR << "pos : " << pos << " amp : " << amp;
+					QString s = QObject::tr("pos : %1 amp : %2").arg(pos).arg(amp);
 					if (printChannel)
-						MSG_ERROR << "channel : " << chan;
+						s += QObject::tr(" - channel : %1, (%2 %3 [%4 %5])").arg(chan).arg(mod).arg(modChan).arg(id).arg(slotId);
+					MSG_ERROR << s;
 				}
 				if (pos > 959)
 					MSG_ERROR << "POSITION > 960 " << pos;
