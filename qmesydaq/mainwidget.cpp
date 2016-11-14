@@ -432,7 +432,8 @@ void MainWidget::startStopSlot(bool checked)
 		// set device id to 0 -> will be filled by mesydaq for master
 		m_meas->start();
 		Histogram *h = m_meas->hist(m_histoType);
-		m_roi[m_histoType] = QRect(0, 0, h->width(), h->height());
+		if (m_roi[m_histoType].isEmpty())
+			m_roi[m_histoType] = QRect(0, 0, h->width(), h->height());
 		setHistogramType(m_histoType);
 		m_time.restart();
 		m_dispTimer = startTimer(500);
