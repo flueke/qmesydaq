@@ -317,6 +317,8 @@ void Measurement::start()
 {
 	m_mode = DataAcquisition;
 	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
+	if (m_Spectrum[AmplitudeSpectrum])
+		m_Spectrum[AmplitudeSpectrum]->clear();
 	foreach (MesydaqCounter *c, m_counter)
 		c->reset();
 	m_packages = 0;
