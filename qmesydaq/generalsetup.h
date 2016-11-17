@@ -39,22 +39,22 @@ public:
 	GeneralSetup(Measurement *, QWidget * = 0);
 
 	//! \return the path for the configuration files
-	QString configFilePath(void) {return configfilepath->text();}
+	QString configFilePath(void);
 
 	//! \return the path for the listmode data files
-	QString listFilePath(void) {return listfilepath->text();}
+	QString listFilePath(void);
 
 	//! \return the path for the histogram data file
-	QString histFilePath(void) {return histfilepath->text();}
+	QString histFilePath(void);
 
 	//! \return the last run ID
-	quint32 lastRunId(void)  {return runId->value();}
+	quint32 lastRunId(void);
 
 	//! \return auto increment run id selection
-	bool getAutoIncRunId(void)  {return runIdAuto->isChecked();}
+	bool getAutoIncRunId(void);
 
 	//! \return write protect closed files
-	bool getWriteProtection(void)  {return writeProtect->isChecked();}
+	bool getWriteProtection(void);
 
 	//! \return MPSD detector arrangement
 	int getArrangement(void) const;
@@ -66,7 +66,7 @@ public:
 	    set the last run id
             \param val
          */
-	void setLastRunId(const quint32 val) {runId->setValue(val);}
+	void setLastRunId(const quint32 val);
 
 private slots:
 	void selectConfigpathSlot();

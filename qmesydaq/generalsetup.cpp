@@ -141,3 +141,38 @@ int GeneralSetup::getHistogramFileFormat(void) const
 {
 	return histogramFileformatButtonGroup->checkedId();
 }
+
+void GeneralSetup::setLastRunId(const quint32 val)
+{
+	runId->setValue(val);
+}
+
+QString GeneralSetup::configFilePath(void)
+{
+	return configfilepath->text();
+}
+
+QString GeneralSetup::listFilePath(void)
+{
+	return listfilepath->text();
+}
+
+QString GeneralSetup::histFilePath(void)
+{
+	return histfilepath->text();
+}
+
+quint32 GeneralSetup::lastRunId(void)
+{
+	return runId->value();
+}
+
+bool GeneralSetup::getAutoIncRunId(void)
+{
+	return runIdAuto->isChecked();
+}
+
+bool GeneralSetup::getWriteProtection(void)
+{
+	return writeProtect->isChecked();
+}
