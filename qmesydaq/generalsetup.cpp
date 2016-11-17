@@ -176,3 +176,18 @@ bool GeneralSetup::getWriteProtection(void)
 {
 	return writeProtect->isChecked();
 }
+
+int GeneralSetup::getTriggerId(void)
+{
+	return triggerInput->currentIndex() - 1;
+}
+
+void GeneralSetup::setTriggerId(const int id)
+{
+	if (id < 0)
+		triggerInput->setCurrentIndex(0);
+	else if (id < 6)
+		triggerInput->setCurrentIndex(id + 1);
+	else
+		triggerInput->setCurrentIndex(0);
+}

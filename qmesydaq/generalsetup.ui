@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="pathBox">
      <property name="title">
       <string>Default paths</string>
      </property>
@@ -83,8 +83,8 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QGroupBox" name="groupBox15">
+   <item row="5" column="0">
+    <widget class="QGroupBox" name="idBox">
      <property name="title">
       <string>Run ID</string>
      </property>
@@ -128,7 +128,7 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -139,13 +139,16 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="histogramFileFormatBox">
      <property name="title">
       <string>Histogram file format</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <widget class="QRadioButton" name="standardHistogramFileFormat">
+        <property name="toolTip">
+         <string>Histogram data will be written in &quot;standard&quot; format</string>
+        </property>
         <property name="text">
          <string>Standard</string>
         </property>
@@ -159,6 +162,9 @@
       </item>
       <item row="0" column="1">
        <widget class="QRadioButton" name="simpleHistogramFileFormat">
+        <property name="toolTip">
+         <string>Histogram data file will be written in a &quot;simple&quot; format</string>
+        </property>
         <property name="text">
          <string>Simple</string>
         </property>
@@ -171,13 +177,16 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="writeProtectionBox">
      <property name="title">
       <string>Data file protections</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
        <widget class="QCheckBox" name="writeProtect">
+        <property name="toolTip">
+         <string>Remove writeable flag from data files</string>
+        </property>
         <property name="text">
          <string>write protect data files</string>
         </property>
@@ -194,6 +203,9 @@
      <layout class="QGridLayout" name="gridLayout_5">
       <item row="0" column="0">
        <widget class="QRadioButton" name="tube2D">
+        <property name="toolTip">
+         <string>Detector tubes are arranged in 2D</string>
+        </property>
         <property name="text">
          <string>2D detector</string>
         </property>
@@ -207,12 +219,66 @@
       </item>
       <item row="0" column="1">
        <widget class="QRadioButton" name="tube1D">
+        <property name="toolTip">
+         <string>Detector tubes are arranged in a &quot;line&quot;</string>
+        </property>
         <property name="text">
          <string>1D detector</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">arrangementButtonGroup</string>
         </attribute>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QGroupBox" name="triggerBox">
+     <property name="title">
+      <string>Trigger input</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <widget class="QComboBox" name="triggerInput">
+        <property name="toolTip">
+         <string>Select the trigger input for time resolved measurements</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>None</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Monitor 1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Monitor 2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Monitor 3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Monitor 4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>TTL 1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>TTL 2</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -229,8 +295,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>427</x>
-     <y>385</y>
+     <x>431</x>
+     <y>478</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -245,8 +311,8 @@
    <slot>selectListpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>482</x>
-     <y>59</y>
+     <x>491</x>
+     <y>55</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -261,8 +327,8 @@
    <slot>selectHistpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>482</x>
-     <y>93</y>
+     <x>491</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -277,8 +343,8 @@
    <slot>selectConfigpathSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>482</x>
-     <y>127</y>
+     <x>491</x>
+     <y>109</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -293,8 +359,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>427</x>
-     <y>385</y>
+     <x>431</x>
+     <y>478</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -309,8 +375,8 @@
    <slot>setRunIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>482</x>
-     <y>337</y>
+     <x>491</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -325,8 +391,8 @@
    <slot>selectAutoIncRunIdSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>196</x>
-     <y>334</y>
+     <x>329</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -341,8 +407,8 @@
    <slot>selectWriteProtectSlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>40</x>
-     <y>264</y>
+     <x>51</x>
+     <y>306</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>

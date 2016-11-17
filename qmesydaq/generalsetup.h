@@ -68,6 +68,9 @@ public:
          */
 	void setLastRunId(const quint32 val);
 
+	//! \return the selected trigger id
+	int getTriggerId(void);
+
 private slots:
 	void selectConfigpathSlot();
 
@@ -80,6 +83,8 @@ private slots:
 	void selectAutoIncRunIdSlot();
 
 	void selectWriteProtectSlot();
+
+	void setTriggerId(const int);
 
 private:
 	//! store the measurement object
