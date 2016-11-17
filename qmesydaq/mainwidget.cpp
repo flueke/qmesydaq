@@ -253,15 +253,9 @@ void MainWidget::about()
 	QString text = tr("<h3>About QMesyDAQ </h3>")
 			+ tr("<p>Authors</p><ul>")
 			+ tr("<li>Copyright (C) 2008 <a href=\"mailto:g.montermann@mesytec.com\">Gregor Montermann</a</li>")
-			+ tr("<li>Copyright (C) 2009-2014 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
-			+ tr("<li>Copyright (C) 2011-2014 <a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a></li>")
-			+ tr("</ul><p>Contributors</p><ul>")
-			+ tr("<li><a href=\"mailto:alexander.lenz@frm2.tum.de\">Alexander Lenz</a> TACO remote control</li>")
-			+ tr("<li><a href=\"mailto:m.drochner@fz-juelich.de\">Matthias Drochner</a> Bug reports</li>")
-			+ tr("<li><a href=\"mailto:christian.randau@frm2.tum.de\">Christian Randau</a> Windows port</li>")
-			+ tr("<li><a href=\"mailto:eric.faustmann@helmholtz-berlin.de\">Eric Faustmann</a>Histogram mapping editor</li>")
-			+ tr("<li><a href=\"mailto:damian.rhein@helmholtz-berlin.de\">Damian Rhein</a>Histogram mapping editor</li>")
-			+ tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-2/8 modules</p>");
+			+ tr("<li>Copyright (C) 2009-2016 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
+			+ tr("<li>Copyright (C) 2011-2016 <a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a></li>")
+			+ tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-8, MCPD-8, MSTD-16, and MDLL modules</p>");
 	LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
 	if (loop)
 	{

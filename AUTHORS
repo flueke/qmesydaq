@@ -1,7 +1,14 @@
 Gregor Montermann <g.montermann@mesytec.com>
 Jens Krüger <jens.krueger@frm2.tum.de>
-Alexander Lenz <alexander.lenz@frm2.tum.de>
 Lutz Rossa <rossa@helmholtz-berlin.de>
-Christian Randau <christian.randau@frm2.tum.de>
-Eric Faustmann <eric.faustmann@helmholtz-berlin.de>
-Damian Rhein <damian.rhein@helmholtz-berlin.de>
+
+Contributors:
+
+Alexander Lenz <alexander.lenz@frm2.tum.de> - TACO remote interface
+Björn Pedersen <bjoern.pedersen@frm2.tum.de> - tar ball generation from git
+Christian Felder <c.felder@fz-juelich.de> - Fixes
+Christian Randau <christian.randau@frm2.tum.de> - Windows port
+Damian Rhein <damian.rhein@helmholtz-berlin.de> - Histogram mapping editor
+Eric Faustmann <eric.faustmann@helmholtz-berlin.de> - Histogram mapping editor
+Josef Heinen <j.heinen@fz-juelich.de> - Mac OS X port
+Stefan Rainow <stefan.rainow@frm2.tum.de> - graphical setup configuration
