@@ -1471,6 +1471,7 @@ void Measurement::readListfile(const QString &readfilename)
 	qint64  seekPos(-1);
 
 	const int blocksize(64 * 1024); // 64KB
+	bool bFound(false);
 	QByteArray header;
 	for (;;) // search for start of sequence magic
 	{
@@ -1492,7 +1493,10 @@ void Measurement::readListfile(const QString &readfilename)
 		{
 			const quint16* p = reinterpret_cast<const quint16 *>(header.constData() + i);
 			if (p[0] == sep0 && p[1] == sep5 && p[2] == sepA && p[3] == sepF)
+			{
+				bFound=true;
 				break;
+			}
 		}
 		if (i >= header.size())
 		{
@@ -1512,7 +1516,7 @@ void Measurement::readListfile(const QString &readfilename)
 	}
 	header.clear();
 
-	if (seekPos < 0)
+	if (!bFound && seekPos < 0)
 	{
 		// header magic failed, use the old way
 		QTextStream textStream;
@@ -1520,7 +1524,7 @@ void Measurement::readListfile(const QString &readfilename)
 		seekPos = 0;
 		textStream.setDevice(&datfile);
 		textStream.seek(seekPos);
-		for (;;)
+		while (!textStream.atEnd())
 		{
 			str = textStream.readLine();
 			seekPos += str.size()+1;
