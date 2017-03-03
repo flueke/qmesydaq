@@ -167,7 +167,7 @@ void MonitorPresetWidget::emitMappingChanged(void)
 	{
 		int i = objectName().mid(7, 1).toInt() - 1; // objectName assumed as monitor[0-9]Preset
 		MSG_DEBUG << tr("emitting %1 : %2 %3 %4").arg(objectName()).arg(mcpdSpinBox->value()).arg(inputComboBox->currentIndex() - 1).arg(i);
-		emit mappingChanged(m_id, mcpdSpinBox->value(), inputComboBox->currentIndex() - 1, i); // -1 since the index 0 is for 'not used'
+		emit mappingChanged(mcpdSpinBox->value(), inputComboBox->currentIndex() - 1, i); // -1 since the index 0 is for 'not used'
 	}
 }
 

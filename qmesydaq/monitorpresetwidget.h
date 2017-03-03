@@ -75,7 +75,7 @@ signals:
 	//! this signal will be emitted if the check button for the master is changed
 	void presetClicked(int, bool);
 
-	void mappingChanged(int, quint16, qint8, qint8);
+	void mappingChanged(quint16, qint8, qint8);
 
 private slots:
 	void resetButtonClicked(void);
