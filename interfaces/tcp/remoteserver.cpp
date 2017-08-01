@@ -164,7 +164,7 @@ void RemoteServer::parseInput(const QString &line)
 		tmp.remove(tmp.length() - 1, 1);
 	if (tmp.endsWith("\r"))
 		tmp.remove(tmp.length() - 1, 1);
-	MSG_DEBUG << tr("parseInput : %1").arg(tmp);
+	MSG_ERROR << tr("parseInput : %1").arg(tmp);
 
 	QStringList l = tmp.split(' ', QString::SkipEmptyParts);
 	if (l.length() > 1 && l.at(0) == "MESYDAQ")
@@ -252,7 +252,6 @@ void RemoteServer::parseInput(const QString &line)
 				else if (val == "MONITOR1" || val == "MONITOR2" || val == "MONITOR3" || val == "MONITOR4")
 				{
 					quint8 i = val.right(1).toInt();
-					MSG_ERROR << val << " " << i;
 					emit monitor(i);
 					return;
 				}

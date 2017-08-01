@@ -183,7 +183,7 @@ void TCPLoop::start(void)
 		m_interface->setHistogramFileName(histFile);
 		m_settings->setValue("lasthistofile", histFile);
 	}
-
+	MSG_ERROR << "MESYDAQ START";
 	m_interface->start();
 }
 
@@ -198,11 +198,13 @@ void TCPLoop::clear(void)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	MSG_ERROR << "MESYDAQ STOP";
 	m_interface->clear();
 }
 
 void TCPLoop::reset(void)
 {
+	MSG_ERROR << "MESYDAQ RESET";
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
 }
@@ -211,6 +213,7 @@ void TCPLoop::presetTimer(const quint32 input)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	MSG_ERROR << "MESYDAQ TIMER " << input;
 	m_interface->selectCounter(TCT, true, input);
 }
 
@@ -218,6 +221,7 @@ void TCPLoop::presetMonitor(const quint8 mon, const quint32 input)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	MSG_ERROR << "MESYDAQ MONITOR " << mon << " " << input;
 	m_interface->selectCounter(mon - 1, true, input);
 }
 
@@ -225,6 +229,7 @@ void TCPLoop::presetEvent(const quint32 input)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	MSG_ERROR << "MESYDAQ EVENT " << input;
 	m_interface->selectCounter(EVCT, true, input);
 }
 
@@ -235,10 +240,12 @@ void TCPLoop::status(void)
 	switch (m_interface->status())
 	{
 		case 1:
+			MSG_ERROR << "MESYDAQ RUNNING";
 			m_server->sendAnswer("MESYDAQ RUNNING\n");
 			break;
 		case 0:
 		default:
+			MSG_ERROR << "MESYDAQ STOPPED";
 			m_server->sendAnswer("MESYDAQ STOPPED\n");
 			break;
 	}
@@ -255,7 +262,7 @@ void TCPLoop::histogram(void)
 // complete histogram
 	if (1)
 	{
-		MSG_DEBUG << "HISTOGRAM TYPE " << m_histo;
+		MSG_ERROR << "MESYDAQ GET HISTOGRAM " << m_histo;
 		QSize s = m_interface->readHistogramSize(m_histo);
 		width = s.width();
 		height = s.height();
@@ -265,12 +272,13 @@ void TCPLoop::histogram(void)
 	else
 	{
 // 1 1 1 value
+		MSG_ERROR << "MESYDAQ GET SPECTROGRAM";
 		tmpList = m_interface->readDiffractogram();
 //		tmp.push_back(tmpList.count());
 //		tmp.push_back(1);
 //		tmp.push_back(1);
 	}
-	MSG_NOTICE << "Histogram size: " << width << "x" << height;
+	MSG_ERROR << "Histogram size: " << width << "x" << height;
 	QString tmp = formatHistogram(width, height, tmpList);
 	m_server->sendAnswer(tmp);
 }
@@ -319,6 +327,7 @@ void TCPLoop::timer(void)
 	QString s;
 	double tmp = m_interface->readCounter(TCT);
 	s.setNum(tmp);
+	MSG_ERROR << "MESYDAQ GET TIMER " << s;
 	m_server->sendAnswer(s + "\n");
 }
 
@@ -329,6 +338,7 @@ void TCPLoop::event(void)
 	QString s;
 	quint64 tmp = m_interface->readCounter(EVCT);
 	s.setNum(tmp);
+	MSG_ERROR << "MESYDAQ GET EVENTS " << s;
 	m_server->sendAnswer(s + "\n");
 }
 
@@ -339,6 +349,7 @@ void TCPLoop::monitor(const quint8 mon)
 	QString s;
 	quint64 tmp = m_interface->readCounter(mon - 1);
 	s.setNum(tmp);
+	MSG_ERROR << "MESYDAQ GET MONITOR" << mon << " " << s;
 	m_server->sendAnswer(s + "\n");
 }
 
@@ -346,6 +357,7 @@ void TCPLoop::histogram(bool writeHistogram)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	MSG_ERROR << "MESYDAQ CONFIG HISTOGRAM " << writeHistogram;
 	m_interface->setHistogramMode(writeHistogram);
 }
 
@@ -354,6 +366,7 @@ void TCPLoop::histogram(const QString &histogramfile)
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
 	m_interface->setHistogramFileName(histogramfile);
+	MSG_ERROR << "MESYDAQ CONFIG HISTOGRAM FILE " << histogramfile;
 	m_settings->setValue("lasthistofile", histogramfile);
 }
 
@@ -367,6 +380,7 @@ void TCPLoop::listmode(void)
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
 	bool tmp = m_interface->getListMode();
+	MSG_ERROR << "MESYDAQ GET CONFIG LISTMODE " << tmp;
 	sendOnOff(tmp);
 }
 
@@ -374,6 +388,7 @@ void TCPLoop::listmode(bool writeListmode)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	MSG_ERROR << "MESYDAQ CONFIG LISTMODE " << writeListmode;
 	m_interface->setListMode(writeListmode, true);
 }
 
@@ -381,6 +396,7 @@ void TCPLoop::listmode(const QString &listmodefile)
 {
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
+	MSG_ERROR << "MESYDAQ GET CONFIG LISTMODE FILE " << listmodefile;
 	m_interface->setListFileName(listmodefile);
 	m_settings->setValue("lastlistfile", listmodefile);
 }
@@ -390,6 +406,7 @@ void TCPLoop::histogramFile(void)
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
 	QString file = m_interface->getHistogramFileName();
+	MSG_ERROR << "MESYDAQ GET CONFIG HISTOGRAM FILE " << file;
 	m_server->sendAnswer(file + '\n');
 }
 
@@ -400,12 +417,15 @@ void TCPLoop::histogramType(void)
 	switch (m_histo)
 	{
 		case CorrectedPositionHistogram:
+			MSG_ERROR << "MESYDAQ GET CONFIG HISTOGRAM TYPE MAPPED";
 			m_server->sendAnswer("MAPPED\n");
 			break;
 		case AmplitudeHistogram:
+			MSG_ERROR << "MESYDAQ GET CONFIG HISTOGRAM TYPE AMPLITUDE";
 			m_server->sendAnswer("AMPLITUDE\n");
 			break;
 		case PositionHistogram:
+			MSG_ERROR << "MESYDAQ GET CONFIG HISTOGRAM TYPE RAW";
 			m_server->sendAnswer("RAW\n");
 			break;
 		default:
@@ -418,6 +438,7 @@ void TCPLoop::histogramType(const QString &type)
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
 	QString tmp = type.toUpper();
+	MSG_ERROR << "MESYDAQ CONFIG HISTOGRAM TYPE " << tmp;
 	if (tmp == "MAPPED")
 		m_histo = CorrectedPositionHistogram;
 	else if (tmp == "AMPLITUDE")
@@ -437,6 +458,7 @@ void TCPLoop::histogramSave(void)
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
 	bool tmp = m_interface->getHistogramMode();
+	MSG_ERROR << "MESYDAQ GET CONFIG HISTOGRAM " << tmp;
 	sendOnOff(tmp);
 }
 
@@ -445,6 +467,7 @@ void TCPLoop::listmodeFile(void)
 	if (!m_interface)
 		m_server->sendAnswer("MESYDAQ NOTOK\n");
 	QString listfile = m_interface->getListFileName();
+	MSG_ERROR << "MESYDAQ GET CONFIG LISTMODE FILE " << listfile;
 	m_server->sendAnswer(listfile + '\n');
 }
 
