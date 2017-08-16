@@ -2085,7 +2085,7 @@ void MainWidget::customEvent(QEvent *e)
 						case M2CT:
 						case M3CT:
 							m_monitorPresets.at(id)->setPresetValue(dblPreset);
-							m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), true);
+							m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), bEnabled);
 							break;
 						case M4CT:
 						case 5:
