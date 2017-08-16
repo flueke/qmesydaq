@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 1.71.11
+VERSION		= 1.71.12
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)

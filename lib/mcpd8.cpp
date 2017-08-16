@@ -2828,10 +2828,14 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
             QList<quint16> tmpList = it->getHistogramList();
             quint16 busNr = it->busNumber();
             quint16 buswidth = busNr * it->getChannels();
+	    int j = 0; // reset list offset
 	    for (int i = 0; i < tmpList.size(); ++i)
-		if (tmpList.at(i) == i)
-		    result.insert(buswidth + i, offset + i);
-	    offset += tmpList.size();
+		if (tmpList.at(i) == i) // ignore not used channels
+		{
+		    result.insert(buswidth + i, offset + j);
+		    j++;
+		}
+	    offset += tmpList.size() - tmpList.count(65535); // Ignore not used channels
         }
     }
     return result;
