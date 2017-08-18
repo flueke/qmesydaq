@@ -46,14 +46,18 @@ MesyDAQ::Base::Base(const std::string& name, DevLong& error) throw (::TACO::Exce
 	, m_interface(NULL)
 	, m_runid(0)
 	, m_histo(0)
-	, m_writeListmode(true)
-	, m_writeHistogram(true)
+	, m_writeListmode(false)
+	, m_writeHistogram(false)
 
 	/* , MyFirstBaseClass(), MySecondBaseClass(), ... */
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 {
 	setDeviceVersion(VERSION);
+	addCommand(::TACO::Command::START, &tacoStart, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
+	addCommand(::TACO::Command::STOP, &tacoStop, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
+	addCommand(::TACO::Command::RESUME, &tacoResume, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
+	addCommand(::TACO::Command::CLEAR, &tacoClear, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 
 	// TACODEVEL CODEGEN CONSTRUCTOR CODE END
 
@@ -94,4 +98,36 @@ MesyDAQ::Base::~Base() throw ()
 
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS BEGIN
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
+void MesyDAQ::Base::tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
+{
+	Base* s = dynamic_cast<Base*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->start();
+}
+
+void MesyDAQ::Base::tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
+{
+	Base* s = dynamic_cast<Base*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->stop();
+}
+
+void MesyDAQ::Base::tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
+{
+	Base* s = dynamic_cast<Base*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->resume();
+}
+
+void MesyDAQ::Base::tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
+{
+	Base* s = dynamic_cast<Base*>(server);
+	if (s == 0)
+		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
+	s->clear();
+}
+
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS END

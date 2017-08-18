@@ -49,6 +49,42 @@ enum HistogramType {
 };
 #endif
 
+DevVoid MesyDAQ::Base::start() throw (::TACO::Exception)
+{
+	INFO_STREAM << "MesyDAQ::Detector::Detector::start()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+
+		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
+		{
+			m_interface->setListMode(m_writeListmode, true);
+			if (m_writeListmode)
+			{
+				m_listFilename = incNumber(m_listFilename);
+				updateResource<std::string>("lastlistfile", m_listFilename);
+				m_interface->setListFileName(m_listFilename.c_str());
+			}
+
+			m_interface->setHistogramMode(m_writeHistogram);
+			if (m_writeHistogram)
+			{
+				m_histFilename = incNumber(m_histFilename);
+				updateResource<std::string>("lasthistfile", m_histFilename);
+				m_interface->setHistogramFileName(m_histFilename.c_str());
+			}
+
+			INFO_STREAM << "interface::start()" << ENDLOG;
+			m_interface->start();
+		}
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Detector::Detector::start()");
+	}
+}
+
 void MesyDAQ::Base::deviceInit(void) throw (::TACO::Exception)
 {
 	INFO_STREAM << "MesyDAQ::Base::deviceInit()" << ENDLOG;
@@ -72,6 +108,59 @@ void MesyDAQ::Base::deviceInit(void) throw (::TACO::Exception)
 	{
 		throw;
 	}
+}
+
+DevVoid MesyDAQ::Base::stop() throw (::TACO::Exception)
+{
+	INFO_STREAM << "MesyDAQ::Base::stop()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (isMaster() && deviceState() == ::TACO::State::COUNTING)
+			m_interface->stop();
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Base::stop()");
+	}
+}
+
+DevVoid MesyDAQ::Base::resume() throw (::TACO::Exception)
+{
+	INFO_STREAM << "MesyDAQ::Base::resume()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
+			m_interface->resume();
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Base::resume()");
+	}
+}
+
+DevVoid MesyDAQ::Base::clear() throw (::TACO::Exception)
+{
+	INFO_STREAM << "MesyDAQ::Base::clear()" << ENDLOG;
+	try
+	{
+		if (!m_interface)
+			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
+		if (isMaster())
+			m_interface->clear();
+	}
+	catch (::TACO::Exception &e)
+	{
+		throw_exception(e, "MesyDAQ::Base::clear()");
+	}
+}
+
+bool MesyDAQ::Base::isMaster(void) throw (::TACO::Exception)
+{
+	return false;
 }
 
 void MesyDAQ::Base::deviceReset(void) throw (::TACO::Exception)
@@ -201,7 +290,8 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 			std::string tmp = queryResource<std::string>("writelistmode");
 			if (!tmp.empty())
 				m_writeListmode = queryResource<bool>("writelistmode");
-			m_interface->setListMode(m_writeListmode, true);
+			if (isMaster())
+				m_interface->setListMode(m_writeListmode, true);
 		}
 		catch (::TACO::Exception &e)
 		{
@@ -213,7 +303,8 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 			std::string tmp = queryResource<std::string>("writehistogram");
 			if (!tmp.empty())
 				m_writeHistogram = queryResource<bool>("writehistogram");
-			m_interface->setHistogramMode(m_writeHistogram);
+			if (isMaster())
+				m_interface->setHistogramMode(m_writeHistogram);
 		}
 		catch (::TACO::Exception &e)
 		{

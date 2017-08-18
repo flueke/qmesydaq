@@ -52,10 +52,6 @@ MesyDAQ::IO::Counter::Counter(const std::string& name, DevLong& error) throw (::
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 {
 	addDeviceType(::IO::COUNTER_ID);
-	addCommand(::TACO::Command::START, &tacoStart, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::STOP, &tacoStop, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::RESUME, &tacoResume, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::CLEAR, &tacoClear, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::SET_MODE, &tacoSetMode, D_LONG_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::MODE, &tacoMode, D_VOID_TYPE, D_LONG_TYPE, READ_ACCESS);
 	addCommand(::TACO::Command::TIME_BASE, &tacoTimeBase, D_VOID_TYPE, D_DOUBLE_TYPE, READ_ACCESS);
@@ -96,38 +92,6 @@ MesyDAQ::IO::Counter::~Counter() throw ()
 
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS BEGIN
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
-
-void MesyDAQ::IO::Counter::tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Counter* s = dynamic_cast<Counter*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->start();
-}
-
-void MesyDAQ::IO::Counter::tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Counter* s = dynamic_cast<Counter*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->stop();
-}
-
-void MesyDAQ::IO::Counter::tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Counter* s = dynamic_cast<Counter*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->resume();
-}
-
-void MesyDAQ::IO::Counter::tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Counter* s = dynamic_cast<Counter*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->clear();
-}
 
 void MesyDAQ::IO::Counter::tacoSetMode(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception)
 {

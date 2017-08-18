@@ -56,14 +56,6 @@ public:
 	~Counter() throw ();
 
 protected:
-	virtual DevVoid start() throw (::TACO::Exception);
-
-	virtual DevVoid stop() throw (::TACO::Exception);
-
-	virtual DevVoid resume() throw (::TACO::Exception);
-
-	virtual DevVoid clear() throw (::TACO::Exception);
-
 	virtual DevVoid setMode(const DevLong input) throw (::TACO::Exception);
 
 	virtual DevLong mode() throw (::TACO::Exception);
@@ -101,14 +93,6 @@ protected:
 private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
-
-	static void tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
-
-	static void tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
-
-	static void tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
-
-	static void tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
 
 	static void tacoSetMode(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception);
 

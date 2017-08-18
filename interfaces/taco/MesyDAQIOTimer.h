@@ -56,15 +56,7 @@ public:
 	~Timer() throw ();
 
 protected:
-	virtual DevVoid start() throw (::TACO::Exception);
-
-	virtual DevVoid stop() throw (::TACO::Exception);
-
 	virtual DevVoid setPreselection(const DevDouble input) throw (::TACO::Exception);
-
-	virtual DevVoid resume() throw (::TACO::Exception);
-
-	virtual DevVoid clear() throw (::TACO::Exception);
 
 	virtual DevDouble preselection() throw (::TACO::Exception);
 
@@ -98,15 +90,7 @@ private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-	static void tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
-
-	static void tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
-
 	static void tacoSetPreselection(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception);
-
-	static void tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
-
-	static void tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
 
 	static void tacoPreselection(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception);
 

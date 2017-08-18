@@ -55,16 +55,7 @@ public:
 	~Detector() throw ();
 
 protected:
-
-	virtual DevVoid start() throw (::TACO::Exception);
-
-	virtual DevVoid stop() throw (::TACO::Exception);
-
 	virtual DevVoid setPreselection(const DevDouble input) throw (::TACO::Exception);
-
-	virtual DevVoid resume() throw (::TACO::Exception);
-
-	virtual DevVoid clear() throw (::TACO::Exception);
 
 	virtual DevDouble preselection() throw (::TACO::Exception);
 

@@ -60,6 +60,14 @@ public:
 	~Base() throw ();
 
 protected:
+	virtual DevVoid start() throw (::TACO::Exception);
+
+	virtual DevVoid stop() throw (::TACO::Exception);
+
+	virtual DevVoid resume() throw (::TACO::Exception);
+
+	virtual DevVoid clear() throw (::TACO::Exception);
+
 	virtual const char *GetClassName() {return "MesyDAQ::Base";}
 
 	virtual const char *GetDevType() {return "Base";}
@@ -74,9 +82,19 @@ protected:
 
 	virtual void deviceReset(void) throw (::TACO::Exception);
 
+	virtual bool isMaster(void) throw (::TACO::Exception);
+
 private:
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS BEGIN
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
+
+	static void tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
+
+	static void tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
+
+	static void tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
+
+	static void tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception);
 
 	// TACODEVEL CODEGEN TACO METHOD DECLARATIONS END
 

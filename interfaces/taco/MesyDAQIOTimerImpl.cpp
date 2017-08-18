@@ -38,57 +38,6 @@
 
 #include "mdefines.h"
 
-DevVoid MesyDAQ::IO::Timer::start() throw (::TACO::Exception)
-{
-	INFO_STREAM << "MesyDAQ::IO::Timer::start()" << ENDLOG;
-	try
-	{
-		if (!m_interface)
-			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
-		{
-#if 1
-			m_listFilename = incNumber(m_listFilename);
-#else
-			m_listFilename = runNumber(m_listFilename);
-#endif
-			updateResource<std::string>("lastlistfile", m_listFilename);
-			m_interface->setListFileName(m_listFilename.c_str());
-			m_interface->setListMode(m_writeListmode, true);
-#if 1
-			m_histFilename = incNumber(m_histFilename);
-#else
-			m_histFilename = runNumber(m_histFilename);
-#endif
-			updateResource<std::string>("lasthistfile", m_histFilename);
-			m_interface->setHistogramFileName(m_histFilename.c_str());
-			m_interface->setHistogramMode(m_writeHistogram);
-			INFO_STREAM << "interface::start()" << ENDLOG;
-			m_interface->start();
-		}
-	}
-	catch (::TACO::Exception &e)
-	{
-		throw_exception(e, "MesyDAQ::IO::Timer::start()");
-	}
-}
-
-DevVoid MesyDAQ::IO::Timer::stop() throw (::TACO::Exception)
-{
-	INFO_STREAM << "MesyDAQ::IO::Timer::stop()" << ENDLOG;
-	try
-	{
-		if (!m_interface)
-			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-		if (isMaster() && deviceState() == ::TACO::State::COUNTING)
-			m_interface->stop();
-	}
-	catch (::TACO::Exception &e)
-	{
-		throw_exception(e, "MesyDAQ::IO::Timer::stop()");
-	}
-}
-
 DevVoid MesyDAQ::IO::Timer::setPreselection(const DevDouble input) throw (::TACO::Exception)
 {
 	INFO_STREAM << "MesyDAQ::IO::Timer::setPreselection(" << input << ")" << ENDLOG;
@@ -101,38 +50,6 @@ DevVoid MesyDAQ::IO::Timer::setPreselection(const DevDouble input) throw (::TACO
 	catch (::TACO::Exception &e)
 	{
 		throw_exception(e, "MesyDAQ::IO::Timer::setPreselection()");
-	}
-}
-
-DevVoid MesyDAQ::IO::Timer::resume() throw (::TACO::Exception)
-{
-	INFO_STREAM << "MesyDAQ::IO::Timer::resume()" << ENDLOG;
-	try
-	{
-		if (!m_interface)
-			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-		if (isMaster() && deviceState() != ::TACO::State::COUNTING)
-			m_interface->resume();
-	}
-	catch (::TACO::Exception &e)
-	{
-		throw_exception(e, "MesyDAQ::IO::Timer::resume()");
-	}
-}
-
-DevVoid MesyDAQ::IO::Timer::clear() throw (::TACO::Exception)
-{
-	INFO_STREAM << "MesyDAQ::IO::Timer::clear()" << ENDLOG;
-	try
-	{
-		if (!m_interface)
-			throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
-		if (isMaster())
-			m_interface->clear();
-	}
-	catch (::TACO::Exception &e)
-	{
-		throw_exception(e, "MesyDAQ::IO::Timer::clear()");
 	}
 }
 

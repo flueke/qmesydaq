@@ -50,11 +50,7 @@ MesyDAQ::Detector::Detector::Detector(const std::string& name, DevLong& error) t
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 {
 	addDeviceType(::Detector::DETECTOR_ID);
-	addCommand(::TACO::Command::START, &tacoStart, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::STOP, &tacoStop, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::SET_PRESELECTION_DOUBLE, &tacoSetPreselection, D_DOUBLE_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::RESUME, &tacoResume, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::CLEAR, &tacoClear, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::PRESELECTION_DOUBLE, &tacoPreselection, D_VOID_TYPE, D_DOUBLE_TYPE, READ_ACCESS);
 	addCommand(::TACO::Command::READ_U_LONG_ARRAY, &tacoRead, D_VOID_TYPE, D_VAR_ULONGARR, READ_ACCESS);
 
@@ -86,44 +82,12 @@ MesyDAQ::Detector::Detector::~Detector() throw ()
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS BEGIN
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-void MesyDAQ::Detector::Detector::tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Detector* s = dynamic_cast<Detector*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->start();
-}
-
-void MesyDAQ::Detector::Detector::tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Detector* s = dynamic_cast<Detector*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->stop();
-}
-
 void MesyDAQ::Detector::Detector::tacoSetPreselection(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception)
 {
 	Detector* s = dynamic_cast<Detector*>(server);
 	if (s == 0)
 		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
 	s->setPreselection(::TACO::convert(static_cast<DevDouble*>(argin)));
-}
-
-void MesyDAQ::Detector::Detector::tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Detector* s = dynamic_cast<Detector*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->resume();
-}
-
-void MesyDAQ::Detector::Detector::tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Detector* s = dynamic_cast<Detector*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->clear();
 }
 
 void MesyDAQ::Detector::Detector::tacoPreselection(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception)

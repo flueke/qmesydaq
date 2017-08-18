@@ -50,12 +50,8 @@ MesyDAQ::IO::Timer::Timer(const std::string& name, DevLong& error) throw (::TACO
 	// This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 {
 	addDeviceType(::IO::TIMER_ID);
-	addCommand(::TACO::Command::START, &tacoStart, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::STOP, &tacoStop, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::SET_PRESELECTION_DOUBLE, &tacoSetPreselection, D_DOUBLE_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::RESUME, &tacoResume, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
-	addCommand(::TACO::Command::CLEAR, &tacoClear, D_VOID_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::PRESELECTION_DOUBLE, &tacoPreselection, D_VOID_TYPE, D_DOUBLE_TYPE, READ_ACCESS);
+	addCommand(::TACO::Command::SET_PRESELECTION_DOUBLE, &tacoSetPreselection, D_DOUBLE_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::SET_MODE, &tacoSetMode, D_LONG_TYPE, D_VOID_TYPE, WRITE_ACCESS);
 	addCommand(::TACO::Command::MODE, &tacoMode, D_VOID_TYPE, D_LONG_TYPE, READ_ACCESS);
 	addCommand(::TACO::Command::ENABLE_MASTER, &tacoEnableMaster, D_BOOLEAN_TYPE, D_VOID_TYPE, WRITE_ACCESS);
@@ -91,44 +87,12 @@ MesyDAQ::IO::Timer::~Timer() throw ()
 // TACODEVEL CODEGEN TACO METHOD DEFINITIONS BEGIN
 // This is an automatically generated block.  Do not edit it.  Any modification may be lost.
 
-void MesyDAQ::IO::Timer::tacoStart(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Timer* s = dynamic_cast<Timer*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->start();
-}
-
-void MesyDAQ::IO::Timer::tacoStop(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Timer* s = dynamic_cast<Timer*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->stop();
-}
-
 void MesyDAQ::IO::Timer::tacoSetPreselection(::TACO::Server *server, DevArgument argin, DevArgument) throw (::TACO::Exception)
 {
 	Timer* s = dynamic_cast<Timer*>(server);
 	if (s == 0)
 		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
 	s->setPreselection(::TACO::convert(static_cast<DevDouble*>(argin)));
-}
-
-void MesyDAQ::IO::Timer::tacoResume(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Timer* s = dynamic_cast<Timer*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->resume();
-}
-
-void MesyDAQ::IO::Timer::tacoClear(::TACO::Server *server, DevArgument, DevArgument) throw (::TACO::Exception)
-{
-	Timer* s = dynamic_cast<Timer*>(server);
-	if (s == 0)
-		throw ::TACO::Exception(::TACO::Error::INTERNAL_ERROR, "bad dynamic cast");
-	s->clear();
 }
 
 void MesyDAQ::IO::Timer::tacoPreselection(::TACO::Server *server, DevArgument, DevArgument argout) throw (::TACO::Exception)
