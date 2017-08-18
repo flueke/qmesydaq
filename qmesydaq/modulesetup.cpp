@@ -220,8 +220,13 @@ void ModuleSetup::setModeSlot()
 {
 	int mod = module->value();
 	if (comAmp->isChecked())
-		mod = 8;
-	m_theApp->setMode(devid->value(), mod, ampMode->isChecked());
+	{
+		QList<int> modules = m_theApp->mpsdId(devid->value());
+		foreach(int m, modules)
+			m_theApp->setMode(devid->value(), m, ampMode->isChecked());
+	}
+	else
+		m_theApp->setMode(devid->value(), mod, ampMode->isChecked());
 }
 
 /*!
