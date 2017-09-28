@@ -75,11 +75,11 @@ MesyDAQ::IO::Counter::Counter(const std::string& name, DevLong& error) throw (::
 		deviceInit();
 		if (Server::deviceState() != ::TACO::State::INIT)
 			setDeviceState(::TACO::State::DEVICE_NORMAL);
-		logStream->noticeStream() << GetClassName() << " : " << deviceName() << " : init complete." << log4cpp::eol;
+		NOTICE_STREAM << GetClassName() << " : " << deviceName() << " : init complete." << ENDLOG;
 	}
 	catch (const ::TACO::Exception &e)
 	{
-		logStream->fatalStream() << GetClassName() << " : " << deviceName() << " : init failed. " << e.what() << log4cpp::eol;
+		FATAL_STREAM << GetClassName() << " : " << deviceName() << " : init failed. " << e.what() << ENDLOG;
 		Server::setDeviceState(DEVON_NOT_REACHED);
 	}
 	// TACODEVEL CODEGEN CONSTRUCTOR FINISH CODE END
