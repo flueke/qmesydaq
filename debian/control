@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 8.0.0),
  pkg-config,
  git,
  gdb,
- libboost-filesystem1.49-dev,
+ libboost-filesystem-dev,
  libqt4-dev,
  qt4-qmake,
  libqtwebkit-dev,
@@ -18,7 +18,7 @@ Package: qmesydaq
 Section: misc
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- libboost-filesystem1.49.0,
+ libboost-filesystem1.49.0 | libboost-filesystem1.55.0 | libboost-filesystem1.58.0,
  taco-common-detector,
  libqt4-gui,
  libqtwebkit4,
