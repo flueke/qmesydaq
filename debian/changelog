@@ -1,3 +1,94 @@
+qmesydaq (0.50.3) unstable; urgency=low
+
+  [ Jens Krüger ]
+  * Define the trigger sources as macros
+  * Split the definition/implementation file for histogram and spectrum
+  * Introduce a time spectrum.
+  * FIX: some initializing order issues
+  * Add the trigger property to the counter.
+  * Activate trigger property of the events.
+  * Change the type of the mapping object.
+  * Add two new monitors to the main widget
+  * Fix formatting issue.
+  * Extend message after stopping data acquistion
+  * DOC: Fix command 9 description in respect to counter cell numbers
+  * LIB: Add the calibration and list mode file name to header (Fixes: #2797)
+  * TACO: improve the start of the detector
+  * TACO: Add 2 additional 'Detector' devices
+  * TACO: Set the checkboxes immediately
+  * Remote interface: Return a negative value for unknown channels
+  * LIB: Fix tube mapping error (overlap)
+  * LIB: extend the log message
+  * TACO: Fix 'channel' resource handling
+  * TACO: Fix typo in 'preselection' command impl
+  * UI: Unify the remote and local control behavior (Fixes: #947)
+  * LIB: Fix enable events in master mode (Fixes: #2807)
+  * LIB: Fix the multimaster mode (Fixes: #2806)
+  * FIX: display of the amplitude spectra in case of display all spectra
+    (Fixes: #2631)
+  * LIB: Fix online status of the NoModule type
+  * LIB: change the type string of NoModule to an empty one
+  * UI: Disable the active checkbox in case of offline module
+  * UI: Change the display of the module info in case of 'offline'
+  * UI: Fix the visiblity of 'active' checkbox
+  * UI: allow 'scrolling' throw the module in modules setup (Fixes: #2629)
+  * LIB: Fix some typos in the docs.
+  * LIB: Fix data flipping in case of default mapping (Fixes: #2812)
+  * LIB: single spectrum selection for mapped data fixed (Fixes: #2813)
+  * UI: Code clean up
+  * TACO: Fix the deviceReset implementation
+  * FIX: Mapping for the Mdll2 type
+  * LIB: Update doc
+  * Remote interfaces did not set the master/slave correctly (Fixes: #2846)
+  * Change filename handling (Fixes: #2847)
+  * LIB: Extend the automatic pulser test
+  * GUI: Fix crash during displaying all spectra for one module
+  * GUI: Fix typo
+  * TACO: Fix problems with some defines from QMesyDAQ
+  * LIB: Fix compiler message about nonimplemented inline method
+  * Initialize the monitor mapping in case of no loaded config file
+    (Fixes: #2966)
+  * LIB: Fix warning about 'lost' data packages. (Fixes: #2978)
+  * GUI: Fix calculation of the maximum IP widget size
+  * GUI: Optimize the MCPD-8 setup widget size
+  * LIB: Extend error message in case of an wrong position value
+  * LIB: Fix: gain settings on MSTD-16 modules
+  * GUI: remove inline functions from main window implementation
+  * LIB: Change the histogram number init
+  * FIX: Mode setting in case of empty MPSD/MSTD slots
+  * Fix: mapping for the tubes in case of empty MPSD/MSTD slots
+  * LIB: Fix some formatting issues
+  * TOOLS/QMDUMP: Add '-t' and '-d' options
+  * QMDUMP: Improve output format for the position and channel
+  * LIB: Do not ignore neutrons with pos > 960 from MSTD-16 modules
+  * GUI: Do not reset the ROI after starting data acquisition (Fixes: #3057)
+  * LIB: Clear amplitude spectrum at start if exists
+  * LIB: Change the height setting of the mapped histogram
+  * GUI: Fix copyright information in 'About' dialog
+  * UI: Change the splash screen photo
+  * GUI: Remove inline methods from GeneralSetup class.
+  * Enable configuration of the trigger input.
+
+  [ Lutz Rossa ]
+  * fix replay list mode file problems
+
+  [ Jens Krüger ]
+  * TCP interface: more verbose to check communication
+  * GUI: Fix remote handling of monitor presets (Fixes: #3473)
+  * LIB: Fix mapping if tubes ignored
+
+  [ Lutz Rossa ]
+  * fix wrong signal/slot
+
+  [ Jens Krüger ]
+  * TACO: Move start/stop/resume/clear commands to base class
+  * ModuleSetup: Change implementation of the mode setting
+  * DEBIAN: update the libboost-filesystem dependencies
+
+  [ Jenkins ]
+
+ -- Jenkins <jenkins@debuild.taco.frm2>  Mon, 09 Oct 2017 14:12:37 +0200
+
 qmesydaq (0.50.1) unstable; urgency=low
 
   [ Jens Krueger ]
