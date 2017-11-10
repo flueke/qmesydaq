@@ -18,9 +18,9 @@
 
 #if defined(_MSC_VER)
 #define VERSION "1.2"
-
+#include <math.h>
 //Functions
-LIBQMESYDAQ_EXPORT int round(double value);
+// LIBQMESYDAQ_EXPORT int round(double value);
 //POSIX Functions
 LIBQMESYDAQ_EXPORT void sleep(unsigned int s);
 LIBQMESYDAQ_EXPORT void usleep(unsigned int us);

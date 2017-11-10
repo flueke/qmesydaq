@@ -33,6 +33,12 @@ INSTALLS	= target
 
 CONFIG		+= create_prl
 
+win32: {
+VERSION =
+CONFIG += staticlib
+DEFINES += LIBQMESYDAQ_LIB
+}
+
 target.path	= $${TARGETLIBPATH}
 
 QT 		+= core network

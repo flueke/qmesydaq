@@ -43,7 +43,8 @@ INSTALLS	= target
 #
 # for 64 bit machines add bit64
 #
-CONFIG		+= debug
+win32:CONFIG 	+= bit64
+unix: CONFIG	+= debug
 
 # QMAKE_CXXFLAGS	+= -fstack-check
 # QMAKE_LFLAGS	+= --stack=0x1000000
@@ -51,7 +52,9 @@ CONFIG		+= debug
 # additional debug messages for QMesyDAQDetectorInterface and CARESS interface
 # DEFINES         += DEBUGBUILD
 
-QMESYDAQCONFIG = mesydaqconfig_$$system(hostname -s).pri
+unix:QMESYDAQCONFIG = mesydaqconfig_$$system(hostname -s).pri
+win32:QMESYDAQCONFIG = mesydaqconfig_$$system(hostname).pri
+
 exists($${QMESYDAQCONFIG}) {
 	include($${QMESYDAQCONFIG})
 }

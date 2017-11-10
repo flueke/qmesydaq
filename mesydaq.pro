@@ -21,7 +21,8 @@
 exists(.git) {
 	system(git describe > version)
 }
-VERSION		= $$system(cat version)
+unix:VERSION		= $$system(cat version)
+win32:VERSION		= $$system(type version)
 
 include (mesydaqconfig.pri)
 
