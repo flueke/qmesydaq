@@ -29,7 +29,7 @@
 #include "mdefines.h"
 #include "logging.h"
 
-#include "../../lib/histogram.cpp"
+#include "histogram.h"
 
 #include <algorithm>
 

@@ -1,6 +1,6 @@
 ############################################################################
 #   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>
-#   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>
+#   Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -29,9 +29,12 @@ SUBDIRS		+= qmsetip \
 		qmsetid \
 		qmmaster \
 		qmdump \
-		qmfire \
 		fixlmfile \
-		mstd16 \
-		simulator
+		mstd16
 
-TARGET = 	
+unix {
+SUBDIRS		+= qmfire \
+		simulator
+}
+
+TARGET =
