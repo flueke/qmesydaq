@@ -28,7 +28,7 @@ TARGET 		= mstd16
 
 QT		+= core network
 
-CONFIG		+= debug link_prl
+CONFIG		+= debug console link_prl
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
@@ -42,3 +42,5 @@ SOURCES 	+= main.cpp \
 INSTALLS        = target
 
 target.path     = $${TARGETPATH}/bin
+
+LIBS		+= $${MESYDAQ_LIBS}

@@ -28,10 +28,12 @@ TARGET 		= qmsetip
 
 QT		+= core network
 
-CONFIG		+= debug link_prl
+CONFIG		+= debug console link_prl
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
+
+LIBS		+= -L$${SRCBASE}/lib
 
 # Input
 SOURCES 	+= main.cpp

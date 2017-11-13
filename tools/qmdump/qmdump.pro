@@ -28,12 +28,13 @@ TARGET 		= qmdump
 
 QT		+= core network
 
-CONFIG		+= debug link_prl
+CONFIG		+= debug console link_prl
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
 
-LIBS		+=
+LIBS		+= -L$${SRCBASE}/lib
+
 # Input
 SOURCES 	+= main.cpp \
 		   readfile.cpp
