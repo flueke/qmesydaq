@@ -29,8 +29,9 @@
 
 #include "libqmesydaq_global.h"
 
+#include "spectrum.h"
+
 class QFile;
-class Spectrum;
 
 /**
  * \short represents a histogram
