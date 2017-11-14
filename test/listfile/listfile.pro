@@ -30,12 +30,13 @@ INCLUDEPATH 	+= . $${SRCBASE}/lib
 
 QT		+= core network
 
-CONFIG		+= debug
-CONFIG		+= link_prl
+CONFIG		+= debug console link_prl
 
 # Input
 SOURCES 	+= main.cpp
 
-LIBS        	+= -L$${SRCBASE}/lib -lmesydaq
+LIBS        	+= -L$${SRCBASE}/lib
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

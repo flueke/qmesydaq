@@ -1,6 +1,6 @@
 ############################################################################
 #   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>
-#   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>
+#   Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -24,20 +24,19 @@ SRCBASE		= ../..
 include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
-TARGET 		= mapping 
+TARGET 		= mapping
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
-CONFIG		+= link_prl
-
-SUBDIRS		+= listfile
 
 QT		+= core network
 QT		-= gui
 
-CONFIG		+= debug
+CONFIG		+= debug console link_prl
 
 SOURCES 	+= main.cpp
 
-LIBS        	+= -L$${SRCBASE}/lib -lmesydaq
+LIBS        	+= -L$${SRCBASE}/lib
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

@@ -30,7 +30,9 @@ TARGET 		=
 DEPENDPATH 	+= $${SRCBASE}/lib
 INCLUDEPATH 	+= $${SRCBASE}/lib
 
-CONFIG		+= link_prl
+LIBS		+= -L$${SRCBASE}/lib
+
+CONFIG		+= console link_prl
 
 # Input
 SOURCES 	+= main.cpp

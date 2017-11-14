@@ -28,20 +28,18 @@ TARGET 		= maptest
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
 
-CONFIG		+= link_prl
-
-SUBDIRS		+= listfile
-
 QT		+= core network
 QT		-= gui
 
 HEADERS		+= histomapping.h
 
-CONFIG		+= debug qtestlib
+CONFIG		+= debug console qtestlib link_prl
 
 SOURCES 	+= main.cpp \
 		histomapping.cpp
 
-LIBS        	+= -L$${SRCBASE}/lib -lmesydaq
+LIBS        	+= -L$${SRCBASE}/lib
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

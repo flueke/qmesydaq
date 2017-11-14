@@ -25,9 +25,9 @@ include ($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= colormaps
-DEPENDPATH 	+= . $${SRCBASE}/qmesydaq 
+DEPENDPATH 	+= . $${SRCBASE}/qmesydaq
 INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
-CONFIG		+= link_prl
+CONFIG		+= debug link_prl
 
 SOURCES 	+= main.cpp \
 		selectcolorbox.cpp \
@@ -38,10 +38,8 @@ HEADERS 	+= selectcolorbox.h \
 		colorwidget.h \
 		colormaps.h
 
-CONFIG		+= debug
-
-FORMS		+= 
+FORMS		+=
 
 INSTALLS	=
 
-LIBS		+= $${QWTLIBS}
+LIBS		+= $${QWTLIBS} $${MESYDAQ_LIBS}

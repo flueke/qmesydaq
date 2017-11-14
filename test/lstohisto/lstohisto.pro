@@ -27,17 +27,18 @@ TEMPLATE 	= app
 TARGET 		= lstohisto
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
-CONFIG		+= link_prl
 
-LIBS		+= -L$${SRCBASE}/lib -lmesydaq
+LIBS		+= -L$${SRCBASE}/lib
 
 SOURCES 	+= main.cpp \
 		logging.cpp
 
-HEADERS 	+= 
+HEADERS 	+=
 
-CONFIG		+= debug
+CONFIG		+= debug console link_prl
 
-FORMS		+= 
+FORMS		+=
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

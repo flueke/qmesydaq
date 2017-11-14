@@ -28,15 +28,16 @@ TARGET 		= readhisto
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
 
-LIBS		+= -L$${SRCBASE}/lib -lmesydaq
+LIBS		+= -L$${SRCBASE}/lib
 
-SOURCES 	+= main.cpp 
+SOURCES 	+= main.cpp
 
-HEADERS 	+= 
+HEADERS 	+=
 
-CONFIG		+= debug
-CONFIG		+= link_prl
+CONFIG		+= debug console link_prl
 
-FORMS		+= 
+FORMS		+=
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

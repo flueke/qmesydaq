@@ -28,15 +28,16 @@ TARGET 		= timespectrum
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
 
-LIBS		+= -L$${SRCBASE}/lib -lmesydaq
+LIBS		+= -L$${SRCBASE}/lib
 
 SOURCES 	+= main.cpp
 
 HEADERS 	+=
 
-CONFIG		+= debug
-CONFIG		+= link_prl
+CONFIG		+= debug console link_prl
 
 FORMS		+=
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}

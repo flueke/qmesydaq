@@ -1,11 +1,11 @@
-#include "mapcorrect.cpp"
-#include "mappedhistogram.cpp"
-#include "histogram.cpp"
+#include "mapcorrect.h"
+#include "mappedhistogram.h"
+#include "histogram.h"
 
 #include <iostream>
 
 int main(int, char **)
-{ 
+{
 	quint16	iSrcWidth(128),
 		iSrcHeight(960),
 		iDstWidth(128),

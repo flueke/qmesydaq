@@ -25,16 +25,17 @@ include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= app
 TARGET 		= readlistfile
-CONFIG		+= link_prl
 
 QT		+= core network
-
-CONFIG		+= debug
 
 CXXFLAGS	+= -p
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
+
+LIBS		+= -L$${SRCBASE}/lib
+
+config		= debug consol link_prl
 
 # Input
 SOURCES 	+= main.cpp

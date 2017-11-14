@@ -28,8 +28,7 @@ TARGET 		= threads
 
 QT		+= core network
 
-CONFIG		+= debug console
-CONFIG		+= link_prl
+CONFIG		+= debug console link_prl
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib

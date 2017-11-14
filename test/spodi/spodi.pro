@@ -30,7 +30,9 @@ TARGET 		=
 DEPENDPATH 	+= $${SRCBASE}/lib
 INCLUDEPATH 	+= $${SRCBASE}/lib
 
-CONFIG		+= link_prl
+LIBS		+= -L$${SRCBASE}/lib
+
+CONFIG		+= debug console link_prl
 
 # Input
 SOURCES 	+= main.cpp
@@ -38,3 +40,5 @@ SOURCES 	+= main.cpp
 QT 		+= network
 
 INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}
