@@ -43,7 +43,11 @@ INSTALLS	= target
 #
 # for 64 bit machines add bit64
 #
-win32:CONFIG 	+= bit64
+win32 {
+CONFIG 	+= bit64
+QMAKE_CXXFLAGS += /FS /Y-
+}
+
 unix: CONFIG	+= debug
 
 # QMAKE_CXXFLAGS	+= -fstack-check
@@ -94,7 +98,8 @@ QWTINCLUDES 	= $${QWTINCLUDE}
 
 INCLUDEPATH 	+= $${QWTINCLUDES} $${SRCBASE}/lib
 DEPENDPATH  	+= $${QWTINCLUDES}
-MESYDAQ_LIBS	= -L$${SRCBASE}/lib -lmesydaq
+unix:MESYDAQ_LIBS	= -L$${SRCBASE}/lib -lmesydaq
+win32:MESYDAQ_LIBS	= -L$${SRCBASE}/lib/debug -lmesydaq
 
 contains(INTERFACE, TACO) {
 	DEFINES		+= HAVE_CONFIG_H
