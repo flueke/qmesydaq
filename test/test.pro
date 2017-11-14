@@ -28,17 +28,19 @@ TARGET 		=
 
 SUBDIRS	 	+= listfile \
 		dummy \
-		mapping \
-		plot \
 		loadsetup \
 		lstohisto \
 		readhisto \
 		calibration \
-		readlistfile \
 		colormaps \
-		countrates \
 		threads \
 		histogramming \
 		ipaddresswidget \
 		timespectrum
 
+unix {
+SUBDIRS		+= mapping \
+		readlistfile \
+		countrates \
+		plot
+}

@@ -41,7 +41,10 @@ PlotWidget::PlotWidget(QWidget *parent)
 
 void PlotWidget::setLinLog(bool val)
 {
+#if 0
+// TODO __PRETTY_FUNCTION__ is only available with GCC
 	qDebug() << __PRETTY_FUNCTION__;
+#endif
 	m_plot->setLinLog(Plot::Scale(val));
 }
 
