@@ -9,6 +9,10 @@ DEPENDPATH +=	.
 INCLUDEPATH +=	.
 QT +=		svg
 
+DEFINES +=	QDESIGNER_EXPORT_WIDGETS
+
+CONFIG +=	create_prl
+
 # Input
 HEADERS +=	qled.h
 SOURCES +=	qled.cpp

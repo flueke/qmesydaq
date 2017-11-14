@@ -9,7 +9,8 @@ QTDIR_build:	DESTDIR = $$QT_BUILD_TREE/plugins/designer
 INCLUDEPATH +=	../src/
 HEADERS =	qledplugin.h
 SOURCES =	qledplugin.cpp
-LIBS += 	-L../src -lqled
+unix: LIBS += 	-L../src -lqled
+win32: LIBS +=  -L../src/debug -lqledd
 
 # install
 target.path =	$$[QT_INSTALL_PLUGINS]/designer
