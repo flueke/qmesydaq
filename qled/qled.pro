@@ -7,4 +7,8 @@ CONFIG +=	ordered
 DEPENDPATH +=	src plugin example
 INCLUDEPATH +=	src plugin example
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+SUBDIRS =	src example
+} else {
 SUBDIRS =	src plugin example
+}

@@ -1,4 +1,10 @@
-CONFIG +=	designer plugin debug
+greaterThan(QT_MAJOR_VERSION, 4) {
+	QT += designer
+}
+else {
+	CONFIG += designer
+}
+CONFIG +=	plugin debug
 ## _and_release
 TARGET =	$$qtLibraryTarget($$TARGET)
 TEMPLATE =	lib
