@@ -50,6 +50,7 @@ QString capToString(int cap)
 {
 	QStringList ret;
 	QTextStream cout(stderr);
+#if !defined(_MSC_VER) || _MSC_VER > 1700
 	if (!(cap & 0b111))
 		return "unknown";
 	if (cap & 0b100)
@@ -58,6 +59,16 @@ QString capToString(int cap)
 		ret << "TP";
 	if (cap & 0b001)
 		ret << "P";
+#else
+	if (!(cap & 0x7))
+		return "unknown";
+	if (cap & 0x4)
+		ret << "TPA";
+	if (cap & 0x2)
+		ret << "TP";
+	if (cap & 0x1)
+		ret << "P";
+#endif
 	return ret.join("|");
 }
 

@@ -152,7 +152,11 @@ void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void *pPar
     if (!pMcpd->m_bBaseMcpdInitialized)
         return;
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1700
     if ((pPacket.constData()->mdp.deviceStatus & 0b1000))
+#else
+    if ((pPacket.constData()->mdp.deviceStatus & 0x8))
+#endif
     {
         MSG_NOTICE << tr("MODULE : %1 lost sync").arg(pPacket.constData()->mdp.deviceId);
         MSG_NOTICE << tr("STATUS : 0x%1").arg(pPacket.constData()->mdp.deviceStatus, 4, 16, QChar('0'));

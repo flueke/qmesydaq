@@ -17,10 +17,14 @@
 #include "libqmesydaq_global.h"
 
 #if defined(_MSC_VER)
-#define VERSION "1.2"
+#if !defined(VERSION)
+	#define VERSION "1.2"
+#endif
 #include <math.h>
 //Functions
-// LIBQMESYDAQ_EXPORT int round(double value);
+#if _MSC_VER < 1700
+LIBQMESYDAQ_EXPORT int round(double value);
+#endif
 //POSIX Functions
 LIBQMESYDAQ_EXPORT void sleep(unsigned int s);
 LIBQMESYDAQ_EXPORT void usleep(unsigned int us);

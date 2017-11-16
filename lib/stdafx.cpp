@@ -3,7 +3,7 @@
 #if defined(_MSC_VER)
 #include <QMutex>
 
-#if 0
+#if _MSC_VER < 1700
 int round(double value)
 {
 	if (value > 0)
