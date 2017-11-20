@@ -29,10 +29,6 @@ build_all:!build_pass {
 	CONFIG += release
 }
 
-build_all:!build_pass {
-	CONFIG += build_all
-}
-
 # install
 target.path =	$$[QT_INSTALL_PLUGINS]/designer
 sources.files = $$SOURCES $$HEADERS *.pro
