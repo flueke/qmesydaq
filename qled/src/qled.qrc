@@ -1,4 +1,4 @@
-<RCC>
+<!DOCTYPE RCC><RCC version="1.0">
     <qresource prefix="/">
         <file>resources/circle_green.svg</file>
         <file>resources/circle_grey.svg</file>

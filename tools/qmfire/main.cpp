@@ -25,9 +25,12 @@
 
 #include <QUdpSocket>
 
+#include "stdafx.h"
 #include <cstdlib>
 #if !defined(_MSC_VER)
     #include <unistd.h>
+#else
+    #define random rand
 #endif
 
 #include "structures.h"

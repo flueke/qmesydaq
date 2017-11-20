@@ -24,7 +24,9 @@ SRCBASE		= ..
 include($${SRCBASE}/mesydaqconfig.pri)
 
 isEmpty(QLEDLIBS) {
-	QLEDLIBS	= -L$${SRCBASE}/qled/src -lqled
+
+win32:	QLEDLIBS	= -L$${SRCBASE}/qled/src/debug -lqledd
+else:	QLEDLIBS	= -L$${SRCBASE}/qled/src -lqled
 	QLEDINCLUDE	= $${SRCBASE}/qled/src
 }
 
@@ -36,7 +38,11 @@ INCLUDEPATH 	+= . $${SRCBASE} $${QLEDINCLUDE}
 
 CONFIG		+= link_prl
 
+DEFINES		+= QWT_DLL
+
+unix {
 SUBDIRS		+= diskspace
+}
 
 INSTALLS	= target
 

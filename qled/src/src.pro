@@ -8,17 +8,10 @@ TARGET = 	$$qtLibraryTarget($$TARGET)
 DEPENDPATH +=	.
 INCLUDEPATH +=	.
 QT +=		svg
-CONFIG += plugin
-
-greaterThan(QT_MAJOR_VERSION, 4) {
-	QT += designer
-} else {
-	CONFIG += designer
-}
 
 DEFINES +=	QDESIGNER_EXPORT_WIDGETS
 
-CONFIG +=	create_prl
+CONFIG +=	static create_prl debug_and_release build_all
 
 # Input
 HEADERS +=	qled.h

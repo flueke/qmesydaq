@@ -44,8 +44,10 @@ INSTALLS	= target
 # for 64 bit machines add bit64
 #
 win32 {
-CONFIG 	+= bit64
-QMAKE_CXXFLAGS += /FS /Y-
+# CONFIG 	+= bit64
+DEFINES		+= WIN32
+QMAKE_CXXFLAGS += /Y-
+QMAKE_LFLAGS += /INCREMENTAL:NO
 }
 
 unix: CONFIG	+= debug

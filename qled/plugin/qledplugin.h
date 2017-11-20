@@ -18,8 +18,7 @@
 
 #include <QDesignerCustomWidgetInterface>
 
-// See Cusotm Widget Plugin Example in Qt online documentation to understand the meaning of this file
-
+// See Custom Widget Plugin Example in Qt online documentation to understand the meaning of this file
 
 class QLedPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
