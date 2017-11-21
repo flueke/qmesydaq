@@ -32,6 +32,8 @@ DEFINES		+= VERSION=\\\"$${VERSION}\\($${GITVERSION}\\)\\\" HAVE_CONFIG_H
 
 INSTALLS	= target
 
+# CONFIG	+= debug_and_release build_all
+
 #
 # emtpy
 # TACO		work as TACO server
@@ -49,8 +51,6 @@ DEFINES		+= WIN32
 QMAKE_CXXFLAGS += /Y-
 QMAKE_LFLAGS += /INCREMENTAL:NO
 }
-
-unix: CONFIG	+= debug
 
 # QMAKE_CXXFLAGS	+= -fstack-check
 # QMAKE_LFLAGS	+= --stack=0x1000000
@@ -101,7 +101,10 @@ QWTINCLUDES 	= $${QWTINCLUDE}
 INCLUDEPATH 	+= $${QWTINCLUDES} $${SRCBASE}/lib
 DEPENDPATH  	+= $${QWTINCLUDES}
 unix:MESYDAQ_LIBS	= -L$${SRCBASE}/lib -lmesydaq
-win32:MESYDAQ_LIBS	= -L$${SRCBASE}/lib/debug -lmesydaq
+win32 {
+CONFIG(debug, debug|release):	MESYDAQ_LIBS = -L$${SRCBASE}/lib/debug -lmesydaq
+CONFIG(release, debug|release):	MESYDAQ_LIBS = -L$${SRCBASE}/lib/release -lmesydaq
+}
 
 contains(INTERFACE, TACO) {
 	DEFINES		+= HAVE_CONFIG_H
@@ -149,4 +152,6 @@ interfaces = $$find(INTERFACE, "TACO") $$find(INTERFACE, "CARESS") $$find(INTERF
 
 UI_DIR		= .ui
 MOC_DIR		= .moc
+unix {
 OBJECTS_DIR	= .obj
+}

@@ -31,7 +31,7 @@ LIBS		-= -lmesydaq
 
 INSTALLS	= target
 
-CONFIG		+= create_prl
+CONFIG		+= debug_and_release build_all create_prl
 
 win32: {
 VERSION =

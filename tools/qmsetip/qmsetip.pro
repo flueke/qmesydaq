@@ -28,7 +28,7 @@ TARGET 		= qmsetip
 
 QT		+= core network
 
-CONFIG		+= debug console link_prl
+CONFIG		+= debug_and_release console link_prl
 
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib

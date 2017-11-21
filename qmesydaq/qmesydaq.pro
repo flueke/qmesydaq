@@ -21,11 +21,18 @@
 VERSION		= 0.76.12
 SRCBASE		= ..
 
+CONFIG		+= debug_and_release link_prl # build_all
+
+# DEFINES		+= QWT_DLL
+
 include($${SRCBASE}/mesydaqconfig.pri)
 
 isEmpty(QLEDLIBS) {
 
-win32:	QLEDLIBS	= -L$${SRCBASE}/qled/src/debug -lqledd
+win32{
+CONFIG(debug, release|debug): QLEDLIBS = -L$${SRCBASE}/qled/src/debug -lqledd
+CONFIG(release, release|debug): QLEDLIBS = -L$${SRCBASE}/qled/src/release -lqled
+}
 else:	QLEDLIBS	= -L$${SRCBASE}/qled/src -lqled
 	QLEDINCLUDE	= $${SRCBASE}/qled/src
 }
@@ -36,13 +43,7 @@ TARGET 		= qmesydaq
 DEPENDPATH 	+= . $${SRCBASE}/test/plot $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE} $${QLEDINCLUDE}
 
-CONFIG		+= link_prl
-
-DEFINES		+= QWT_DLL
-
-unix {
 SUBDIRS		+= diskspace
-}
 
 INSTALLS	= target
 
@@ -187,13 +188,14 @@ contains(INTERFACE, TCP) {
 INCLUDEPATH	+= diskspace
 DEPENDPATH	+= diskspace
 
+unix {
 isEmpty(BOOST_LIBS) {
 	BOOST_LIBS	=  -lboost_filesystem -lboost_system
+}
 }
 
 LIBS		+= $${QLEDLIBS}
 LIBS		+= $${MESYDAQ_LIBS}
 LIBS		+= $${QWTLIBS}
-LIBS		+= $${BOOST_LIBS}
 
-message($${LIBS})
+unix:LIBS	+= $${BOOST_LIBS}
