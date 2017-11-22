@@ -1,3 +1,31 @@
+qmesydaq (0.50.4) unstable; urgency=low
+
+  [ Jens Krüger ]
+  * WIN32: Try to fix some issues related to win32 system
+  * LIB: remove unused includes (QApplication)
+  * TACO: Use *_STREAMS and ENDLOG
+  * TOOLS: add the 'console' config for WINDOWS
+  * TOOLS: fix problems with windows compatibility
+  * LIB: Fix some include related issues
+  * TEST: Fix some issues related with MSVC
+  * TEST: Disable some test programs on WINDOWS
+  * QLED: make it more MSVC compatible
+  * Set MSVC compiler flags
+  * QLED: Make it Qt5 compatible
+  * LIB: Fix some MSVC 10 related compiler issues
+
+  [ localadmin ]
+  * Fix some MSVC compiling issues
+
+  [ Jens Krüger ]
+  * Fix double target
+  * WINDOWS: fix building issues
+  * WINDOWS: add the Qwt library selection (debug/release)
+
+  [ Jenkins ]
+
+ -- Jenkins <jenkins@debuild.taco.frm2>  Wed, 22 Nov 2017 09:50:07 +0100
+
 qmesydaq (0.50.3) unstable; urgency=low
 
   [ Jens Krüger ]
