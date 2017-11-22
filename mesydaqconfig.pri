@@ -78,7 +78,11 @@ isEmpty(QWTINCLUDE) {
 }
 
 isEmpty(QWTLIB) {
-	QWTLIB		= qwt-qt4
+	win32 {
+		CONFIG(debug, debug|release) QWTLIB = qwtd
+		CONFIG(release, debug|release) QWTLIB = qwt
+	}
+	else: QWTLIB	= qwt-qt4
 }
 
 target.path	= $${TARGETPATH}
