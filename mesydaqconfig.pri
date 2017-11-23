@@ -46,10 +46,12 @@ INSTALLS	= target
 # for 64 bit machines add bit64
 #
 win32 {
-# CONFIG 	+= bit64
-DEFINES		+= WIN32
-QMAKE_CXXFLAGS += /Y-
-QMAKE_LFLAGS += /INCREMENTAL:NO
+	# CONFIG 	+= bit64
+	DEFINES		+= WIN32
+	win32-msvc {
+		QMAKE_CXXFLAGS += /Y-
+		QMAKE_LFLAGS += /INCREMENTAL:NO
+	}
 }
 
 # QMAKE_CXXFLAGS	+= -fstack-check
