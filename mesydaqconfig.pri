@@ -48,7 +48,7 @@ INSTALLS	= target
 win32 {
 	# CONFIG 	+= bit64
 	DEFINES		+= WIN32
-	win32-msvc {
+	if (win32-msvc*) {
 		QMAKE_CXXFLAGS += /Y-
 		QMAKE_LFLAGS += /INCREMENTAL:NO
 	}
@@ -81,8 +81,13 @@ isEmpty(QWTINCLUDE) {
 
 isEmpty(QWTLIB) {
 	win32 {
-		CONFIG(debug, debug|release) QWTLIB = qwtd
-		CONFIG(release, debug|release) QWTLIB = qwt
+		if (win32-msvc*) {
+			CONFIG(debug, debug|release) QWTLIB = qwtd
+			CONFIG(release, debug|release) QWTLIB = qwt
+		}
+		if (win32-g++) {
+			QWTLIB = qwt
+		}
 	}
 	else: QWTLIB	= qwt-qt4
 }
@@ -108,8 +113,8 @@ INCLUDEPATH 	+= $${QWTINCLUDES} $${SRCBASE}/lib
 DEPENDPATH  	+= $${QWTINCLUDES}
 unix:MESYDAQ_LIBS	= -L$${SRCBASE}/lib -lmesydaq
 win32 {
-CONFIG(debug, debug|release):	MESYDAQ_LIBS = -L$${SRCBASE}/lib/debug -lmesydaq
-CONFIG(release, debug|release):	MESYDAQ_LIBS = -L$${SRCBASE}/lib/release -lmesydaq
+	CONFIG(debug, debug|release):	MESYDAQ_LIBS = -L$${SRCBASE}/lib/debug -lmesydaq
+	CONFIG(release, debug|release):	MESYDAQ_LIBS = -L$${SRCBASE}/lib/release -lmesydaq
 }
 
 contains(INTERFACE, TACO) {

@@ -45,7 +45,11 @@
 #define MSG_QWARNING  qWarning().nospace() << QString("%1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
 
 // which debugging options are enabled
+#if defined(WIN32) && !defined(_MSC_VER)
+extern LIBQMESYDAQ_EXPORT int DEBUGLEVEL;
+#else
 extern int DEBUGLEVEL;
+#endif
 
 // start logging (parse command line parameters from QCoreApplication)
 void LIBQMESYDAQ_EXPORT startLogging(const char* szShortUsage, const char* szLongUsage);

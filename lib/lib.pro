@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 1.71.13
+VERSION		= 1.71.14
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -33,10 +33,12 @@ INSTALLS	= target
 
 CONFIG		+= debug_and_release build_all create_prl
 
-win32: {
-VERSION =
-CONFIG += staticlib
-DEFINES += LIBQMESYDAQ_LIB
+win32 {
+	VERSION =
+	if (win32-msvc*) {
+		CONFIG += staticlib
+	}
+	DEFINES += LIBQMESYDAQ_LIB
 }
 
 target.path	= $${TARGETLIBPATH}

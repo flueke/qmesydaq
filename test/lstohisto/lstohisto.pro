@@ -30,8 +30,7 @@ INCLUDEPATH 	+= . $${SRCBASE}/lib
 
 LIBS		+= -L$${SRCBASE}/lib
 
-SOURCES 	+= main.cpp \
-		logging.cpp
+SOURCES 	+= main.cpp
 
 HEADERS 	+=
 
