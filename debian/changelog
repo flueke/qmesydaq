@@ -1,3 +1,13 @@
+qmesydaq (0.50.5) unstable; urgency=low
+
+  [ Jens Krüger ]
+  * WINDOWS: set some compiler flags only for the MSVC
+  * WINDOWS: fix some issues related to g++ compiler
+
+  [ Jenkins ]
+
+ -- Jenkins <jenkins@debuild.taco.frm2>  Fri, 24 Nov 2017 19:33:56 +0100
+
 qmesydaq (0.50.4) unstable; urgency=low
 
   [ Jens Krüger ]
