@@ -62,6 +62,7 @@
 #include "caresssetup.h"
 #include "ConfigFileDialog.h"
 #include "streamwriter.h"
+#include "stdafx.h"
 
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)

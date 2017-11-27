@@ -27,6 +27,7 @@
 #include "StatusBarEntry.h"
 #include "logging.h"
 #include "website.h"
+#include "stdafx.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
