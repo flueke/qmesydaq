@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.76.12
+VERSION		= 0.76.13
 SRCBASE		= ..
 
 CONFIG		+= debug_and_release link_prl # build_all

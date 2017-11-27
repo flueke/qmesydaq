@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 	QStringList 		argList = app.arguments();
 	LoopObject 		*loop(NULL);
 	QString 		szLoadConfiguration(QString::null);
-	Q_INIT_RESOURCE(qled);
+	Q_INIT_RESOURCE_EXTERN(qled);
 
 	startLogging(g_szShortUsage, g_szLongUsage);
 	for (int i = 1; i < argList.size(); ++i)
