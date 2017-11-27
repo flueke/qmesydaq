@@ -26,7 +26,9 @@ win32 {
 CONFIG +=	windows
 CONFIG(debug, debug|release):	LIBS +=	-L../src/debug -lqledd
 CONFIG(release, debug|release):	LIBS += -L../src/release -lqled
-QMAKE_LFLAGS += /MT
+if (win32-msvc*) {
+	QMAKE_LFLAGS += /MT
+}
 }
 
 

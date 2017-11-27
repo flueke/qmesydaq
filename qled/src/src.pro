@@ -11,7 +11,11 @@ QT +=		svg
 
 DEFINES +=	QDESIGNER_EXPORT_WIDGETS
 
-CONFIG +=	static create_prl debug_and_release build_all
+if (win32-msvc*) {
+	CONFIG += static
+}
+
+CONFIG +=	create_prl debug_and_release build_all
 
 # Input
 HEADERS +=	qled.h
