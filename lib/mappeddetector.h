@@ -73,7 +73,7 @@ private:
         \author	Damian Rhein <damian.rhein@helmholtz-berlin.de>
         \author	Lutz Rossa <rossa@helmholtz-berlin.de>
 */
-class ListedMappedDetector : public MappedDetector
+class LIBQMESYDAQ_EXPORT ListedMappedDetector : public MappedDetector
 {
 public:
 	ListedMappedDetector();

@@ -158,7 +158,7 @@ private:
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class TimeSpectrum : public Spectrum
+class LIBQMESYDAQ_EXPORT TimeSpectrum : public Spectrum
 {
 	Q_OBJECT
 public:

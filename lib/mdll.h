@@ -25,7 +25,7 @@
 #include "logging.h"
 #include "mpsd8.h"
 
-class M2D : public QObject
+class LIBQMESYDAQ_EXPORT M2D : public QObject
 {
 	Q_OBJECT
 
@@ -87,7 +87,7 @@ protected:
  *
  * \author Gregor Montermann <g.montermann@mesytec.com>
  */
-class MDLL : public M2D
+class LIBQMESYDAQ_EXPORT MDLL : public M2D
 {
 	Q_OBJECT
 
@@ -243,7 +243,7 @@ private:
  *
  * \author Jens Krüger <jens.krueger@frm2.tum.de>
  */
-class MWPCHR : public M2D
+class LIBQMESYDAQ_EXPORT MWPCHR : public M2D
 {
 	Q_OBJECT
 

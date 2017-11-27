@@ -25,6 +25,9 @@
 
 class Mesydaq2;
 
+#include "libqmesydaq_global.h"
+
+
 struct puls
 {
 	quint16	mod;
@@ -35,7 +38,11 @@ struct puls
 	int	onTime;
 };
 
+#if !defined(_MSC_VER)
+class LIBQMESYDAQ_EXPORT PulserTest
+#else
 class PulserTest
+#endif
 {
 	PulserTest();
 public:
