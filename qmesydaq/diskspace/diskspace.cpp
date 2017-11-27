@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "diskspace.h"
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 
 #include <windows.h>
 #include <AtlBase.h>
@@ -46,6 +46,16 @@
 	}
 
 #else //_MSC_VER
+# if defined(WIN32)
+	unsigned long long DiskSpace::freeBytes(void)
+	{
+		return 0;
+	}
+	unsigned long long DiskSpace::availableBytes(void)
+	{
+		return 0;
+	}
+#else
 
 #include <boost/filesystem.hpp>
 
@@ -85,5 +95,5 @@
 		}
 		return 0;
 	}
-
+#endif // WIN32
 #endif //_MSC_VER
