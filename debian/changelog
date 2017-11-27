@@ -1,3 +1,17 @@
+qmesydaq (0.50.6) unstable; urgency=low
+
+  [ Jens Krüger ]
+  * LIB: add export/import type to classes for the WINDOWS compiler
+  * UI: Fix resource handling
+  * QLED: fix resource handling
+  * UI: include window specific header (VERSION define)
+  * MINGW: diskspace could not be calculated at the moment
+  * FIX: mingw/msvc linker problem
+
+  [ Jenkins ]
+
+ -- Jenkins <jenkins@debuild.taco.frm2>  Mon, 27 Nov 2017 20:11:03 +0100
+
 qmesydaq (0.50.5) unstable; urgency=low
 
   [ Jens Krüger ]
