@@ -90,9 +90,26 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 			QSize s = m_interface->readHistogramSize(m_histo);
 			tmpList = m_interface->readHistogram(m_histo);
 
+			std::vector<DevULong> tmp1;
+			for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+				tmp1.push_back(quint32(*it));
+			std::vector<DevULong>::iterator it = tmp1.begin();
+                        for (int i = 0; i < s.height(); ++i)
+			{
+				std::reverse(it, it + s.width());
+				it += s.width();
+			}
+			std::reverse(tmp1.begin(), tmp1.end());
 			tmp.push_back(s.width());
 			tmp.push_back(s.height());
 			tmp.push_back(1);
+			for (int i = 0; i < s.width(); ++i)
+				for (int j = 0; j < s.height(); ++j)
+				{
+					int idx = j * s.width() + i;
+					DevULong val = tmp1[idx];
+					tmp.push_back(val);
+				}
 		}
 // spectrogram
 		else
@@ -102,9 +119,9 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 			tmp.push_back(tmpList.count());
 			tmp.push_back(1);
 			tmp.push_back(1);
+			for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+				tmp.push_back(quint32(*it));
 		}
-		for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
-			tmp.push_back(quint32(*it));
 	}
 	catch (::TACO::Exception &e)
 	{
