@@ -10,7 +10,9 @@ The structure of a command buffer is displayed here again. It’s layout is
 identical for all commands.
 
 +---------------------------------+--------------------------+
-| Buffer Type                     | Word 0                   |
+| Buffer Length (in 16 bit words) | Word 0                   |
++---------------------------------+--------------------------+
+| Buffer Type                                                |
 +---------------------------------+--------------------------+
 | Header Length (in 16 bit words)                            |
 +------------------------------------------------------------+

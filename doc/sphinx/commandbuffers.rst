@@ -91,7 +91,7 @@ from a control pc to a MCPD-8:
                     to have a timed log of command communication.
                     Can be left blank in buffers sent by control pc.
 :Command Checksum:  16 bit XOR checksum
-                    Covering all words from “Buffer Type” (Word 0) to last
+                    Covering all words from “Buffer Length” (Word 0) to last
                     data word (Word buffer length –1).
                     Set checksum field to 0x0000 before calculation.
 
