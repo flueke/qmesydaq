@@ -15,43 +15,7 @@ Buffer Structure:
 -----------------
 (in 16 bit words):
 
-
-+---------------------------------+-------------------------+
-| Buffer Length (in 16 bit words) | Word 0                  |
-+---------------------------------+-------------------------+
-| Buffer Type                                               |
-+-----------------------------------------------------------+
-| Header Length (in 16 bit words)                           |
-+-----------------------------------------------------------+
-| Buffer Number                                             |
-+-----------------------------------------------------------+
-| Cmd                                                       |
-+---------------------------------+-------------------------+
-| MCPD-ID                         | Status                  |
-+---------------------------------+-------------------------+
-| Header Timestamp Lo                                       |
-+-----------------------------------------------------------+
-| Header Timestamp Mid                                      |
-+---------------------------------+-------------------------+
-| Header Timestamp Hi             | Word 8                  |
-+---------------------------------+-------------------------+
-| Command Checksum                | Word 9                  |
-+---------------------------------+-------------------------+
-| Data 0                          | Word 10                 |
-+---------------------------------+-------------------------+
-| Data 1                                                    |
-+-----------------------------------------------------------+
-| Data 2                                                    |
-+-----------------------------------------------------------+
-| ...                                                       |
-+-----------------------------------------------------------+
-| Trailing data                                             |
-+-----------------------------------------------------------+
-| with                                                      |
-+---------------------------------+-------------------------+
-| Variable length                 | Word (buffer length –1) |
-+---------------------------------+-------------------------+
-
+.. include:: commandbuffertable.inc
 
 Header data dictionary:
 -----------------------
@@ -60,6 +24,11 @@ Use and meaning of header data varies depending on sender. While MCPD-8 fills
 in all data, some of them may be left uninitialized when sending a data block
 from a control pc to a MCPD-8:
 
+:Buffer Length:     In multiple of 16 bit words.
+                    Spans from “Buffer Type” to last data word. Only counts
+                    useful data words.
+                    Padding bytes added to fulfill minimum Ethernet buffer size
+                    will not be counted.
 :Buffer Type:       16 bit type descriptor
 
                     Bits 0 … 14 carry a version information and may be left
@@ -73,12 +42,7 @@ from a control pc to a MCPD-8:
                     Separate counters for data and cmd buffers.
                     A control software could increment with each cmd issued.
                     MCPD-8 will increment its own counter with each cmd answered.
-:Buffer Length:     In multiple of 16 bit words.
-                    Spans from “Buffer Type” to last data word. Only counts
-                    useful data words.
-                    Padding bytes added to fulfill minimum Ethernet buffer size
-                    will not be counted.
-:CMD-ID:            16 bit value representing the command that is answered/issued
+:CMD:               16 bit value representing the command that is answered/issued
                     in this buffer.
                     Please see the following chapter for a detailed description
                     of the individual commands.
@@ -94,4 +58,3 @@ from a control pc to a MCPD-8:
                     Covering all words from “Buffer Length” (Word 0) to last
                     data word (Word buffer length –1).
                     Set checksum field to 0x0000 before calculation.
-
