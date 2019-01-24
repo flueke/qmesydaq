@@ -627,8 +627,9 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 	if (chan > m_mpsd[addr]->getChannels())
 		chan = m_mpsd[addr]->getChannels();
 	// The old MSTD-16 could only set the gain for two channels simultaneously
-	if (m_mpsd[addr]->type() == TYPE_MSTD16 && version() < 9.9)
-		if (chan > 8)
+	float ver = version() + 0.005; // uncertainty of float
+	if (m_mpsd[addr]->type() == TYPE_MSTD16 && ver < 9.9)
+		if (chan > 7)
 			chan /= 2;
 
 	MSG_DEBUG << tr("SETGAIN_%1 %2, addr %3, chan %4, val %5")
@@ -636,7 +637,9 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 				.arg(m_byId).arg(addr).arg(chan).arg(gainval);
 	QMutexLocker locker(m_pCommandMutex);
 	m_mpsd[addr]->setGain(chan, gainval, 1);
-	initCmdBuffer((m_mpsd[addr]->type() == TYPE_MSTD16 && version() > 9.9) ? SETGAIN_MSTD : SETGAIN_MPSD);
+	quint8 cmd = (m_mpsd[addr]->type() == TYPE_MSTD16 && ver >= 9.9) ? SETGAIN_MSTD : SETGAIN_MPSD;
+	MSG_ERROR << tr("Use setGain command: %1").arg(cmd);
+	initCmdBuffer(cmd);
 	m_cmdBuf.data[0] = addr;
 	m_cmdBuf.data[1] = chan;
 	m_cmdBuf.data[2] = gainval;
