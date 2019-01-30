@@ -771,6 +771,8 @@ void MainWidget::clearAllSlot()
 	m_meas->clearCounter(MON2ID);
 	m_meas->clearCounter(MON3ID);
 	m_meas->clearCounter(MON4ID);
+	m_meas->clearCounter(TTL1ID);
+	m_meas->clearCounter(TTL2ID);
 	emit redraw();
 }
 
@@ -1991,8 +1993,8 @@ void MainWidget::customEvent(QEvent *e)
 							value = m_monitorPresets.at(id)->presetValue();
 							break;
 						case M4CT:
-						case 5:	// TTL inputs
-						case 6:
+						case M5CT: // TTL inputs
+						case M6CT:
 							if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 								value = m_monitorPresets.at(id)->presetValue();
 							break;
@@ -2034,8 +2036,8 @@ void MainWidget::customEvent(QEvent *e)
 						value = m_monitorPresets.at(id)->isChecked();
 						break;
 					case M4CT:
-					case 5:
-					case 6:
+					case M5CT:
+					case M6CT:
 						if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							value = m_monitorPresets.at(id)->isChecked();
 						break;
@@ -2065,8 +2067,8 @@ void MainWidget::customEvent(QEvent *e)
 						m_monitorPresets.at(id)->presetCheckClicked(bEnabled);
 						break;
 					case M4CT:
-					case 5:
-					case 6:
+					case M5CT:
+					case M6CT:
 						if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							m_monitorPresets.at(id)->presetCheckClicked(bEnabled);
 						break;
@@ -2089,8 +2091,8 @@ void MainWidget::customEvent(QEvent *e)
 							m_meas->setPreset(id, m_monitorPresets.at(id)->presetValue(), bEnabled);
 							break;
 						case M4CT:
-						case 5:
-						case 6:
+						case M5CT:
+						case M6CT:
 							if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							{
 								m_monitorPresets.at(id)->setPresetValue(dblPreset);
@@ -2124,8 +2126,8 @@ void MainWidget::customEvent(QEvent *e)
 							m_meas->setPreset(id, dblPreset, true);
 							break;
 						case M4CT:
-						case 5:
-						case 6:
+						case M5CT:
+						case M6CT:
 							if (m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
 							{
 								m_monitorPresets.at(id)->setPresetValue(dblPreset);
@@ -2176,6 +2178,16 @@ void MainWidget::customEvent(QEvent *e)
 						monitor4Preset->setPresetValue(dblPreset);
 						m_meas->setPreset(MON4ID, dblPreset, true);
 					}
+					else if (monitor5Preset->isChecked() && m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
+					{
+						monitor4Preset->setPresetValue(dblPreset);
+						m_meas->setPreset(TTL1ID, dblPreset, true);
+					}
+					else if (monitor6Preset->isChecked() && m_meas->setupType() != Mdll && m_meas->setupType() != Mdll2)
+					{
+						monitor4Preset->setPresetValue(dblPreset);
+						m_meas->setPreset(TTL2ID, dblPreset, true);
+					}
 				}
 			}
 			break;
@@ -2186,16 +2198,12 @@ void MainWidget::customEvent(QEvent *e)
 				switch (id)
 				{
 					case M1CT:
-						value = m_meas->mon(MON1ID);
-						break;
 					case M2CT:
-						value = m_meas->mon(MON2ID);
-						break;
 					case M3CT:
-						value = m_meas->mon(MON3ID);
-						break;
 					case M4CT:
-						value = m_meas->mon(MON4ID);
+					case M5CT:
+					case M6CT:
+						value = m_meas->mon(id);
 						break;
 					case EVCT:
 						value = m_meas->events();

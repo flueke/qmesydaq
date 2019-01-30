@@ -165,6 +165,8 @@
 #define M2CT			1
 #define M3CT			2
 #define M4CT			3
+#define M5CT			4	// TTL input 1
+#define M6CT			5	// TTL input 2
 #define EVCT			100
 #define TCT			101
 #define HISTO			99

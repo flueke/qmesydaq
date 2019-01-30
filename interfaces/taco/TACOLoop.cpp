@@ -1,7 +1,7 @@
 // Interface to the QMesyDAQ software
 // Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>
 // Copyright (C) 2008 by Lutz Rossa <rossa@hmi.de>
-// Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>
+// Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>
 // Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -53,17 +53,17 @@ void TACOLoop::runLoop()
 	m_detDevice[1] = settings.value("raw", "test/qmesydaq/detraw").toString();
 	m_detDevice[2] = settings.value("amplitude", "test/qmesydaq/detamp").toString();
 	m_timerDevice = settings.value("timer", "test/qmesydaq/timer").toString();
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 6; ++i)
 		m_counterDevice[i] = settings.value(QString("counter%1").arg(i), QString("test/qmesydaq/counter%1").arg(i)).toString();
-	m_counterDevice[4] = settings.value("events", "test/qmesydaq/events").toString();
+	m_counterDevice[6] = settings.value("events", "test/qmesydaq/events").toString();
 	settings.endGroup();
 
 	QStringList	deviceList;
 	deviceList << m_detDevice[0] << m_detDevice[1] << m_detDevice[2] << m_timerDevice;
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 7; ++i)
 		deviceList << m_counterDevice[i];
 
-	QString devices = deviceList.join(" ");	
+	QString devices = deviceList.join(" ");
 	MSG_DEBUG << tr("device_server to start %1/%2 with device(s) ").arg(m_server).arg(m_personal) << devices;
 
 	char **devList = new char*[deviceList.size()];

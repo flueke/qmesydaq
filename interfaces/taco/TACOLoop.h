@@ -67,7 +67,7 @@ private:
 	QString m_timerDevice;
 
 	//! TACO counter device names, default = "puma/qmesydaq/counter[0..3]" "puma/qmesydaq/events"
-	QString m_counterDevice[5];
+	QString m_counterDevice[7];
 };
 
 #endif // TACOLOOP_H
