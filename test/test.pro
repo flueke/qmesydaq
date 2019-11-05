@@ -39,7 +39,9 @@ SUBDIRS	 	+= listfile \
 		timespectrum \
 		ipaddresswidget \
 		calibration \
-		colormaps
+		colormaps \
+		fill \
+		inspect
 
 unix {
 SUBDIRS		+= mapping \
