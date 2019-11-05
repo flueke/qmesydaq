@@ -8,7 +8,7 @@
 void results(std::string s, int events, int elapsed, long number)
 {
 	std::cerr << "inserting of " << events << " into " << s << " took " << elapsed << " ms" << std::endl;
-	std::cerr << "MEvents/s : " << events / elapsed / 1000 << std::endl;
+	std::cerr << "MEvents/s : " << events / elapsed / 1000. << std::endl;
 	std::cerr << number << " are in " << s << std::endl;
 }
 
