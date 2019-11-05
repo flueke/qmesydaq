@@ -5,11 +5,17 @@
 
 #include "hist.h"
 
-const int events = 100000000;
+void results(std::string s, int events, int elapsed, long number)
+{
+	std::cerr << "inserting of " << events << " into " << s << " took " << elapsed << " ms" << std::endl;
+	std::cerr << "MEvents/s : " << events / elapsed / 1000 << std::endl;
+	std::cerr << number << " are in " << s << std::endl;
+}
 
 int main(int, char **)
 {
 	QTime		t;
+	const int events = 100000000;
 
 	t.start();
 	Spectrum 	s;
@@ -31,33 +37,42 @@ int main(int, char **)
 	t.restart();
 	for (int i = 0; i < events; ++i)
 		s.incVal(i % 960);
-	int elapsed = t.elapsed();
-	std::cerr << "inserting of " << events << " into s took " << elapsed << " ms" << std::endl;
-	std::cerr << "events/s : " << events / elapsed * 1000 << std::endl;
-	std::cerr << s.getTotalCounts() << " are in s" << std::endl;
+	results("s", events, t.elapsed(), s.getTotalCounts());
 
 	t.restart();
 	for (int i = 0; i < events; ++i)
 		h1.incVal(i % 960, i % 128);
-	elapsed = t.elapsed();
-	std::cerr << "inserting of " << events << " into h1 took " << elapsed << " ms" << std::endl;
-	std::cerr << "events/s : " << events / elapsed * 1000 << std::endl;
-	std::cerr << h1.getTotalCounts() << " are in h1" << std::endl;
+	results("h1", events, t.elapsed(), h1.getTotalCounts());
 
 	t.restart();
 	for (int i = 0; i < events; ++i)
 		h2.incVal(i % 960, i % 128);
-	elapsed = t.elapsed();
-	std::cerr << "inserting of " << events << " into h2 took " << elapsed << " ms" << std::endl;
-	std::cerr << "events/s : " << events / elapsed * 1000 << std::endl;
-	std::cerr << h2.getTotalCounts() << " are in h2" << std::endl;
+	results("h2", events, t.elapsed(), h2.getTotalCounts());
 
 	t.restart();
 	for (int i = 0; i < events; ++i)
 		h3.incVal(i % 960, i % 128);
-	elapsed = t.elapsed();
-	std::cerr << "inserting of " << events << " into h3 took " << elapsed << " ms" << std::endl;
-	std::cerr << "events/s : " << events / elapsed * 1000 << std::endl;
-	std::cerr << h3.getTotalCounts() << " are in h3" << std::endl;
+	results("h3", events, t.elapsed(), h3.getTotalCounts());
+
+	t.restart();
+	for (int i = 0; i < events; ++i)
+	{
+		s.incVal(i % 960);
+		h1.incVal(i % 960, i % 128);
+		h2.incVal(i % 960, i % 128);
+	}
+	results("s, h1, h2", events, t.elapsed(), h3.getTotalCounts());
+
+	Histogram h[3];
+	Spectrum sp[12];
+	t.restart();
+	for (int i = 0; i < events; ++i)
+	{
+		for (int j = 0; j < 12; j++)
+			sp[j].incVal(i % 960);
+		for (int j = 0; j < 3; j++)
+			h[j].incVal(i % 960, i % 128);
+	}
+	results("all histograms/spectra", events, t.elapsed(), h3.getTotalCounts());
 	return 0;
 }
