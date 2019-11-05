@@ -144,6 +144,33 @@ int main(int, char **)
 	}
 	results("multiple histogram events", packets, t.elapsed());
 
+	Spectrum s[12];
+	n = 0;
+	t.restart();
+	for (int i = 0; i < packets; ++i)
+	{
+		n += dp.bufferLength;
+		headerTime = (quint64(dp.time[2]) << 32) | (dp.time[1] << 16) | dp.time[0];
+		quint16 nevents = (dp.bufferLength - dp.headerLength) / 3;
+
+		for (int j = 0; j < nevents; ++j)
+		{
+			int k = j * 3;
+			quint64 evt = (quint64(dp.data[k + 2]) << 32) | dp.data[k + 1] << 16 | dp.data[k];
+			struct event ev;
+			ev.trigger = evt & (0x800000);
+			ev.amplitude = (evt >> 39) & 0xFF;
+			ev.x = (evt >> 19) & 0x2FF;
+			ev.y = (evt >> 29) & 0x2FF;
+			ev.time = headerTime + (evt & 0x3FFFF);
+			for (int l = 0; l < 3; ++l)
+				h[l].incVal(ev.x, ev.y);
+			for (int l = 0; l < 12; ++l)
+				s[l].incVal(ev.x);
+		}
+	}
+	results("histogram and spectrum events", packets, t.elapsed());
+
 #if 0
 	t.restart();
 	for (int i = 0; i < events; ++i)
