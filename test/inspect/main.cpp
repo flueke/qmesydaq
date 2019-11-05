@@ -138,7 +138,7 @@ int main(int, char **)
 			ev.x = (evt >> 19) & 0x2FF;
 			ev.y = (evt >> 29) & 0x2FF;
 			ev.time = headerTime + (evt & 0x3FFFF);
-			for (int l = 0; i < 3; ++l)
+			for (int l = 0; l < 3; ++l)
 				h[l].incVal(ev.x, ev.y);
 		}
 	}
