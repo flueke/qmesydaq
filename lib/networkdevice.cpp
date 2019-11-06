@@ -335,7 +335,7 @@ void NetworkDevice::readSocketData(void)
                 }
             }
             if (bLostPacket)
-                MSG_DEBUG << tr("lost %1 bytes from %2%, port %3: %4").arg(len).arg(fromAddress.toString()).arg(fromPort).arg(QString(HexDump(&recBuf->mdp, len)));
+                MSG_DEBUG << tr("lost %1 bytes from %2, port %3: %4").arg(len).arg(fromAddress.toString()).arg(fromPort).arg(QString(HexDump(&recBuf->mdp, len)));
         }
     }
 }
