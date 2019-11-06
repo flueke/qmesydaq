@@ -31,6 +31,7 @@ SUBDIRS	 	+= listfile \
 		input \
 		input2 \
 		input3 \
+		input4 \
 		loadsetup \
 		lstohisto \
 		readhisto \
