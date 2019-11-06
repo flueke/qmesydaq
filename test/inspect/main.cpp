@@ -97,6 +97,7 @@ int main(int, char **)
 	results("inspect events", packets, t.elapsed());
 
 	Histogram	h[3];
+	Spectrum s[12];
 	n = 0;
 	t.restart();
 	for (int i = 0; i < packets; ++i)
@@ -116,9 +117,10 @@ int main(int, char **)
 			ev.y = (evt >> 29) & 0x2FF;
 			ev.time = headerTime + (evt & 0x3FFFF);
 			h[0].incVal(ev.x, ev.y);
+			s[0].incVal(ev.x);
 		}
 	}
-	results("histogram events", packets, t.elapsed());
+	results("histogram/spectrum events", packets, t.elapsed());
 
 	n = 0;
 	t.restart();
@@ -144,7 +146,6 @@ int main(int, char **)
 	}
 	results("multiple histogram events", packets, t.elapsed());
 
-	Spectrum s[12];
 	n = 0;
 	t.restart();
 	for (int i = 0; i < packets; ++i)
