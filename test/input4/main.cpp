@@ -9,12 +9,13 @@ void results(std::string s, int packets, int elapsed, bool evt = true)
 {
 	if (!elapsed)
 		elapsed = 1;
+	quint64 events = packets * 243;
 	if (evt)
-		std::cerr << s << " of " << packets * 243 << " events took " << elapsed << " ms" << std::endl;
+		std::cerr << s << " of " << events << " events took " << elapsed << " ms" << std::endl;
 	else
 		std::cerr << s << " of " << packets << " packets took " << elapsed << " ms" << std::endl;
-	std::cerr << "MEvents/s : " << packets * 243 / elapsed / 1000. << std::endl;
-	// std::cerr << number << " are in " << s << std::endl;
+	std::cerr << events / elapsed / 1000. << " MEvents/s" << std::endl;
+	std::cerr << 1. * elapsed / events << " ms/Event" << std::endl << std::endl;
 }
 
 int main(int, char **)
