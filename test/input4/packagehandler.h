@@ -28,4 +28,8 @@ public slots:
 	void analyzeBuffer5(const DATA_PACKET &);
 
 	void analyzeBuffer6(const DATA_PACKET &);
+
+	void analyzeBuffer7(const DATA_PACKET &);
+
+	void analyzeBuffer8(const DATA_PACKET &);
 };
