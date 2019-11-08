@@ -30,6 +30,7 @@ int main(int, char **)
 
 	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		         &ph, SLOT(analyzeBuffer1(const DATA_PACKET &)));
+	ph.clear();
 	t = pp.run();
 	results("get header time", packets, t, false);
 	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
@@ -37,6 +38,7 @@ int main(int, char **)
 
 	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		         &ph, SLOT(analyzeBuffer2(const DATA_PACKET &)));
+	ph.clear();
 	t = pp.run();
 	results("unpack events", packets, t);
 	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
@@ -44,6 +46,7 @@ int main(int, char **)
 
 	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		         &ph, SLOT(analyzeBuffer3(const DATA_PACKET &)));
+	ph.clear();
 	t = pp.run();
 	results("analyze events", packets, t);
 	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
@@ -51,6 +54,7 @@ int main(int, char **)
 
 	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		         &ph, SLOT(analyzeBuffer4(const DATA_PACKET &)));
+	ph.clear();
 	t = pp.run();
 	results("histogram events", packets, t);
 	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
@@ -58,9 +62,18 @@ int main(int, char **)
 
 	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		         &ph, SLOT(analyzeBuffer5(const DATA_PACKET &)));
+	ph.clear();
 	t = pp.run();
 	results("all histogram events", packets, t);
 	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		            &ph, SLOT(analyzeBuffer5(const DATA_PACKET &)));
+
+	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		         &ph, SLOT(analyzeBuffer6(const DATA_PACKET &)));
+	ph.clear();
+	t = pp.run();
+	results("realistic histogram events", packets, t);
+	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		            &ph, SLOT(analyzeBuffer6(const DATA_PACKET &)));
 	return 0;
 }

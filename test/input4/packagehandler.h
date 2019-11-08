@@ -14,6 +14,8 @@ class PackageHandler : public QObject
 public:
 	PackageHandler();
 
+	void clear(void);
+
 public slots:
 	void analyzeBuffer1(const DATA_PACKET &);
 
@@ -24,4 +26,6 @@ public slots:
 	void analyzeBuffer4(const DATA_PACKET &);
 
 	void analyzeBuffer5(const DATA_PACKET &);
+
+	void analyzeBuffer6(const DATA_PACKET &);
 };
