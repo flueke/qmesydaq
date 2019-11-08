@@ -18,36 +18,32 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-SRCBASE		= ..
+VERSION		= 1.0.1
+SRCBASE		= ../..
 
-include($${SRCBASE}/mesydaqconfig.pri)
+include ($${SRCBASE}/mesydaqconfig.pri)
 
-TEMPLATE 	= subdirs
+TEMPLATE 	= app
+TARGET 		= input5
+DEPENDPATH 	+= . $${SRCBASE}/lib
+INCLUDEPATH 	+= . $${SRCBASE}/lib
 
-TARGET 		= 
+SUBDIRS		+= listfile
 
-SUBDIRS	 	+= listfile \
-		dummy \
-		input \
-		input2 \
-		input3 \
-		input4 \
-		input5 \
-		loadsetup \
-		lstohisto \
-		readhisto \
-		threads \
-		histogramming \
-		timespectrum \
-		ipaddresswidget \
-		calibration \
-		colormaps \
-		fill \
-		inspect
+QT		+= core network
+QT		-= gui
 
-unix {
-SUBDIRS		+= mapping \
-		readlistfile \
-		countrates \
-		plot
-}
+CONFIG		+= debug console link_prl
+
+HEADERS		+= packageprovider.h \
+		packagehandler.h
+
+SOURCES 	+= main.cpp \
+		packageprovider.cpp \
+		packagehandler.cpp
+
+LIBS        	+= -L$${SRCBASE}/lib
+
+INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}
