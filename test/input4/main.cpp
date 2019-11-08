@@ -76,5 +76,21 @@ int main(int, char **)
 	results("realistic histogram events", packets, t);
 	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		            &ph, SLOT(analyzeBuffer6(const DATA_PACKET &)));
+
+	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		         &ph, SLOT(analyzeBuffer7(const DATA_PACKET &)));
+	ph.clear();
+	t = pp.run();
+	results("put events into spectrum", packets, t);
+	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		            &ph, SLOT(analyzeBuffer7(const DATA_PACKET &)));
+
+	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		         &ph, SLOT(analyzeBuffer8(const DATA_PACKET &)));
+	ph.clear();
+	t = pp.run();
+	results("put events into histogram", packets, t);
+	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		            &ph, SLOT(analyzeBuffer8(const DATA_PACKET &)));
 	return 0;
 }
