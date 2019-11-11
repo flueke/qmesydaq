@@ -36,7 +36,8 @@ QT		-= gui
 CONFIG		+= debug console link_prl
 
 HEADERS		+= packageprovider.h \
-		packagehandler.h
+		packagehandler.h \
+		hist.h
 
 SOURCES 	+= main.cpp \
 		packageprovider.cpp \

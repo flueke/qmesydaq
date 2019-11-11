@@ -4,6 +4,8 @@
 #include "histogram.h"
 #include "mappedhistogram.h"
 
+#include "hist.h"
+
 
 class PackageHandler : public QObject
 {
@@ -12,6 +14,7 @@ class PackageHandler : public QObject
 	Histogram	*h[2];
 	MappedHistogram *mh;
 	Spectrum	*s[12];
+	hist		*_h[2];
 
 public:
 	PackageHandler();
@@ -36,4 +39,8 @@ public slots:
 	void analyzeBuffer8(const DATA_PACKET &);
 
 	void analyzeBuffer9(const DATA_PACKET &);
+
+	void analyzeBuffer10(const DATA_PACKET &);
+
+	void analyzeBuffer11(const DATA_PACKET &);
 };
