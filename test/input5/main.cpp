@@ -116,5 +116,13 @@ int main(int, char **)
 	results("put events into 2 new histogram impl", packets, t);
 	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
 		         &ph, SLOT(analyzeBuffer11(const DATA_PACKET &)));
+
+	QObject::connect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		         &ph, SLOT(analyzeBuffer12(const DATA_PACKET &)));
+	ph.clear();
+	t = pp.run();
+	results("put events into all spectra", packets, t);
+	QObject::disconnect(&pp, SIGNAL(bufferReceived(const DATA_PACKET &)),
+		         &ph, SLOT(analyzeBuffer12(const DATA_PACKET &)));
 	return 0;
 }

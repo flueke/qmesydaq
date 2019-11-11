@@ -43,4 +43,6 @@ public slots:
 	void analyzeBuffer10(const DATA_PACKET &);
 
 	void analyzeBuffer11(const DATA_PACKET &);
+
+	void analyzeBuffer12(const DATA_PACKET &);
 };
