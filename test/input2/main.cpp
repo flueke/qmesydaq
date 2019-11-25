@@ -16,6 +16,7 @@ int main(int argc, char **argv)
 	QElapsedTimer eTimer;
 	QString host("192.168.168.121");
 	const quint16 port(54321);
+	int meastime = 600;
 
 	eTimer.invalidate();
 
@@ -25,6 +26,9 @@ int main(int argc, char **argv)
 
 	if (args.size() > 1)
 		host = args.at(1);
+
+	if (args.size() > 2)
+		meastime = args.at(2).toInt();
 
 	// NetworkDevice	*nd = NetworkDevice::create(54321);
 	// nd->connect_handler(QHostAddress(QHostInfo::fromName("taco6.ictrl.frm2").addresses().first()), 0, &analyzeBuffer, NULL))
@@ -44,9 +48,9 @@ int main(int argc, char **argv)
 		MSG_ERROR << "Stop data stream";
 		mcpd->stop();
 		sleep(1);
-		MSG_ERROR << "Start data acquisition";
+		MSG_ERROR << "Start data acquisition for: " << meastime << " s";
 		mcpd->start();
-		QTimer::singleShot(0.75 * 360 * 1000, &app, SLOT(quit()));
+		QTimer::singleShot(meastime * 1000, &app, SLOT(quit()));
 		eTimer.start();
 		MSG_INFO << QDateTime::currentDateTime().toString();
 	}
@@ -65,8 +69,11 @@ int main(int argc, char **argv)
 	MSG_FATAL << "Got " << packets << " packets with " << events << " events.";
 	if (eTimer.isValid())
 	{
-		MSG_FATAL << "Packet rate: " << (packets / (eTimer.elapsed() / 1000.)) << " packets/s";
-		MSG_FATAL << "Event rate: " << (events / (eTimer.elapsed() / 1000.)) << " Ev/s";
+		float etime = eTimer.elapsed();
+		MSG_FATAL << "Results for " << meastime << " s";
+		MSG_FATAL << "Elapsed time: " << etime << " s";
+		MSG_FATAL << "Packet rate: " << (packets / etime) << " packets/s";
+		MSG_FATAL << "Event rate: " << (events / etime) << " Ev/s";
 	}
 	MSG_FATAL << "Lost " << mcpd->missedData() << " packets.";
 
