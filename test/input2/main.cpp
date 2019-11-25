@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 	MSG_FATAL << "Got " << packets << " packets with " << events << " events.";
 	if (eTimer.isValid())
 	{
-		float etime = eTimer.elapsed();
+		float etime = eTimer.elapsed() / 1000.;
 		MSG_FATAL << "Results for " << meastime << " s";
 		MSG_FATAL << "Elapsed time: " << etime << " s";
 		MSG_FATAL << "Packet rate: " << (packets / etime) << " packets/s";
