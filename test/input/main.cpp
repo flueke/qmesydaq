@@ -8,6 +8,7 @@
 #include <iostream>
 #include <networkdevice.h>
 #include <mdefines.h>
+#include <logging.h>
 
 void analyzeDataBuffer(QSharedDataPointer<SD_PACKET>);
 
@@ -103,22 +104,29 @@ int main(int argc, char **argv)
 {
 	eTimer.invalidate();
 
-	DEBUGLEVEL = NOTICE;
-
 	QCoreApplication app(argc, argv);
+
+	int meastime = 1000;
+
+	if (argc > 1)
+		meastime = strtol(argv[1], NULL, 10) * 1000;
+
+	startLogging("", "");
+
+	DEBUGLEVEL = NOTICE;
 
 	NetworkDevice	*nd = NetworkDevice::create(54321);
 
-	qDebug() << QHostInfo::fromName("taco6.taco.frm2").addresses().first();
+	MSG_ERROR << QHostInfo::fromName("taco6.taco.frm2").addresses().first();
 
 	if (nd->connect_handler(QHostAddress(QHostInfo::fromName("taco6.taco.frm2").addresses().first()), 0, &analyzeBuffer, NULL))
 	{
-		QTimer::singleShot(600000, &app, SLOT(quit()));
-		qDebug() << QDateTime::currentDateTime().toString();
+		QTimer::singleShot(meastime, &app, SLOT(quit()));
+		MSG_NOTICE << QDateTime::currentDateTime().toString();
 	}
 	else
 	{
-		std::cerr << "Could not install handler" << std::endl;
+		MSG_ERROR << "Could not install handler.";
 		QTimer::singleShot(1, &app, SLOT(quit()));
 	}
 
@@ -126,10 +134,10 @@ int main(int argc, char **argv)
 
 	NetworkDevice::destroy(nd);
 
-	std::cout << "Got " << packets << " packets with " << events << " events." << std::endl;
+	MSG_NOTICE << "Got " << packets << " packets with " << events << " events.";
 	if (eTimer.isValid())
-		std::cout << "Event rate: " << (events / (eTimer.elapsed() / 1000.)) << " Ev/s" << std::endl;
+		MSG_NOTICE << "Event rate: " << (events / (eTimer.elapsed() / 1000.)) << " Ev/s";
 
-	qDebug() << QDateTime::currentDateTime().toString();
+	MSG_NOTICE << QDateTime::currentDateTime().toString();
 	return 0;
 }
