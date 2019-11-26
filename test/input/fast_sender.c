@@ -14,7 +14,7 @@
 #include <inttypes.h>
 #define BUFLEN 1434  //Max length of buffer to avoid udp fragmentation
 #define PORT 8888   //The port on which to listen for incoming data
-#define EVENTS 232
+#define EVENTS 243
 #define DLEN 1500L
 
 
@@ -313,7 +313,7 @@ struct MCPDHeader genheader(void)
     header.Status = 1;
     uint64_t t = (uint64_t)(ts2.tv_sec * 1e7 + ts2.tv_nsec * 100);
     for (int i = 0; i < 3; ++i)
-	header.headts[0] = 0xFF & (t >> (1 << i));
+	header.headts[i] = 0xFF & (t >> (1 << i));
     header.param0[0] = 0;
     header.param1[0] = 1;
     header.param2[0] = 2;
@@ -327,7 +327,7 @@ struct packet genpacket(void) {
     for (int i=0; i<EVENTS; i++) {
         genevent( &packet.events[i], packet.header.headts );
     }
-    packet.buflen = packet.header.hlength + EVENTS * 6 + 1;
+    packet.buflen = packet.header.hlength + EVENTS * 3;
     return packet;
 }
 
@@ -344,7 +344,7 @@ void* gendata(void)
     {
         pdata[i] = genpacket();
     }
-    printf ("Data generation done");
+    printf ("Data generation done\n");
     return (void *)pdata;
 }
 
