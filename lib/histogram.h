@@ -180,34 +180,34 @@ protected:
 	QHash<QPoint, int>	m_data1;
 
 	//! all spectra
-	Spectrum			**m_data;
+	Spectrum		**m_data;
 
 	//! the list of all keys for the spectra
 	QList<quint16>		m_dataKeys;
 
 	//! length of the tube
-	quint16				m_height;
+	quint16			m_height;
 
 	//! number of tubes
-	quint16				m_width;
+	quint16			m_width;
 
 	//! X sum spectrum
-	Spectrum			*m_xSumSpectrum;
+	Spectrum		*m_xSumSpectrum;
 
 	//! Y sum spectrum
-	Spectrum			*m_ySumSpectrum;
+	Spectrum		*m_ySumSpectrum;
 
 	//! number of the tube containing the histogram maximum
-	quint16				m_maximumPos;
+	quint16			m_maximumPos;
 
 	//! automatic resize of the histogram allowed or not
-	bool				m_autoResize;
+	bool			m_autoResize;
 
 	//! minimum value in ROI
-	quint64				m_minROI;
+	quint64			m_minROI;
 
 	//! maximum value in ROI
-	quint64				m_maxROI;
+	quint64			m_maxROI;
 };
 
 #endif
