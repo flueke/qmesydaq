@@ -25,6 +25,7 @@
 #include <QMutex>
 #include <QThread>
 #include <QWaitCondition>
+#include <QQueue>
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
@@ -156,7 +157,7 @@ private:
     QList<struct handler> m_aHandler;
 
     //! all incoming MCPD packets
-    QList<QSharedDataPointer<SD_PACKET> > m_aTodoPackets;
+    QQueue<QSharedDataPointer<SD_PACKET> > m_aTodoPackets;
 };
 
 /**

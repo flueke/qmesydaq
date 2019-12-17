@@ -168,7 +168,8 @@ void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void *pPar
     {
         if (!pMcpd->m_bIsSynced)
             emit pMcpd->lostSync(pPacket.constData()->mdp.deviceId, false);
-        pMcpd->m_bIsSynced = true;
+        else
+            pMcpd->m_bIsSynced = true;
     }
     for (;;)
     {
@@ -176,11 +177,11 @@ void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void *pPar
         if (pMcpd->m_pThread->m_iCommand != MCPDThread::WORK)
             break;
         pMcpd->m_pPacketMutex->unlock();
-        usleep(1000);
+        usleep(1);
     }
     if (pMcpd->m_pThread->m_iCommand == MCPDThread::NONE)
     {
-        pMcpd->m_aTodoPackets.append(pPacket);
+        pMcpd->m_aTodoPackets.enqueue(pPacket);
         pMcpd->m_pThread->m_iCommand = MCPDThread::WORK;
         pMcpd->m_pThread->m_ThreadCondition.wakeOne();
     }
@@ -276,7 +277,7 @@ void MCPDThread::run()
         while (!m_pMcpd->m_aTodoPackets.isEmpty())
         {
             bool bPacketLost(false);
-            pPacket = m_pMcpd->m_aTodoPackets.takeFirst();
+            pPacket = m_pMcpd->m_aTodoPackets.dequeue();
             m_pMcpd->m_pPacketMutex->unlock();
             if (!m_pMcpd->analyzeBuffer(pPacket))
             {

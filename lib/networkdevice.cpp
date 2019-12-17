@@ -308,7 +308,7 @@ void NetworkDevice::readSocketData(void)
     // read socket data into receive buffer and notify
     if (m_sock->hasPendingDatagrams())
     {
-//      MSG_ERROR << tr("%1(%2) : NetworkDevice::readSocketData()").arg(ip()).arg(port());
+        // MSG_ERROR << tr("%1(%2) : NetworkDevice::readSocketData()").arg(ip()).arg(port());
         qint64 maxsize = m_sock->pendingDatagramSize();
         if (maxsize > 0)
         {
@@ -320,12 +320,13 @@ void NetworkDevice::readSocketData(void)
             if (len != -1)
             {
                 // MSG_ERROR << tr("%1(%2) : ID = %3 read datagram : %4 from %5 bytes").arg(fromAddress.toString()).arg(fromPort).arg(recBuf->mdp.deviceId).arg(len).arg(maxsize);
-                // MSG_DEBUG << tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(recBuf.bufferNumber).arg(recBuf.cmd).arg(recBuf.deviceStatus);
+                // MSG_DEBUG << tr("%1(%2) : read nr : %3 cmd : %4 status %5").arg(ip()).arg(port()).arg(recBuf->mdp.bufferNumber).arg(recBuf->mdp.cmd).arg(recBuf->mdp.deviceStatus);
                 // quint64 tim = recBuf.time[0] + recBuf.time[1] * 0x10000ULL + recBuf.time[2] * 0x100000000ULL;
                 // MSG_DEBUG << tr("%1(%2) : read time : %3").arg(ip()).arg(port()).arg(tim);
 
                 foreach (const struct handler &tmp, m_aHandler)
                 {
+                    // MSG_DEBUG << tr("source: %1:%2 %3:%4").arg(tmp.SourceAddr.toString()).arg(tmp.wPort).arg(fromAddress.toString()).arg(fromPort);
                     if ((tmp.SourceAddr.isNull() || tmp.SourceAddr == fromAddress)
 			&& (tmp.wPort == 0 || tmp.wPort == fromPort))
                     {

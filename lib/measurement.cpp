@@ -1113,6 +1113,8 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
 
 	m_packages++;
+	Mode mode = this->mode();
+
 	if(pPacket->dp.bufferType < 0x0003)
 	{
 // extract parameter values:
@@ -1224,7 +1226,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						continue;
 					}
 				}
-				if (mode() == ReplayListFile || m_mesydaq->active(mod, id, slotId))
+				if (mode == ReplayListFile || m_mesydaq->active(mod, id, slotId))
 				{
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
@@ -1308,8 +1310,10 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					if (m_Hist[CorrectedPositionHistogram])
 						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
 				}
+#if 0
 				else
 					MSG_DEBUG << tr("Neutron for an inactive channel %1 %2 %3").arg(mod).arg(id).arg(modChan);
+#endif
 			}
 		}
 #if 0
