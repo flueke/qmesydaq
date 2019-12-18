@@ -376,6 +376,8 @@ void Measurement::stop()
 			for(int i = 0; i < m_counter.size(); ++i)
 				MSG_NOTICE << tr("Counter %1 got %2 events").arg(i).arg(m_counter[i]->value());
 		}
+		for (int i = 0; i < NoHistogram; ++i)
+			MSG_ERROR << tr("Histogram[%1]: %2").arg(i).arg(m_Hist[i]->getTotalCounts());
 	}
 	m_status = Idle;
 }
