@@ -42,3 +42,5 @@ LIBS        	+= -L$${SRCBASE}/lib
 INSTALLS	=
 
 LIBS		+= $${MESYDAQ_LIBS}
+
+HEADERS		+= testapplication.h
