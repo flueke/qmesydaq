@@ -101,12 +101,13 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 				| Qt::WindowTitleHint
 				| Qt::WindowSystemMenuHint
 				| Qt::WindowMaximizeButtonHint);
+	m_dataFrame->setObjectName(QString::fromUtf8("m_dataFrame"));
+
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.beginGroup("Plot");
 	m_dataFrame->restoreGeometry(settings.value("geometry").toByteArray());
 	settings.endGroup();
 
-	m_dataFrame->setObjectName(QString::fromUtf8("m_dataFrame"));
 	QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	sizePolicy1.setHorizontalStretch(0);
 	sizePolicy1.setVerticalStretch(0);
@@ -1388,19 +1389,21 @@ void MainWidget::setHistogramType(int val)
 			{
 				// Change the ROI settings
 				Histogram *h = m_meas->hist(m_histoType);
+				int hw = h->width();
+				int hh = h->height();
 
 				roiX->blockSignals(true);
 				roiY->blockSignals(true);
 				roiWidth->blockSignals(true);
 				roiHeight->blockSignals(true);
 
-				roiX->setMaximum(h->width() - 1);
+				roiX->setMaximum(hw - 1);
 				roiX->setValue(m_roi[m_histoType].x());
-				roiY->setMaximum(h->height() - 1);
+				roiY->setMaximum(hh - 1);
 				roiY->setValue(m_roi[m_histoType].y());
-				roiWidth->setMaximum(h->width() - m_roi[m_histoType].x());
+				roiWidth->setMaximum(hw - m_roi[m_histoType].x());
 				roiWidth->setValue(m_roi[m_histoType].width());
-				roiHeight->setMaximum(h->height() - m_roi[m_histoType].y());
+				roiHeight->setMaximum(hh - m_roi[m_histoType].y());
 				roiHeight->setValue(m_roi[m_histoType].height());
 
 				roiHeight->blockSignals(false);
@@ -1487,7 +1490,6 @@ void MainWidget::draw(void)
 		return;
 	}
 	Spectrum *spec(NULL);
-	Histogram *histogram(NULL);
 	quint64 counts(0);
 	QString roiText(tr("Counts"));
 	switch (m_mode)
@@ -1498,14 +1500,16 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
 			}
-			histogram = m_meas->hist(m_histoType);
-			if (m_zoomedRect.isEmpty())
-				m_zoomedRect = QRectF(0, 0, histogram->width(), histogram->height());
-			histogram->calcMinMaxInROI(m_zoomedRect);
-			m_histData->setData(histogram);
-			m_dataFrame->setHistogramData(m_histData);
-			roiText = tr("Counts in displayed region");
-			counts = histogram->getCounts(m_zoomedRect);
+			{
+				Histogram histogram = *m_meas->hist(m_histoType);
+				if (m_zoomedRect.isEmpty())
+					m_zoomedRect = QRectF(0, 0, histogram.width(), histogram.height());
+				histogram.calcMinMaxInROI(m_zoomedRect);
+				m_histData->setData(&histogram);
+				m_dataFrame->setHistogramData(m_histData);
+				roiText = tr("Counts in displayed region");
+				counts = histogram.getCounts(m_zoomedRect);
+			}
 			break;
 		case Plot::Diffractogram :
 			spec = m_meas->spectrum(Measurement::Diffractogram);
@@ -2278,13 +2282,13 @@ void MainWidget::customEvent(QEvent *e)
 						case Measurement::AmplitudeHistogram:
 						case Measurement::CorrectedPositionHistogram:
 							{
-								Histogram *tmpHistogram = m_meas->hist(id);
-								if (tmpHistogram->height() > 0 && tmpHistogram->width() > 0)
+								Histogram tmpHistogram = *m_meas->hist(id);
+								if (tmpHistogram.height() > 0 && tmpHistogram.width() > 0)
 								{
 									// CARESS has it's x=0:y=0 position at top left corner
-									for (int y = tmpHistogram->height() - 1; y >= 0; --y)
-										for (int x = 0; x < tmpHistogram->width(); ++x)
-											tmpData->append(tmpHistogram->value(x, y));
+									for (int y = tmpHistogram.height() - 1; y >= 0; --y)
+										for (int x = 0; x < tmpHistogram.width(); ++x)
+											tmpData->append(tmpHistogram.value(x, y));
 								}
 								else
 									tmpData->append(m_meas->events());
@@ -2300,19 +2304,19 @@ void MainWidget::customEvent(QEvent *e)
 			break;
 		case CommandEvent::C_READ_SPECTROGRAM:
 			{
-				Histogram *tmpHistogram = m_meas->hist(Measurement::PositionHistogram);
+				Histogram tmpHistogram = *m_meas->hist(Measurement::PositionHistogram);
 				Spectrum* tmpSpectrum = NULL;
 				int i(-1);
 				if (!args.isEmpty())
 				{
 					i = args[0].toInt();
-					if (i < 0 || i > tmpHistogram->height())
+					if (i < 0 || i > tmpHistogram.height())
 						i =- 1;
 				}
 				if (i >= 0)
-					tmpSpectrum = tmpHistogram->spectrum(i);
+					tmpSpectrum = tmpHistogram.spectrum(i);
 				else
-					tmpSpectrum = tmpHistogram->xSumSpectrum();
+					tmpSpectrum = tmpHistogram.xSumSpectrum();
 				if (tmpSpectrum->width() > 0)
 				{
 					for (int x = 0; x < tmpSpectrum->width(); ++x)
@@ -2619,9 +2623,10 @@ void MainWidget::changeRoiX(const int val)
 {
 	m_roi[m_histoType].setX(val);
 	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int hw = h->width();
 	int newVal = roiWidth->value() + val;
-	roiWidth->setMaximum(h->width() - val);
-	if (newVal > h->width() && val > m_roi[m_histoType].x())
+	roiWidth->setMaximum(hw - val);
+	if (newVal > hw && val > m_roi[m_histoType].x())
 		roiWidth->setValue(roiWidth->maximum());
 	else
 	{
@@ -2634,9 +2639,10 @@ void MainWidget::changeRoiY(const int val)
 {
 	m_roi[m_histoType].setY(val);
 	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int hh = h->height();
 	int newVal = roiHeight->value() + val;
-	roiHeight->setMaximum(h->height() - val);
-	if (newVal > h->height() && val > m_roi[m_histoType].y())
+	roiHeight->setMaximum(hh - val);
+	if (newVal > hh && val > m_roi[m_histoType].y())
 		roiHeight->setValue(roiHeight->maximum());
 	else
 	{
@@ -2648,10 +2654,11 @@ void MainWidget::changeRoiY(const int val)
 void MainWidget::changeRoiWidth(const int val)
 {
 	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int hw = h->width();
 	int newVal = roiY->value() + val;
-	if (newVal > h->width())
+	if (newVal > hw)
 	{
-		roiWidth->setMaximum(h->width() - roiX->value());
+		roiWidth->setMaximum(hw - roiX->value());
 		roiWidth->setValue(roiWidth->maximum());
 		m_roi[m_histoType].setWidth(roiWidth->value());
 	}
@@ -2663,10 +2670,11 @@ void MainWidget::changeRoiWidth(const int val)
 void MainWidget::changeRoiHeight(const int val)
 {
 	Histogram *h = m_meas->hist(Measurement::HistogramType(m_histoType));
+	int hh = h->height();
 	int newVal = roiX->value() + val;
-	if (newVal > h->height())
+	if (newVal > hh)
 	{
-		roiHeight->setMaximum(h->height() - roiY->value());
+		roiHeight->setMaximum(hh - roiY->value());
 		roiHeight->setValue(roiHeight->maximum());
 		m_roi[m_histoType].setHeight(roiHeight->value());
 	}

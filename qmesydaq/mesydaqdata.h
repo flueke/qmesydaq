@@ -24,9 +24,8 @@
 #include <qwt_data.h>
 #include <qwt_raster_data.h>
 #include <qwt_plot_spectrogram.h>
-
-class Spectrum;
-class Histogram;
+#include "spectrum.h"
+#include "histogram.h"
 
 /**
  * \class MesydaqSpectrumData
@@ -75,7 +74,7 @@ public:
 
 private:
 	//! The spectrum data
-	Spectrum	*m_spectrum;
+	Spectrum	m_spectrum;
 };
 
 /**
@@ -121,7 +120,7 @@ public:
 	
 private:
 	//! The histogram data
-	Histogram		*m_histogram;
+	Histogram		m_histogram;
 
 	QwtDoubleInterval	m_range;
 };

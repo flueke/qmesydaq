@@ -20,8 +20,6 @@
 #include <qwt_color_map.h>
 #include <qwt_scale_map.h>
 #include "mesydaqdata.h"
-#include "spectrum.h"
-#include "histogram.h"
 
 #include "logging.h"
 
@@ -30,23 +28,19 @@
  */
 MesydaqSpectrumData::MesydaqSpectrumData()
 	: QwtData()
-	, m_spectrum(NULL)
 {
 }
 
 QwtData *MesydaqSpectrumData::copy() const
 {
 	MesydaqSpectrumData *tmp = new MesydaqSpectrumData();
-	tmp->setData(m_spectrum);
+	tmp->setData((Spectrum *)&m_spectrum);
 	return tmp;
 }
 
 size_t MesydaqSpectrumData::size() const
 {
-	if (m_spectrum) 
-		return m_spectrum->width() + 1;
-	else
-		return 0;
+	return m_spectrum.width() + 1;
 }
 
 double MesydaqSpectrumData::x(size_t i) const
@@ -57,14 +51,11 @@ double MesydaqSpectrumData::x(size_t i) const
 double MesydaqSpectrumData::y(size_t i) const
 {
 	double tmp = 0.0;
-	if (m_spectrum)
-	{
 // Doubles the last point to get a horizontal line too at the right end
-		if (i < m_spectrum->width())
-			tmp = m_spectrum->value(i);
-		else if (i == m_spectrum->width())
-			tmp = m_spectrum->value(m_spectrum->width() - 1);
-	}
+	if (i < m_spectrum.width())
+		tmp = m_spectrum.value(i);
+	else if (i == m_spectrum.width())
+		tmp = m_spectrum.value(m_spectrum.width() - 1);
 	if (tmp == 0.0)
 		tmp = 0.1;
 	return tmp;
@@ -72,28 +63,24 @@ double MesydaqSpectrumData::y(size_t i) const
 
 void MesydaqSpectrumData::setData(Spectrum *data)
 {
-	m_spectrum = data;
+	m_spectrum = *data;
 }
 
 quint32 MesydaqSpectrumData::max(void)
 {
-	if (m_spectrum)
-		return m_spectrum->max();
-	else
-		return 0;
+	return m_spectrum.max();
 }
 
 QwtDoubleRect MesydaqSpectrumData::boundingRect() const
 {
-	if (m_spectrum)
-		return QwtData::boundingRect();
-	else
-		return QwtDoubleRect(0.0, 0.1, 1.0, 1.0);
+	QwtDoubleRect rect = QwtData::boundingRect();
+	if (rect.isEmpty())
+		 rect = QwtDoubleRect(0.0, 0.1, 1.0, 1.0);
+	return rect;
 }
 
 MesydaqHistogramData::MesydaqHistogramData()
 	: QwtRasterData()
-	, m_histogram(NULL)
 	, m_range(QwtDoubleInterval(0, 0))
 {
 }
@@ -101,7 +88,7 @@ MesydaqHistogramData::MesydaqHistogramData()
 QwtRasterData *MesydaqHistogramData::copy() const
 {
 	MesydaqHistogramData *tmp = new MesydaqHistogramData();
-	tmp->setData(m_histogram);
+	tmp->setData((Histogram *)&m_histogram);
 	tmp->setRange(m_range);
 	return tmp;
 }
@@ -113,30 +100,21 @@ void MesydaqHistogramData::setRange(const QwtDoubleInterval &r)
 
 QwtDoubleInterval MesydaqHistogramData::range() const
 {
-	if (m_histogram)
-	{
-		double _max = double(m_histogram->maxROI());
-		double _min = double(m_histogram->minROI());
-		if (m_range.isNull())
+	double _max = double(m_histogram.maxROI());
+	double _min = double(m_histogram.minROI());
+	if (m_range.isNull() && (_min != _max))
 			return QwtDoubleInterval(_min, _max);
-		else
-			return m_range;
-	}
-	else
-		return QwtDoubleInterval(0.0, 1.0);
+	return QwtDoubleInterval(0.0, 1.0);
 }
 
 double MesydaqHistogramData::value(double x, double y) const
 {
-	if (m_histogram)
-		return m_histogram->value(quint16(x), quint16(y));
-	else
-		return 0.0;
+	return m_histogram.value(quint16(x), quint16(y));
 }
 
 void MesydaqHistogramData::setData(Histogram *data)
 {
-	m_histogram = data;
+	m_histogram = *data;
 	setBoundingRect(QRectF(0.0, 0.0, data ? data->width() : 0.0, data ? data->height() : 0.0));
 }
 

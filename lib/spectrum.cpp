@@ -55,10 +55,10 @@ Spectrum::Spectrum(const Spectrum &src)
 	, m_autoResize(src.m_autoResize)
 	, m_width(src.m_width)
 {
-	memmove(m_floatingMean, src.m_floatingMean, sizeof(m_floatingMean));
+	memcpy(m_floatingMean, src.m_floatingMean, sizeof(m_floatingMean));
 	m_data = (quint64*) malloc(m_width * sizeof(*m_data));
 	if (m_data != NULL)
-		memmove(m_data, src.m_data, m_width * sizeof(*m_data));
+		memcpy(m_data, src.m_data, m_width * sizeof(*m_data));
 }
 
 //! copy operator
@@ -68,12 +68,12 @@ Spectrum& Spectrum::operator=(const Spectrum &src)
 	m_meanCount    = src.m_meanCount;
 	m_totalCounts  = src.m_totalCounts;
 	m_meanPos      = src.m_meanPos;
-	memmove(m_floatingMean, src.m_floatingMean, sizeof(m_floatingMean));
+	memcpy(m_floatingMean, src.m_floatingMean, sizeof(m_floatingMean));
 	m_autoResize   = src.m_autoResize;
 	m_width        = src.m_width;
 	m_data = (quint64*) malloc(m_width * sizeof(m_data[0]));
 	if (m_data != NULL)
-		memmove(m_data, src.m_data, m_width * sizeof(m_data[0]));
+		memcpy(m_data, src.m_data, m_width * sizeof(m_data[0]));
 	return *this;
 }
 
