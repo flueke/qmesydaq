@@ -31,6 +31,17 @@ test/threads/threads
 test/histogramming/histogramming
 test/ipaddresswidget/ipaddresswidget
 test/timespectrum/timespectrum
+test/inspect/inspect
+test/input/input
+test/input/fast_sender
+test/input2/input2
+test/input3/input3
+test/input4/input4
+test/input5/input5
+test/input6/input6
+test/input12/input12
+test/input22/input22
+test/fill/fill
 
 tools/fixlmfile/fixlmfile
 tools/mstd16/mstd16
@@ -51,3 +62,4 @@ qled/example/ui_dialog.h
 qled/plugin/moc_qledplugin.cpp
 qled/src/moc_qled.cpp
 
+gmon.out
