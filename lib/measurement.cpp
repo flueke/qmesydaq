@@ -1108,6 +1108,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	quint16 counterTriggers = 0;
 	quint64 tim;
 	quint16 mod = pPacket->dp.deviceId;
+	quint16 txmod = m_mesydaq->getTxMode(mod, true);
 
 	setHeadertime(pPacket->dp.time[0] + (quint64(pPacket->dp.time[1]) << 16) + (quint64(pPacket->dp.time[2]) << 32));
 	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
@@ -1238,7 +1239,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					}
 					if (moduleID != TYPE_MDLL)
 					{
-						if (!(m_mesydaq->getTxMode(mod, true) & TPA) && m_mesydaq->getMode(mod, id))
+						if (!(txmod & TPA) && m_mesydaq->getMode(mod, id))
 						{
 // Amplitude must be different from 0 !!
 							if (amp == 0)
@@ -1352,8 +1353,10 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 quint16 Measurement::mapTube(const quint16 tube)
 {
 	quint16 tmpTube = m_tubeMapping.value(tube, 0xFFFF);
+#if 0
 	if (tmpTube == 0xFFFF)
 		MSG_NOTICE << tube << " -> " << tmpTube << " " << m_tubeMapping;
+#endif
 	return tmpTube;
 }
 
