@@ -26,7 +26,7 @@
 #include "mesydaq2.h"
 #include "StatusBarEntry.h"
 #include "logging.h"
-#include "website.h"
+// #include "website.h"
 #include "stdafx.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -105,7 +105,7 @@ MainWindow::MainWindow(QWidget *parent)
 	statusBar()->addPermanentWidget(m_pulserStatus);
 	statusBar()->addPermanentWidget(m_mode);
 
-	m_wsTool = new WebsiteTool("https://forge.frm2.tum.de/redmine/projects/qmesydaq");
+	// m_wsTool = new WebsiteTool("https://forge.frm2.tum.de/redmine/projects/qmesydaq");
 
 	restoreSettings();
 }
@@ -306,7 +306,7 @@ void MainWindow::lostSync(quint16 /* id */, bool /* bLost */)
  */
 void MainWindow::bugReport(void)
 {
-	m_wsTool->show();
+	// m_wsTool->show();
 }
 
 void MainWindow::doLoadConfiguration(const QString &sFilename)

@@ -49,7 +49,7 @@ INSTALLS	= target
 
 target.path	= $${TARGETPATH}/bin
 
-QT 		+= network svg webkit
+QT 		+= network svg # webkit
 
 RESOURCES       += qmesydaq.qrc
 
@@ -91,9 +91,9 @@ HEADERS 	+= mainwidget.h \
 		caresssetup.h \
 		tcpsetup.h \
 		diskspace/diskspace.h \
-		website.h \
 		data.h \
 		ConfigFileDialog.h
+#		website.h \
 
 FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
@@ -156,9 +156,9 @@ SOURCES 	+= main.cpp \
 		caresssetup.cpp \
 		tcpsetup.cpp \
 		diskspace/diskspace.cpp \
-		website.cpp \
 		data.cpp \
 		ConfigFileDialog.cpp
+#		website.cpp \
 
 DISTFILES	+= images/mesytec.jpg \
 		images/mesylogo_200x95_yellow.png
