@@ -1,6 +1,6 @@
 ############################################################################
 #   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>
-#   Copyright (C) 2009-2019 by Jens Krüger <jens.krueger@frm2.tum.de>
+#   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -18,40 +18,29 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-SRCBASE		= ..
+VERSION		= 1.0.1
+SRCBASE		= ../..
 
-include($${SRCBASE}/mesydaqconfig.pri)
+include ($${SRCBASE}/mesydaqconfig.pri)
 
-TEMPLATE 	= subdirs
+TEMPLATE 	= app
+TARGET 		= input32
+DEPENDPATH 	+= . $${SRCBASE}/lib
+INCLUDEPATH 	+= . $${SRCBASE}/lib
 
-TARGET 		= 
+SUBDIRS		+= listfile
 
-SUBDIRS	 	+= listfile \
-		dummy \
-		input \
-		input2 \
-		input3 \
-		input4 \
-		input5 \
-		input6 \
-		input12 \
-		input22 \
-		input32 \
-		loadsetup \
-		lstohisto \
-		readhisto \
-		threads \
-		histogramming \
-		timespectrum \
-		ipaddresswidget \
-		calibration \
-		colormaps \
-		fill \
-		inspect
+QT		+= core network
+QT		-= gui
 
-unix {
-SUBDIRS		+= mapping \
-		readlistfile \
-		countrates \
-		plot
-}
+CONFIG		+= debug console link_prl
+
+SOURCES 	+= main.cpp
+
+LIBS        	+= -L$${SRCBASE}/lib
+
+INSTALLS	=
+
+LIBS		+= $${MESYDAQ_LIBS}
+
+HEADERS		+= testapplication.h

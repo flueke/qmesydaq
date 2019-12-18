@@ -41,6 +41,7 @@ test/input5/input5
 test/input6/input6
 test/input12/input12
 test/input22/input22
+test/input32/input32
 test/fill/fill
 
 tools/fixlmfile/fixlmfile
