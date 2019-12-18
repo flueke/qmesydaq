@@ -11,33 +11,38 @@
 #include <logging.h>
 
 
-QElapsedTimer eTimer;
 
 int main(int argc, char **argv)
 {
-	eTimer.invalidate();
+	int meastime(10);
+	QElapsedTimer eTimer;
+
 
 	QCoreApplication app(argc, argv);
 
+	if (argc > 1)
+		meastime = strtol(argv[1], NULL, 10);
+
 	startLogging("", "");
+	DEBUGLEVEL = FATAL;
 
-	qDebug() << QHostInfo::fromName("taco6.taco.frm2").addresses().first();
+	eTimer.invalidate();
 
-	DEBUGLEVEL = ERROR;
+	MSG_FATAL << QHostInfo::fromName("taco6.taco.frm2").addresses().first();
 
-	qDebug() << DEBUGLEVEL;
+
 	Mesydaq2 *mesy = new Mesydaq2();
 
 	mesy->addMCPD(1, "172.25.2.6", 54321);
-	// MSG_FATAL << "Lost " << mcpd->missedData() << " packets.";
+	MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
 
 	qDebug() << DEBUGLEVEL;
 
 	if (mesy)
 	{
-		QTimer::singleShot(0.75 * 360 * 1000, &app, SLOT(quit()));
+		QTimer::singleShot(meastime * 1000, &app, SLOT(quit()));
 		eTimer.start();
-		mesy->start();
+		// mesy->start();
 		qDebug() << QDateTime::currentDateTime().toString();
 	}
 	else
@@ -48,14 +53,15 @@ int main(int argc, char **argv)
 
 	app.exec();
 
-	quint64 events = 0;
-	MSG_FATAL << "Got " << mesy->receivedData() << " packets with " << events << " events.";
+	quint64 packets = mesy->receivedData();
+	quint64 events = 243 * packets;
+
+	MSG_FATAL << "Got " << packets << " packets with " << events << " events.";
 	if (eTimer.isValid())
 		MSG_FATAL << "Event rate: " << (events / (eTimer.elapsed() / 1000.)) << " Ev/s";
 	MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
 
 	delete mesy;
 
-	qDebug() << QDateTime::currentDateTime().toString();
 	return 0;
 }
