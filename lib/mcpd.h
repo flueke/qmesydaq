@@ -86,6 +86,8 @@ public:
      */
     quint16 port(void) const;
 
+    quint64 queueLength();
+
 signals:
 
     /**

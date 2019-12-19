@@ -73,7 +73,6 @@ MCPD::MCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, q
         // m_pDataNetwork = NetworkDevice::create(m_wDataPort, szSourceIp);
         bResult &= m_pNetwork->connect_handler(QHostAddress(szMcpdDataIp), wDataPort, &staticAnalyzeBuffer, this);
     }
-
     //! this is normally true and only false, if there is already such a MCPD
     m_bBaseMcpdInitialized = bResult;
 }
@@ -223,6 +222,11 @@ QString MCPD::ip(void) const
 quint16 MCPD::port(void) const
 {
     return m_wPort;
+}
+
+quint64 MCPD::queueLength()
+{
+    return m_aTodoPackets.length();
 }
 
 /** \fn MCPDThread::MCPDThread(MCPD* pMcpd)
