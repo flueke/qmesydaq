@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Jens Krüger <jens.krueger@frm2.tum.de>          *
+ *   Copyright (C) 2014-2019 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Module Public License as published by   *
