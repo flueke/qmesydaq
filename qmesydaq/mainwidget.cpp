@@ -155,7 +155,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
 	if (loop)
 	{
-		MSG_ERROR << loop->version();
+		MSG_NOTICE << loop->version();
 		remoteInterfaceVersionLabel->setText(tr("Interface %1").arg(loop->version()));
 	}
 	else
@@ -894,7 +894,7 @@ void MainWidget::displayMpsdSlot(int iModule)
 		tmp = "TP";
 	else if (cap & P)
 		tmp = "P";
-	MSG_ERROR << tr("%1 %2").arg(cap).arg(tmp);
+	MSG_NOTICE << tr("%1 %2").arg(cap).arg(tmp);
 	capabilities->setText(tmp);
 
 	quint16 txmod = m_theApp->getTxMode(mod);
@@ -904,7 +904,7 @@ void MainWidget::displayMpsdSlot(int iModule)
 		tmp = "TP";
 	else if (txmod & P)
 		tmp = "P";
-	MSG_ERROR << tr("%1 %2").arg(txmod).arg(tmp);
+	MSG_NOTICE << tr("%1 %2").arg(txmod).arg(tmp);
 	txMode->setText(tmp);
 
 // Status display:

@@ -519,7 +519,7 @@ bool MCPD8::readId(void)
         }
         else if ((*it)->type() != m_awReadId[0])
         {
-            MSG_FATAL << tr("renewing MDLL");
+            MSG_WARNING << tr("renewing MDLL");
             // delete m_mpsd[c];
             m_mdll.remove(0);
             if (m_awReadId[0] != 0)
@@ -638,12 +638,12 @@ bool MCPD8::setGain(quint16 addr, quint8 chan, quint8 gainval)
 	QMutexLocker locker(m_pCommandMutex);
 	m_mpsd[addr]->setGain(chan, gainval, 1);
 	quint8 cmd = (m_mpsd[addr]->type() == TYPE_MSTD16 && ver >= 9.9) ? SETGAIN_MSTD : SETGAIN_MPSD;
-	MSG_ERROR << tr("Use setGain command: %1").arg(cmd);
+	MSG_INFO << tr("Use setGain command: %1").arg(cmd);
 	initCmdBuffer(cmd);
 	m_cmdBuf.data[0] = addr;
 	m_cmdBuf.data[1] = chan;
 	m_cmdBuf.data[2] = gainval;
-	MSG_FATAL << tr("set gain to potival: %1").arg(m_cmdBuf.data[2]);
+	MSG_INFO << tr("set gain to potival: %1").arg(m_cmdBuf.data[2]);
 	finishCmdBuffer(3);
 	return sendCommand(true);
 }
@@ -1617,7 +1617,7 @@ tryagain:
 #else
         quint64 qwStart = quint64(QDateTime::currentDateTime().toTime_t()) * 1000;
 #endif
-        MSG_FATAL << tr("%1(%2) : %3. sent cmd: %4 to id: %5").
+        MSG_INFO << tr("%1(%2) : %3. sent cmd: %4 to id: %5").
 		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(m_cmdBuf.bufferNumber).arg(m_cmdBuf.cmd).arg(m_cmdBuf.deviceId);
 // block other commands due to the writing on flash to avoid crashes on MCPD-8
         if (m_cmdBuf.cmd == SETPROTOCOL)
@@ -1763,7 +1763,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
     bool bAnswerOk(true);
     if (pMdp->deviceId != m_byId)
     {
-        MSG_FATAL << tr("deviceId : %1 <-> %2").arg(pMdp->deviceId).arg(m_byId);
+        MSG_WARNING << tr("deviceId : %1 <-> %2").arg(pMdp->deviceId).arg(m_byId);
         return false;
     }
 
@@ -1790,7 +1790,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         switch (pMdp->cmd)
         {
             case RESET:
-                MSG_ERROR << tr("not handled command : RESET");
+                MSG_WARNING << tr("not handled command : RESET");
                 break;
             case START:
                 emit startedDaq();
@@ -1823,10 +1823,10 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			MSG_INFO << tr("SETTIMING : master %1 terminate %2").arg(pMdp->data[0]).arg(pMdp->data[1]);
                 break;
             case SETCLOCK:
-                MSG_ERROR << tr("not handled command : SETCLOCK");
+                MSG_WARNING << tr("not handled command : SETCLOCK");
                 break;
             case SETRUNID:
-                MSG_ERROR << tr("not handled command : SETRUNID");
+                MSG_WARNING << tr("not handled command : SETRUNID");
                 break;
             case SETCELL:
 		if (pMdp->cmd & 0x80)
@@ -1854,7 +1854,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			MSG_INFO << tr("SETPARAM");
                 break;
             case GETPARAM:
-                MSG_ERROR << tr("not handled command : GETPARAM");
+                MSG_WARNING << tr("not handled command : GETPARAM");
                 {
 			quint64 val = pMdp->data[9] + (quint64(pMdp->data[10]) << 16) + (quint64(pMdp->data[11]) << 32);
 			setParameter(0, val);
@@ -1937,16 +1937,16 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		}
                 break;
             case SETDAC:
-                MSG_ERROR << tr("not handled command : SETDAC");
+                MSG_WARNING << tr("not handled command : SETDAC");
                 break;
             case SENDSERIAL:
-                MSG_ERROR << tr("not handled command : SENDSERIAL");
+                MSG_WARNING << tr("not handled command : SENDSERIAL");
                 break;
             case READSERIAL:
-                MSG_ERROR << tr("not handled command : READSERIAL");
+                MSG_WARNING << tr("not handled command : READSERIAL");
                 break;
             case SCANPERI:
-                MSG_ERROR << tr("not handled command : SCANPERI");
+                MSG_WARNING << tr("not handled command : SCANPERI");
                 break;
             case WRITEFPGA:
 		if (pMdp->cmd & 0x80)
@@ -1973,7 +1973,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			m_capabilities = m_txMode = 0;
 			m_reg = 0xFFF;
                 }
-                MSG_ERROR << tr("GETCAPABILITIES %1").arg(m_reg);
+                MSG_NOTICE << tr("GETCAPABILITIES %1").arg(m_reg);
                 break;
             case SETCAPABILITIES:
                 if(pMdp->data[0] == m_txMode)
@@ -1986,18 +1986,18 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 break;
             case READREGISTER:
 		for (int i = 0; i < (pMdp->bufferLength - pMdp->headerLength); ++i)
-			MSG_FATAL << tr("READREGISTER : %1 = %2").arg(i).arg(pMdp->data[i]);
+			MSG_NOTICE << tr("READREGISTER : %1 = %2").arg(i).arg(pMdp->data[i]);
 		m_reg = pMdp->data[0];
-		MSG_FATAL << tr("READREGISTER : %1 %2").arg(m_reg).arg(pMdp->bufferLength);
+		MSG_NOTICE << tr("READREGISTER : %1 %2").arg(m_reg).arg(pMdp->bufferLength);
                 break;
             case READFPGA:
-                MSG_ERROR << tr("not handled command : READFPGA");
+                MSG_WARNING << tr("not handled command : READFPGA");
                 break;
             case SETPOTI:
-                MSG_ERROR << tr("not handled command : SETPOTI");
+                MSG_WARNING << tr("not handled command : SETPOTI");
                 break;
             case GETPOTI:
-                MSG_ERROR << tr("not handled command : GETPOTI");
+                MSG_WARNING << tr("not handled command : GETPOTI");
                 break;
             case READID: // extract the retrieved MPSD-8 IDs:
 		for (quint8 c = 0; c < 8; ++c)
@@ -2005,10 +2005,10 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 MSG_DEBUG << tr("READID finished");
                 break;
             case DATAREQUEST:
-                MSG_ERROR << tr("not handled command : DATAREQUEST");
+                MSG_WARNING << tr("not handled command : DATAREQUEST");
                 break;
             case QUIET:
-                MSG_ERROR << tr("not handled command : QUIET");
+                MSG_WARNING << tr("not handled command : QUIET");
                 break;
             case GETVER:
                 m_version = pMdp->data[1];
@@ -2188,7 +2188,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 }
                 break;
             default:
-                MSG_ERROR << tr("not handled command : %1").arg(pMdp->cmd);
+                MSG_WARNING << tr("not handled command : %1").arg(pMdp->cmd);
                 break;
         }
 

@@ -282,7 +282,7 @@ void MPSDPulser::display()
 void MPSDPulser::pulserTestSlot(bool onoff)
 {
 	bool ok;
-	MSG_ERROR << "pulser test : " << onoff;
+	MSG_NOTICE << "pulser test : " << onoff;
 //	if (onoff)
 //		emit clear();
 	emit pulserTest(onoff);

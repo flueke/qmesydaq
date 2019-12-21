@@ -264,7 +264,7 @@ void Mesydaq2::startedDaq(void)
 		m_pDatStream->setFile(m_listfilename);
 	}
 	m_bRunAck = true;
-	MSG_ERROR << tr("daq started");
+	MSG_DEBUG << tr("daq started");
 }
 
 /*!
@@ -649,13 +649,13 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 					for (int k = 0; k < modules; ++k)
 					{
 						settings.setValue(QString("gain%1").arg(k), value->getGainPoti(j, k));
-						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->active(j, k);
+						MSG_NOTICE << tr("%1 %2 ").arg(j).arg(k) << value->active(j, k);
 					}
 					for (int k = 0; k < modules; ++k)
 					{
 						settings.setValue(QString("active%1").arg(k), value->active(j, k) ? "true" : "false");
 						settings.setValue(QString("histogram%1").arg(k), value->histogram(j, k) ? "true" : "false");
-						MSG_ERROR << tr("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
+						MSG_NOTICE << tr("%1 %2 ").arg(j).arg(k) << value->histogram(j, k);
 					}
 					settings.endGroup();
 					break;
@@ -704,7 +704,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			MSG_ERROR << tr("found no or invalid MCPD id");
+			MSG_FATAL << tr("found no or invalid MCPD id");
 			continue;
 		}
 		++nMcpd;
@@ -784,7 +784,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			MSG_ERROR << tr("found no or invalid Module id");
+			MSG_FATAL << tr("found no or invalid Module id");
 			continue;
 		}
 		int iMCPDId = iId / 8;
@@ -846,7 +846,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		int iId = settings.value("id", "-1").toInt();
 		if (iId < 0)
 		{
-			MSG_ERROR << tr("found no or invalid Module id");
+			MSG_FATAL << tr("found no or invalid Module id");
 			continue;
 		}
 

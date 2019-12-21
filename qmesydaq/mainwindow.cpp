@@ -113,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::updateStatusBar()
 {
 	QList<int> list = m_mesy->mcpdId();
-        MSG_ERROR << tr("MCPD %1").arg(list.size());
+	MSG_DEBUG << tr("MCPD %1").arg(list.size());
 	for (int i = 0; i < list.size(); ++i)
      		if (m_mesy->isExtsynced(list.at(i)))
 			m_sync->setText("External");
