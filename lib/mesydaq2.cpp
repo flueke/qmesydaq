@@ -795,7 +795,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		bool	comgain(true);
 		bool	ampmode(false);
 
-		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
+		if (m_mcpd.contains(iMCPDId) && dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
 		{
 			int moduleID = getModuleId(iMCPDId, j);
 			switch (moduleID)
