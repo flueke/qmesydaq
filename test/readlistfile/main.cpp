@@ -6,7 +6,7 @@
 #include <iostream>
 #include <mesydaq2.h>
 #include <measurement.h>
-#include <logging.h>
+#include <qmlogging.h>
 
 void version(void)
 {

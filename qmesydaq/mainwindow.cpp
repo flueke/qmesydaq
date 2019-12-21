@@ -25,7 +25,7 @@
 #include "passworddialog.h"
 #include "mesydaq2.h"
 #include "StatusBarEntry.h"
-#include "logging.h"
+#include "qmlogging.h"
 // #include "website.h"
 #include "stdafx.h"
 

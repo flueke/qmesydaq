@@ -4,7 +4,7 @@
 #include <QStringList>
 #include <QTimer>
 
-#include "logging.h"
+#include "qmlogging.h"
 #include "measurement.h"
 #include "mesydaq2.h"
 

@@ -20,7 +20,7 @@
 #include <QSplashScreen>
 #include <QPlastiqueStyle>
 #include <QSettings>
-#include "logging.h"
+#include "qmlogging.h"
 
 #if USE_TACO
 #	include "TACOLoop.h"

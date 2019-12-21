@@ -47,7 +47,7 @@ int clock_gettime(int /* clockid_t*/ clk_id, struct timespec *tp)
 #include "utils.h"
 #include "simapp.h"
 #include "simmcpd8.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "mdefines.h"
 
 #include <algorithm>    // std::random_shuffle

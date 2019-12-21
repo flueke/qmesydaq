@@ -7,7 +7,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 
-#include "logging.h"
+#include "qmlogging.h"
 
 ConfigFileDialog::ConfigFileDialog(QWidget *parent, Qt::WindowFlags flags)
 	: QFileDialog(parent, flags)

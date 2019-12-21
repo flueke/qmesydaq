@@ -21,7 +21,7 @@
 #include <QApplication>
 
 #include "tcpsetup.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

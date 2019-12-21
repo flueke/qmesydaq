@@ -56,7 +56,7 @@
 #include "CARESSLoop.h"
 #include "mapcorrect.h"
 #include "mapcorrectparser.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "streamwriter.h"
 
 #include <QApplication>

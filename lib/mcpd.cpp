@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "mcpd.h"
 #include "networkdevice.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 
 /** \fn MCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szMcpdDataIp = QString::null,

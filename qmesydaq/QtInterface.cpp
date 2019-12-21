@@ -23,7 +23,7 @@
 #include <QDateTime>
 #include "QtInterface.h"
 #include "LoopObject.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 
 /*!

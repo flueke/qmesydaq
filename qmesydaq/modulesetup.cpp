@@ -21,7 +21,7 @@
 #include "modulesetup.h"
 #include "mesydaq2.h"
 
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
  *  constructor

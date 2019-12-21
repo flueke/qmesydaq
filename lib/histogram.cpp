@@ -20,7 +20,7 @@
 
 #include "histogram.h"
 #include "spectrum.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 #include <cmath>
 #include <algorithm>

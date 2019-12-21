@@ -26,7 +26,7 @@
 #include "mstd16.h"
 #include "mdll.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 
 #define MCPD8_MAX_ERRORCOUNT    5

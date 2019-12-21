@@ -22,7 +22,7 @@
 
 #include "libqmesydaq_global.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /**
  * \class MPSD8

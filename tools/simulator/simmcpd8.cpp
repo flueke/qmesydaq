@@ -18,7 +18,7 @@
  ***************************************************************************/
 #include "utils.h"
 #include "simmcpd8.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // SimMCPD8::SimMCPD8(QObject *parent, quint8 id, const QHostAddress &address, quint16 port)

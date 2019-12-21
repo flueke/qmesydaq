@@ -27,7 +27,7 @@
 #include <QDebug>
 #include <zlib.h>
 #include "mapcorrectparser.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 #define ARRAY_SIZE(x) ((int)(sizeof(x)/sizeof((x)[0])))
 

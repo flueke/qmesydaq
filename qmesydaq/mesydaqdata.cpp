@@ -21,7 +21,7 @@
 #include <qwt_scale_map.h>
 #include "mesydaqdata.h"
 
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

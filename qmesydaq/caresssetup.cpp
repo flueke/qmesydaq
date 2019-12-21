@@ -22,7 +22,7 @@
 #include <QMessageBox>
 
 #include "caresssetup.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

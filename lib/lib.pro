@@ -52,7 +52,7 @@ HEADERS 	+= stdafx.h \
 		   datarepeater.h \
 		   spectrum.h \
 		   histogram.h \
-		   logging.h \
+		   qmlogging.h \
 		   mapcorrect.h \
 		   usermapcorrect.h \
 		   mdllcorrect.h \
@@ -79,7 +79,7 @@ SOURCES 	+= stdafx.cpp \
 		   datarepeater.cpp \
 		   spectrum.cpp \
 		   histogram.cpp \
-		   logging.cpp \
+		   qmlogging.cpp \
 		   mapcorrect.cpp \
 		   linearmapcorrect.cpp \
 		   usermapcorrect.cpp \

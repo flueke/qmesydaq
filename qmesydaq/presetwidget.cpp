@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "presetwidget.h"
 
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

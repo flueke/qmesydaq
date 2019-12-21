@@ -20,7 +20,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "TACOLoop.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 #include <iostream>
 #include <QApplication>

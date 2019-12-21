@@ -28,7 +28,7 @@
 #include "LoopObject.h"
 #include "mapcorrect.h"
 #include "mappedhistogram.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

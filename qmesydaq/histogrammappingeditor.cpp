@@ -32,7 +32,7 @@
 #include "mappeddetector.h"
 #include "editormemory.h"
 #include "mappeddetector.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 static const QString g_sUndefined("#undef.");
 const int g_iColumnCount = 6;

@@ -22,7 +22,7 @@
 #include <QThread>
 #include "networkdevice.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 
 QMutex			NetworkDevice::m_mutex(QMutex::Recursive);

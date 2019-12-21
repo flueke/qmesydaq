@@ -35,7 +35,7 @@
 #include <QDebug>
 #include <QMutexLocker>
 #include <iostream>
-#include "logging.h"
+#include "qmlogging.h"
 #include "mdefines.h"
 #include <cctype>
 

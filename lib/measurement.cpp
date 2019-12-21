@@ -32,7 +32,7 @@
 #include "mdllcorrect.h"
 #include "mappedhistogram.h"
 #include "mesydaq2.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "editormemory.h"
 #include "stdafx.h"
 

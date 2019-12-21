@@ -22,7 +22,7 @@
 
 #include "generalsetup.h"
 #include "measurement.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

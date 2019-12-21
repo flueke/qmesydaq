@@ -34,7 +34,7 @@
 #include "mesydaqdata.h"
 #include "zoomer.h"
 
-#include "logging.h"
+#include "qmlogging.h"
 
 #include <QResizeEvent>
 

@@ -29,7 +29,7 @@
 #include "mesydaq2.h"
 #include "mdefines.h"
 
-#include "logging.h"
+#include "qmlogging.h"
 
 void version(void)
 {

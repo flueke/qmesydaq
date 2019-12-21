@@ -20,7 +20,7 @@
 #include "mdefines.h"
 #include "mcpdsetup.h"
 #include "mesydaq2.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

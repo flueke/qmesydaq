@@ -18,7 +18,7 @@
    59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "logging.h"
+#include "qmlogging.h"
 #include "histogram.h"
 
 Histogram &generateData(const quint16 slice)

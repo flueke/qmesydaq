@@ -25,7 +25,7 @@
 
 #include "moduleidentificationpage.h"
 #include "mcpd8.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 
 #define WAITTIME 2000 //! (ms) wait time after last input before testing new MCPD

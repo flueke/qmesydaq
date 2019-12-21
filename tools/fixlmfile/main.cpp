@@ -27,7 +27,7 @@
 #include <mcpd8.h>
 #include <mesydaq2.h>
 #include <mdefines.h>
-#include <logging.h>
+#include <qmlogging.h>
 
 void fixListfile(QString readfilename);
 

@@ -22,7 +22,7 @@
 #include "spectrum.h"
 #include "mappedhistogram.h"
 #include "mapcorrect.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor: store mapping and possible create histogram (generate a new mapped copy of the source)

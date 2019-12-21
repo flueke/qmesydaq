@@ -1,5 +1,5 @@
 #include <iostream>
-#include <logging.h>
+#include <qmlogging.h>
 #include "mapcorrect.h"
 #include "packagehandler.h"
 

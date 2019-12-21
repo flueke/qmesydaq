@@ -27,7 +27,7 @@
 
 #include "structures.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 static const quint16  	sep0 = 0x0000;
 static const quint16  	sep5 = 0x5555;    

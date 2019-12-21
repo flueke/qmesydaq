@@ -20,7 +20,7 @@
 
 #include "mpsd8.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     \fn MPSD8plus::MPSD8plus(quint8 id, QObject *parent)

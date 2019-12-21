@@ -2,7 +2,7 @@
 
 #include "measurement.h"
 #include "mesydaq2.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 int main(int argc, char **argv)
 {

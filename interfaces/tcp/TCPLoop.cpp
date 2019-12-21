@@ -27,7 +27,7 @@
 #include <QFileInfo>
 
 #include "TCPLoop.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "MultipleLoopApplication.h"
 #include "QMesydaqDetectorInterface.h"
 

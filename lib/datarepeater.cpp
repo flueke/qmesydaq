@@ -31,7 +31,7 @@
 #include <QTimerEvent>
 
 #include "datarepeater.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 //! if defined use a connected UDP socket, else send datagrams directly
 #define USE_CONNECTED_UDP

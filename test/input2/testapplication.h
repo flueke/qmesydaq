@@ -4,7 +4,7 @@
 #include <QTimer>
 
 #include <mcpd8.h>
-#include <logging.h>
+#include <qmlogging.h>
 #include <mdefines.h>
 
 #include <histogram.h>

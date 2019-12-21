@@ -35,7 +35,7 @@
 
 #include "structures.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 extern void readListfile(const QString &readfilename);
 

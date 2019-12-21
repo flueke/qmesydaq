@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <mcpd8.h>
 #include <mdefines.h>
-#include <logging.h>
+#include <qmlogging.h>
 
 #include "testapplication.h"
 

@@ -26,7 +26,7 @@
 #include <QStringList>
 
 #include "editormemory.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 UserMapCorrection::UserMapCorrection()
 {

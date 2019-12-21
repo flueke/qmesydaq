@@ -27,7 +27,7 @@
 
 #include "structures.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 static QString key = "mesytec psd listmode data";
 

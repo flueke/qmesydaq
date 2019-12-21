@@ -25,7 +25,7 @@
 #include "mesydaq2.h"
 #include "pulsertest.h"
 
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

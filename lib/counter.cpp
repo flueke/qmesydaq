@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include <QDebug>
 #include "counter.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 MesydaqCounter :: MesydaqCounter()
 	: QObject()

@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include "mpsd8.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

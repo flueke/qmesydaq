@@ -20,7 +20,7 @@
 #include "mcpd8.h"
 #include "mpsd8.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

@@ -21,7 +21,7 @@
 #include "mdefines.h"
 #include "networkdevice.h"
 #include "mcpd8.h"
-#include "logging.h"
+#include "qmlogging.h"
 
 /*!
     constructor

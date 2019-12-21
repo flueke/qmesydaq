@@ -25,7 +25,7 @@
 #include "datarepeater.h"
 #include "streamwriter.h"
 #include "mcpd8.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 
 /*!

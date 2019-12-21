@@ -8,7 +8,7 @@
 #include <iostream>
 #include <networkdevice.h>
 #include <mdefines.h>
-#include <logging.h>
+#include <qmlogging.h>
 
 void analyzeDataBuffer(QSharedDataPointer<SD_PACKET>);
 

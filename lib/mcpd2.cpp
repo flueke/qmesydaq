@@ -24,7 +24,7 @@
 #include "mpsd8.h"
 #include "mcpd2.h"
 #include "mdefines.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "stdafx.h"
 
 /**

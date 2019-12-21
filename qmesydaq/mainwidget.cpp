@@ -52,7 +52,7 @@
 #include "mcpdsetup.h"
 #include "mpsdpulser.h"
 #include "mdllpulser.h"
-#include "logging.h"
+#include "qmlogging.h"
 #include "histogrammappingeditor.h"
 #include "editormemory.h"
 #include "mainwindow.h"

@@ -20,7 +20,7 @@
 
 #include "colormaps.h"
 
-#include "logging.h"
+#include "qmlogging.h"
 
 #include <cmath>
 
