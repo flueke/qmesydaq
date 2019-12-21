@@ -1,9 +1,22 @@
 *.[oa]
 *~
 *.patch
+*.orig
+*.rej
+*.zip
+*.tar
+*.tar.gz
+*.tar.bz2
 Makefile
+Makefile.Debug
+Makefile.Release
 revision.h
+version
 
+data/
+configs/
+release/
+debug/
 .moc/
 .libs/
 .ui/
