@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2014 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2014 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -38,7 +38,7 @@ class SpectrumData: public QwtData
 {
     // The x values depend on its index and the y values
     // can be calculated from the corresponding x value.
-    // So we don´t need to store the values.
+    // So we donÂ´t need to store the values.
     // Such an implementation is slower because every point
     // has to be recalculated for every replot, but it demonstrates how
     // QwtData can be used.
