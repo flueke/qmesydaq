@@ -905,7 +905,7 @@ CARESS::ReturnType CORBADevice_i::release_module(CORBA::Long kind,
 	if (m_theApp!=NULL)
 		pInterface=dynamic_cast<QMesyDAQDetectorInterface*>(m_theApp->getQtInterface());
 
-	for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>=0; --iDevice)
+	for (iDevice=QMESYDAQ_MAXDEVICES-1; iDevice>0; --iDevice)
 		if (m_lId[iDevice]>0 && m_lId[iDevice]==id)
 			break;
 	m_lId[iDevice]=0;
