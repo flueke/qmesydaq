@@ -74,16 +74,17 @@ Histogram& Histogram::operator=(const Histogram &src)
 	m_data1        = src.m_data1;
 	for (int i = 0; i < m_width; ++i)
 		delete m_data[i];
-	m_data = (Spectrum**)realloc(m_data, src.m_width * sizeof(Spectrum*));
-	if (m_data != NULL)
+	Spectrum **new_data = (Spectrum**)realloc(m_data, src.m_width * sizeof(Spectrum *));
+	if (new_data != NULL)
 	{
+		m_data = new_data;
 		for (int i = 0; i < src.m_width; ++i)
 		{
-			Spectrum* pSrc = src.m_data[i];
+			Spectrum *pSrc = src.m_data[i];
 			if (pSrc != NULL)
 				m_data[i] = new Spectrum(*pSrc);
 			else
-				m_data[i] = NULL;
+				m_data[i] = new Spectrum();
 		}
 	}
 	m_dataKeys     = src.m_dataKeys;
