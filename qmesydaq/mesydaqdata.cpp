@@ -27,16 +27,22 @@
     constructor
  */
 MesydaqSpectrumData::MesydaqSpectrumData()
+#if QWT_VERSION < 0x060000
 	: QwtData()
+#else
+	: QwtSeriesData<QPointF>()
+#endif
 {
 }
 
+#if QWT_VERSION < 0x060000
 QwtData *MesydaqSpectrumData::copy() const
 {
 	MesydaqSpectrumData *tmp = new MesydaqSpectrumData();
 	tmp->setData((Spectrum *)&m_spectrum);
 	return tmp;
 }
+#endif
 
 size_t MesydaqSpectrumData::size() const
 {
@@ -61,9 +67,20 @@ double MesydaqSpectrumData::y(size_t i) const
 	return tmp;
 }
 
+#if QWT_VERSION >= 0x060000
+QPointF MesydaqSpectrumData::sample(size_t i) const
+{
+	return QPointF(x(i), y(i));
+}
+#endif
+
 void MesydaqSpectrumData::setData(Spectrum *data)
 {
 	m_spectrum = *data;
+#if QWT_VERSION >= 0x060000
+#warning TODO calculate the spectrum minima
+	d_boundingRect = QRectF(0, 0, data->width(), data->max());
+#endif
 }
 
 quint32 MesydaqSpectrumData::max(void)
@@ -73,7 +90,11 @@ quint32 MesydaqSpectrumData::max(void)
 
 QwtDoubleRect MesydaqSpectrumData::boundingRect() const
 {
+#if QWT_VERSION < 0x060000
 	QwtDoubleRect rect = QwtData::boundingRect();
+#else
+	QwtDoubleRect rect = d_boundingRect;
+#endif
 	if (rect.isEmpty())
 		 rect = QwtDoubleRect(0.0, 0.1, 1.0, 1.0);
 	return rect;
@@ -85,6 +106,7 @@ MesydaqHistogramData::MesydaqHistogramData()
 {
 }
 
+#if QWT_VERSION < 0x060000
 QwtRasterData *MesydaqHistogramData::copy() const
 {
 	MesydaqHistogramData *tmp = new MesydaqHistogramData();
@@ -92,6 +114,7 @@ QwtRasterData *MesydaqHistogramData::copy() const
 	tmp->setRange(m_range);
 	return tmp;
 }
+#endif
 
 void MesydaqHistogramData::setRange(const QwtDoubleInterval &r)
 {
@@ -103,7 +126,7 @@ QwtDoubleInterval MesydaqHistogramData::range() const
 	double _max = double(m_histogram.maxROI());
 	double _min = double(m_histogram.minROI());
 	if (m_range.isNull() && (_min != _max))
-			return QwtDoubleInterval(_min, _max);
+		return QwtDoubleInterval(_min, _max);
 	return QwtDoubleInterval(0.0, 1.0);
 }
 
@@ -115,7 +138,13 @@ double MesydaqHistogramData::value(double x, double y) const
 void MesydaqHistogramData::setData(Histogram *data)
 {
 	m_histogram = *data;
+#if QWT_VERSION < 0x060000
 	setBoundingRect(QRectF(0.0, 0.0, data ? data->width() : 0.0, data ? data->height() : 0.0));
+#else
+	setInterval(Qt::XAxis, QwtInterval(0.0, data ? data->width() : 0.0));
+	setInterval(Qt::YAxis, QwtInterval(0.0, data ? data->height() : 0.0));
+	setInterval(Qt::ZAxis, QwtInterval(0.0, data ? data->max() : 0.0));
+#endif
 }
 
 /*!
@@ -128,6 +157,7 @@ void MesydaqHistogramData::initRaster(const QRectF &, const QSize &)
 {
 }
 
+#if QWT_VERSION < 0x060000
 /*!
     \fn QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
 
@@ -199,3 +229,4 @@ QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtSca
 	return image;	
 //	return QwtPlotSpectrogram::renderImage(xMap, yMap, area);
 }
+#endif

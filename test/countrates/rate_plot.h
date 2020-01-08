@@ -30,7 +30,9 @@ protected:
 private:
 	void alignScales();
 
+#if QWT_VERSION < 0x060000
 	void drawItems(QPainter *painter, const QRect &rect, const QwtScaleMap map[axisCnt], const QwtPlotPrintFilter &pfilter) const;
+#endif
 
 	void setWidth(const quint32 w);
 

@@ -26,11 +26,13 @@ RatePlot::RatePlot(QWidget *parent)
 	, m_lastVal(0.0)
 {
 // Disable polygon clipping
+#if QWT_VERSION < 0x060000
 	QwtPainter::setDeviceClipping(false);
 
 // We don't need the cache here
 	canvas()->setPaintAttribute(QwtPlotCanvas::PaintCached, false);
 	canvas()->setPaintAttribute(QwtPlotCanvas::PaintPacked, false);
+#endif
 
 #if QT_VERSION >= 0x040000
 #ifdef Q_WS_X11
@@ -53,7 +55,9 @@ RatePlot::RatePlot(QWidget *parent)
 //  Initialize data
 	setWidth(PLOT_SIZE);
 // Attach (don't copy) data. Both curves use the same x array.
+#if QWT_VERSION < 0x060000
 	cLeft->setRawData(m_x, m_y, PLOT_SIZE);
+#endif
 
 //  Insert min rate line at y = 0
 	m_minRate = new QwtPlotMarker();
@@ -91,7 +95,9 @@ void RatePlot::alignScales()
 // why the spreaded API needs polishing.
 
 //	canvas()->setFrameStyle(QFrame::Box | QFrame::Plain );
+#if QWT_VERSION < 0x060000
 	canvas()->setLineWidth(1);
+#endif
 
 	for ( int i = 0; i < QwtPlot::axisCnt; i++ )
 	{
@@ -175,9 +181,11 @@ void RatePlot::setRateMax(const double val)
 	m_maxRate->setYValue(val);
 }
 
+#if QWT_VERSION < 0x060000
 void RatePlot::drawItems(QPainter *painter, const QRect &rect, const QwtScaleMap map[axisCnt], const QwtPlotPrintFilter &pfilter) const
 {
 //	qDebug() << __FUNCTION__;
 //	painter->rotate(90);
 	QwtPlot::drawItems(painter, rect, map, pfilter);
 }
+#endif

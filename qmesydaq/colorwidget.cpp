@@ -37,7 +37,11 @@ MesydaqColorWidget::MesydaqColorWidget(MesydaqColorMap *map, const QString &text
 	QVBoxLayout 	*layout = new QVBoxLayout;
 	QwtScaleWidget 	*scale = new QwtScaleWidget(this);
 	scale->setColorBarEnabled(true);
+#if QWT_VERSION < 0x060000
 	scale->setColorMap(QwtDoubleInterval(0.0, 1.0), *m_map);
+#else
+	scale->setColorMap(QwtDoubleInterval(0.0, 1.0), m_map);
+#endif
 	layout->addWidget(scale);
 	layout->addWidget(m_button);
 	setLayout(layout);

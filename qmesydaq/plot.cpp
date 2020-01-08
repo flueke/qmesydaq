@@ -103,7 +103,11 @@ void Plot::setSpectrumData(SpectrumData *data, int curve)
 {
 	if (data)
 	{
+#if QWT_VERSION < 0x060000
 		m_curve[curve]->setData(*data);
+#else
+		m_curve[curve]->setData(data);
+#endif
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
 			QRectF r = m_curve[curve]->boundingRect();
@@ -119,7 +123,11 @@ void Plot::setSpectrumData(MesydaqSpectrumData *data, int curve)
 {
 	if (data)
 	{
+#if QWT_VERSION < 0x060000
 		m_curve[curve]->setData(*data);
+#else
+		m_curve[curve]->setData(data);
+#endif
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
 			QRectF r = m_curve[curve]->boundingRect();
@@ -135,7 +143,11 @@ void Plot::setHistogramData(HistogramData *data)
 {
 	if (data)
 	{
+#if QWT_VERSION < 0x060000
 		m_histogram->setData(*data);
+#else
+		m_histogram->setData(data);
+#endif
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
 			QRectF r = m_histogram->boundingRect();
@@ -150,8 +162,12 @@ void Plot::setHistogramData(MesydaqHistogramData *data)
 {
 	if (data)
 	{
+#if QWT_VERSION < 0x060000
 		data->setRange(m_thresholds);
 		m_histogram->setData(*data);
+#else
+		m_histogram->setData(data);
+#endif
 		if (m_zoomer && !m_zoomer->zoomRectIndex())
 		{
 			QRectF r = m_histogram->boundingRect();
@@ -174,15 +190,27 @@ void Plot::setLinLog(const enum Scale log)
 			switch (m_linlog)
 			{
 				case Logarithmic :
+#if QWT_VERSION < 0x060000
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLog10ScaleEngine);
+#else
+					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
+#endif
 					m_colorMap->setLogarithmicScaling();
+#if QWT_VERSION < 0x060000
 					m_histogram->setColorMap(*m_colorMap);
+#else
+					m_histogram->setColorMap(m_colorMap);
+#endif
 					break;
 				case Linear :
 				default:
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLinearScaleEngine);
 					m_colorMap->setLinearScaling();
+#if QWT_VERSION < 0x060000
 					m_histogram->setColorMap(*m_colorMap);
+#else
+					m_histogram->setColorMap(m_colorMap);
+#endif
 					break;
 			}
 			break;
@@ -193,7 +221,11 @@ void Plot::setLinLog(const enum Scale log)
 			switch (m_linlog)
 			{
 				case Logarithmic:
+#if QWT_VERSION < 0x060000
             				setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+#else
+					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
+#endif
 					break;
 				case Linear :
 				default:
@@ -224,7 +256,11 @@ void Plot::setDisplayMode(const Mode &m)
 			switch(m_linlog)
 			{
 				case Logarithmic :
+#if QWT_VERSION < 0x060000
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+#else
+					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
+#endif
 					break;
 				case Linear :
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
@@ -239,7 +275,11 @@ void Plot::setDisplayMode(const Mode &m)
 			switch (m_linlog)
 			{
 				case Logarithmic :
+#if QWT_VERSION < 0x060000
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+#else
+					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
+#endif
 					break;
 				case Linear :
 				default:
@@ -258,7 +298,11 @@ void Plot::setDisplayMode(const Mode &m)
 			switch (m_linlog)
 			{
 				case Logarithmic :
+#if QWT_VERSION < 0x060000
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
+#else
+					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
+#endif
 					break;
 				case Linear :
 				default:
@@ -275,15 +319,27 @@ void Plot::setDisplayMode(const Mode &m)
 			switch (m_linlog)
 			{
 				case Logarithmic :
+#if QWT_VERSION < 0x060000
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLog10ScaleEngine);
+#else
+            				setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
+#endif
 					m_colorMap->setLogarithmicScaling();
+#if QWT_VERSION < 0x060000
 					m_histogram->setColorMap(*m_colorMap);
+#else
+					m_histogram->setColorMap(m_colorMap);
+#endif
 					break;
 				case Linear :
 				default:
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLinearScaleEngine);
 					m_colorMap->setLinearScaling();
+#if QWT_VERSION < 0x060000
 					m_histogram->setColorMap(*m_colorMap);
+#else
+					m_histogram->setColorMap(m_colorMap);
+#endif
 					break;
 			}
 			setAxisTitle(QwtPlot::xBottom, "tube");
@@ -306,10 +362,24 @@ void Plot::replot(void)
 	{
 		case Histogram:
 			{
+#if QWT_VERSION < 0x060000
 				QwtDoubleInterval r = m_histogram->data().range();
+#else
+				QwtRasterData *data = m_histogram->data();
+				QwtDoubleInterval r(0, 0);
+				if (data)
+				{
+					r.setMinValue(data->interval(Qt::ZAxis).minValue());
+					r.setMaxValue(data->interval(Qt::ZAxis).maxValue());
+				}
+#endif
 				if (m_linlog && r.minValue() < 1)
 					r.setMinValue(1.0);
+#if QWT_VERSION < 0x060000
 				m_rightAxis->setColorMap(r, m_histogram->colorMap());
+#else
+				m_rightAxis->setColorMap(r, const_cast<QwtColorMap *>(m_histogram->colorMap()));
+#endif
 				setAxisScale(QwtPlot::yRight, r.minValue(), r.maxValue());
 			}
 			break;
@@ -403,6 +473,7 @@ int Plot::heightForWidth(int /* w */) const
 	return -1;
 }
 
+#if QWT_VERSION < 0x060000
 void Plot::print(QPaintDevice &printer, const QwtPlotPrintFilter &filter)
 {
 	QPen pen = m_curve[0]->pen();
@@ -412,6 +483,7 @@ void Plot::print(QPaintDevice &printer, const QwtPlotPrintFilter &filter)
 	pen.setWidth(0);
 	m_curve[0]->setPen(pen);
 }
+#endif
 
 void Plot::setColorMap(MesydaqColorMap *map)
 {

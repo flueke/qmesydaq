@@ -23,7 +23,13 @@
 
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
-#include <qwt_double_interval.h>
+
+#if QWT_VERSION < 0x060000
+#	include <qwt_double_interval.h>
+#else
+#	include <qwt_interval.h>
+#	define QwtDoubleInterval QwtInterval
+#endif
 
 class QwtPlotCurve;
 class QwtPlotSpectrogram;
@@ -196,20 +202,20 @@ private slots:
 	 * \param rect zoom area
 	 */
 
-#if QWT_VERSION >= 0x060000
-	void zoomed(const QRectF &rect);
-	void zoomAreaSelected(const QRectF &);
-#else
+#if QWT_VERSION < 0x060000
 	void zoomed(const QwtDoubleRect &rect);
 	void zoomAreaSelected(const QwtDoubleRect &);
+#else
+	void zoomed(const QRectF &rect);
+	void zoomAreaSelected(const QRectF &);
 #endif
 
 signals:
 	//! this signal will be emitted if the user has zoomed in or out
-#if QWT_VERSION >= 0x060000
-	void zoom(const QRectF &rect);
-#else
+#if QWT_VERSION < 0x060000
 	void zoom(const QwtDoubleRect &rect);
+#else
+	void zoom(const QRectF &rect);
 #endif
 
 protected:

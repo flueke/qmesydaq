@@ -21,7 +21,13 @@
 #ifndef MESYDAQ_DATA_H
 #define MESYDAQ_DATA_H
 
-#include <qwt_data.h>
+#if QWT_VERSION < 0x060000
+#	include <qwt_data.h>
+#else
+#	include <qwt_series_data.h>
+#	define QwtDoubleRect QRectF
+#	define QwtDoubleInterval QwtInterval
+#endif
 #include <qwt_raster_data.h>
 #include <qwt_plot_spectrogram.h>
 #include "spectrum.h"
@@ -34,14 +40,20 @@
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de
  */
+#if QWT_VERSION < 0x060000
 class MesydaqSpectrumData : public QwtData
+#else
+class MesydaqSpectrumData : public QwtSeriesData<QPointF>
+#endif
 {
 public:
 	//! constructor
 	MesydaqSpectrumData();
 
+#if QWT_VERSION < 0x060000
 	//! \return a deep copy of the spectrum data
 	virtual QwtData *copy() const;
+#endif
 
 	//! \return the length of the spectrum
 	virtual size_t size() const; 
@@ -57,6 +69,10 @@ public:
 	    \return the counts of the cell i in spectrum
 	 */
 	virtual double y(size_t i) const;
+
+#if QWT_VERSION >= 0x060000
+	virtual QPointF sample(size_t i) const;
+#endif
 
 	/**
 	 * takes the data from the spectrum
@@ -116,7 +132,9 @@ public:
 
 	virtual void initRaster(const QRectF &, const QSize &);
 
+#if QWT_VERSION < 0x060000
 	QSize rasterHint(const QRectF &) const;
+#endif
 	
 private:
 	//! The histogram data

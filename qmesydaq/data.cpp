@@ -51,10 +51,12 @@ SpectrumData::~SpectrumData()
 	delete [] m_data;
 }
 
+#if QWT_VERSION < 0x060000
 QwtData *SpectrumData::copy() const
 {
 	return new SpectrumData(*this);
 }
+#endif
 
 size_t SpectrumData::size() const
 {
@@ -71,15 +73,42 @@ double SpectrumData::y(size_t i) const
 	return m_data[i];
 }
 
-HistogramData::HistogramData()
-	: QwtRasterData(QRectF(-1.5, -1.5, 3.0, 3.0))
+QwtDoubleRect SpectrumData::boundingRect() const
 {
+#if QWT_VERSION < 0x060000
+	QwtDoubleRect rect = QwtData::boundingRect();
+#else
+	QwtDoubleRect rect = d_boundingRect;
+#endif
+	if (rect.isEmpty())
+		 rect = QwtDoubleRect(0.0, 0.1, 1.0, 1.0);
+	return rect;
 }
 
+#if QWT_VERSION >= 0x060000
+QPointF SpectrumData::sample(size_t i) const
+{
+	return QPointF(x(i), y(i));
+}
+#endif
+
+HistogramData::HistogramData()
+#if QWT_VERSION < 0x060000
+	: QwtRasterData(QRectF(-1.5, -1.5, 3.0, 3.0))
+#endif
+{
+#if QWT_VERSION >= 0x060000
+	setInterval(Qt::XAxis, QwtInterval(-1.5, 1.5));
+	setInterval(Qt::YAxis, QwtInterval(-1.5, 1.5));
+#endif
+}
+
+#if QWT_VERSION < 0x060000
 QwtRasterData *HistogramData::copy() const
 {
 	return new HistogramData();
 }
+#endif
 
 QwtDoubleInterval HistogramData::range() const
 {
@@ -104,7 +133,11 @@ DiffractogramData::DiffractogramData(const SpectrumData &data)
 DiffractogramData::DiffractogramData(const HistogramData &data, int dir)
 	: SpectrumData()
 {
+#if QWT_VERSION < 0x060000
 	QRectF r = data.boundingRect();
+#else
+	QRectF r(0, 0, data.interval(Qt::XAxis).width(), data.interval(Qt::YAxis).width());
+#endif
 	if (dir == Data::xDir)
 	{
 		d_size = size_t(r.width() / 0.1);
@@ -121,10 +154,12 @@ DiffractogramData::DiffractogramData(const HistogramData &data, int dir)
 	}
 }
 
+#if QWT_VERSION < 0x060000
 QwtData *DiffractogramData::copy() const
 {
 	return new DiffractogramData(*this);
 }
+#endif
 
 size_t DiffractogramData::size() const
 {

@@ -30,6 +30,10 @@
 #include <qwt_scale_widget.h>
 #include <qwt_scale_engine.h>
 
+#if QWT_VERSION >= 0x060000
+#	include <qwt_plot_renderer.h>
+#endif
+
 #include "plot.h"
 #include "colormaps.h"
 #include "mainwidget.h"
@@ -1626,9 +1630,18 @@ void MainWidget::exportPDF()
 			fileName += ".pdf";
 		m_printer->setOutputFormat(QPrinter::PdfFormat);
 		m_printer->setOutputFileName(fileName);
+#if QWT_VERSION < 0x060000
 		QwtPlotPrintFilter filter;
 		filter.setOptions(QwtPlotPrintFilter::PrintAll & ~QwtPlotPrintFilter::PrintBackground);
 		m_dataFrame->print(*m_printer, filter);
+#else
+		QwtPlotRenderer renderer;
+
+		renderer.setDiscardFlag(QwtPlotRenderer::DiscardBackground, false);
+		// renderer.setLayoutFlag(QwtPlotRenderer::KeepFrames, true);
+
+		renderer.renderTo(m_dataFrame, *m_printer);
+#endif
 	}
 }
 
@@ -1651,7 +1664,9 @@ void MainWidget::exportSVG()
 		generator.setDescription(tr("QMesydaq generated data plot"));
 #endif
 		generator.setSize(QSize(800, 600));
+#if QWT_VERSION < 0x060000
 		m_dataFrame->print(generator);
+#endif
 	}
 }
 
@@ -1887,9 +1902,9 @@ void MainWidget::printPlot(void)
 		QwtPlotRenderer renderer;
 
 		renderer.setDiscardFlag(QwtPlotRenderer::DiscardBackground, false);
-		renderer.setLayoutFlag(QwtPlotRenderer::KeepFrames, true);
+		// renderer.setLayoutFlag(QwtPlotRenderer::KeepFrames, true);
 
-		renderer.renderTo(this, printer);
+		renderer.renderTo(m_dataFrame, *m_printer);
 #endif
 	}
 }

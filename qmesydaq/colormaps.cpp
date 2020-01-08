@@ -76,6 +76,7 @@ QRgb MesydaqColorMap::rgb(const QwtDoubleInterval &interval, double value) const
 		return QwtLinearColorMap::rgb(interval, value);
 }
 
+#if QWT_VERSION < 0x060000
 QwtColorMap *MesydaqColorMap::copy() const
 {
 	MesydaqColorMap *map = new MesydaqColorMap();
@@ -83,6 +84,7 @@ QwtColorMap *MesydaqColorMap::copy() const
 	map->m_log = this->m_log;
 	return map;
 }
+#endif
 
 StdColorMap::StdColorMap()
 	: MesydaqColorMap() 

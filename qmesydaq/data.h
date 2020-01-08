@@ -21,7 +21,15 @@
 #ifndef _DATA_H_
 #define _DATA_H
 
-#include <qwt_data.h>
+#include <qwt_global.h>
+
+#if QWT_VERSION < 0x060000
+#	include <qwt_data.h>
+#else
+#	include <qwt_series_data.h>
+#	define QwtDoubleRect QRectF
+#	define QwtDoubleInterval QwtInterval
+#endif
 #include <qwt_raster_data.h>
 
 double myspectrum(double value);
@@ -34,7 +42,11 @@ namespace Data
 	};
 }
 
+#if QWT_VERSION < 0x060000
 class SpectrumData: public QwtData
+#else
+class SpectrumData: public QwtSeriesData<QPointF>
+#endif
 {
     // The x values depend on its index and the y values
     // can be calculated from the corresponding x value.
@@ -46,19 +58,28 @@ class SpectrumData: public QwtData
 public:
 	SpectrumData(size_t size);
 
-	SpectrumData(const SpectrumData  &);
+	SpectrumData(const SpectrumData &);
 
 	SpectrumData();
 
 	~SpectrumData();
 
+#if QWT_VERSION < 0x060000
 	virtual QwtData *copy() const;
+#endif
 
 	virtual size_t size() const;
 
 	virtual double x(size_t i) const;
 
 	virtual double y(size_t i) const;
+
+#if QWT_VERSION >= 0x060000
+	virtual QPointF sample(size_t i) const;
+#endif
+
+	//! \return the bounding rectangle of the data.
+	QwtDoubleRect boundingRect() const;
 
 protected:
 	size_t 	d_size;
@@ -71,7 +92,9 @@ class HistogramData: public QwtRasterData
 public:
 	HistogramData();
 
+#if QWT_VERSION < 0x060000
 	virtual QwtRasterData *copy() const;
+#endif
 
 	virtual QwtDoubleInterval range() const;
 
@@ -83,9 +106,11 @@ class DiffractogramData : public SpectrumData
 public:
 	DiffractogramData(const SpectrumData &);
 
-	DiffractogramData(const HistogramData &, int );
+	DiffractogramData(const HistogramData &, int);
 
+#if QWT_VERSION < 0x060000
 	virtual QwtData *copy() const;
+#endif
 
 	virtual size_t size() const;
 

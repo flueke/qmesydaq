@@ -22,6 +22,9 @@
 #define _COLORMAPS_H_
 
 #include <qwt_color_map.h>
+#if QWT_VERSION >= 0x060000
+#	define QwtDoubleInterval QwtInterval
+#endif
 
 /**
  * \short base class for all color maps used in qmesydaq
@@ -58,8 +61,10 @@ public:
 	 */
 	virtual QRgb rgb(const QwtDoubleInterval &, double value) const;
 
+#if QWT_VERSION < 0x060000
 	//! Clone the color map. 
 	virtual QwtColorMap *copy () const;
+#endif
 
 	//! sets the colormap to linear scaling mode
 	void setLinearScaling(void);

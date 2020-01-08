@@ -20,10 +20,16 @@
 
 #include "zoomer.h"
 
+#if QWT_VERSION < 0x060000
 Zoomer::Zoomer(QwtPlotCanvas *canvas)
+#else
+Zoomer::Zoomer(QWidget *canvas)
+#endif
 	: QwtPlotZoomer(canvas)
 {
+#if QWT_VERSION < 0x060000
 	setSelectionFlags(QwtPicker::DragSelection | QwtPicker::CornerToCorner);
+#endif
 	setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier);
 	setMousePattern(QwtEventPattern::MouseSelect3, Qt::RightButton);
 

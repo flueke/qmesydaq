@@ -23,6 +23,8 @@
 
 #include <qwt_plot_zoomer.h>
 
+class QwtPlotCanvas;
+
 /**
  * \short The standard zoomer object for all displays
  *
@@ -36,7 +38,11 @@ public:
 	 *
  	 * \param canvas canvas
 	 */
+#if QWT_VERSION < 0x060000
 	Zoomer(QwtPlotCanvas *canvas);
+#else
+	Zoomer(QWidget *canvas);
+#endif
 
 	/*!
 	 * Sets the color of the rubber band of the zoomer
