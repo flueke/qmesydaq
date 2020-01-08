@@ -73,7 +73,10 @@ Histogram& Histogram::operator=(const Histogram &src)
 	m_totalCounts  = src.m_totalCounts;
 	m_data1        = src.m_data1;
 	for (int i = 0; i < m_width; ++i)
+	{
 		delete m_data[i];
+	        m_data[i] = NULL;
+	}
 	Spectrum **new_data = (Spectrum**)realloc(m_data, src.m_width * sizeof(Spectrum *));
 	if (new_data != NULL)
 	{

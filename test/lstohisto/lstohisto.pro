@@ -28,6 +28,10 @@ TARGET 		= lstohisto
 DEPENDPATH 	+= . $${SRCBASE}/lib
 INCLUDEPATH 	+= . $${SRCBASE}/lib
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+}
+
 LIBS		+= -L$${SRCBASE}/lib
 
 SOURCES 	+= main.cpp

@@ -31,14 +31,17 @@ INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
 CONFIG		-= debug
 CONFIG		+= release link_prl
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+}
+
 SOURCES 	+= main.cpp \
 		selectcolorbox.cpp \
-		colorwidget.cpp \
-		colormaps.cpp
+		../../qmesydaq/colormaps.cpp \
+		../../qmesydaq/colorwidget.cpp
 
 HEADERS 	+= selectcolorbox.h \
-		colorwidget.h \
-		colormaps.h
+		../../qmesydaq/colorwidget.h
 
 FORMS		+=
 

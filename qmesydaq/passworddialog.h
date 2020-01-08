@@ -48,7 +48,7 @@ public:
 	//! returns the encrypted hash for the user typed input
 	QString password(void)
 	{
-		return QCryptographicHash::hash(passwordInput->text().toAscii(), QCryptographicHash::Md5).toHex();
+		return QCryptographicHash::hash(passwordInput->text().toLatin1().data(), QCryptographicHash::Md5).toHex();
 	}
 };
 #endif

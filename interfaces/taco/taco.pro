@@ -34,6 +34,10 @@ CONFIG		+= create_prl
 
 target.path	= $${TARGETLIBPATH}
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+}
+
 # Input
 HEADERS 	+= MesyDAQDetectorDetector.h \
 		MesyDAQIOCounter.h \

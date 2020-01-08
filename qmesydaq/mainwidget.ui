@@ -744,9 +744,6 @@ histogram file</string>
               <property name="text">
                <string>0</string>
               </property>
-              <property name="textFormat">
-               <enum>Qt::LogText</enum>
-              </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>

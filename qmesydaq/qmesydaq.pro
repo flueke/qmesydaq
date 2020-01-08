@@ -51,6 +51,10 @@ target.path	= $${TARGETPATH}/bin
 
 QT 		+= network svg # webkit
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += printsupport widgets
+}
+
 RESOURCES       += qmesydaq.qrc
 
 # Input

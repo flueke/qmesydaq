@@ -28,6 +28,7 @@
 #include "measurement.h"
 
 class QTimer;
+class QPrinter;
 
 class MesydaqPlotSpectrogram;
 class MesydaqSpectrumData;

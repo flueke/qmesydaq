@@ -36,7 +36,8 @@ SOURCES 	+= main.cpp \
 		testdata.cpp \
 		plotwidget.cpp \
 		colormaps.cpp \
-		$${SRCBASE}/qmesydaq/data.cpp
+		$${SRCBASE}/qmesydaq/data.cpp \
+		$${SRCBASE}/qmesydaq/mesydaqdata.cpp
 
 HEADERS 	+= testdata.h \
 		plot.h \
@@ -51,4 +52,4 @@ FORMS		+= plotwidget.ui
 
 INSTALLS	=
 
-LIBS		+= $${QWTLIBS}
+LIBS		+= $${QWTLIBS} -L$${SRCBASE}/lib $${MESYDAQ_LIBS}

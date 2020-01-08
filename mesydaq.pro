@@ -29,13 +29,13 @@ include (mesydaqconfig.pri)
 TEMPLATE 	= subdirs
 CONFIG		+= ordered edist
 
-SUBDIRS		+= lib interfaces tools test
+SUBDIRS		+= lib interfaces tools
 
 isEmpty(QLEDLIBS) {
 	SUBDIRS		+= qled
 }
 
-SUBDIRS		+= qmesydaq
+SUBDIRS		+= qmesydaq test
 
 TARGET		= mesydaq
 

@@ -373,7 +373,7 @@ StreamWriter &StreamWriter::writeBytes(const char *pData, uint uLen)
  */
 int StreamWriter::writeRawData(const QString &str)
 {
-	return writeRawData(str.toAscii());
+	return writeRawData(str.toLatin1());
 }
 
 /*!
@@ -551,13 +551,13 @@ bool FilePartsStream::nextFile()
 				szDigits.clear();
 				bEscape = false;
 
-				switch (c.toAscii())
+				switch (c.toLatin1())
 				{
 					case '%':
 						m_szCurrentFile.remove(i, 1);
 						continue;
 					case 'r':
-							iDefaultDigits = 8;
+						iDefaultDigits = 8;
 						dwValue = m_dwRunId;
 						break;
 					case 'p':

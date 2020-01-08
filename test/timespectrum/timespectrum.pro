@@ -30,6 +30,10 @@ INCLUDEPATH 	+= . $${SRCBASE}/lib
 
 LIBS		+= -L$${SRCBASE}/lib
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+}
+
 SOURCES 	+= main.cpp
 
 HEADERS 	+=

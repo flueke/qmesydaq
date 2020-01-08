@@ -18,7 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <QSplashScreen>
-#include <QPlastiqueStyle>
+#if QT_VERSION < 0x050000
+#	include <QPlastiqueStyle>
+#endif
 #include <QSettings>
 #include "qmlogging.h"
 
@@ -74,7 +76,7 @@ int main(int argc, char **argv)
 	QStringList 		argList = app.arguments();
 	LoopObject 		*loop(NULL);
 	QString 		szLoadConfiguration(QString::null);
-	Q_INIT_RESOURCE_EXTERN(qled);
+	Q_INIT_RESOURCE(qled);
 
 	startLogging(g_szShortUsage, g_szLongUsage);
 	for (int i = 1; i < argList.size(); ++i)
@@ -129,8 +131,9 @@ int main(int argc, char **argv)
 #endif
 	if (loop)
 		app.setLoopObject(loop);
-
+#if QT_VERSION < 0x050000
 	app.setStyle(new QPlastiqueStyle());
+#endif
 
 	QPixmap pixmap(":/images/mesytec.png");
 

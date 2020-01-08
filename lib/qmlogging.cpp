@@ -127,7 +127,11 @@ static QString createMessage(const char *msg, char cLogLevel)
 //==================================================================================================================
 // new Qt message handler for logging and debugging the qtMessages
 // messages will go to the logfile
+#if QT_VERSION < 0x050000
 static void messageToFile(QtMsgType type, const char *msg)
+#else
+static void messageToFile(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+#endif
 {
 	char cLogLevel='\0';
 	int iLogLevel(100);
@@ -135,11 +139,14 @@ static void messageToFile(QtMsgType type, const char *msg)
 	{
 		case QtDebugMsg:
 			iLogLevel = DEBUG;
-			if (isdigit(msg[0])) 
+			if (QChar(msg[0]).isDigit())
 			{
-				cLogLevel = msg[0];
+				cLogLevel = QChar(msg[0]).toLatin1();
 				iLogLevel = cLogLevel-'0';
+#if QT_VERSION < 0x050000
 				++msg;
+#else
+#endif
 			}
 			break;
 		case QtWarningMsg:  iLogLevel = WARNING; break;
@@ -148,7 +155,7 @@ static void messageToFile(QtMsgType type, const char *msg)
 	}
 	if (iLogLevel <= DEBUGLEVEL)
 	{
-		QString logline = createMessage(msg, cLogLevel);
+		QString logline = createMessage(QString(msg).toLatin1().data(), cLogLevel);
 		std::cerr << logline.toStdString();
 
 		if (g_bUseLogfile)
@@ -172,7 +179,11 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 	g_bUseLogfile = false;
 	DEBUGLEVEL = ERROR;
 
+#if QT_VERSION < 0x050000
 	qInstallMsgHandler(messageToFile);
+#else
+	qInstallMessageHandler(messageToFile);
+#endif
 	for (int i = 1; i < args.size(); ++i)
 	{
 		QString szArgument = args[i], 

@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    Q_INIT_RESOURCE_EXTERN(qled);
+    Q_INIT_RESOURCE(qled);
     QApplication a(argc, argv);
     Dialog w;
     w.show();
