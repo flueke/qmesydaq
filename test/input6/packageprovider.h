@@ -18,5 +18,5 @@ signals:
 	void bufferReceived(const DATA_PACKET &);
 
 private:
-	NetworkDevice	*nd = NetworkDevice::create(54321);
+	NetworkDevice	*nd;
 };
