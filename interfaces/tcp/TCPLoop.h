@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2002 by Gregor Montermann <g.montermann@mesytec.com>    *
  *   Copyright (C) 2008 by Lutz Rossa <rossa@hmi.de>                       *
- *   Copyright (C) 2009-2019 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2020 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *   Copyright (C) 2010 by Alexander Lenz <alexander.lenz@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

@@ -4,7 +4,7 @@
  * requirements.                                                         *
  * http://stackoverflow.com/questions/9306335/an-ip-address-widget-for-qt-similar-to-mfcs-ip-address-control
  * Copyright (C) 2012 by jpo38, Tugo                                     *
- * Copyright (C) 2014-2019 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ * Copyright (C) 2014-2020 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2019 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2020 by Jens Krüger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -255,8 +255,8 @@ void MainWidget::about()
 	QString text = tr("<h3>About QMesyDAQ </h3>")
 			+ tr("<p>Authors</p><ul>")
 			+ tr("<li>Copyright (C) 2008 <a href=\"mailto:g.montermann@mesytec.com\">Gregor Montermann</a</li>")
-			+ tr("<li>Copyright (C) 2009-2019 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
-			+ tr("<li>Copyright (C) 2011-2019 <a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a></li>")
+			+ tr("<li>Copyright (C) 2009-2020 <a href=\"mailto:jens.krueger@frm2.tum.de\">Jens Kr&uuml;ger</a></li>")
+			+ tr("<li>Copyright (C) 2011-2020 <a href=\"mailto:rossa@helmholtz-berlin.de\">Lutz Rossa</a></li>")
 			+ tr("</ul><p>This program controls the data acquisition and display for the MesyTec MCPD-8, MCPD-8, MSTD-16, and MDLL modules</p>");
 	LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
 	if (loop)

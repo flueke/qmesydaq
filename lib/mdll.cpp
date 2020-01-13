@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2009-2019 by Gregor Montermann, mesytec GmbH & Co. KG   *
+ *   Copyright (C) 2009-2020 by Gregor Montermann, mesytec GmbH & Co. KG   *
  *      g.montermann@mesytec.com                                           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

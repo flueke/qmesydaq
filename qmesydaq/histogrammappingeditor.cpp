@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013-2019 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
+ *   Copyright (C) 2013-2020 by Lutz Rossa <rossa@helmholtz-berlin.de>,    *
  *                    Eric Faustmann <eric.faustmann@helmholtz-berlin.de>, *
  *                    Damian Rhein <damian.rhein@helmholtz-berlin.de>      *
  *                                                                         *
