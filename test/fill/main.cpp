@@ -32,7 +32,7 @@ int main(int, char **)
 	hist		h3;
 	std::cerr << "init of h3 took " << t.elapsed() << " ms" << std::endl;
 
-	const quint32	hsize = 128 * 960;
+	// const quint32	hsize = 128 * 960;
 
 	t.restart();
 	for (int i = 0; i < events; ++i)

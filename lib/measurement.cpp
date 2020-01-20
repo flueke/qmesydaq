@@ -1101,7 +1101,6 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
  */
 void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
-	ulong	data;
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
 	quint16	monitorTriggers = 0;
@@ -1141,7 +1140,9 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				triggers++;
 				quint8 dataId = (pPacket->dp.data[counter + 2] >> 8) & 0x0F;
 				quint8 olddataId = dataId;
-				data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
+#if 0
+				ulong data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
+#endif
 				if (dataId > ADC2ID)
 				{
 					++counterTriggers;

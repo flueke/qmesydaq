@@ -201,7 +201,7 @@ int MCPD8::width(void) const
 		    i += 8;
 		    break;
 	    }
-	return i;
+    return i;
 }
 
 /*!

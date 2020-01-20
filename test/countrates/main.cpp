@@ -19,7 +19,7 @@ public:
 		startTimer(550);
 	}
 
-	virtual void timerEvent(QTimerEvent *e)
+	virtual void timerEvent(QTimerEvent *)
 	{
 		plot->setValue(generateNewValue());
 	}
