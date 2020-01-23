@@ -180,7 +180,7 @@ protected:
 	QHash<QPoint, int>	m_data1;
 
 	//! all spectra
-	Spectrum		**m_data;
+	QVector<Spectrum *>	m_data;
 
 	//! the list of all keys for the spectra
 	QList<quint16>		m_dataKeys;

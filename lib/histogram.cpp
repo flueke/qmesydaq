@@ -36,7 +36,7 @@
 Histogram::Histogram(const quint16 w, const quint16 h)
 	: QObject()
 	, m_totalCounts(0)
-	, m_data(NULL)
+	, m_data(0)
 	, m_height(0)
 	, m_width(0)
 	, m_xSumSpectrum(NULL)
@@ -55,7 +55,7 @@ Histogram::Histogram(const quint16 w, const quint16 h)
 Histogram::Histogram(const Histogram &src)
 	: QObject()
 	, m_totalCounts(0)
-	, m_data(NULL)
+	, m_data(0)
 	, m_height(0)
 	, m_width(0)
 	, m_xSumSpectrum(NULL)
@@ -74,21 +74,18 @@ Histogram& Histogram::operator=(const Histogram &src)
 	m_data1        = src.m_data1;
 	for (int i = 0; i < m_width; ++i)
 	{
-		delete m_data[i];
-	        m_data[i] = NULL;
+		if (m_data[i])
+			delete m_data[i];
+		m_data[i] = NULL;
 	}
-	Spectrum **new_data = (Spectrum**)realloc(m_data, src.m_width * sizeof(Spectrum *));
-	if (new_data != NULL)
+	m_data.resize(src.m_width);
+	for (int i = 0; i < src.m_width; ++i)
 	{
-		m_data = new_data;
-		for (int i = 0; i < src.m_width; ++i)
-		{
-			Spectrum *pSrc = src.m_data[i];
-			if (pSrc != NULL)
-				m_data[i] = new Spectrum(*pSrc);
-			else
-				m_data[i] = new Spectrum();
-		}
+		Spectrum *pSrc = src.m_data[i];
+		if (pSrc != NULL)
+			m_data[i] = new Spectrum(*pSrc);
+		else
+			m_data[i] = new Spectrum();
 	}
 	m_dataKeys     = src.m_dataKeys;
 	m_height       = src.m_height;
@@ -105,17 +102,13 @@ Histogram& Histogram::operator=(const Histogram &src)
 //! destructor
 Histogram::~Histogram()
 {
-	if (m_data != NULL)
+	for (int i = 0; i < m_width; ++i)
 	{
-		for (int i = 0; i < m_width; ++i)
-		{
-			if (m_data[i])
-				delete m_data[i];
-			m_data[i] = NULL;
-		}
-		free(m_data);
-		m_data = NULL;
+		if (m_data[i])
+			delete m_data[i];
+		m_data[i] = NULL;
 	}
+	m_data.resize(0);
 	if (m_xSumSpectrum)
 		delete m_xSumSpectrum;
 	m_xSumSpectrum = NULL;
@@ -294,14 +287,13 @@ void Histogram::clear(const quint16 channel)
  */
 void Histogram::clear(void)
 {
-	if (m_data != NULL)
-		for (int i = 0; i < m_width; ++i)
-		{
-			Spectrum *value = m_data[i];
-			Q_ASSERT_X(value != NULL, "Histogram::clear", "one of the spectra is NULL");
-			if (value != NULL)
-				value->clear();
-		}
+	for (int i = 0; i < m_width; ++i)
+	{
+		Spectrum *value = m_data[i];
+		Q_ASSERT_X(value != NULL, "Histogram::clear", "one of the spectra is NULL");
+		if (value != NULL)
+			value->clear();
+	}
 	m_xSumSpectrum->clear();
 	m_ySumSpectrum->clear();
 	m_totalCounts = 0;
@@ -393,7 +385,7 @@ quint64 Histogram::getCounts(const QRectF &r) const
  */
 Spectrum *Histogram::spectrum(const quint16 channel)
 {
-	if (channel < m_height && m_data && m_data[channel])
+	if (channel < m_height && m_data[channel])
 		return m_data[channel];
 	else
 		return NULL;
@@ -407,7 +399,7 @@ Spectrum *Histogram::spectrum(const quint16 channel)
  */
 quint64 Histogram::max(const quint16 channel) const
 {
-	if (channel < m_height && m_data && m_data[channel])
+	if (channel < m_height && m_data[channel])
 		return m_data[channel]->max();
 	else
 		return 0;
@@ -421,7 +413,7 @@ quint64 Histogram::max(const quint16 channel) const
  */
 quint16 Histogram::maxpos(const quint16 channel) const
 {
-	if (channel < m_height && m_data && m_data[channel])
+	if (channel < m_height && m_data[channel])
 		return m_data[channel]->maxpos();
 	else
 		return 0;
@@ -438,7 +430,7 @@ quint16 Histogram::maxpos(const quint16 channel) const
  */
 void Histogram::getMean(const quint16 chan, float &m, float &s)
 {
-	if (chan < m_width && m_data && m_data[chan])
+	if (chan < m_width && m_data[chan])
 		m = m_data[chan]->mean(s);
 	else
 		m = s = 0.0;
@@ -480,29 +472,19 @@ void Histogram::setWidth(const quint16 w)
 		return;
 	if (w > m_width)
 	{
-		Spectrum **pNew = (Spectrum **)realloc(m_data, w * sizeof(Spectrum *));
-		if (pNew == NULL)
-			return;
-		m_data = pNew;
+		m_data.resize(w);
 		for (int i = m_width; i < w; ++i)
 			m_data[i] = new Spectrum(m_height);
 	}
 	else
 	{
 		for (int i = m_width - 1; i >= w; --i)
-			delete m_data[i];
-		if (w > 0)
 		{
-			Spectrum **pNew = (Spectrum **)realloc(m_data, w * sizeof(Spectrum *));
-			if (pNew == NULL)
-				return;
-			m_data = pNew;
+			if (m_data[i])
+				delete m_data[i];
+			m_data[i] = NULL;
 		}
-		else
-		{
-			free(m_data);
-			m_data = NULL;
-		}
+		m_data.resize(w);
 	}
 	m_xSumSpectrum->setWidth(w);
 	m_maximumPos = w - 1;
