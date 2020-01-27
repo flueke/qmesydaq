@@ -57,9 +57,11 @@ MappedHistogram::MappedHistogram(const MappedHistogram &src)
 
 MappedHistogram::~MappedHistogram()
 {
+#if 0
 	if (m_spectrum)
 		delete m_spectrum;
 	m_spectrum = NULL;
+#endif
 }
 
 /*!
@@ -75,6 +77,7 @@ MappedHistogram& MappedHistogram::operator=(const MappedHistogram &src)
 	m_adblData = src.m_adblData;
 	m_dblTotalCounts = src.m_dblTotalCounts;
 	m_iMaxPos = src.m_iMaxPos;
+	m_spectrum = new Spectrum(*src.m_spectrum);
 	return *this;
 }
 

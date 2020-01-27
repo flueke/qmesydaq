@@ -1505,7 +1505,21 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
 			}
 			{
-				Histogram histogram = *m_meas->hist(m_histoType);
+				Histogram histogram;
+				if (m_histoType == Measurement::CorrectedPositionHistogram)
+				{
+					MappedHistogram mhistogram = *reinterpret_cast<MappedHistogram *>(m_meas->hist(m_histoType));
+					// The data for a mapped histogram must be copied !
+					// Otherwise the data will not be store in the histogram
+					// since the histogram is copied (due to performance
+					// TODO: check if there is another way to do it
+					histogram = mhistogram;
+					for (int x = 0; x < histogram.width(); ++x)
+						for (int y = 0; y < histogram.height(); ++y)
+							histogram.setValue(x, y, mhistogram.value(x, y));
+				}
+				else
+					histogram = *m_meas->hist(m_histoType);
 				if (m_zoomedRect.isEmpty())
 					m_zoomedRect = QRectF(0, 0, histogram.width(), histogram.height());
 				histogram.calcMinMaxInROI(m_zoomedRect);
