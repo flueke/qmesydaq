@@ -30,7 +30,7 @@ INCLUDEPATH 	+= . .. $${SRCBASE} $${SRCBASE}/qmesydaq
 
 LIBS		+= $${TACOLIBS}
 
-CONFIG		+= create_prl
+CONFIG		+= debug_and_release build_all create_prl
 
 target.path	= $${TARGETLIBPATH}
 
