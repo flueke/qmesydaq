@@ -2298,9 +2298,9 @@ void MainWidget::customEvent(QEvent *e)
 				QList<quint64>* tmpData = new QList<quint64>();
 				if (m_meas->setupType() == Mstd)
 				{
-					Spectrum *tmpSpectrum = m_meas->spectrum(Measurement::SingleTubeSpectrum);
-					for (int x = 0; x < tmpSpectrum->width(); ++x)
-						tmpData->append(tmpSpectrum->value(x));
+					Spectrum tmpSpectrum = *m_meas->spectrum(Measurement::SingleTubeSpectrum);
+					for (int x = 0; x < tmpSpectrum.width(); ++x)
+						tmpData->append(tmpSpectrum.value(x));
 				}
 				else
 				{
@@ -2311,7 +2311,17 @@ void MainWidget::customEvent(QEvent *e)
 						case Measurement::AmplitudeHistogram:
 						case Measurement::CorrectedPositionHistogram:
 							{
-								Histogram tmpHistogram = *m_meas->hist(id);
+								Histogram tmpHistogram;
+								if (id == Measurement::CorrectedPositionHistogram)
+								{
+									MappedHistogram mhistogram = *reinterpret_cast<MappedHistogram *>(m_meas->hist(id));
+									tmpHistogram = mhistogram;
+									for (int x = 0; x < tmpHistogram.width(); ++x)
+										for (int y = 0; y < tmpHistogram.height(); ++y)
+											tmpHistogram.setValue(x, y, mhistogram.value(x, y));
+								}
+								else
+									tmpHistogram = *m_meas->hist(id);
 								if (tmpHistogram.height() > 0 && tmpHistogram.width() > 0)
 								{
 									// CARESS has it's x=0:y=0 position at top left corner
@@ -2458,8 +2468,8 @@ void MainWidget::customEvent(QEvent *e)
 			break;
 		case CommandEvent::C_MAPPEDHISTOGRAM: // mapped and corrected position histogram
 			{
-				MappedHistogram *pHist = reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
-				answer << ((quint64)pHist);
+				MappedHistogram pHist = *reinterpret_cast<MappedHistogram *>(m_meas->hist(Measurement::CorrectedPositionHistogram));
+				answer << ((quint64)&pHist);
 				break;
 			}
 		case CommandEvent::C_GET_RUNID:
