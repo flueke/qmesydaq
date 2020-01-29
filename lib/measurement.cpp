@@ -1112,7 +1112,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	quint16 txmod = m_mesydaq->getTxMode(mod, true);
 
 	setHeadertime(pPacket->dp.time[0] + (quint64(pPacket->dp.time[1]) << 16) + (quint64(pPacket->dp.time[2]) << 32));
-	setCurrentTime(m_headertime / 10000); // headertime is in 100ns steps
+	setCurrentTime(m_headertime / m_timeBase);
 
 	m_packages++;
 	Mode mode = this->mode();
@@ -1133,7 +1133,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			tim += m_headertime;
 // id stands for the trigId and modId depending on the package type
 			quint8 id = (pPacket->dp.data[counter + 2] >> 12) & 0x7;
-			m_timer->setTime(tim / 10000);
+			m_timer->setTime(tim / m_timeBase);
 // not neutron event (counter, chopper, ...)
 			if((pPacket->dp.data[counter + 2] & TRIGGEREVENTTYPE))
 			{
@@ -1580,7 +1580,7 @@ void Measurement::readListfile(const QString &readfilename)
 		if (getNextBlock(datStream, dataBuf->dp))
 		{
 			quint64 tmp = dataBuf->dp.time[0] + (quint64(dataBuf->dp.time[1]) << 16) + (quint64(dataBuf->dp.time[2]) << 32);
-			m_timer->start(tmp / 10000);
+			m_timer->start(tmp / m_timeBase);
 			analyzeBuffer(dataBuf);
 			++blocks;
 			++bcount;
@@ -1769,6 +1769,7 @@ bool Measurement::loadSetup(const QString &name)
 	QString	home(getenv("HOME"));
 	m_histPath = settings.value("histogramPath", home).toString();
 	m_listPath = settings.value("listfilePath", home).toString();
+	m_timeBase = settings.value("timebase", 10000).toUInt(); // headertime is in 100ns steps
 	QString sz = settings.value("debugLevel", QString("%1").arg(WARNING)).toString();
 	m_psdArrangement = Arrangement(settings.value("psdarrangement", "0").toInt());
 	int n = sz.toInt(&bOK);

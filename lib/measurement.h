@@ -556,6 +556,8 @@ private:
 	QMap<int, QPair<int, int> >	m_monitorMap;
 
 	quint64		m_lastTriggerTime;
+
+	quint64		m_timeBase;
 };
 
 #endif
