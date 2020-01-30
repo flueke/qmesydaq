@@ -38,7 +38,7 @@
 
 #include <QResizeEvent>
 
-SpectrumCurve:: SpectrumCurve()
+SpectrumCurve::SpectrumCurve()
 	: QwtPlotCurve("")
 {
         setStyle(QwtPlotCurve::Steps);
@@ -97,6 +97,15 @@ Plot::Plot(QWidget *parent)
 
         setDisplayMode(Histogram);
 	setLinLog(Linear);
+}
+
+Plot::~Plot()
+{
+	for (int i = 0; i < 16; ++i)
+	{
+		m_curve[i]->detach();
+		delete m_curve[i];
+	}
 }
 
 void Plot::setSpectrumData(SpectrumData *data, int curve)
@@ -174,7 +183,7 @@ void Plot::setHistogramData(MesydaqHistogramData *data)
 			setAxisScale(QwtPlot::xBottom, 0, r.width());
 			setAxisScale(QwtPlot::yLeft, 0, r.height());
 			QwtDoubleInterval iv = data->range();
-			// MSG_ERROR << tr("%1, %2").arg(iv.minValue()).arg(iv.maxValue());
+			// MSG_ERROR << tr("setHistogramData: %1, %2").arg(iv.minValue()).arg(iv.maxValue());
 			setAxisScale(QwtPlot::yRight, iv.minValue(), iv.maxValue());
 		}
 		replot();

@@ -114,6 +114,8 @@ public:
 	 */
 	Plot(QWidget *parent = NULL);
 
+	virtual ~Plot();
+
 	//! returns the the current display mode
 	Mode displayMode(void) const
 	{
