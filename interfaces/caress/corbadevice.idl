@@ -308,7 +308,7 @@ module CARESS
 				3 = \c DONE
 			\return result of this function \n
 				\c OK = device was started \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\note
 				initialisation with \ref init_module_ex enables exceptions and in case
 				of an error, this function may throw an exception with details
@@ -339,7 +339,7 @@ module CARESS
 				3 = \c DONE
 			\return result of this function \n
 				\c OK = device was started \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\note
 				initialisation with \ref init_module_ex enables exceptions and in case
 				of an error, this function may throw an exception with details
@@ -377,7 +377,7 @@ module CARESS
 				6 = \c COMBA_ACTIVE (multiplexed device \c ACTIVE)
 			\return result of this function \n
 				\c OK = device was started, already finished or delayed \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\note
 				initialisation with \ref init_module_ex enables exceptions and in case
 				of an error, this function may throw an exception with details
@@ -410,7 +410,7 @@ module CARESS
 				4 = \c LOADED
 			\return result of this function \n
 				\c OK = data was loaded or ignored \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\note
 				initialisation with \ref init_module_ex enables exceptions and in case
 				of an error, this function may throw an exception with details
@@ -464,7 +464,7 @@ module CARESS
 			\param[in] data           load this data (see 'kind') \n
 			\return result of this function \n
 				\c OK = data was loaded or ignored \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\note
 				initialisation with \ref init_module_ex enables exceptions and in case
 				of an error, this function may throw an exception with details
@@ -502,7 +502,7 @@ module CARESS
 			\param[out] data          current or cached value (see 'kind') \n
 			\return result of this function \n
 				\c OK = successful or ignored \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\remarks
 				values depend on CARESS device IDs (parameter 'id'). \n
 				Common devices give a single value (32bit-int or 32bit-float).
@@ -549,7 +549,7 @@ module CARESS
 			\param[in,out] type          data type of current value (\c TypeArrayLong or \c TypeArrayFloat)
 			\return result of this function \n
 				\c OK = successful \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\note
 				initialisation with \ref init_module_ex enables exceptions and in case
 				of an error, this function may throw an exception with details
@@ -583,7 +583,7 @@ module CARESS
 			\param[out] data          block data
 			\return result of this function \n
 				\c OK = successful or device skipped \n
-				\c NOT_OK = an error occured
+				\c NOT_OK = an error occurred
 			\note
 				initialisation with \ref init_module_ex enables exceptions and in case
 				of an error, this function may throw an exception with details

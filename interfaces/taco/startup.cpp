@@ -206,7 +206,7 @@ long startup(char *serverName, DevLong *e)
 	if (counter == deviceList.size())
 		NOTICE_STREAM << "startup: success" << ENDLOG;
 	else if (counter != 0)
-		ERROR_STREAM << "startup: some errors occured. Not all devices exported." << ENDLOG;
+		ERROR_STREAM << "startup: some errors occurred. Not all devices exported." << ENDLOG;
 	else
 	{
 		FATAL_STREAM << "startup: failed" << ENDLOG;
