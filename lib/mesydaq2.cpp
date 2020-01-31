@@ -899,7 +899,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		Q_ASSERT_X(value != NULL, "Mesydaq2::loadSetup", "one of the MCPD's is NULL");
 		p += value->numModules();
 	}
-	MSG_NOTICE << tr("%1 MCPD-8 and %2 Modules found").arg(nMcpd).arg(p);
+	MSG_INFO << tr("%1 MCPD-8 and %2 Modules found").arg(nMcpd).arg(p);
 	return true;
 }
 
