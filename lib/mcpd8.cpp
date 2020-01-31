@@ -2768,8 +2768,9 @@ QList<quint16> MCPD8::getActiveList(void)
 quint8 MCPD8::numModules(void)
 {
     quint8 n(0);
-    foreach(MPSD8 *it, m_mpsd)
+    for(int i = 0; i < m_mpsd.keys().size(); ++i)
     {
+        MPSD8 *it = m_mpsd.value(i);
         Q_ASSERT_X(it != NULL, "MCPD8::numModules", "one of the MPSD's is NULL");
         if (it->getModuleId())
             n++;
@@ -2824,8 +2825,9 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
     else
     {
         quint16 offset(0);
-        foreach(MPSD8 *it, m_mpsd)
+        for(int i = 0; i < m_mpsd.keys().size(); ++i)
         {
+            MPSD8 *it = m_mpsd.value(i);
             Q_ASSERT_X(it != NULL, "MCPD8::getTubeMapping", "one of the MPSD's is NULL");
             QList<quint16> tmpList = it->getHistogramList();
             quint16 busNr = it->busNumber();
