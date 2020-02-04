@@ -96,7 +96,8 @@ HEADERS 	+= mainwidget.h \
 		tcpsetup.h \
 		diskspace/diskspace.h \
 		data.h \
-		ConfigFileDialog.h
+		ConfigFileDialog.h \
+		datetimelabel.h
 #		website.h \
 
 FORMS 		+= mainwidget.ui \
@@ -161,7 +162,8 @@ SOURCES 	+= main.cpp \
 		tcpsetup.cpp \
 		diskspace/diskspace.cpp \
 		data.cpp \
-		ConfigFileDialog.cpp
+		ConfigFileDialog.cpp \
+		datetimelabel.cpp
 #		website.cpp \
 
 DISTFILES	+= images/mesytec.jpg \

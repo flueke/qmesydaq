@@ -191,7 +191,7 @@ histogram file</string>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="dateTimeLabel">
+           <widget class="DateTimeLabel" name="dateTimeLabel">
             <property name="text">
              <string>Date/Time:</string>
             </property>

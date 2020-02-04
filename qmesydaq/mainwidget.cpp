@@ -68,6 +68,8 @@
 #include "streamwriter.h"
 #include "stdafx.h"
 
+#include "datetimelabel.h"
+
 /*!
     \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
 
@@ -221,6 +223,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	selectUserMode(User);
 	setDisplayMode(Plot::Histogram);
 	draw();
+	dateTimeLabel->startTimer(1000);
 }
 
 //! destructor
@@ -661,8 +664,6 @@ void MainWidget::checkHistogramFilename(bool checked)
  */
 void MainWidget::updateDisplay(void)
 {
-	dateTimeLabel->setText(QString("Date/Time: %1").arg(m_time.currentTime().toString("HH:mm:ss")));
-
 	quint16 id = (quint16) paramId->value();
 	int ci = statusTab->currentIndex();
 	QTime tmpTime;
