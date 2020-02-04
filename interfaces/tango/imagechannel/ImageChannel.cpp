@@ -598,7 +598,7 @@ void ImageChannel::read_value(Tango::Attribute &attr)
 	for (int i = 0; i < s.width(); ++i)
 		for (int j = 0; j < s.height(); ++j)
 		{
-			int idx = j * s.width() + i;
+			int idx = i * s.width() + j;
 			Tango::DevULong val = tmp1[idx];
 			attr_value_read[k++] = val;
 		}
