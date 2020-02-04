@@ -1866,56 +1866,64 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			setParameter(3, val);
                 }
                 break;
-			case SETGAIN_MPSD: // extract the set gain values:
-			case SETGAIN_MSTD:
-				if (pMdp->bufferLength == 21) // set common gain
-				{
-					for(quint8 c = 0; c < 8; c++)
-					{
-						ptrMPSD = m_mpsd[pMdp->data[0]];
-						if(pMdp->data[2 + c] != ptrMPSD->getGainpoti(c, 1))
-						{
-							bAnswerOk = false;
-							MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-								arg(8 * pMdp->deviceId + pMdp->data[0]).arg(c).arg(pMdp->data[2 + c]).arg(ptrMPSD->getGainpoti(c, 1));
-							// set back to received value
-							ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[c + 2], 0);
-						}
-					}
-					ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[2], 0);
-				}
-				else // set one channel
-				{
-					// If there was a gain set to module which do not answer right, the data area is empty and this would lead to NULL pointers
-					if (pMdp->bufferLength > pMdp->headerLength)
-					{
-						ptrMPSD = m_mpsd[pMdp->data[0]];
-						if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
-						{
-							bAnswerOk = false;
-							MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-								arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
-							// set back to received value
-						}
-						ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
-					}
-					else
-					{
-						bAnswerOk = false;
-						MSG_ERROR << tr("Error setting gain, perhaps an MSTD-16 module");
-					}
-				}
-				break;
-			case SETTHRESH: // extract the set thresh value:
+            case SETGAIN_MPSD: // extract the set gain values:
+            case SETGAIN_MSTD:
+                if (pMdp->bufferLength == 21) // set common gain
+		{
+                        for(quint8 c = 0; c < 8; c++)
+			{
 				ptrMPSD = m_mpsd[pMdp->data[0]];
-				if (pMdp->data[1] != ptrMPSD->getThreshold(1))
+				if(pMdp->data[2 + c] != ptrMPSD->getGainpoti(c, 1))
 				{
 					bAnswerOk = false;
-					MSG_ERROR << tr("Error setting threshold, mod %1, is: %2, should be: %3").
-						arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(ptrMPSD->getThreshold(1));
+					MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
+						arg(8 * pMdp->deviceId + pMdp->data[0]).arg(c).arg(pMdp->data[2 + c]).arg(ptrMPSD->getGainpoti(c, 1));
+					// set back to received value
+					ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[c + 2], 0);
 				}
-				ptrMPSD->setThreshold(pMdp->data[1], 0);
-				break;
+			}
+				ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[2], 0);
+		}
+		else // set one channel
+		{
+			// If there was a gain set to module which do not answer right, the data area is empty and this would lead to NULL pointers
+			if (pMdp->bufferLength > pMdp->headerLength + 1)
+			{
+				ptrMPSD = m_mpsd[pMdp->data[0]];
+				if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
+				{
+					bAnswerOk = false;
+					MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
+						arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
+					// set back to received value
+				}
+				ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
+			}
+			else
+			{
+				bAnswerOk = false;
+				MSG_ERROR << tr("Error setting gain, perhaps an MSTD-16 module");
+			}
+		}
+		break;
+            case SETTHRESH: // extract the set thresh value:
+		if (pMdp->bufferLength > pMdp->headerLength + 1)
+		{
+			ptrMPSD = m_mpsd[pMdp->data[0]];
+			if (pMdp->data[1] != ptrMPSD->getThreshold(1))
+			{
+				bAnswerOk = false;
+				MSG_ERROR << tr("Error setting threshold, mod %1, is: %2, should be: %3").
+					arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(ptrMPSD->getThreshold(1));
+			}
+			ptrMPSD->setThreshold(pMdp->data[1], 0);
+		}
+		else
+		{
+			bAnswerOk = false;
+			MSG_ERROR << tr("Error setting threshold, answer from hardware incomplete");
+		}
+		break;
             case SETPULSER:
 		ptrMPSD = m_mpsd[pMdp->data[0]];
 		if(pMdp->data[3] != ptrMPSD->getPulsPoti(1))
@@ -1927,6 +1935,7 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		ptrMPSD->setPulserPoti(pMdp->data[1], pMdp->data[2], pMdp->data[3], pMdp->data[4], 0);
                 break;
             case SETMODE: // extract the set mode:
+		if (pMdp->bufferLength > pMdp->headerLength + 1)
 		{
 		    int mod = pMdp->data[0];
 		    if (mod == 8)
@@ -1934,6 +1943,11 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		            m_mpsd[i]->setMode(pMdp->data[1] == 1, 0);
                     else
 		        m_mpsd[mod]->setMode(pMdp->data[1] == 1, 0);
+		}
+		else
+		{
+			bAnswerOk = false;
+			MSG_ERROR << tr("Error setting mode, answer from hardware incomplete");
 		}
                 break;
             case SETDAC:
