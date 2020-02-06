@@ -1,11 +1,49 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="DetectorChannel" pogoRevision="9.4">
-    <description description="Abstract base class for a detector channel." title="" sourcePath="/home/jkrueger/sources/qmesydaq/interfaces/tango/detectorchannel" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="false" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+    <description description="Abstract base class for a detector channel." title="" sourcePath="/home/jkrueger/sources/qmesydaq/interfaces/tango/detectorchannel" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
-      <inheritances classname="MLZDevice" sourcePath="../defs/defs"/>
+      <inheritances classname="MLZDevice" sourcePath="../mlzdevice"/>
       <identification contact="at frm2.tum.de> - Alexander Lenz &lt;alexander.lenz" author="Alexander Lenz &lt;alexander.lenz" emailDomain="frm2.tum.de>" classFamily="AbstractClasses" siteSpecific="" platform="All Platforms" bus="Not Applicable" manufacturer="none" reference=""/>
     </description>
+    <deviceProperties name="writelistmode" description="Write a list mode file if true">
+      <type xsi:type="pogoDsl:BooleanType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>false</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="writehistogram" description="Write a histogram file if true">
+      <type xsi:type="pogoDsl:BooleanType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>false</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="configfile" description="Name of the used configuration file">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </deviceProperties>
+    <deviceProperties name="calibrationfile" description="Name of the used calibration file">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </deviceProperties>
+    <deviceProperties name="runid" description="Number of the run">
+      <type xsi:type="pogoDsl:UIntType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>0</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="lastlistfile" description="Name of the last used list mode file">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>tangolistfile00000.mdat</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="lasthistfile" description="Name of the last used histogram file">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>tangolasthistfile00000.mdat</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="lastbinnedfile" description="Name of the last binned data file">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>tangolasthistfile00000.mdat</DefaultPropValue>
+    </deviceProperties>
     <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">
       <argin description="none">
         <type xsi:type="pogoDsl:VoidType"/>

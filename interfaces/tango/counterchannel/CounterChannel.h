@@ -61,12 +61,13 @@ class CounterChannel : public DetectorChannel_ns::DetectorChannel
 //	Add your own data members
 
 //	Device property data members
-public:
-	//	channel:	What monitor input is used.
-	Tango::DevUShort	channel;
 
 /*----- PROTECTED REGION END -----*/	//	CounterChannel::Data Members
 
+//	Device property data members
+public:
+	//	channel:	What monitor input is used.
+	Tango::DevUShort	channel;
 
 //	Attribute data members
 public:
@@ -194,7 +195,15 @@ public:
 	virtual Tango::DevVarStringArray *get_properties();
 
 protected:
+
+	virtual Tango::DevBoolean update_properties(const Tango::DevVarStringArray *argin);
+
 	virtual bool isMaster(void);
+
+	bool check_channel_value(const Tango::DevUShort);
+
+	void set_channel(const Tango::DevUShort);
+
 
 /*----- PROTECTED REGION END -----*/	//	CounterChannel::Additional Method prototypes
 };

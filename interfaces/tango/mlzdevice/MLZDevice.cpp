@@ -296,7 +296,12 @@ Tango::DevBoolean MLZDevice::set_properties(const Tango::DevVarStringArray *argi
 	DEBUG_STREAM << "MLZDevice::SetProperties()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(MLZDevice::set_properties) ENABLED START -----*/
 
-	//	Add your own code
+	if (argin->length() % 2)
+		::Tango::ApiDataExcept::throw_exception("Value error",
+							"number of parameter strings is not multiple of 2",
+							"CounterChannel::set_properties()");
+
+	argout = update_properties(argin);
 
 	/*----- PROTECTED REGION END -----*/	//	MLZDevice::set_properties
 	return argout;
@@ -336,6 +341,10 @@ void MLZDevice::add_dynamic_commands()
 /*----- PROTECTED REGION ID(MLZDevice::namespace_ending) ENABLED START -----*/
 
 //	Additional Methods
+Tango::DevBoolean MLZDevice::update_properties(const Tango::DevVarStringArray *argin)
+{
+	return Tango::DevBoolean(true);
+}
 
 /*----- PROTECTED REGION END -----*/	//	MLZDevice::namespace_ending
 } //	namespace

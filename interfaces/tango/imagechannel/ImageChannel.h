@@ -265,6 +265,13 @@ public:
 
 	virtual Tango::DevVarStringArray *get_properties();
 
+protected:
+	virtual Tango::DevBoolean update_properties(const Tango::DevVarStringArray *);
+
+	bool check_histogram_value(const std::string &);
+
+	void set_histogram(const std::string &);
+
 /*----- PROTECTED REGION END -----*/	//	ImageChannel::Additional Method prototypes
 };
 

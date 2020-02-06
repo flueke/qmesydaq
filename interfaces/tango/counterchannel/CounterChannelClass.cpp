@@ -227,7 +227,7 @@ void CounterChannelClass::set_default_property()
 		Tango::DbDatum	data(prop_name);
 		data << vect_data ;
 		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc, prop_def);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);

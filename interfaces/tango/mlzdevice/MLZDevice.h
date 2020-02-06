@@ -201,6 +201,9 @@ public:
 /*----- PROTECTED REGION ID(MLZDevice::Additional Method prototypes) ENABLED START -----*/
 
 //	Additional Method prototypes
+protected:
+
+	virtual Tango::DevBoolean update_properties(const Tango::DevVarStringArray *);
 
 /*----- PROTECTED REGION END -----*/	//	MLZDevice::Additional Method prototypes
 };

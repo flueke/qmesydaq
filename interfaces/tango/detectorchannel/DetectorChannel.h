@@ -68,6 +68,24 @@ private:
 
 /*----- PROTECTED REGION END -----*/	//	DetectorChannel::Data Members
 
+//	Device property data members
+public:
+	//	writelistmode:	Write a list mode file if true
+	Tango::DevBoolean	writelistmode;
+	//	writehistogram:	Write a histogram file if true
+	Tango::DevBoolean	writehistogram;
+	//	configfile:	Name of the used configuration file
+	string	configfile;
+	//	calibrationfile:	Name of the used calibration file
+	string	calibrationfile;
+	//	runid:	Number of the run
+	Tango::DevULong	runid;
+	//	lastlistfile:	Name of the last used list mode file
+	string	lastlistfile;
+	//	lasthistfile:	Name of the last used histogram file
+	string	lasthistfile;
+	//	lastbinnedfile:	Name of the last binned data file
+	string	lastbinnedfile;
 
 //	Attribute data members
 public:
@@ -113,6 +131,10 @@ public:
 	 *	Initialize the device
 	 */
 	virtual void init_device();
+	/*
+	 *	Read the device properties from database
+	 */
+	void get_device_property();
 	/*
 	 *	Always executed method before execution command method.
 	 */
@@ -207,12 +229,18 @@ public:
 	void add_dynamic_commands();
 
 /*----- PROTECTED REGION ID(DetectorChannel::Additional Method prototypes) ENABLED START -----*/
+
 //	Additional Method prototypes
 
 public:
 	virtual Tango::DevState dev_state();
 
+	virtual Tango::DevVarStringArray *get_properties();
+
 protected:
+
+	virtual Tango::DevBoolean update_properties(const Tango::DevVarStringArray *argin);
+
 	virtual bool isMaster(void);
 
 /*----- PROTECTED REGION END -----*/	//	DetectorChannel::Additional Method prototypes

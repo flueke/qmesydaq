@@ -264,7 +264,7 @@ void ImageChannel::get_device_property()
 	/*----- PROTECTED REGION ID(ImageChannel::get_device_property_after) ENABLED START -----*/
 
 	//	Check device property data members init
-	if (histogram != "raw" || histogram != "mapped" || histogram != "amplitude")
+	if (!check_histogram_value(histogram))
 		histogram = "mapped";
 #if 0
 		// Don't throw an exception here which leads to an endless recursion
@@ -272,12 +272,7 @@ void ImageChannel::get_device_property()
 							"histogram value not in 'raw', 'mapped', or 'amplitude'",
 							"CounterChannel::get_device_property()");
 #endif
-	if (histogram == "raw")
-		m_histo = PositionHistogram;
-	else if (histogram == "mapped")
-		m_histo = CorrectedPositionHistogram;
-	else if (histogram == "amplitude")
-		m_histo = AmplitudeHistogram;
+	set_histogram(histogram);
 
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::get_device_property_after
 }
@@ -674,18 +669,58 @@ void ImageChannel::add_dynamic_commands()
 Tango::DevVarStringArray *ImageChannel::get_properties()
 {
 	Tango::DevVarStringArray *argout;
-	DEBUG_STREAM << "MLZDevice::GetProperties()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(MLZDevice::get_properties) ENABLED START -----*/
+	DEBUG_STREAM << "ImageChannel::GetProperties()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(ImageChannel::get_properties) ENABLED START -----*/
 
-	argout = new Tango::DevVarStringArray;
-	argout->length(2);
+	argout = DetectorChannel::get_properties();
+	int i = argout->length();
+	argout->length(i + 2);
 
-	(*argout)[0] = CORBA::string_dup("histogram");
-	(*argout)[1] = CORBA::string_dup(histogram.c_str());
+	(*argout)[i] = CORBA::string_dup("histogram");
+	(*argout)[i + 1] = CORBA::string_dup(histogram.c_str());
 
-
-	/*----- PROTECTED REGION END -----*/	//	MLZDevice::get_properties
+	/*----- PROTECTED REGION END -----*/	//	ImageChannel::get_properties
 	return argout;
+}
+
+Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray *argin)
+{
+	for (unsigned int i = 0; i < argin->length(); i += 2)
+	{
+		std::string propertyName((*argin)[i]);
+		std::string arg((*argin)[i + 1]);
+		Tango::DbDatum data(propertyName);
+		data << arg;
+	/*----- PROTECTED REGION ID(ImageChannel::update_properties) ENABLED START -----*/
+		if (propertyName == "histogram")
+		{
+			std::string val;
+			data >> val;
+			if (!check_histogram_value(val))
+				::Tango::ApiDataExcept::throw_exception("Value error",
+									"histogram value not in 'raw', 'mapped', or 'amplitude'",
+									"CounterChannel::update_properties()");
+			set_histogram(val);
+		}
+	/*----- PROTECTED REGION END -----*/	//	ImageChannel::update_properties
+	}
+	return DetectorChannel::update_properties(argin);
+}
+
+bool ImageChannel::check_histogram_value(const std::string &val)
+{
+	return val == "raw" || val == "mapped" || val == "amplitude";
+}
+
+void ImageChannel::set_histogram(const std::string &val)
+{
+	if (val == "raw")
+		m_histo = PositionHistogram;
+	else if (val == "mapped")
+		m_histo = CorrectedPositionHistogram;
+	else if (val == "amplitude")
+		m_histo = AmplitudeHistogram;
+	histogram = val;
 }
 
 /*----- PROTECTED REGION END -----*/	//	ImageChannel::namespace_ending

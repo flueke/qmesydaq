@@ -227,11 +227,11 @@ void CounterChannel::get_device_property()
 
 	/*----- PROTECTED REGION ID(CounterChannel::get_device_property_after) ENABLED START -----*/
 	//	Check device property data members init
-	if (channel > 6 && channel != 100)
+	if (!check_channel_value(channel))
 	{
 		channel = 0;
-		// Don't throw an exception here which leads to an endless recursion
 #if 0
+		// Don't throw an exception here which leads to an endless recursion
 		::Tango::ApiDataExcept::throw_exception("Value error",
 							"channel value not in [0..5, 100]",
 							"CounterChannel::get_device_property()");
@@ -456,25 +456,60 @@ void CounterChannel::write_active(Tango::WAttribute &attr)
 Tango::DevVarStringArray *CounterChannel::get_properties()
 {
 	Tango::DevVarStringArray *argout;
-	DEBUG_STREAM << "MLZDevice::GetProperties()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(MLZDevice::get_properties) ENABLED START -----*/
+	DEBUG_STREAM << "CounterChannel::GetProperties()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(CounterChannel::get_properties) ENABLED START -----*/
 
-	argout = new Tango::DevVarStringArray;
-	argout->length(2);
+	argout = DetectorChannel::get_properties();
+	int i = argout->length();
+	argout->length(i + 2);
 
-	(*argout)[0] = CORBA::string_dup("channel");
+	(*argout)[i] = CORBA::string_dup("channel");
 	char channel_str[64];
 	snprintf(channel_str, sizeof(channel_str) - 1, "%d", channel);
-	(*argout)[1] = CORBA::string_dup(channel_str);
+	(*argout)[i + 1] = CORBA::string_dup(channel_str);
 
-
-	/*----- PROTECTED REGION END -----*/	//	MLZDevice::get_properties
+	/*----- PROTECTED REGION END -----*/	//	CounterChannel::get_properties
 	return argout;
+}
+
+Tango::DevBoolean CounterChannel::update_properties(const Tango::DevVarStringArray *argin)
+{
+	for (unsigned int i = 0; i < argin->length(); i += 2)
+	{
+		std::string propertyName((*argin)[i]);
+		std::string arg((*argin)[i + 1]);
+		Tango::DbDatum data(propertyName);
+		data << arg;
+	/*----- PROTECTED REGION ID(ImageChannel::update_properties) ENABLED START -----*/
+		if (propertyName == "channel")
+		{
+			Tango::DevUShort val;
+			data >> val;
+			if (!check_channel_value(val))
+				::Tango::ApiDataExcept::throw_exception("Value error",
+							"channel value not in [0..5, 100]",
+							"CounterChannel::update_properties()");
+			set_channel(val);
+		}
+	/*----- PROTECTED REGION END -----*/	//	CounterChannel::update_properties
+	}
+	return DetectorChannel::update_properties(argin);
 }
 
 bool CounterChannel::isMaster(void)
 {
 	return bool(m_interface->counterSelected(channel));
+}
+
+
+bool CounterChannel::check_channel_value(const Tango::DevUShort val)
+{
+	return val <=5 || val == 100;
+}
+
+void CounterChannel::set_channel(const Tango::DevUShort val)
+{
+	channel = val;
 }
 
 /*----- PROTECTED REGION END -----*/	//	CounterChannel::namespace_ending
