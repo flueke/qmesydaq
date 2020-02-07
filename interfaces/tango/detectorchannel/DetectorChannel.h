@@ -243,6 +243,8 @@ protected:
 
 	virtual bool isMaster(void);
 
+	std::string incNumber(const std::string &);
+
 /*----- PROTECTED REGION END -----*/	//	DetectorChannel::Additional Method prototypes
 };
 

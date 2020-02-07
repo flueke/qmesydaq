@@ -34,6 +34,8 @@
 //=============================================================================
 
 
+#include <iomanip>
+
 #include <DetectorChannel.h>
 #include <DetectorChannelClass.h>
 
@@ -445,23 +447,19 @@ void DetectorChannel::start()
 	{
 		m_started = true;
 		set_state(Tango::MOVING);
-#if 0
-		m_interface->setListMode(m_writeListmode, true);
-		if (m_writeListmode)
+		m_interface->setListMode(writelistmode, true);
+		if (writelistmode)
 		{
-			m_listFilename = incNumber(m_listFilename);
-			updateResource<std::string>("lastlistfile", m_listFilename);
-			m_interface->setListFileName(m_listFilename.c_str());
+			lastlistfile = incNumber(lastlistfile);
+			m_interface->setListFileName(lastlistfile.c_str());
 		}
 
-		m_interface->setHistogramMode(m_writeHistogram);
-		if (m_writeHistogram)
+		m_interface->setHistogramMode(writehistogram);
+		if (writehistogram)
 		{
-			m_histFilename = incNumber(m_histFilename);
-			updateResource<std::string>("lasthistfile", m_histFilename);
-			m_interface->setHistogramFileName(m_histFilename.c_str());
+			lastbinnedfile = lasthistfile = incNumber(lasthistfile);
+			m_interface->setHistogramFileName(lasthistfile.c_str());
 		}
-#endif
 		ERROR_STREAM << "interface::start()";
 		m_interface->start();
 		for (int i = 0; i < 10; ++i)
@@ -702,6 +700,41 @@ Tango::DevBoolean DetectorChannel::update_properties(const Tango::DevVarStringAr
 	/*----- PROTECTED REGION END -----*/	//	DetectorChannel::update_properties
 	}
 	return MLZDevice::update_properties(argin);
+}
+
+std::string DetectorChannel::incNumber(const std::string &val)
+{
+	std::string tmpString = val;
+	std::string baseName = basename(const_cast<char *>(tmpString.c_str()));
+	std::string::size_type pos = baseName.rfind(".");
+	std::string ext("");
+	if (pos == std::string::npos)
+		ext = ".mdat";
+	else
+	{
+		ext = baseName.substr(pos);
+		baseName.erase(pos);
+	}
+	Tango::DevLong currIndex(0);
+	if (baseName.length() > 5)
+	{
+		currIndex = strtol(baseName.substr(baseName.length() - 5).c_str(), NULL, 10);
+		if (currIndex)
+			baseName.erase(baseName.length() - 5);
+	}
+	std::ostringstream os;
+	os << std::fixed << std::setprecision(5) << std::setfill('0') << ++currIndex;
+	std::string tmp = os.str();
+	pos = tmpString.find(baseName);
+	pos += baseName.length();
+	tmpString.erase(pos);
+#if 0
+	for (int i = tmp.length(); i < 5; ++i)
+		tmpString += '0';
+#endif
+	tmpString += tmp;
+	tmpString += ext;
+	return tmpString;
 }
 
 /*----- PROTECTED REGION END -----*/	//	DetectorChannel::namespace_ending
