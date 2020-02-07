@@ -441,7 +441,7 @@ void DetectorChannel::start()
 						 "Control interface not initialized",
 						 "DetectorChannel::start()");
 
-	if (isMaster() && get_state() != ::Tango::MOVING)
+	if (isMaster() && dev_state() != ::Tango::MOVING)
 	{
 		m_started = true;
 		set_state(Tango::MOVING);
@@ -491,7 +491,7 @@ void DetectorChannel::stop()
 		::Tango::Except::throw_exception("Runtime error",
 						 "Control interface not initialized",
 						 "DetectorChannel::stop()");
-	if (isMaster() && get_state() == Tango::MOVING)
+	if (isMaster() && dev_state() == Tango::MOVING)
 		m_interface->stop();
 
 	/*----- PROTECTED REGION END -----*/	//	DetectorChannel::stop
