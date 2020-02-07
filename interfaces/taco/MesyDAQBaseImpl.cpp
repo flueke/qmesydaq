@@ -193,7 +193,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 		{
 			std::string tmp = queryResource<std::string>("configfile");
 			if (tmp.empty())
-				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "Not empty config file name allowed");
+				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "No empty config file name allowed");
 			if (!m_interface)
 				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 			m_interface->loadConfigurationFile(tmp.c_str());
@@ -208,7 +208,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 		{
 			std::string tmp = queryResource<std::string>("calibrationfile");
 			if (tmp.empty())
-				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "Not empty config file name allowed");
+				throw ::TACO::Exception(::TACO::Error::INVALID_VALUE, "No empty calibration file name allowed");
 			if (!m_interface)
 				throw ::TACO::Exception(::TACO::Error::RUNTIME_ERROR, "Control interface not initialized");
 			m_interface->loadCalibrationFile(tmp.c_str());
@@ -216,7 +216,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 		}
 		catch (::TACO::Exception &e)
 		{
-			throw_exception(e, "could not update 'configfile' ");
+			throw_exception(e, "could not update 'calibrationfile' ");
 		}
 	if (resourceUpdateRequest("lastlistfile"))
 		try
@@ -267,7 +267,7 @@ void MesyDAQ::Base::deviceUpdate(void) throw (::TACO::Exception)
 		}
 		catch (::TACO::Exception &e)
 		{
-			throw_exception(e, "could not update 'lasthistfile' ");
+			throw_exception(e, "could not update 'lastbinnedfile' ");
 		}
 	if (resourceUpdateRequest("histogram"))
 		try
