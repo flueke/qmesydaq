@@ -72,6 +72,16 @@ Histogram& Histogram::operator=(const Histogram &src)
 {
 	m_totalCounts  = src.m_totalCounts;
 	m_data1        = src.m_data1;
+	if (m_xSumSpectrum)
+	{
+		delete m_xSumSpectrum;
+		m_xSumSpectrum = NULL;
+	}
+	if (m_ySumSpectrum)
+	{
+		delete m_ySumSpectrum;
+		m_ySumSpectrum = NULL;
+	}
 	for (int i = 0; i < m_width; ++i)
 	{
 		if (m_data[i])
