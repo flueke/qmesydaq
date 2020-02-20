@@ -1495,6 +1495,7 @@ void MainWidget::draw(void)
 		return;
 	}
 	Spectrum *spec(NULL);
+	Histogram histogram;
 	quint64 counts(0);
 	QString roiText(tr("Counts"));
 	switch (m_mode)
@@ -1506,7 +1507,6 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::yLeft, "Y (channel)");
 			}
 			{
-				Histogram histogram;
 				if (m_histoType == Measurement::CorrectedPositionHistogram)
 				{
 					MappedHistogram mhistogram = *reinterpret_cast<MappedHistogram *>(m_meas->hist(m_histoType));
