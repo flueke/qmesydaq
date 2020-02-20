@@ -110,7 +110,6 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 		setMonitorMapping(p.x(), p.y(), j);
 	}
 
-	m_rateTimer = startTimer(100);	// every 100 ms calculate the rates, was 8 before
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
 }
 
@@ -339,6 +338,7 @@ void Measurement::start()
 	m_lastTriggerTime = 0;
 	m_events->start(m_starttime_msec);
 	m_timer->start(m_starttime_msec);
+	m_rateTimer = startTimer(100);	// every 100 ms calculate the rates, was 8 before
 }
 
 /*!
@@ -380,6 +380,9 @@ void Measurement::stop()
 			MSG_WARNING << tr("Histogram[%1]: %2").arg(i).arg(m_Hist[i]->getTotalCounts());
 	}
 	m_status = Idle;
+        if (m_rateTimer)
+		killTimer(m_rateTimer);
+	m_rateTimer = 0;
 }
 
 /*!
