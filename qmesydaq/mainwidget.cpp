@@ -1937,6 +1937,8 @@ void MainWidget::quitContinue(void)
 	QString interface("CARESS");
 #elif USE_TCP
 	QString interface("TCP");
+#elif USE_TANGO
+	QString interface("Tango");
 #else
 	QString interface("");
 #endif

@@ -120,10 +120,21 @@ void MainWindow::updateStatusBar()
      		if (m_mesy->isExtsynced(list.at(i)))
 			m_sync->setText("External");
 }
+#if !defined(_MSC_VER)
+#include <signal.h>
+#endif
 
 MainWindow::~MainWindow()
 {
 	delete m_mesy;
+#if USE_TANGO
+	// The Tango loops are not stopped without sending a TERM to the Tango process
+	qint64 pid = QCoreApplication::applicationPid();
+#if !defined(_MSC_VER)
+	kill(pid_t(pid), SIGTERM);
+#endif
+#endif
+
 }
 
 void MainWindow::restoreSettings()
