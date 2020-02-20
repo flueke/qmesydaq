@@ -80,13 +80,13 @@ public:
 	 *
 	 * \param data pointer to the data spectrum
 	 */
-	void setData(Spectrum *data);
+	void setData(const Spectrum *data);
 
 	//! \return the maximum value for the spectrum
 	quint32 max(void);
 
 	//! \return the bounding rectangle of the data.
-	QwtDoubleRect boundingRect() const;
+	virtual QwtDoubleRect boundingRect() const;
 
 private:
 	//! The spectrum data
@@ -120,7 +120,7 @@ public:
 	 * \param y number of the tube (truncated to integer)
 	 * \return counts
 	 */
-	double value(double x, double y) const;
+	virtual double value(double x, double y) const;
 
 	/**
 	 * takes the data from the histogram
@@ -128,7 +128,7 @@ public:
 	 *
 	 * \param data pointer to the data histogram
 	 */
-	void setData(Histogram *data);
+	void setData(const Histogram *data);
 
 	virtual void initRaster(const QRectF &, const QSize &);
 

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    *
- *   Copyright (C) 2009-2016 by Jens Krüger <jens.krueger@frm2.tum.de>     *
+ *   Copyright (C) 2009-2020 by Jens KrÃ¼ger <jens.krueger@frm2.tum.de>     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -74,7 +74,7 @@ QPointF MesydaqSpectrumData::sample(size_t i) const
 }
 #endif
 
-void MesydaqSpectrumData::setData(Spectrum *data)
+void MesydaqSpectrumData::setData(const Spectrum *data)
 {
 	m_spectrum = *data;
 #if QWT_VERSION >= 0x060000
@@ -135,7 +135,7 @@ double MesydaqHistogramData::value(double x, double y) const
 	return m_histogram.value(quint16(x), quint16(y));
 }
 
-void MesydaqHistogramData::setData(Histogram *data)
+void MesydaqHistogramData::setData(const Histogram *data)
 {
 	m_histogram = *data;
 #if QWT_VERSION < 0x060000
