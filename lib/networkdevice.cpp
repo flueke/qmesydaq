@@ -104,7 +104,7 @@ NetworkDevice::NetworkDevice(quint16 wPort, QString szHostIp)
 {
     m_pThread = new QThread;
     moveToThread(m_pThread);
-    m_pThread->start(QThread::HighestPriority);
+    m_pThread->start(QThread::TimeCriticalPriority);
     connect(m_pThread, SIGNAL(started()), this, SLOT(createSocket()), Qt::DirectConnection);
     connect(m_pThread, SIGNAL(finished()), this, SLOT(destroySocket()), Qt::DirectConnection);
     while (!m_bFlag)
