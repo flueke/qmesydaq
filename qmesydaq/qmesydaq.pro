@@ -92,6 +92,7 @@ HEADERS 	+= mainwidget.h \
 		histogrammappingeditor.h \
 		histogramedittablewidget.h \
 		tacosetup.h \
+		tangosetup.h \
 		caresssetup.h \
 		tcpsetup.h \
 		diskspace/diskspace.h \
@@ -120,6 +121,7 @@ FORMS 		+= mainwidget.ui \
 		mdllpulser.ui \
 		histogrammappingeditor.ui \
 		tacosetup.ui \
+		tangosetup.ui \
 		caresssetup.ui \
 		tcpsetup.ui \
 		ipaddresswidget.ui \
@@ -158,6 +160,7 @@ SOURCES 	+= main.cpp \
 		histogrammappingeditor.cpp \
 		histogramedittablewidget.cpp \
 		tacosetup.cpp \
+		tangosetup.cpp \
 		caresssetup.cpp \
 		tcpsetup.cpp \
 		diskspace/diskspace.cpp \

@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(actionNewSetup, SIGNAL(triggered()), m_main, SLOT(newSetupSlot()));
 	connect(actionSetupMCPD, SIGNAL(triggered()), m_main, SLOT(setupMCPD()));
 	actionTACO->setVisible(false);
+	actionTANGO->setVisible(false);
 	actionTCP->setVisible(false);
 	actionCARESS->setVisible(false);
 	actionGeneral->setVisible(false);
@@ -72,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
 #if USE_TACO
 	connect(actionTACO, SIGNAL(triggered()), m_main, SLOT(setupTACO()));
 #elif USE_TANGO
-
+	connect(actionTANGO, SIGNAL(triggered()), m_main, SLOT(setupTANGO()));
 #elif USE_TCP
 	connect(actionTCP, SIGNAL(triggered()), m_main, SLOT(setupTCP()));
 #elif USE_CARESS
@@ -209,6 +210,8 @@ void MainWindow::selectUser(void)
 	actionLoad_Calibration_File->setVisible(false);
 #if USE_TACO
 	actionTACO->setVisible(false);
+#elif USE_TANGO
+	actionTANGO->setVisible(false);
 #endif
 	actionPulser->setVisible(false);
 	actionHistogram_Mapping->setVisible(false);
@@ -231,6 +234,8 @@ void MainWindow::selectExpert(void)
 		actionLoad_Calibration_File->setVisible(true);
 #if USE_TACO
 		actionTACO->setVisible(false);
+#elif USE_TANGO
+		actionTANGO->setVisible(false);
 #endif
 		actionPulser->setVisible(m_main->setupType() != Mdll2);
 		actionPulser->setEnabled(m_main->setupType() != Mdll2);
@@ -257,6 +262,8 @@ void MainWindow::selectSuperuser(void)
 		actionLoad_Calibration_File->setVisible(true);
 #if USE_TACO
 		actionTACO->setVisible(true);
+#elif USE_TANGO
+		actionTANGO->setVisible(true);
 #endif
 		actionPulser->setVisible(m_main->setupType() != Mdll2);
 		actionPulser->setEnabled(m_main->setupType() != Mdll2);

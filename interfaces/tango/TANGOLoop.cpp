@@ -80,7 +80,6 @@ void TANGOLoop::runLoop()
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
 	settings.beginGroup("TANGO");
 	m_personal = settings.value("personal", "qm").toString();
-	// m_detDevice = settings.value("detector", "qm/qmesydaq/det").toString();
 	m_timerDevice = settings.value("timer", "qm/qmesydaq/timer").toString();
 	m_eventDevice = settings.value("events", "qm/qmesydaq/events").toString();
 	m_imageDevice = settings.value("image", "qm/qmesydaq/image").toString();

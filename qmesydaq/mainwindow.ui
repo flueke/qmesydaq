@@ -22,7 +22,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Files">
@@ -80,6 +80,7 @@
       <string>Remote Interface</string>
      </property>
      <addaction name="actionTACO"/>
+     <addaction name="actionTANGO"/>
      <addaction name="actionTCP"/>
      <addaction name="actionCARESS"/>
     </widget>
@@ -273,6 +274,17 @@
   <action name="action_Bug_Report">
    <property name="text">
     <string>Bug report ...</string>
+   </property>
+  </action>
+  <action name="actionTANGO">
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>TANGO</string>
+   </property>
+   <property name="toolTip">
+    <string>Tango</string>
    </property>
   </action>
  </widget>

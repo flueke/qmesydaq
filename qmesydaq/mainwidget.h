@@ -98,6 +98,8 @@ public slots:
 
 	void    setupTACO();
 
+	void    setupTANGO();
+
 	void	setupTCP();
 
 	void	setupCARESS();

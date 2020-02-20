@@ -62,6 +62,7 @@
 #include "mainwindow.h"
 #include "stdafx.h"
 #include "tacosetup.h"
+#include "tangosetup.h"
 #include "tcpsetup.h"
 #include "caresssetup.h"
 #include "ConfigFileDialog.h"
@@ -1731,6 +1732,12 @@ void MainWidget::setupTCP(void)
 void MainWidget::setupCARESS(void)
 {
 	CARESSSetup d;
+	d.exec();
+}
+
+void MainWidget::setupTANGO(void)
+{
+	TangoSetup d;
 	d.exec();
 }
 
