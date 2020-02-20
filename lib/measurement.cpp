@@ -425,6 +425,7 @@ void Measurement::setCounter(quint32 cNum, quint64 val)
  */
 void Measurement::calcRates()
 {
+	m_events->calcRate();
 	foreach(MesydaqCounter *c, m_counter)
 		c->calcRate();
 }
@@ -436,6 +437,7 @@ void Measurement::calcRates()
  */
 void Measurement::calcMeanRates()
 {
+	m_events->calcMeanRate();
 	foreach(MesydaqCounter *c, m_counter)
 		c->calcMeanRate();
 }
