@@ -644,15 +644,19 @@ Tango::DevBoolean DetectorChannel::update_properties(const Tango::DevVarStringAr
 	/*----- PROTECTED REGION ID(DetectorChannel::update_properties) ENABLED START -----*/
 		if (propertyName == "writelistmode")
 		{
-			data >> writelistmode;
 			if (isMaster())
+			{
+				data >> writelistmode;
 				m_interface->setListMode(writelistmode, true);
+			}
 		}
 		else if (propertyName == "writehistogram")
 		{
-			data >> writehistogram;
 			if (isMaster())
+			{
+				data >> writehistogram;
 				m_interface->setHistogramMode(writehistogram);
+			}
 		}
 		else if (propertyName == "configfile")
 		{
