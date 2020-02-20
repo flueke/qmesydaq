@@ -391,9 +391,9 @@ void DetectorChannelClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "lasthistfile";
 	prop_desc = "Name of the last used histogram file";
-	prop_def  = "tangolasthistfile00000.mdat";
+	prop_def  = "tangolasthistfile00000.mtxt";
 	vect_data.clear();
-	vect_data.push_back("tangolasthistfile00000.mdat");
+	vect_data.push_back("tangolasthistfile00000.mtxt");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -405,9 +405,9 @@ void DetectorChannelClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "lastbinnedfile";
 	prop_desc = "Name of the last binned data file";
-	prop_def  = "tangolasthistfile00000.mdat";
+	prop_def  = "tangolasthistfile00000.mtxt";
 	vect_data.clear();
-	vect_data.push_back("tangolasthistfile00000.mdat");
+	vect_data.push_back("tangolasthistfile00000.mtxt");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

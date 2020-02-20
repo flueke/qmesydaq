@@ -676,13 +676,13 @@ Tango::DevBoolean DetectorChannel::update_properties(const Tango::DevVarStringAr
 				lastlistfile = "tangolistfile00000.mdat";
 			m_interface->setListFileName(lastlistfile.c_str());
 		}
-		else if (propertyName == "lasthistfile" && propertyName == "lastbinnedfile")
+		else if (propertyName == "lasthistfile" || propertyName == "lastbinnedfile")
 		{
 			data >> lasthistfile;
 			if (lasthistfile.empty())
-				lasthistfile = "tangohistfile00000.mdat";
+				lasthistfile = "tangohistfile00000.mtxt";
 			m_interface->setHistogramFileName(lasthistfile.c_str());
-			lastbinnedfile= lasthistfile;
+			lastbinnedfile = lasthistfile;
 		}
 		else if (propertyName == "runid")
 		{
@@ -708,34 +708,30 @@ Tango::DevBoolean DetectorChannel::update_properties(const Tango::DevVarStringAr
 
 std::string DetectorChannel::incNumber(const std::string &val)
 {
+	int nwidth(5);
 	std::string tmpString = val;
 	std::string baseName = basename(const_cast<char *>(tmpString.c_str()));
 	std::string::size_type pos = baseName.rfind(".");
-	std::string ext("");
-	if (pos == std::string::npos)
-		ext = ".mdat";
-	else
+	std::string ext(".mdat");
+	if (pos != std::string::npos)
 	{
 		ext = baseName.substr(pos);
 		baseName.erase(pos);
 	}
 	Tango::DevLong currIndex(0);
-	if (baseName.length() > 5)
+	if (baseName.length() > nwidth)
 	{
-		currIndex = strtol(baseName.substr(baseName.length() - 5).c_str(), NULL, 10);
-		if (currIndex)
-			baseName.erase(baseName.length() - 5);
+		std::string nString = baseName.substr(baseName.length() - nwidth);
+		currIndex = strtol(nString.c_str(), NULL, 10);
+		if (currIndex || nString == "00000")
+			baseName.erase(baseName.length() - nwidth);
 	}
 	std::ostringstream os;
-	os << std::fixed << std::setprecision(5) << std::setfill('0') << ++currIndex;
+	os << std::fixed << std::setw(nwidth) << std::setfill('0') << ++currIndex;
 	std::string tmp = os.str();
 	pos = tmpString.find(baseName);
 	pos += baseName.length();
 	tmpString.erase(pos);
-#if 0
-	for (int i = tmp.length(); i < 5; ++i)
-		tmpString += '0';
-#endif
 	tmpString += tmp;
 	tmpString += ext;
 	return tmpString;
