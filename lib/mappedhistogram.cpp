@@ -72,7 +72,7 @@ MappedHistogram::~MappedHistogram()
  */
 MappedHistogram& MappedHistogram::operator=(const MappedHistogram &src)
 {
-	Histogram::operator =(src);
+	Histogram::operator=(src);
 	m_pMapCorrection = src.m_pMapCorrection;
 	m_adblData = src.m_adblData;
 	m_dblTotalCounts = src.m_dblTotalCounts;
