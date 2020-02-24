@@ -2214,10 +2214,10 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
     {
         quint16 diff = pMdp->bufferNumber - m_lastDataBufnum;
         if(diff > 1 && pMdp->bufferNumber > 0 && m_lastDataBufnum > 0)
-	{
+        {
              m_dataMissed += (diff - 1);
-             // MSG_ERROR << tr("%1(%2) %3: Lost %4 data buffers: current: %5, last: %6").
-             //   arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(pMdp->bufferNumber).arg(m_lastDataBufnum);
+             MSG_ERROR << tr("%1(%2) %3: Lost %4 data buffers: current: %5, last: %6").
+                 arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(pMdp->bufferNumber).arg(m_lastDataBufnum);
         }
         m_lastDataBufnum = pMdp->bufferNumber;
         ++m_dataRxd;
