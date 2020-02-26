@@ -335,6 +335,8 @@ void MainWidget::init()
 #if 0
 	connect(this, SIGNAL(setCounter(quint32, quint64)), m_meas, SLOT(setCounter(quint32, quint64)));
 #endif
+	dispAllCorrectedPos->setChecked(true);
+	dispAllCorrectedPos->click();
 	emit redraw();
 }
 
@@ -1090,7 +1092,7 @@ void MainWidget::updateMeasurement(void)
 		Histogram *h = m_meas->hist(Measurement::HistogramType(i));
 		m_roi[i] = QRect(0, 0, h->width(), h->height());
 	}
-	setHistogramType(Measurement::PositionHistogram);
+	setHistogramType(Measurement::CorrectedPositionHistogram);
 	emit redraw();
 }
 
