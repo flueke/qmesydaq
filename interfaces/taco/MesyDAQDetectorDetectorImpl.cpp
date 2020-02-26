@@ -106,7 +106,7 @@ const std::vector<DevULong> &MesyDAQ::Detector::Detector::read() throw (::TACO::
 			for (int i = 0; i < s.width(); ++i)
 				for (int j = 0; j < s.height(); ++j)
 				{
-					int idx = j * s.width() + i;
+					int idx = i * s.width() + j;
 					DevULong val = tmp1[idx];
 					tmp.push_back(val);
 				}
