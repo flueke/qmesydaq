@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "mdll.h"
+#include "mpsd8.h"
 
 /*!
     \fn M2D *M2D::create(int bus, int typ, QObject *parent)

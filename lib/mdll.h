@@ -23,7 +23,6 @@
 #include <QString>
 #include "mdefines.h"
 #include "qmlogging.h"
-#include "mpsd8.h"
 
 class LIBQMESYDAQ_EXPORT M2D : public QObject
 {
