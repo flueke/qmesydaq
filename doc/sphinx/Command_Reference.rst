@@ -56,6 +56,7 @@ Command List (Numerical Order):
 23        :ref:`Set MCPD-8 fast bus capabilities <cmd23>`
 24        :ref:`Read MPSD-8+ parameters <cmd24>`
 25        :ref:`Set MPSD-8+ fast tx protocol <cmd25>`
+36        :ref:`Read ID <cmd36>`
 51        :ref:`Retrieve MCPD-8 version information <cmd51>`
 ========= ========================================
 
@@ -87,6 +88,7 @@ Command List (Functional Order):
 12        :ref:`Get Parameters <cmd12>`
 22        :ref:`Get MCPD-8 fast bus capabilities <cmd22>`
 23        :ref:`Set MCPD-8 fast bus Capabilities <cmd23>`
+36        :ref:`Read ID <cmd36>`
 51        :ref:`Retrieve MCPD-8 version information <cmd51>`
 ========= ========================================
 
@@ -646,6 +648,39 @@ Returns version information of MCPD-8 microcontroller and FPGA firmware.
     ======== =========================================
 
 MCPD-8 offers two TTL output ports that can be set.
+
+-----
+
+**Cmd=36 Read ID**
+
+.. table::
+    :name: cmd36
+
+    ======== =========================================
+    **Word** **Contents**
+    ======== =========================================
+    10       0xFFFF
+    ======== =========================================
+
+Answer buffer look like follows:
+
+**Cmd=36 Read ID (Answer)**
+
+.. table::
+
+    ======== =========================================
+    **Word** **Contents**
+    ======== =========================================
+    10       ID of MPSD module 1
+    11       ID of MPSD module 1
+    12       ID of MPSD module 1
+    13       ID of MPSD module 1
+    14       ID of MPSD module 1
+    15       ID of MPSD module 1
+    16       ID of MPSD module 1
+    17       ID of MPSD module 1
+    18       0xFFFF
+    ======== =========================================
 
 -----
 
