@@ -672,13 +672,13 @@ Answer buffer look like follows:
     **Word** **Contents**
     ======== =========================================
     10       ID of MPSD module 1
-    11       ID of MPSD module 1
-    12       ID of MPSD module 1
-    13       ID of MPSD module 1
-    14       ID of MPSD module 1
-    15       ID of MPSD module 1
-    16       ID of MPSD module 1
-    17       ID of MPSD module 1
+    11       ID of MPSD module 2
+    12       ID of MPSD module 3
+    13       ID of MPSD module 4
+    14       ID of MPSD module 5
+    15       ID of MPSD module 6
+    16       ID of MPSD module 7
+    17       ID of MPSD module 8
     18       0xFFFF
     ======== =========================================
 
