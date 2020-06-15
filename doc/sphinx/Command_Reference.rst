@@ -56,6 +56,8 @@ Command List (Numerical Order):
 23        :ref:`Set MCPD-8 fast bus capabilities <cmd23>`
 24        :ref:`Read MPSD-8+ parameters <cmd24>`
 25        :ref:`Set MPSD-8+ fast tx protocol <cmd25>`
+31        :ref:`Write register <cmd31>`
+32        :ref:`Read register <cmd32>`
 36        :ref:`Read ID <cmd36>`
 51        :ref:`Retrieve MCPD-8 version information <cmd51>`
 ========= ========================================
@@ -125,6 +127,8 @@ Command List (Functional Order):
 18        :ref:`Send MCPD-8 Serial String <cmd18>`
 19        :ref:`Read MCPD-8 Serial String <cmd19>`
 21        :ref:`Set MCPD-8 TTL Outputs <cmd21>`
+31        :ref:`Write register <cmd31>`
+32        :ref:`Read register <cmd32>`
 ========= ========================================
 
 Command Descriptions:
@@ -632,6 +636,53 @@ Answer buffers look like follows:
     ============ =========================================
 
 Returns version information of MCPD-8 microcontroller and FPGA firmware.
+
+-----
+
+**Cmd=31 Write register**
+
+.. table::
+    :name: cmd31
+
+    ======== =========================================
+    **Word** **Contents**
+    ======== =========================================
+    10       1 (exact one register)
+    11       register number
+    12       register value
+    13       0xFFFF
+    ======== =========================================
+
+Writes a 16bit value to a given register
+
+-----
+
+**Cmd=32 Read register**
+
+.. table::
+    :name: cmd32
+
+    ======== =========================================
+    **Word** **Contents**
+    ======== =========================================
+    10       1 (exact one register)
+    11       register number
+    12       0xFFFF
+    ======== =========================================
+
+Reads a 16 bit value from a given register
+
+**Cmd=32 Read register (Answer)**
+
+.. table::
+
+    ======== =========================================
+    **Word** **Contents**
+    ======== =========================================
+    10       1 (exact one register)
+    11       register value
+    12       0xFFFF
+    ======== =========================================
 
 -----
 
