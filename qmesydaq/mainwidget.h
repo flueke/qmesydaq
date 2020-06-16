@@ -48,7 +48,7 @@ class MainWidget : public QWidget, public Ui_MainWidget
 Q_OBJECT
 public:
 	//! The different access levels
-	enum UserLevel 
+	enum UserLevel
 	{
 		User = 0, 	//!< normal user
 		Expert,		//!< experient user (like instrument responsible)
@@ -65,6 +65,8 @@ public:
 	Setup setupType(void);
 
 	void 	closeEvent(QCloseEvent *);
+
+	UserLevel userLevel(void);
 
 signals:
 	//! will be emitted in case of start of data acquisition

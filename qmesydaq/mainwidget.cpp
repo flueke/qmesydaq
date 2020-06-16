@@ -2743,3 +2743,8 @@ void MainWidget::setChannels(int mod)
 		dispChan->setModuleList(modList);
 	}
 }
+
+MainWidget::UserLevel MainWidget::userLevel(void)
+{
+	return m_userLevel;
+}

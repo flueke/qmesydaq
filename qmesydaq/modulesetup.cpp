@@ -21,6 +21,8 @@
 #include "modulesetup.h"
 #include "mesydaq2.h"
 
+#include "mainwidget.h"
+
 #include "qmlogging.h"
 
 /*!
@@ -136,6 +138,10 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	histogramGroupBox->setDisabled(modules.empty());
 
 	channel->setModuleList(m_theApp->channelId(devid->value(), module->value()));
+
+	registerValue->setValidator(new QIntValidator(0, 0xFFFF, registerValue));
+	MainWidget *mw = reinterpret_cast<MainWidget *>(parent);
+	tabWidget->setTabEnabled(tabWidget->indexOf(tabRegisterSettings), (mw != NULL && mw->userLevel() == MainWidget::SuperUser));
 
 	displaySlot();
 }

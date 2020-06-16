@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>790</width>
-    <height>291</height>
+    <width>922</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1000,42 +1000,93 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabRegisterSettings">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <attribute name="title">
-       <string>Register Settings</string>
+       <string>Module Register Settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_6">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox39">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
+        <widget class="QGroupBox" name="periRegBox">
          <property name="title">
-          <string>Register op</string>
+          <string>Register operations</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="gridLayout_8">
           <item row="0" column="0">
-           <widget class="QPushButton" name="writeRegisterButton">
-            <property name="text">
-             <string>Write</string>
-            </property>
-           </widget>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Register #</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Register value</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QSpinBox" name="registerSelect">
+              <property name="maximum">
+               <number>2</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="registerValue"/>
+            </item>
+           </layout>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="readRegisterButton">
-            <property name="text">
-             <string>Read</string>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QSpinBox" name="registerSelect">
-            <property name="maximum">
-             <number>2</number>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>340</width>
+              <height>20</height>
+             </size>
             </property>
-           </widget>
+           </spacer>
           </item>
-          <item row="0" column="3">
-           <widget class="QLineEdit" name="registerValue"/>
+          <item row="1" column="0">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>340</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QPushButton" name="readRegisterButton">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Read</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="writeRegisterButton">
+              <property name="text">
+               <string>Write</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
