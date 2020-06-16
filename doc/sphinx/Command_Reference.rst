@@ -639,7 +639,7 @@ Returns version information of MCPD-8 microcontroller and FPGA firmware.
 
 -----
 
-**Cmd=31 Write register**
+**Cmd=31 Write register(s)**
 
 .. table::
     :name: cmd31
@@ -657,32 +657,33 @@ Writes a 16bit value to a given register
 
 -----
 
-**Cmd=32 Read register**
+**Cmd=32 Read register(s)**
 
 .. table::
     :name: cmd32
 
-    ======== =========================================
+    ======== ===================================================
     **Word** **Contents**
-    ======== =========================================
-    10       1 (exact one register)
+    ======== ===================================================
+    10       len or number of registers (max. buffer_length - 1)
     11       register number
     12       0xFFFF
-    ======== =========================================
+    ======== ===================================================
 
-Reads a 16 bit value from a given register
+Reads a consecutive list of 16 bit value from a registers starting
+at given register number
 
 **Cmd=32 Read register (Answer)**
 
 .. table::
 
-    ======== =========================================
-    **Word** **Contents**
-    ======== =========================================
-    10       1 (exact one register)
-    11       register value
-    12       0xFFFF
-    ======== =========================================
+    ============ =========================================
+    **Word**     **Contents**
+    ============ =========================================
+    11           register 1 value
+    ...          ...
+    10 + len + 1 0xFFFF
+    ============ =========================================
 
 -----
 
