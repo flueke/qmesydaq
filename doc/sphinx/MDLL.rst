@@ -1,5 +1,5 @@
 MDLL
-====
+****
 
 **Readout module for area detectors with delayline readout**
 
@@ -55,16 +55,16 @@ or:
 Data are output as UDP packages on an ethernet interface, data format is comparable
 to data format of MCPD-8 / MPSD-8. Please see below for a detailed description.
 
-**Overview Main Properties:**
+**Overview Main Properties**
 
-**MDLL, “detector part”:**
+**MDLL, “detector part”**
 
 *   direct inputs for 2 x X-cathode, 2 x Y-cathode, 1 x Anode
 *   X and Y position calculation from delay time
 *   Energy determination from anode signal
 *   Adaptable to delays of 100 ns … 500 ns
 
-**MDLL, “MCPD-8 part”:**
+**MDLL, “MCPD-8 part”**
 
 *   same network interface like MCPD-8
 *   similar digital interface like MCPD-8, but:

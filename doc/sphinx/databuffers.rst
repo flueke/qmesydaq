@@ -12,8 +12,8 @@ to 1500 Bytes (limited by unfragmented Ethernet frame length).
 
 .. _data_buffer_structure:
 
-Buffer Structure:
------------------
+Buffer Structure
+----------------
 (in 16 bit words):
 
 +---------------------------------+-------------------------+
@@ -78,8 +78,8 @@ Buffer Structure:
 
 .. _header_data_dictionary:
 
-Header data dictionary:
------------------------
+Header data dictionary
+----------------------
 
 :Buffer Type:       16 bit type descriptor
 
@@ -122,8 +122,8 @@ Header data dictionary:
 
 .. _event_structure:
 
-Event structure:
-~~~~~~~~~~~~~~~~
+Event structure
+~~~~~~~~~~~~~~~
 
 Each event has a fixed 48 bit length. The content differs according to the event
 ID.
@@ -131,8 +131,8 @@ ID.
 :ID = 0: Neutron data event
 :ID = 1: Trigger data event
 
-Neutron data events (ID = 0):
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Neutron data events (ID = 0)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 +------------------+------------+----------+--------------+-------------+--------------+
 | MSB              |            |          |              |             |         LSB  |
@@ -181,8 +181,8 @@ Neutron data events (ID = 0):
                 19 bit
 
  
-Address reconstruction:
-"""""""""""""""""""""""
+Address reconstruction
+""""""""""""""""""""""
 
 The complete, two dimensional address of a neutron event consists of max.
 16 + 10 bit and is composed by the following partial informations:
@@ -223,8 +223,8 @@ look like this:
         No calculation needed (but possibly calibration against physical data ...)
 
 
-Trigger events (ID = 1):
-^^^^^^^^^^^^^^^^^^^^^^^^
+Trigger events (ID = 1)
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Several trigger sources (counters, timers, digital inputs) can initiate a data
 taking event. Triggerd by levels or defined overflows of the trigger sources,

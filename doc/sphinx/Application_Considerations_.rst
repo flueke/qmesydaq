@@ -1,7 +1,7 @@
 .. |mus|  unicode:: U+003BC s
 
-Application Considerations:
-===========================
+Application Considerations
+==========================
 
 The various functional units of the MCPD-8 allow building a highly flexible
 system, delivering exactly the data needed by an instrument. Not only neutron
@@ -11,8 +11,8 @@ As it is not really self explaining how to use the many flexible possibilities
 the PSD system offers, here are some considerations and hints that might be
 helpful adapting the readout system to an instrument.
 
-Data Sources:
--------------
+Data Sources
+------------
 
 The PSD system offers three different kinds of data:
 
@@ -77,11 +77,11 @@ The PSD system offers three different kinds of data:
   | (There's no self-triggering with a compare register for the ADCs.)
 
 
-Examples:
----------
+Examples
+--------
 
-Chopper Signals:
-~~~~~~~~~~~~~~~~
+Chopper Signals
+~~~~~~~~~~~~~~~
 
 Chopper signals need precise timing, so it's a good application for a self
 triggering TTL input:
@@ -110,8 +110,8 @@ values other than 22: a „0“ will lead to triggering every second rising edge
 a „1“ every fourth“, ...
 
 
-Monitor Counters:
-~~~~~~~~~~~~~~~~~
+Monitor Counters
+~~~~~~~~~~~~~~~~
 
 Monitor counters normally don't need precise timing with a 100 ns timebase. So
 there are several possibilites for monitor counter readout – depending on
@@ -120,8 +120,8 @@ instrumental needs:
 Connect the monitor counting output (TTL)
 to one of the four Monitor/Chopper inputs or to one of the backpanel TTL inputs.
 
-Monitor counter as header parameter:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Monitor counter as header parameter
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Define the appropriate counter (0...3: frontpanel, 4,5: backpanel) as source of
 one of the four parameter fields that will be transmitted with every data buffer
@@ -192,8 +192,8 @@ to :math:`2^22`
 
 Identical to chopper signals described above.
 
-External analog data, timer triggered:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+External analog data, timer triggered
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Many instruments need information from other components of the setup: temperature,
 pressure, fields, …
@@ -226,8 +226,8 @@ be generated, timestamped and buffered with the following data:
   | DataID = n (n=address of ADC input)
   | Data = ADC value (12 bit valid data, 9 bit leading zeroes)
 
-External analog data, TTL triggered:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+External analog data, TTL triggered
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ADC readout can also be triggered by an axternal TTL signal, which can be an end
 point switch, an external frequency source, …
@@ -247,8 +247,8 @@ be generated, timestamped and buffered with the following data :
   | DataID = n (n=address of ADC input)
   | Data = ADC value (12 bit valid data, 9 bit leading zeroes)
 
-External analog data, continuously transmitted with buffer header:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+External analog data, continuously transmitted with buffer header
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If external data just have to be monitored, but precise timing is not the issue,
 data transmission in one of the four parameter fields of the buffer header may
@@ -261,8 +261,8 @@ both ADC values in the selected parameter field.
 Buffers are transmitted whenever they are full with events or latest every 40 ms.
 Values and timestamps are generated at the moment of buffer generation.
 
-Combination of timers, triggering, counting and header parameters:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Combination of timers, triggering, counting and header parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For a sophisticated setup, most of the readout possiblities can be combined.
 

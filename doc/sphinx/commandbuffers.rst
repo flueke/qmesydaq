@@ -11,14 +11,14 @@ up to 1.500 bytes (limited by unfragmented Ethernet frame length)
 (Padding bytes to keep Ethernet minimum buffer sizes must be added).
 
 
-Buffer Structure:
------------------
-(in 16 bit words):
+Buffer Structure
+----------------
+(in 16 bit words)
 
 .. include:: commandbuffertable.inc
 
-Header data dictionary:
------------------------
+Header data dictionary
+----------------------
 
 Use and meaning of header data varies depending on sender. While MCPD-8 fills
 in all data, some of them may be left uninitialized when sending a data block

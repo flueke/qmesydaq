@@ -7,8 +7,8 @@ number of position channels (960 x 960).
 To signalize this different structure, field „Buffer Type“ in buffer header has a
 value of 0x0002.
 
-Buffer Structure:
-------------------
+Buffer Structure
+----------------
 
 (in 16 bit words):
 
@@ -72,8 +72,8 @@ Buffer Structure:
 
 (must be identical with buffer length – 1)
 
-Event structure MDLL:
-----------------------
+Event structure MDLL
+--------------------
 
 Each event has a fixed 48 bit length. The contents differs according to the event
 id.
@@ -86,8 +86,8 @@ transmitted data are slight ly different to MPSD data format:
 :ID = 1:        Trigger data event
 
 
-Neutron data events (ID = 0):
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Neutron data events (ID = 0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +------------+---------------+-----------------+-----------------+----------------+
 | MSB        |               |                 |                 |         LSB    |

@@ -1,10 +1,10 @@
 .. |mus|  unicode:: U+003BC s
 
 Command Reference
-=================
+*****************
 
-General Command Format:
------------------------
+General Command Format
+======================
 
 The structure of a command buffer is displayed here again. It’s layout is
 identical for all commands.
@@ -22,11 +22,11 @@ Every command buffer will be answered by MCPD-8. Set values instead of requested
 values will be inserted into the appropriate fields. If a command fails in the
 MCPD-8, the Cmd number will *have bit 15 set*.
 
-Command Set MCPD-8:
--------------------
+Command Set MCPD-8
+==================
 
-Command List (Numerical Order):
--------------------------------
+Command List (Numerical Order)
+------------------------------
 
 ========= ========================================
 **Cmd #** **Command**
@@ -62,10 +62,10 @@ Command List (Numerical Order):
 51        :ref:`Retrieve MCPD-8 version information <cmd51>`
 ========= ========================================
 
-Command List (Functional Order):
---------------------------------
+Command List (Functional Order)
+-------------------------------
 
-**Communication Settings:**
+**Communication Settings**
 
 ========= ========================================
 **Cmd #** **Command**
@@ -76,7 +76,7 @@ Command List (Functional Order):
 23        :ref:`Set MCPD-8 fast bus Capabilities <cmd23>`
 ========= ========================================
 
-**General MCPD-8 Settings:**
+**General MCPD-8 Settings**
 
 ========= ========================================
 **Cmd #** **Command**
@@ -94,7 +94,7 @@ Command List (Functional Order):
 51        :ref:`Retrieve MCPD-8 version information <cmd51>`
 ========= ========================================
 
-**MPSD-8 Settings:**
+**MPSD-8 Settings**
 
 ========= ========================================
 **Cmd #** **Command**
@@ -107,7 +107,7 @@ Command List (Functional Order):
 25        :ref:`Set MPSD-8+ fast tx protocol <cmd25>`
 ========= ========================================
 
-**DAQ Commands:**
+**DAQ Commands**
 
 ========= ========================================
 **Cmd #** **Command**
@@ -118,7 +118,7 @@ Command List (Functional Order):
 3         :ref:`Continue DAQ <cmd3>`
 ========= ========================================
 
-**MCPD-8 Port Commands:**
+**MCPD-8 Port Commands**
 
 ========= ========================================
 **Cmd #** **Command**
@@ -131,11 +131,11 @@ Command List (Functional Order):
 32        :ref:`Read register <cmd32>`
 ========= ========================================
 
-Command Descriptions:
----------------------
+Command Descriptions
+====================
 
-Communication Settings:
------------------------
+Communication Settings
+----------------------
 
 **Cmd=4 Set MCPD ID#**
 
@@ -346,8 +346,8 @@ Answer buffer:
     11       0xFFFF
     ======== =========================================
 
-General settings:
------------------
+General settings
+----------------
 
 **Cmd=6 Set MCPD-8 timing setup**
 
@@ -410,8 +410,8 @@ Set value for the header field “Run ID” can be set to any desired value.
 The master MCPD-8 distributes its Run ID over the sync bus. Thus it’s only
 necessary to set the Run Id at the master module.
 
-Counter, ADC, Timer and Parameter settings:
--------------------------------------------
+Counter, ADC, Timer and Parameter settings
+------------------------------------------
 
 **Cmd=9 Set Counter / ADC Cell**
 

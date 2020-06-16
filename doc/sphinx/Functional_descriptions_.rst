@@ -1,7 +1,7 @@
 .. |mus|  unicode:: U+003BC s
 
-Functional descriptions:
-========================
+Functional descriptions
+=======================
 
 
 All commands are used to control properties and behaviour of two main targets:
@@ -14,8 +14,8 @@ All commands are used to control properties and behaviour of two main targets:
   MPSD-8 are translated in the central module MCPD-8 and transmitted over the serial
   connections.
 
-MPSD-8:
--------
+MPSD-8
+------
 
 | Each MPSD-8 has eight dual amplification stages. The gain values are kept
   symmetric internally, so there’s one gain value for each MPSD-8 channel.
@@ -41,15 +41,15 @@ Test pulser unit:
     *   1 position within channel (left / middle / right)
     *   on / off
 
-MCPD-8:
--------
+MCPD-8
+------
 
 The central processing module MCPD-8 offers the following groups of
 properties/functional modules:
 
 
-Address and communication parameters:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Address and communication parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Device ID**
 
@@ -78,8 +78,8 @@ UDP port number for command and data buffers can be set to a desired value. Valu
 are saved permanently. If not set, the port number of the last cmd packet is used.
 
 
-Timing parameters:
-~~~~~~~~~~~~~~~~~~
+Timing parameters
+~~~~~~~~~~~~~~~~~
 
 **Timing master**
 
@@ -95,8 +95,8 @@ during data acquisition.
 Timing sync line has to be terminated at the end, so the last MCPD-8 has to be
 set to sync “on”.
 
-General properties:
-~~~~~~~~~~~~~~~~~~~
+General properties
+~~~~~~~~~~~~~~~~~~
 
 **Run id**
 
@@ -104,8 +104,8 @@ An arbitrary 16 bit value to identify the current run. Value is transmitted in
 every data buffer header. Run ID value of the master MCPD-8 will be propagated
 via sync bus.
 
-Functional units:
-~~~~~~~~~~~~~~~~~~
+Functional units
+~~~~~~~~~~~~~~~~
 
 | Besides the aggregation of neutron event data, MCPD-8 can contribute own data
   originating from six digital (TTL) and two analog inputs.
@@ -161,8 +161,8 @@ of ADC data when waiting for a change in sample environment.
 Auxiliary timer configuration is done by :ref:`command #10 (set auxiliary timer) <cmd10>`,
 the only parameter to submit is the capture register value.
 
-Counter cells:
-~~~~~~~~~~~~~~
+Counter cells
+~~~~~~~~~~~~~
 
 | Counter cells can be used e.g. for monitor counters, chopper inputs, auxiliary
   timing purposes and more.
@@ -290,8 +290,8 @@ cell address:
 
 This setup is done using cmd #9 (Set counter / ADC cell), described in detail below.
 
-ADC cells:
-~~~~~~~~~~
+ADC cells
+~~~~~~~~~
 
 | ADC cells operate principally similar to the counter cells. Their data have
   12 bit resolution (which are extended by 9 leading zeroes to keep the data
@@ -312,8 +312,8 @@ The ADC cells can be triggered by:
 *   one of the four programmable auxilliary timers
 *   one of the two digital inputs on the backpanel
 
-Multipurpose counters (“Parameters”):
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Multipurpose counters (“Parameters”)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 | MCPD-8 offers four additional 48 bit wide multipurpose counters / data fields.
 | Their values are automatically transmitted as parameter 0 … 3 with every data
@@ -347,8 +347,8 @@ sources:
     :7: event counter
     :8: master clock
 
-Counter / Port Status Polling:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Counter / Port Status Polling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As a last means to derive counter values and port status from MCPD-8, there’s
 a polling command that delivers all possible data sources in one cmd answer buffer:
