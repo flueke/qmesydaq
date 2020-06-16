@@ -17,7 +17,7 @@ given:
 | | ASCII format                                                                |
 | | variable length                                                             |
 | | length given in header                                                      |
-| | carries administrationadata                                                 |
+| | carries administration data                                                 |
 +-------------------------------------------------------------------------------+
 | **Header Separator**                                                          |
 |                                                                               |
