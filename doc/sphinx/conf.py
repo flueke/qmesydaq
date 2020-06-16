@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PSD+ cmd format'
-copyright = u'2005-2015, Gregor Montermann'
+copyright = u'2005-2020, Gregor Montermann'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
