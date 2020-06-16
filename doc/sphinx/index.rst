@@ -28,7 +28,7 @@
 Table of contents:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     overview
     protocol
@@ -38,8 +38,6 @@ Table of contents:
     Application_Considerations_
     Command_Reference
     MDLL
-    MDLL_Databuffers
-    MDLL_Command_Reference
     Listmode_Data_Format
     Bus_protocol___Data_transmission
 
