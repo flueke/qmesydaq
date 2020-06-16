@@ -189,8 +189,7 @@ void ModuleSetup::readRegisterSlot()
 	quint16 id = (quint16) devid->value();
 	quint16 addr = module->value();
 	quint16 reg = registerSelect->value();
-
-	m_theApp->readPeriReg(id, addr, reg);
+	registerValue->setText(QString::number(m_theApp->readPeriReg(id, addr, reg)));
 }
 
 /*!
