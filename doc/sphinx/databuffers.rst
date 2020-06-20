@@ -123,7 +123,7 @@ Header data dictionary
 .. _event_structure:
 
 Event structure
-~~~~~~~~~~~~~~~
+---------------
 
 Each event has a fixed 48 bit length. The content differs according to the event
 ID.
@@ -136,7 +136,7 @@ Neutron data events (ID = 0)
 
 +------------------+------------+----------+--------------+-------------+--------------+
 | MSB              |            |          |              |             |         LSB  |
-+------------------+------------+----------+--------------+-------------+--------------+
++==================+============+==========+==============+=============+==============+
 |ID (1 bit) = **0**|ModID(3 bit)|SlotID (5)|Amplitude (10)|Position (10)|Timestamp (19)|
 +------------------+------------+----------+--------------+-------------+--------------+
 
@@ -195,7 +195,7 @@ The complete, two dimensional address of a neutron event consists of max.
 
 +-------------+------------+------------+
 | Bit 15 .. 8 | Bit 7 .. 5 | Bit 4 .. 0 |
-+-------------+------------+------------+
++=============+============+============+
 | MCPD-ID     | ModID      | SlotID     |
 +-------------+------------+------------+
 
@@ -211,7 +211,7 @@ look like this:
 
 +------------+------------+------------+
 | Bit 7 .. 6 | Bit 5 .. 3 | Bit 2 .. 0 |
-+------------+------------+------------+
++============+============+============+
 | MCPD-ID    | ModID      | SlotID     |
 +------------+------------+------------+
 
@@ -222,56 +222,4 @@ look like this:
 
         No calculation needed (but possibly calibration against physical data ...)
 
-
-Trigger events (ID = 1)
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Several trigger sources (counters, timers, digital inputs) can initiate a data
-taking event. Triggerd by levels or defined overflows of the trigger sources,
-data are taken from the data sources and written to an event structure. Possible
-trigger and dats sources are timers, counters, and ADC values.
-
-
-MSB
-
-+------------------+-------------+----------+--------------+--------------+
-|ID (1 bit) = **1**|TrigID(3 bit)|DataID (4)|Data (21 bit) |Timestamp (19)|
-+------------------+-------------+----------+--------------+--------------+
-
-:ID:    ID = 1, signalling a 'not neutron' event (= generated centrally in MCPD-8)
-        possible trigger and data sources are:
-        - Counter
-        - Timers
-        - Digital inputs
-
-        1 bit
-
-:TrigID: Trigger ID characterizing the event trigger source
-         :1..4: Timer 1 .. 4
-         :5,6:  rear TTL inputs 1,2
-         :7:    compare register
-
-         3 bit
-
-:DataID: DataID characterizing the data source.
-
-         Data taking was initiated by the trigger source indentified in TrigID,
-         at the time ``header timestamp + event timestamp``.
-
-         :0..3: Monitor/Chopper input 1..4
-         :4,5:  rear TTL inputs 1,2
-         :6,7:  ADC 1,2
-
-         4 bit
-
-:Data:  Counter, timer, or ADC value of the identified data source
-        
-        21 bit (depending on source not necessarily all valid)
-        
-:Timestamp:     timing offset to the corresponding header timestamp
-               
-                event time = header timestamp + event timestamp
-
-                19 bit
-
-
+.. include:: triggerevents.inc
