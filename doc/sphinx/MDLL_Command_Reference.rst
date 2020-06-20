@@ -22,6 +22,8 @@ Command List (Numerical Order)
  12       :ref:`Get Parameters <cmd12>`
  18       :ref:`Send MCPD-8 Serial String <cmd18>`
  19       :ref:`Read MCPD-8 Serial String <cmd19>`
+ 22       :ref:`Get MCPD-8 fast bus capabilities <cmd22>`
+ 36       :ref:`Read ID <cmd36>`
  51       :ref:`Retrieve MCPD-8 version information <cmd51>`
  60       :ref:`Set MDLL thresholds <cmd60>`
  61       :ref:`Set MDLL spectrum <cmd61>`
@@ -31,12 +33,63 @@ Command List (Numerical Order)
  68       :ref:`Set MDLL energy window <cmd68>`
 ========= ========================================
 
-.. note:: commands 60-68 are MDLL exclusive
+Command List (Functional Order)
+-------------------------------
 
+**DAQ Commands**
 
-**UDP command set for MDLL**
+========= ========================================
+**Cmd #** **Command**
+========= ========================================
+0         :ref:`Reset <cmd0>`
+1         :ref:`Start DAQ <cmd1>`
+2         :ref:`Stop DAQ <cmd2>`
+3         :ref:`Continue DAQ <cmd3>`
+========= ========================================
 
-(extended command set for MDLL “detector properties”)
+**Communication Settings**
+
+========= ===============================================
+**Cmd #** **Command**
+========= ===============================================
+4         :ref:`Set MCPD ID# <cmd4>`
+5         :ref:`Set Protocol Parameters <cmd5>`
+========= ===============================================
+
+**General MCPD-8 Settings**
+
+========= ========================================
+**Cmd #** **Command**
+========= ========================================
+6         :ref:`Set MCPD-8 Timing Setup <cmd6>`
+7         :ref:`Set Master Clock <cmd7>`
+8         :ref:`Set Run ID <cmd8>`
+9         :ref:`Set Counter / ADC cell <cmd9>`
+10        :ref:`Set Auxiliary Timer <cmd10>`
+11        :ref:`Set Parameter Source <cmd11>`
+12        :ref:`Get Parameters <cmd12>`
+22        :ref:`Get MCPD-8 fast bus capabilities <cmd22>`
+36        :ref:`Read ID <cmd36>`
+51        :ref:`Retrieve MCPD-8 version information <cmd51>`
+========= ========================================
+
+**MDLL Settings**
+
+========= ========================================
+**Cmd #** **Command**
+========= ========================================
+ 60       :ref:`Set MDLL thresholds <cmd60>`
+ 61       :ref:`Set MDLL spectrum <cmd61>`
+ 65       :ref:`Set MDLL Test pulser <cmd65>`
+ 66       :ref:`Set MDLL dataset <cmd66>`
+ 67       :ref:`Set MDLL timing window <cmd67>`
+ 68       :ref:`Set MDLL energy window <cmd68>`
+========= ========================================
+
+UDP command set for MDLL
+------------------------
+
+Extended command set for MDLL “detector properties”.
 
 **Cmd=60 Set MDLL Thresholds**
 
