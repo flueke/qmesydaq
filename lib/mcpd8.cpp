@@ -590,7 +590,7 @@ bool MCPD8::scanPeriph(void)
                 tmpFloat /= 100.;
                 tmpFloat += (tmp >> 8);
                 m_mpsd[mod]->setVersion(tmpFloat);
-                MSG_INFO << tr("Module (ID %1): Version number : %2").arg(mod).arg(tmpFloat, 0, 'f', 2);
+                MSG_INFO << tr("Module (ID %1, TYPE: %3): Version number : %2").arg(mod).arg(tmpFloat, 0, 'f', 2).arg(m_mpsd[mod]->type());
 		switch (m_mpsd[mod]->type())
 		{
 			case TYPE_MPSD8P:
@@ -600,6 +600,10 @@ bool MCPD8::scanPeriph(void)
                         case TYPE_NOMODULE:
                             m_mpsd[mod]->setCapabilities(0);
                             break;
+			case TYPE_MDLL:
+                            MSG_NOTICE << tr("Module: %d is a MDLL module").arg(mod);
+		            m_mpsd[mod]->setCapabilities(P);
+			    return true;
 			default:
 		            m_mpsd[mod]->setCapabilities(P);
                 }
