@@ -1157,7 +1157,8 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
  */
 void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, quint16 dataPort, const QString &cmdIP, quint16 cmdPort)
 {
-	if (m_mcpd.contains(id))
+	// NOTE: the MWPCHR module type does not need set the communication parameters
+	if (m_mcpd.contains(id) && m_mcpd[id]->getModuleId(0) != TYPE_MWPCHR)
 		m_mcpd[id]->setProtocol(mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }
 
