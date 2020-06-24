@@ -27,7 +27,7 @@
 SimMCPD8::SimMCPD8(quint8 id, const QHostAddress &address, quint16 port)
 	: m_pSocket(NULL)
 	, m_DataTarget(QHostAddress::Broadcast)
-	, m_wDataPort(54321)
+	, m_wDataPort(port)
 	, m_byCpdId(id)
 	, m_wBufferNo(0)
 {
