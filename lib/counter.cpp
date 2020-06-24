@@ -129,7 +129,7 @@ void MesydaqCounter::calcRate(void)
 			else
 			{
 				if (m_value)
-					MSG_ERROR << tr("size : %1; m_value : %2, m_lastValue : %3").arg(m_rate.size()).arg(m_value).arg(m_lastValue);
+					MSG_INFO << tr("size : %1; m_value : %2, m_lastValue : %3").arg(m_rate.size()).arg(m_value).arg(m_lastValue);
 				m_rate.enqueue(0);
 			}
 		}
