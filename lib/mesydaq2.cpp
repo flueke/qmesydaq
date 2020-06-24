@@ -746,7 +746,6 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		MCPD8 *pMCPD = m_mcpd[iId];
 		if (dynamic_cast<MCPD *>(pMCPD) != NULL && pMCPD->isInitialized())
 		{
-			setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
 			for (int j = 0; j < 4; ++j)
 			{
 				setAuxTimer(iId, j, settings.value(QString("auxtimer%1").arg(j), "0").toUInt());
@@ -770,6 +769,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 			}
 			setTimingSetup(iId, settings.value("master", "true").toBool(), settings.value("terminate", "true").toBool(),
 				settings.value("extsync", "false").toBool());
+			setProtocol(iId, QString("0.0.0.0"), dataIP, dataPort, cmdIP, cmdPort);
 		}
 		else
 			MSG_FATAL << tr("MCPD id %1 with address %2 was not correctly initialized").arg(iId).arg(IP);
