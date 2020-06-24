@@ -72,22 +72,6 @@ QList<quint16> MWPCHR::getActiveList(void)
 
 #if 0
 /*!
-    \fn void MDll::initMdll(void)
-
-    initialize settings
- */
-void MWPCHR::initMdll(void)
-{
-    m_mcpd->setMdllSpectrum(m_shift[0][1], m_shift[1][1], m_scale[0][1], m_scale[1][1]);
-    m_mcpd->setMdllAcqset(0, 0, m_timingWindow[0][1], m_timingWindow[1][1], m_timingWindow[2][1], m_timingWindow[3][1]);
-    m_mcpd->setMdllEnergyWindow(m_energyWindow[0][1], m_energyWindow[1][1], 0, 0);
-    m_mcpd->setMdllThresholds(m_thresh[0], m_thresh[1], m_thresh[2]);
-}
-
-#endif
-
-#if 0
-/*!
     \fn void MDll::serialize(QFile * fi)
 
     \param fi
