@@ -78,14 +78,14 @@ void MDLL::setThresholds(quint8 threshX, quint8 threshY, quint8 threshA, bool pr
         m_thresh[0][1] = threshX;
         m_thresh[1][1] = threshY;
         m_thresh[2][1] = threshA;
-        MSG_NOTICE << tr("m_thresh presets%1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_thresh[0][preset]).arg(m_thresh[1][preset]).arg(m_thresh[3][preset]);
+        MSG_NOTICE << tr("m_thresh presets%1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_thresh[0][preset]).arg(m_thresh[1][preset]).arg(m_thresh[2][preset]);
     }
     else
     {
         m_thresh[0][0] = threshX;
         m_thresh[1][0] = threshY;
         m_thresh[2][0] = threshA;
-        MSG_NOTICE << tr("m_thresh presets%1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_thresh[0][preset]).arg(m_thresh[1][preset]).arg(m_thresh[3][preset]);
+        MSG_NOTICE << tr("m_thresh presets%1, MDLL to: %2, %3, %4").arg(m_mcpdId).arg(m_thresh[0][preset]).arg(m_thresh[1][preset]).arg(m_thresh[2][preset]);
     }
 }
 
