@@ -1124,6 +1124,8 @@ bool MCPD8::setPulser(quint16 addr, quint8 chan, quint8 pos, quint8 amp, bool on
  */
 bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 {
+    if (!m_mdll.isEmpty() && m_mdll[0]->type() != TYPE_MDLL)
+        return true;
     MSG_INFO << tr("MCPD8::setAuxTimer(%1, %2)").arg(tim).arg(val);
     if(tim > 3)
         tim = 3;
@@ -1150,6 +1152,8 @@ bool MCPD8::setAuxTimer(quint16 tim, quint16 val)
 bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
 {
     bool errorflag = true;
+    if (!m_mdll.isEmpty() && m_mdll[0]->type() != TYPE_MDLL)
+        return errorflag;
     if (source > 7)
     {
         MSG_ERROR << tr("Error: mcpd %1: trying to set counter cell #%2. Range exceeded! Max. cell# is 7").arg(m_byId).arg(source);
@@ -1217,6 +1221,8 @@ void MCPD8::getCounterCell(quint8 cell, quint16 *celldata)
  */
 bool MCPD8::setParamSource(quint16 param, quint16 source)
 {
+    if (!m_mdll.isEmpty() && m_mdll[0]->type() != TYPE_MDLL)
+        return true;
     MSG_NOTICE << tr("set parameter source %1 to %2").arg(param).arg(source);
     if(param > 3 || source > 8)
         return false;
