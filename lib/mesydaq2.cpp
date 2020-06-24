@@ -1311,7 +1311,8 @@ void Mesydaq2::setMasterClock(quint16 id, quint64 val)
  */
 void Mesydaq2::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
 {
-	if (m_mcpd.contains(id))
+	// MWPCHR does not have set timing setup
+	if (m_mcpd.contains(id) && m_mcpd[id]->getModuleId(0) != TYPE_MWPCHR)
 		m_mcpd[id]->setTimingSetup(master, term, extsync);
 }
 
