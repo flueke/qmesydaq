@@ -600,6 +600,9 @@ bool MCPD8::scanPeriph(void)
                         case TYPE_NOMODULE:
                             m_mpsd[mod]->setCapabilities(0);
                             break;
+			case TYPE_MWPCHR:
+                            MSG_NOTICE << tr("Module: %d is a MWPCHR module").arg(mod);
+                            return true;
 			case TYPE_MDLL:
                             MSG_NOTICE << tr("Module: %d is a MDLL module").arg(mod);
 		            m_mpsd[mod]->setCapabilities(P);
