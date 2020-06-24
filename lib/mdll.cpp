@@ -26,6 +26,8 @@
 
 /*!
     constructor
+
+    \param bus
     \param parent
  */
 MDLL::MDLL(quint8 bus, QObject *parent)
