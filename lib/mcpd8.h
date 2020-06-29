@@ -333,6 +333,10 @@ protected:
          */
 	void setBuffer(quint8 index, quint16 value);
 
+	bool parseDataBuffer(QSharedDataPointer<SD_PACKET> pd);
+
+	bool parseCmdBuffer(QSharedDataPointer<SD_PACKET> pd);
+
 private:
 	quint16 calcChksum(const MDP_PACKET &buffer);
 

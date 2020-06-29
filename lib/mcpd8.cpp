@@ -1773,91 +1773,103 @@ quint16 MCPD8::calcChksum(const QSharedDataPointer<SD_PACKET> &buffer)
 bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
     const MDP_PACKET *pMdp = &pPacket.constData()->mdp;
-    bool bAnswerOk(true);
-    if (pMdp->deviceId != m_byId)
+//    MSG_DEBUG << tr("MCPD8::analyzeBuffer(QSharedDataPointer<SD_MDP_PACKET> pPacket) 0x%1 : %2").arg(pMdp->bufferType, 0, 16).arg(pMdp->cmd);
+    if (pMdp->deviceId == m_byId)
     {
-        MSG_WARNING << tr("deviceId : %1 <-> %2").arg(pMdp->deviceId).arg(m_byId);
-        return false;
-    }
-
-    if(pMdp->bufferType & CMDBUFTYPE)
-    {
-        quint16 diff = pMdp->bufferNumber - m_lastCmdBufnum;
-        if(diff > 1 && pMdp->bufferNumber > 0 && m_lastCmdBufnum > 0)
-             MSG_ERROR << tr("%1(%2) %3: Lost %4 command buffers: current: %5, last: %6").
-		arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(pMdp->bufferNumber).arg(m_lastCmdBufnum);
-        m_lastCmdBufnum = pMdp->bufferNumber;
-
-        ++m_cmdRxd;
-//	MSG_DEBUG << tr("%1(%2) : id %3").arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(pMdp->deviceId);
-
         m_headertime = pMdp->time[0] + (quint64(pMdp->time[1]) << 16) + (quint64(pMdp->time[2]) << 32);
         m_timemsec = (m_headertime / 10000); // headertime is in 100ns steps
-//	MSG_DEBUG << tr("MCPD8::analyzeBuffer(QSharedDataPointer<SD_MDP_PACKET> pPacket) 0x%1 : %2").arg(pMdp->bufferType, 0, 16).arg(pMdp->cmd);
+        emit headerTimeChanged(m_headertime);
 
-	emit headerTimeChanged(m_headertime);
+        if(pMdp->bufferType & CMDBUFTYPE)
+            return parseCmdBuffer(pPacket);
+        return parseDataBuffer(pPacket);
+    }
+    MSG_WARNING << tr("deviceId : %1 <-> %2").arg(pMdp->deviceId).arg(m_byId);
+    return false;
+}
 
-        MPSD8	*ptrMPSD;
-        MDLL    *ptrMDLL;
+/*!
+    \fn bool MCPD8::parseCmdBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
-        switch (pMdp->cmd)
-        {
-            case RESET:
-                MSG_WARNING << tr("not handled command : RESET");
-                break;
-            case START:
-                emit startedDaq();
-                break;
-            case STOP:
-                emit stoppedDaq();
-                break;
-            case CONTINUE:
-                emit continuedDaq();
-                break;
-            case SETID:
-		if (pMdp->cmd & 0x80)
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("SETID : failed");
-		}
-		else
-			MSG_NOTICE << tr("SETID = %1").arg(pMdp->data[0]);
-                break;
-            case SETPROTOCOL:
-                // extract ip and eth addresses in case of "this pc"
-                break;
-            case SETTIMING:
-		if (pMdp->cmd & 0x80)
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("SETTIMING : failed");
-		}
-		else
-			MSG_INFO << tr("SETTIMING : master %1 terminate %2").arg(pMdp->data[0]).arg(pMdp->data[1]);
-                break;
-            case SETCLOCK:
-                MSG_WARNING << tr("not handled command : SETCLOCK");
-                break;
-            case SETRUNID:
-                MSG_WARNING << tr("not handled command : SETRUNID");
-                break;
-            case SETCELL:
-		if (pMdp->cmd & 0x80)
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("SETCELL : failed");
-		}
-		else
-			MSG_INFO << tr(": SETCELL");
-                break;
-            case SETAUXTIMER:
-		if (pMdp->data[1] != m_auxTimer[pMdp->data[0]])
-		{
-			MSG_ERROR << tr("Error setting auxiliary timer, tim %1, is: %2, should be %3").
-				arg(pMdp->data[0]).arg(pMdp->data[1]).arg(m_auxTimer[pMdp->data[0]]);
-		}
-                break;
-            case SETPARAM:
+    analyze the command package coming from the MCPD-8
+
+    \param pPacket command package
+ */
+bool MCPD8::parseCmdBuffer(QSharedDataPointer<SD_PACKET> pPacket)
+{
+    const MDP_PACKET *pMdp = &pPacket.constData()->mdp;
+    bool bAnswerOk(true);
+
+    quint16 diff = pMdp->bufferNumber - m_lastCmdBufnum;
+    if(diff > 1 && pMdp->bufferNumber > 0 && m_lastCmdBufnum > 0)
+         MSG_ERROR << tr("%1(%2) %3: Lost %4 command buffers: current: %5, last: %6").
+                      arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(pMdp->bufferNumber).arg(m_lastCmdBufnum);
+    m_lastCmdBufnum = pMdp->bufferNumber;
+
+    ++m_cmdRxd;
+//    MSG_DEBUG << tr("%1(%2) : id %3").arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(pMdp->deviceId);
+
+    MPSD8 *ptrMPSD;
+    MDLL  *ptrMDLL;
+
+    switch (pMdp->cmd)
+    {
+        case RESET:
+            MSG_WARNING << tr("not handled command : RESET");
+            break;
+        case START:
+            emit startedDaq();
+            break;
+        case STOP:
+            emit stoppedDaq();
+            break;
+        case CONTINUE:
+            emit continuedDaq();
+            break;
+        case SETID:
+            if (pMdp->cmd & 0x80)
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("SETID : failed");
+            }
+            else
+                MSG_NOTICE << tr("SETID = %1").arg(pMdp->data[0]);
+            break;
+        case SETPROTOCOL:
+            // extract ip and eth addresses in case of "this pc"
+            break;
+        case SETTIMING:
+            if (pMdp->cmd & 0x80)
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("SETTIMING : failed");
+            }
+            else
+                MSG_INFO << tr("SETTIMING : master %1 terminate %2").arg(pMdp->data[0]).arg(pMdp->data[1]);
+            break;
+        case SETCLOCK:
+            MSG_WARNING << tr("not handled command : SETCLOCK");
+            break;
+        case SETRUNID:
+            MSG_WARNING << tr("not handled command : SETRUNID");
+            break;
+        case SETCELL:
+            if (pMdp->cmd & 0x80)
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("SETCELL : failed");
+            }
+            else
+                MSG_INFO << tr(": SETCELL");
+            break;
+        case SETAUXTIMER:
+            if (pMdp->data[1] != m_auxTimer[pMdp->data[0]])
+            {
+                MSG_ERROR << tr("Error setting auxiliary timer, tim %1, is: %2, should be %3").
+                             arg(pMdp->data[0]).arg(pMdp->data[1]).arg(m_auxTimer[pMdp->data[0]]);
+            }
+            break;
+        case SETPARAM:
 		if (pMdp->cmd & 0x80)
 		{
 			bAnswerOk = false;
@@ -1866,377 +1878,429 @@ bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		else
 			MSG_INFO << tr("SETPARAM");
                 break;
-            case GETPARAM:
-                MSG_WARNING << tr("not handled command : GETPARAM");
+        case GETPARAM:
+            MSG_WARNING << tr("not handled command : GETPARAM");
+            {
+                quint64 val = pMdp->data[9] + (quint64(pMdp->data[10]) << 16) + (quint64(pMdp->data[11]) << 32);
+                setParameter(0, val);
+                val = pMdp->data[12] + (quint64(pMdp->data[13]) << 16) + (quint64(pMdp->data[14]) << 32);
+                setParameter(1, val);
+                val = pMdp->data[15] + (quint64(pMdp->data[16]) << 16) + (quint64(pMdp->data[17]) << 32);
+                setParameter(2, val);
+                val = pMdp->data[18] + (quint64(pMdp->data[19]) << 16) + (quint64(pMdp->data[20]) << 32);
+                setParameter(3, val);
+            }
+            break;
+        case SETGAIN_MPSD: // extract the set gain values:
+        case SETGAIN_MSTD:
+            if (pMdp->bufferLength == 21) // set common gain
+            {
+                for(quint8 c = 0; c < 8; c++)
                 {
-			quint64 val = pMdp->data[9] + (quint64(pMdp->data[10]) << 16) + (quint64(pMdp->data[11]) << 32);
-			setParameter(0, val);
-			val = pMdp->data[12] + (quint64(pMdp->data[13]) << 16) + (quint64(pMdp->data[14]) << 32);
-			setParameter(1, val);
-			val = pMdp->data[15] + (quint64(pMdp->data[16]) << 16) + (quint64(pMdp->data[17]) << 32);
-			setParameter(2, val);
-			val = pMdp->data[18] + (quint64(pMdp->data[19]) << 16) + (quint64(pMdp->data[20]) << 32);
-			setParameter(3, val);
+                    ptrMPSD = m_mpsd[pMdp->data[0]];
+                    if(pMdp->data[2 + c] != ptrMPSD->getGainpoti(c, 1))
+                    {
+                        bAnswerOk = false;
+                        MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
+                                     arg(8 * pMdp->deviceId + pMdp->data[0]).arg(c).arg(pMdp->data[2 + c]).arg(ptrMPSD->getGainpoti(c, 1));
+                        // set back to received value
+                        ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[c + 2], 0);
+                    }
                 }
-                break;
-            case SETGAIN_MPSD: // extract the set gain values:
-            case SETGAIN_MSTD:
-                if (pMdp->bufferLength == 21) // set common gain
-		{
-                        for(quint8 c = 0; c < 8; c++)
-			{
-				ptrMPSD = m_mpsd[pMdp->data[0]];
-				if(pMdp->data[2 + c] != ptrMPSD->getGainpoti(c, 1))
-				{
-					bAnswerOk = false;
-					MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-						arg(8 * pMdp->deviceId + pMdp->data[0]).arg(c).arg(pMdp->data[2 + c]).arg(ptrMPSD->getGainpoti(c, 1));
-					// set back to received value
-					ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[c + 2], 0);
-				}
-			}
-				ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[2], 0);
-		}
-		else // set one channel
-		{
-			// If there was a gain set to module which do not answer right, the data area is empty and this would lead to NULL pointers
-			if (pMdp->bufferLength > pMdp->headerLength + 1)
-			{
-				ptrMPSD = m_mpsd[pMdp->data[0]];
-				if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
-				{
-					bAnswerOk = false;
-					MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
-						arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
-					// set back to received value
-				}
-				ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
-			}
-			else
-			{
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error setting gain, perhaps an MSTD-16 module");
-			}
-		}
-		break;
-            case SETTHRESH: // extract the set thresh value:
-		if (pMdp->bufferLength > pMdp->headerLength + 1)
-		{
-			ptrMPSD = m_mpsd[pMdp->data[0]];
-			if (pMdp->data[1] != ptrMPSD->getThreshold(1))
-			{
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error setting threshold, mod %1, is: %2, should be: %3").
-					arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(ptrMPSD->getThreshold(1));
-			}
-			ptrMPSD->setThreshold(pMdp->data[1], 0);
-		}
-		else
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("Error setting threshold, answer from hardware incomplete");
-		}
-		break;
-            case SETPULSER:
-		ptrMPSD = m_mpsd[pMdp->data[0]];
-		if(pMdp->data[3] != ptrMPSD->getPulsPoti(1))
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("Error setting pulspoti, mod %1, is: %2, should be: %3").
-			       arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[3]).arg(ptrMPSD->getPulsPoti(1));
-		}
-		ptrMPSD->setPulserPoti(pMdp->data[1], pMdp->data[2], pMdp->data[3], pMdp->data[4], 0);
-                break;
-            case SETMODE: // extract the set mode:
-		if (pMdp->bufferLength > pMdp->headerLength + 1)
-		{
-		    int mod = pMdp->data[0];
-		    if (mod == 8)
-		        for (int i = 0; i < 8; ++i)
-		            m_mpsd[i]->setMode(pMdp->data[1] == 1, 0);
-                    else
-		        m_mpsd[mod]->setMode(pMdp->data[1] == 1, 0);
-		}
-		else
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("Error setting mode, answer from hardware incomplete");
-		}
-                break;
-            case SETDAC:
-                MSG_WARNING << tr("not handled command : SETDAC");
-                break;
-            case SENDSERIAL:
-                MSG_WARNING << tr("not handled command : SENDSERIAL");
-                break;
-            case READSERIAL:
-                MSG_WARNING << tr("not handled command : READSERIAL");
-                break;
-            case SCANPERI:
-                MSG_WARNING << tr("not handled command : SCANPERI");
-                break;
-            case WRITEFPGA:
-		if (pMdp->cmd & 0x80)
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("WRITEFPGA : failed");
-		}
-                break;
-            case WRITEREGISTER:
-		if (pMdp->cmd & 0x80)
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("WRITEREGISTER failed");
-		}
-                break;
-            case GETCAPABILITIES:
-		if (pMdp->bufferLength - pMdp->headerLength > 1)
-		{
-			m_capabilities = pMdp->data[0];
-			m_txMode = pMdp->data[1];
-		}
+                ptrMPSD->setGain(ptrMPSD->getChannels(), (quint8)pMdp->data[2], 0);
+            }
+            else // set one channel
+            {
+                // If there was a gain set to module which do not answer right, the data area is empty and this would lead to NULL pointers
+                if (pMdp->bufferLength > pMdp->headerLength + 1)
+                {
+                    ptrMPSD = m_mpsd[pMdp->data[0]];
+                    if(pMdp->data[2] != ptrMPSD->getGainpoti(pMdp->data[1], 1))
+                    {
+                        bAnswerOk = false;
+                        MSG_ERROR << tr("Error setting gain, mod %1, chan %2 is: %3, should be: %4").
+                                     arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(pMdp->data[2]).arg(ptrMPSD->getGainpoti(pMdp->data[1], 1));
+                    }
+                    // set back to received value
+                    ptrMPSD->setGain(pMdp->data[1], (quint8)pMdp->data[2], 0);
+                }
                 else
                 {
-			m_capabilities = m_txMode = 0;
-			m_reg = 0xFFF;
+                    bAnswerOk = false;
+                    MSG_ERROR << tr("Error setting gain, perhaps an MSTD-16 module");
                 }
-                MSG_NOTICE << tr("GETCAPABILITIES %1").arg(m_reg);
-                break;
-            case SETCAPABILITIES:
-                if(pMdp->data[0] == m_txMode)
-                        MSG_DEBUG << tr("MCPD txMode set to %1").arg(m_txMode);
-                else
+            }
+            break;
+        case SETTHRESH: // extract the set thresh value:
+            if (pMdp->bufferLength > pMdp->headerLength + 1)
+            {
+                ptrMPSD = m_mpsd[pMdp->data[0]];
+                if (pMdp->data[1] != ptrMPSD->getThreshold(1))
                 {
-                        MSG_ERROR << tr("Error setting MCPD txMode to %1, is now: %2").arg(m_txMode).arg(pMdp->data[0]);
-                        m_txMode = pMdp->data[0];
+                    bAnswerOk = false;
+                    MSG_ERROR << tr("Error setting threshold, mod %1, is: %2, should be: %3").
+                                 arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[1]).arg(ptrMPSD->getThreshold(1));
                 }
-                break;
-            case READREGISTER:
-		for (int i = 0; i < (pMdp->bufferLength - pMdp->headerLength); ++i)
-			MSG_NOTICE << tr("READREGISTER : %1 = %2").arg(i).arg(pMdp->data[i]);
-		m_reg = pMdp->data[0];
-		MSG_NOTICE << tr("READREGISTER : %1 %2").arg(m_reg).arg(pMdp->bufferLength);
-                break;
-            case READFPGA:
-                MSG_WARNING << tr("not handled command : READFPGA");
-                break;
-            case SETPOTI:
-                MSG_WARNING << tr("not handled command : SETPOTI");
-                break;
-            case GETPOTI:
-                MSG_WARNING << tr("not handled command : GETPOTI");
-                break;
-            case READID: // extract the retrieved MPSD-8 IDs:
-		for (quint8 c = 0; c < 8; ++c)
-			m_awReadId[c] = pMdp->data[c];
-                MSG_DEBUG << tr("READID finished");
-                break;
-            case DATAREQUEST:
-                MSG_WARNING << tr("not handled command : DATAREQUEST");
-                break;
-            case QUIET:
-                MSG_WARNING << tr("not handled command : QUIET");
-                break;
-            case GETVER:
-                m_version = pMdp->data[1];
-                while (m_version > 1)
-                    m_version /= 10.;
-                m_version += pMdp->data[0];
-                m_fpgaVersion = pMdp->data[2] & 0xFF;
-                while (m_fpgaVersion > 1)
-                    m_fpgaVersion /= 10.;
-                m_fpgaVersion += pMdp->data[2] >> 8;
-                MSG_DEBUG << tr("Modul (ID %1): Version number : %2, FPGA version : %3").arg(m_byId).arg(m_version, 0, 'f', 2).arg(m_fpgaVersion, 0, 'f', 2);
-                break;
-            case READPERIREG:
-		ptrMPSD = m_mpsd[pMdp->data[0]];
-		m_periReg = pMdp->data[2];
-		MSG_DEBUG << tr("READPERIREG %1 : %2 = %3").arg(pMdp->data[0]).arg(pMdp->data[1]).arg(m_periReg);
-                break;
-            case WRITEPERIREG:
-		ptrMPSD = m_mpsd[pMdp->data[0]];
-		if(pMdp->data[2] != ptrMPSD->getInternalreg(pMdp->data[1], 1))
-		{
-			bAnswerOk = false;
-			MSG_ERROR << tr("Error setting internal mpsd-register, mod %1, is: %2, should be: %3").
-			       arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[3]).arg(ptrMPSD->getPulsPoti(1));
-		}
-		ptrMPSD->setInternalreg(pMdp->data[1], pMdp->data[2], 0);
-                break;
+                ptrMPSD->setThreshold(pMdp->data[1], 0);
+            }
+            else
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("Error setting threshold, answer from hardware incomplete");
+            }
+            break;
+        case SETPULSER:
+            ptrMPSD = m_mpsd[pMdp->data[0]];
+            if(pMdp->data[3] != ptrMPSD->getPulsPoti(1))
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("Error setting pulspoti, mod %1, is: %2, should be: %3").
+                             arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[3]).arg(ptrMPSD->getPulsPoti(1));
+            }
+            ptrMPSD->setPulserPoti(pMdp->data[1], pMdp->data[2], pMdp->data[3], pMdp->data[4], 0);
+            break;
+        case SETMODE: // extract the set mode:
+            if (pMdp->bufferLength > pMdp->headerLength + 1)
+            {
+                int mod = pMdp->data[0];
+                if (mod == 8)
+                    for (int i = 0; i < 8; ++i)
+                        m_mpsd[i]->setMode(pMdp->data[1] == 1, 0);
+                else
+                    m_mpsd[mod]->setMode(pMdp->data[1] == 1, 0);
+            }
+            else
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("Error setting mode, answer from hardware incomplete");
+            }
+            break;
+        case SETDAC:
+            MSG_WARNING << tr("not handled command : SETDAC");
+            break;
+        case SENDSERIAL:
+            MSG_WARNING << tr("not handled command : SENDSERIAL");
+            break;
+        case READSERIAL:
+            MSG_WARNING << tr("not handled command : READSERIAL");
+            break;
+        case SCANPERI:
+            MSG_WARNING << tr("not handled command : SCANPERI");
+            break;
+        case WRITEFPGA:
+            if (pMdp->cmd & 0x80)
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("WRITEFPGA : failed");
+            }
+            break;
+        case WRITEREGISTER:
+            if (pMdp->cmd & 0x80)
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("WRITEREGISTER failed");
+            }
+            break;
+        case GETCAPABILITIES:
+            if (pMdp->bufferLength - pMdp->headerLength > 1)
+            {
+                m_capabilities = pMdp->data[0];
+                m_txMode = pMdp->data[1];
+            }
+            else
+            {
+                m_capabilities = m_txMode = 0;
+                m_reg = 0xFFF;
+            }
+            MSG_NOTICE << tr("GETCAPABILITIES %1").arg(m_reg);
+            break;
+        case SETCAPABILITIES:
+            if(pMdp->data[0] == m_txMode)
+                    MSG_DEBUG << tr("MCPD txMode set to %1").arg(m_txMode);
+            else
+            {
+                    MSG_ERROR << tr("Error setting MCPD txMode to %1, is now: %2").arg(m_txMode).arg(pMdp->data[0]);
+                    m_txMode = pMdp->data[0];
+            }
+            break;
+        case READREGISTER:
+            for (int i = 0; i < (pMdp->bufferLength - pMdp->headerLength); ++i)
+                MSG_NOTICE << tr("READREGISTER : %1 = %2").arg(i).arg(pMdp->data[i]);
+            m_reg = pMdp->data[0];
+            MSG_NOTICE << tr("READREGISTER : %1 %2").arg(m_reg).arg(pMdp->bufferLength);
+            break;
+        case READFPGA:
+            MSG_WARNING << tr("not handled command : READFPGA");
+            break;
+        case SETPOTI:
+            MSG_WARNING << tr("not handled command : SETPOTI");
+            break;
+        case GETPOTI:
+            MSG_WARNING << tr("not handled command : GETPOTI");
+            break;
+        case READID: // extract the retrieved MPSD-8 IDs:
+            for (quint8 c = 0; c < 8 /* m_awReadId.size() */ && pMdp->data[0] != 0xFFFF; ++c)
+                 m_awReadId[c] = pMdp->data[c];
+            break;
+        case DATAREQUEST:
+            MSG_WARNING << tr("not handled command : DATAREQUEST");
+            break;
+        case QUIET:
+            MSG_WARNING << tr("not handled command : QUIET");
+            break;
+        case GETVER:
+            m_version = pMdp->data[1];
+            while (m_version > 1)
+                m_version /= 10.;
+            m_version += pMdp->data[0];
+            m_fpgaVersion = pMdp->data[2] & 0xFF;
+            while (m_fpgaVersion > 1)
+                m_fpgaVersion /= 10.;
+            m_fpgaVersion += pMdp->data[2] >> 8;
+            MSG_DEBUG << tr("Modul (ID %1): Version number : %2, FPGA version : %3").arg(m_byId).arg(m_version, 0, 'f', 2).arg(m_fpgaVersion, 0, 'f', 2);
+            break;
+        case READPERIREG:
+            ptrMPSD = m_mpsd[pMdp->data[0]];
+            m_periReg = pMdp->data[2];
+            MSG_DEBUG << tr("READPERIREG %1 : %2 = %3").arg(pMdp->data[0]).arg(pMdp->data[1]).arg(m_periReg);
+            break;
+        case WRITEPERIREG:
+            ptrMPSD = m_mpsd[pMdp->data[0]];
+            if(pMdp->data[2] != ptrMPSD->getInternalreg(pMdp->data[1], 1))
+            {
+                bAnswerOk = false;
+                MSG_ERROR << tr("Error setting internal mpsd-register, mod %1, is: %2, should be: %3").
+                             arg(8 * pMdp->deviceId + pMdp->data[0]).arg(pMdp->data[3]).arg(ptrMPSD->getPulsPoti(1));
+            }
+            ptrMPSD->setInternalreg(pMdp->data[1], pMdp->data[2], 0);
+            break;
 // MDLL commands:
-            case SETMDLLTHRESHS:
-		if (m_mdll[0]->type() == TYPE_MDLL)
-		{
-			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
-			MSG_DEBUG << tr("MDLL command : SETMDLLTHRESHS");
-			quint8 thresh[3];
-			for (quint8 c = 0; c < 3; c++)
-			{
-				if (pMdp->data[c] != ptrMDLL->getThreshold(c))
-				{
-					bAnswerOk = false;
-					MSG_ERROR << tr("Error setting threshold%1, mod %2, is: %3, should be: %4").
-					       arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c]).arg(ptrMDLL->getThreshold(c));
-					// leave old threshold setting
-					thresh[c] = ptrMDLL->getThreshold(c);
-				}
-				else
-					thresh[c] = pMdp->data[c];
-			}
-			ptrMDLL->setThresholds(thresh[0], thresh[1], thresh[2], false);
-		}
-		break;
-            case SETMDLLSPECTRUM:
-		if (m_mdll[0]->type() == TYPE_MDLL)
+        case SETMDLLTHRESHS:
+            if (m_mdll[0]->type() == TYPE_MDLL)
+            {
+                ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
+                MSG_DEBUG << tr("MDLL command : SETMDLLTHRESHS");
+                quint8 thresh[3];
+                for (quint8 c = 0; c < 3; c++)
                 {
-			MSG_DEBUG << tr("MDLL command : SETMDLLSPECTRUM");
-			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
-			quint8 spect[4];
-			for(quint8 c = 0; c < 4; c++)
-			{
-				if (pMdp->data[c] != ptrMDLL->getSpectrum(c))
-				{
-					bAnswerOk = false;
-					MSG_ERROR << tr("Error setting spectrum%1, mod %2, is: %3, should be: %4").
-						arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c]).arg(ptrMDLL->getSpectrum(c));
-					// leave old spectrum setting
-					spect[c] = ptrMDLL->getSpectrum(c);
-				}
-				else
-					spect[c] = pMdp->data[c];
-			}
-			ptrMDLL->setSpectrum(spect[0], spect[1], spect[2], spect[3], false);
-		}
-                break;
-            case SETMDLLPULSER:
-		if (m_mdll[0]->type() == TYPE_MDLL)
-                {
-			MSG_DEBUG << tr("MDLL command : SETMDLLPULSER");
-			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
-			quint8 puls[3];
-
-			quint8 val = ptrMDLL->isPulserOn(true);
-			if(pMdp->data[0] != val)
-			{
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error switching pulser, mod %1, is: %2, should be: %3").
-					arg(8 * pMdp->deviceId).arg(pMdp->data[0]).arg(val);
-				// leave old threshold setting
-				puls[0] = ptrMDLL->isPulserOn(false);
-			}
-			else
-				puls[0] = pMdp->data[0];
-
-			if (pMdp->data[1] != ptrMDLL->getPulsAmp(true))
-			{
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error switching pulser, mod %1, is: %2, should be: %3").
-					arg(8 * pMdp->deviceId).arg(pMdp->data[1]).arg(ptrMDLL->getPulsAmp(true));
-				// leave old threshold setting
-				puls[1] = ptrMDLL->getPulsAmp(false);
-			}
-			else
-				puls[1] = pMdp->data[1];
-
-			if (pMdp->data[2] != ptrMDLL->getPulsPos(true))
-			{
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error switching pulser, mod %1, is: %2, should be: %3").
-					arg(8 * pMdp->deviceId).arg(pMdp->data[1]).arg(ptrMDLL->getPulsPos(true));
-				// leave old threshold setting
-				puls[2] = ptrMDLL->getPulsPos(false);
-			}
-			else
-				puls[2] = pMdp->data[2];
-			ptrMDLL->setPulser(puls[2], puls[1], puls[0], false);
+                    if (pMdp->data[c] != ptrMDLL->getThreshold(c))
+                    {
+                        bAnswerOk = false;
+                        MSG_ERROR << tr("Error setting threshold%1, mod %2, is: %3, should be: %4").
+                                     arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c]).arg(ptrMDLL->getThreshold(c));
+                        // leave old threshold setting
+                        thresh[c] = ptrMDLL->getThreshold(c);
+                    }
+                    else
+                        thresh[c] = pMdp->data[c];
                 }
-                break;
-            case SETMDLLDATASET:
-		if (m_mdll[0]->type() == TYPE_MDLL)
+                ptrMDLL->setThresholds(thresh[0], thresh[1], thresh[2], false);
+            }
+            break;
+        case SETMDLLSPECTRUM:
+            if (m_mdll[0]->type() == TYPE_MDLL)
+            {
+                MSG_DEBUG << tr("MDLL command : SETMDLLSPECTRUM");
+                ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
+                quint8 spect[4];
+                for(quint8 c = 0; c < 4; c++)
                 {
-			MSG_DEBUG << tr("MDLL command : SETMDLLDATASET");
-			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
-			quint8 set;
-			if (pMdp->data[0] != ptrMDLL->getDataset())
-			{
-				bAnswerOk = false;
-				MSG_ERROR << tr("Error setting dataset, mod %1, is: %2, should be: %3").
-					arg(8 * pMdp->deviceId).arg(pMdp->data[0]).arg(ptrMDLL->getDataset());
-				// leave old threshold setting
-				set = ptrMDLL->getDataset();
-			}
-			else
-				set = pMdp->data[0];
-			ptrMDLL->setDataset(set, false);
+                    if (pMdp->data[c] != ptrMDLL->getSpectrum(c))
+                    {
+                        bAnswerOk = false;
+                        MSG_ERROR << tr("Error setting spectrum%1, mod %2, is: %3, should be: %4").
+                                     arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c]).arg(ptrMDLL->getSpectrum(c));
+                        // leave old spectrum setting
+                        spect[c] = ptrMDLL->getSpectrum(c);
+                    }
+                    else
+                        spect[c] = pMdp->data[c];
                 }
-                break;
-            case SETMDLLACQSET:
-		if (m_mdll[0]->type() == TYPE_MDLL)
-                {
-			MSG_DEBUG << tr("MDLL command : SETMDLLACQSET");
-			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
-			quint16 tsum[4];
-			for(quint8 c = 0; c < 4; c++)
-			{
-				if (pMdp->data[c+2] != ptrMDLL->getTimingWindow(c))
-				{
-					bAnswerOk = false;
-					MSG_ERROR << tr("Error setting timing window%1, mod %2, is: %3, should be: %4").
-					       arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c + 2]).arg(ptrMDLL->getTimingWindow(c));
-					// leave old threshold setting
-					tsum[c] = ptrMDLL->getTimingWindow(c);
-				}
-				else
-					tsum[c] = pMdp->data[c+2];
-			}
-			ptrMDLL->setTimingWindow(tsum[0], tsum[1], tsum[2], tsum[3], false);
-                }
-                break;
-            case SETMDLLEWINDOW:
-		if (m_mdll[0]->type() == TYPE_MDLL)
-                {
-			MSG_DEBUG << tr("MDLL command : SETMDLLEWINDOW");
-			ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
-			quint8 e[2];
-			for(quint8 c = 0; c < 2; c++)
-			{
-				if (pMdp->data[c] != ptrMDLL->getEnergyWindow(c))
-				{
-					bAnswerOk = false;
-					MSG_ERROR << tr("Error setting energy window%1, mod %2, is: %3, should be: %4").
-					       arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c]).arg(ptrMDLL->getEnergyWindow(c));
-					// leave old threshold setting
-					e[c] = ptrMDLL->getEnergyWindow(c);
-				}
-				else
-					e[c] = pMdp->data[c];
-			}
-			ptrMDLL->setEnergyWindow(e[0], e[1], false);
-                }
-                break;
-            default:
-                MSG_WARNING << tr("not handled command : %1").arg(pMdp->cmd);
-                break;
-        }
+                ptrMDLL->setSpectrum(spect[0], spect[1], spect[2], spect[3], false);
+            }
+            break;
+        case SETMDLLPULSER:
+            if (m_mdll[0]->type() == TYPE_MDLL)
+            {
+                MSG_DEBUG << tr("MDLL command : SETMDLLPULSER");
+                ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
+                quint8 puls[3];
 
-        m_pCommunicationMutex->lock();
-        m_iCommActive = bAnswerOk ? RECV : RECV_INVALID;
-        m_pCommunicationMutex->unlock();
+                quint8 val = ptrMDLL->isPulserOn(true);
+                if(pMdp->data[0] != val)
+                {
+                    bAnswerOk = false;
+                    MSG_ERROR << tr("Error switching pulser, mod %1, is: %2, should be: %3").
+                                 arg(8 * pMdp->deviceId).arg(pMdp->data[0]).arg(val);
+                    // leave old threshold setting
+                    puls[0] = ptrMDLL->isPulserOn(false);
+                }
+                else
+                    puls[0] = pMdp->data[0];
+
+                if (pMdp->data[1] != ptrMDLL->getPulsAmp(true))
+                {
+                    bAnswerOk = false;
+                    MSG_ERROR << tr("Error switching pulser, mod %1, is: %2, should be: %3").
+                                 arg(8 * pMdp->deviceId).arg(pMdp->data[1]).arg(ptrMDLL->getPulsAmp(true));
+                    // leave old threshold setting
+                    puls[1] = ptrMDLL->getPulsAmp(false);
+                }
+                else
+                    puls[1] = pMdp->data[1];
+
+                if (pMdp->data[2] != ptrMDLL->getPulsPos(true))
+                {
+                    bAnswerOk = false;
+                    MSG_ERROR << tr("Error switching pulser, mod %1, is: %2, should be: %3").
+                                 arg(8 * pMdp->deviceId).arg(pMdp->data[1]).arg(ptrMDLL->getPulsPos(true));
+                    // leave old threshold setting
+                    puls[2] = ptrMDLL->getPulsPos(false);
+                }
+                else
+                    puls[2] = pMdp->data[2];
+                ptrMDLL->setPulser(puls[2], puls[1], puls[0], false);
+            }
+            break;
+        case SETMDLLDATASET:
+            if (m_mdll[0]->type() == TYPE_MDLL)
+            {
+                MSG_DEBUG << tr("MDLL command : SETMDLLDATASET");
+                ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
+                quint8 set;
+                if (pMdp->data[0] != ptrMDLL->getDataset())
+                {
+                    bAnswerOk = false;
+                    MSG_ERROR << tr("Error setting dataset, mod %1, is: %2, should be: %3").
+                                 arg(8 * pMdp->deviceId).arg(pMdp->data[0]).arg(ptrMDLL->getDataset());
+                    // leave old threshold setting
+                    set = ptrMDLL->getDataset();
+                }
+                else
+                    set = pMdp->data[0];
+                ptrMDLL->setDataset(set, false);
+            }
+            break;
+        case SETMDLLACQSET:
+            if (m_mdll[0]->type() == TYPE_MDLL)
+            {
+                MSG_DEBUG << tr("MDLL command : SETMDLLACQSET");
+                ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
+                quint16 tsum[4];
+                for(quint8 c = 0; c < 4; c++)
+                {
+                    if (pMdp->data[c+2] != ptrMDLL->getTimingWindow(c))
+                    {
+                        bAnswerOk = false;
+                        MSG_ERROR << tr("Error setting timing window%1, mod %2, is: %3, should be: %4").
+                                     arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c + 2]).arg(ptrMDLL->getTimingWindow(c));
+                        // leave old threshold setting
+                        tsum[c] = ptrMDLL->getTimingWindow(c);
+                    }
+                    else
+                        tsum[c] = pMdp->data[c+2];
+                }
+                ptrMDLL->setTimingWindow(tsum[0], tsum[1], tsum[2], tsum[3], false);
+            }
+            break;
+        case SETMDLLEWINDOW:
+            if (m_mdll[0]->type() == TYPE_MDLL)
+            {
+                MSG_DEBUG << tr("MDLL command : SETMDLLEWINDOW");
+                ptrMDLL = reinterpret_cast<MDLL *>(m_mdll[0]);
+                quint8 e[2];
+                for(quint8 c = 0; c < 2; c++)
+                {
+                    if (pMdp->data[c] != ptrMDLL->getEnergyWindow(c))
+                    {
+                        bAnswerOk = false;
+                        MSG_ERROR << tr("Error setting energy window%1, mod %2, is: %3, should be: %4").
+                                     arg(c).arg(8 * pMdp->deviceId).arg(pMdp->data[c]).arg(ptrMDLL->getEnergyWindow(c));
+                        // leave old threshold setting
+                        e[c] = ptrMDLL->getEnergyWindow(c);
+                    }
+                    else
+                        e[c] = pMdp->data[c];
+                }
+                ptrMDLL->setEnergyWindow(e[0], e[1], false);
+            }
+            break;
+        default:
+            MSG_WARNING << tr("not handled command : %1").arg(pMdp->cmd);
+            break;
     }
-    else
+
+    m_pCommunicationMutex->lock();
+    m_iCommActive = bAnswerOk ? RECV : RECV_INVALID;
+    m_pCommunicationMutex->unlock();
+    return true;
+}
+
+/*!
+    \fn bool MCPD8::parseCmdBuffer(QSharedDataPointer<SD_PACKET> pPacket)
+
+    analyze the data package coming from the MCPD-8
+
+    \param pPacket command package
+ */
+bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
+{
+    const DATA_PACKET *dp = &pPacket.constData()->dp;
+
+    quint16 diff = dp->bufferNumber - m_lastDataBufnum;
+    if(diff > 1 && dp->bufferNumber > 0 && m_lastDataBufnum > 0)
     {
-        quint16 diff = pMdp->bufferNumber - m_lastDataBufnum;
-        if(diff > 1 && pMdp->bufferNumber > 0 && m_lastDataBufnum > 0)
-        {
-             m_dataMissed += (diff - 1);
-             MSG_ERROR << tr("%1(%2) %3: Lost %4 data buffers: current: %5, last: %6").
-                 arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(pMdp->bufferNumber).arg(m_lastDataBufnum);
-        }
-        m_lastDataBufnum = pMdp->bufferNumber;
-        ++m_dataRxd;
-//      MSG_DEBUG << tr("ID %1 : emit analyzeBuffer(pPacket)").arg(m_id);
-	emit analyzeDataBuffer(pPacket);
+         m_dataMissed += (diff - 1);
+         MSG_ERROR << tr("%1(%2) %3: Lost %4 data buffers: current: %5, last: %6").
+                 arg(m_pNetwork->ip()).arg(m_pNetwork->port()).arg(getId()).arg(diff - 1).arg(dp->bufferNumber).arg(m_lastDataBufnum);
     }
+    m_lastDataBufnum = dp->bufferNumber;
+    ++m_dataRxd;
+
+    if ((dp->bufferLength == 0) || (dp->bufferLength > sizeof(DATA_PACKET) / 2))
+    {
+        MSG_ERROR << tr("BUFFER with length %1").arg(dp->bufferLength);
+	return false;
+    }
+    if(dp->bufferType > 0x0002)
+    {
+        MSG_ERROR << tr("BUFFER with unknown buffer type: %1").arg(dp->bufferType);
+	return false;
+    }
+
+//  quint16 runID = dp->runID;
+    quint32 datalen = (dp->bufferLength - dp->headerLength) / 3;
+    for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
+    {
+        if(!(dp->data[counter + 2] & TRIGGEREVENTTYPE))
+        {
+            quint8 slotId = (dp->data[counter + 2] >> 7) & 0x1F;
+            quint8 id = (dp->data[counter + 2] >> 12) & 0x7;
+            if (getModuleId(slotId) == TYPE_MPSD8 && getMode(id)) // amplitude mode
+            {
+                // put the amplitude to the new format position
+                DATA_PACKET *tmp = const_cast<DATA_PACKET *>(dp);
+                quint16 amp = (tmp->data[counter + 1] >> 3) & 0x3FF;
+                tmp->data[counter + 2] &= 0xFF80;	// clear amp and pos field
+                tmp->data[counter + 1] &= 0x0007;
+                tmp->data[counter + 2] |= (amp >> 3);
+                tmp->data[counter + 1] |= ((amp & 0x7) << 13);
+            }
+        }
+    }
+// extract parameter values:
+    for(quint8 i = 0; i < 4; i++)
+    {
+        quint64 var = 0;
+        for(quint8 j = 0; j < 3; j++)
+        {
+            var <<= 16;
+            var |= dp->param[i][2 - j];
+        }
+        setParameter(i, var);
+    }
+//  MSG_DEBUG << tr("ID %1 : emit analyzeBuffer(pPacket)").arg(m_id);
+    emit analyzeDataBuffer(pPacket);
     return true;
 }
 
