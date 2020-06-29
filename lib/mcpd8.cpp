@@ -204,6 +204,31 @@ int MCPD8::width(void) const
     return i;
 }
 
+/*
+    \fn MCDP8::maxwidth()
+
+    For the MDLL and MWPCHR the values are fixed, whereas if one module is a
+    MSTD-16 ones it is assumed that all of them are MSTD-16 and  the number
+    is 8 * 16, otherwise 8 * 8.
+
+    \return the maximum number of cannels
+ */
+int MCPD8::maxwidth(void) const
+{
+    if (!m_mdll.isEmpty())
+    {
+        if (m_mdll[0]->type() == TYPE_MDLL)
+            return 960;
+        else
+            return 1024;
+    }
+    for (quint8 c = 0; c < 8; c++)
+        if (m_mpsd.find(c) != m_mpsd.end())
+            if (m_mpsd[c]->getModuleId() == TYPE_MSTD16)
+                return 8 * 16;
+    return 8 * 8;
+}
+
 /*!
     \fn MCPD8::reset(void)
     resets the MCPD-8

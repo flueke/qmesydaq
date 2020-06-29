@@ -290,6 +290,8 @@ public:
 
 	int width() const;
 
+	int maxwidth() const;
+
 public slots:
 	//! analyse network packet
 	virtual bool analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
