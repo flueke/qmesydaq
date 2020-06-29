@@ -2292,7 +2292,7 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         return false;
     }
 
-//  quint16 runID = dp->runID;
+    quint8 mod = dp->deviceId;
     quint32 datalen = (dp->bufferLength - dp->headerLength) / 3;
     for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
     {
