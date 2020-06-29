@@ -1871,9 +1871,9 @@ void Mesydaq2::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
  */
 void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
-	const DATA_PACKET *dp = &pPacket.constData()->dp;
 	if (m_bRunning)
 	{
+		const DATA_PACKET *dp = &pPacket.constData()->dp;
 		quint64 headertime = dp->time[0] + (quint64(dp->time[1]) << 16) + (quint64(dp->time[2]) << 32);
 		if (m_starttime_msec > (headertime / 10000))
 		{
@@ -1881,66 +1881,15 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			return;
 		}
 
-		quint16 mod = dp->deviceId;
-//		m_runID = dp->runID;
-		quint32 datalen = (dp->bufferLength - dp->headerLength) / 3;
-		for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
-		{
-			if(!(dp->data[counter + 2] & TRIGGEREVENTTYPE))
-			{
-				quint8 slotId = (dp->data[counter + 2] >> 7) & 0x1F;
-				quint8 id = (dp->data[counter + 2] >> 12) & 0x7;
-				if (getModuleId(mod, slotId) == TYPE_MPSD8 && getMode(mod, id)) // amplitude mode
-				{
-					// put the amplitude to the new format position
-					DATA_PACKET *tmp = const_cast<DATA_PACKET *>(dp);
-					quint16 amp = (tmp->data[counter + 1] >> 3) & 0x3FF;
-					tmp->data[counter + 2] &= 0xFF80;	// clear amp and pos field
-					tmp->data[counter + 1] &= 0x0007;
-					tmp->data[counter + 2] |= (amp >> 3);
-					tmp->data[counter + 1] |= ((amp & 0x7) << 13);
-				}
-			}
-		}
 		if(m_acquireListfile)
 		{
-			if (dp->bufferLength == 0)
-			{
-				MSG_ERROR << tr("BUFFER with length 0");
-				return;
-			}
-#if 0
-			if (dp->bufferLength == 21)
-				return;
-#endif
-			if (dp->bufferLength > sizeof(DATA_PACKET) / 2)
-			{
-				MSG_ERROR << tr("BUFFER with length %1").arg(dp->bufferLength);
-				return;
-			}
 			*m_pDatStream << dp;
 		}
 		m_pDatSender->WriteData(&dp->bufferLength, dp->bufferLength, true);
 		writeBlockSeparator();
 
-//		MSG_DEBUG << tr("------------------");
 		MSG_DEBUG << tr("buffer : length : %1 type : %2").arg(dp->bufferLength).arg(dp->bufferType);
-		if(dp->bufferType < 0x0003)
-		{
-// extract parameter values:
-			for(quint8 i = 0; i < 4; i++)
-			{
-				quint64 var = 0;
-				for(quint8 j = 0; j < 3; j++)
-				{
-					var <<= 16;
-					var |= dp->param[i][2 - j];
-				}
-				if (m_mcpd.contains(mod))
-					m_mcpd[mod]->setParameter(i, var);
-			}
-			emit analyzeDataBuffer(pPacket);
-		}
+		emit analyzeDataBuffer(pPacket);
 	}
 	else
 		MSG_DEBUG << tr("DROP DATA PACKET");
