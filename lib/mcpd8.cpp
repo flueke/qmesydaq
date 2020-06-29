@@ -571,10 +571,6 @@ bool MCPD8::scanPeriph(void)
     if (m_bTestOnly)
         return true;
 
-// check the MCPD capabilities
-    m_capabilities = capabilities(false);
-// check the peripherial modules
-    MSG_DEBUG << tr("GETCAPABILITIES %1: %2").arg(m_byId).arg(m_capabilities);
     if (m_iErrorCounter >= MCPD8_MAX_ERRORCOUNT)
         return false;
     // check the peripherial modules
@@ -601,6 +597,7 @@ bool MCPD8::scanPeriph(void)
                             m_mpsd[mod]->setCapabilities(0);
                             break;
 			case TYPE_MWPCHR:
+                            m_mpsd[mod]->setCapabilities(0);
                             MSG_NOTICE << tr("Module: %d is a MWPCHR module").arg(mod);
                             return true;
 			case TYPE_MDLL:
@@ -611,6 +608,9 @@ bool MCPD8::scanPeriph(void)
 		            m_mpsd[mod]->setCapabilities(P);
                 }
             }
+// check the MCPD capabilities
+        m_capabilities = capabilities(false);
+        MSG_DEBUG << tr("GETCAPABILITIES %1: %2").arg(m_byId).arg(m_capabilities);
         return true;
     }
     return false;
