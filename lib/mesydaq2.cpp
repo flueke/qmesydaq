@@ -467,7 +467,7 @@ quint16 Mesydaq2::width(void)
 	{
 		QMap<quint16, quint16> tmpList = it.value()->getTubeMapping();
 		quint16 lastTube = !m_tubeMapping.empty() ? m_tubeMapping.values().last() + 1 : 0;
-		quint16 lastKey = it.key() * 64;
+		quint16 lastKey = it.key() * (*it)->maxwidth();
 		for (QMap<quint16, quint16>::iterator jt = tmpList.begin(); jt != tmpList.end(); ++jt)
 			m_tubeMapping.insert(lastKey + jt.key(), lastTube + jt.value());
 	}
