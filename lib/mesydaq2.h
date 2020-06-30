@@ -351,6 +351,8 @@ public slots:
 
 	virtual void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
+	virtual void dumpListmode(QSharedDataPointer<SD_PACKET>);
+
 	/**
 	 * will be emitted if the MCPD's has lost his sync (lost = true)
 	 * or if it was resynchronized (lost = false)

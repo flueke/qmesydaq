@@ -1845,6 +1845,24 @@ void Mesydaq2::setRunId(quint32 runid)
 }
 
 /*!
+    \fn Mesydaq2::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
+
+    callback to dump the data into a list mode file
+
+    \param pPacket data packet
+ */
+void Mesydaq2::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
+{
+	if (m_bRunning && m_acquireListfile)
+	{
+		const DATA_PACKET *dp = &pPacket.constData()->dp;
+		*m_pDatStream << dp;
+		m_pDatSender->WriteData(&dp->bufferLength, dp->bufferLength, true);
+		writeBlockSeparator();
+	}
+}
+
+/*!
     \fn Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
     callback to analyze input data packet
