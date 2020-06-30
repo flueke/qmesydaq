@@ -1122,94 +1122,87 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	m_packages++;
 	Mode mode = this->mode();
 
-	if(pPacket->dp.bufferType < 0x0003)
-	{
-// extract parameter values:
-		QChar c('0');
-		quint32 datalen = (pPacket->dp.bufferLength - pPacket->dp.headerLength) / 3;
+	quint32 datalen = (pPacket->dp.bufferLength - pPacket->dp.headerLength) / 3;
 //
 // status Idle is for replaying files
 //
-		for(quint32 counter = 0, i = 0; i < datalen && (status() == Started || status() == Idle); ++i, counter += 3)
-		{
-			tim = pPacket->dp.data[counter + 1] & 0x7;
-			tim <<= 16;
-			tim += pPacket->dp.data[counter];
-			tim += m_headertime;
+	for(quint32 counter = 0, i = 0; i < datalen && (status() == Started || status() == Idle); ++i, counter += 3)
+	{
+		tim = m_headertime + ((pPacket->dp.data[counter + 1] & 0x7) << 16 + pPacket->dp.data[counter]);
 // id stands for the trigId and modId depending on the package type
-			quint8 id = (pPacket->dp.data[counter + 2] >> 12) & 0x7;
-			m_timer->setTime(tim / m_timeBase);
+		m_timer->setTime(tim / m_timeBase);
 // not neutron event (counter, chopper, ...)
-			if((pPacket->dp.data[counter + 2] & TRIGGEREVENTTYPE))
+		if((pPacket->dp.data[counter + 2] & TRIGGEREVENTTYPE))
+		{
+			triggers++;
+			quint8 dataId = (pPacket->dp.data[counter + 2] >> 8) & 0x0F;
+			quint8 olddataId = dataId;
+#if 0
+			ulong data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
+#endif
+			if (dataId > ADC2ID)
 			{
-				triggers++;
-				quint8 dataId = (pPacket->dp.data[counter + 2] >> 8) & 0x0F;
-				quint8 olddataId = dataId;
-#if 0
-				ulong data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
-#endif
-				if (dataId > ADC2ID)
-				{
-					++counterTriggers;
-					MSG_NOTICE << tr("counter %1 : %2").arg(dataId).arg(i);
-				}
-				else switch (dataId = monitorMapping(mod, dataId))
-				{
-					case MON1ID :
-					case MON2ID :
-					case MON3ID :
-					case MON4ID :
-						++monitorTriggers;
-						++(*m_counter[dataId]);
-						if (m_counter[dataId]->isTrigger())
-							m_lastTriggerTime = tim;
-#if 0
-						MSG_ERROR << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
-#endif
-						break;
-					case TTL1ID :
-					case TTL2ID :
-						++ttlTriggers;
-						++(*m_counter[dataId]);
-						if (m_counter[dataId]->isTrigger())
-							m_lastTriggerTime = tim;
-#if 0
-						MSG_ERROR << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
-#endif
-						break;
-					case ADC1ID :
-					case ADC2ID :
-						++adcTriggers;
-						++(*m_counter[dataId]);
-#if 0
-						MSG_DEBUG << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
-#endif
-						break;
-					default:
-						MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2, %3).").arg(dataId).arg(mod).arg(olddataId);
-						break;
-				}
+				++counterTriggers;
+				MSG_NOTICE << tr("counter %1 : %2").arg(dataId).arg(i);
 			}
-// neutron event:
-			else
+			else switch (dataId = monitorMapping(mod, dataId))
 			{
-				tim -= m_lastTriggerTime;
-				quint8 slotId = (pPacket->dp.data[counter + 2] >> 7) & 0x1F;
-				quint8 modChan = (id << 3) + slotId;
-				quint16 chan = modChan + (mod << 6);
-				quint16 amp = ((pPacket->dp.data[counter+2] & 0x7F) << 3) + ((pPacket->dp.data[counter+1] >> 13) & 0x7),
-					pos = (pPacket->dp.data[counter+1] >> 3) & 0x3FF;
-				quint16 moduleID = m_mesydaq->getModuleId(mod, id);
+				case MON1ID :
+				case MON2ID :
+				case MON3ID :
+				case MON4ID :
+					++monitorTriggers;
+					++(*m_counter[dataId]);
+					if (m_counter[dataId]->isTrigger())
+						m_lastTriggerTime = tim;
+#if 0
+						MSG_ERROR << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
+#endif
+					break;
+				case TTL1ID :
+				case TTL2ID :
+					++ttlTriggers;
+					++(*m_counter[dataId]);
+					if (m_counter[dataId]->isTrigger())
+						m_lastTriggerTime = tim;
+#if 0
+						MSG_ERROR << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
+#endif
+					break;
+				case ADC1ID :
+				case ADC2ID :
+					++adcTriggers;
+					++(*m_counter[dataId]);
+#if 0
+					MSG_DEBUG << tr("counter %1 : (%2 - %3) %4 : %5").arg(dataId).arg(i).arg(triggers).arg(m_counter[dataId]->value()).arg(data);
+#endif
+					break;
+				default:
+					// MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2, %3).").arg(dataId).arg(mod).arg(olddataId);
+					break;
+			}
+		}
+// neutron event:
+		else
+		{
+			quint8 id = (pPacket->dp.data[counter + 2] >> 12) & 0x7;
+			tim -= m_lastTriggerTime;
+			quint8 slotId = (pPacket->dp.data[counter + 2] >> 7) & 0x1F;
+			quint8 modChan = (id << 3) + slotId;
+			quint16 chan = modChan + (mod << 6);
+			quint16 amp = ((pPacket->dp.data[counter+2] & 0x7F) << 3) + ((pPacket->dp.data[counter+1] >> 13) & 0x7),
+				pos = (pPacket->dp.data[counter+1] >> 3) & 0x3FF;
+			quint16 moduleID = m_mesydaq->getModuleId(mod, id);
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
-				if (moduleID == TYPE_MPSD8OLD)
-				{
-					amp >>= 2;
-					pos >>= 2;
-				}
-				if (pPacket->dp.bufferType == 0x0002)
-				{
+			if (moduleID == TYPE_MPSD8OLD)
+			{
+				amp >>= 2;
+				pos >>= 2;
+			}
+			if (pPacket->dp.bufferType == 0x0002)
+			{
 //
 // in MDLL, data format is different:
 // The position inside the PSD is used as y direction
@@ -1218,144 +1211,142 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 // y position (10 bit) is at MPSD "Amplitude" data
 // amplitude (8 bit) is at MPSD "chan" data
 //
-					chan = (id << 5) + slotId;
-					quint16 val = pos;
-					pos = amp;
-					amp = chan;
-					chan = val;
-					if (pos >= m_mesydaq->height())
-						continue;
-				}
-				else
+				chan = (id << 5) + slotId;
+				quint16 val = pos;
+				pos = amp;
+				amp = chan;
+				chan = val;
+				if (pos >= m_mesydaq->height())
 				{
-					if (pos >= 960 && moduleID != TYPE_MSTD16)
-					{
-						MSG_WARNING << tr("POSITION >= 959 : %1 %2.%3.%4").arg(pos).arg(pPacket->dp.data[counter + 2], 4, 16, QChar('0')).
-							arg(pPacket->dp.data[counter + 1], 4, 16, QChar('0')).arg(pPacket->dp.data[counter], 4, 16, QChar('0'));
-						continue;
-					}
+					continue;
 				}
-				if (mode == ReplayListFile || m_mesydaq->active(mod, id, slotId))
+			}
+			else
+			{
+				if (pos >= 960 && moduleID != TYPE_MSTD16)
 				{
+					MSG_WARNING << tr("POSITION >= 959 : %1 %2.%3.%4").arg(pos).arg(pPacket->dp.data[counter + 2], 4, 16, QChar('0')).
+						arg(pPacket->dp.data[counter + 1], 4, 16, QChar('0')).arg(pPacket->dp.data[counter], 4, 16, QChar('0'));
+					continue;
+				}
+			}
+			if (mode == ReplayListFile || m_mesydaq->active(mod, id, slotId))
+			{
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
 // BUG is reported
-					if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0 && (m_mesydaq->capabilities(mod, true) & TPA))
+				if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0 && (m_mesydaq->capabilities(mod, true) & TPA))
+				{
+					MSG_WARNING << tr("GHOST EVENT: SlotID %1 Mod %2").arg(slotId).arg(id);
+					continue;
+				}
+				if (moduleID != TYPE_MDLL)
+				{
+					if (!(txmod & TPA) && m_mesydaq->getMode(mod, id))
 					{
-						MSG_WARNING << tr("GHOST EVENT: SlotID %1 Mod %2").arg(slotId).arg(id);
-						continue;
-					}
-					if (moduleID != TYPE_MDLL)
-					{
-						if (!(txmod & TPA) && m_mesydaq->getMode(mod, id))
-						{
 // Amplitude must be different from 0 !!
-							if (amp == 0)
-							{
+						if (amp == 0)
+						{
 // If the modules are not able to transfer the position and amplitude simultaneously
 // and the amplitude mode is enabled, the amplitude is in the field for the position
 // given !
-								quint16 val = pos;
-								pos = amp;
-								amp = val;
-							}
-						}
-						if (moduleID == TYPE_MSTD16)
-						{
-#if 0
-							MSG_INFO << tr("MSTD-16 event : id: %3, chan : %1 : pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp);
-#endif
-							quint16 lchan = chan << 1;	// each tube has two channels
-							if (m_mesydaq->version(mod, id) <= 6.03)
-								lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
-							else if (m_mesydaq->getMode(mod, id))
-							{
-								lchan += (amp >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
-//								MSG_DEBUG << "amp " << amp << "-" << (amp >> 9) << "-" << lchan;
-							}
-							else
-							{
-								lchan += (pos >> 9) & 0x1;
-//								MSG_DEBUG << "pos " << pos << "-" << (pos >> 9) << "-" << lchan;
-							}
-							amp &= 0x1FF;		// in MSB of amp is the information left/right
-							lchan = mapTube(lchan);
-#if 0
-							MSG_DEBUG << tr("MSTD-16 event : id: %3, chan : %1 : lchan : %5 :pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp).arg(lchan);
-							MSG_DEBUG << tr("Put this event into channel : %1").arg(lchan);
-#endif
-							if (lchan == 0xFFFF)
-								continue;
-							chan = lchan;
-							if (m_Spectrum[SingleTubeSpectrum])
-							{
-								m_Spectrum[SingleTubeSpectrum]->incVal(chan);
-#if 0
-								MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
-#endif
-							}
-						}
-						else
-						{
-							chan = mapTube(chan);
-							if (chan == 0xFFFF)
-								continue;
+							quint16 val = pos;
+							pos = amp;
+							amp = val;
 						}
 					}
-					neutrons++;
-					++(*m_events);
-					if (m_Hist[PositionHistogram])
-						m_Hist[PositionHistogram]->incVal(chan, pos);
-					if (m_Hist[AmplitudeHistogram])
+					if (moduleID == TYPE_MSTD16)
 					{
-						if (pPacket->dp.bufferType == 0x0002)
+#if 0
+						MSG_INFO << tr("MSTD-16 event : id: %3, chan : %1 : pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp);
+#endif
+						quint16 lchan = chan << 1;	// each tube has two channels
+						if (m_mesydaq->version(mod, id) <= 6.03)
+							lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+						else if (m_mesydaq->getMode(mod, id))
 						{
-							m_Hist[AmplitudeHistogram]->addValue(chan, pos, amp);
-							m_Spectrum[AmplitudeSpectrum]->incVal(amp);
+							lchan += (amp >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
+//							MSG_DEBUG << "amp " << amp << "-" << (amp >> 9) << "-" << lchan;
 						}
 						else
-							m_Hist[AmplitudeHistogram]->incVal(chan, amp);
+						{
+							lchan += (pos >> 9) & 0x1;
+//							MSG_DEBUG << "pos " << pos << "-" << (pos >> 9) << "-" << lchan;
+						}
+						amp &= 0x1FF;		// in MSB of amp is the information left/right
+						lchan = mapTube(lchan);
+#if 0
+						MSG_DEBUG << tr("MSTD-16 event : id: %3, chan : %1 : lchan : %5 :pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp).arg(lchan);
+						MSG_DEBUG << tr("Put this event into channel : %1").arg(lchan);
+#endif
+						if (lchan == 0xFFFF)
+							continue;
+						chan = lchan;
+						if (m_Spectrum[SingleTubeSpectrum])
+						{
+							m_Spectrum[SingleTubeSpectrum]->incVal(chan);
+#if 0
+							MSG_INFO << tr("Value of this channel : %1").arg(m_Spectrum[SingleTubeSpectrum]->value(chan));
+#endif
+						}
 					}
-					if (m_Hist[CorrectedPositionHistogram])
-						m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
+					else
+					{
+						chan = mapTube(chan);
+						if (chan == 0xFFFF)
+							continue;
+					}
 				}
-#if 0
-				else
-					MSG_DEBUG << tr("Neutron for an inactive channel %1 %2 %3").arg(mod).arg(id).arg(modChan);
-#endif
-			}
-		}
-#if 0
-		MSG_ERROR << tr("# : %1 has %2 trigger events and %3 neutrons").arg(pPacket->dp.bufferNumber).arg(triggers).arg(neutrons);
-		MSG_ERROR << tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pPacket->dp.bufferNumber)
-					.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);
-#endif
-		m_triggers += triggers;
-		m_neutrons += neutrons;
-#if 0
-		for(int i = MON1ID; i <= TTL2ID; i++)
-		{
-			quint64 var = 0;
-			for(int j = 0; j < 3; j++)
-			{
-				var <<= 16;
-				var |= pd.param[i][2 - j];
-			}
-			quint64 tmp = m_counter[i]->value();
-			if (var)
-			{
-// only differences > 1 should be logged
-				if ((tmp > var && tmp > (var + 1)) || (tmp < var && (tmp + 1) < var))
+				neutrons++;
+				++(*m_events);
+				if (m_Hist[PositionHistogram])
+					m_Hist[PositionHistogram]->incVal(chan, pos);
+				if (m_Hist[AmplitudeHistogram])
 				{
-					MSG_ERROR << tr("%1 counter %2 : is %3 <-> should be %4").arg(m_packages).arg(i).arg(var).arg(m_counter[i]->value());
-					setCounter(i, var);
+					if (pPacket->dp.bufferType == 0x0002)
+					{
+						m_Hist[AmplitudeHistogram]->addValue(chan, pos, amp);
+						m_Spectrum[AmplitudeSpectrum]->incVal(amp);
+					}
+					else
+						m_Hist[AmplitudeHistogram]->incVal(chan, amp);
 				}
+				if (m_Hist[CorrectedPositionHistogram])
+					m_Hist[CorrectedPositionHistogram]->incVal(chan, pos);
+			}
+#if 0
+			else
+				MSG_DEBUG << tr("Neutron for an inactive channel %1 %2 %3").arg(mod).arg(id).arg(modChan);
+#endif
+		}
+	}
+#if 0
+	MSG_ERROR << tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pPacket->dp.bufferNumber)
+				.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);
+#endif
+	m_triggers += triggers;
+	m_neutrons += neutrons;
+#if 0
+	for(int i = MON1ID; i <= TTL2ID; i++)
+	{
+		quint64 var = 0;
+		for(int j = 0; j < 3; j++)
+		{
+			var <<= 16;
+			var |= pd.param[i][2 - j];
+		}
+		quint64 tmp = m_counter[i]->value();
+		if (var)
+		{
+// only differences > 1 should be logged
+			if ((tmp > var && tmp > (var + 1)) || (tmp < var && (tmp + 1) < var))
+			{
+				MSG_ERROR << tr("%1 counter %2 : is %3 <-> should be %4").arg(m_packages).arg(i).arg(var).arg(m_counter[i]->value());
+				setCounter(i, var);
 			}
 		}
-#endif
 	}
-	else
-		MSG_INFO << tr("buffer type : %1").arg(pPacket->dp.bufferType);
+#endif
 }
 
 quint16 Measurement::mapTube(const quint16 tube)
