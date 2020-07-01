@@ -89,25 +89,24 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
 	connect(m_mesydaq, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
-	m_events = new MesydaqCounter();
-	connect(m_events, SIGNAL(stop()), this, SLOT(requestStop()));
-	m_timer = new MesydaqTimer();
-	connect(m_timer, SIGNAL(stop()), this, SLOT(requestStop()));
-	for (quint8 i = MON1ID; i < ADC1ID; ++i)
-	{
-		m_counter[i] = new MesydaqCounter();
-		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
-	}
 
 	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
 
 	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
 	connect(this, SIGNAL(autoSaveHistogram(bool)), m_mesydaq, SLOT(autoSaveHistogram(bool)));
 
-	for (int j = MON1ID; j <= TTL2ID; ++j)
+	m_events = new MesydaqCounter();
+	connect(m_events, SIGNAL(stop()), this, SLOT(requestStop()));
+	m_timer = new MesydaqTimer();
+	connect(m_timer, SIGNAL(stop()), this, SLOT(requestStop()));
+
+	for (int i = MON1ID; i <= TTL2ID; ++i)
 	{
-		QPoint p = settings.value(QString("monitor%1").arg(j), QPoint(0, j)).toPoint();
-		setMonitorMapping(p.x(), p.y(), j);
+		m_counter[i] = new MesydaqCounter();
+		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
+
+		QPoint p = settings.value(QString("monitor%1").arg(i), QPoint(0, i)).toPoint();
+		setMonitorMapping(p.x(), p.y(), i);
 	}
 
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
