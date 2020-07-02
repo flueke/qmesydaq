@@ -267,7 +267,7 @@ public:
 	void setSetupType(const Setup val);
 
 	//! read setup type
-	Setup setupType() const;
+	Setup setupType(void) const;
 
 public slots:
 	//! analysis thread end
