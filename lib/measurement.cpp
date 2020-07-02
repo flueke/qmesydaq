@@ -1595,7 +1595,7 @@ void Measurement::readListfile(const QString &readfilename)
 	MSG_WARNING << tr("Found %1 data packages").arg(blocks);
 	MSG_WARNING << tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
 	resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(),
-			m_Hist[PositionHistogram]->width() ?  m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
+			m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 	QCoreApplication::processEvents();
 	m_status = Idle;
 }
