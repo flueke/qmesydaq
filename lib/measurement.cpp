@@ -1099,7 +1099,7 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 /*!
     \fn Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
-    analyze the data packet and put all events into the right counters and/or histogram
+    analyze the data packet and put all events into the right counters and/or histograms
 
     \param pPacket data packet
  */
