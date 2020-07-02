@@ -51,7 +51,13 @@ void TANGOLoop::register_server(const QString &process, const QString &personal)
 			_personal(personal.toStdString());
 
 	std::string	fullname(_process + "/" + _personal);
-	m_db->delete_server(fullname);
+	try
+	{
+		m_db->delete_server(fullname);
+	}
+	catch (Tango::DevFailed &)
+	{
+	}
 	Tango::DbDatum data = m_db->get_services(_process, _personal);
 	std::vector<std::string> serverList;
 
