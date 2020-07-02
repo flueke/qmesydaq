@@ -2323,6 +2323,109 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         }
         setParameter(i, var);
     }
+
+    QSharedDataPointer<EVENT_BUFFER> evBuffer(new EVENT_BUFFER(dp->runID, mod, datalen));
+
+    quint64 headertime = dp->time[0] + (quint64(dp->time[1]) << 16) + ((quint64(dp->time[2]) << 32));
+    for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
+    {
+        quint64 timestamp = headertime + dp->data[counter] + (quint64(dp->data[counter + 1] & 0x7) << 16);
+        if(!(dp->data[counter + 2] & TRIGGEREVENTTYPE))
+        {
+            quint16 x,
+                    y,
+                    amp;
+            if (dp->bufferType == 0x0002)
+            {
+//
+// in MDLL, data format is different:
+// The position inside the PSD is used as y direction
+// Therefore the x position of the MDLL has to be used as channel
+// the y position as position and the channel value is the amplitude value
+// y position (10 bit) is at MPSD "Amplitude" data
+// amplitude (8 bit) is at MPSD "chan" data
+//
+                x = (dp->data[counter + 1] >> 3) & 0x3FF;
+                amp = (dp->data[counter + 2] >> 7) & 0xFF;
+                y = ((dp->data[counter + 2] & 0x7F) << 3) + ((dp->data[counter + 1] >> 13) & 0x7);
+#if 0
+                if (y >= m_mesydaq->height())
+                {
+                    ignored++;
+                    continue;
+                }
+#endif
+            }
+            else
+            {
+                quint8 mod = (dp->data[counter + 2] >> 12) & 0x7;
+                x = (mod << 3) + ((dp->data[counter + 2] >> 7) & 0x1F);
+                amp = ((dp->data[counter + 2] & 0x7F) << 3) + ((dp->data[counter + 1] >> 13) & 0x7);
+
+                y = (dp->data[counter + 1] >> 3) & 0x3FF;
+                quint16 moduleID = getModuleId(mod);
+                if (moduleID == TYPE_MPSD8OLD)
+                {
+                    amp >>= 2;
+                    y >>= 2;
+                }
+                else if (moduleID == TYPE_MSTD16)
+                {
+#if 0
+                    MSG_INFO << tr("MSTD-16 event : id: %3, chan : %1 : pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp);
+#endif
+                    x <<= 1;                    // each tube has two channels
+                    if (version(mod) <= 6.03)
+                        x += (y >> 9) & 0x1;    // if the MSB bit is set then it comes from the right channel
+                    else if (getMode(mod))      // if in amplitude mode
+                    {
+                        x += (amp >> 9) & 0x1;  // if the MSB bit is set then it comes from the right channel
+//                      MSG_DEBUG << "amp " << amp << "-" << (amp >> 9) << "-" << lchan;
+                    }
+                    else
+                    {
+                        x += (y >> 9) & 0x1;
+//                      MSG_DEBUG << "y " << y << "-" << (y >> 9) << "-" << lchan;
+                    }
+                    amp &= 0x1FF;               // in MSB of amp is the information left/right
+                    y = 0;
+#if 0
+                    MSG_DEBUG << tr("MSTD-16 event: id: %3, chan : %1 : x : %5 :pos : %2 : amp : %4").arg(chan).arg(y).arg(id).arg(amp).arg(x);
+                    MSG_DEBUG << tr("Put this event into channel : %1").arg(lchan);
+#endif
+                }
+                else if (moduleID != TYPE_MSTD16)
+                {
+                    if (y >= 960)
+                    {
+#if 0
+                        MSG_WARNING << tr("POSITION >= 959 : %1 %2.%3.%4").arg(pos).arg(dp->data[counter + 2], 4, 16, QChar('0')).
+                                          arg(dp->data[counter + 1], 4, 16, QChar('0')).arg(dp->data[counter], 4, 16, QChar('0'));
+                        ignored++;
+                        continue;
+#endif
+                    }
+                }
+            }
+            struct EVENT ev = {false, timestamp, {amp, y, x}};
+            evBuffer->events[i] = ev;
+        }
+        else
+        {
+// extract triggers
+            quint8 source((dp->data[counter + 2] >> 12) & 0x7),
+                   id((dp->data[counter + 2] >> 7) & 0x1F);
+            quint32 data(((quint32(dp->data[counter + 2] << 16) + dp->data[counter + 1]) >> 3) & 0x1FFFFF);
+
+            struct EVENT ev = {true, timestamp};
+            ev.ev_trigger.source = source;
+            ev.ev_trigger.id = id;
+            evBuffer->events[i] = ev;
+	    // MSG_ERROR << tr("TRIGGER: %1 %2 %3").arg(i).arg(evBuffer->events[i].ev_trigger.id).arg(evBuffer->events[i].ev_trigger.source);
+        }
+    }
+//  MSG_ERROR << tr("ID %1 : emit newDataBuffer(evBuffer)").arg(evBuffer->id);
+    emit newDataBuffer(evBuffer);
 //  MSG_DEBUG << tr("ID %1 : emit analyzeBuffer(pPacket)").arg(m_id);
     emit analyzeDataBuffer(pPacket);
     return true;

@@ -23,6 +23,7 @@
 #include <QMetaType>
 #include <QSharedData>
 #include <QSharedDataPointer>
+#include <QVector>
 
 //! command packet structure
 struct MDP_PACKET
@@ -105,9 +106,50 @@ struct MDP_PACKET2
 	quint8 data[1024];
 };
 
+struct EVENT
+{
+	bool	trigger;	// if true trigger event
+	quint64	timestamp;	// timestamp in ns
+	union
+	{
+		struct
+		{
+			quint16	amplitude;
+			quint16	y;
+			quint16 x;
+		} ev_neutron;
+		struct
+		{
+			quint8 source;
+			quint8 id;
+			quint32 data;
+		} ev_trigger;
+	};
+};
+
+struct EVENT_BUFFER : public QSharedData
+{
+	quint16 runid;
+	quint8  id;
+	QVector<struct EVENT> events;
+	EVENT_BUFFER()
+		: runid(0)
+		, id(0)
+	{
+	}
+	EVENT_BUFFER(quint16 rid, quint8 mid, quint32 datalen)
+		: runid(rid)
+		, id(mid)
+	{
+		events.resize(datalen);
+	}
+};
+
 // Q_DECLARE_METATYPE(SD_MPD_PACKET_DATA);
 Q_DECLARE_METATYPE(MDP_PACKET)
 Q_DECLARE_METATYPE(DATA_PACKET)
+Q_DECLARE_METATYPE(EVENT)
+Q_DECLARE_METATYPE(EVENT_BUFFER)
 
 //! command/data packet structure as shared data object (multi threading preparation)
 struct SD_PACKET : public QSharedData

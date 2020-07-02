@@ -51,6 +51,7 @@ Mesydaq2::Mesydaq2()
 {
 	MSG_NOTICE << tr("running on Qt %1").arg(qVersion());
 	qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
+	qRegisterMetaType<QSharedDataPointer<EVENT_BUFFER> >("QSharedDataPointer<EVENT_BUFFER>");
 	m_pThread = new QThread;
 	moveToThread(m_pThread);
 	connect(m_pThread, SIGNAL(finished()), this, SLOT(threadExit()), Qt::DirectConnection);

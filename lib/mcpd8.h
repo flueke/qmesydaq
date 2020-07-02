@@ -319,6 +319,12 @@ signals:
 
 	//! a new header time received
 	void headerTimeChanged(quint64);
+	/**
+	 * this will be emitted if the MPCD-8 has sent a new event packet
+	 *
+	 * \param eb event buffer
+	 */
+	void newDataBuffer(QSharedDataPointer<EVENT_BUFFER>);
 
 protected:
 	void initCmdBuffer(quint16);
