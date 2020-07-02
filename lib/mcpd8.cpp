@@ -2431,6 +2431,15 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
     return true;
 }
 
+int MCPD8::type(void) const
+{
+    if (m_mdll.isEmpty())
+        return TYPE_MCPD8;
+    if (m_mdll[0]->type() == TYPE_MDLL)
+        return TYPE_MDLL;
+    return TYPE_MWPCHR;
+}
+
 /*!
     \fn MCPD8::readPeriReg(quint16 mod, quint16 reg)
 

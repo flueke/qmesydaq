@@ -269,6 +269,9 @@ public:
 	//! read setup type
 	Setup setupType(void) const;
 
+	//! read position mapping of the id in a histogram
+	QPoint idOffset(const quint8 id) const;
+
 public slots:
 	//! analysis thread end
 	void threadExit(void);
@@ -353,6 +356,8 @@ public slots:
 
 	virtual void dumpListmode(QSharedDataPointer<SD_PACKET>);
 
+	void rearrangeEvents(QSharedDataPointer<EVENT_BUFFER>);
+
 	/**
 	 * will be emitted if the MCPD's has lost his sync (lost = true)
 	 * or if it was resynchronized (lost = false)
@@ -382,6 +387,13 @@ signals:
 	 */
 	void analyzeDataBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
+	/**
+	 * will be emitted if the neutrons events are rearranged in position
+	 *
+	 * \param evb event buffer
+	 */
+	void eventsRearranged(EVENT_BUFFER evb);
+
 	//! a new data package from one of the MCPD's received
 	void newCmdPackageReceived();
 
@@ -396,6 +408,8 @@ signals:
 	 * \param bLost true=lost  false=resynced
 	 */
 	void syncLost(quint16 id, bool bLost);
+
+	void newDataBuffer(QSharedDataPointer<EVENT_BUFFER>);
 
 protected:
 	void timerEvent(QTimerEvent *event);

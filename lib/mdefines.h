@@ -207,6 +207,7 @@
 // Module ID's
 #define	TYPE_NOMODULE		0
 #define	TYPE_MPSD8OLD		1
+#define TYPE_MCPD8		2
 #define	TYPE_MPSD8SADC		102	// 10bit, single ADC, DNS
 #define	TYPE_MPSD8		103
 #define	TYPE_MSTD16		104

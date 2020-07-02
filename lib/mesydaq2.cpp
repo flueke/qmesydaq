@@ -308,6 +308,8 @@ void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szD
 		connect(tmp, SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 		connect(tmp, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
 		connect(tmp, SIGNAL(lostSync(quint16, bool)), this, SLOT(lostSync(quint16, bool)));
+		connect(tmp, SIGNAL(newDataBuffer(QSharedDataPointer<EVENT_BUFFER>)), this, SLOT(rearrangeEvents(QSharedDataPointer<EVENT_BUFFER>)));
+
 		m_mcpd.insert(byId, tmp);
 	}
 }
@@ -1894,6 +1896,68 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	}
 	else
 		MSG_DEBUG << tr("DROP DATA PACKET");
+}
+
+/*!
+    \fn Mesydaq2::rearrange(EVENT_BUFFER evb)
+
+    callback to rearrange the positions
+
+    \param evb event packet
+ */
+void Mesydaq2::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
+{
+//	MSG_ERROR << tr("device id: %1").arg(evb->id);
+	if (m_mcpd.contains(evb->id))
+	{
+		quint32 xshift = idOffset(evb->id).x();
+		quint32 yshift = 0 /* idMapping(evb->id).y() * m_mcpd[evb->id]->height() */;
+#if 0
+		if (evb->id > 0)
+			MSG_ERROR << tr("X shift: %1").arg(xshift);
+#endif
+		for (QVector<EVENT>::iterator it = evb->events.begin(); it != evb->events.end(); ++it)
+		{
+			if (!it->trigger)
+			{
+				it->ev_neutron.x += xshift;
+				it->ev_neutron.y += yshift;
+			}
+		}
+	}
+	emit newDataBuffer(evb);
+}
+
+/*!
+    \fn Mesydaq2::idOffset(const quint8 id) const
+
+    Calculates the x,y position of the module origin in the histogram.
+
+    The histogram number and the position are given via the configuration file.
+
+    \param id MCPD id
+ */
+QPoint Mesydaq2::idOffset(const quint8 id) const
+{
+	// TODO: the id of the module has to be mapped
+	if (m_mcpd.contains(id))
+	{
+		// MSG_ERROR << tr("MCPD type %1: %2").arg(id).arg(m_mcpd[id]->type());
+		switch (m_mcpd[id]->type())
+		{
+			case TYPE_MWPCHR:
+			case TYPE_MDLL:
+				return QPoint(id * m_mcpd[id]->maxwidth(), 0);
+			default:
+				{
+					int offset = 0;
+					for (quint8 i = 0; i < id; ++i)
+						offset += m_mcpd[i]->width();
+					return QPoint(offset, 0);
+				}
+		}
+	}
+	return QPoint(0, 0);
 }
 
 /*!

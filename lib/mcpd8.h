@@ -76,6 +76,8 @@ public:
 
 	QMap<quint16, quint16> getTubeMapping();
 
+	int type(void) const;
+
 // commands of the MPCD-8
 // commands: DAQ commands
 	bool reset(void);
