@@ -475,8 +475,8 @@ quint16 Mesydaq2::width(void)
 			m_tubeMapping.insert(lastKey + jt.key(), lastTube + jt.value());
 	}
 	quint16 w(m_tubeMapping.size() - m_tubeMapping.count(0xFFFF));
-	MSG_NOTICE << m_tubeMapping;
 	MSG_NOTICE << tr("Found %1 tubes to histogram (%2 - %3)").arg(w).arg(m_tubeMapping.size()).arg(m_tubeMapping.count(0xFFFF));
+	MSG_INFO << m_tubeMapping;
 	return w;
 }
 
