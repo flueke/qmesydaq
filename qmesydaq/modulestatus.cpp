@@ -100,6 +100,8 @@ void ModuleStatus::histogramSlot(bool val)
 	checkActiveBox->setVisible(val & m_online);
 	checkActiveBox->setEnabled(m_online);
 	emit histogram(m_id, val);
+	if (!val)
+		checkActiveBox->setChecked(false);
 }
 
 /*!
