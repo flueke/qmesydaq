@@ -368,6 +368,8 @@ quint8 MCPD8::getChannels(quint8 addr)
  */
 bool MCPD8::online(quint8 addr)
 {
+    if (!m_mdll.isEmpty())
+        return m_mdll[0]->online();
     if (m_mpsd.contains(addr))
         return m_mpsd[addr]->online();
     return false;
