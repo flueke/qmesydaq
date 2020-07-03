@@ -138,7 +138,7 @@ quint64 Mesydaq2::time(void)
 
 /*!
     \fn Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
-    
+
     writes a value to a register in a selected MCPD, if the MPCD with
     the id does not exist, the command will be ignored
 
@@ -194,7 +194,7 @@ bool Mesydaq2::isTerminated(quint16 mod)
 
 /*!
     \fn float Mesydaq2::getFirmware(quint16 id)
-    
+
     gets the firmware version of a MCPD
 
     \param id number of the MCPD
@@ -387,7 +387,7 @@ void Mesydaq2::writeHeaderSeparator(void)
     \fn Mesydaq2::writeBlockSeparator(void)
 
     write a block separator into a list mode file
-    
+
     \see writeListfileHeader
     \see writeHeaderSeparator
     \see writeClosingSignature
@@ -1132,7 +1132,7 @@ void Mesydaq2::reset(void)
 
 /*!
     \fn Mesydaq2::checkMcpd(quint8 device)
-    
+
     rescan all MCPD's for the connected modules
 
     \return true if successfully finished otherwise false
@@ -1962,7 +1962,7 @@ QPoint Mesydaq2::idOffset(const quint8 id) const
 
 /*!
     \fn bool Mesydaq2::active(quint16 mid, quint16 id, quint16 chan)
-    
+
     \param mid MCPD id
     \param id MPSD id
     \param chan channel id
@@ -1977,7 +1977,7 @@ bool Mesydaq2::active(quint16 mid, quint16 id, quint16 chan)
 
 /*!
     \fn bool Mesydaq2::active(quint16 mid, quint16 id)
-    
+
     \param mid MCPD id
     \param id MPSD id
     \return true or false
