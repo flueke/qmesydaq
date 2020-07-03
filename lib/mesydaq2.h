@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QSize>
 #include <QMap>
+#include <QPoint>
 
 #include "libqmesydaq_global.h"
 #include "structures.h"
@@ -352,8 +353,6 @@ public slots:
 
 	void writeHeaderSeparator(void);
 
-	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
-
 	void dumpListmode(QSharedDataPointer<SD_PACKET>);
 
 	void rearrangeEvents(QSharedDataPointer<EVENT_BUFFER>);
@@ -468,6 +467,10 @@ private:
 
 	//! setup type
 	Setup		m_setup;
+
+	quint8		m_detector;
+
+	QPoint		m_histogramPos;
 };
 
 

@@ -48,6 +48,8 @@ Mesydaq2::Mesydaq2()
 	, m_bAutoIncRunId(true)
 	, m_bWriteProtect(false)
 	, m_setup(Mpsd)
+	, m_detector(0)
+	, m_histogramPos(QPoint(0, 0))
 {
 	MSG_NOTICE << tr("running on Qt %1").arg(qVersion());
 	qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
@@ -302,7 +304,7 @@ void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szD
 	MCPD8 *tmp = new MCPD8(byId, szMcpdIp, wPort, szDataIp, wDataPort, szHostIp);
 	if (tmp)
 	{
-		connect(tmp, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+		connect(tmp, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(dumpListmode(QSharedDataPointer<SD_PACKET>)));
 		connect(tmp, SIGNAL(startedDaq()), this, SLOT(startedDaq()));
 		connect(tmp, SIGNAL(stoppedDaq()), this, SLOT(stoppedDaq()));
 		connect(tmp, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
@@ -587,6 +589,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 				settings.setValue("dataport", dataport);
 		}
 		settings.setValue("master", value->isMaster() ? "true" : "false");
+		settings.setValue("detector", m_detector);
 		if (value->type() != TYPE_MWPCHR) // no terminate/sync, timers, parameter sources, and counter cells
 		{
 			settings.setValue("terminate", value->isTerminated() ? "true" : "false");
@@ -732,6 +735,9 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 		quint16 cmdPort = settings.value("cmdport", "0").toUInt();
 		QString dataIP = settings.value("dataip", "0.0.0.0").toString();
 		quint16 dataPort = settings.value("dataport", "0").toUInt();
+		m_detector = settings.value("detector", "0").toInt();
+		m_histogramPos = settings.value("histogrampos", QPoint(0, 0)).toPoint();
+
 
 		QHostAddress cmd(cmdIP);
 		if (cmd == QHostAddress::Any || cmd == QHostAddress::AnyIPv6 || IP == cmdIP)
@@ -860,51 +866,50 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	{
 		settings.beginGroup(moduleList[i]);
 
-		int iId = settings.value("id", "-1").toInt();
-		if (iId < 0)
+		int iMCPDId = settings.value("id", "-1").toInt();
+		if (iMCPDId < 0)
 		{
 			MSG_FATAL << tr("found no or invalid Module id");
 			continue;
 		}
 
-		int iMCPDId = iId / 8;
-
-//		int j = iId % 8;
-
-		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized() &&
-		    getModuleId(iMCPDId, 0) == TYPE_MDLL)
+		if (dynamic_cast<MCPD *>(m_mcpd[iMCPDId]) != NULL && m_mcpd[iMCPDId]->isInitialized())
 		{
-			quint8	thresh[3],
-				shift[2],
-				scale[2],
-				dataset,
-				ewindow[2];
-			quint16 twindow[4];
+			if (getModuleId(iMCPDId, 0) == TYPE_MDLL)
+			{
+				quint8	thresh[3],
+					shift[2],
+					scale[2],
+					dataset,
+					ewindow[2];
+				quint16 twindow[4];
 
-			thresh[0] = settings.value(QString("threshX"), "20").toUInt();
-			thresh[1] = settings.value(QString("threshY"), "20").toUInt();
-			thresh[2] = settings.value(QString("threshA"), "20").toUInt();
-			setMdllThresholds(iMCPDId, thresh[0], thresh[1], thresh[2]);
+				thresh[0] = settings.value(QString("threshX"), "20").toUInt();
+				thresh[1] = settings.value(QString("threshY"), "20").toUInt();
+				thresh[2] = settings.value(QString("threshA"), "20").toUInt();
+				setMdllThresholds(iMCPDId, thresh[0], thresh[1], thresh[2]);
 
-			shift[0] = settings.value(QString("shiftX"), "100").toUInt();
-			shift[1] = settings.value(QString("shiftY"), "100").toUInt();
-			scale[0] = settings.value(QString("scaleX"), "48").toUInt();
-			scale[1] = settings.value(QString("scaleY"), "48").toUInt();
-			setMdllSpectrum(iMCPDId, shift[0], shift[1], scale[0], scale[1]);
+				shift[0] = settings.value(QString("shiftX"), "100").toUInt();
+				shift[1] = settings.value(QString("shiftY"), "100").toUInt();
+				scale[0] = settings.value(QString("scaleX"), "48").toUInt();
+				scale[1] = settings.value(QString("scaleY"), "48").toUInt();
+				setMdllSpectrum(iMCPDId, shift[0], shift[1], scale[0], scale[1]);
 
-			twindow[0] = settings.value(QString("tWinXLo"), "100").toUInt();
-			twindow[1] = settings.value(QString("tWinXHi"), "1000").toUInt();
-			twindow[2] = settings.value(QString("tWinYLo"), "100").toUInt();
-			twindow[3] = settings.value(QString("tWinYHi"), "1000").toUInt();
-			setMdllTimingWindow(iMCPDId, twindow[0], twindow[1], twindow[2], twindow[3]);
+				twindow[0] = settings.value(QString("tWinXLo"), "100").toUInt();
+				twindow[1] = settings.value(QString("tWinXHi"), "1000").toUInt();
+				twindow[2] = settings.value(QString("tWinYLo"), "100").toUInt();
+				twindow[3] = settings.value(QString("tWinYHi"), "1000").toUInt();
+				setMdllTimingWindow(iMCPDId, twindow[0], twindow[1], twindow[2], twindow[3]);
 
-			ewindow[0] = settings.value(QString("eWinLo"), "20").toUInt();
-			ewindow[1] = settings.value(QString("eWinHi"), "240").toUInt();
-			setMdllEnergyWindow(iMCPDId, ewindow[0], ewindow[1]);
+				ewindow[0] = settings.value(QString("eWinLo"), "20").toUInt();
+				ewindow[1] = settings.value(QString("eWinHi"), "240").toUInt();
+				setMdllEnergyWindow(iMCPDId, ewindow[0], ewindow[1]);
 
-			dataset = settings.value(QString("dataset"), "0").toUInt();
-			setMdllDataset(iMCPDId, dataset);
-
+				dataset = settings.value(QString("dataset"), "0").toUInt();
+				setMdllDataset(iMCPDId, dataset);
+			}
+			setActive(iMCPDId, iMCPDId, settings.value(QString("active"), "true").toBool());
+			setHistogram(iMCPDId, iMCPDId, settings.value(QString("histogram"), "true").toBool());
 		}
 		settings.endGroup();
 	}
@@ -1870,46 +1875,16 @@ void Mesydaq2::setRunId(quint32 runid)
  */
 void Mesydaq2::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
 {
-	if (m_bRunning && m_acquireListfile)
-	{
-		const DATA_PACKET *dp = &pPacket.constData()->dp;
-		*m_pDatStream << dp;
-		m_pDatSender->WriteData(&dp->bufferLength, dp->bufferLength, true);
-		writeBlockSeparator();
-	}
-}
-
-/*!
-    \fn Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
-
-    callback to analyze input data packet
-
-    \param pPacket data packet
- */
-void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
-{
 	if (m_bRunning)
 	{
 		const DATA_PACKET *dp = &pPacket.constData()->dp;
-		quint64 headertime = dp->time[0] + (quint64(dp->time[1]) << 16) + (quint64(dp->time[2]) << 32);
-		if (m_starttime_msec > (headertime / 10000))
-		{
-			MSG_FATAL << tr("OLD PACKAGE : %1 < %2").arg(headertime / 10000).arg(m_starttime_msec);
-			return;
-		}
-
 		if(m_acquireListfile)
 		{
 			*m_pDatStream << dp;
 		}
 		m_pDatSender->WriteData(&dp->bufferLength, dp->bufferLength, true);
 		writeBlockSeparator();
-
-		MSG_DEBUG << tr("buffer : length : %1 type : %2").arg(dp->bufferLength).arg(dp->bufferType);
-		emit analyzeDataBuffer(pPacket);
 	}
-	else
-		MSG_DEBUG << tr("DROP DATA PACKET");
 }
 
 /*!
@@ -1921,7 +1896,12 @@ void Mesydaq2::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
  */
 void Mesydaq2::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 {
-//	MSG_ERROR << tr("device id: %1").arg(evb->id);
+	if (!m_bRunning)
+	{
+		MSG_ERROR << tr("DROP DATA PACKET: no data acquisition is running!");
+		MSG_ERROR << tr("device id: %1").arg(evb->id);
+		return;
+	}
 	if (m_mcpd.contains(evb->id))
 	{
 		quint32 xshift = idOffset(evb->id).x();
@@ -1932,6 +1912,8 @@ void Mesydaq2::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 #endif
 		for (QVector<EVENT>::iterator it = evb->events.begin(); it != evb->events.end(); ++it)
 		{
+			if (m_starttime_msec > (it->timestamp / 10000))
+				MSG_FATAL << tr("OLD EVENT : %1 < %2").arg(it->timestamp / 10000).arg(m_starttime_msec);
 			if (!it->trigger)
 			{
 				it->ev_neutron.x += xshift;

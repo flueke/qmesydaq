@@ -2298,8 +2298,8 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         return false;
     }
 
-    quint8 mod = dp->deviceId;
-    quint32 datalen = (dp->bufferLength - dp->headerLength) / 3;
+    quint8 mod(dp->deviceId);
+    quint32 datalen((dp->bufferLength - dp->headerLength) / 3);
     for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
     {
         if(!(dp->data[counter + 2] & TRIGGEREVENTTYPE))
@@ -2332,7 +2332,9 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
     QSharedDataPointer<EVENT_BUFFER> evBuffer(new EVENT_BUFFER(dp->runID, mod, datalen));
 
-    quint64 headertime = dp->time[0] + (quint64(dp->time[1]) << 16) + ((quint64(dp->time[2]) << 32));
+    quint64 headertime(dp->time[0] + (quint64(dp->time[1]) << 16) + ((quint64(dp->time[2]) << 32)));
+    evBuffer->timestamp = headertime;
+    quint32 evts(0);
     for(quint32 i = 0, counter = 0; i < datalen; ++i, counter += 3)
     {
         quint64 timestamp = headertime + dp->data[counter] + (quint64(dp->data[counter + 1] & 0x7) << 16);
@@ -2343,6 +2345,8 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                     amp;
             if (dp->bufferType == 0x0002)
             {
+                if (!active())
+                    continue;
 //
 // in MDLL, data format is different:
 // The position inside the PSD is used as y direction
@@ -2357,7 +2361,7 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 #if 0
                 if (y >= m_mesydaq->height())
                 {
-                    ignored++;
+                    // ignored++;
                     continue;
                 }
 #endif
@@ -2365,11 +2369,17 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
             else
             {
                 quint8 mod = (dp->data[counter + 2] >> 12) & 0x7;
-                x = (mod << 3) + ((dp->data[counter + 2] >> 7) & 0x1F);
-                amp = ((dp->data[counter + 2] & 0x7F) << 3) + ((dp->data[counter + 1] >> 13) & 0x7);
+                quint8 slot = (dp->data[counter + 2] >> 7) & 0x1F;
 
+                if (!active(mod, slot))
+                    continue;
+
+                x = (mod << 3) + slot;
+                amp = ((dp->data[counter + 2] & 0x7F) << 3) + ((dp->data[counter + 1] >> 13) & 0x7);
                 y = (dp->data[counter + 1] >> 3) & 0x3FF;
+
                 quint16 moduleID = getModuleId(mod);
+
                 if (moduleID == TYPE_MPSD8OLD)
                 {
                     amp >>= 2;
@@ -2378,7 +2388,7 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 else if (moduleID == TYPE_MSTD16)
                 {
 #if 0
-                    MSG_INFO << tr("MSTD-16 event : id: %3, chan : %1 : pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp);
+                    MSG_INFO << tr("MSTD-16 event : id = %3, x = %1 : y = %2 : amp = %4").arg(x).arg(y).arg(mod).arg(amp);
 #endif
                     x <<= 1;                    // each tube has two channels
                     if (version(mod) <= 6.03)
@@ -2386,12 +2396,12 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                     else if (getMode(mod))      // if in amplitude mode
                     {
                         x += (amp >> 9) & 0x1;  // if the MSB bit is set then it comes from the right channel
-//                      MSG_DEBUG << "amp " << amp << "-" << (amp >> 9) << "-" << lchan;
+//                      MSG_DEBUG << tr("amp %1 - %2 - %3").arg(amp).arg(amp >> 9).arg(x);
                     }
                     else
                     {
                         x += (y >> 9) & 0x1;
-//                      MSG_DEBUG << "y " << y << "-" << (y >> 9) << "-" << lchan;
+//                      MSG_DEBUG << tr("y %1 - %2 - %3").arg(y).arg(y >> 9).arg(x);
                     }
                     amp &= 0x1FF;               // in MSB of amp is the information left/right
                     y = 0;
@@ -2405,9 +2415,9 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                     if (y >= 960)
                     {
 #if 0
-                        MSG_WARNING << tr("POSITION >= 959 : %1 %2.%3.%4").arg(pos).arg(dp->data[counter + 2], 4, 16, QChar('0')).
+                        MSG_WARNING << tr("POSITION >= 959 : %1 %2.%3.%4").arg(y).arg(dp->data[counter + 2], 4, 16, QChar('0')).
                                           arg(dp->data[counter + 1], 4, 16, QChar('0')).arg(dp->data[counter], 4, 16, QChar('0'));
-                        ignored++;
+                        // ignored++;
                         continue;
 #endif
                     }
@@ -2420,7 +2430,7 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 }
             }
             struct EVENT ev = {false, timestamp, {amp, y, x}};
-            evBuffer->events[i] = ev;
+            evBuffer->events[evts++] = ev;
         }
         else
         {
@@ -2432,13 +2442,15 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
             struct EVENT ev = {true, timestamp};
             ev.ev_trigger.source = source;
             ev.ev_trigger.id = id;
-            evBuffer->events[i] = ev;
+            ev.ev_trigger.data = data;
+            evBuffer->events[evts++] = ev;
 	    // MSG_ERROR << tr("TRIGGER: %1 %2 %3").arg(i).arg(evBuffer->events[i].ev_trigger.id).arg(evBuffer->events[i].ev_trigger.source);
         }
     }
+    evBuffer->events.resize(evts);
 //  MSG_ERROR << tr("ID %1 : emit newDataBuffer(evBuffer)").arg(evBuffer->id);
     emit newDataBuffer(evBuffer);
-//  MSG_DEBUG << tr("ID %1 : emit analyzeBuffer(pPacket)").arg(m_id);
+//  MSG_DEBUG << tr("ID %1 : emit analyzeBuffer(pPacket)").arg(mod);
     emit analyzeDataBuffer(pPacket);
     return true;
 }
@@ -3074,7 +3086,7 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
     {
         QList<quint16> tmpList = m_mdll[0]->getHistogramList();
         foreach(quint16 i, tmpList)
-            if (tmpList.at(i) == i)
+            if (i != 0xFFFF && tmpList.at(i) == i)
                 result.insert(n++, i);
     }
     else
@@ -3089,7 +3101,7 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
             quint16 buswidth = busNr * it->getChannels();
             int j = 0; // reset list offset
             for (int i = 0; i < tmpList.size(); ++i)
-                if (tmpList.at(i) == i) // ignore not used channels
+                if (i != 0xFFFF && tmpList.at(i) == i) // ignore not used channels
                 {
                     result.insert(buswidth + i, offset + j);
                     j++;

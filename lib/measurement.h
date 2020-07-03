@@ -406,6 +406,8 @@ public:
 public slots:
 	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
+	void histogramEvents(QSharedDataPointer<EVENT_BUFFER>);
+
 	void calcRates();
 
 	void setHeadertime(quint64 ht);

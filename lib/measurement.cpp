@@ -86,7 +86,8 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	setWriteProtection(settings.value("config/writeprotect", "false").toBool());
 	setHistogramFileFormat(HistogramFileFormat(settings.value("config/histogramfileformat", "0").toInt()));
 
-	connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+	// connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+	connect(m_mesydaq, SIGNAL(newDataBuffer(QSharedDataPointer<EVENT_BUFFER>)), this, SLOT(histogramEvents(QSharedDataPointer<EVENT_BUFFER>)));
 	connect(m_mesydaq, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
 	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
 
@@ -1067,6 +1068,107 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 }
 
 /*!
+    \fn Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
+
+    put all events into the right counters and/or histograms
+
+    \param evb event buffer
+ */
+void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
+{
+	quint16 neutrons = 0;
+	quint16 triggers = 0;
+	quint16	monitorTriggers = 0;
+	quint16	ttlTriggers = 0;
+	quint16	adcTriggers = 0;
+	quint16 counterTriggers = 0;
+	quint16 mod = evb->id;
+
+	m_packages++;
+
+	if (!evb->events.isEmpty())
+		setCurrentTime(evb->events[0].timestamp / m_timeBase);
+	else
+		setCurrentTime(evb->timestamp / m_timeBase);
+	bool mdllType = setupType() == Mdll || setupType() == Mdll2;
+	for (QVector<EVENT>::iterator it = evb->events.begin();
+		it != evb->events.end() && (status() == Started || status() == Idle); ++it)
+	{
+		m_timer->setTime(it->timestamp / m_timeBase);
+		if (it->trigger)
+		{
+			triggers++;
+			quint8 dataId = it->ev_trigger.id;
+			if (dataId > ADC2ID)
+			{
+				++counterTriggers;
+				MSG_NOTICE << tr("counter %1 ignored").arg(dataId);
+			}
+			else switch (dataId = monitorMapping(mod, dataId))
+			{
+				case MON1ID :
+				case MON2ID :
+				case MON3ID :
+				case MON4ID :
+					++monitorTriggers;
+					++(*m_counter[dataId]);
+					if (m_counter[dataId]->isTrigger())
+						m_lastTriggerTime = it->timestamp;
+#if 0
+						MSG_ERROR << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
+#endif
+					break;
+				case TTL1ID :
+				case TTL2ID :
+					++ttlTriggers;
+					++(*m_counter[dataId]);
+					if (m_counter[dataId]->isTrigger())
+						m_lastTriggerTime = it->timestamp;
+#if 0
+						MSG_ERROR << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
+#endif
+					break;
+				case ADC1ID :
+				case ADC2ID :
+					++adcTriggers;
+					++(*m_counter[dataId]);
+#if 0
+					MSG_DEBUG << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
+#endif
+					break;
+				default:
+					MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2).").arg(dataId).arg(mod);
+					break;
+			}
+		}
+		else
+		{
+			quint16 x(it->ev_neutron.x),
+				y(it->ev_neutron.y),
+				amp(it->ev_neutron.amplitude);
+			neutrons++;
+			++(*m_events);
+			if (m_Hist[PositionHistogram])
+				m_Hist[PositionHistogram]->incVal(x, y);
+			if (m_Hist[AmplitudeHistogram])
+			{
+				if (mdllType) /* bufferType == 0x0002 */
+				{
+					m_Hist[AmplitudeHistogram]->addValue(x, y, amp);
+					m_Spectrum[AmplitudeSpectrum]->incVal(amp);
+				}
+				else
+					m_Hist[AmplitudeHistogram]->incVal(x, amp);
+			}
+			if (m_Hist[CorrectedPositionHistogram])
+				m_Hist[CorrectedPositionHistogram]->incVal(x, y);
+		}
+	}
+	m_triggers += triggers;
+	m_neutrons += neutrons;
+}
+
+/*!
     \fn Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 
     analyze the data packet and put all events into the right counters and/or histograms
@@ -1077,6 +1179,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
 	quint16 neutrons = 0;
 	quint16 triggers = 0;
+	quint16 ignored = 0;
 	quint16	monitorTriggers = 0;
 	quint16	ttlTriggers = 0;
 	quint16	adcTriggers = 0;
@@ -1091,13 +1194,15 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	m_packages++;
 	Mode mode = this->mode();
 
+	// MSG_ERROR << tr("Module: %1").arg(mod);
+
 	quint32 datalen = (pPacket->dp.bufferLength - pPacket->dp.headerLength) / 3;
 //
 // status Idle is for replaying files
 //
 	for(quint32 counter = 0, i = 0; i < datalen && (status() == Started || status() == Idle); ++i, counter += 3)
 	{
-		tim = m_headertime + ((pPacket->dp.data[counter + 1] & 0x7) << 16 + pPacket->dp.data[counter]);
+		tim = m_headertime + (((pPacket->dp.data[counter + 1] & 0x7) << 16) + pPacket->dp.data[counter]);
 // id stands for the trigId and modId depending on the package type
 		m_timer->setTime(tim / m_timeBase);
 // not neutron event (counter, chopper, ...)
@@ -1105,7 +1210,6 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 		{
 			triggers++;
 			quint8 dataId = (pPacket->dp.data[counter + 2] >> 8) & 0x0F;
-			quint8 olddataId = dataId;
 #if 0
 			ulong data = ((pPacket->dp.data[counter + 2] & 0xFF) << 13) + ((pPacket->dp.data[counter + 1] >> 3) & 0x7FFF);
 #endif
@@ -1147,7 +1251,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 #endif
 					break;
 				default:
-					// MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2, %3).").arg(dataId).arg(mod).arg(olddataId);
+					// MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2, %3).").arg(dataId).arg(mod);
 					break;
 			}
 		}
@@ -1187,6 +1291,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				chan = val;
 				if (pos >= m_mesydaq->height())
 				{
+					ignored++;
 					continue;
 				}
 			}
@@ -1289,6 +1394,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 #endif
 		}
 	}
+	MSG_NOTICE << tr("# : %1 has %2 trigger events and %3 neutrons. %4 events are ignored").arg(pPacket->dp.bufferNumber).arg(triggers).arg(neutrons).arg(ignored);
 #if 0
 	MSG_ERROR << tr("# : %1 Triggers : monitor %2, TTL %3, ADC %4, counter %5").arg(pPacket->dp.bufferNumber)
 				.arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers).arg(counterTriggers);

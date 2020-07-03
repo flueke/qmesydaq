@@ -131,6 +131,7 @@ struct EVENT_BUFFER : public QSharedData
 {
 	quint16 runid;
 	quint8  id;
+	quint64	timestamp;	// timestamp in ns
 	QVector<struct EVENT> events;
 	EVENT_BUFFER()
 		: runid(0)
