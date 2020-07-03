@@ -2769,7 +2769,9 @@ QString MCPD8::getModuleType(quint8 addr)
  */
 void MCPD8::setHistogram(bool hist)
 {
-    foreach(MPSD8 *it, m_mpsd)
+    if (!m_mdll.isEmpty())
+        m_mdll[0]->setHistogram(hist);
+    else foreach(MPSD8 *it, m_mpsd)
     {
         Q_ASSERT_X(it != NULL, "MCPD8::setHistogram", "one of the MPSD's is NULL");
         it->setHistogram(hist);
@@ -2787,7 +2789,9 @@ void MCPD8::setHistogram(bool hist)
 
 void MCPD8::setHistogram(quint16 id, bool hist)
 {
-    if (m_mpsd.contains(id))
+    if (!m_mdll.isEmpty())
+        m_mdll[0]->setHistogram(hist);
+    else if (m_mpsd.contains(id))
         m_mpsd[id]->setHistogram(hist);
     if (!hist)
         setActive(id, false);
@@ -2802,7 +2806,9 @@ void MCPD8::setHistogram(quint16 id, bool hist)
  */
 void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
 {
-    if (m_mpsd.contains(id))
+    if (!m_mdll.isEmpty())
+        m_mdll[0]->setHistogram(hist);
+    else if (m_mpsd.contains(id))
         m_mpsd[id]->setHistogram(chan, hist);
     if (!hist)
         setActive(id, chan, false);
@@ -2815,7 +2821,9 @@ void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
  */
 void MCPD8::setActive(bool act)
 {
-    foreach(MPSD8 *it, m_mpsd)
+    if (!m_mdll.isEmpty())
+         m_mdll[0]->setActive(act);
+    else foreach(MPSD8 *it, m_mpsd)
     {
         Q_ASSERT_X(it != NULL, "MCPD8::setActive", "one of the MPSD's is NULL");
         it->setActive(act);
@@ -2830,7 +2838,9 @@ void MCPD8::setActive(bool act)
  */
 void MCPD8::setActive(quint16 id, bool act)
 {
-    if (m_mpsd.contains(id))
+    if (!m_mdll.isEmpty())
+         m_mdll[0]->setActive(act);
+    else if (m_mpsd.contains(id))
         m_mpsd[id]->setActive(act);
 }
 
@@ -2843,7 +2853,9 @@ void MCPD8::setActive(quint16 id, bool act)
  */
 void MCPD8::setActive(quint16 id, quint16 chan, bool act)
 {
-    if (m_mpsd.contains(id))
+    if (!m_mdll.isEmpty())
+         m_mdll[0]->setActive(act);
+    else if (m_mpsd.contains(id))
         m_mpsd[id]->setActive(chan, act);
 }
 
@@ -2855,8 +2867,8 @@ void MCPD8::setActive(quint16 id, quint16 chan, bool act)
 bool MCPD8::active(void)
 {
     bool result(false);
-    if(m_mdll.find(0) != m_mdll.end())
-            return true;
+    if (!m_mdll.isEmpty())
+        return m_mdll[0]->active();
     foreach(MPSD8 *it, m_mpsd)
     {
         Q_ASSERT_X(it != NULL, "MCPD8::active", "one of the MPSD's is NULL");
@@ -2873,6 +2885,8 @@ bool MCPD8::active(void)
 bool MCPD8::histogram(void)
 {
     bool result(false);
+    if (!m_mdll.isEmpty())
+        return m_mdll[0]->histogram();
     foreach(MPSD8 *it, m_mpsd)
     {
         Q_ASSERT_X(it != NULL, "MCPD8::histogram", "one of the MPSD's is NULL");
@@ -2889,8 +2903,8 @@ bool MCPD8::histogram(void)
  */
 bool MCPD8::active(quint16 id)
 {
-    if(m_mdll.find(0) != m_mdll.end())
-            return true;
+    if (!m_mdll.isEmpty())
+        return m_mdll[0]->active();
     if (m_mpsd.contains(id))
         return m_mpsd[id]->active();
     return false;
@@ -2905,8 +2919,8 @@ bool MCPD8::active(quint16 id)
  */
 bool MCPD8::active(quint16 id, quint16 chan)
 {
-    if(m_mdll.find(0) != m_mdll.end())
-            return true;
+    if (!m_mdll.isEmpty())
+        return m_mdll[0]->active();
     if (m_mpsd.contains(id))
         return m_mpsd[id]->active(chan);
     return false;
@@ -2920,6 +2934,8 @@ bool MCPD8::active(quint16 id, quint16 chan)
  */
 bool MCPD8::histogram(quint16 id)
 {
+    if (!m_mdll.isEmpty())
+        return m_mdll[0]->histogram();
     if (m_mpsd.contains(id))
         return m_mpsd[id]->histogram();
     return false;
@@ -2934,6 +2950,8 @@ bool MCPD8::histogram(quint16 id)
  */
 bool MCPD8::histogram(quint16 id, quint16 chan)
 {
+    if (!m_mdll.isEmpty())
+        return m_mdll[0]->histogram();
     if (m_mpsd.contains(id))
         return m_mpsd[id]->histogram(chan);
     return false;
