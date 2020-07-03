@@ -215,7 +215,7 @@ bool NetworkDevice::connect_handler(QHostAddress source, quint16 wPort, NetworkD
     h.pParam = pParam;
 #endif
     m_aHandler.append(h);
-    MSG_NOTICE << "have " << m_aHandler.size() << " handlers installed";
+    MSG_NOTICE << tr("%1(%2): have %3 handlers installed.").arg(source.toString()).arg(wPort).arg(m_aHandler.size());
     return true;
 }
 
