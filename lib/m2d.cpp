@@ -72,3 +72,8 @@ quint16 M2D::capabilities(void) const
 {
 	return TPA;
 }
+
+bool M2D::online(void) const
+{
+	return true;
+}

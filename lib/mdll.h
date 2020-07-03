@@ -75,6 +75,9 @@ public:
 
 	virtual quint16 capabilities(void) const;
 
+	//! \return is the module online or not
+	bool online(void) const;
+
 protected:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
@@ -265,9 +268,6 @@ public:
 
 	//! \return the type of the MPSD as number
 	int type(void) const;
-
-	//! \return is the module online or not
-	bool online(void);
 
 	bool isPulserOn(bool = false) const;
 
