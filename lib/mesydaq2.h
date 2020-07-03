@@ -352,9 +352,9 @@ public slots:
 
 	void writeHeaderSeparator(void);
 
-	virtual void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
+	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
 
-	virtual void dumpListmode(QSharedDataPointer<SD_PACKET>);
+	void dumpListmode(QSharedDataPointer<SD_PACKET>);
 
 	void rearrangeEvents(QSharedDataPointer<EVENT_BUFFER>);
 
