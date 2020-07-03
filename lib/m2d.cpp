@@ -22,6 +22,8 @@
 
 M2D::M2D(quint8, QObject *parent)
 	: QObject(parent)
+	, m_active(true)
+	, m_histogram(true)
 {
 }
 
@@ -31,20 +33,24 @@ M2D::~M2D()
 
 bool M2D::active(void) const
 {
-	return true;
+	return m_active;
 }
 
-void M2D::setActive(bool)
+void M2D::setActive(bool act)
 {
+	m_active = act;
 }
 
 bool M2D::histogram(void) const
 {
-	return true;
+	return m_histogram;
 }
 
-void M2D::setHistogram(bool)
+void M2D::setHistogram(bool histo)
 {
+	m_histogram = histo;
+	if (!histo)
+		setActive(false);
 }
 
 quint16 M2D::bins() const

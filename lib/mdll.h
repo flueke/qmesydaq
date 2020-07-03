@@ -78,6 +78,12 @@ public:
 protected:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
+
+	//! module active or not
+	bool		m_active;
+
+	//! histogram module data
+	bool		m_histogram;
 };
 
 /**
