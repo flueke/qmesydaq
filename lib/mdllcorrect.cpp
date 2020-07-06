@@ -31,17 +31,7 @@ MdllMapCorrection::MdllMapCorrection(void)
 {
 }
 
-MdllMapCorrection::MdllMapCorrection(const QSize &destSize)
-	: LinearMapCorrection(QSize(960, 960), destSize, MapCorrection::OrientationUp)
-{
-}
-
-Mdll2MapCorrection::Mdll2MapCorrection(const QSize &destSize)
-	: LinearMapCorrection(QSize(1024, 1024), destSize, MapCorrection::OrientationUp)
-{
-}
-
-Mdll2MapCorrection::Mdll2MapCorrection(void)
-	: LinearMapCorrection()
+MdllMapCorrection::MdllMapCorrection(const QSize &srcSize, const QSize &destSize)
+	: LinearMapCorrection(srcSize, destSize, MapCorrection::OrientationUp)
 {
 }

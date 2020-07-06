@@ -1032,11 +1032,15 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 		{
 			case Mdll:
 				MSG_INFO << tr("MDLL Map correction");
-				m_posHistMapCorrection = new MdllMapCorrection(QSize(480, 480/* m_width, m_height */));
+				// use a standard calibration, which bins the histogram by 2 x 2 to have
+				// only 480 of the 960 possible channels
+				m_posHistMapCorrection = new MdllMapCorrection(QSize(m_width, m_height), QSize(m_width / 2, m_height / 2));
 				break;
 			case Mdll2:
 				MSG_INFO << tr("MWPCHR Map correction");
-				m_posHistMapCorrection = new Mdll2MapCorrection(QSize(256, 256/* m_width, m_height */));
+				// use a standard calibration, which bins the histogram by 4 x 4 to have
+				// only 256 of the 1024 possible channels
+				m_posHistMapCorrection = new MdllMapCorrection(QSize(m_width, m_height), QSize(m_width / 4, m_height / 4));
 				break;
 			default:
 				MSG_INFO << tr("Linear Map correction");
