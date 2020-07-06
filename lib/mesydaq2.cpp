@@ -1946,7 +1946,13 @@ QPoint Mesydaq2::idOffset(const quint8 id) const
 		{
 			case TYPE_MWPCHR:
 			case TYPE_MDLL:
-				return QPoint(id * m_mcpd[id]->maxwidth(), 0);
+				{
+					int offset(0);
+					for (int i = 0; i < id; ++i)
+						if (m_mcpd[i]->histogram())
+							offset += m_mcpd[id]->maxwidth();
+					return QPoint(offset, 0);
+				}
 			default:
 				{
 					int offset = 0;
