@@ -149,12 +149,6 @@ private slots:
 
 	void startStopSlot(bool = false);
 
-	void clearChanSlot();
-
-	void clearMpsdSlot();
-
-	void clearMcpdSlot();
-
 	void clearAllSlot();
 
 	void setStreamSlot();

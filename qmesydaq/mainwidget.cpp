@@ -786,47 +786,6 @@ void MainWidget::clearAllSlot()
 }
 
 /*!
-    \fn void MainWidget::clearMcpdSlot()
-
-    callback to clear the MCPD list
-*/
-void MainWidget::clearMcpdSlot()
-{
-	quint32 start = m_theApp->startChannel(dispMcpd->value());
-	quint32 size = m_theApp->width(dispMcpd->value());
-	for(quint32 i = start; i < start + size; ++i)
-		m_meas->clearChanHist(i);
-	emit redraw();
-}
-
-/*!
-    \fn void MainWidget::clearMpsdSlot()
-
-
-    callback to clear the MPSD list
-*/
-void MainWidget::clearMpsdSlot()
-{
-	quint32 start = m_theApp->startChannel(dispMcpd->value());
-	start += m_theApp->width(dispMcpd->value(), dispMpsd->value());
-	quint32 size = m_theApp->getChannels(dispMcpd->value(), dispMpsd->value());
-//	MSG_DEBUG << tr("clearMpsd: %1").arg(start);
-	for(quint32 i = start; i < start + size; ++i)
-		m_meas->clearChanHist(i);
-	emit redraw();
-}
-/*!
-    \fn void MainWidget::clearChanSlot()
-
-    callback to clear the channel list
-*/
-void MainWidget::clearChanSlot()
-{
-	m_meas->clearChanHist(dispMcpd->value(), dispMpsd->value(), dispChan->value());
-	emit redraw();
-}
-
-/*!
     \fn void MainWidget::replayListfileSlot()
 
     callback function to replay a listmode file

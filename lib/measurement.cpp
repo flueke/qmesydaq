@@ -756,40 +756,6 @@ void Measurement::clearAllHist(void)
 }
 
 /*!
-    \fn Measurement::clearChanHist(quint16 chan)
-
-    clears the spectra of a tube
-
-    \param chan tube number
- */
-void Measurement::clearChanHist(quint16 chan)
-{
-	quint16 line = mapTube(chan);
-	if (line == 0xFFFF)
-		return;
-	if (m_Hist[PositionHistogram])
-		m_Hist[PositionHistogram]->clear(line);
-	if (m_Hist[AmplitudeHistogram])
-		m_Hist[AmplitudeHistogram]->clear(line);
-	if (m_Hist[CorrectedPositionHistogram])
-		m_Hist[CorrectedPositionHistogram]->clear(line);
-}
-
-/*!
-    \fn void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan)
-
-    clears the spectra of a tube
-
-    \param mcpd number of the MCPD
-    \param mpsd number of the MPSD on the MCPD
-    \param chan number of the channel at the MPSD
- */
-void Measurement::clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan)
-{
-	quint16 line = chan + m_mesydaq->startChannel(mcpd) + m_mesydaq->width(mcpd, mpsd);
-	clearChanHist(line);
-}
-/*!
     \fn Spectrum *Measurement::data(const HistogramType t, const quint16 line)
 
     gets a position spectrum of a tube

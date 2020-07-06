@@ -229,9 +229,6 @@ public:
 
 	void clearAllHist(void);
 
-	void clearChanHist(const quint16 chan);
-	void clearChanHist(const quint16 mcpd, const quint8 mpsd, const quint8 chan);
-
 	Spectrum *data(const HistogramType t);
 	Spectrum *data(const HistogramType t, const quint16 line);
 	Spectrum *data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan);
