@@ -183,25 +183,29 @@ bool MCPD8::init(void)
  */
 int MCPD8::width(void) const
 {
-    int i(0);
+    if (!m_mdll.isEmpty())
+        switch (m_mdll[0]->getModuleId())
+        {
+            case TYPE_MDLL :
+                return (histogram() ? 960 : 0);
+                break;
+            case TYPE_MWPCHR:
+                return (histogram() ? 1024 : 0);
+                break;
+        }
+    int w(0);
     for (quint8 c = 0; c < 8; c++)
         if (m_mpsd.find(c) != m_mpsd.end())
             switch (m_mpsd[c]->getModuleId())
             {
                 case TYPE_MSTD16:
-                    i += 16;
-                    break;
-                case TYPE_MDLL :
-                    i += 960;
-                    break;
-                case TYPE_MWPCHR:
-                    i += 1024;
+                    w += 16;
                     break;
                 default:
-                    i += 8;
+                    w += 8;
                     break;
             }
-    return i;
+    return w;
 }
 
 /*
