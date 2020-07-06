@@ -117,7 +117,6 @@ quint64 Mesydaq2::sentCmds(void)
     \fn Mesydaq2::time(void)
 
     time of the first master MCPD
-    \todo at the moment not implemented, use instead the first MCPD
 
     \return the time of the MCPD
  */
