@@ -449,6 +449,8 @@ private:
 
 	//! FPGA version
 	float		m_fpgaVersion;
+
+	QMap<quint16, quint16> m_tubeMapping;
 };
 
 #endif

@@ -2407,6 +2407,12 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                         continue;
 #endif
                     }
+                    quint16 x = m_tubeMapping.value(x, 0xFFFF);
+                    if (x == 0xFFFF)
+                    {
+                        // ignored++;
+                        continue;
+                    }
                 }
             }
             struct EVENT ev = {false, timestamp, {amp, y, x}};
@@ -3087,7 +3093,8 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
             offset += tmpList.size() - tmpList.count(0xFFFF); // Ignore not used channels
         }
     }
-    return result;
+    m_tubeMapping = result;
+    return m_tubeMapping;
 }
 
 QList<int> MCPD8::mpsdId(void)
