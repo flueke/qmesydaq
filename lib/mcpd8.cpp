@@ -2890,7 +2890,7 @@ bool MCPD8::active(void)
 
     \return true if one of the connected modules contributes to the histogram
  */
-bool MCPD8::histogram(void)
+bool MCPD8::histogram(void) const
 {
     bool result(false);
     if (!m_mdll.isEmpty())

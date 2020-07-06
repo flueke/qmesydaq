@@ -45,7 +45,7 @@ public:
 	virtual bool isInitialized() const;
 
         //! \return whether the whole MCPD should integrated into the histogram
-	bool histogram(void);
+	bool histogram(void) const;
 
 	void setHistogram(bool hist);
 
