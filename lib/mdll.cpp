@@ -262,7 +262,7 @@ QList<quint16> MDLL::getHistogramList(void)
 
 // MDLL has fixed channels
     for(quint16 i = 0; i < 960; i++)
-        result << i;
+        result << (histogram() ? i : 0xFFFF);
     return result;
 }
 
@@ -279,7 +279,7 @@ QList<quint16> MDLL::getActiveList(void)
 
 // MDLL has fixed channels
     for(quint16 i = 0; i < 960; i++)
-        result << i;
+        result << (active() ? i : 0xFFFF);
     return result;
 }
 

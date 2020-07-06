@@ -49,7 +49,7 @@ QList<quint16> MWPCHR::getHistogramList(void)
 
 // MWPCHR has fixed channels
     for(quint16 i = 0; i < 1024; i++)
-        result << i;
+        result << (histogram() ? i : 0xFFFF);
     return result;
 }
 
@@ -66,7 +66,7 @@ QList<quint16> MWPCHR::getActiveList(void)
 
 // MDLL has fixed channels
     for(quint16 i = 0; i < 1024; i++)
-        result << i;
+        result << (active() ? i : 0xFFFF);
     return result;
 }
 

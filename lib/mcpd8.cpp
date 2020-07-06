@@ -3064,11 +3064,8 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
     {
         QList<quint16> tmpList = m_mdll[0]->getHistogramList();
         foreach(quint16 i, tmpList)
-        {
-            // TODO: check if n is correct !!
-            result.insert(n, n);
-            n++;
-        }
+            if (tmpList.at(i) == i)
+                result.insert(n++, i);
     }
     else
     {
@@ -3087,7 +3084,7 @@ QMap<quint16, quint16> MCPD8::getTubeMapping(void)
                     result.insert(buswidth + i, offset + j);
                     j++;
                 }
-            offset += tmpList.size() - tmpList.count(65535); // Ignore not used channels
+            offset += tmpList.size() - tmpList.count(0xFFFF); // Ignore not used channels
         }
     }
     return result;
