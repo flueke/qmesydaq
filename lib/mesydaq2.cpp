@@ -1941,25 +1941,19 @@ QPoint Mesydaq2::idOffset(const quint8 id) const
 	// TODO: the id of the module has to be mapped
 	if (m_mcpd.contains(id))
 	{
+		int offset(0);
 		// MSG_ERROR << tr("MCPD type %1: %2").arg(id).arg(m_mcpd[id]->type());
 		switch (m_mcpd[id]->type())
 		{
 			case TYPE_MWPCHR:
 			case TYPE_MDLL:
-				{
-					int offset(0);
-					for (int i = 0; i < id; ++i)
-						if (m_mcpd[i]->histogram())
-							offset += m_mcpd[id]->maxwidth();
-					return QPoint(offset, 0);
-				}
+				for (int i = 0; i < id; ++i)
+					offset += m_mcpd[i]->width();
+				return QPoint(offset, 0);
 			default:
-				{
-					int offset = 0;
-					for (quint8 i = 0; i < id; ++i)
-						offset += m_mcpd[i]->width();
-					return QPoint(offset, 0);
-				}
+				for (quint8 i = 0; i < id; ++i)
+					offset += m_mcpd[i]->width();
+				return QPoint(offset, 0);
 		}
 	}
 	return QPoint(0, 0);
