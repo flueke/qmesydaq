@@ -302,6 +302,7 @@ void Plot::setDisplayMode(const Mode &m)
 		case ModuleSpectrum:
 			for (int i = 1; i < 16; ++i)
 				m_curve[i]->attach(this);
+			/* no break */
 		case Spectrum:
 			enableAxis(QwtPlot::yRight, false);
 			switch (m_linlog)

@@ -690,7 +690,7 @@ void SimApp::timerEvent(QTimerEvent *)
 						k != 10)                    // 1*MON3
 						break;
 					k &= 0x07;
-					/*no break*/
+					/* no break */
 				case 0: case 1: case 2: case 3: // monitor counter
 				case 4: case 5: // rear TTL inputs 1,2
 				case 6: case 7: // ADC inputs 1,2
