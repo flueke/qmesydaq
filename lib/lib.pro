@@ -47,6 +47,7 @@ unix {
 	!count(ver, 0) {
 		QMAKE_CXXFLAGS += -Wimplicit-fallthrough=1
 	}
+	QMAKE_CXXFLAGS  += -Wno-class-memaccess
 }
 
 target.path	= $${TARGETLIBPATH}
