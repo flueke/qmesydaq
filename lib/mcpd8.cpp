@@ -2411,7 +2411,7 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                         continue;
 #endif
                     }
-                    quint16 x = m_tubeMapping.value(x, 0xFFFF);
+                    x = m_tubeMapping.value(x, 0xFFFF);
                     if (x == 0xFFFF)
                     {
                         // ignored++;
