@@ -189,6 +189,7 @@ contains(INTERFACE, TANGO) {
 	LIBS		+= -L$${SRCBASE}/interfaces/tango -ltangoInterface $${LIBS}
 	CONFIG		+= link_pkgconfig
 	PKGCONFIG	= tango
+	QMAKE_CXXFLAGS	+= -Wno-deprecated
 }
 
 contains(INTERFACE, CARESS) {

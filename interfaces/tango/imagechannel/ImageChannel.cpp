@@ -428,11 +428,13 @@ void ImageChannel::write_roiOffset(Tango::WAttribute &attr)
 	const Tango::DevULong	*w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(ImageChannel::write_roiOffset) ENABLED START -----*/
-#if 0
-	// no ROI handling at the moment
 	for (int i = 0; i < 2 && i < w_length; ++i)
+	{
+#if 0
+		// no ROI handling at the moment
 		attr_roiOffset_read[i] = w_val[i];
 #endif
+	}
 
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::write_roiOffset
 }
@@ -528,11 +530,13 @@ void ImageChannel::write_binning(Tango::WAttribute &attr)
 	const Tango::DevULong	*w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(ImageChannel::write_binning) ENABLED START -----*/
-#if 0
-	// No binning at the moment
 	for (int i = 0; i < 2 && i < w_length; ++i)
+	{
+		// No binning at the moment
+#if 0
 		attr_binning_read[i] = w_val[i];
 #endif
+	}
 
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::write_binning
 }
@@ -635,6 +639,10 @@ Tango::DevVarULongArray *ImageChannel::get_block(const Tango::DevVarULongArray *
 	/*----- PROTECTED REGION ID(ImageChannel::get_block) ENABLED START -----*/
 
 	//	Add your own code
+	if (argin->length() != 2)
+	{
+	}
+	argout = new Tango::DevVarULongArray(0);
 
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::get_block
 	return argout;

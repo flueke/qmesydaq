@@ -708,7 +708,7 @@ Tango::DevBoolean DetectorChannel::update_properties(const Tango::DevVarStringAr
 
 std::string DetectorChannel::incNumber(const std::string &val)
 {
-	int nwidth(5);
+	size_t nwidth(5);
 	std::string tmpString = val;
 	std::string baseName = basename(const_cast<char *>(tmpString.c_str()));
 	std::string::size_type pos = baseName.rfind(".");

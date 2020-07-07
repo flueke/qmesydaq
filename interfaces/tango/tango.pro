@@ -70,3 +70,7 @@ SOURCES		+= \
 		detectorchannel/DetectorChannel.cpp \
 		detectorchannel/DetectorChannelClass.cpp \
 		detectorchannel/DetectorChannelStateMachine.cpp
+
+unix {
+QMAKE_CXXFLAGS	+= -Wno-deprecated -Wno-unused-variable
+}

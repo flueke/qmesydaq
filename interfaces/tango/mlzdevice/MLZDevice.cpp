@@ -341,7 +341,7 @@ void MLZDevice::add_dynamic_commands()
 /*----- PROTECTED REGION ID(MLZDevice::namespace_ending) ENABLED START -----*/
 
 //	Additional Methods
-Tango::DevBoolean MLZDevice::update_properties(const Tango::DevVarStringArray *argin)
+Tango::DevBoolean MLZDevice::update_properties(const Tango::DevVarStringArray *)
 {
 	return Tango::DevBoolean(true);
 }
