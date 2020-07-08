@@ -587,21 +587,22 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 				settings.setValue("dataport", dataport);
 		}
 		settings.setValue("master", value->isMaster() ? "true" : "false");
-		settings.setValue("terminate", value->isTerminated() ? "true" : "false");
-		settings.setValue("extsync", value->isExtsynced() ? "true" : "false");
-//		settings.setValue("active", value->active() ? "true" : "false");
-//		settings.setValue("histogram", value->histogram() ? "true" : "false");
+		if (value->type() != TYPE_MWPCHR) // no terminate/sync, timers, parameter sources, and counter cells
+		{
+			settings.setValue("terminate", value->isTerminated() ? "true" : "false");
+			settings.setValue("extsync", value->isExtsynced() ? "true" : "false");
 
-		for (int j =0; j < 4; ++j)
-		{
-			settings.setValue(QString("auxtimer%1").arg(j), value->getAuxTimer(j));
-			settings.setValue(QString("paramsource%1").arg(j), value->getParamSource(j));
-		}
-		for (int j = 0; j < 8; ++j)
-		{
-			quint16 cells[2];
-			value->getCounterCell(j, &cells[0]);
-			settings.setValue(QString("counterCell%1").arg(j), QString("%1 %2").arg(cells[0]).arg(cells[1]));
+			for (int j =0; j < 4; ++j)
+			{
+				settings.setValue(QString("auxtimer%1").arg(j), value->getAuxTimer(j));
+				settings.setValue(QString("paramsource%1").arg(j), value->getParamSource(j));
+			}
+			for (int j = 0; j < 8; ++j)
+			{
+				quint16 cells[2];
+				value->getCounterCell(j, &cells[0]);
+				settings.setValue(QString("counterCell%1").arg(j), QString("%1 %2").arg(cells[0]).arg(cells[1]));
+			}
 		}
 		settings.endGroup();
 
@@ -612,33 +613,47 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 			int moduleID = value->getModuleId(j);
 			switch (moduleID)
 			{
-				case TYPE_MWPCHR:
 				case TYPE_NOMODULE :
 					break;
+				case TYPE_MWPCHR:
+					if (j == 0)
+					{
+						settings.beginGroup(QString("MDLL-%1").arg(i));
+						settings.setValue("id", i);
+						settings.setValue("active", value->active());
+						settings.setValue("histogram", value->histogram());
+						settings.endGroup();
+					}
+					break;
 				case TYPE_MDLL:
-					settings.beginGroup("MDLL");
-					settings.setValue("id", 0);
+					if (j == 0)
+					{
+						settings.beginGroup(QString("MDLL-%1").arg(i));
+						settings.setValue("id", i);
+						settings.setValue("active", value->active());
+						settings.setValue("histogram", value->histogram());
 
-					settings.setValue("threshX", value->getMdllThreshold(0));
-					settings.setValue("threshY", value->getMdllThreshold(1));
-					settings.setValue("threshA", value->getMdllThreshold(2));
+						settings.setValue("threshX", value->getMdllThreshold(0));
+						settings.setValue("threshY", value->getMdllThreshold(1));
+						settings.setValue("threshA", value->getMdllThreshold(2));
 
-					settings.setValue("shiftX", value->getMdllSpectrum(0));
-					settings.setValue("shiftY", value->getMdllSpectrum(1));
-					settings.setValue("scaleX", value->getMdllSpectrum(2));
-					settings.setValue("scaleY", value->getMdllSpectrum(3));
+						settings.setValue("shiftX", value->getMdllSpectrum(0));
+						settings.setValue("shiftY", value->getMdllSpectrum(1));
+						settings.setValue("scaleX", value->getMdllSpectrum(2));
+						settings.setValue("scaleY", value->getMdllSpectrum(3));
 
-					settings.setValue("tWinXLo", value->getMdllTimingWindow(0));
-					settings.setValue("tWinXHi", value->getMdllTimingWindow(1));
-					settings.setValue("tWinYLo", value->getMdllTimingWindow(2));
-					settings.setValue("tWinYHi", value->getMdllTimingWindow(3));
+						settings.setValue("tWinXLo", value->getMdllTimingWindow(0));
+						settings.setValue("tWinXHi", value->getMdllTimingWindow(1));
+						settings.setValue("tWinYLo", value->getMdllTimingWindow(2));
+						settings.setValue("tWinYHi", value->getMdllTimingWindow(3));
 
-					settings.setValue("eWinLo", value->getMdllEnergyWindow(0));
-					settings.setValue("eWinHi", value->getMdllEnergyWindow(1));
+						settings.setValue("eWinLo", value->getMdllEnergyWindow(0));
+						settings.setValue("eWinHi", value->getMdllEnergyWindow(1));
 
-					settings.setValue("dataSet", value->getMdllDataset());
+						settings.setValue("dataSet", value->getMdllDataset());
 
-					settings.endGroup();
+						settings.endGroup();
+					}
 					break;
 				default:
 					moduleName = QString("MODULE-%1").arg(8 * i + j);
