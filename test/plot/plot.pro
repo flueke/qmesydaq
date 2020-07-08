@@ -56,7 +56,7 @@ LIBS		+= $${QWTLIBS} -L$${SRCBASE}/lib $${MESYDAQ_LIBS}
 
 unix {
 	COMPILER_VERSION = V$$system($$QMAKE_CXX " -dumpversion")
-	ver = $$find(COMPILER_VERSION, "V8") $$find(COMPILER_VERSION, "V9")
+	ver =  $$find(COMPILER_VERSION, "V7")$$find(COMPILER_VERSION, "V8") $$find(COMPILER_VERSION, "V9")
 	!count(ver, 0) {
 		QMAKE_CXXFLAGS += -Wimplicit-fallthrough=1
 	}
