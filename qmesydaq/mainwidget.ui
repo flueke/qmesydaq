@@ -1727,7 +1727,7 @@ histogram file</string>
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>Counts in diplayed region</string>
+           <string>Counts in displayed region</string>
           </property>
          </widget>
         </item>

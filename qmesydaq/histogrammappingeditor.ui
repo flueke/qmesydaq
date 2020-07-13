@@ -232,7 +232,7 @@
          <item row="2" column="1">
           <widget class="QLineEdit" name="Channel">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Marks the specified channels.&lt;/p&gt;&lt;p&gt;(An area will be marked if two numbers are seperated by a hyphen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Marks the specified channels.&lt;/p&gt;&lt;p&gt;(An area will be marked if two numbers are separated by a hyphen.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
