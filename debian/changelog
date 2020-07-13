@@ -1,3 +1,9 @@
+qmesydaq (0.93.2) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- Jenkins <jenkins@debuild.taco.frm2>  Mon, 13 Jul 2020 14:45:00 +0100
+
 qmesydaq (0.50.7) unstable; urgency=low
 
   * UNRELEASED
@@ -1427,7 +1433,7 @@ qmesydaq (0.50.1) unstable; urgency=low
   [ Gregor Montermann ]
   * Remove timing delta histogram in widget
 
-  [ Gregor Montemann ]
+  [ Gregor Montermann ]
   * Change the pulser test
 
   [ Jens Krüger ]

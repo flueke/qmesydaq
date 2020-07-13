@@ -1,7 +1,7 @@
 Source: qmesydaq
 Section: misc
-Priority: extra
-Maintainer: Jens Krüger<jens.krueger@tum.de>
+Priority: optional
+Maintainer: Jens Krüger <jens.krueger@tum.de>
 Build-Depends: debhelper (>= 8.0.0),
  pkg-config,
  git,
@@ -11,25 +11,24 @@ Build-Depends: debhelper (>= 8.0.0),
  qt4-qmake,
  libqtwebkit-dev,
  libqwt5-qt4-dev,
- taco-common-detector-dev
-Standards-Version: 3.9.3
+ libtango-dev
+Standards-Version: 4.3.0
 
 Package: qmesydaq
-Section: misc
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- libboost-filesystem1.49.0 | libboost-filesystem1.55.0 | libboost-filesystem1.58.0,
- taco-common-detector,
+ libtango9,
+ libboost-filesystem1.49.0 | libboost-filesystem1.55.0 | libboost-filesystem1.58.0 | libboost-filesystem-1.67.0,
  libqt4-gui,
  libqtwebkit4,
  libqwt5-qt4
-Description: General tool to control the MesyTec electronics
+Description: General tool to control the MesyTec electronics.
+ It has a compiled in support for TANGO http://www.tango-controls.org.
 
 Package: qmesydaq-dbg
-Section: misc
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- taco-common-detector-dbg,
+ libtango9-dbg,
  libqt4-dbg,
  libqtwebkit4-dbg
 Description: Debug symbols for qmesydaq
