@@ -100,16 +100,6 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	connect(m_events, SIGNAL(stop()), this, SLOT(requestStop()));
 	m_timer = new MesydaqTimer();
 	connect(m_timer, SIGNAL(stop()), this, SLOT(requestStop()));
-
-	for (int i = MON1ID; i <= TTL2ID; ++i)
-	{
-		m_counter[i] = new MesydaqCounter();
-		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
-
-		QPoint p = settings.value(QString("monitor%1").arg(i), QPoint(0, i)).toPoint();
-		setMonitorMapping(p.x(), p.y(), i);
-	}
-
 	m_onlineTimer = startTimer(60);	// every 60 ms check measurement
 }
 
@@ -1104,41 +1094,42 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 				++counterTriggers;
 				MSG_NOTICE << tr("counter %1 ignored").arg(dataId);
 			}
-			else switch (dataId = monitorMapping(mod, dataId))
+			else
 			{
-				case MON1ID :
-				case MON2ID :
-				case MON3ID :
-				case MON4ID :
-					++monitorTriggers;
+				dataId = monitorMapping(mod, dataId);
+				if (dataId == 0xFF)
+					MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2, %3).").arg(dataId).arg(mod).arg(it->ev_trigger.id);
+				else
+				{
 					++(*m_counter[dataId]);
 					if (m_counter[dataId]->isTrigger())
 						m_lastTriggerTime = it->timestamp;
 #if 0
-						MSG_ERROR << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
+					MSG_ERROR << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
 #endif
-					break;
-				case TTL1ID :
-				case TTL2ID :
-					++ttlTriggers;
-					++(*m_counter[dataId]);
-					if (m_counter[dataId]->isTrigger())
-						m_lastTriggerTime = it->timestamp;
+				}
+				switch (it->ev_trigger.id)
+				{
+					case MON1ID :
+					case MON2ID :
+					case MON3ID :
+					case MON4ID :
+						++monitorTriggers;
+						break;
+					case TTL1ID :
+					case TTL2ID :
+						++ttlTriggers;
+						break;
+					case ADC1ID :
+					case ADC2ID :
+						++adcTriggers;
 #if 0
-						MSG_ERROR << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
+						MSG_DEBUG << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
 #endif
-					break;
-				case ADC1ID :
-				case ADC2ID :
-					++adcTriggers;
-					++(*m_counter[dataId]);
-#if 0
-					MSG_DEBUG << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
-#endif
-					break;
-				default:
-					MSG_ERROR << tr("Got unknown trigger on data id(%1) from (%2).").arg(dataId).arg(mod);
-					break;
+						break;
+					default:
+						break;
+				}
 			}
 		}
 		else
@@ -1164,6 +1155,7 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 				m_Hist[CorrectedPositionHistogram]->incVal(x, y);
 		}
 	}
+	MSG_DEBUG << tr("Packet has %1 neutrons and %2 trigger: %3 monitor, %4 ttl, and %5 ADC events.").arg(neutrons).arg(triggers).arg(monitorTriggers).arg(ttlTriggers).arg(adcTriggers);
 	m_triggers += triggers;
 	m_neutrons += neutrons;
 }
@@ -1876,11 +1868,23 @@ bool Measurement::loadSetup(const QString &name)
 
 	updateSetupType();
 
+	m_counter.clear();
 	settings.beginGroup("MESYDAQ");
-	for (int j = MON1ID; j <= TTL2ID; ++j)
+	QStringList monitors = settings.childKeys().filter("monitor");
+	if (monitors.isEmpty())
 	{
-		QPoint p = settings.value(QString("monitor%1").arg(j), QPoint(0, j)).toPoint();
-		setMonitorMapping(p.x(), p.y(), j);
+		for (int i = MON1ID; i <= TTL2ID; ++i)
+			monitors << tr("monitor%1").arg(i);
+	}
+	foreach(QString mon, monitors)
+	{
+		int i = mon.mid(7).toInt();
+		MSG_INFO << tr("initialize %1: %2").arg(mon).arg(i);
+		m_counter[i] = new MesydaqCounter();
+		connect(m_counter[i], SIGNAL(stop()), this, SLOT(requestStop()));
+
+		QPoint p = settings.value(mon, QPoint(0, i)).toPoint();
+		setMonitorMapping(p.x(), p.y(), i);
 	}
 	settings.endGroup();
 
@@ -2010,7 +2014,9 @@ Histogram *Measurement::hist(const HistogramType t) const
 
 quint64	Measurement::mon(const int id) const
 {
-	return m_counter[id]->value();
+	if (m_counter.contains(id))
+		return m_counter[id]->value();
+	return 0;
 }
 
 quint64 Measurement::events() const
