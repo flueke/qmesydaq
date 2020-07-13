@@ -28,6 +28,10 @@ PresetWidget::PresetWidget(QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
+	mcpdLabel->hide();
+	mcpdSpinBox->hide();
+	inputLabel->hide();
+	inputComboBox->hide();
 	setLabel("");
 	setPresetValue(0);
 }

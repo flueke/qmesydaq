@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 0.77.0
+VERSION		= 0.78.0
 SRCBASE		= ..
 
 CONFIG		+= debug_and_release link_prl # build_all
@@ -113,7 +113,6 @@ FORMS 		+= mainwidget.ui \
 		mainwindow.ui \
 		generalsetup.ui \
 		mcpdsetup.ui \
-		presetwidget.ui \
 		monitorpresetwidget.ui \
 		doublepresetwidget.ui \
 		modulestatus.ui \

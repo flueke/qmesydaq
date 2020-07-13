@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>42</height>
+    <width>550</width>
+    <height>47</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
@@ -19,8 +25,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
     <widget class="QLabel" name="label">
      <property name="minimumSize">
       <size>
@@ -36,7 +42,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
+   <item>
     <widget class="QCheckBox" name="presetButton">
      <property name="toolTip">
       <string>activate preset for</string>
@@ -49,7 +55,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="3">
+   <item>
     <widget class="QDoubleSpinBox" name="preset">
      <property name="enabled">
       <bool>false</bool>
@@ -77,20 +83,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="5">
+   <item>
     <widget class="QPushButton" name="resetButton">
      <property name="minimumSize">
       <size>
@@ -109,7 +102,20 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="6">
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QLabel" name="currentValue">
      <property name="minimumSize">
       <size>
@@ -125,7 +131,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
+   <item>
     <widget class="QLabel" name="currentValue_2">
      <property name="minimumSize">
       <size>
@@ -140,32 +146,6 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-   </item>
-   <item row="0" column="8">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="1">
-    <spacer name="horizontalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

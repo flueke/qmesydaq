@@ -21,7 +21,7 @@
 #define PRESET_WIDGET_H
 
 #include <QWidget>
-#include "ui_presetwidget.h"
+#include "ui_monitorpresetwidget.h"
 
 class QMouseEvent;
 
@@ -32,7 +32,7 @@ class QMouseEvent;
 
     \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
-class PresetWidget : public QWidget, public Ui_PresetWidget
+class PresetWidget : public QWidget, public Ui_MonitorPresetWidget
 {
 	Q_OBJECT
 public:
