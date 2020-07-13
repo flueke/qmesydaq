@@ -6,7 +6,7 @@ else {
 }
 CONFIG +=	debug_and_release link_prl
 ## _and_release
-TARGET =	$$qtLibraryTarget($$TARGET)
+TARGET =	qledplugin # $$qtLibraryTarget($$TARGET)
 TEMPLATE =	lib
 QTDIR_build:	DESTDIR = $$QT_BUILD_TREE/plugins/designer
 
