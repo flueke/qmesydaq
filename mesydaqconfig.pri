@@ -68,7 +68,7 @@ exists($${QMESYDAQCONFIG}) {
 }
 
 isEmpty(TARGETPATH) {
-	TARGETPATH	= /usr/local
+	TARGETPATH = $$[QT_INSTALL_PREFIX]
 }
 
 isEmpty(QWT_ROOT) {
@@ -92,7 +92,6 @@ isEmpty(QWTLIB) {
 	else: QWTLIB	= qwt-qt4
 }
 
-target.path	= $${TARGETPATH}
 
 contains(CONFIG, bit64) {
 	DEFINES	+= HAVE_BIT64
@@ -103,7 +102,7 @@ isEmpty(QWTLIBS) {
 }
 
 isEmpty(TARGETLIBPATH) {
-	TARGETLIBPATH = $${TARGETPATH}/lib
+	TARGETLIBPATH = $$[QT_INSTALL_LIBS]
 }
 
 QWTLIBS		= -L$${QWTLIBS} -l$${QWTLIB}
