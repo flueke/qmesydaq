@@ -53,10 +53,6 @@ INCLUDEPATH 	+= . $${SRCBASE} $${QLEDINCLUDE}
 
 SUBDIRS		+= diskspace
 
-INSTALLS	= target
-
-target.path	= $${TARGETPATH}/bin
-
 QT 		+= network svg # webkit
 
 greaterThan(QT_MAJOR_VERSION, 4) {
@@ -225,3 +221,9 @@ LIBS		+= $${MESYDAQ_LIBS}
 LIBS		+= $${QWTLIBS}
 
 unix:LIBS	+= $${BOOST_LIBS}
+
+unix {
+	target.path	= $${TARGETPATH}/bin
+}
+
+INSTALLS	+= target

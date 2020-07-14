@@ -29,8 +29,6 @@ DEPENDPATH 	+= .
 INCLUDEPATH 	+= .
 LIBS		-= -lmesydaq
 
-INSTALLS	= target
-
 CONFIG		+= debug_and_release build_all create_prl
 
 win32 {
@@ -49,8 +47,6 @@ unix {
 	}
 	QMAKE_CXXFLAGS  += -Wno-class-memaccess
 }
-
-target.path	= $${TARGETLIBPATH}
 
 QT 		+= core network
 
@@ -120,3 +116,7 @@ SOURCES 	+= stdafx.cpp \
 		   editormemory.cpp \
 		   calibration.cpp \
 		   streamwriter.cpp
+
+target.path	= $${TARGETLIBPATH}
+
+INSTALLS	+= target
