@@ -710,7 +710,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	m_autoSaveHistogram = settings.value("autosavehistogram", "false").toBool();
 	m_pDatSender->SetSource(settings.value("repeatersource", "").toString());
 	m_pDatSender->SetTarget(settings.value("repeatertarget", "").toString(),
-			      settings.value("repeaterport", m_pDatSender->DEFAULTPORT).toUInt());
+				settings.value("repeaterport", m_pDatSender->DEFAULTPORT).toUInt());
 	m_pDatSender->SetEnabled(settings.value("repeaterenable", "false").toBool());
 	settings.endGroup();
 
