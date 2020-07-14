@@ -66,8 +66,6 @@ public:
 
 	virtual void clear(void);
 
-	void clear(const quint16 channel);
-
 	virtual quint64 getTotalCounts(void) const;
 
 	quint64 getCounts(const QRect &r) const;

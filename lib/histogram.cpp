@@ -270,27 +270,6 @@ bool Histogram::addValue(const quint16 chan, const quint16 bin, const quint64 va
 }
 
 /*!
-    \fn Histogram::clear(const quint16 channel)
-
-    clears the spectrum channel
-
-    \param channel number of the spectrum to be cleared
- */
-void Histogram::clear(const quint16 channel)
-{
-	m_totalCounts -= m_data[channel]->getTotalCounts();
-
-#if defined(_MSC_VER)
-#	pragma message("TODO remove the counts from the sum spectrum and total counts and adjust the new maximum")
-#else
-#	warning TODO remove the counts from the sum spectrum and total counts and adjust the new maximum
-#endif
-//! \todo remove the counts from the sum spectrum and total counts and adjust the new maximum
-	m_data[channel]->clear();
-}
-
-
-/*!
     \fn Histogram::clear(void);
 
     clears the complete histogram
