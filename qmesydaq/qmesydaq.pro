@@ -182,6 +182,8 @@ DISTFILES	+= images/mesytec.jpg \
 contains(INTERFACE, TACO) {
 	DEPENDPATH	+= $${SRCBASE}/interfaces/taco
 	INCLUDEPATH	+= $${SRCBASE}/interfaces/taco
+	CONFIG		+= link_pkgconfig
+	PKGCONFIG	= taco
 	LIBS		+= -L$${SRCBASE}/interfaces/taco -ltacoInterface $${TACOLIBS} $${LIBS}
 }
 
