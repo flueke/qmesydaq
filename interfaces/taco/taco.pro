@@ -32,8 +32,6 @@ LIBS		+= $${TACOLIBS}
 
 CONFIG		+= debug_and_release build_all create_prl
 
-target.path	= $${TARGETLIBPATH}
-
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
 }
@@ -60,4 +58,7 @@ SOURCES 	+= MesyDAQDetectorDetector.cpp \
 		TACOLoop.cpp \
 		device_server.c
 
+target.path	= $${TARGETLIBPATH}
+headers.path	= $$[QT_INSTALL_HEADERS]
 
+INSTALLS	+= target headers

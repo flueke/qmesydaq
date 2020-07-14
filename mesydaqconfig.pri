@@ -30,7 +30,7 @@ GITVERSION	= $$system(git describe)
 }
 DEFINES		+= VERSION=\\\"$${VERSION}\\($${GITVERSION}\\)\\\" HAVE_CONFIG_H
 
-# CONFIG	+= debug_and_release build_all
+CONFIG	+= debug_and_release build_all
 
 #
 # emtpy
@@ -169,3 +169,7 @@ MOC_DIR		= .moc
 unix {
 OBJECTS_DIR	= .obj
 }
+
+target.path	= $${TARGETPATH}
+
+INSTALLS	+= target

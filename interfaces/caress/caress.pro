@@ -33,16 +33,14 @@ LIBS		+= $${CARESSLIBS}
 
 CONFIG		+= debug_and_release build_all create_prl
 
-target.path	= $${TARGETLIBPATH}
-
 DISTFILES       += corbadevice.idl
 QMAKE_DISTCLEAN += corbadevice.h corbadeviceSK.cpp
 
 # Input
 HEADERS 	+= CARESSLoop.h corbadevice.h \
-    mapcorrectparser.h
+		   mapcorrectparser.h
 SOURCES 	+= CARESSLoop.cpp corbadeviceSK.cpp \
-    mapcorrectparser.cpp
+		   mapcorrectparser.cpp
 OTHER_FILES     += corbadevice.idl
 
 # CORBA interface to C++ compiler
@@ -53,3 +51,8 @@ idl2intermediate.commands = omniidl -bcxx -Wbh=.h -Wbs=SK.cpp -Wbd=DynSK.cpp cor
 
 # This variable contains the extra targets that have been added
 QMAKE_EXTRA_TARGETS += idl1intermediate idl2intermediate
+
+target.path	= $${TARGETLIBPATH}
+headers.path	= $$[QT_INSTALL_HEADERS]
+
+INSTALLS	+= target headers

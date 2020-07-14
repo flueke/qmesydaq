@@ -34,8 +34,6 @@ QT		+= network
 
 CONFIG		+= debug_and_release build_all create_prl
 
-target.path	= $${TARGETLIBPATH}
-
 # Input
 HEADERS		+= remoteserver.h \
 		TCPLoop.h
@@ -43,4 +41,7 @@ HEADERS		+= remoteserver.h \
 SOURCES		+= remoteserver.cpp \
 		TCPLoop.cpp
 
+target.path	= $${TARGETLIBPATH}
+headers.path	= $$[QT_INSTALL_HEADERS]
 
+INSTALLS	+= target headers

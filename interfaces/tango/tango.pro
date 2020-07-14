@@ -74,3 +74,8 @@ SOURCES		+= \
 unix {
 QMAKE_CXXFLAGS	+= -Wno-deprecated -Wno-unused-variable
 }
+
+target.path =	$$[QT_INSTALL_LIBS]
+headers.path =	$$[QT_INSTALL_HEADERS]
+
+INSTALLS	+= target headers
