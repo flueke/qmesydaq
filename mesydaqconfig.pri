@@ -30,13 +30,12 @@ GITVERSION	= $$system(git describe)
 }
 DEFINES		+= VERSION=\\\"$${VERSION}\\($${GITVERSION}\\)\\\" HAVE_CONFIG_H
 
-INSTALLS	= target
-
 # CONFIG	+= debug_and_release build_all
 
 #
 # emtpy
 # TACO		work as TACO server
+# TANGO		work as TANGO server
 # CARESS	work as CARESS server
 # TCP		work as TCP server
 #
