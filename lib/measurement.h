@@ -208,13 +208,6 @@ public:
 	 */
 	quint64	timer() const;
 
-	/**
-		gets the number of all events in the selected ROI
-		\todo counter mapping configuration
-		\return events in ROI
-	 */
-	quint64 eventsInROI(const HistogramType t, const QRect &roi);
-
 	//! \return time of the last header read from interface
 	quint64 getHeadertime(void) const;
 

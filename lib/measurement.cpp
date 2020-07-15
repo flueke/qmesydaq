@@ -1616,12 +1616,6 @@ void Measurement::readListfile(const QString &readfilename)
 	m_status = Idle;
 }
 
-quint64 Measurement::eventsInROI(const HistogramType t, const QRect &roi)
-{
-	quint64 tmp = m_Hist[t]->getCounts(roi);
-	return tmp;
-}
-
 void Measurement::setListFileHeader(const QByteArray& header, bool bInsertHeaderLength)
 {
 	if (m_detector)
