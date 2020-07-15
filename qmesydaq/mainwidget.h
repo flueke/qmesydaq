@@ -230,6 +230,10 @@ private:
 
 	QRect	roi(void);
 
+	Spectrum *data(const Measurement::HistogramType t);
+	Spectrum *data(const Measurement::HistogramType t, const quint16 line);
+	Spectrum *data(const Measurement::HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan);
+
 private:
 	//! The detector object
 	Detector		*m_detector;

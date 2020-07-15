@@ -226,10 +226,6 @@ public:
 
 	void clearAllHist(void);
 
-	Spectrum *data(const HistogramType t);
-	Spectrum *data(const HistogramType t, const quint16 line);
-	Spectrum *data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan);
-
 	/**
 	    \param t type of the requested histogram
             \return a histogram
@@ -440,6 +436,7 @@ private:
 
 	bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf);
 
+public:
 	quint16 mapTube(const quint16);
 
 private:

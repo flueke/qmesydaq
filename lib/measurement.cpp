@@ -747,58 +747,6 @@ void Measurement::clearAllHist(void)
 }
 
 /*!
-    \fn Spectrum *Measurement::data(const HistogramType t, const quint16 line)
-
-    gets a position spectrum of a tube
-
-    \param t type of the requested histogram
-    \param line tube number
-    \return spectrum if line exist otherwise NULL pointer
- */
-Spectrum *Measurement::data(const HistogramType t, const quint16 line)
-{
-	quint16 tmpLine = mapTube(line);
-	if (m_Hist[t] && tmpLine != 0xFFFF)
-		return m_Hist[t]->spectrum(tmpLine);
-	else
-		return NULL;
-}
-
-/*!
-    \fn Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint16 mpsd, const quint8 chan)
-
-    gets a position spectrum of a tube
-
-    \param t type of the requested histogram
-    \param mcpd number of the MCPD
-    \param mpsd number of the MPSD on the MCPD
-    \param chan number of the channel at the MPSD
-    \return spectrum if line exist otherwise NULL pointer
- */
-Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan)
-{
-	quint16 line = calculateChannel(mcpd, mpsd, chan); // chan + m_detector->startChannel(mcpd) + m_detector->width(mcpd, mpsd);
-	return data(t, line);
-}
-
-
-/*!
-    \fn Spectrum *Measurement::data(const HistogramType t)
-
-    gets the position histogram
-
-    \return position histogram if exist otherwise NULL pointer
-*/
-Spectrum *Measurement::data(const HistogramType t)
-{
-	if (t == CorrectedPositionHistogram)
-		return m_Spectrum[TubeSpectrum];
-	if (m_Hist[t])
-		return m_Hist[t]->ySumSpectrum();
-	return NULL;
-}
-
-/*!
     \fn Spectrum *Measurement::spectrum(const SpectrumType t)
 
     gets a spectrum of all events

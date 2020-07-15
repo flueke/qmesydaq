@@ -1524,7 +1524,7 @@ void MainWidget::draw(void)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "Y (channel)");
 			if(dispAll->isChecked())
 			{
-				spec = m_meas->data(m_histoType);
+				spec = data(m_histoType);
 				if (m_zoomedRect.isEmpty())
 					m_zoomedRect = QRectF(0, 0, spec->width(), 1);
 				m_data->setData(spec);
@@ -1552,7 +1552,7 @@ void MainWidget::draw(void)
 						quint8 chan(m_detector->getChannels(dispMcpd->value(), dispMpsd->value()));
 						for (quint8 i = 0; i < chan; ++i)
 						{
-							spec = m_meas->data(m_histoType, dispMcpd->value(), dispMpsd->value(), i);
+							spec = data(m_histoType, dispMcpd->value(), dispMpsd->value(), i);
 							m_specData[i]->setData(spec);
 							m_dataFrame->setSpectrumData(m_specData[i], i);
 
@@ -1567,7 +1567,7 @@ void MainWidget::draw(void)
 					}
 					else
 					{
-						spec = m_meas->data(m_histoType, dispMcpd->value(), dispMpsd->value(), dispChan->value());
+						spec = data(m_histoType, dispMcpd->value(), dispMpsd->value(), dispChan->value());
 						m_data->setData(spec);
 						m_dataFrame->setSpectrumData(m_data);
 
@@ -2706,4 +2706,55 @@ void MainWidget::setChannels(int mod)
 MainWidget::UserLevel MainWidget::userLevel(void)
 {
 	return m_userLevel;
+}
+
+/*!
+    \fn Spectrum *MainWidget::data(const HistogramType t, const quint16 line)
+
+    gets a position spectrum of a tube
+
+    \param t type of the requested histogram
+    \param line tube number
+    \return spectrum if line exist otherwise NULL pointer
+ */
+Spectrum *MainWidget::data(const Measurement::HistogramType t, const quint16 line)
+{
+	quint16 tmpLine = m_meas->mapTube(line);
+	if (m_meas->hist(t) && tmpLine != 0xFFFF)
+		return m_meas->hist(t)->spectrum(tmpLine);
+	return NULL;
+}
+
+/*!
+    \fn Spectrum *MainWidget::data(const HistogramType t, const quint16 mcpd, const quint16 mpsd, const quint8 chan)
+
+    gets a position spectrum of a tube
+
+    \param t type of the requested histogram
+    \param mcpd number of the MCPD
+    \param mpsd number of the MPSD on the MCPD
+    \param chan number of the channel at the MPSD
+    \return spectrum if line exist otherwise NULL pointer
+ */
+Spectrum *MainWidget::data(const Measurement::HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan)
+{
+	quint16 line = m_meas->calculateChannel(mcpd, mpsd, chan); // chan + m_detector->startChannel(mcpd) + m_detector->width(mcpd, mpsd);
+	return data(t, line);
+}
+
+
+/*!
+    \fn Spectrum *MainWidget::data(const HistogramType t)
+
+    gets the position histogram
+
+    \return position histogram if exist otherwise NULL pointer
+*/
+Spectrum *MainWidget::data(const Measurement::HistogramType t)
+{
+	if (t == Measurement::CorrectedPositionHistogram)
+		return m_meas->spectrum(Measurement::TubeSpectrum);
+	if (m_meas->hist(t))
+		return m_meas->hist(t)->ySumSpectrum();
+	return NULL;
 }
