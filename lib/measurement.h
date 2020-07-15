@@ -186,9 +186,6 @@ public:
 
 	void	readListfile(const QString &readfilename);
 
-	//! \returns the number of counts in the defined ROI
-	quint64	getROICounts(void) const;
-
 	/**
 		gets the value of the monitor given by id value
 		\todo monitor mapping configuration
@@ -247,10 +244,6 @@ public:
 
 	//! \return the mapping and correction data for position histogram
 	MapCorrection *&posHistMapCorrection();
-
-	void getMean(const HistogramType t, float &, float &);
-	void getMean(const HistogramType t, quint16, float &, float &);
-	void getMean(const SpectrumType t, float &, float &);
 
 	//! \brief store header for list mode file
 	void setListFileHeader(const QByteArray& header, bool bInsertHeaderLength);

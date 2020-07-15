@@ -1668,54 +1668,6 @@ void Measurement::readListfile(const QString &readfilename)
 	m_status = Idle;
 }
 
-/*!
-    \fn Measurement::getMean(const HistogramType t, float &mean, float &sigma)
-
-    gives the mean value and the standard deviation of the last position events
-
-    \param t type of the requested histogram
-    \param mean mean value
-    \param sigma standard deviation
- */
-void Measurement::getMean(const HistogramType t, float &mean, float &sigma)
-{
-	m_Hist[t]->getMean(mean, sigma);
-}
-
-/*!
-    \fn Measurement::getMean(const HistogramType t, quint16 chan, float &mean, float &sigma)
-
-    gives the mean value and the standard deviation of the last events in the tube chan of the position histogram
-
-    \param t type of the requested histogram
-    \param chan the number of the tube
-    \param mean mean value
-    \param sigma standard deviation
- */
-void Measurement::getMean(const HistogramType t, quint16 chan, float &mean, float &sigma)
-{
-	quint16 tmpChan = mapTube(chan);
-	if (tmpChan != 0xFFFF)
-		m_Hist[t]->getMean(tmpChan, mean, sigma);
-	else
-		mean = sigma = 0.0;
-}
-
-/**
-    \fn Measurement::getMean(const SpectrumType t, float &mean, float &sigma)
-
-    gives the mean value and the standard deviation of the last events in the time spectrum
-
-    \param t type of the requested spectrum
-    \param mean mean value
-    \param sigma standard deviation of the mean value
-    \return mean value
- */
-void Measurement::getMean(const SpectrumType t, float &mean, float &sigma)
-{
-	mean = m_Spectrum[t]->mean(sigma);
-}
-
 quint64 Measurement::eventsInROI(const HistogramType t, const QRect &roi)
 {
 	quint64 tmp = m_Hist[t]->getCounts(roi);

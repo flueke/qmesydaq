@@ -1112,23 +1112,23 @@ void MainWidget::drawOpData()
 	if(dispAll->isChecked())
 	{
 		if (dispAllPos->isChecked())
-			m_meas->getMean(Measurement::PositionHistogram, mean, sigma);
+			m_meas->hist(Measurement::PositionHistogram)->getMean(mean, sigma);
 		else if (dispAllAmpl->isChecked())
-			m_meas->getMean(Measurement::AmplitudeHistogram, mean, sigma);
+			m_meas->hist(Measurement::AmplitudeHistogram)->getMean(mean, sigma);
 		else
-			m_meas->getMean(Measurement::CorrectedPositionHistogram, mean, sigma);
+			m_meas->hist(Measurement::CorrectedPositionHistogram)->getMean(mean, sigma);
 	}
 	else
 	{
 		quint16 channel = m_meas->calculateChannel(dispMcpd->value(), dispMpsd->value(), dispChan->value());
 		if (dispAllPos->isChecked())
-			m_meas->getMean(Measurement::PositionHistogram, channel, mean, sigma);
+			m_meas->hist(Measurement::PositionHistogram)->getMean(channel, mean, sigma);
 		else if (dispAllAmpl->isChecked())
-			m_meas->getMean(Measurement::AmplitudeHistogram, channel, mean, sigma);
+			m_meas->hist(Measurement::AmplitudeHistogram)->getMean(channel, mean, sigma);
 		else if (dispAllCorrectedPos->isChecked())
-			m_meas->getMean(Measurement::CorrectedPositionHistogram, channel, mean, sigma);
+			m_meas->hist(Measurement::CorrectedPositionHistogram)->getMean(channel, mean, sigma);
 		else if(specialBox->isChecked())
-			m_meas->getMean(Measurement::TimeSpectrum, mean, sigma);
+			mean = m_meas->spectrum(Measurement::TimeSpectrum)->mean(sigma);
 	}
 	if (m_userLevel == MainWidget::SuperUser)
 	{
