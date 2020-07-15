@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "mdefines.h"
 #include "modulesetup.h"
-#include "mesydaq2.h"
+#include "detector.h"
 
 #include "mainwidget.h"
 
@@ -31,9 +31,9 @@
  *  \param mesy
  *  \param parent
  */
-ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
+ModuleSetup::ModuleSetup(Detector *detector, QWidget *parent)
 	: QDialog(parent)
-	, m_theApp(mesy)
+	, m_detector(detector)
 {
 	setupUi(this);
 
@@ -125,19 +125,19 @@ ModuleSetup::ModuleSetup(Mesydaq2 *mesy, QWidget *parent)
 	channelLabel->setHidden(comgain->isChecked());
 	channel->setHidden(comgain->isChecked());
 
-	QList<int> mcpdList = m_theApp->mcpdId();
+	QList<int> mcpdList = m_detector->mcpdId();
 	bool noModule = mcpdList.isEmpty();
 	tabWidget->setDisabled(noModule);
 
 	devid->setMCPDList(mcpdList);
-	QList<int> modules = m_theApp->mpsdId(devid->value());
+	QList<int> modules = m_detector->mpsdId(devid->value());
 	module->setModuleList(modules);
 	module->setDisabled(false);
 	ampdiscGroup->setDisabled(modules.empty());
 	modeGroup->setDisabled(modules.empty());
 	histogramGroupBox->setDisabled(modules.empty());
 
-	channel->setModuleList(m_theApp->channelId(devid->value(), module->value()));
+	channel->setModuleList(m_detector->channelId(devid->value(), module->value()));
 
 	registerValue->setValidator(new QIntValidator(0, 0xFFFF, registerValue));
 	MainWidget *mw = reinterpret_cast<MainWidget *>(parent);
@@ -156,12 +156,12 @@ void ModuleSetup::setGainSlot()
 	bool	ok;
 	quint16	id = (quint16) devid->value();
 	quint16	addr = module->value();
-	quint16	chan = comgain->isChecked() ? m_theApp->getChannels(id, addr) : channel->text().toUInt(&ok, 0);
+	quint16	chan = comgain->isChecked() ? m_detector->getChannels(id, addr) : channel->text().toUInt(&ok, 0);
 	float 	gainval = gain->value();
 #if 0
-	m_theApp->setGain(id, addr, chan, gainval);
+	m_detector->setGain(id, addr, chan, gainval);
 #else
-	m_theApp->setGain(id, addr, chan, quint8(gainval));
+	m_detector->setGain(id, addr, chan, quint8(gainval));
 #endif
 }
 
@@ -176,7 +176,7 @@ void ModuleSetup::setThresholdSlot()
 	quint16 addr = module->value();
 	quint16 thresh = threshold->value();
 
-	m_theApp->setThreshold(id, addr, thresh);
+	m_detector->setThreshold(id, addr, thresh);
 }
 
 /*!
@@ -195,7 +195,7 @@ void ModuleSetup::readRegisterSlot()
 	quint16 id = (quint16) devid->value();
 	quint16 addr = module->value();
 	quint16 reg = registerSelect->value();
-	registerValue->setText(QString::number(m_theApp->readPeriReg(id, addr, reg)));
+	registerValue->setText(QString::number(m_detector->readPeriReg(id, addr, reg)));
 }
 
 /*!
@@ -211,7 +211,7 @@ void ModuleSetup::writeRegisterSlot()
 	quint16 reg = registerSelect->value();
 	quint16 val = registerValue->text().toUInt(&ok, 0);
 
-	m_theApp->writePeriReg(id, addr, reg, val);
+	m_detector->writePeriReg(id, addr, reg, val);
 }
 
 /*!
@@ -226,12 +226,12 @@ void ModuleSetup::setModeSlot()
 	int mod = module->value();
 	if (comAmp->isChecked())
 	{
-		QList<int> modules = m_theApp->mpsdId(devid->value());
+		QList<int> modules = m_detector->mpsdId(devid->value());
 		foreach(int m, modules)
-			m_theApp->setMode(devid->value(), m, ampMode->isChecked());
+			m_detector->setMode(devid->value(), m, ampMode->isChecked());
 	}
 	else
-		m_theApp->setMode(devid->value(), mod, ampMode->isChecked());
+		m_detector->setMode(devid->value(), mod, ampMode->isChecked());
 }
 
 /*!
@@ -256,9 +256,9 @@ void ModuleSetup::setModule(int id)
 void ModuleSetup::setMCPD(int id)
 {
 	devid->setValue(id);
-//	devid->setMCPDList(m_theApp->mcpdId());
+//	devid->setMCPDList(m_detector->mcpdId());
 	id = devid->value();
-	QList<int> modules = m_theApp->mpsdId(id);
+	QList<int> modules = m_detector->mpsdId(id);
 	module->setModuleList(modules);
 	module->setDisabled(false);
 	modeGroup->setDisabled(modules.empty());
@@ -282,7 +282,7 @@ void ModuleSetup::displayMCPDSlot(int id)
 
 	QList<int> modList;
 	for (int i = 0; i < 8; ++i)
-		if (m_theApp->getModuleId(id, i))
+		if (m_detector->getModuleId(id, i))
 			modList << i;
 	module->setModuleList(modList);
 	module->setDisabled(false);
@@ -303,7 +303,7 @@ void ModuleSetup::displayMPSDSlot(int id)
 {
 	if (id < 0)
 		id = 0;
-	channel->setModuleList(m_theApp->channelId(devid->value(), id));
+	channel->setModuleList(m_detector->channelId(devid->value(), id));
 	displaySlot();
 }
 
@@ -316,9 +316,9 @@ void ModuleSetup::displaySlot()
 {
 	quint8 mod = devid->value();
 	quint8 id = module->value();
-	quint8 channels = m_theApp->getChannels(mod, id);
+	quint8 channels = m_detector->getChannels(mod, id);
 	quint8 chan = comgain->isChecked() ? channels : channel->value();
-	modeGroup->setEnabled(!module->empty() && m_theApp->getTxMode(mod, id) != TPA);
+	modeGroup->setEnabled(!module->empty() && m_detector->getTxMode(mod, id) != TPA);
 
 	for (int i = 0; i < 16; ++i)
 	{
@@ -337,24 +337,24 @@ void ModuleSetup::displaySlot()
 
 // gain:
 	gain->blockSignals(true);
-	gain->setValue(m_theApp->getGain(mod, id, chan));
+	gain->setValue(m_detector->getGain(mod, id, chan));
 	gain->blockSignals(false);
 
 // threshold:
 	threshold->blockSignals(true);
-	threshold->setValue(m_theApp->getThreshold(mod, id));
+	threshold->setValue(m_detector->getThreshold(mod, id));
 	threshold->blockSignals(false);
 
 // mode:
-	if (m_theApp->getMode(mod, id))
+	if (m_detector->getMode(mod, id))
 		ampMode->setChecked(true);
 
 // histogram/active:
 	for (int i = 0; i < 16 && i < channels; ++i)
 	{
-		bool bHistogram = m_theApp->histogram(mod, id, i);
+		bool bHistogram = m_detector->histogram(mod, id, i);
 		m_histogram[i]->setChecked(bHistogram);
-		m_active[i]->setChecked(m_theApp->active(mod, id, i));
+		m_active[i]->setChecked(m_detector->active(mod, id, i));
 		m_active[i]->setVisible(bHistogram);
 	}
 }
@@ -368,7 +368,7 @@ void ModuleSetup::displaySlot()
  */
 void ModuleSetup::setHistogram1(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 0, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 0, hist);
 }
 
 /*!
@@ -380,7 +380,7 @@ void ModuleSetup::setHistogram1(bool hist)
  */
 void ModuleSetup::setActive1(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 0, act);
+	m_detector->setActive(devid->value(), module->value(), 0, act);
 }
 
 /*!
@@ -392,7 +392,7 @@ void ModuleSetup::setActive1(bool act)
  */
 void ModuleSetup::setHistogram2(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 1, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 1, hist);
 }
 
 /*!
@@ -404,7 +404,7 @@ void ModuleSetup::setHistogram2(bool hist)
  */
 void ModuleSetup::setActive2(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 1, act);
+	m_detector->setActive(devid->value(), module->value(), 1, act);
 }
 
 /*!
@@ -416,7 +416,7 @@ void ModuleSetup::setActive2(bool act)
  */
 void ModuleSetup::setHistogram3(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 2, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 2, hist);
 }
 
 /*!
@@ -428,7 +428,7 @@ void ModuleSetup::setHistogram3(bool hist)
  */
 void ModuleSetup::setActive3(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 2, act);
+	m_detector->setActive(devid->value(), module->value(), 2, act);
 }
 
 /*!
@@ -440,7 +440,7 @@ void ModuleSetup::setActive3(bool act)
  */
 void ModuleSetup::setHistogram4(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 3, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 3, hist);
 }
 
 /*!
@@ -452,7 +452,7 @@ void ModuleSetup::setHistogram4(bool hist)
  */
 void ModuleSetup::setActive4(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 3, act);
+	m_detector->setActive(devid->value(), module->value(), 3, act);
 }
 
 /*!
@@ -464,7 +464,7 @@ void ModuleSetup::setActive4(bool act)
  */
 void ModuleSetup::setHistogram5(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 4, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 4, hist);
 }
 
 /*!
@@ -476,7 +476,7 @@ void ModuleSetup::setHistogram5(bool hist)
  */
 void ModuleSetup::setActive5(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 4, act);
+	m_detector->setActive(devid->value(), module->value(), 4, act);
 }
 
 /*!
@@ -488,7 +488,7 @@ void ModuleSetup::setActive5(bool act)
  */
 void ModuleSetup::setHistogram6(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 5, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 5, hist);
 }
 
 /*!
@@ -500,7 +500,7 @@ void ModuleSetup::setHistogram6(bool hist)
  */
 void ModuleSetup::setActive6(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 5, act);
+	m_detector->setActive(devid->value(), module->value(), 5, act);
 }
 
 /*!
@@ -512,7 +512,7 @@ void ModuleSetup::setActive6(bool act)
  */
 void ModuleSetup::setHistogram7(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 6, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 6, hist);
 }
 
 /*!
@@ -524,7 +524,7 @@ void ModuleSetup::setHistogram7(bool hist)
  */
 void ModuleSetup::setActive7(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 6, act);
+	m_detector->setActive(devid->value(), module->value(), 6, act);
 }
 
 /*!
@@ -536,7 +536,7 @@ void ModuleSetup::setActive7(bool act)
  */
 void ModuleSetup::setHistogram8(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 7, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 7, hist);
 }
 
 /*!
@@ -548,7 +548,7 @@ void ModuleSetup::setHistogram8(bool hist)
  */
 void ModuleSetup::setActive8(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 7, act);
+	m_detector->setActive(devid->value(), module->value(), 7, act);
 }
 
 /*!
@@ -560,7 +560,7 @@ void ModuleSetup::setActive8(bool act)
  */
 void ModuleSetup::setHistogram9(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 8, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 8, hist);
 }
 
 /*!
@@ -572,7 +572,7 @@ void ModuleSetup::setHistogram9(bool hist)
  */
 void ModuleSetup::setActive9(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 8, act);
+	m_detector->setActive(devid->value(), module->value(), 8, act);
 }
 
 /*!
@@ -584,7 +584,7 @@ void ModuleSetup::setActive9(bool act)
  */
 void ModuleSetup::setHistogram10(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 9, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 9, hist);
 }
 
 /*!
@@ -596,7 +596,7 @@ void ModuleSetup::setHistogram10(bool hist)
  */
 void ModuleSetup::setActive10(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 9, act);
+	m_detector->setActive(devid->value(), module->value(), 9, act);
 }
 
 /*!
@@ -608,7 +608,7 @@ void ModuleSetup::setActive10(bool act)
  */
 void ModuleSetup::setHistogram11(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 10, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 10, hist);
 }
 
 /*!
@@ -620,7 +620,7 @@ void ModuleSetup::setHistogram11(bool hist)
  */
 void ModuleSetup::setActive11(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 10, act);
+	m_detector->setActive(devid->value(), module->value(), 10, act);
 }
 
 /*!
@@ -632,7 +632,7 @@ void ModuleSetup::setActive11(bool act)
  */
 void ModuleSetup::setHistogram12(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 11, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 11, hist);
 }
 
 /*!
@@ -644,7 +644,7 @@ void ModuleSetup::setHistogram12(bool hist)
  */
 void ModuleSetup::setActive12(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 11, act);
+	m_detector->setActive(devid->value(), module->value(), 11, act);
 }
 
 /*!
@@ -656,7 +656,7 @@ void ModuleSetup::setActive12(bool act)
  */
 void ModuleSetup::setHistogram13(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 12, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 12, hist);
 }
 
 /*!
@@ -668,7 +668,7 @@ void ModuleSetup::setHistogram13(bool hist)
  */
 void ModuleSetup::setActive13(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 12, act);
+	m_detector->setActive(devid->value(), module->value(), 12, act);
 }
 
 /*!
@@ -680,7 +680,7 @@ void ModuleSetup::setActive13(bool act)
  */
 void ModuleSetup::setHistogram14(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 13, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 13, hist);
 }
 
 /*!
@@ -692,7 +692,7 @@ void ModuleSetup::setHistogram14(bool hist)
  */
 void ModuleSetup::setActive14(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 13, act);
+	m_detector->setActive(devid->value(), module->value(), 13, act);
 }
 
 /*!
@@ -704,7 +704,7 @@ void ModuleSetup::setActive14(bool act)
  */
 void ModuleSetup::setHistogram15(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 14, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 14, hist);
 }
 
 /*!
@@ -716,7 +716,7 @@ void ModuleSetup::setHistogram15(bool hist)
  */
 void ModuleSetup::setActive15(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 14, act);
+	m_detector->setActive(devid->value(), module->value(), 14, act);
 }
 
 /*!
@@ -728,7 +728,7 @@ void ModuleSetup::setActive15(bool act)
  */
 void ModuleSetup::setHistogram16(bool hist)
 {
-	m_theApp->setHistogram(devid->value(), module->value(), 15, hist);
+	m_detector->setHistogram(devid->value(), module->value(), 15, hist);
 }
 
 /*!
@@ -740,5 +740,5 @@ void ModuleSetup::setHistogram16(bool hist)
  */
 void ModuleSetup::setActive16(bool act)
 {
-	m_theApp->setActive(devid->value(), module->value(), 15, act);
+	m_detector->setActive(devid->value(), module->value(), 15, act);
 }

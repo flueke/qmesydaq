@@ -24,7 +24,7 @@
 #include "ui_mpsdpulser.h"
 #include "pulsertest.h"
 
-class Mesydaq2;
+class Detector;
 
 /*!
     \class ModuleSetup
@@ -37,7 +37,7 @@ class MPSDPulser : public QDialog, public Ui_MPSDPulser
 {
 	Q_OBJECT
 public:
-	MPSDPulser(Mesydaq2 *, QWidget * = 0);
+	MPSDPulser(Detector *, QWidget * = 0);
 
 public:
 	void setModule(int);
@@ -85,8 +85,8 @@ private:
 	void display();
 
 private:
-	//! The MesyDaq objext
-	Mesydaq2		*m_theApp;
+	//! The detector object
+	Detector		*m_detector;
 
 	//! guard to disable the updates of the pulser
 	bool			m_enabled;

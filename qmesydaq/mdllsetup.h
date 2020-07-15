@@ -23,7 +23,7 @@
 #include <QDialog>
 #include "ui_mdllsetup.h"
 
-class Mesydaq2;
+class Detector;
 
 /*!
     \class MdllSetup
@@ -36,7 +36,7 @@ class MdllSetup : public QDialog, public Ui_MdllSetup
 {
 	Q_OBJECT
 public:
-	MdllSetup(Mesydaq2 *, QWidget * = 0);
+	MdllSetup(Detector *, QWidget * = 0);
 
 public slots:
 	void setMCPD(int);
@@ -55,8 +55,8 @@ private slots:
 	void setDatasetSlot();
 
 private:
-	//! The Mesydaq object
-	Mesydaq2	*m_theApp;
+	//! The detector object
+	Detector	*m_detector;
 
 };
 #endif

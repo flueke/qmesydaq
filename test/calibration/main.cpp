@@ -6,7 +6,7 @@
 
 #include "qmlogging.h"
 #include "measurement.h"
-#include "mesydaq2.h"
+#include "detector.h"
 
 #include "mapcorrect.h"
 
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
 		MSG_FATAL << QObject::tr("Read file : %1 ").arg(fileName);
 
-		Measurement *meas = new Measurement(new Mesydaq2());
+		Measurement *meas = new Measurement(new Detector());
 		
 		meas->readCalibration(fileName);
 		MapCorrection *map = meas->posHistMapCorrection();

@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <mcpd8.h>
-#include <mesydaq2.h>
+#include <detector.h>
 #include <mdefines.h>
 
 int main(int argc, char **argv)
@@ -17,34 +17,34 @@ int main(int argc, char **argv)
 
 	QCoreApplication app(argc, argv);
 
-	Mesydaq2 *mesy = new Mesydaq2();
+	Detector *detector = new Detector();
 		
 	for (int i = 0; i < 2; i++)
-		mesy->addMCPD(i, ip[i], port[i], sourceIP[i]);
+		detector->addMCPD(i, ip[i], port[i], sourceIP[i]);
 
-	mesy->stop();
+	detector->stop();
 
-	mesy->setTimingSetup(0, true, true, false);
-	mesy->setGain(0, 0, 8, float(1.0));
-	mesy->setThreshold(0, 0, quint16(20));
-	mesy->setPulser(0, 0, 0, MIDDLE, 50, true);
+	detector->setTimingSetup(0, true, true, false);
+	detector->setGain(0, 0, 8, float(1.0));
+	detector->setThreshold(0, 0, quint16(20));
+	detector->setPulser(0, 0, 0, MIDDLE, 50, true);
 
-	mesy->setTimingSetup(1, false, true, false);
-	mesy->setGain(1, 7, 8, float(1.0));
-	mesy->setThreshold(1, 7, quint16(20));
-	mesy->setPulser(1, 7, 0, MIDDLE, 50, true);
+	detector->setTimingSetup(1, false, true, false);
+	detector->setGain(1, 7, 8, float(1.0));
+	detector->setThreshold(1, 7, quint16(20));
+	detector->setPulser(1, 7, 0, MIDDLE, 50, true);
 
-	mesy->acqListfile(true);
-	mesy->setListfilename("test.mdat");
+	detector->acqListfile(true);
+	detector->setListfilename("test.mdat");
 
-	mesy->start();
-	QTimer::singleShot(500, mesy, SLOT(stop()));
+	detector->start();
+	QTimer::singleShot(500, detector, SLOT(stop()));
 
 	QTimer::singleShot(500, &app, SLOT(quit()));
 
 	app.exec();
 
-	delete mesy;
+	delete detector;
 
 	return 0;
 }

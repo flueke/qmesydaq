@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "mdefines.h"
 #include "mcpdsetup.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "qmlogging.h"
 
 /*!
@@ -28,13 +28,13 @@
     \param mesy
     \param parent
  */
-MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
+MCPDSetup::MCPDSetup(Detector *detector, QWidget *parent)
 	: QDialog(parent)
-	, m_theApp(mesy)
+	, m_detector(detector)
 {
 	setupUi(this);
 
-	QList<int> mcpdList = m_theApp->mcpdId();
+	QList<int> mcpdList = m_detector->mcpdId();
 	bool noModule = mcpdList.isEmpty();
 	tabWidget->setDisabled(noModule);
 
@@ -61,7 +61,7 @@ MCPDSetup::MCPDSetup(Mesydaq2 *mesy, QWidget *parent)
 void MCPDSetup::sendCellSlot()
 {
 	quint16 id = mcpdId->value();
-	m_theApp->setCounterCell(id, cellSource->currentIndex(), cellTrigger->currentIndex(), cellCompare->currentIndex());
+	m_detector->setCounterCell(id, cellSource->currentIndex(), cellTrigger->currentIndex(), cellCompare->currentIndex());
 }
 
 /*!
@@ -72,7 +72,7 @@ void MCPDSetup::sendCellSlot()
 void MCPDSetup::sendParamSlot()
 {
 	qint16 id = mcpdId->value();
-	m_theApp->setParamSource(id, param->value(), paramSource->currentIndex());
+	m_detector->setParamSource(id, param->value(), paramSource->currentIndex());
 }
 
 /*!
@@ -85,7 +85,7 @@ void MCPDSetup::sendAuxSlot()
 	bool ok;
 	quint16 compare = compareAux->cleanText().toUInt(&ok, 10);
 	if (ok)
-		m_theApp->setAuxTimer(mcpdId->value(), timer->value() - 1, compare);
+		m_detector->setAuxTimer(mcpdId->value(), timer->value() - 1, compare);
 }
 
 /*!
@@ -97,7 +97,7 @@ void MCPDSetup::resetTimerSlot()
 {
 	quint16 id = mcpdId->value();
 	MSG_NOTICE << tr("reset timer");
-	m_theApp->setMasterClock(id, 0LL);
+	m_detector->setMasterClock(id, 0LL);
 }
 
 /*!
@@ -110,7 +110,7 @@ void MCPDSetup::setTimingSlot()
 	quint16 id = mcpdId->value();
 	resetTimer->setEnabled(master->isChecked());
 	MSG_NOTICE << tr("set timing");
-	m_theApp->setTimingSetup(id, master->isChecked(), terminate->isChecked(), extsync->isChecked());
+	m_detector->setTimingSetup(id, master->isChecked(), terminate->isChecked(), extsync->isChecked());
 	if (master->isChecked())
 		emit sync(extsync->isChecked());
 }
@@ -122,7 +122,7 @@ void MCPDSetup::setTimingSlot()
  */
 void MCPDSetup::setMcpdIdSlot()
 {
-	m_theApp->setId(mcpdId->value(), deviceId->value());
+	m_detector->setId(mcpdId->value(), deviceId->value());
 }
 
 /*!
@@ -138,7 +138,7 @@ void MCPDSetup::setIpUdpSlot()
 	dataIP = !dataThisPc->isChecked() ? dataIPAddress->getAddress() : "0.0.0.0";
 	quint16 cmdPort = (quint16) cmdUdpPort->value(),
 	dataPort = (quint16) dataUdpPort->value();
-	m_theApp->setProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
+	m_detector->setProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 }
 
 /*!
@@ -151,17 +151,17 @@ void MCPDSetup::setIpUdpSlot()
 void MCPDSetup::displayMCPDSlot(int id)
 {
 // retrieve displayed ID
-	if (!m_theApp->numMCPD())
+	if (!m_detector->numMCPD())
 		return;
 	if (id < 0)
 		id = mcpdId->value();
 
 // store the current termination value it will be change if switch from master to slave
-	master->setChecked(m_theApp->isMaster(id));
+	master->setChecked(m_detector->isMaster(id));
 	if (!master->isChecked())
-		terminate->setChecked(m_theApp->isTerminated(id));
+		terminate->setChecked(m_detector->isTerminated(id));
 	else
-		extsync->setChecked(m_theApp->isExtsynced(id));
+		extsync->setChecked(m_detector->isExtsynced(id));
 
 	displayCounterCellSlot(-1);
 	displayParameterSlot(-1);
@@ -183,7 +183,7 @@ void MCPDSetup::displayCounterCellSlot(int id)
 	if (id < 0)
 		id = cellSource->currentIndex();
 // get cell parameters
-	m_theApp->getCounterCell(mcpdId->value(), id, values);
+	m_detector->getCounterCell(mcpdId->value(), id, values);
 	cellTrigger->setCurrentIndex(values[0]);
 	cellCompare->setCurrentIndex(values[1]);
 }
@@ -198,7 +198,7 @@ void MCPDSetup::displayParameterSlot(int id)
 	if (id < 0)
 		id = param->value();
 // get parameter settings
-	paramSource->setCurrentIndex(m_theApp->getParamSource(mcpdId->value(), id));
+	paramSource->setCurrentIndex(m_detector->getParamSource(mcpdId->value(), id));
 }
 
 /*!
@@ -211,10 +211,10 @@ void MCPDSetup::displayAuxTimerSlot(int id)
 	if (id < 0)
 		id = timer->value();
 // get timer settings
-	compareAux->setValue(m_theApp->getAuxTimer(mcpdId->value(), id - 1));
+	compareAux->setValue(m_detector->getAuxTimer(mcpdId->value(), id - 1));
 
 // get stream setting
-//	statusStream->setChecked(m_theApp->myMcpd[id]->getStream());
+//	statusStream->setChecked(m_detector->myMcpd[id]->getStream());
 }
 
 /*!
@@ -251,7 +251,7 @@ void MCPDSetup::setSyncSlot(bool master)
  */
 void MCPDSetup::setModule(int modNr)
 {
-	QList<int> mcpdList = m_theApp->mcpdId();
+	QList<int> mcpdList = m_detector->mcpdId();
 
 	int id = mcpdList[modNr - 1];
 
@@ -261,7 +261,7 @@ void MCPDSetup::setModule(int modNr)
 	quint16	dataPort,
 		cmdPort;
 
-	m_theApp->getProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
+	m_detector->getProtocol(id, mcpdIP, dataIP, dataPort, cmdIP, cmdPort);
 	MSG_DEBUG << tr("%1 %2(%3) %4(%5)").arg(mcpdIP).arg(dataIP).arg(dataPort).arg(cmdIP).arg(cmdPort);
 
 	mcpdIPAddress->setAddress(mcpdIP);

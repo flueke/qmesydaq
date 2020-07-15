@@ -21,7 +21,7 @@
 #include <QThread>
 #include <QStringList>
 #include "mdefines.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "datarepeater.h"
 #include "streamwriter.h"
 #include "mcpd8.h"
@@ -29,11 +29,11 @@
 #include "stdafx.h"
 
 /*!
-    \fn Mesydaq2::Mesydaq2()
+    \fn Detector::Detector()
 
     constructor
 */
-Mesydaq2::Mesydaq2()
+Detector::Detector()
 	: m_pThread(NULL)
 	, m_bRunning(false)
 	, m_bRunAck(false)
@@ -63,7 +63,7 @@ Mesydaq2::Mesydaq2()
 }
 
 //! destructor
-Mesydaq2::~Mesydaq2()
+Detector::~Detector()
 {
 	m_pThread->quit();
 	m_pThread->wait();
@@ -72,7 +72,7 @@ Mesydaq2::~Mesydaq2()
 	delete m_pDatSender;
 }
 
-void Mesydaq2::threadExit()
+void Detector::threadExit()
 {
 	foreach (MCPD8* value, m_mcpd)
 		delete value;
@@ -80,7 +80,7 @@ void Mesydaq2::threadExit()
 }
 
 //! \return number of missed data packages for the whole setup
-quint64 Mesydaq2::missedData(void)
+quint64 Detector::missedData(void)
 {
 	quint64 dataMissed = 0;
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -89,7 +89,7 @@ quint64 Mesydaq2::missedData(void)
 }
 
 //! \return number of received data packages for the whole setup
-quint64 Mesydaq2::receivedData(void)
+quint64 Detector::receivedData(void)
 {
 	quint64 dataRxd = 0;
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -98,7 +98,7 @@ quint64 Mesydaq2::receivedData(void)
 }
 
 //! \return number of received cmd answer packages for the whole setup
-quint64 Mesydaq2::receivedCmds(void)
+quint64 Detector::receivedCmds(void)
 {
 	quint64 cmdRxd = 0;
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -107,7 +107,7 @@ quint64 Mesydaq2::receivedCmds(void)
 }
 
 //! \return number of sent cmd packages for the whole setup
-quint64 Mesydaq2::sentCmds(void)
+quint64 Detector::sentCmds(void)
 {
 	quint64 cmdTxd = 0;
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -116,13 +116,13 @@ quint64 Mesydaq2::sentCmds(void)
 }
 
 /*!
-    \fn Mesydaq2::time(void)
+    \fn Detector::time(void)
 
     time of the first master MCPD
 
     \return the time of the MCPD
  */
-quint64 Mesydaq2::time(void)
+quint64 Detector::time(void)
 {
 	quint64 ret(0);
 	if (!m_mcpd.empty())
@@ -138,7 +138,7 @@ quint64 Mesydaq2::time(void)
 }
 
 /*!
-    \fn Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
+    \fn Detector::writeRegister(quint16 id, quint16 reg, quint16 val)
 
     writes a value to a register in a selected MCPD, if the MPCD with
     the id does not exist, the command will be ignored
@@ -148,18 +148,18 @@ quint64 Mesydaq2::time(void)
     \param val new value
     \see readRegister
  */
-void Mesydaq2::writeRegister(quint16 id, quint16 reg, quint16 val)
+void Detector::writeRegister(quint16 id, quint16 reg, quint16 val)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->writeRegister(reg, val);
 }
 
 /*!
-    \fn Mesydaq2::isMaster(quint16 mod)
+    \fn Detector::isMaster(quint16 mod)
     \param mod number of the MCPD
     \return is the MCPD master or not
 */
-bool Mesydaq2::isMaster(quint16 mod)
+bool Detector::isMaster(quint16 mod)
 {
 	if (!m_mcpd.contains(mod))
 		return false;
@@ -167,11 +167,11 @@ bool Mesydaq2::isMaster(quint16 mod)
 }
 
 /*!
-    \fn Mesydaq2::isExtsynced(quint16 mod)
+    \fn Detector::isExtsynced(quint16 mod)
     \param mod number of the MCPD
     \return is the MCPD external sync allowed or not
 */
-bool Mesydaq2::isExtsynced(quint16 mod)
+bool Detector::isExtsynced(quint16 mod)
 {
 	if (!m_mcpd.contains(mod))
 		return false;
@@ -179,11 +179,11 @@ bool Mesydaq2::isExtsynced(quint16 mod)
 }
 
 /*!
-    \fn Mesydaq2::isTerminated(quint16 mod)
+    \fn Detector::isTerminated(quint16 mod)
     \param mod number of the MCPD
     \return is the MCPD terminated or not
 */
-bool Mesydaq2::isTerminated(quint16 mod)
+bool Detector::isTerminated(quint16 mod)
 {
 	if (!m_mcpd.contains(mod))
 		return false;
@@ -194,14 +194,14 @@ bool Mesydaq2::isTerminated(quint16 mod)
 }
 
 /*!
-    \fn float Mesydaq2::getFirmware(quint16 id)
+    \fn float Detector::getFirmware(quint16 id)
 
     gets the firmware version of a MCPD
 
     \param id number of the MCPD
     \return the firmware version as float value, if MCPD does not exist 0
 */
-float Mesydaq2::getFirmware(quint16 id)
+float Detector::getFirmware(quint16 id)
 {
 	if (!m_mcpd.contains(id))
 		return 0;
@@ -209,47 +209,47 @@ float Mesydaq2::getFirmware(quint16 id)
 }
 
 /*!
-    \fn float Mesydaq2::getFpga(quint16 id)
+    \fn float Detector::getFpga(quint16 id)
 
     gets the FPGA version of a MCPD
 
     \param id number of the MCPD
     \return the FPGA version as float value, if MCPD does not exist 0
 */
-float Mesydaq2::getFpga(quint16 id)
+float Detector::getFpga(quint16 id)
 {
 	if (!m_mcpd.contains(id))
 		return 0;
 	return m_mcpd[id]->fpgaVersion();
 }
 /*!
-    \fn Mesydaq2::acqListfile(bool yesno)
+    \fn Detector::acqListfile(bool yesno)
 
     enables the writing of list mode file
 
     \param yesno enable/disable if true/false
  */
-void Mesydaq2::acqListfile(bool yesno)
+void Detector::acqListfile(bool yesno)
 {
 	m_acquireListfile = yesno;
 	MSG_NOTICE << tr("Listfile recording %1").arg(yesno ? "on" : "off");
 }
 
 /*!
-    \fn Mesydaq2::autoSaveHistogram(bool yesno)
+    \fn Detector::autoSaveHistogram(bool yesno)
 
     enables the writing of list mode file
 
     \param yesno enable/disable if true/false
  */
-void Mesydaq2::autoSaveHistogram(bool yesno)
+void Detector::autoSaveHistogram(bool yesno)
 {
 	m_autoSaveHistogram = yesno;
 	MSG_NOTICE << tr("automatic histogram saving after stop data acquisition %1").arg(yesno ? "on" : "off");
 }
 
 /*!
-    \fn Mesydaq2::startedDaq(void)
+    \fn Detector::startedDaq(void)
 
     callback after the start was succeeded
 
@@ -257,7 +257,7 @@ void Mesydaq2::autoSaveHistogram(bool yesno)
     \see stop
     \see stoppedDaq
  */
-void Mesydaq2::startedDaq(void)
+void Detector::startedDaq(void)
 {
 	if (m_acquireListfile && !m_bRunAck)
 	{
@@ -270,7 +270,7 @@ void Mesydaq2::startedDaq(void)
 }
 
 /*!
-    \fn Mesydaq2::stoppedDaq(void)
+    \fn Detector::stoppedDaq(void)
 
     callback after the aquisition was stopped
 
@@ -278,7 +278,7 @@ void Mesydaq2::startedDaq(void)
     \see stop
     \see startedDaq
  */
-void Mesydaq2::stoppedDaq(void)
+void Detector::stoppedDaq(void)
 {
 	m_pDatStream->close();
 	m_bRunAck = false;
@@ -286,7 +286,7 @@ void Mesydaq2::stoppedDaq(void)
 }
 
 /*!
-    \fn Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szHostIp)
+    \fn Detector::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szHostIp)
 
     'adds' another MCPD to this class
 
@@ -297,7 +297,7 @@ void Mesydaq2::stoppedDaq(void)
     \param wDataPort the port number of the data sending port of the MCPD (optional)
     \param szHostIp  IP address to get data and cmd answers back
 */
-void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szDataIp, quint16 wDataPort, QString szHostIp)
+void Detector::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szDataIp, quint16 wDataPort, QString szHostIp)
 {
 	if (m_mcpd.contains(byId))
 		return;
@@ -316,7 +316,7 @@ void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szD
 }
 
 /*!
-    \fn Mesydaq2::writeListfileHeader(void)
+    \fn Detector::writeListfileHeader(void)
 
     write the header of a listfile
 
@@ -324,7 +324,7 @@ void Mesydaq2::addMCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szD
     \see writeBlockSeparator
     \see writeClosingSignature
  */
-void Mesydaq2::writeListfileHeader(void)
+void Detector::writeListfileHeader(void)
 {
 	if (m_datHeader.isEmpty())
 	{
@@ -366,7 +366,7 @@ void Mesydaq2::writeListfileHeader(void)
 
 
 /*!
-    \fn Mesydaq2::writeHeaderSeparator(void)
+    \fn Detector::writeHeaderSeparator(void)
 
     write a header separator into a list mode file
 
@@ -374,7 +374,7 @@ void Mesydaq2::writeListfileHeader(void)
     \see writeBlockSeparator
     \see writeClosingSignature
  */
-void Mesydaq2::writeHeaderSeparator(void)
+void Detector::writeHeaderSeparator(void)
 {
 	//const unsigned short awBuffer[] = {sep0, sep5, sepA, sepF};
 	if (m_pDatStream->isOpen())
@@ -385,7 +385,7 @@ void Mesydaq2::writeHeaderSeparator(void)
 
 
 /*!
-    \fn Mesydaq2::writeBlockSeparator(void)
+    \fn Detector::writeBlockSeparator(void)
 
     write a block separator into a list mode file
 
@@ -393,7 +393,7 @@ void Mesydaq2::writeHeaderSeparator(void)
     \see writeHeaderSeparator
     \see writeClosingSignature
  */
-void Mesydaq2::writeBlockSeparator(void)
+void Detector::writeBlockSeparator(void)
 {
 	const unsigned short awBuffer[] = {sep0, sepF, sep5, sepA};
 	if (m_pDatStream->isOpen())
@@ -403,13 +403,13 @@ void Mesydaq2::writeBlockSeparator(void)
 
 
 /*!
-    \fn Mesydaq2::writeClosingSignature(void)
+    \fn Detector::writeClosingSignature(void)
 
     \see writeListfileHeader
     \see writeHeaderSeparator
     \see writeBlockSeparator
  */
-void Mesydaq2::writeClosingSignature(void)
+void Detector::writeClosingSignature(void)
 {
 	const unsigned short awBuffer[] = {sepF, sepA, sep5, sep0};
 	if (m_pDatStream->isOpen())
@@ -419,9 +419,9 @@ void Mesydaq2::writeClosingSignature(void)
 }
 
 /*!
-    \fn Mesydaq2::writeProtectFile(QIODevice* pIODevice)
+    \fn Detector::writeProtectFile(QIODevice* pIODevice)
  */
-void Mesydaq2::writeProtectFile(QIODevice* pIODevice)
+void Detector::writeProtectFile(QIODevice* pIODevice)
 {
 	if (m_bWriteProtect)
 	{
@@ -432,23 +432,23 @@ void Mesydaq2::writeProtectFile(QIODevice* pIODevice)
 }
 
 /*!
-    \fn QSize Mesydaq2::size(void)
+    \fn QSize Detector::size(void)
 
     \return the 'size' of the detector in 'channels'
  */
-QSize Mesydaq2::size(void)
+QSize Detector::size(void)
 {
 	return QSize(width(), height());
 }
 
 /*!
-    \fn quint16 Mesydaq2::height()
+    \fn quint16 Detector::height()
 
     the maximum number of bins over all modules
 
     \return number of bins
  */
-quint16 Mesydaq2::height(void)
+quint16 Detector::height(void)
 {
 	quint16 bins(0);
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -458,13 +458,13 @@ quint16 Mesydaq2::height(void)
 }
 
 /*!
-    \fn quint16 Mesydaq2::width()
+    \fn quint16 Detector::width()
 
     the maximum number of channel over all modules
 
     \return maximum number of channel
  */
-quint16 Mesydaq2::width(void)
+quint16 Detector::width(void)
 {
 	m_tubeMapping.clear();
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -482,13 +482,13 @@ quint16 Mesydaq2::width(void)
 }
 
 /*!
-    \fn Mesydaq2::isPulserOn()
+    \fn Detector::isPulserOn()
 
     checks all MCPD's for a running pulser
 
     \return true if a running pulser found false otherwise
  */
-bool Mesydaq2::isPulserOn()
+bool Detector::isPulserOn()
 {
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 		if (it.value()->isPulserOn())
@@ -497,14 +497,14 @@ bool Mesydaq2::isPulserOn()
 }
 
 /*!
-    \fn Mesydaq2::isPulserOn(quint16 id)
+    \fn Detector::isPulserOn(quint16 id)
 
     checks a MCPD with number id for a running pulser
 
     \param id number of the MCPD
     \return true if a running pulser found false otherwise
  */
-bool Mesydaq2::isPulserOn(quint16 id)
+bool Detector::isPulserOn(quint16 id)
 {
 	if (!m_mcpd.contains(id))
 		return false;
@@ -512,7 +512,7 @@ bool Mesydaq2::isPulserOn(quint16 id)
 }
 
 /*!
-    \fn Mesydaq2::isPulserOn(quint16 id, quint8 addr)
+    \fn Detector::isPulserOn(quint16 id, quint8 addr)
 
     checks a MPSD with number addr behind a MCPD with number id for a running pulser
 
@@ -520,7 +520,7 @@ bool Mesydaq2::isPulserOn(quint16 id)
     \param addr number of the MPSD behind the MCPD
     \return true if a running pulser found false otherwise
  */
-bool Mesydaq2::isPulserOn(quint16 id, quint8 addr)
+bool Detector::isPulserOn(quint16 id, quint8 addr)
 {
 	if (!m_mcpd.contains(id))
 		return false;
@@ -528,20 +528,20 @@ bool Mesydaq2::isPulserOn(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::scanPeriph(quint16 id)
+    \fn Detector::scanPeriph(quint16 id)
 
     checks which MPSD's at the moment are connected to the MCPD
 
     \param id number of the MCPD
  */
-void Mesydaq2::scanPeriph(quint16 id)
+void Detector::scanPeriph(quint16 id)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->scanPeriph();
 }
 
 /*!
-    \fn Mesydaq2::saveSetup(QSettings &settings)
+    \fn Detector::saveSetup(QSettings &settings)
 
     Stores the setup in a file. This function stores INI files in format of
     "MesyDAQ" instead of "QMesyDAQ" using QSettings class (which is not easy
@@ -553,7 +553,7 @@ void Mesydaq2::scanPeriph(quint16 id)
     \param settings
     \return true if successfully saved otherwise false
  */
-bool Mesydaq2::saveSetup(QSettings &settings)
+bool Detector::saveSetup(QSettings &settings)
 {
 	settings.beginGroup("MESYDAQ");
 	settings.setValue("listmode", m_acquireListfile ? "true" : "false");
@@ -687,7 +687,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
 }
 
 /*!
-    \fn Mesydaq2::loadSetup(QSettings &settings)
+    \fn Detector::loadSetup(QSettings &settings)
 
     Loads the setup from a file. This function should be able to load
     "MesyDAQ" files and also "QMesyDAQ" files (using QSettings class which is
@@ -699,7 +699,7 @@ bool Mesydaq2::saveSetup(QSettings &settings)
     \param settings
     \return true if successfully loaded otherwise false
  */
-bool Mesydaq2::loadSetup(QSettings &settings)
+bool Detector::loadSetup(QSettings &settings)
 {
 	int		nMcpd(0);
 	bool		bOK(false);
@@ -918,7 +918,7 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 	quint16 p(0);
 	foreach(MCPD8 *value, m_mcpd)
 	{
-		Q_ASSERT_X(value != NULL, "Mesydaq2::loadSetup", "one of the MCPD's is NULL");
+		Q_ASSERT_X(value != NULL, "Detector::loadSetup", "one of the MCPD's is NULL");
 		p += value->numModules();
 	}
 	MSG_INFO << tr("%1 MCPD-8 and %2 Modules found").arg(nMcpd).arg(p);
@@ -926,11 +926,11 @@ bool Mesydaq2::loadSetup(QSettings &settings)
 }
 
 /*!
-    \fn Mesydaq2::timerEvent(QTimerEvent *event)
+    \fn Detector::timerEvent(QTimerEvent *event)
 
     callback for the timer
  */
-void Mesydaq2::timerEvent(QTimerEvent * /* event */)
+void Detector::timerEvent(QTimerEvent * /* event */)
 {
 #if 0
 	if (event->timerId() == m_checkTimer)
@@ -939,7 +939,7 @@ void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 }
 
 /*!
-    \fn Mesydaq2::initMcpd(quint8 id)
+    \fn Detector::initMcpd(quint8 id)
 
     initializes a MCPD
 
@@ -947,7 +947,7 @@ void Mesydaq2::timerEvent(QTimerEvent * /* event */)
 
     \param id number of the MCPD
  */
-void Mesydaq2::initMcpd(quint8 id)
+void Detector::initMcpd(quint8 id)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->init();
@@ -955,11 +955,11 @@ void Mesydaq2::initMcpd(quint8 id)
 
 
 /*!
-    \fn Mesydaq2::allPulserOff()
+    \fn Detector::allPulserOff()
 
     switches all pulsers off
  */
-void Mesydaq2::allPulserOff()
+void Detector::allPulserOff()
 {
 // send pulser off to all connected MPSD
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -969,7 +969,7 @@ void Mesydaq2::allPulserOff()
 }
 
 /*!
-    \fn Mesydaq2::setTimingwidth(quint8 width)
+    \fn Detector::setTimingwidth(quint8 width)
 
     defines a timing width ????
 
@@ -977,7 +977,7 @@ void Mesydaq2::allPulserOff()
 
     \param width ????
  */
-void Mesydaq2::setTimingwidth(quint8 width)
+void Detector::setTimingwidth(quint8 width)
 {
 	m_timingwidth = width;
 	if(width > 48)
@@ -995,14 +995,14 @@ void Mesydaq2::setTimingwidth(quint8 width)
 }
 
 /*!
-    \fn quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
+    \fn quint16 Detector::capabilities(quint16 id, const bool cached)
 
     reads the capabilities of the central module.
 
     \param id number of the MCPD
     \return the central module capabilities
  */
-quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
+quint16 Detector::capabilities(quint16 id, const bool cached)
 {
 	if (m_mcpd.empty() || !m_mcpd.contains(id))
 		return 0;
@@ -1010,13 +1010,13 @@ quint16 Mesydaq2::capabilities(quint16 id, const bool cached)
 }
 
 /*!
- * \fn quint16 Mesydaq2::getTxMode(quint16 id)
+ * \fn quint16 Detector::getTxMode(quint16 id)
  * reads the current set transmission mod of the central module
  *
  *  \param id number of the MCPD
  *  \return the central module transmission mode
  */
-quint16 Mesydaq2::getTxMode(quint16 id, const bool cached)
+quint16 Detector::getTxMode(quint16 id, const bool cached)
 {
 	if (m_mcpd.empty() || !m_mcpd.contains(id))
 		return 0;
@@ -1024,13 +1024,13 @@ quint16 Mesydaq2::getTxMode(quint16 id, const bool cached)
 }
 
 /*!
- * \fn quint16 Mesydaq2::getTxMode(quint16 id, quint8 mod)
+ * \fn quint16 Detector::getTxMode(quint16 id, quint8 mod)
  * reads the current set transmission mod of the central module
  *
  *  \param id number of the MCPD
  *  \return the central module transmission mode
  */
-quint16 Mesydaq2::getTxMode(quint16 id, quint8 mod)
+quint16 Detector::getTxMode(quint16 id, quint8 mod)
 {
 	if (m_mcpd.empty() || !m_mcpd.contains(id))
 		return 0;
@@ -1038,7 +1038,7 @@ quint16 Mesydaq2::getTxMode(quint16 id, quint8 mod)
 }
 
 /*!
-    \fn Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
+    \fn Detector::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 
     reads the content of a register in a module
 
@@ -1049,7 +1049,7 @@ quint16 Mesydaq2::getTxMode(quint16 id, quint8 mod)
     \see writePeriReg
 
  */
-quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
+quint16 Detector::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 {
 	if (m_mcpd.empty())
 		return 0;
@@ -1057,7 +1057,7 @@ quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
 }
 
 /*!
-    \fn Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
+    \fn Detector::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 
     writes a value into a module register
 
@@ -1067,7 +1067,7 @@ quint16 Mesydaq2::readPeriReg(quint16 id, quint16 mod, quint16 reg)
     \param val new value
     \see readPeriReg
  */
-void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
+void Detector::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->writePeriReg(mod, reg, val);
@@ -1075,11 +1075,11 @@ void Mesydaq2::writePeriReg(quint16 id, quint16 mod, quint16 reg, quint16 val)
 
 // command shortcuts for simple operations:
 /*!
-    \fn Mesydaq2::start(void)
+    \fn Detector::start(void)
 
     starts a data acquisition
  */
-void Mesydaq2::start(void)
+void Detector::start(void)
 {
 	MSG_NOTICE << tr("remote start");
 // start the slaves first
@@ -1096,11 +1096,11 @@ void Mesydaq2::start(void)
 }
 
 /*!
-    \fn Mesydaq2::stop(void)
+    \fn Detector::stop(void)
 
     stops a data acquisition
  */
-void Mesydaq2::stop(void)
+void Detector::stop(void)
 {
 	MSG_NOTICE << tr("remote stop");
 	emit statusChanged("STOPPED");
@@ -1117,11 +1117,11 @@ void Mesydaq2::stop(void)
 }
 
 /*!
-    \fn Mesydaq2::cont(void)
+    \fn Detector::cont(void)
 
     continues a data acquisition
  */
-void Mesydaq2::cont(void)
+void Detector::cont(void)
 {
 	MSG_NOTICE << tr("remote cont");
 // continue the slaves first
@@ -1136,13 +1136,13 @@ void Mesydaq2::cont(void)
 }
 
 /*!
-    \fn Mesydaq2::reset(void)
+    \fn Detector::reset(void)
 
     resets the MCPD's
 
     \todo implement me
  */
-void Mesydaq2::reset(void)
+void Detector::reset(void)
 {
 	MSG_NOTICE << tr("remote reset");
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -1150,13 +1150,13 @@ void Mesydaq2::reset(void)
 }
 
 /*!
-    \fn Mesydaq2::checkMcpd(quint8 device)
+    \fn Detector::checkMcpd(quint8 device)
 
     rescan all MCPD's for the connected modules
 
     \return true if successfully finished otherwise false
  */
-bool Mesydaq2::checkMcpd(quint8 /* device */)
+bool Detector::checkMcpd(quint8 /* device */)
 {
 	quint8 c(0);
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -1165,7 +1165,7 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
 }
 
 /*!
-    \fn Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, const quint16 dataPort, const QString &cmdIP, const quint16 cmdPort)
+    \fn Detector::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, const quint16 dataPort, const QString &cmdIP, const quint16 cmdPort)
 
     configures a MCPD for the communication it will set the IP address of the module, the IP address and ports of the data and command sink
 
@@ -1177,7 +1177,7 @@ bool Mesydaq2::checkMcpd(quint8 /* device */)
     \param cmdPort port number for cmd answer packets (if 0 the port number won't be changed)
     \see getProtocol
  */
-void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, quint16 dataPort, const QString &cmdIP, quint16 cmdPort)
+void Detector::setProtocol(const quint16 id, const QString &mcpdIP, const QString &dataIP, quint16 dataPort, const QString &cmdIP, quint16 cmdPort)
 {
 	// NOTE: the MWPCHR module type does not need set the communication parameters
 	if (m_mcpd.contains(id) && m_mcpd[id]->getModuleId(0) != TYPE_MWPCHR)
@@ -1185,7 +1185,7 @@ void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QStrin
 }
 
 /*!
-    \fn void Mesydaq2::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const
+    \fn void Detector::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const
 
     gets the configured parameters from the MCPD with the ID id.
 
@@ -1197,14 +1197,14 @@ void Mesydaq2::setProtocol(const quint16 id, const QString &mcpdIP, const QStrin
     \param cmdPort port number for cmd answer packets (if 0 the port number won't be changed)
     \see setProtocol
  */
-void Mesydaq2::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const
+void Detector::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, quint16 &dataPort, QString &cmdIP, quint16 &cmdPort) const
 {
 	if (m_mcpd.contains(id))
 		 m_mcpd[id]->getProtocol(mcpdIP, cmdIP, cmdPort, dataIP, dataPort);
 }
 
 /*!
-    \fn Mesydaq2::getMode(const quint16 id, quint8 addr)
+    \fn Detector::getMode(const quint16 id, quint8 addr)
 
     get the mode: amplitude or position
 
@@ -1212,7 +1212,7 @@ void Mesydaq2::getProtocol(const quint16 id, QString &mcpdIP, QString &dataIP, q
     \param addr module number
     \see setMode
  */
-bool Mesydaq2::getMode(const quint16 id, quint8 addr)
+bool Detector::getMode(const quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMode(addr);
@@ -1220,7 +1220,7 @@ bool Mesydaq2::getMode(const quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::setMode(const quint16 id, quint8 addr, bool mode)
+    \fn Detector::setMode(const quint16 id, quint8 addr, bool mode)
 
     set the mode to amplitude or position
 
@@ -1229,14 +1229,14 @@ bool Mesydaq2::getMode(const quint16 id, quint8 addr)
     \param mode if true amplitude mode otherwise position mode
     \see getMode
 */
-void Mesydaq2::setMode(const quint16 id, quint8 addr, bool mode)
+void Detector::setMode(const quint16 id, quint8 addr, bool mode)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMode(addr, mode);
 }
 
 /*!
-    \fn Mesydaq2::setPulser(const quint16 id, quint8 addr, quint8 chan, quint8 pos, quint8 amp, bool onoff)
+    \fn Detector::setPulser(const quint16 id, quint8 addr, quint8 chan, quint8 pos, quint8 amp, bool onoff)
 
     set the pulser of the module to a position, channel, and amplitude
     and switch it on or off
@@ -1249,14 +1249,14 @@ void Mesydaq2::setMode(const quint16 id, quint8 addr, bool mode)
     \param onoff true the pulser will be switch on, otherwise off
     \see isPulserOn
  */
-void Mesydaq2::setPulser(const quint16 id, quint8 addr, quint8 channel, quint8 position, quint8 amp, bool onoff)
+void Detector::setPulser(const quint16 id, quint8 addr, quint8 channel, quint8 position, quint8 amp, bool onoff)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setPulser(addr, channel, position, amp, onoff);
 }
 
 /*!
-    \fn Mesydaq2::setCounterCell(quint16 id, quint16 source, quint16 trigger, quint16 compare)
+    \fn Detector::setCounterCell(quint16 id, quint16 source, quint16 trigger, quint16 compare)
 
     map the counter cell
 
@@ -1266,14 +1266,14 @@ void Mesydaq2::setPulser(const quint16 id, quint8 addr, quint8 channel, quint8 p
     \param compare ????
     \see getCounterCell
  */
-void Mesydaq2::setCounterCell(quint16 id, quint16 source, quint16 trigger, quint16 compare)
+void Detector::setCounterCell(quint16 id, quint16 source, quint16 trigger, quint16 compare)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setCounterCell(source, trigger, compare);
 }
 
 /*!
-    \fn Mesydaq2::setParamSource(quint16 id, quint16 param, quint16 source)
+    \fn Detector::setParamSource(quint16 id, quint16 param, quint16 source)
 
     set the source of a parameter
 
@@ -1282,14 +1282,14 @@ void Mesydaq2::setCounterCell(quint16 id, quint16 source, quint16 trigger, quint
     \param source number of source
     \see getParamSource
  */
-void Mesydaq2::setParamSource(quint16 id, quint16 param, quint16 source)
+void Detector::setParamSource(quint16 id, quint16 param, quint16 source)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setParamSource(param, source);
 }
 
 /*!
-    \fn Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
+    \fn Detector::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 
     sets the auxiliary timer to a new value
 
@@ -1298,7 +1298,7 @@ void Mesydaq2::setParamSource(quint16 id, quint16 param, quint16 source)
     \param val new timer value
     \see getAuxTimer
  */
-void Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
+void Detector::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 {
 	MSG_NOTICE << tr("set aux timer : ID = %1, timer = %2, interval = %3").arg(id).arg(tim).arg(val);
 	if (m_mcpd.contains(id))
@@ -1306,7 +1306,7 @@ void Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 }
 
 /*!
-    \fn Mesydaq2::setMasterClock(quint16 id, quint64 val)
+    \fn Detector::setMasterClock(quint16 id, quint64 val)
 
     sets the master clock to a new value
 
@@ -1315,14 +1315,14 @@ void Mesydaq2::setAuxTimer(quint16 id, quint16 tim, quint16 val)
     \param id number of the MCPD
     \param val new clock value
  */
-void Mesydaq2::setMasterClock(quint16 id, quint64 val)
+void Detector::setMasterClock(quint16 id, quint64 val)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMasterClock(val);
 }
 
 /*!
-    \fn Mesydaq2::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
+    \fn Detector::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
 
     sets the communication parameters between the MCPD's
 
@@ -1331,7 +1331,7 @@ void Mesydaq2::setMasterClock(quint16 id, quint64 val)
     \param term should the MCPD synchronization bus terminated or not
     \param extsync is external synchronization bus enabled or not (omly master)
  */
-void Mesydaq2::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
+void Detector::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
 {
 	// MWPCHR does not have set timing setup
 	if (m_mcpd.contains(id) && m_mcpd[id]->getModuleId(0) != TYPE_MWPCHR)
@@ -1339,7 +1339,7 @@ void Mesydaq2::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
 }
 
 /*!
-    \fn Mesydaq2::setId(quint16 id, quint8 mcpdid)
+    \fn Detector::setId(quint16 id, quint8 mcpdid)
 
     sets the id of the MCPD
 
@@ -1347,14 +1347,14 @@ void Mesydaq2::setTimingSetup(quint16 id, bool master, bool term, bool extsync)
     \param mcpdid the new ID of the MCPD
     \see getId
  */
-void Mesydaq2::setId(quint16 id, quint8 mcpdid)
+void Detector::setId(quint16 id, quint8 mcpdid)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setId(mcpdid);
 }
 
 /*!
-    \fn Mesydaq2::setGain(quint16 id, quint8 addr, quint8 chan, quint8 gainval)
+    \fn Detector::setGain(quint16 id, quint8 addr, quint8 chan, quint8 gainval)
 
     sets the gain to a poti value
 
@@ -1364,14 +1364,14 @@ void Mesydaq2::setId(quint16 id, quint8 mcpdid)
     \param gainval poti value of the gain
     \see getGain
  */
-void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 channel, quint8 gain)
+void Detector::setGain(quint16 id, quint8 addr, quint8 channel, quint8 gain)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setGain(addr, channel, gain);
 }
 
 /*!
-    \overload Mesydaq2::setGain(quint16 id, quint8 addr, quint8 chan, float gainval)
+    \overload Detector::setGain(quint16 id, quint8 addr, quint8 chan, float gainval)
 
     the gain value will be set as a user value
 
@@ -1381,14 +1381,14 @@ void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 channel, quint8 gain)
     \param gainval user value of the gain
     \see getGain
  */
-void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 chan, float gain)
+void Detector::setGain(quint16 id, quint8 addr, quint8 chan, float gain)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setGain(addr, chan, gain);
 }
 
 /*!
-    \fn Mesydaq2::setThreshold(quint16 id, quint8 addr, quint8 thresh)
+    \fn Detector::setThreshold(quint16 id, quint8 addr, quint8 thresh)
 
     set the threshold value as poti value
 
@@ -1397,14 +1397,14 @@ void Mesydaq2::setGain(quint16 id, quint8 addr, quint8 chan, float gain)
     \param thresh threshold value as poti value
     \see getThresh
  */
-void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint8 thresh)
+void Detector::setThreshold(quint16 id, quint8 addr, quint8 thresh)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setThreshold(addr, thresh);
 }
 
 /*!
-    \overload Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
+    \overload Detector::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 
     set the threshold value
 
@@ -1413,28 +1413,28 @@ void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint8 thresh)
     \param thresh threshold value
     \see getThresh
 */
-void Mesydaq2::setThreshold(quint16 id, quint8 addr, quint16 thresh)
+void Detector::setThreshold(quint16 id, quint8 addr, quint16 thresh)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setThreshold(addr, thresh);
 }
 
 /*!
-    \fn void Mesydaq2::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, quint8 threshA)
+    \fn void Detector::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, quint8 threshA)
 
     \param id
     \param threshX
     \param threshY
     \param threshA
  */
-void Mesydaq2::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, quint8 threshA)
+void Detector::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, quint8 threshA)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllThresholds(threshX, threshY, threshA);
 }
 
 /*!
-    \fn void Mesydaq2::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
+    \fn void Detector::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 
     \param id
     \param shiftX
@@ -1442,26 +1442,26 @@ void Mesydaq2::setMdllThresholds(quint16 id, quint8 threshX, quint8 threshY, qui
     \param scaleX
     \param scaleY
  */
-void Mesydaq2::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
+void Detector::setMdllSpectrum(quint16 id, quint8 shiftX, quint8 shiftY, quint8 scaleX, quint8 scaleY)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllSpectrum(shiftX, shiftY, scaleX, scaleY);
 }
 
 /*!
-     \fn void Mesydaq2::setMdllDataset(quint16 id, quint8 set)
+     \fn void Detector::setMdllDataset(quint16 id, quint8 set)
 
      \param id
      \param set
  */
-void Mesydaq2::setMdllDataset(quint16 id, quint8 set)
+void Detector::setMdllDataset(quint16 id, quint8 set)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllDataset(set);
 }
 
 /*!
-    \fn void Mesydaq2::setMdllTimingWindow(quint16 id, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
+    \fn void Detector::setMdllTimingWindow(quint16 id, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
 
     \param id
     \param xlo
@@ -1469,27 +1469,27 @@ void Mesydaq2::setMdllDataset(quint16 id, quint8 set)
     \param ylo
     \param yhi
  */
-void Mesydaq2::setMdllTimingWindow(quint16 id, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
+void Detector::setMdllTimingWindow(quint16 id, quint16 xlo, quint16 xhi, quint16 ylo, quint16 yhi)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllTimingWindow(xlo, xhi, ylo, yhi);
 }
 
 /*!
-    \fn void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
+    \fn void Detector::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
 
     \param id
     \param elo
     \param ehi
  */
-void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
+void Detector::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setMdllEnergyWindow(elo, ehi);
 }
 
 /*!
-    \fn quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
+    \fn quint8 Detector::getModuleId(quint16 id, quint8 addr)
 
     get the detected ID of the MPSD. If MPSD not exists it will return 0.
 
@@ -1498,7 +1498,7 @@ void Mesydaq2::setMdllEnergyWindow(quint16 id, quint8 elo, quint8 ehi)
     \return module ID (type)
     \see readId
  */
-quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
+quint8 Detector::getModuleId(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getModuleId(addr);
@@ -1506,7 +1506,7 @@ quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn quint8 Mesydaq2::getChannels(quint16 id, quint8 addr)
+    \fn quint8 Detector::getChannels(quint16 id, quint8 addr)
 
     get the channel count of the MPSD. If MPSD not exists it will return 0.
 
@@ -1514,7 +1514,7 @@ quint8 Mesydaq2::getModuleId(quint16 id, quint8 addr)
     \param addr module number
     \return channel count
  */
-quint8 Mesydaq2::getChannels(quint16 id, quint8 addr)
+quint8 Detector::getChannels(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getChannels(addr);
@@ -1522,14 +1522,14 @@ quint8 Mesydaq2::getChannels(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn quint8 Mesydaq2::getMdllDataset(quint16 id)
+    \fn quint8 Detector::getMdllDataset(quint16 id)
 
     get dataset setting of the MDLL. E, X, Y / E, tX, tY
 
     \param id number of the MCPD
     \return dataset
  */
-quint8 Mesydaq2::getMdllDataset(quint16 id)
+quint8 Detector::getMdllDataset(quint16 id)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMdllDataset();
@@ -1537,7 +1537,7 @@ quint8 Mesydaq2::getMdllDataset(quint16 id)
 }
 
 /*!
-    \fn quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
+    \fn quint16 Detector::getMdllTimingWindow(quint16 id, quint8 val)
 
     get one of four timing window borders of the MDLL.
 
@@ -1545,7 +1545,7 @@ quint8 Mesydaq2::getMdllDataset(quint16 id)
     \param val requested value: txlo, txhi, tylo, tyhi (0...3)
     \return border value
  */
-quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
+quint16 Detector::getMdllTimingWindow(quint16 id, quint8 val)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMdllTimingWindow(val);
@@ -1553,7 +1553,7 @@ quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
 }
 
 /*!
-    \fn quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
+    \fn quint8 Detector::getMdllEnergyWindow(quint16 id, quint8 val)
 
     get one of two energy window borders of the MDLL.
 
@@ -1561,7 +1561,7 @@ quint16 Mesydaq2::getMdllTimingWindow(quint16 id, quint8 val)
     \param val requested value: elo, ehi (0/1)
     \return border value
  */
-quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
+quint8 Detector::getMdllEnergyWindow(quint16 id, quint8 val)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMdllEnergyWindow(val);
@@ -1569,7 +1569,7 @@ quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
 }
 
 /*!
-    \fn quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
+    \fn quint8 Detector::getMdllSpectrum(quint16 id, quint8 val)
 
     get one of four spectrum parameters of the MDLL.
 
@@ -1577,7 +1577,7 @@ quint8 Mesydaq2::getMdllEnergyWindow(quint16 id, quint8 val)
     \param val requested value: shiftX, shiftY, scaleX, scaleY (0...3)
     \return spectrum value
  */
-quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
+quint8 Detector::getMdllSpectrum(quint16 id, quint8 val)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMdllSpectrum(val);
@@ -1585,7 +1585,7 @@ quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
 }
 
 /*!
-    \fn quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
+    \fn quint8 Detector::getMdllThresholds(quint16 id, quint8 val)
 
     get one of three CFD thresholds of the MDLL.
 
@@ -1593,7 +1593,7 @@ quint8 Mesydaq2::getMdllSpectrum(quint16 id, quint8 val)
     \param val requested value: threshX, threshY, threshA (0...2)
     \return threshold value
  */
-quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
+quint8 Detector::getMdllThresholds(quint16 id, quint8 val)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMdllThreshold(val);
@@ -1601,7 +1601,7 @@ quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
 }
 
 /*!
-    \fn quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
+    \fn quint8 Detector::getMdllPulser(quint16 id, quint8 val)
 
     get one of three pulser parameters of the MDLL.
 
@@ -1609,7 +1609,7 @@ quint8 Mesydaq2::getMdllThresholds(quint16 id, quint8 val)
     \param val requested value: On, Amplitude, Position (0...2)
     \return pulser parameter
  */
-quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
+quint8 Detector::getMdllPulser(quint16 id, quint8 val)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getMdllPulser(val);
@@ -1617,7 +1617,7 @@ quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
 }
 
 /*!
-    \fn bool Mesydaq2::online(quint16 id, quint8 addr)
+    \fn bool Detector::online(quint16 id, quint8 addr)
 
     returns whether the module is detected and online or not
 
@@ -1625,7 +1625,7 @@ quint8 Mesydaq2::getMdllPulser(quint16 id, quint8 val)
     \param addr module number
     \return true or false
  */
-bool Mesydaq2::online(quint16 id, quint8 addr)
+bool Detector::online(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->online(addr);
@@ -1633,7 +1633,7 @@ bool Mesydaq2::online(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::getModuleType(quint16 id, quint8 addr)
+    \fn Detector::getModuleType(quint16 id, quint8 addr)
 
     get the detected ID of the MPSD. If MPSD not exists it will return 0.
     the value is a human readable value.
@@ -1643,7 +1643,7 @@ bool Mesydaq2::online(quint16 id, quint8 addr)
     \return module ID (type)
     \see readId
  */
-QString Mesydaq2::getModuleType(quint16 id, quint8 addr)
+QString Detector::getModuleType(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getModuleType(addr);
@@ -1651,7 +1651,7 @@ QString Mesydaq2::getModuleType(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn float Mesydaq2::getModuleVersion(quint16 id, quint8 addr)
+    \fn float Detector::getModuleVersion(quint16 id, quint8 addr)
 
     get the detected version of the MPSD. If MPSD not exists it will return 0.
 
@@ -1660,7 +1660,7 @@ QString Mesydaq2::getModuleType(quint16 id, quint8 addr)
     \return module ID (type)
     \see readId
 */
-float Mesydaq2::getModuleVersion(quint16 id, quint8 addr)
+float Detector::getModuleVersion(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->version(addr);
@@ -1668,7 +1668,7 @@ float Mesydaq2::getModuleVersion(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::getPulsChan(quint16 id, quint8 addr)
+    \fn Detector::getPulsChan(quint16 id, quint8 addr)
 
     gets the current set channel of the pulser of a module
 
@@ -1679,7 +1679,7 @@ float Mesydaq2::getModuleVersion(quint16 id, quint8 addr)
     \see getPulsAmp
     \see getPulsPos
  */
-quint8 Mesydaq2::getPulsChan(quint16 id, quint8 addr)
+quint8 Detector::getPulsChan(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getPulsChan(addr);
@@ -1687,7 +1687,7 @@ quint8 Mesydaq2::getPulsChan(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::getPulsAmp(quint16 id, quint8 addr)
+    \fn Detector::getPulsAmp(quint16 id, quint8 addr)
 
     gets the current set pulser amplitude of a module
 
@@ -1698,7 +1698,7 @@ quint8 Mesydaq2::getPulsChan(quint16 id, quint8 addr)
     \see getPulsPos
     \see getPulsChan
  */
-quint8 Mesydaq2::getPulsAmp(quint16 id, quint8 addr)
+quint8 Detector::getPulsAmp(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getPulsAmp(addr);
@@ -1706,7 +1706,7 @@ quint8 Mesydaq2::getPulsAmp(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::getPulsPos(quint16 id, quint8 addr)
+    \fn Detector::getPulsPos(quint16 id, quint8 addr)
     gets the current set pulser position of a module
 
     \param id number of the MCPD
@@ -1716,7 +1716,7 @@ quint8 Mesydaq2::getPulsAmp(quint16 id, quint8 addr)
     \see getPulsAmp
     \see getPulsChan
  */
-quint8 Mesydaq2::getPulsPos(quint16 id, quint8 addr)
+quint8 Detector::getPulsPos(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getPulsPos(addr);
@@ -1724,7 +1724,7 @@ quint8 Mesydaq2::getPulsPos(quint16 id, quint8 addr)
 }
 
 /*!
-    \fn Mesydaq2::getCounterCell(quint16 id, quint8 cell, quint16 *celldata)
+    \fn Detector::getCounterCell(quint16 id, quint8 cell, quint16 *celldata)
 
     celldata[0] = trig, celldata[1] = comp
 
@@ -1733,14 +1733,14 @@ quint8 Mesydaq2::getPulsPos(quint16 id, quint8 addr)
     \param celldata return data
     \see setCounterCell
  */
-void Mesydaq2::getCounterCell(quint16 id, quint8 cell, quint16 *celldata)
+void Detector::getCounterCell(quint16 id, quint8 cell, quint16 *celldata)
 {
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->getCounterCell(cell, celldata);
 }
 
 /*!
-    \fn Mesydaq2::getParamSource(quint16 id, quint16 param)
+    \fn Detector::getParamSource(quint16 id, quint16 param)
 
     get the source of parameter param
 
@@ -1749,7 +1749,7 @@ void Mesydaq2::getCounterCell(quint16 id, quint8 cell, quint16 *celldata)
     \return source of the parameter
     \see setParamSource
  */
-quint16 Mesydaq2::getParamSource(quint16 id, quint16 param)
+quint16 Detector::getParamSource(quint16 id, quint16 param)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getParamSource(param);
@@ -1757,7 +1757,7 @@ quint16 Mesydaq2::getParamSource(quint16 id, quint16 param)
 }
 
 /*!
-    \fn Mesydaq2::getAuxTimer(quint16 id, quint16 timer)
+    \fn Detector::getAuxTimer(quint16 id, quint16 timer)
 
     get the value of auxiliary counter
 
@@ -1766,7 +1766,7 @@ quint16 Mesydaq2::getParamSource(quint16 id, quint16 param)
     \return counter value
     \see setAuxTimer
  */
-quint16 Mesydaq2::getAuxTimer(quint16 id, quint16 timer)
+quint16 Detector::getAuxTimer(quint16 id, quint16 timer)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getAuxTimer(timer);
@@ -1774,7 +1774,7 @@ quint16 Mesydaq2::getAuxTimer(quint16 id, quint16 timer)
 }
 
 /*!
-    \fn Mesydaq2::getParameter(quint16 id, quint16 param)
+    \fn Detector::getParameter(quint16 id, quint16 param)
 
     gets the value of the parameter number param
 
@@ -1783,7 +1783,7 @@ quint16 Mesydaq2::getAuxTimer(quint16 id, quint16 timer)
     \return parameter value
     \see setParameter
  */
-quint64 Mesydaq2::getParameter(quint16 id, quint16 param)
+quint64 Detector::getParameter(quint16 id, quint16 param)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getParameter(param);
@@ -1791,7 +1791,7 @@ quint64 Mesydaq2::getParameter(quint16 id, quint16 param)
 }
 
 /*!
-    \fn Mesydaq2::getGain(quint16 id, quint8 addr,  quint8 chan)
+    \fn Detector::getGain(quint16 id, quint8 addr,  quint8 chan)
 
     gets the currently set gain value for a special module and channel
 
@@ -1804,7 +1804,7 @@ quint64 Mesydaq2::getParameter(quint16 id, quint16 param)
     \return poti value of the gain
     \see setGain
  */
-float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
+float Detector::getGain(quint16 id, quint8 addr, quint8 chan)
 {
 	if (m_mcpd.contains(id))
 #if 0
@@ -1817,7 +1817,7 @@ float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
 }
 
 /*!
-    \fn Mesydaq2::getThreshold(quint16 id, quint8 addr)
+    \fn Detector::getThreshold(quint16 id, quint8 addr)
 
     get the threshold value as poti value
 
@@ -1826,14 +1826,14 @@ float Mesydaq2::getGain(quint16 id, quint8 addr, quint8 chan)
     \return the threshold as poti value
     \see setThreshold
  */
-quint8 Mesydaq2::getThreshold(quint16 id, quint8 addr)
+quint8 Detector::getThreshold(quint16 id, quint8 addr)
 {
 	if (m_mcpd.contains(id))
 		return m_mcpd[id]->getThreshold(addr);
 	return 0;
 }
 
-quint32 Mesydaq2::runId(void)
+quint32 Detector::runId(void)
 {
 	return m_runId;
 #if 0
@@ -1845,7 +1845,7 @@ quint32 Mesydaq2::runId(void)
 #endif
 }
 /*!
-    \fn Mesydaq2::setRunId(quint32 runid)
+    \fn Detector::setRunId(quint32 runid)
 
     sets the run ID of the measurement
 
@@ -1853,9 +1853,9 @@ quint32 Mesydaq2::runId(void)
     \return true if operation was succesful or not
     \see getRunId
  */
-void Mesydaq2::setRunId(quint32 runid)
+void Detector::setRunId(quint32 runid)
 {
-	MSG_NOTICE << tr("Mesydaq2::setRunId(%1)").arg(runid);
+	MSG_NOTICE << tr("Detector::setRunId(%1)").arg(runid);
 	m_runId = runid;
 	m_pDatStream->setRunId(m_runId);
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
@@ -1867,13 +1867,13 @@ void Mesydaq2::setRunId(quint32 runid)
 }
 
 /*!
-    \fn Mesydaq2::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
+    \fn Detector::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
 
     callback to dump the data into a list mode file
 
     \param pPacket data packet
  */
-void Mesydaq2::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
+void Detector::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
 {
 	if (m_bRunning)
 	{
@@ -1888,13 +1888,13 @@ void Mesydaq2::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
 }
 
 /*!
-    \fn Mesydaq2::rearrange(EVENT_BUFFER evb)
+    \fn Detector::rearrange(EVENT_BUFFER evb)
 
     callback to rearrange the positions
 
     \param evb event packet
  */
-void Mesydaq2::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
+void Detector::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 {
 	if (!m_bRunning)
 	{
@@ -1925,7 +1925,7 @@ void Mesydaq2::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 }
 
 /*!
-    \fn Mesydaq2::idOffset(const quint8 id) const
+    \fn Detector::idOffset(const quint8 id) const
 
     Calculates the x,y position of the module origin in the histogram.
 
@@ -1933,7 +1933,7 @@ void Mesydaq2::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 
     \param id MCPD id
  */
-QPoint Mesydaq2::idOffset(const quint8 id) const
+QPoint Detector::idOffset(const quint8 id) const
 {
 	// TODO: the id of the module has to be mapped
 	if (m_mcpd.contains(id))
@@ -1957,14 +1957,14 @@ QPoint Mesydaq2::idOffset(const quint8 id) const
 }
 
 /*!
-    \fn bool Mesydaq2::active(quint16 mid, quint16 id, quint16 chan)
+    \fn bool Detector::active(quint16 mid, quint16 id, quint16 chan)
 
     \param mid MCPD id
     \param id MPSD id
     \param chan channel id
     \return true or false
  */
-bool Mesydaq2::active(quint16 mid, quint16 id, quint16 chan)
+bool Detector::active(quint16 mid, quint16 id, quint16 chan)
 {
 	if (m_mcpd.contains(mid))
 		return m_mcpd[mid]->active(id, chan);
@@ -1972,13 +1972,13 @@ bool Mesydaq2::active(quint16 mid, quint16 id, quint16 chan)
 }
 
 /*!
-    \fn bool Mesydaq2::active(quint16 mid, quint16 id)
+    \fn bool Detector::active(quint16 mid, quint16 id)
 
     \param mid MCPD id
     \param id MPSD id
     \return true or false
  */
-bool Mesydaq2::active(quint16 mid, quint16 id)
+bool Detector::active(quint16 mid, quint16 id)
 {
 	if (m_mcpd.contains(mid))
 		return m_mcpd[mid]->active(id);
@@ -1986,13 +1986,13 @@ bool Mesydaq2::active(quint16 mid, quint16 id)
 }
 
 /*!
-    \fn bool Mesydaq2::histogram(quint16 mid, quint16 id, quint16 chan)
+    \fn bool Detector::histogram(quint16 mid, quint16 id, quint16 chan)
     \param mid MCPD id
     \param id MPSD id
     \param chan channel id
     \return true or false
  */
-bool Mesydaq2::histogram(quint16 mid, quint16 id, quint16 chan)
+bool Detector::histogram(quint16 mid, quint16 id, quint16 chan)
 {
 	bool result(false);
 	if (m_mcpd.contains(mid))
@@ -2001,12 +2001,12 @@ bool Mesydaq2::histogram(quint16 mid, quint16 id, quint16 chan)
 }
 
 /*!
-    \fn bool Mesydaq2::histogram(quint16, quint16)
+    \fn bool Detector::histogram(quint16, quint16)
     \param mid MCPD mid
     \param id MPSD id
     \return true or false
  */
-bool Mesydaq2::histogram(quint16 mid, quint16 id)
+bool Detector::histogram(quint16 mid, quint16 id)
 {
 	if (m_mcpd.contains(mid))
 		return m_mcpd[mid]->histogram(id);
@@ -2014,65 +2014,65 @@ bool Mesydaq2::histogram(quint16 mid, quint16 id)
 }
 
 /*!
-    \fn void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, bool set)
+    \fn void Detector::setActive(quint16 mcpd, quint16 mpsd, bool set)
 
     \param mcpd
     \param mpsd
     \param set
  */
-void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, bool set)
+void Detector::setActive(quint16 mcpd, quint16 mpsd, bool set)
 {
 	if (m_mcpd.contains(mcpd))
 		m_mcpd[mcpd]->setActive(mpsd, set);
 }
 
 /*!
-    \fn void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, quint8 channel, bool set)
+    \fn void Detector::setActive(quint16 mcpd, quint16 mpsd, quint8 channel, bool set)
 
     \param mcpd
     \param mpsd
     \param channel
     \param set
  */
-void Mesydaq2::setActive(quint16 mcpd, quint16 mpsd, quint8 channel, bool set)
+void Detector::setActive(quint16 mcpd, quint16 mpsd, quint8 channel, bool set)
 {
 	if (m_mcpd.contains(mcpd))
 		m_mcpd[mcpd]->setActive(mpsd, channel, set);
 }
 
 /*!
-    \fn void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool hist)
+    \fn void Detector::setHistogram(quint16 mcpd, quint16 mpsd, bool hist)
 
     \param mcpd
     \param mpsd
     \param hist
  */
-void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, bool hist)
+void Detector::setHistogram(quint16 mcpd, quint16 mpsd, bool hist)
 {
 	if (m_mcpd.contains(mcpd))
 		m_mcpd[mcpd]->setHistogram(mpsd, hist);
 }
 
 /*!
-    \fn void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool hist)
+    \fn void Detector::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool hist)
 
     \param mcpd
     \param mpsd
     \param channel
     \param hist
  */
-void Mesydaq2::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool hist)
+void Detector::setHistogram(quint16 mcpd, quint16 mpsd, quint8 channel, bool hist)
 {
 	if (m_mcpd.contains(mcpd))
 		m_mcpd[mcpd]->setHistogram(mpsd, channel, hist);
 }
 
-QString Mesydaq2::libVersion(void) const
+QString Detector::libVersion(void) const
 {
 	return QString(VERSION);
 }
 
-float Mesydaq2::version(quint16 mcpd, quint8 mpsd)
+float Detector::version(quint16 mcpd, quint8 mpsd)
 {
 	if (m_mcpd.contains(mcpd))
 		return m_mcpd[mcpd]->version(mpsd);
@@ -2084,7 +2084,7 @@ float Mesydaq2::version(quint16 mcpd, quint8 mpsd)
  * \param header the complete header text
  * \param bInsertHeaderLength add the length of the header or not in the header itself
  */
-void Mesydaq2::setListFileHeader(const QByteArray& header, bool bInsertHeaderLength)
+void Detector::setListFileHeader(const QByteArray& header, bool bInsertHeaderLength)
 {
 	m_datHeader = header;
 	m_bInsertHeaderLength = bInsertHeaderLength;
@@ -2095,7 +2095,7 @@ void Mesydaq2::setListFileHeader(const QByteArray& header, bool bInsertHeaderLen
  * \param pbAck return acknowledged acquisition status of hardware
  * \return return acquisition status
  */
-bool Mesydaq2::status(bool* pbAck /*= NULL*/) const
+bool Detector::status(bool* pbAck /*= NULL*/) const
 {
 	if (pbAck!=NULL)
 		*pbAck = m_bRunAck;
@@ -2106,22 +2106,22 @@ bool Mesydaq2::status(bool* pbAck /*= NULL*/) const
  *
  * \returns the tube mapping vector
  */
-QMap<quint16, quint16>& Mesydaq2::getTubeMapping()
+QMap<quint16, quint16>& Detector::getTubeMapping()
 {
 	if (m_tubeMapping.isEmpty())
 		width();
 	return m_tubeMapping;
 }
 
-QList<int> Mesydaq2::mcpdId(void)
+QList<int> Detector::mcpdId(void)
 {
-	MSG_NOTICE << "Mesydaq2::mcpdId : " << m_mcpd.size();
+	MSG_NOTICE << "Detector::mcpdId : " << m_mcpd.size();
 	QList<int> st = m_mcpd.keys();
 	qSort(st);
 	return st;
 }
 
-QList<int> Mesydaq2::mpsdId(const int id)
+QList<int> Detector::mpsdId(const int id)
 {
 	QList<int> modList;
 	if (m_mcpd.contains(id))
@@ -2129,7 +2129,7 @@ QList<int> Mesydaq2::mpsdId(const int id)
 	return modList;
 }
 
-QList<int> Mesydaq2::histogrammedId(const int id)
+QList<int> Detector::histogrammedId(const int id)
 {
 	QList<int> modList;
 	if (m_mcpd.contains(id))
@@ -2137,7 +2137,7 @@ QList<int> Mesydaq2::histogrammedId(const int id)
 	return modList;
 }
 
-QList<int> Mesydaq2::channelId(const int id, const int mod)
+QList<int> Detector::channelId(const int id, const int mod)
 {
 	QList<int> channelList;
 	if (m_mcpd.contains(id))
@@ -2146,7 +2146,7 @@ QList<int> Mesydaq2::channelId(const int id, const int mod)
 	return channelList;
 }
 
-quint16 Mesydaq2::startChannel(quint16 id)
+quint16 Detector::startChannel(quint16 id)
 {
 	quint16 start(0);
 	for (quint16 i = 0; i < id; ++i)
@@ -2154,7 +2154,7 @@ quint16 Mesydaq2::startChannel(quint16 id)
 	return start;
 }
 
-quint16 Mesydaq2::width(quint16 id, quint16 end)
+quint16 Detector::width(quint16 id, quint16 end)
 {
 	quint16 size(0);
 	for (int i = 0; i < end; ++i)
@@ -2162,13 +2162,13 @@ quint16 Mesydaq2::width(quint16 id, quint16 end)
 	return size;
 }
 
-void Mesydaq2::lostSync(quint16 id, bool bLost)
+void Detector::lostSync(quint16 id, bool bLost)
 {
 	MSG_NOTICE << tr("MODULE : %1 %2").arg(id).arg(bLost ? "lost sync" : "resynchronized");
 	emit syncLost(id, bLost);
 }
 
-bool Mesydaq2::isSynced() const
+bool Detector::isSynced() const
 {
 	foreach (const MCPD8 *pMCPD, m_mcpd)
 		if (!pMCPD->isSynced())
@@ -2176,7 +2176,7 @@ bool Mesydaq2::isSynced() const
 	return true;
 }
 
-void Mesydaq2::setStreamWriter(StreamWriter* pStreamWriter)
+void Detector::setStreamWriter(StreamWriter* pStreamWriter)
 {
 	if (m_pDatStream != NULL)
 	{
@@ -2196,68 +2196,68 @@ void Mesydaq2::setStreamWriter(StreamWriter* pStreamWriter)
 	}
 }
 
-void Mesydaq2::setListfilename(const QString &name)
+void Detector::setListfilename(const QString &name)
 {
 	m_listfilename = name;
 }
 
-QString Mesydaq2::getListfilename() const
+QString Detector::getListfilename() const
 {
 	return m_listfilename;
 }
 
-const QByteArray& Mesydaq2::getListFileHeader() const
+const QByteArray& Detector::getListFileHeader() const
 {
 	return m_datHeader;
 }
 
-bool Mesydaq2::getAutoIncRunId() const
+bool Detector::getAutoIncRunId() const
 {
 	return m_bAutoIncRunId;
 }
 
-void Mesydaq2::setAutoIncRunId(bool b)
+void Detector::setAutoIncRunId(bool b)
 {
 	m_bAutoIncRunId = b;
 }
 
-bool Mesydaq2::getWriteProtection() const
+bool Detector::getWriteProtection() const
 {
 	return m_bWriteProtect;
 }
 
-void Mesydaq2::setWriteProtection(bool b)
+void Detector::setWriteProtection(bool b)
 {
 	m_bWriteProtect = b;
 }
 
-quint16 Mesydaq2::numMCPD(void) const
+quint16 Detector::numMCPD(void) const
 {
 	return m_mcpd.size();
 }
 
-bool Mesydaq2::acqListfile() const
+bool Detector::acqListfile() const
 {
 	return m_acquireListfile;
 }
 
-bool Mesydaq2::autoSaveHistogram() const
+bool Detector::autoSaveHistogram() const
 {
 	return m_autoSaveHistogram;
 }
 
-void Mesydaq2::setHeadertime(quint64 ht)
+void Detector::setHeadertime(quint64 ht)
 {
 	emit headerTimeChanged(ht);
 	emit newCmdPackageReceived();
 }
 
-void Mesydaq2::setSetupType(const Setup val)
+void Detector::setSetupType(const Setup val)
 {
 	m_setup = val;
 }
 
-Setup Mesydaq2::setupType() const
+Setup Detector::setupType() const
 {
 	return m_setup;
 }

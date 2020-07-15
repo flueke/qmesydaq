@@ -1,4 +1,4 @@
-// #include "mesydaq2.h"
+// #include "detector.h"
 #include <QSettings>
 #include <QDebug>
 #include <QStringList>
@@ -7,8 +7,8 @@ int main(int argc, char **argv)
 {
 	QString settingsFile("/home/jkrueger/data/mno.mcfg");
 
-//	Mesydaq2 *mesy = new Mesydaq2();
-//	mesy->loadSetup("/home/jkrueger/data/ghi.mcfg");
+//	Detector *detector = new Detector();
+//	detector->loadSetup("/home/jkrueger/data/ghi.mcfg");
 
 	if (argc > 1)
 		settingsFile = QString(argv[1]);

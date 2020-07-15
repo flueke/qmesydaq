@@ -3,7 +3,7 @@
 #include <QStringList>
 #include <QTimer>
 
-#include <mesydaq2.h>
+#include <detector.h>
 #include <qmlogging.h>
 #include <mdefines.h>
 #include <histogram.h>
@@ -19,7 +19,7 @@ struct event
 	quint64	time;
 };
 
-class Mesydaq : public Mesydaq2
+class Mesydaq : public Detector
 {
 
 public:
@@ -54,17 +54,17 @@ public:
 
 		if (args.size() > 2)
 			meastime = args.at(2).toInt();
-		mesy = new Mesydaq();
-		mesy->addMCPD(1, host);
+		detector = new Mesydaq();
+		detector->addMCPD(1, host);
 
-		meas = new Measurement(mesy);
+		meas = new Measurement(detector);
 		meas->resizeHistogram(128, 960);
 		Histogram *h = meas->hist(Measurement::PositionHistogram);
 		MSG_FATAL << h->width() << "x" << h->height();
 		meas->setTimerPreset(1000 * meastime, true);
 		MSG_FATAL << "timer " << meas->getTimerPreset();
 
-		MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
+		MSG_FATAL << "Lost " << detector->missedData() << " packets.";
 	}
 
 	void start()
@@ -76,12 +76,12 @@ public:
 
 	quint64 receivedData()
 	{
-		return mesy->receivedData();
+		return detector->receivedData();
 	}
 
 	void result(const QElapsedTimer &eTimer)
 	{
-		quint64 packets = mesy->receivedData();
+		quint64 packets = detector->receivedData();
 		quint64 events = 232 * packets;
 		MSG_FATAL << "Got " << packets << " packets with " << events << " events.";
 		if (eTimer.isValid())
@@ -96,7 +96,7 @@ public:
 			MSG_FATAL << "Position histogram : " << h->getTotalCounts();
 			MSG_FATAL << h->width() << "x" << h->height();
 		}
-		MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
+		MSG_FATAL << "Lost " << detector->missedData() << " packets.";
 #if 0
 		for (int i = 0; i < 3; ++i)
 			MSG_FATAL << "Counts: " << h[i].getTotalCounts();
@@ -123,7 +123,7 @@ public slots:
 
 private:
 	Measurement	*meas;
-	Mesydaq2	*mesy;
+	Detector	*detector;
 	QString		host;
 	int		meastime;
 };

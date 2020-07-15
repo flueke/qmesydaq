@@ -39,7 +39,7 @@
 #include "mainwidget.h"
 #include "mdefines.h"
 #include "measurement.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "spectrum.h"
 #include "histogram.h"
 #include "mesydaqdata.h"
@@ -72,17 +72,17 @@
 #include "datetimelabel.h"
 
 /*!
-    \fn MainWidget::MainWidget(Mesydaq2 *, QWidget *parent = 0)
+    \fn MainWidget::MainWidget(Detector *, QWidget *parent = 0)
 
     constructor
 
-    \param mesy Mesydaq2 object to control the hardware
+    \param mesy detector object to control the hardware
     \param parent Qt parent object
 */
-MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
+MainWidget::MainWidget(Detector *detector, QWidget *parent)
 	: QWidget(parent)
 	, Ui_MainWidget()
-	, m_theApp(mesy)
+	, m_detector(detector)
 	, m_dispThresh(false)
 	, m_dispLoThresh(0)
 	, m_dispHiThresh(0)
@@ -128,7 +128,7 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 #else
 	QObject::connect(m_dataFrame, SIGNAL(zoom(const QwtDoubleRect &)), this, SLOT(zoomed(const QwtDoubleRect &)));
 #endif
-	QObject::connect(m_theApp, SIGNAL(newCmdPackageReceived()), this, SLOT(updateDisplay()));
+	QObject::connect(m_detector, SIGNAL(newCmdPackageReceived()), this, SLOT(updateDisplay()));
 	m_dataFrame->show();
 
 	m_time = QTime(QTime::currentTime());
@@ -167,11 +167,11 @@ MainWidget::MainWidget(Mesydaq2 *mesy, QWidget *parent)
 	}
 	else
 		remoteInterfaceVersionLabel->setText("");
-	libraryVersionLabel->setText(tr("Library %1").arg(m_theApp->libVersion()));
+	libraryVersionLabel->setText(tr("Library %1").arg(m_detector->libVersion()));
 
-	connect(acquireListFile, SIGNAL(toggled(bool)), m_theApp, SLOT(acqListfile(bool)));
-	connect(autoSaveHistogram, SIGNAL(toggled(bool)), m_theApp, SLOT(autoSaveHistogram(bool)));
-	connect(m_theApp, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
+	connect(acquireListFile, SIGNAL(toggled(bool)), m_detector, SLOT(acqListfile(bool)));
+	connect(autoSaveHistogram, SIGNAL(toggled(bool)), m_detector, SLOT(autoSaveHistogram(bool)));
+	connect(m_detector, SIGNAL(statusChanged(const QString &)), daqStatusLine, SLOT(setText(const QString &)));
 
 	connect(parent, SIGNAL(loadConfiguration(const QString&)), this, SLOT(loadConfiguration(const QString&)), Qt::DirectConnection);
 
@@ -277,7 +277,7 @@ void MainWidget::about()
 	text += tr("<p>It is published under GPL (GNU General Public License) <tt><a href=\"http://www.gnu.org/licenses/gpl.html\">http://www.gnu.org/licenses/gpl.html</a></tt></p>")
 		+ tr("The data plot window is based in part on the work of the <a href=\"http://qwt.sf.net\">Qwt project</a>")
 		+ tr("<p>Version : <b>%1</b></p>").arg(VERSION)
-		+ tr("<p>Library Version : <b>%1</b></p>").arg(m_theApp->libVersion());
+		+ tr("<p>Library Version : <b>%1</b></p>").arg(m_detector->libVersion());
 
 	QMessageBox msgBox(this);
 	msgBox.setText(text);
@@ -305,7 +305,7 @@ void MainWidget::init()
 		delete m_meas;
 	}
 	m_meas = NULL;
-	m_meas = new Measurement(m_theApp, this);
+	m_meas = new Measurement(m_detector, this);
 	if (!QDir(m_meas->getConfigfilepath()).exists())
 		QMessageBox::warning(this, tr("No config file path"),
 					tr("The configuration file path<br><b>%1</b><br>does not exists!").arg(m_meas->getConfigfilepath()));
@@ -360,7 +360,7 @@ void MainWidget::timerEvent(QTimerEvent *event)
 */
 void MainWidget::allPulserOff(void)
 {
-	m_theApp->allPulserOff();
+	m_detector->allPulserOff();
 	if (m_pulserDialog)
 	{
 		if (dynamic_cast<MdllPulser *>(m_pulserDialog))
@@ -421,7 +421,7 @@ void MainWidget::startStopSlot(bool checked)
 		checkHistogramFilename(autoSaveHistogram->isChecked());
 		m_remoteStart = false;
 		// get timing binwidth
-		// m_theApp->setTimingwidth(timingBox->value());
+		// m_detector->setTimingwidth(timingBox->value());
 
 		// get latest preset entries
 		if(m_meas->isTimerMaster())
@@ -504,9 +504,9 @@ void MainWidget::setStreamSlot()
 	else
 		m_cmdBuffer[2] = 0;
 	MSG_WARNING << tr("Set stream %1").arg(m_cmdBuffer[2]);
-	m_theApp->sendCommand(m_pBuffer);
+	m_detector->sendCommand(m_pBuffer);
 
-	m_theApp->setStream(mcpdId->value(), statusStream->isChecked());
+	m_detector->setStream(mcpdId->value(), statusStream->isChecked());
 #endif
 }
 
@@ -574,7 +574,7 @@ void MainWidget::checkListfilename(bool checked)
 		}
 
 		if(!sFilename.isEmpty())
-			m_theApp->setListfilename(sFilename);
+			m_detector->setListfilename(sFilename);
 		else
 		{
 			MSG_DEBUG << tr("disable auto write list mode file");
@@ -675,10 +675,10 @@ void MainWidget::updateDisplay(void)
 		realTimeLabel->setText(QString("Real time: %1").arg(tmpTime.toString("HH:mm:ss.zzz")));
 	if (statusTab->tabText(ci) == tr("Statistics"))
 	{
-		dataMissed->setText(tr("%1").arg(m_theApp->missedData()));
-		dataRx->setText(tr("%1").arg(m_theApp->receivedData()));
-		cmdTx->setText(tr("%1").arg(m_theApp->sentCmds()));
-		cmdRx->setText(tr("%1").arg(m_theApp->receivedCmds()));
+		dataMissed->setText(tr("%1").arg(m_detector->missedData()));
+		dataRx->setText(tr("%1").arg(m_detector->receivedData()));
+		cmdTx->setText(tr("%1").arg(m_detector->sentCmds()));
+		cmdRx->setText(tr("%1").arg(m_detector->receivedCmds()));
 	}
 	if (!m_meas)
 		return;
@@ -692,10 +692,10 @@ void MainWidget::updateDisplay(void)
 	mTimeText->setText(buildTimestring(m_meas->timer(), /*getMeastime(),*/ false));
 
 	// parameter values for selected ID
-	param0->setText(tr("%1").arg(m_theApp->getParameter(id, 0)));
-	param1->setText(tr("%1").arg(m_theApp->getParameter(id, 1)));
-	param2->setText(tr("%1").arg(m_theApp->getParameter(id, 2)));
-	param3->setText(tr("%1").arg(m_theApp->getParameter(id, 3)));
+	param0->setText(tr("%1").arg(m_detector->getParameter(id, 0)));
+	param1->setText(tr("%1").arg(m_detector->getParameter(id, 1)));
+	param2->setText(tr("%1").arg(m_detector->getParameter(id, 2)));
+	param3->setText(tr("%1").arg(m_detector->getParameter(id, 3)));
 	m_meas->calcMeanRates();
 
 	// measurement values counters and rates
@@ -809,12 +809,12 @@ void MainWidget::replayListfileSlot()
 		m_zoomedRect = QRectF(0, 0, 0, 0);
 #endif
 		m_dispTimer = startTimer(1000);
-		m_theApp->setListfilename(QFileInfo(name).fileName());
+		m_detector->setListfilename(QFileInfo(name).fileName());
 		m_meas->readListfile(name);
 		if (m_dispTimer)
 			killTimer(m_dispTimer);
 		m_dispTimer = 0;
-		startStopButton->setDisabled(m_theApp->mcpdId().empty());
+		startStopButton->setDisabled(m_detector->mcpdId().empty());
 //		startStopButton->setEnabled(true);
 		emit redraw();
 	}
@@ -831,9 +831,9 @@ void MainWidget::displayMcpdSlot(int id)
 {
 	if (id < 0)
 		return;
-	if (!m_theApp->numMCPD())
+	if (!m_detector->numMCPD())
 		return;
-	QList<int> modList = m_theApp->histogrammedId(id);
+	QList<int> modList = m_detector->histogrammedId(id);
 	dispMpsd->setModuleList(modList);
 }
 
@@ -851,10 +851,10 @@ void MainWidget::displayMpsdSlot(int iModule)
 	if (iModule < 0)
 		mod = devid_2->value();
 // firmware version
-	firmwareVersion->setText(tr("%1 (FPGA: %2)").arg(m_theApp->getFirmware(mod), 0, 'f', 2).arg(m_theApp->getFpga(mod), 0, 'f', 2));
+	firmwareVersion->setText(tr("%1 (FPGA: %2)").arg(m_detector->getFirmware(mod), 0, 'f', 2).arg(m_detector->getFpga(mod), 0, 'f', 2));
 // MCPD capabilities
 	QString tmp("");
-	quint16 cap = m_theApp->capabilities(mod, true);
+	quint16 cap = m_detector->capabilities(mod, true);
 	if (cap & TPA)
 		tmp = "TPA";
 	else if (cap & TP)
@@ -864,7 +864,7 @@ void MainWidget::displayMpsdSlot(int iModule)
 	MSG_NOTICE << tr("%1 %2").arg(cap).arg(tmp);
 	capabilities->setText(tmp);
 
-	quint16 txmod = m_theApp->getTxMode(mod);
+	quint16 txmod = m_detector->getTxMode(mod);
 	if (txmod & TPA)
 		tmp = "TPA";
 	else if (txmod & TP)
@@ -875,14 +875,14 @@ void MainWidget::displayMpsdSlot(int iModule)
 	txMode->setText(tmp);
 
 // Status display:
-	moduleStatus0->update(m_theApp->getModuleType(mod, 0), m_theApp->getModuleVersion(mod, 0), m_theApp->online(mod, 0), m_theApp->histogram(mod, 0), m_theApp->active(mod, 0));
-	moduleStatus1->update(m_theApp->getModuleType(mod, 1), m_theApp->getModuleVersion(mod, 1), m_theApp->online(mod, 1), m_theApp->histogram(mod, 1), m_theApp->active(mod, 1));
-	moduleStatus2->update(m_theApp->getModuleType(mod, 2), m_theApp->getModuleVersion(mod, 2), m_theApp->online(mod, 2), m_theApp->histogram(mod, 2), m_theApp->active(mod, 2));
-	moduleStatus3->update(m_theApp->getModuleType(mod, 3), m_theApp->getModuleVersion(mod, 3), m_theApp->online(mod, 3), m_theApp->histogram(mod, 3), m_theApp->active(mod, 3));
-	moduleStatus4->update(m_theApp->getModuleType(mod, 4), m_theApp->getModuleVersion(mod, 4), m_theApp->online(mod, 4), m_theApp->histogram(mod, 4), m_theApp->active(mod, 4));
-	moduleStatus5->update(m_theApp->getModuleType(mod, 5), m_theApp->getModuleVersion(mod, 5), m_theApp->online(mod, 5), m_theApp->histogram(mod, 5), m_theApp->active(mod, 5));
-	moduleStatus6->update(m_theApp->getModuleType(mod, 6), m_theApp->getModuleVersion(mod, 6), m_theApp->online(mod, 6), m_theApp->histogram(mod, 6), m_theApp->active(mod, 6));
-	moduleStatus7->update(m_theApp->getModuleType(mod, 7), m_theApp->getModuleVersion(mod, 7), m_theApp->online(mod, 7), m_theApp->histogram(mod, 7), m_theApp->active(mod, 7));
+	moduleStatus0->update(m_detector->getModuleType(mod, 0), m_detector->getModuleVersion(mod, 0), m_detector->online(mod, 0), m_detector->histogram(mod, 0), m_detector->active(mod, 0));
+	moduleStatus1->update(m_detector->getModuleType(mod, 1), m_detector->getModuleVersion(mod, 1), m_detector->online(mod, 1), m_detector->histogram(mod, 1), m_detector->active(mod, 1));
+	moduleStatus2->update(m_detector->getModuleType(mod, 2), m_detector->getModuleVersion(mod, 2), m_detector->online(mod, 2), m_detector->histogram(mod, 2), m_detector->active(mod, 2));
+	moduleStatus3->update(m_detector->getModuleType(mod, 3), m_detector->getModuleVersion(mod, 3), m_detector->online(mod, 3), m_detector->histogram(mod, 3), m_detector->active(mod, 3));
+	moduleStatus4->update(m_detector->getModuleType(mod, 4), m_detector->getModuleVersion(mod, 4), m_detector->online(mod, 4), m_detector->histogram(mod, 4), m_detector->active(mod, 4));
+	moduleStatus5->update(m_detector->getModuleType(mod, 5), m_detector->getModuleVersion(mod, 5), m_detector->online(mod, 5), m_detector->histogram(mod, 5), m_detector->active(mod, 5));
+	moduleStatus6->update(m_detector->getModuleType(mod, 6), m_detector->getModuleVersion(mod, 6), m_detector->online(mod, 6), m_detector->histogram(mod, 6), m_detector->active(mod, 6));
+	moduleStatus7->update(m_detector->getModuleType(mod, 7), m_detector->getModuleVersion(mod, 7), m_detector->online(mod, 7), m_detector->histogram(mod, 7), m_detector->active(mod, 7));
 }
 
 /*!
@@ -896,9 +896,9 @@ void MainWidget::scanPeriSlot(bool real)
 {
 	quint16 id = devid_2->value();
 	if (real)
-		m_theApp->scanPeriph(id);
+		m_detector->scanPeriph(id);
 
-	QList<int> modList = m_theApp->mpsdId(id);
+	QList<int> modList = m_detector->mpsdId(id);
 	dispMpsd->setModuleList(modList);
 	displayMpsdSlot(id);
 }
@@ -979,7 +979,7 @@ void MainWidget::updateMeasurement(void)
 	}
 	settings.endGroup();
 
-	QList<int> mcpdList = m_theApp->mcpdId();
+	QList<int> mcpdList = m_detector->mcpdId();
 	dispMcpd->setMCPDList(mcpdList);
 	devid_2->setMCPDList(mcpdList);
 	devid_2->setDisabled(mcpdList.empty());
@@ -1145,7 +1145,7 @@ void MainWidget::drawOpData()
 	}
 
 // pulser warning
-	if(m_theApp->isPulserOn())
+	if(m_detector->isPulserOn())
 		pulserWarning->setText(tr("<p align=\"center\">PULSER ON!</p>"));
 	else
 		pulserWarning->setText("");
@@ -1167,10 +1167,10 @@ void MainWidget::dispFiledata(void)
 		calibrationFilename->setText("-");
 	else
 		calibrationFilename->setText(m_meas->getCalibrationfilename());
-	if (m_theApp->getListfilename().isEmpty())
+	if (m_detector->getListfilename().isEmpty())
 		listFilename->setText("-");
 	else
-		listFilename->setText(m_theApp->getListfilename());
+		listFilename->setText(m_detector->getListfilename());
 }
 
 /*!
@@ -1180,7 +1180,7 @@ void MainWidget::dispFiledata(void)
  */
 void MainWidget::writeHistSlot()
 {
-	QString sName(selectHistogramfile(m_theApp->getListfilename()));
+	QString sName(selectHistogramfile(m_detector->getListfilename()));
 	if (!sName.isEmpty())
 		m_meas->writeHistograms(sName);
 }
@@ -1549,7 +1549,7 @@ void MainWidget::draw(void)
 				{
 					if (dispAllChannels->isChecked())
 					{
-						quint8 chan(m_theApp->getChannels(dispMcpd->value(), dispMpsd->value()));
+						quint8 chan(m_detector->getChannels(dispMcpd->value(), dispMpsd->value()));
 						for (quint8 i = 0; i < chan; ++i)
 						{
 							spec = m_meas->data(m_histoType, dispMcpd->value(), dispMpsd->value(), i);
@@ -1654,7 +1654,7 @@ void MainWidget::exportSVG()
 */
 void MainWidget::setupMCPD(void)
 {
-	MCPDSetup d(m_theApp);
+	MCPDSetup d(m_detector);
 	d.exec();
 }
 
@@ -1667,12 +1667,12 @@ void MainWidget::setupMCPD(void)
 */
 void MainWidget::addMCPD(void)
 {
-	ModuleWizard d("192.168.168.121", quint16(0), this); // m_theApp);
+	ModuleWizard d("192.168.168.121", quint16(0), this); // m_detector);
 	if (d.exec() == QDialog::Accepted)
 	{
-		QMetaObject::invokeMethod(m_theApp, "addMCPD", Qt::BlockingQueuedConnection, Q_ARG(quint8, d.id()), Q_ARG(QString, d.ip()));
-		m_theApp->scanPeriph(d.id());
-		m_theApp->setTimingSetup(d.id(), d.master(), d.terminate(), d.externsync());
+		QMetaObject::invokeMethod(m_detector, "addMCPD", Qt::BlockingQueuedConnection, Q_ARG(quint8, d.id()), Q_ARG(QString, d.ip()));
+		m_detector->scanPeriph(d.id());
+		m_detector->setTimingSetup(d.id(), d.master(), d.terminate(), d.externsync());
 		m_meas->updateSetupType();
 		updateMeasurement();
 	}
@@ -1712,12 +1712,12 @@ void MainWidget::toolPulser(void)
 	if (m_meas->setupType() == Mdll)
 	{
 		if (!m_pulserDialog)
-			m_pulserDialog = new MdllPulser(m_theApp, this);
+			m_pulserDialog = new MdllPulser(m_detector, this);
 	}
 	else
 	{
 		if (!m_pulserDialog)
-			m_pulserDialog = new MPSDPulser(m_theApp, this);
+			m_pulserDialog = new MPSDPulser(m_detector, this);
 		connect(m_pulserDialog, SIGNAL(pulserTest(bool)), startStopButton, SLOT(setChecked(bool)));
 		connect(m_pulserDialog, SIGNAL(pulserTest(bool)), this, SLOT(startStopSlot(bool)));
 		connect(m_pulserDialog, SIGNAL(clear()), clearAll, SLOT(animateClick()));
@@ -1735,7 +1735,7 @@ void MainWidget::toolPulser(void)
  */
 void MainWidget::setupModule(quint8 id)
 {
-	ModuleSetup d(m_theApp, this);
+	ModuleSetup d(m_detector, this);
 	d.setMCPD(devid_2->value());
 	d.setModule(id);
 	d.exec();
@@ -1750,9 +1750,9 @@ void MainWidget::setupModule(void)
 {
 	QDialog *d;
 	if (m_meas->setupType() == Mdll)
-		d = new MdllSetup(m_theApp, this);
+		d = new MdllSetup(m_detector, this);
 	else
-		d = new ModuleSetup(m_theApp, this);
+		d = new ModuleSetup(m_detector, this);
 	d->exec();
 	delete d;
 }
@@ -1767,7 +1767,7 @@ void MainWidget::setupModule(void)
 void MainWidget::setupMdll(quint8 id)
 {
  	Q_UNUSED(id);
-	MdllSetup d(m_theApp, this);
+	MdllSetup d(m_detector, this);
 //	d.setMCPD(devid_2->value());
 	d.exec();
 }
@@ -2528,7 +2528,7 @@ void MainWidget::customEvent(QEvent *e)
 void MainWidget::moduleHistogramSlot(quint8 id, bool set)
 {
 	MSG_DEBUG << tr("MainWidget::moduleHistogramSlot %1 %2").arg(id).arg(set);
-	m_theApp->setHistogram(devid_2->value(), id, set);
+	m_detector->setHistogram(devid_2->value(), id, set);
 }
 
 /*!
@@ -2540,7 +2540,7 @@ void MainWidget::moduleHistogramSlot(quint8 id, bool set)
  */
 void MainWidget::moduleActiveSlot(quint8 id, bool set)
 {
-	m_theApp->setActive(devid_2->value(), id, set);
+	m_detector->setActive(devid_2->value(), id, set);
 }
 
 /*!
@@ -2698,7 +2698,7 @@ void MainWidget::setChannels(int mod)
 	if (!dispAllChannels->isChecked())
 	{
 		int id = dispMcpd->value();
-		QList<int> modList = m_theApp->channelId(id, mod);
+		QList<int> modList = m_detector->channelId(id, mod);
 		dispChan->setModuleList(modList);
 	}
 }

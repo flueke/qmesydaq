@@ -22,7 +22,7 @@
 
 #include "ui_mcpdsetup.h"
 
-class Mesydaq2;
+class Detector;
 
 /*!
     \class MCPDSetup
@@ -35,7 +35,7 @@ class MCPDSetup : public QDialog, public Ui_MCPDSetup
 {
 	Q_OBJECT
 public:
-	MCPDSetup(Mesydaq2 *, QWidget * = 0);
+	MCPDSetup(Detector *, QWidget * = 0);
 
 private slots:
 	void sendCellSlot();
@@ -70,8 +70,8 @@ signals:
         void sync(bool);
 
 private:
-	//! stores the Mesydaq object
-	Mesydaq2 *m_theApp;
+	//! stores the detector object
+	Detector *m_detector;
 
 };
 #endif

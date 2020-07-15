@@ -4,7 +4,7 @@
 #include <QStringList>
 
 #include <iostream>
-#include <mesydaq2.h>
+#include <detector.h>
 #include <measurement.h>
 #include <qmlogging.h>
 
@@ -50,8 +50,8 @@ int main(int argc, char **argv)
 
 	MSG_ERROR << QObject::tr("Read file : %1 ").arg(fileName);
 
-	Mesydaq2	m_mesy;
-	Measurement 	m_meas(&m_mesy, NULL);
+	Detector	m_detector;
+	Measurement 	m_meas(&m_detector, NULL);
         m_meas.readListfile(fileName);
 
 	QTimer::singleShot(50, &app, SLOT(quit()));

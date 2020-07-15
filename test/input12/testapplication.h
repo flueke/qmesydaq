@@ -3,7 +3,7 @@
 #include <QStringList>
 #include <QTimer>
 
-#include <mesydaq2.h>
+#include <detector.h>
 #include <qmlogging.h>
 #include <mdefines.h>
 #include <histogram.h>
@@ -38,11 +38,11 @@ public:
 
 		if (args.size() > 2)
 			meastime = args.at(2).toInt();
-		mesy = new Mesydaq2();
-		mesy->addMCPD(1, host);
+		detector = new Detector();
+		detector->addMCPD(1, host);
 
-		connect(mesy, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
-		MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
+		connect(detector, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+		MSG_FATAL << "Lost " << detector->missedData() << " packets.";
 	}
 
 	void start()
@@ -50,18 +50,18 @@ public:
 		MSG_ERROR << "Start data acquisition for: " << meastime << " s";
 		evtCounter = 0;
 		maxX = maxY = 0;
-		mesy->start();
+		detector->start();
 		QTimer::singleShot(meastime * 1000, this, SLOT(finish()));
 	}
 
 	quint64 receivedData()
 	{
-		return mesy->receivedData();
+		return detector->receivedData();
 	}
 
 	void result(const QElapsedTimer &eTimer)
 	{
-		quint64 packets = mesy->receivedData();
+		quint64 packets = detector->receivedData();
 		quint64 events = evtCounter;  // 232 * packets;
 		MSG_FATAL << "Got " << packets << " packets with " << events << " events.";
 		if (eTimer.isValid())
@@ -72,7 +72,7 @@ public:
 			MSG_FATAL << "Packet rate: " << (packets / etime) << " packets/s";
 			MSG_FATAL << "Event rate: " << (events / etime) << " Ev/s";
 		}
-		MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
+		MSG_FATAL << "Lost " << detector->missedData() << " packets.";
 
 		for (int i = 0; i < 3; ++i)
 			MSG_FATAL << "Counts: " << h[i].getTotalCounts();
@@ -81,7 +81,7 @@ public:
 	void stop()
 	{
 		MSG_ERROR << "Stop data stream";
-		mesy->stop();
+		detector->stop();
 	}
 
 	void clear()
@@ -126,7 +126,7 @@ public slots:
 	}
 
 private:
-	Mesydaq2 *mesy;
+	Detector *detector;
 	QString host;
 	int	meastime;
 	quint64	evtCounter;

@@ -28,7 +28,7 @@
 #include "structures.h"
 
 class MainWidget;
-class Mesydaq2;
+class Detector;
 class QCloseEvent;
 class StatusBarEntry;
 class WebsiteTool;
@@ -102,7 +102,7 @@ private:
 	MainWidget 	*m_main;
 
 	//! the MesyDaq object
-	Mesydaq2	*m_mesy;
+	Detector	*m_mesy;
 
 	StatusBarEntry	*m_daqStatus;
 

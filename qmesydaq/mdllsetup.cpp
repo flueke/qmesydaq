@@ -22,7 +22,7 @@
 
 #include "mdefines.h"
 #include "mdllsetup.h"
-#include "mesydaq2.h"
+#include "detector.h"
 
 /*!
     constructor
@@ -30,13 +30,13 @@
     \param mesy
     \param parent
  */
-MdllSetup::MdllSetup(Mesydaq2 *mesy, QWidget *parent)
+MdllSetup::MdllSetup(Detector *detector, QWidget *parent)
 	: QDialog(parent)
-	, m_theApp(mesy)
+	, m_detector(detector)
 {
 	setupUi(this);
 
-	QList<int> mcpdList = m_theApp->mcpdId();
+	QList<int> mcpdList = m_detector->mcpdId();
 	bool noModule = mcpdList.isEmpty();
 	tabWidget->setDisabled(noModule);
 
@@ -55,13 +55,13 @@ void MdllSetup::setMCPD(int /* id */)
 {
 #if 0
 	devid->setValue(id);
-//	devid->setMCPDList(m_theApp->mcpdId());
+//	devid->setMCPDList(m_detector->mcpdId());
 	id = devid->value();
-	module->setModuleList(m_theApp->mpsdId(id));
+	module->setModuleList(m_detector->mpsdId(id));
 	int mid = module->value();
 
-	checkChannel1Use->setChecked(m_theApp->active(id, mid, 0));
-	checkChannel1Histogram->setChecked(m_theApp->histogram(id, mid, 0));
+	checkChannel1Use->setChecked(m_detector->active(id, mid, 0));
+	checkChannel1Histogram->setChecked(m_detector->histogram(id, mid, 0));
 #endif
 	displaySlot(devid->value());
 }
@@ -77,7 +77,7 @@ void MdllSetup::setTimingSlot()
 	quint16 xhi = txhi->value();
 	quint16 ylo = tylo->value();
 	quint16 yhi = tyhi->value();
-	m_theApp->setMdllTimingWindow(0, xlo, xhi, ylo, yhi);
+	m_detector->setMdllTimingWindow(0, xlo, xhi, ylo, yhi);
 }
 
 /*!
@@ -91,7 +91,7 @@ void MdllSetup::setSpectrumSlot()
 	quint8 shY = shiftY->value();
 	quint8 scX = scaleX->value();
 	quint8 scY = scaleY->value();
-	m_theApp->setMdllSpectrum(0, shX, shY, scX, scY);
+	m_detector->setMdllSpectrum(0, shX, shY, scX, scY);
 }
 
 /*!
@@ -104,7 +104,7 @@ void MdllSetup::setThresholdsSlot()
 	quint8 tX = threshX->value();
 	quint8 tY = threshY->value();
 	quint8 tA = threshA->value();
-	m_theApp->setMdllThresholds(0, tX, tY, tA);
+	m_detector->setMdllThresholds(0, tX, tY, tA);
 }
 
 /*!
@@ -115,9 +115,9 @@ void MdllSetup::setThresholdsSlot()
 void MdllSetup::setDatasetSlot()
 {
 	if(posButton->isChecked())
-		m_theApp->setMdllDataset(0, 0);
+		m_detector->setMdllDataset(0, 0);
  	else
-		m_theApp->setMdllDataset(0, 1);
+		m_detector->setMdllDataset(0, 1);
 }
 
 /*!
@@ -129,7 +129,7 @@ void MdllSetup::setEnergySlot()
 {
 	quint8 eL = elo->value();
 	quint8 eH = ehi->value();
-	m_theApp->setMdllEnergyWindow(0, eL, eH);
+	m_detector->setMdllEnergyWindow(0, eL, eH);
 }
 
 /*!
@@ -141,7 +141,7 @@ void MdllSetup::setEnergySlot()
  */
 void MdllSetup::displaySlot(int id)
 {
-	bool mdll = m_theApp->getModuleId(id, 0) == TYPE_MDLL;
+	bool mdll = m_detector->getModuleId(id, 0) == TYPE_MDLL;
 	tabWidget->setTabEnabled(tabWidget->indexOf(dataTab), mdll);
 	tabWidget->setTabEnabled(tabWidget->indexOf(hardwareTab), mdll);
 //	dataTab->setVisible(mdll);
@@ -149,7 +149,7 @@ void MdllSetup::displaySlot(int id)
 	if (!mdll)
 		return;
 // dataset:
-	if(m_theApp->getMdllDataset(id))
+	if(m_detector->getMdllDataset(id))
 	{
 		posButton->setChecked(false);
 		timingButton->setChecked(true);
@@ -161,23 +161,23 @@ void MdllSetup::displaySlot(int id)
 	}
 
 // timing window
-	txlo->setValue(m_theApp->getMdllTimingWindow(id, 0));
-	txhi->setValue(m_theApp->getMdllTimingWindow(id, 1));
-	tylo->setValue(m_theApp->getMdllTimingWindow(id, 2));
-	tyhi->setValue(m_theApp->getMdllTimingWindow(id, 3));
+	txlo->setValue(m_detector->getMdllTimingWindow(id, 0));
+	txhi->setValue(m_detector->getMdllTimingWindow(id, 1));
+	tylo->setValue(m_detector->getMdllTimingWindow(id, 2));
+	tyhi->setValue(m_detector->getMdllTimingWindow(id, 3));
 
 // energy window
-	elo->setValue(m_theApp->getMdllEnergyWindow(id, 0));
-	ehi->setValue(m_theApp->getMdllEnergyWindow(id, 1));
+	elo->setValue(m_detector->getMdllEnergyWindow(id, 0));
+	ehi->setValue(m_detector->getMdllEnergyWindow(id, 1));
 
 // spectrum parameters
-	shiftX->setValue(m_theApp->getMdllSpectrum(id, 0));
-	shiftY->setValue(m_theApp->getMdllSpectrum(id, 1));
-	scaleX->setValue(m_theApp->getMdllSpectrum(id, 2));
-	scaleY->setValue(m_theApp->getMdllSpectrum(id, 3));
+	shiftX->setValue(m_detector->getMdllSpectrum(id, 0));
+	shiftY->setValue(m_detector->getMdllSpectrum(id, 1));
+	scaleX->setValue(m_detector->getMdllSpectrum(id, 2));
+	scaleY->setValue(m_detector->getMdllSpectrum(id, 3));
 
 // CFD thresholds
-	threshX->setValue(m_theApp->getMdllThresholds(id, 0));
-	threshY->setValue(m_theApp->getMdllThresholds(id, 1));
-	threshA->setValue(m_theApp->getMdllThresholds(id, 2));
+	threshX->setValue(m_detector->getMdllThresholds(id, 0));
+	threshY->setValue(m_detector->getMdllThresholds(id, 1));
+	threshA->setValue(m_detector->getMdllThresholds(id, 2));
 }

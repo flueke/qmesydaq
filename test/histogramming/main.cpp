@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 
 #include "measurement.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "qmlogging.h"
 
 int main(int argc, char **argv)
@@ -11,8 +11,8 @@ int main(int argc, char **argv)
 
 	startLogging(NULL, NULL);
 
-	Mesydaq2 *mesy = new Mesydaq2();
-	Measurement *meas = new Measurement(mesy, &app);
+	Detector *detector = new Detector();
+	Measurement *meas = new Measurement(detector, &app);
 
 	QObject::connect(meas, SIGNAL(stopSignal()), &app, SLOT(quit()));
 

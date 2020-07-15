@@ -23,7 +23,7 @@
 #include <QDialog>
 #include "ui_mdllpulser.h"
 
-class Mesydaq2;
+class Detector;
 
 /*!
     \class MdllSetup
@@ -36,7 +36,7 @@ class MdllPulser : public QDialog, public Ui_MdllPulser
 {
 	Q_OBJECT
 public:
-	MdllPulser(Mesydaq2 *, QWidget * = 0);
+	MdllPulser(Detector *, QWidget * = 0);
 
 public slots:
 	void setMCPD(int = -1);
@@ -57,8 +57,8 @@ private:
 	void updatePulser();
 
 private:
-	//! The Mesydaq object
-	Mesydaq2	*m_theApp;
+	//! The detector object
+	Detector	*m_detector;
 
 };
 #endif

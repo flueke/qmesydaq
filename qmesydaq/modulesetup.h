@@ -23,7 +23,7 @@
 #include <QDialog>
 #include "ui_modulesetup.h"
 
-class Mesydaq2;
+class Detector;
 
 /*!
     \class ModuleSetup
@@ -36,7 +36,7 @@ class ModuleSetup : public QDialog, public Ui_ModuleSetup
 {
 	Q_OBJECT
 public:
-	ModuleSetup(Mesydaq2 *, QWidget * = 0);
+	ModuleSetup(Detector *, QWidget * = 0);
 
 public:
 	void setModule(int);
@@ -98,8 +98,8 @@ private slots:
 	void setActive16(bool);
 
 private:
-	//! The MesyDaq objext
-	Mesydaq2	*m_theApp;
+	//! The detector object
+	Detector	*m_detector;
 
 	QLabel		*m_label[16];
 

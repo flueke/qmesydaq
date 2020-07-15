@@ -23,7 +23,7 @@
 
 #include <QList>
 
-class Mesydaq2;
+class Detector;
 
 #include "libqmesydaq_global.h"
 
@@ -46,7 +46,7 @@ class PulserTest
 {
 	PulserTest();
 public:
-	static QList<puls> sequence(Mesydaq2 *, quint8 amp1 = 30, quint8 amp2 = 60);
+	static QList<puls> sequence(Detector *, quint8 amp1 = 30, quint8 amp2 = 60);
 };
 
 #endif

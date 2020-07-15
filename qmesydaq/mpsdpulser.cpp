@@ -22,7 +22,7 @@
 
 #include "mdefines.h"
 #include "mpsdpulser.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "pulsertest.h"
 
 #include "qmlogging.h"
@@ -33,16 +33,16 @@
     \param mesy
     \param parent
  */
-MPSDPulser::MPSDPulser(Mesydaq2 *mesy, QWidget *parent)
+MPSDPulser::MPSDPulser(Detector *detector, QWidget *parent)
 	: QDialog(parent)
-	, m_theApp(mesy)
+	, m_detector(detector)
 	, m_enabled(false)
 {
 	setupUi(this);
 
-	devid->setMCPDList(m_theApp->mcpdId());
+	devid->setMCPDList(m_detector->mcpdId());
 
-	QList<int> modules = m_theApp->mpsdId(devid->value());
+	QList<int> modules = m_detector->mpsdId(devid->value());
 	module->setModuleList(modules);
 	module->setDisabled(modules.empty());
 	pulserGroupBox->setDisabled(modules.empty());
@@ -130,7 +130,7 @@ void MPSDPulser::updatePulser()
 		ampl = (quint8) pulsAmp2->text().toInt(&ok);
 
 	quint16 pos = MIDDLE;
-	int modType = m_theApp->getModuleId(id, mod);
+	int modType = m_detector->getModuleId(id, mod);
 
 	if (modType == TYPE_MSTD16)
 	{
@@ -154,7 +154,7 @@ void MPSDPulser::updatePulser()
 	else
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
 	MSG_INFO << tr("MPSDPulser::updatePulser : id = %1, mod = %2, chan = %3, pos = %4, amp = %5, on = %6").arg(id).arg(mod).arg(chan).arg(pos).arg(ampl).arg(pulse);
-	m_theApp->setPulser(id, mod, chan, pos, ampl, pulse);
+	m_detector->setPulser(id, mod, chan, pos, ampl, pulse);
 }
 
 /*!
@@ -182,7 +182,7 @@ void MPSDPulser::setMCPD(int id)
 	{
 		devid->setValue(id);
 		id = devid->value();
-		QList<int> modules = m_theApp->mpsdId(id);
+		QList<int> modules = m_detector->mpsdId(id);
 		module->setModuleList(modules);
 		module->setDisabled(modules.empty());
 		pulserGroupBox->setDisabled(modules.empty());
@@ -204,7 +204,7 @@ void MPSDPulser::displayMCPDSlot(int id)
 
 	QList<int> modList;
 	for (int i = 0; i < 8; ++i)
-		if (m_theApp->getModuleId(id, i))
+		if (m_detector->getModuleId(id, i))
 			modList << i;
 	module->setModuleList(modList);
 	module->setDisabled(modList.empty());
@@ -236,19 +236,19 @@ void MPSDPulser::display()
 	quint8 mod = devid->value();
 	quint8 id = module->value();
 
-	int modType = m_theApp->getModuleId(mod, id);
+	int modType = m_detector->getModuleId(mod, id);
 	MSG_DEBUG << mod << " " << id << " modType " << modType;
 	positionGroup->setVisible(modType != TYPE_MSTD16);
 	pulsChan->setMaximum(modType == TYPE_MSTD16 ? 15 : 7);
 
 // pulser:  on/off
-	bool pulser = m_theApp->isPulserOn(mod, id);
-	MSG_DEBUG << mod << " " << id << " pulser Chan " << m_theApp->getPulsChan(mod, id);
+	bool pulser = m_detector->isPulserOn(mod, id);
+	MSG_DEBUG << mod << " " << id << " pulser Chan " << m_detector->getPulsChan(mod, id);
 	pulserButton->setChecked(pulser);
 
 // position
-	MSG_DEBUG << mod << " " << id << " pulser Pos " << m_theApp->getPulsPos(mod, id);
-	switch(m_theApp->getPulsPos(mod, id))
+	MSG_DEBUG << mod << " " << id << " pulser Pos " << m_detector->getPulsPos(mod, id);
+	switch(m_detector->getPulsPos(mod, id))
 	{
 		case LEFT:
 			modType != TYPE_MSTD16 ? pulsLeft->setChecked(true) : pulsRight->setChecked(true);
@@ -266,16 +266,16 @@ void MPSDPulser::display()
 	{
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::red));
 // active pulser channel
-		pulsChan->setValue((int)m_theApp->getPulsChan(mod, id));
+		pulsChan->setValue((int)m_detector->getPulsChan(mod, id));
 	}
 	else
 		const_cast<QPalette &>(pulserButton->palette()).setColor(QPalette::ButtonText, QColor(Qt::black));
 // amplitude
-	MSG_DEBUG << mod << " " << id << " pulser Amp " << m_theApp->getPulsAmp(mod, id);
+	MSG_DEBUG << mod << " " << id << " pulser Amp " << m_detector->getPulsAmp(mod, id);
 	if(pulsampRadio1->isChecked())
-		pulsAmp1->setValue((int)m_theApp->getPulsAmp(mod, id));
+		pulsAmp1->setValue((int)m_detector->getPulsAmp(mod, id));
 	else
-		pulsAmp2->setValue((int)m_theApp->getPulsAmp(mod, id));
+		pulsAmp2->setValue((int)m_detector->getPulsAmp(mod, id));
 	m_enabled = true;
 }
 
@@ -288,7 +288,7 @@ void MPSDPulser::pulserTestSlot(bool onoff)
 	emit pulserTest(onoff);
 	if (onoff)
 	{
-		m_pulses = PulserTest::sequence(m_theApp, testAmp1->text().toInt(&ok), testAmp2->text().toInt(&ok));
+		m_pulses = PulserTest::sequence(m_detector, testAmp1->text().toInt(&ok), testAmp2->text().toInt(&ok));
 		m_it = m_pulses.begin();
 		QTimer::singleShot(0, this, SLOT(nextStep()));
 	}
@@ -327,7 +327,7 @@ void MPSDPulser::nextStep()
 	{
 		if(infiniteBox->isChecked())
 		{
-			m_pulses = PulserTest::sequence(m_theApp, testAmp1->text().toInt(&ok), testAmp2->text().toInt(&ok));
+			m_pulses = PulserTest::sequence(m_detector, testAmp1->text().toInt(&ok), testAmp2->text().toInt(&ok));
 			m_it = m_pulses.begin();
 			QTimer::singleShot(0, this, SLOT(nextStep()));
 		}

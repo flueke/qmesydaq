@@ -18,7 +18,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ############################################################################
 
-VERSION		= 1.76.0
+VERSION		= 1.99.0
 SRCBASE		= ..
 
 include($${SRCBASE}/mesydaqconfig.pri)
@@ -71,7 +71,7 @@ HEADERS 	+= stdafx.h \
 		   mdefines.h \
 		   measurement.h \
 		   pulsertest.h \
-		   mesydaq2.h \
+		   detector.h \
 		   mpsd8.h \
 		   mstd16.h \
 		   mcpd2.h \
@@ -99,7 +99,7 @@ SOURCES 	+= stdafx.cpp \
 		   mcpd2.cpp \
 		   measurement.cpp \
 		   pulsertest.cpp \
-		   mesydaq2.cpp \
+		   detector.cpp \
 		   mpsd8.cpp \
 		   mpsd8p.cpp \
 		   mpsd8old.cpp \

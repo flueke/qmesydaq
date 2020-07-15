@@ -34,7 +34,7 @@ class MesydaqPlotSpectrogram;
 class MesydaqSpectrumData;
 class MesydaqHistogramData;
 class Histogram;
-class Mesydaq2;
+class Detector;
 class EditorMemory;
 class SetupComment;
 
@@ -56,7 +56,7 @@ public:
 	};
 
 public:
-	MainWidget(Mesydaq2 *, QWidget* parent = 0);
+	MainWidget(Detector *, QWidget* parent = 0);
 
 	~MainWidget();
 
@@ -231,8 +231,8 @@ private:
 	QRect	roi(void);
 
 private:
-	//! The MesyDaq object
-	Mesydaq2		*m_theApp;
+	//! The detector object
+	Detector		*m_detector;
 	
 // using thresholds for display
 	//! using thresholds ?

@@ -20,8 +20,8 @@
  ***************************************************************************/
 
 
-#ifndef _MESYDAQ2_H_
-#define _MESYDAQ2_H_
+#ifndef _DETECTOR_H_
+#define _DETECTOR_H_
 
 #include <QObject>
 #include <QSettings>
@@ -41,12 +41,12 @@ class DataRepeater;
 class StreamWriter;
 
 /**
- * \short Mesydaq DAQ object (without any graphical frontend)
+ * \short Mesydaq detector object (without any graphical frontend)
  * \author Gregor Montermann <g.montermann@mesytec.com>
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  * \version 0.9
  */
-class LIBQMESYDAQ_EXPORT Mesydaq2 : public QObject
+class LIBQMESYDAQ_EXPORT Detector : public QObject
 {
 	Q_OBJECT
 
@@ -54,12 +54,12 @@ public:
 	/**
 	 * Default Constructor
 	 */
-	Mesydaq2();
+	Detector();
 
 	/**
 	 * Default Destructor
 	 */
-	virtual ~Mesydaq2();
+	virtual ~Detector();
 
 	void setActive(quint16, quint16, bool);
 
@@ -475,4 +475,4 @@ private:
 
 
 
-#endif // _MESYDAQ2_H_
+#endif // _DETECTOR_H_

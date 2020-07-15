@@ -22,7 +22,7 @@
 
 #include "mdefines.h"
 #include "mdllpulser.h"
-#include "mesydaq2.h"
+#include "detector.h"
 
 /*!
     constructor
@@ -30,13 +30,13 @@
     \param mesy
     \param parent
  */
-MdllPulser::MdllPulser(Mesydaq2 *mesy, QWidget *parent)
+MdllPulser::MdllPulser(Detector *detector, QWidget *parent)
 	: QDialog(parent)
-	, m_theApp(mesy)
+	, m_detector(detector)
 {
 	setupUi(this);
 
-	QList<int> mcpdList = m_theApp->mcpdId();
+	QList<int> mcpdList = m_detector->mcpdId();
 	devid->setMCPDList(mcpdList);
 	display(devid->value());
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
@@ -72,7 +72,7 @@ void MdllPulser::updatePulser()
 {
 	quint8 amp = pulsamp->currentIndex();
 	quint8 pos = pulspos->currentIndex();
-	m_theApp->setPulser(0, 0, 0, pos, amp, pulserBox->isChecked());
+	m_detector->setPulser(0, 0, 0, pos, amp, pulserBox->isChecked());
 }
 
 /*!
@@ -85,11 +85,11 @@ void MdllPulser::updatePulser()
 void MdllPulser::display(int id)
 {
 // pulser:  on/off
-	pulserBox->setChecked(m_theApp->getMdllPulser(id, 0));
+	pulserBox->setChecked(m_detector->getMdllPulser(id, 0));
 // channel
-	pulspos->setCurrentIndex((int)m_theApp->getMdllPulser(id, 2));
+	pulspos->setCurrentIndex((int)m_detector->getMdllPulser(id, 2));
 // amplitude
-	pulsamp->setCurrentIndex((int)m_theApp->getMdllPulser(id, 1));
+	pulsamp->setCurrentIndex((int)m_detector->getMdllPulser(id, 1));
 }
 
 /*!

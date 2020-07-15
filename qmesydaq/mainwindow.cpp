@@ -23,7 +23,7 @@
 #include "mainwindow.h"
 #include "mainwidget.h"
 #include "passworddialog.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "StatusBarEntry.h"
 #include "qmlogging.h"
 // #include "website.h"
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
 #else
 	setWindowTitle("QMesyDAQ " __DATE__);
 #endif
-	m_mesy = new Mesydaq2();
+	m_mesy = new Detector();
 	m_main = new MainWidget(m_mesy, this);
 	setCentralWidget(m_main);
 

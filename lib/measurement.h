@@ -30,12 +30,12 @@
 #include "counter.h"
 #include "structures.h"
 #include "mdefines.h"
-#include "mesydaq2.h"
+#include "detector.h"
 
 class Histogram;
 class Spectrum;
 class MapCorrection;
-class Mesydaq2;
+class Detector;
 class QTextStream;
 
 /**
@@ -126,7 +126,7 @@ public:
 	};
 
 public:
-	Measurement(Mesydaq2 *mesy, QObject *parent = 0);
+	Measurement(Detector *detector, QObject *parent = 0);
 
 	~Measurement();
 
@@ -392,7 +392,7 @@ public:
 	void updateSetupType(void);
 
 	//! \return get access to the hardware layer
-	Mesydaq2 *getMesydaq() const;
+	Detector *getMesydaq() const;
 
 	//! \return the calculated channel number from the given mcpd, mpsd/mstd, channel
 	quint16 calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel);
@@ -460,7 +460,7 @@ private:
 	static const quint16	sepF = 0xFFFF;
 
 	//! Access to hardware
-	Mesydaq2	*m_mesydaq;
+	Detector	*m_detector;
 
 	//! histogram buffer
 	Histogram	*m_Hist[NoHistogram];

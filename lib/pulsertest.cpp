@@ -20,7 +20,7 @@
 
 #include "pulsertest.h"
 #include "mdefines.h"
-#include "mesydaq2.h"
+#include "detector.h"
 
 PulserTest::PulserTest()
 {
@@ -33,20 +33,20 @@ PulserTest::PulserTest()
  *   	- all positions
  *   	  - all amplitude values (30, 60)
  */
-QList<puls> PulserTest::sequence(Mesydaq2 *mesy, quint8 amp1, quint8 amp2)
+QList<puls> PulserTest::sequence(Detector *detector, quint8 amp1, quint8 amp2)
 {
 	qDebug("Pulsertest");
 	QList<puls> retVal;
 	QList<quint8> amps;
 	amps << amp1 << amp2;
-	QList<int> m_mcpd = mesy->mcpdId();
+	QList<int> m_mcpd = detector->mcpdId();
 	QList<int> positions;
 	positions << LEFT << MIDDLE << RIGHT;
 	foreach(int mod, m_mcpd)
 	{
-		QList<int> mpsd = mesy->mpsdId(mod);
+		QList<int> mpsd = detector->mpsdId(mod);
 		foreach(int addr, mpsd)
-			for (quint8 channel = 0; channel < mesy->getChannels(mod, addr); ++channel)
+			for (quint8 channel = 0; channel < detector->getChannels(mod, addr); ++channel)
 				foreach (quint8 position, positions)
 					foreach(quint8 amp, amps)
 					{

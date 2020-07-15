@@ -31,7 +31,7 @@
 #include "usermapcorrect.h"
 #include "mdllcorrect.h"
 #include "mappedhistogram.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "qmlogging.h"
 #include "editormemory.h"
 #include "stdafx.h"
@@ -40,16 +40,16 @@
 #include <algorithm>
 
 /*!
-    \fn Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
+    \fn Measurement::Measurement(Detector *mesy, QObject *parent)
 
     constructor
 
-    \param mesy Mesydaq2 object to control the hardware
+    \param mesy Detector object to control the hardware
     \param parent Qt parent object
 */
-Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
+Measurement::Measurement(Detector *detector, QObject *parent)
 	: QObject(parent)
-	, m_mesydaq(mesy)
+	, m_detector(detector)
 	, m_posHistMapCorrection(NULL)
 	, m_starttime_msec(0)
 	, m_meastime_msec(0)
@@ -86,15 +86,15 @@ Measurement::Measurement(Mesydaq2 *mesy, QObject *parent)
 	setWriteProtection(settings.value("config/writeprotect", "false").toBool());
 	setHistogramFileFormat(HistogramFileFormat(settings.value("config/histogramfileformat", "0").toInt()));
 
-	// connect(m_mesydaq, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
-	connect(m_mesydaq, SIGNAL(newDataBuffer(QSharedDataPointer<EVENT_BUFFER>)), this, SLOT(histogramEvents(QSharedDataPointer<EVENT_BUFFER>)));
-	connect(m_mesydaq, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
-	connect(this, SIGNAL(stopSignal()), m_mesydaq, SLOT(stop()));
+	// connect(m_detector, SIGNAL(analyzeDataBuffer(QSharedDataPointer<SD_PACKET>)), this, SLOT(analyzeBuffer(QSharedDataPointer<SD_PACKET>)));
+	connect(m_detector, SIGNAL(newDataBuffer(QSharedDataPointer<EVENT_BUFFER>)), this, SLOT(histogramEvents(QSharedDataPointer<EVENT_BUFFER>)));
+	connect(m_detector, SIGNAL(headerTimeChanged(quint64)), this, SLOT(setHeadertime(quint64)));
+	connect(this, SIGNAL(stopSignal()), m_detector, SLOT(stop()));
 
-	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
+	resizeHistogram(m_detector->width(), m_detector->height());
 
-	connect(this, SIGNAL(acqListfile(bool)), m_mesydaq, SLOT(acqListfile(bool)));
-	connect(this, SIGNAL(autoSaveHistogram(bool)), m_mesydaq, SLOT(autoSaveHistogram(bool)));
+	connect(this, SIGNAL(acqListfile(bool)), m_detector, SLOT(acqListfile(bool)));
+	connect(this, SIGNAL(autoSaveHistogram(bool)), m_detector, SLOT(autoSaveHistogram(bool)));
 
 	m_events = new MesydaqCounter();
 	connect(m_events, SIGNAL(stop()), this, SLOT(requestStop()));
@@ -145,7 +145,7 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 	m_height = h;
 	m_width = w;
 
-	m_tubeMapping = m_mesydaq->getTubeMapping();
+	m_tubeMapping = m_detector->getTubeMapping();
 
 	for (int i = PositionHistogram; i < CorrectedPositionHistogram; ++i)
 	{
@@ -305,7 +305,7 @@ quint64 Measurement::getMeastime(void) const
 void Measurement::start()
 {
 	m_mode = DataAcquisition;
-	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
+	resizeHistogram(m_detector->width(), m_detector->height());
 	if (m_Spectrum[AmplitudeSpectrum])
 		m_Spectrum[AmplitudeSpectrum]->clear();
 	foreach (MesydaqCounter *c, m_counter)
@@ -313,11 +313,11 @@ void Measurement::start()
 	m_packages = 0;
 	m_triggers = 0;
 	m_neutrons = 0;
-	if (m_mesydaq->getAutoIncRunId())
-		m_mesydaq->setRunId(m_mesydaq->runId() + 1);
-	m_mesydaq->start();
+	if (m_detector->getAutoIncRunId())
+		m_detector->setRunId(m_detector->runId() + 1);
+	m_detector->start();
 	m_status = Started;
-	m_starttime_msec = m_mesydaq->time();
+	m_starttime_msec = m_detector->time();
 	MSG_INFO << tr("event counter limit : %1").arg(m_events->limit());
 	MSG_INFO << tr("timer limit : %1").arg(m_timer->limit() / 1000);
 	foreach (MesydaqCounter *c, m_counter)
@@ -356,8 +356,8 @@ void Measurement::stop()
 	if (status() != Idle)
 	{
 		if (status() == Started)
-			m_mesydaq->stop();
-		quint64 time = m_mesydaq->time();
+			m_detector->stop();
+		quint64 time = m_detector->time();
 		foreach (MesydaqCounter *c, m_counter)
 			c->stop(time);
 		MSG_WARNING << tr("packages : %1 triggers : %2 neutrons : %3").arg(m_packages).arg(m_triggers).arg(m_neutrons);
@@ -777,7 +777,7 @@ Spectrum *Measurement::data(const HistogramType t, const quint16 line)
  */
 Spectrum *Measurement::data(const HistogramType t, const quint16 mcpd, const quint8 mpsd, const quint8 chan)
 {
-	quint16 line = calculateChannel(mcpd, mpsd, chan); // chan + m_mesydaq->startChannel(mcpd) + m_mesydaq->width(mcpd, mpsd);
+	quint16 line = calculateChannel(mcpd, mpsd, chan); // chan + m_detector->startChannel(mcpd) + m_detector->width(mcpd, mpsd);
 	return data(t, line);
 }
 
@@ -1178,7 +1178,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 	quint16 counterTriggers = 0;
 	quint64 tim;
 	quint16 mod = pPacket->dp.deviceId;
-	quint16 txmod = m_mesydaq->getTxMode(mod, true);
+	quint16 txmod = m_detector->getTxMode(mod, true);
 
 	setHeadertime(pPacket->dp.time[0] + (quint64(pPacket->dp.time[1]) << 16) + (quint64(pPacket->dp.time[2]) << 32));
 	setCurrentTime(m_headertime / m_timeBase);
@@ -1257,7 +1257,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 			quint16 chan = modChan + (mod << 6);
 			quint16 amp = ((pPacket->dp.data[counter+2] & 0x7F) << 3) + ((pPacket->dp.data[counter+1] >> 13) & 0x7),
 				pos = (pPacket->dp.data[counter+1] >> 3) & 0x3FF;
-			quint16 moduleID = m_mesydaq->getModuleId(mod, id);
+			quint16 moduleID = m_detector->getModuleId(mod, id);
 //
 // old MPSD-8 are running in 8-bit mode and the data are stored left in the ten bits
 //
@@ -1281,7 +1281,7 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 				pos = amp;
 				amp = chan;
 				chan = val;
-				if (pos >= m_mesydaq->height())
+				if (pos >= m_detector->height())
 				{
 					ignored++;
 					continue;
@@ -1296,19 +1296,19 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 					continue;
 				}
 			}
-			if (mode == ReplayListFile || m_mesydaq->active(mod, id, slotId))
+			if (mode == ReplayListFile || m_detector->active(mod, id, slotId))
 			{
 // BUG in firmware, every first neutron event seems to be "buggy" or virtual
 // Only on newer modules with a distinct CPLD firmware
 // BUG is reported
-				if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0 && (m_mesydaq->capabilities(mod, true) & TPA))
+				if (neutrons == 1 && modChan == 0 && pos == 0 && amp == 0 && (m_detector->capabilities(mod, true) & TPA))
 				{
 					MSG_WARNING << tr("GHOST EVENT: SlotID %1 Mod %2").arg(slotId).arg(id);
 					continue;
 				}
 				if (moduleID != TYPE_MDLL)
 				{
-					if (!(txmod & TPA) && m_mesydaq->getMode(mod, id))
+					if (!(txmod & TPA) && m_detector->getMode(mod, id))
 					{
 // Amplitude must be different from 0 !!
 						if (amp == 0)
@@ -1327,9 +1327,9 @@ void Measurement::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 						MSG_INFO << tr("MSTD-16 event : id: %3, chan : %1 : pos : %2 : amp : %4").arg(chan).arg(pos).arg(id).arg(amp);
 #endif
 						quint16 lchan = chan << 1;	// each tube has two channels
-						if (m_mesydaq->version(mod, id) <= 6.03)
+						if (m_detector->version(mod, id) <= 6.03)
 							lchan += (pos >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
-						else if (m_mesydaq->getMode(mod, id))
+						else if (m_detector->getMode(mod, id))
 						{
 							lchan += (amp >> 9) & 0x1;	// if the MSB bit is set then it comes from the right channel
 //							MSG_DEBUG << "amp " << amp << "-" << (amp >> 9) << "-" << lchan;
@@ -1428,7 +1428,7 @@ quint16 Measurement::mapTube(const quint16 tube)
 
 bool Measurement::acqListfile() const
 {
-	return m_mesydaq ? m_mesydaq->acqListfile() : true;
+	return m_detector ? m_detector->acqListfile() : true;
 }
 
 /**
@@ -1635,10 +1635,10 @@ void Measurement::readListfile(const QString &readfilename)
 	{
 		MSG_NOTICE << tr("%1").arg(m_Hist[PositionHistogram]->width());
 #if 0
-		m_starttime_msec = m_mesydaq->time();
+		m_starttime_msec = m_detector->time();
 		foreach (MesydaqCounter *c, m_counter)
 			c->start(m_starttime_msec);
-		setROI(QRectF(0, 0, m_mesydaq->width(), m_mesydaq->height()));
+		setROI(QRectF(0, 0, m_detector->width(), m_detector->height()));
 #endif
 		if (getNextBlock(datStream, dataBuf->dp))
 		{
@@ -1724,8 +1724,8 @@ quint64 Measurement::eventsInROI(const HistogramType t, const QRect &roi)
 
 void Measurement::setListFileHeader(const QByteArray& header, bool bInsertHeaderLength)
 {
-	if (m_mesydaq)
-		m_mesydaq->setListFileHeader(header, bInsertHeaderLength);
+	if (m_detector)
+		m_detector->setListFileHeader(header, bInsertHeaderLength);
 }
 
 void Measurement::setConfigfilepath(const QString &path)
@@ -1757,12 +1757,12 @@ void Measurement::setHistfilepath(const QString &path)
 
 void Measurement::setListfilename(const QString &name)
 {
-	if (m_mesydaq)
+	if (m_detector)
 	{
 		QString tmp = name;
 		if(!tmp.isEmpty() && tmp.indexOf(".mdat") == -1)
 			tmp.append(".mdat");
-		m_mesydaq->setListfilename(tmp);
+		m_detector->setListfilename(tmp);
 	}
 }
 
@@ -1800,7 +1800,7 @@ QString Measurement::getConfigfilename(void) const
 void Measurement::setSetupType(const Setup val)
 {
 	m_setup = val;
-	m_mesydaq->setSetupType(val);
+	m_detector->setSetupType(val);
 }
 
 /*!
@@ -1862,7 +1862,7 @@ bool Measurement::loadSetup(const QString &name)
 	sz = settings.value("calibrationfile", "").toString();
 	settings.endGroup();
 
-	m_mesydaq->loadSetup(settings);
+	m_detector->loadSetup(settings);
 
 	storeLastFile();
 
@@ -1891,7 +1891,7 @@ bool Measurement::loadSetup(const QString &name)
 // Calibration file must be read after hardware configuration
 	readCalibration(sz, true);
 
-	resizeHistogram(m_mesydaq->width(), m_mesydaq->height());
+	resizeHistogram(m_detector->width(), m_detector->height());
 	return true;
 }
 
@@ -1899,23 +1899,23 @@ void Measurement::updateSetupType(void)
 {
 	setSetupType(Mpsd);
 
-	QList<int> mcpdList = m_mesydaq->mcpdId();
+	QList<int> mcpdList = m_detector->mcpdId();
 	for (int i = 0; i < mcpdList.size(); ++i)
 	{
 		int mod = mcpdList.at(i);
 		for (int j = 0; j < 8; ++j)
-			switch (m_mesydaq->getModuleId(mod, j))
+			switch (m_detector->getModuleId(mod, j))
 			{
 				case TYPE_MSTD16 :
-					if (m_mesydaq->active(mod, j))
+					if (m_detector->active(mod, j))
 						setSetupType(Mstd);
 					break;
 				case TYPE_MWPCHR :
-					if (m_mesydaq->active(mod, j))
+					if (m_detector->active(mod, j))
 						setSetupType(Mdll2);
 					break;
 				case TYPE_MDLL :
-					if (m_mesydaq->active(mod, j))
+					if (m_detector->active(mod, j))
 						setSetupType(Mdll);
 					break;
 				default:
@@ -1934,8 +1934,8 @@ void Measurement::updateSetupType(void)
 		if (!m_Spectrum[AmplitudeSpectrum])
 			m_Spectrum[AmplitudeSpectrum] = new Spectrum();
 	}
-	m_width = m_mesydaq->width();
-	m_height = m_mesydaq->height();
+	m_width = m_detector->width();
+	m_height = m_detector->height();
 }
 
 /*!
@@ -1989,7 +1989,7 @@ bool Measurement::saveSetup(const QString &name, const QString &comment)
 	if (pUserMapCorrection != NULL)
 		pUserMapCorrection->saveCorrectionFile(m_calibrationfilename);
 
-	m_mesydaq->saveSetup(settings);
+	m_detector->saveSetup(settings);
 	settings.sync();
 	storeLastFile();
 	return true;
@@ -2044,9 +2044,9 @@ MapCorrection *&Measurement::posHistMapCorrection()
 	return m_posHistMapCorrection;
 }
 
-Mesydaq2 *Measurement::getMesydaq() const
+Detector *Measurement::getMesydaq() const
 {
-	return m_mesydaq;
+	return m_detector;
 }
 
 Setup Measurement::setupType(void) const
@@ -2061,7 +2061,7 @@ QString Measurement::getConfigfilepath(void) const
 
 QString Measurement::getListfilename(void) const
 {
-	return m_mesydaq ? m_mesydaq->getListfilename() : "";
+	return m_detector ? m_detector->getListfilename() : "";
 }
 
 QString Measurement::getListfilepath(void) const
@@ -2086,7 +2086,7 @@ QString Measurement::getCalibrationfilename(void) const
 
 bool Measurement::hwstatus(bool *pbAck) const
 {
-	return m_mesydaq->status(pbAck);
+	return m_detector->status(pbAck);
 }
 
 Measurement::Mode Measurement::mode(void) const
@@ -2101,12 +2101,12 @@ Measurement::Status Measurement::status(void) const
 
 bool Measurement::getWriteProtection() const
 {
-	return m_mesydaq->getWriteProtection();
+	return m_detector->getWriteProtection();
 }
 
 void Measurement::setWriteProtection(bool b)
 {
-	m_mesydaq->setWriteProtection(b);
+	m_detector->setWriteProtection(b);
 }
 
 Measurement::HistogramFileFormat Measurement::getHistogramFileFormat() const
@@ -2116,22 +2116,22 @@ Measurement::HistogramFileFormat Measurement::getHistogramFileFormat() const
 
 void Measurement::setRunId(const quint32 runid)
 {
-	m_mesydaq->setRunId(runid);
+	m_detector->setRunId(runid);
 }
 
 bool Measurement::getAutoIncRunId() const
 {
-	return m_mesydaq->getAutoIncRunId();
+	return m_detector->getAutoIncRunId();
 }
 
 void Measurement::setAutoIncRunId(bool b)
 {
-	m_mesydaq->setAutoIncRunId(b);
+	m_detector->setAutoIncRunId(b);
 }
 
 quint32 Measurement::runId(void) const
 {
-	return m_mesydaq->runId();
+	return m_detector->runId();
 }
 
 quint16 Measurement::calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel)
@@ -2149,7 +2149,7 @@ Measurement::Arrangement Measurement::getPsdArrangement(void) const
 
 void Measurement::setMonitorMapping(quint16 id, qint8 input, qint8 channel)
 {
-	QList<int> mcpd = m_mesydaq->mcpdId();
+	QList<int> mcpd = m_detector->mcpdId();
 	if (mcpd.contains(id))
 	{
 		if (input < 0)

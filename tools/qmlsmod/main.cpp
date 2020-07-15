@@ -26,7 +26,7 @@
 
 #include <iostream>
 #include "mcpd8.h"
-#include "mesydaq2.h"
+#include "detector.h"
 #include "mdefines.h"
 
 #include "qmlogging.h"

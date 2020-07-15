@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <mcpd8.h>
-#include <mesydaq2.h>
+#include <detector.h>
 #include <mdefines.h>
 
 int main(int argc, char **argv)
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
 	QCoreApplication app(argc, argv);
 
-	Mesydaq2 *mesy(NULL);
+	Detector *detector(NULL);
 		
 #if 1
 	m[0] = new MCPD8(0, "192.168.168.121", 54321, "192.168.168.5");
@@ -46,10 +46,10 @@ int main(int argc, char **argv)
 	m[0]->setThreshold(0, 20);
 	m[0]->setPulser(0, 0, MIDDLE, 50, true);
 #else
-	mesy = new Mesydaq2();
+	detector = new Detector();
 
-	qDebug() << QObject::tr("module 1 : %1").arg(mesy->getFirmware(0));
-	qDebug() << QObject::tr("module 2 : %1").arg(mesy->getFirmware(1));
+	qDebug() << QObject::tr("module 1 : %1").arg(detector->getFirmware(0));
+	qDebug() << QObject::tr("module 2 : %1").arg(detector->getFirmware(1));
 #endif
 
 	QTimer::singleShot(50, &app, SLOT(quit()));
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	delete m[0];
 	delete m[1];
 
-	delete mesy;
+	delete detector;
 
 	return 0;
 }

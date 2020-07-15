@@ -6,7 +6,7 @@
 #include <QDateTime>
 
 #include <iostream>
-#include <mesydaq2.h>
+#include <detector.h>
 #include <mdefines.h>
 #include <qmlogging.h>
 
@@ -31,18 +31,18 @@ int main(int argc, char **argv)
 	MSG_FATAL << QHostInfo::fromName("taco6.taco.frm2").addresses().first();
 
 
-	Mesydaq2 *mesy = new Mesydaq2();
+	Detector *detector = new Detector();
 
-	mesy->addMCPD(1, "172.25.2.6", 54321);
-	MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
+	detector->addMCPD(1, "172.25.2.6", 54321);
+	MSG_FATAL << "Lost " << detector->missedData() << " packets.";
 
 	qDebug() << DEBUGLEVEL;
 
-	if (mesy)
+	if (detector)
 	{
 		QTimer::singleShot(meastime * 1000, &app, SLOT(quit()));
 		eTimer.start();
-		// mesy->start();
+		// detector->start();
 		qDebug() << QDateTime::currentDateTime().toString();
 	}
 	else
@@ -53,15 +53,15 @@ int main(int argc, char **argv)
 
 	app.exec();
 
-	quint64 packets = mesy->receivedData();
+	quint64 packets = detector->receivedData();
 	quint64 events = 243 * packets;
 
 	MSG_FATAL << "Got " << packets << " packets with " << events << " events.";
 	if (eTimer.isValid())
 		MSG_FATAL << "Event rate: " << (events / (eTimer.elapsed() / 1000.)) << " Ev/s";
-	MSG_FATAL << "Lost " << mesy->missedData() << " packets.";
+	MSG_FATAL << "Lost " << detector->missedData() << " packets.";
 
-	delete mesy;
+	delete detector;
 
 	return 0;
 }
