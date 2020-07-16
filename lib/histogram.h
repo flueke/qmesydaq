@@ -153,22 +153,22 @@ private:
 	void calcMaximumPosition(const quint16 chan);
 
 	/**
-	 * checks whether the channel chan is inside the histogram or not.
-	 * If the autoresize is set and the channel isn't inside the size
-	 * of the histogram will be resized to the channel number.
+	 * checks whether the ordinat x is inside the histogram or not.
+	 * If the autoresize is set and the ordinate isn't inside the size
+	 * of the histogram will be resized to the ordinate number.
 	 *
-	 * \param chan requested channel
+	 * \param x requested ordinate
 	 */
-	bool checkChannel(const quint16 chan);
+	bool checkX(const quint16 x);
 
 	/**
-	 * checks whether the bin is inside the histogram or not.
-	 * If the autoresize is set and the bin isn't inside the size
-	 * of the histogram will be resized to the bin number.
+	 * checks whether the abscissa is inside the histogram or not.
+	 * If the autoresize is set and the abscissa isn't inside the size
+	 * of the histogram will be resized to the abscissa number.
 	 *
-	 * \param bin requested bin
+	 * \param y requested abscissa
 	 */
-	bool checkBin(const quint16 bin);
+	bool checkY(const quint16 y);
 
 protected:
 	//! total number of counts inside the histogram

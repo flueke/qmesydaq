@@ -165,7 +165,7 @@ double MappedHistogram::floatValue(quint16 x, quint16 y) const
 // OrientationLeftRev:  channel --> Y [bottom=0 ... top], bin --> X [right=0 ... left]
 // OrientationRight:    channel --> Y [top=0 ... bottom], bin --> X [right=0 ... left]
 // OrientationRightRev: channel --> Y [top=0 ... bottom], bin --> X [left=0 ... right]
-bool MappedHistogram::incVal(quint16 channel, quint16 bin)
+bool MappedHistogram::incVal(quint16 x, quint16 y)
 {
 	bool bOK(false);
 	if (m_pMapCorrection != NULL)
@@ -173,7 +173,7 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 		int iDstX(-1);
 		int iDstY(-1);
 		float fCorrection(0.0);
-		if (m_pMapCorrection->getMap(channel, bin, iDstX, iDstY, fCorrection))
+		if (m_pMapCorrection->getMap(x, y, iDstX, iDstY, fCorrection))
 		{
 			if (fCorrection > 0.0)
 			{
@@ -226,7 +226,7 @@ bool MappedHistogram::incVal(quint16 channel, quint16 bin)
 	return bOK;
 }
 
-bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quint64 val)
+bool MappedHistogram::addValue(const quint16 x, const quint16 y, const quint64 val)
 {
 	bool bOK(false);
 	if (m_pMapCorrection != NULL)
@@ -234,7 +234,7 @@ bool MappedHistogram::addValue(const quint16 chan, const quint16 bin, const quin
 		int iDstX(-1);
 		int iDstY(-1);
 		float fCorrection(0.0);
-		if (m_pMapCorrection->getMap(chan, bin, iDstX, iDstY, fCorrection))
+		if (m_pMapCorrection->getMap(x, y, iDstX, iDstY, fCorrection))
 		{
 			if (fCorrection > 0.0)
 			{
@@ -316,12 +316,12 @@ MapCorrection *MappedHistogram::getMapCorrection() const
 }
 
 /*!
-    \fn MappedHistogram::spectrum(const quint16 channel)
+    \fn MappedHistogram::spectrum(const quint16 x)
 
-    \param channel number of the tube
-    \return the spectrum of the tube channel
+    \param x ordinate
+    \return the spectrum of the x'th channel
  */
-Spectrum *MappedHistogram::spectrum(const quint16 channel)
+Spectrum *MappedHistogram::spectrum(const quint16 x)
 {
 	if (m_spectrum)
 	{
@@ -329,7 +329,7 @@ Spectrum *MappedHistogram::spectrum(const quint16 channel)
 		if (m_spectrum->width() != m_height)
 			m_spectrum->resize(m_height);
 		for (int i = 0; i < m_height; ++i)
-			m_spectrum->setValue(i, floatValue(channel, i));
+			m_spectrum->setValue(i, floatValue(x, i));
 	}
 	return m_spectrum;
 }
