@@ -281,8 +281,8 @@ void Measurement::setCurrentTime(quint64 msecs)
 	{
 		m_meastime_msec = msecs - m_starttime_msec;
 		m_events->setTime(m_meastime_msec);
-		for (quint8 i = MON1ID; i < ADC1ID; ++i)
-			m_counter[i]->setTime(m_meastime_msec);
+		foreach (MesydaqCounter *c, m_counter)
+			c->setTime(m_meastime_msec);
 		m_timer->setTime(msecs);
 	}
 }
