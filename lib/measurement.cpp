@@ -805,8 +805,10 @@ Spectrum *Measurement::spectrum(const SpectrumType t)
 void Measurement::writeHistograms(const QString &name)
 {
 	if(name.isEmpty())
+	{
+		MSG_ERROR << tr("There is no file name given to write a histogram file.");
 		return;
-
+	}
 	QFile f;
 	f.setFileName(name);
 	if (f.open(QIODevice::WriteOnly))
@@ -826,6 +828,8 @@ void Measurement::writeHistograms(const QString &name)
 		if (getWriteProtection())
 			f.setPermissions(f.permissions() & (~(QFile::WriteOwner|QFile::WriteUser|QFile::WriteGroup|QFile::WriteOther)));
 	}
+	else
+		MSG_ERROR << tr("Could not open file: %1").arg(name);
 }
 
 void Measurement::writeStandardHistograms(QTextStream &t)
