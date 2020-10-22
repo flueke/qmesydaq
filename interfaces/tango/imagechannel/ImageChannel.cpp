@@ -710,6 +710,16 @@ Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray
 									"CounterChannel::update_properties()");
 			set_histogram(val);
 		}
+		if (propertyName == "writelistmode")
+		{
+			data >> writelistmode;
+			m_interface->setListMode(writelistmode, true);
+		}
+		else if (propertyName == "writehistogram")
+		{
+			data >> writehistogram;
+			m_interface->setHistogramMode(writehistogram);
+		}
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::update_properties
 	}
 	return DetectorChannel::update_properties(argin);
