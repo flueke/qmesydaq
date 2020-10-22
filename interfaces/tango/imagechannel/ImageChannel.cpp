@@ -710,7 +710,7 @@ Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray
 									"CounterChannel::update_properties()");
 			set_histogram(val);
 		}
-		if (propertyName == "writelistmode")
+		else if (propertyName == "writelistmode")
 		{
 			data >> writelistmode;
 			m_interface->setListMode(writelistmode, true);
@@ -720,9 +720,82 @@ Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray
 			data >> writehistogram;
 			m_interface->setHistogramMode(writehistogram);
 		}
+		else if (propertyName == "configfile")
+		{
+			std::string val;
+			data >> val;
+			if (val.empty())
+				::Tango::ApiDataExcept::throw_exception("Value error",
+									"configuration file name must not be empty",
+									"CounterChannel::update_properties()");
+			m_interface->loadConfigurationFile(val.c_str());
+			configfile = val;
+		}
+		else if (propertyName == "lastlistfile")
+		{
+			data >> lastlistfile;
+			if (lastlistfile.empty())
+				lastlistfile = "tangolistfile00000.mdat";
+			m_interface->setListFileName(lastlistfile.c_str());
+		}
+		else if (propertyName == "lasthistfile" || propertyName == "lastbinnedfile")
+		{
+			data >> lasthistfile;
+			if (lasthistfile.empty())
+				lasthistfile = "tangohistfile00000.mtxt";
+			m_interface->setHistogramFileName(lasthistfile.c_str());
+			lastbinnedfile = lasthistfile;
+		}
+		else if (propertyName == "calibrationfile")
+		{
+			std::string val;
+			data >> val;
+			if (val.empty())
+				::Tango::ApiDataExcept::throw_exception("Value error",
+									"calibration file name must not be empty",
+									"CounterChannel::update_properties()");
+			m_interface->loadCalibrationFile(val.c_str());
+			calibrationfile = val;
+		}
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::update_properties
 	}
 	return DetectorChannel::update_properties(argin);
+}
+
+//--------------------------------------------------------
+/**
+ *	Command Start related method
+ *	Description: Starts the acquisition.
+ *
+ */
+//--------------------------------------------------------
+void ImageChannel::start()
+{
+	DEBUG_STREAM << "DetectorChannel::Start()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(DetectorChannel::start) ENABLED START -----*/
+	//	Add your own code
+	if (!m_interface)
+		::Tango::Except::throw_exception("Runtime error",
+						 "Control interface not initialized",
+						 "ImageChannel::start()");
+
+	if (dev_state() != ::Tango::MOVING)
+	{
+		m_interface->setHistogramMode(writehistogram);
+		if (writehistogram)
+		{
+			lastbinnedfile = lasthistfile = incNumber(lasthistfile);
+			m_interface->setHistogramFileName(lasthistfile.c_str());
+		}
+		m_interface->setListMode(writelistmode, true);
+		if (writelistmode)
+		{
+			lastlistfile = incNumber(lastlistfile);
+			m_interface->setListFileName(lastlistfile.c_str());
+		}
+	}
+	/*----- PROTECTED REGION END -----*/	//	ImageChannel::start
+	DetectorChannel::start();
 }
 
 bool ImageChannel::check_histogram_value(const std::string &val)

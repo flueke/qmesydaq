@@ -447,19 +447,6 @@ void DetectorChannel::start()
 	{
 		m_started = true;
 		set_state(Tango::MOVING);
-		m_interface->setListMode(writelistmode, true);
-		if (writelistmode)
-		{
-			lastlistfile = incNumber(lastlistfile);
-			m_interface->setListFileName(lastlistfile.c_str());
-		}
-
-		m_interface->setHistogramMode(writehistogram);
-		if (writehistogram)
-		{
-			lastbinnedfile = lasthistfile = incNumber(lasthistfile);
-			m_interface->setHistogramFileName(lasthistfile.c_str());
-		}
 		ERROR_STREAM << "interface::start()";
 		m_interface->start();
 		for (int i = 0; i < 10; ++i)
@@ -642,64 +629,11 @@ Tango::DevBoolean DetectorChannel::update_properties(const Tango::DevVarStringAr
 		Tango::DbDatum data(propertyName);
 		data << arg;
 	/*----- PROTECTED REGION ID(DetectorChannel::update_properties) ENABLED START -----*/
-		if (propertyName == "writelistmode")
-		{
-			if (isMaster())
-			{
-				data >> writelistmode;
-				m_interface->setListMode(writelistmode, true);
-			}
-		}
-		else if (propertyName == "writehistogram")
-		{
-			if (isMaster())
-			{
-				data >> writehistogram;
-				m_interface->setHistogramMode(writehistogram);
-			}
-		}
-		else if (propertyName == "configfile")
-		{
-			std::string val;
-			data >> val;
-			if (val.empty())
-				::Tango::ApiDataExcept::throw_exception("Value error",
-									"configuration file name must not be empty",
-									"CounterChannel::update_properties()");
-			m_interface->loadConfigurationFile(val.c_str());
-			configfile = val;
-		}
-		else if (propertyName == "lastlistfile")
-		{
-			data >> lastlistfile;
-			if (lastlistfile.empty())
-				lastlistfile = "tangolistfile00000.mdat";
-			m_interface->setListFileName(lastlistfile.c_str());
-		}
-		else if (propertyName == "lasthistfile" || propertyName == "lastbinnedfile")
-		{
-			data >> lasthistfile;
-			if (lasthistfile.empty())
-				lasthistfile = "tangohistfile00000.mtxt";
-			m_interface->setHistogramFileName(lasthistfile.c_str());
-			lastbinnedfile = lasthistfile;
-		}
-		else if (propertyName == "runid")
+		if (propertyName == "runid")
 		{
 			Tango::DevULong val;
 			data >> val;
 			m_interface->setRunID(val);
-		}
-		else if (propertyName == "calibrationfile")
-		{
-			std::string val;
-			data >> val;
-			if (val.empty())
-				::Tango::ApiDataExcept::throw_exception("Value error",
-									"calibration file name must not be empty",
-									"CounterChannel::update_properties()");
-			m_interface->loadCalibrationFile(val.c_str());
-			calibrationfile = val;
 		}
 	/*----- PROTECTED REGION END -----*/	//	DetectorChannel::update_properties
 	}

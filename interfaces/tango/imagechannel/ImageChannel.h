@@ -261,6 +261,8 @@ public:
 
 /*----- PROTECTED REGION ID(ImageChannel::Additional Method prototypes) ENABLED START -----*/
 
+	virtual void start();
+
 //	Additional Method prototypes
 
 	virtual Tango::DevVarStringArray *get_properties();
