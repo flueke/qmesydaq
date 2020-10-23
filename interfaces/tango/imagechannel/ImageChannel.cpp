@@ -213,6 +213,9 @@ void ImageChannel::init_device()
 	}
 	attr_preselection_read[0] = 0;
 
+	m_histogramIncrement = true;
+	m_listmodeIncrement = true;
+
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::init_device
 }
 
@@ -737,6 +740,7 @@ Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray
 			if (lastlistfile.empty())
 				lastlistfile = "tangolistfile00000.mdat";
 			m_interface->setListFileName(lastlistfile.c_str());
+			m_listmodeIncrement = false;
 		}
 		else if (propertyName == "lasthistfile" || propertyName == "lastbinnedfile")
 		{
@@ -745,6 +749,7 @@ Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray
 				lasthistfile = "tangohistfile00000.mtxt";
 			m_interface->setHistogramFileName(lasthistfile.c_str());
 			lastbinnedfile = lasthistfile;
+			m_histogramIncrement = false;
 		}
 		else if (propertyName == "calibrationfile")
 		{
@@ -784,16 +789,20 @@ void ImageChannel::start()
 		m_interface->setHistogramMode(writehistogram);
 		if (writehistogram)
 		{
-			lastbinnedfile = lasthistfile = incNumber(lasthistfile);
+			if (m_histogramIncrement)
+				lastbinnedfile = lasthistfile = incNumber(lasthistfile);
 			m_interface->setHistogramFileName(lasthistfile.c_str());
 		}
 		m_interface->setListMode(writelistmode, true);
 		if (writelistmode)
 		{
-			lastlistfile = incNumber(lastlistfile);
+			if (m_listmodeIncrement)
+				lastlistfile = incNumber(lastlistfile);
 			m_interface->setListFileName(lastlistfile.c_str());
 		}
 	}
+	m_histogramIncrement = true;
+	m_listmodeIncrement = true;
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::start
 	DetectorChannel::start();
 }

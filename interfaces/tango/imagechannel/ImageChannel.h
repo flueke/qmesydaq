@@ -67,6 +67,10 @@ public:
 private:
 	Tango::DevULong	m_histo;
 
+	bool	m_histogramIncrement;
+
+	bool	m_listmodeIncrement;
+
 /*----- PROTECTED REGION END -----*/	//	ImageChannel::Data Members
 
 
