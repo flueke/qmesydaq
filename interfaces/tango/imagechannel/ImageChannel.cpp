@@ -717,11 +717,13 @@ Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray
 		{
 			data >> writelistmode;
 			m_interface->setListMode(writelistmode, true);
+			m_listmodeIncrement = false;
 		}
 		else if (propertyName == "writehistogram")
 		{
 			data >> writehistogram;
 			m_interface->setHistogramMode(writehistogram);
+			m_histogramIncrement = false;
 		}
 		else if (propertyName == "configfile")
 		{
