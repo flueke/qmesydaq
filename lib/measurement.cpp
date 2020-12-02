@@ -840,7 +840,7 @@ void Measurement::writeStandardHistograms(QTextStream &t)
 	//
 	// write the monitor, events, and timer values after a '#' char
 	//
-	for (quint8 i = MON1ID; i <= TTL2ID; ++i)
+	for (quint8 i = MON1ID; i <= TTL2ID && m_counter.count(i); ++i)
 		t << "# monitor " << (i + 1) << " = " << m_counter[i]->value() << endLine;
 	t << "# events = " << m_events->value() << endLine;
 	t << "# timer = " << m_timer->value() << " ms" << endLine;
