@@ -50,6 +50,12 @@ class LIBQMESYDAQ_EXPORT Detector : public QObject
 {
 	Q_OBJECT
 
+	enum state {
+		DET_IDLE,
+		DET_RUNNING,
+		DET_REPLAY
+	};
+
 public:
 	/**
 	 * Default Constructor
@@ -366,6 +372,8 @@ public slots:
 	 */
 	void lostSync(quint16 id, bool bLost);
 
+	void replayPacket(QSharedDataPointer<SD_PACKET>);
+
 public:
 	bool status(bool *pbAck = NULL) const;
 
@@ -431,7 +439,7 @@ private:
 	QThread*	m_pThread;
 
 	//! acquisition is active
-	bool            m_bRunning;
+	enum state      m_Running;
 
 	//! hardware acknowledge of acquisition status
 	bool            m_bRunAck;

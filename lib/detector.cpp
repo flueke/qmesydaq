@@ -35,7 +35,7 @@
 */
 Detector::Detector()
 	: m_pThread(NULL)
-	, m_bRunning(false)
+	, m_Running(DET_IDLE)
 	, m_bRunAck(false)
 	, m_acquireListfile(false)
 	, m_autoSaveHistogram(false)
@@ -331,7 +331,7 @@ void Detector::writeListfileHeader(void)
 		m_pDatStream->writeRawData(QString("mesytec psd listmode data\n"));
 		m_pDatStream->writeRawData(QString("header length: %1 lines \n").arg(2));
 
-		if (m_bRunning && !m_bRunAck)
+		if ((m_Running == DET_RUNNING) && !m_bRunAck)
 			m_pDatSender->WriteData(QByteArray("DATA\n"));
 	}
 	else
@@ -359,7 +359,7 @@ void Detector::writeListfileHeader(void)
 			header1 = m_datHeader;
 		if (m_pDatStream->isOpen())
 			m_pDatStream->writeRawData(header1);
-		if (m_bRunning && !m_bRunAck)
+		if ((m_Running == DET_RUNNING) && !m_bRunAck)
 			m_pDatSender->WriteData(header1);
 	}
 }
@@ -379,7 +379,7 @@ void Detector::writeHeaderSeparator(void)
 	//const unsigned short awBuffer[] = {sep0, sep5, sepA, sepF};
 	if (m_pDatStream->isOpen())
 		*m_pDatStream << sep0 << sep5 << sepA << sepF;
-	//if (m_bRunning && !m_bRunAck)
+	//if ((m_Running == DET_RUNNING) && !m_bRunAck)
 	//	m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer));
 }
 
@@ -414,7 +414,7 @@ void Detector::writeClosingSignature(void)
 	const unsigned short awBuffer[] = {sepF, sepA, sep5, sep0};
 	if (m_pDatStream->isOpen())
 		*m_pDatStream << sepF << sepA << sep5 << sep0;
-	if (!m_bRunning && m_bRunAck)
+	if ((m_Running == DET_IDLE) && m_bRunAck)
 		m_pDatSender->WriteData(&awBuffer[0], sizeof(awBuffer), true);
 }
 
@@ -1090,7 +1090,7 @@ void Detector::start(void)
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 		if (it.value()->isMaster())
 			it.value()->start();
-	m_bRunning = true;
+	m_Running = DET_RUNNING;
 	m_starttime_msec = time();
 	emit statusChanged("STARTED");
 }
@@ -1112,7 +1112,7 @@ void Detector::stop(void)
 	for (QHash<int, MCPD8 *>::iterator it = m_mcpd.begin(); it != m_mcpd.end(); ++it)
 		if (!it.value()->isMaster())
 			it.value()->stop();
-	m_bRunning = false;
+	m_Running = DET_IDLE;
 	emit statusChanged("IDLE");
 }
 
@@ -1875,7 +1875,7 @@ void Detector::setRunId(quint32 runid)
  */
 void Detector::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
 {
-	if (m_bRunning)
+	if (m_Running == DET_RUNNING)
 	{
 		const DATA_PACKET *dp = &pPacket.constData()->dp;
 		if(m_acquireListfile)
@@ -1896,7 +1896,7 @@ void Detector::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
  */
 void Detector::rearrangeEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 {
-	if (!m_bRunning)
+	if (m_Running == DET_IDLE)
 	{
 		MSG_ERROR << tr("DROP DATA PACKET: no data acquisition is running!");
 		MSG_ERROR << tr("device id: %1").arg(evb->id);
@@ -2097,9 +2097,9 @@ void Detector::setListFileHeader(const QByteArray& header, bool bInsertHeaderLen
  */
 bool Detector::status(bool* pbAck /*= NULL*/) const
 {
-	if (pbAck!=NULL)
+	if (pbAck != NULL)
 		*pbAck = m_bRunAck;
-	return m_bRunning;
+	return m_Running == DET_RUNNING;
 }
 
 /*!
@@ -2260,4 +2260,19 @@ void Detector::setSetupType(const Setup val)
 Setup Detector::setupType() const
 {
 	return m_setup;
+}
+
+void Detector::replayPacket(QSharedDataPointer<SD_PACKET> pPacket)
+{
+	const DATA_PACKET *dp = &pPacket.constData()->dp;
+	quint16 module = dp->deviceId;
+	if (m_mcpd.contains(module))
+	{
+		MSG_WARNING << tr("replay packet of module %1 (%2)").arg(module).arg(m_mcpd[module]->type());
+		m_Running = DET_REPLAY;
+		m_mcpd[module]->analyzeBuffer(pPacket);
+		m_Running = DET_REPLAY;
+	}
+	else
+		MSG_ERROR << tr("ignoring packet of module %1").arg(module);
 }

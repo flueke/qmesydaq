@@ -386,8 +386,6 @@ public:
 	QPair<int, int> monitorMapping(quint8 channel) const;
 
 public slots:
-	void analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket);
-
 	void histogramEvents(QSharedDataPointer<EVENT_BUFFER>);
 
 	void calcRates();

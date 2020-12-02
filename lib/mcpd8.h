@@ -321,6 +321,7 @@ signals:
 
 	//! a new header time received
 	void headerTimeChanged(quint64);
+
 	/**
 	 * this will be emitted if the MPCD-8 has sent a new event packet
 	 *
