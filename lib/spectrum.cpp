@@ -255,7 +255,7 @@ quint64 Spectrum::value(const quint16 index) const
 	return 0;
 }
 
-quint64 Spectrum::max()
+quint64 Spectrum::max() const
 {
 	return m_width ? m_data[m_maximumPos] : 0;
 }

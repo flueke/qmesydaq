@@ -62,7 +62,7 @@ public:
 	void clear(void);
 
 	//! \return the maximum value of the spectrum
-	quint64 max();
+	quint64 max() const;
 
 	//! \return the first position of the maximum value of the spectrum
 	quint16 maxpos(void) const;
