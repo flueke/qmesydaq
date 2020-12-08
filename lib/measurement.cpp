@@ -1352,10 +1352,12 @@ void Measurement::readListfile(const QString &readfilename)
 			if(!(bcount % 5000))
 				QCoreApplication::processEvents();
 		}
+		QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
 		MSG_NOTICE << tr("%1").arg(m_Hist[PositionHistogram]->width());
 		MSG_NOTICE << tr("End replay");
 		MSG_WARNING << tr("Found %1 data packages").arg(blocks);
 		MSG_WARNING << tr("%2 trigger events and %3 neutrons").arg(m_triggers).arg(m_neutrons);
+		MSG_WARNING << tr("%1 neutrons in histogram").arg(m_Hist[PositionHistogram]->getTotalCounts());
 		resizeHistogram(m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->width() : m_Hist[AmplitudeHistogram]->width(),
 				m_Hist[PositionHistogram]->width() ? m_Hist[PositionHistogram]->height() : m_Hist[AmplitudeHistogram]->height(), false);
 	}
