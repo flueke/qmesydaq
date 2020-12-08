@@ -171,7 +171,15 @@ class LIBQMESYDAQ_EXPORT MCPDThread : public QThread
 {
     friend class MCPD;
     Q_OBJECT
+    Q_ENUMS(Command)
+
     Q_DISABLE_COPY(MCPDThread)
+public:
+    enum Command {
+	    NONE,
+	    WORK,
+	    QUIT,
+    };
 protected:
     MCPDThread(MCPD* pMcpd);
     virtual ~MCPDThread();
@@ -180,11 +188,7 @@ protected:
     //! reference to MCPD
     MCPD*          m_pMcpd;
 
-    enum Command {
-	    NONE,
-	    WORK,
-	    QUIT,
-    } m_iCommand;
+    enum Command   m_iCommand;
 
     //! wake thread up
     QWaitCondition m_ThreadCondition;

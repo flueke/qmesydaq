@@ -1041,7 +1041,7 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 		{
 			triggers++;
 			quint8 dataId = it->ev_trigger.id;
-			if (dataId > ADC2ID)
+			if (dataId >= m_counter.size())
 			{
 				++counterTriggers;
 				MSG_NOTICE << tr("counter %1 ignored").arg(dataId);
