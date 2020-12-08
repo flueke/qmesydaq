@@ -1732,7 +1732,7 @@ histogram file</string>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="countsInVOI">
+         <widget class="QLabel" name="countsInROI">
           <property name="minimumSize">
            <size>
             <width>75</width>

@@ -1587,7 +1587,7 @@ void MainWidget::draw(void)
 			break;
 	}
 	labelCountsInROI->setText(roiText);
-	countsInVOI->setText(tr("%1").arg(counts));
+	countsInROI->setText(tr("%1").arg(counts));
 	m_dataFrame->replot();
 	drawOpData();
 	updateDisplay();
