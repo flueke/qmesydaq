@@ -26,6 +26,7 @@ lib*.prl
 mesydaqconfig_*.pri
 mesydaq.pro.user
 qrc_*.cpp
+.qmake.stash
 
 qmesydaq/qmesydaq
 
