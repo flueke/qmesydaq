@@ -304,10 +304,7 @@ quint64 Histogram::getCounts(const QRect &region) const
 
 	for (int y = region.y(); y < h; ++y)
 		for (int x = region.x(); x < w; ++x)
-		{
-			int v = value(x, y);
-			tmp += v;
-		}
+			tmp += value(x, y);
 	return tmp;
 }
 
@@ -352,8 +349,7 @@ quint64 Histogram::getCounts(const QRectF &r) const
 		else
 			y -= 1;
 	}
-	QRect region(x, y, w, h);
-	return getCounts(region);
+	return getCounts(QRect(x, y, w, h));
 }
 
 /*!

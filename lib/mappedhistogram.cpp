@@ -137,7 +137,7 @@ quint64 MappedHistogram::value(quint16 x, quint16 y) const
 {
 	double r = this->floatValue(x, y);
 	if (r > 0.0 && r < 1.0) 	// single event only
-		r = 1.0;
+		return 1;
 	return (quint64)(r + 0.5);
 }
 
