@@ -2268,7 +2268,7 @@ void Detector::replayPacket(QSharedDataPointer<SD_PACKET> pPacket)
 	quint16 module = dp->deviceId;
 	if (m_mcpd.contains(module))
 	{
-		MSG_WARNING << tr("replay packet of module %1 (%2)").arg(module).arg(m_mcpd[module]->type());
+		MSG_INFO << tr("replay packet of module %1 (%2)").arg(module).arg(m_mcpd[module]->type());
 		m_Running = DET_REPLAY;
 		m_mcpd[module]->analyzeBuffer(pPacket);
 		m_Running = DET_REPLAY;
