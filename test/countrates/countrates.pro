@@ -26,6 +26,8 @@ include($${SRCBASE}/mesydaqconfig.pri)
 TARGET       	= countrates
 CONFIG		+= link_prl
 
+QT		+= widgets
+
 INSTALLS	=
 
 HEADERS 	= \
