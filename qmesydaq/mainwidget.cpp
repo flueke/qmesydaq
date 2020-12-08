@@ -1383,8 +1383,9 @@ void MainWidget::setHistogramType(int val)
                 		m_dataFrame->setHistogramData(m_histData);
 #endif
 			}
+			m_zoomedRect = QRectF(0, 0, 0, 0);
 			break;
-		default :
+		default:
 			break;
 	}
 	emit redraw();
