@@ -36,6 +36,7 @@ class LIBQMESYDAQ_EXPORT MapCorrection : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS(Orientation)
+	Q_ENUMS(CorrectionType);
 
 	Q_PROPERTY(bool m_bNoMapping READ isNoMap)
 
