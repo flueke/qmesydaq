@@ -26,25 +26,26 @@ include ($${SRCBASE}/mesydaqconfig.pri)
 TEMPLATE 	= app
 TARGET 		= plot
 DEPENDPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
-INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib $${SRCBASE}/qmesydaq
+INCLUDEPATH 	+= . $${SRCBASE}/qmesydaq $${SRCBASE}/lib
 CONFIG		+= link_prl
 
+QT		+= widgets
+
 SOURCES 	+= main.cpp \
-		plot.cpp \
 		mainwindow.cpp \
-		zoomer.cpp \
 		testdata.cpp \
 		plotwidget.cpp \
-		colormaps.cpp \
+		$${SRCBASE}/qmesydaq/colormaps.cpp \
+		$${SRCBASE}/qmesydaq/plot.cpp \
+		$${SRCBASE}/qmesydaq/zoomer.cpp \
 		$${SRCBASE}/qmesydaq/data.cpp \
 		$${SRCBASE}/qmesydaq/mesydaqdata.cpp
 
 HEADERS 	+= testdata.h \
-		plot.h \
 		mainwindow.h \
-		zoomer.h \
 		plotwidget.h \
-		colormaps.h
+		colormaps.h \
+		$${SRCBASE}/qmesydaq/plot.h
 
 CONFIG		+= debug
 
