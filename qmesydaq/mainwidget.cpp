@@ -1573,7 +1573,7 @@ void MainWidget::draw(void)
 						m_dataFrame->setSpectrumData(m_data);
 
 						if (m_zoomedRect.isEmpty())
-							m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+							m_zoomedRect = QRectF(0, 0, spec ? spec->width() : 1, 1);
 						if (spec)
 							counts = spec->getCounts(m_zoomedRect);
 						roiText = tr("MCPD: %1 MPSD: %2 Channel: %3").arg(dispMcpd->value()).arg(dispMpsd->value()).arg(dispChan->value());
