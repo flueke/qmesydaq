@@ -1782,10 +1782,18 @@ quint32 Measurement::runId(void) const
 
 quint16 Measurement::calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel)
 {
-	if (m_setup == Mpsd)
-		return mcpd * 64 + mpsd * 8 + channel;
-	else
-		return mcpd * 128 + mpsd * 16 + channel;
+	switch (m_setup)
+	{
+		case Mpsd:
+			return mcpd * 64 + mpsd * 8 + channel;
+		case Mdll:
+			return mcpd * 960 + channel;
+		case Mdll2:
+			return mcpd * 1024 + channel;
+		case Mstd:
+		default:
+			return mcpd * 128 + mpsd * 16 + channel;
+	}
 }
 
 Measurement::Arrangement Measurement::getPsdArrangement(void) const
