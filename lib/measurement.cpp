@@ -1048,6 +1048,7 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 	quint16	adcTriggers = 0;
 	quint16 counterTriggers = 0;
 	quint16 mod = evb->id;
+	quint8 maxCounter = m_counter.size();
 
 	m_packages++;
 
@@ -1064,10 +1065,12 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 		{
 			triggers++;
 			quint8 dataId = it->ev_trigger.id;
-			if (dataId >= m_counter.size())
+			if (dataId >= maxCounter)
 			{
 				++counterTriggers;
-				MSG_NOTICE << tr("counter %1 ignored").arg(dataId);
+#if 0
+				// MSG_NOTICE << tr("counter %1 ignored").arg(dataId);
+#endif
 			}
 			else
 			{
@@ -1358,7 +1361,7 @@ void Measurement::readListfile(const QString &readfilename)
 	datStream >> sep1 >> sep2 >> sep3 >> sep4;
 	if ((sep1 == sep0) && (sep2 == sep5) && (sep3 == sepA) && (sep4 == sepF))
 	{
-		MSG_NOTICE << tr("%1").arg(m_Hist[PositionHistogram]->width());
+		MSG_NOTICE << tr("Start replay: %1").arg(m_Hist[PositionHistogram]->width());
 #if 0
 		m_starttime_msec = m_detector->time();
 		foreach (MesydaqCounter *c, m_counter)
@@ -1379,7 +1382,7 @@ void Measurement::readListfile(const QString &readfilename)
 // hand over data buffer for processing
 			m_detector->replayPacket(dataBuf);
 			if(!(bcount % 5000))
-				QCoreApplication::processEvents();
+				QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
 		}
 		QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
 		MSG_NOTICE << tr("%1").arg(m_Hist[PositionHistogram]->width());

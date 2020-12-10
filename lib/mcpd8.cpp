@@ -1803,7 +1803,7 @@ quint16 MCPD8::calcChksum(const QSharedDataPointer<SD_PACKET> &buffer)
 bool MCPD8::analyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket)
 {
     const MDP_PACKET *pMdp = &pPacket.constData()->mdp;
-//    MSG_DEBUG << tr("MCPD8::analyzeBuffer(QSharedDataPointer<SD_MDP_PACKET> pPacket) 0x%1 : %2").arg(pMdp->bufferType, 0, 16).arg(pMdp->cmd);
+    // MSG_WARNING << tr("MCPD8::analyzeBuffer(QSharedDataPointer<SD_MDP_PACKET> pPacket) 0x%1 : %2").arg(pMdp->bufferType, 0, 16).arg(pMdp->cmd);
     if (pMdp->deviceId == m_byId)
     {
         m_headertime = pMdp->time[0] + (quint64(pMdp->time[1]) << 16) + (quint64(pMdp->time[2]) << 32);
