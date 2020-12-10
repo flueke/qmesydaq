@@ -1690,7 +1690,7 @@ MapCorrection *&Measurement::posHistMapCorrection()
 	return m_posHistMapCorrection;
 }
 
-Detector *Measurement::getMesydaq() const
+Detector *Measurement::getDetector() const
 {
 	return m_detector;
 }

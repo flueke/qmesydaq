@@ -2473,7 +2473,7 @@ void MainWidget::customEvent(QEvent *e)
 			}
 			break;
 		case CommandEvent::C_SET_STREAMWRITER:
-			m_meas->getMesydaq()->setStreamWriter(dynamic_cast<StreamWriter *>((QObject*)args[0].toULongLong()));
+			m_meas->getDetector()->setStreamWriter(dynamic_cast<StreamWriter *>((QObject*)args[0].toULongLong()));
 			break;
 		case CommandEvent::C_UPDATEMAINWIDGET:
 			if (args.count() >= 4)

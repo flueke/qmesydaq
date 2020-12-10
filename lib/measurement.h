@@ -374,7 +374,7 @@ public:
 	void updateSetupType(void);
 
 	//! \return get access to the hardware layer
-	Detector *getMesydaq() const;
+	Detector *getDetector() const;
 
 	//! \return the calculated channel number from the given mcpd, mpsd/mstd, channel
 	quint16 calculateChannel(const quint16 mcpd, const quint8 mpsd, const quint8 channel);
