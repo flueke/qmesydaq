@@ -229,7 +229,7 @@ public:
 	  \param t type of the requested spectrum
 	  \return a spectrum
          */
-	Spectrum *spectrum(const SpectrumType t);
+	Spectrum *spectrum(const SpectrumType t, int=0);
 
 	//! \return the mapping and correction data for position histogram
 	MapCorrection *&posHistMapCorrection();
@@ -448,6 +448,9 @@ private:
 
 	//! time spectrum
 	Spectrum	*m_Spectrum[NoSpectrum];
+
+	//! amplitude spectra
+	QHash<int, Spectrum *>	m_Amplitude;
 
 	//! mapping and correction data for position histogram
 	MapCorrection   *m_posHistMapCorrection;

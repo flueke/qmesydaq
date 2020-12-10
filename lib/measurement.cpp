@@ -179,6 +179,13 @@ void Measurement::resizeHistogram(quint16 w, quint16 h, bool clr, bool resize)
 		m_Spectrum[SingleLineSpectrum]->resize(w * h);
 	else
 		m_Spectrum[SingleLineSpectrum] = new Spectrum(w * h);
+	if (setupType() == Mdll2 || setupType() == Mdll)
+	{
+		int namp = w / (setupType() == Mdll2 ? 1024 : 960);
+		for (int i = m_Amplitude.size(); i < namp; ++i)
+			m_Amplitude[i] = new Spectrum(256);
+		m_Spectrum[AmplitudeSpectrum]->resize(256);
+	}
 }
 
 /*!
@@ -308,6 +315,8 @@ void Measurement::start()
 	resizeHistogram(m_detector->width(), m_detector->height());
 	if (m_Spectrum[AmplitudeSpectrum])
 		m_Spectrum[AmplitudeSpectrum]->clear();
+	foreach (Spectrum *s, m_Amplitude)
+		s->clear();
 	foreach (MesydaqCounter *c, m_counter)
 		c->reset();
 	m_packages = 0;
@@ -747,13 +756,13 @@ void Measurement::clearAllHist(void)
 }
 
 /*!
-    \fn Spectrum *Measurement::spectrum(const SpectrumType t)
+    \fn Spectrum *Measurement::spectrum(const SpectrumType t, int mdll)
 
     gets a spectrum of all events
 
     \return spectrum if line exist otherwise NULL pointer
 */
-Spectrum *Measurement::spectrum(const SpectrumType t)
+Spectrum *Measurement::spectrum(const SpectrumType t, int mdll)
 {
 	switch(t)
 	{
@@ -789,7 +798,21 @@ Spectrum *Measurement::spectrum(const SpectrumType t)
 #endif
 			return m_Spectrum[Diffractogram];
 			break;
-		default :
+		case AmplitudeSpectrum:
+			if (mdll < 0)
+				return m_Spectrum[t];
+			if (getDetector()->histogram(mdll, 0))  // MDLL in histogram
+			{
+				quint16 tmpLine = mapTube(calculateChannel(mdll, 0, 0)); // find line
+				if (tmpLine != 0xFFFF)
+				{
+					int i = tmpLine / (setupType() == Mdll2 ? 1024 : 960); // find out the module
+					return m_Amplitude.value(i, NULL);
+				}
+			}
+			return NULL;
+			break;
+		default:
 			return m_Spectrum[t];
 	}
 	return NULL;
@@ -1098,7 +1121,9 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 				if (mdllType) /* bufferType == 0x0002 */
 				{
 					m_Hist[AmplitudeHistogram]->addValue(x, y, amp);
-					m_Spectrum[AmplitudeSpectrum]->incVal(amp);
+					m_Spectrum[AmplitudeSpectrum]->incVal(amp & 0xFF);
+					int mdll = x / (setupType() == Mdll2 ? 1024 : 960);
+					m_Amplitude[mdll]->incVal(amp & 0xFF);
 				}
 				else
 					m_Hist[AmplitudeHistogram]->incVal(x, amp);
@@ -1319,6 +1344,10 @@ void Measurement::readListfile(const QString &readfilename)
 #else
 	resizeHistogram(128, 960, true, true);
 #endif
+	if (m_Spectrum[AmplitudeSpectrum])
+		m_Spectrum[AmplitudeSpectrum]->clear();
+	foreach (Spectrum *s, m_Amplitude)
+		s->clear();
 	foreach(MesydaqCounter *c, m_counter)
 		c->reset();
 

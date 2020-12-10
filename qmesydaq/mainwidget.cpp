@@ -1434,7 +1434,10 @@ void MainWidget::setDisplayMode(int val)
 		case Plot::Histogram:
 		case Plot::Diffractogram:
 		case Plot::SingleSpectrum:
-			dispAll->setEnabled(false);
+			if (m_mode == Plot::SingleSpectrum && (setupType() == Mdll || setupType() == Mdll2))
+				dispAll->setEnabled(true);
+			else
+				dispAll->setEnabled(false);
 			dispMcpd->setEnabled(false);
 			dispMpsd->setEnabled(false);
  			dispChan->setEnabled(false);
@@ -1507,7 +1510,8 @@ void MainWidget::draw(void)
 		case Plot::SingleSpectrum :
 			if (setupType() == Mdll || setupType() == Mdll2)
 			{
-				spec = m_meas->spectrum(Measurement::AmplitudeSpectrum);
+				int mdll = dispAll->isChecked() ? -1 : dispMcpd->value();
+				spec = m_meas->spectrum(Measurement::AmplitudeSpectrum, mdll);
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "amplitude");
 			}
 			else if (m_meas->getPsdArrangement() == Measurement::Line)
