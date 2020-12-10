@@ -1496,12 +1496,13 @@ void MainWidget::draw(void)
 		case Plot::Diffractogram :
 			spec = m_meas->spectrum(Measurement::Diffractogram);
 			if (m_zoomedRect.isEmpty())
-				m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+				m_zoomedRect = QRectF(0, 0, spec ? spec->width() : 1, 1);
 			if (setupType() == Mdll || setupType() == Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
-			counts = spec->getCounts(m_zoomedRect);
+			if (spec)
+				counts = spec->getCounts(m_zoomedRect);
 			break;
 		case Plot::SingleSpectrum :
 			if (setupType() == Mdll || setupType() == Mdll2)
@@ -1514,10 +1515,11 @@ void MainWidget::draw(void)
 			else
 				spec = m_meas->spectrum(Measurement::SingleTubeSpectrum);
 			if (m_zoomedRect.isEmpty())
-				m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+				m_zoomedRect = QRectF(0, 0, spec ? spec->width() : 1, 1);
 			m_data->setData(spec);
 			m_dataFrame->setSpectrumData(m_data);
-			counts = spec->getCounts(m_zoomedRect);
+			if (spec)
+				counts = spec->getCounts(m_zoomedRect);
 			break;
 		case Plot::ModuleSpectrum:
 		case Plot::Spectrum :
@@ -1527,10 +1529,11 @@ void MainWidget::draw(void)
 			{
 				spec = data(m_histoType);
 				if (m_zoomedRect.isEmpty())
-					m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+					m_zoomedRect = QRectF(0, 0, spec ? spec->width() : 1, 1);
 				m_data->setData(spec);
 				m_dataFrame->setSpectrumData(m_data);
-				counts = spec->getCounts(m_zoomedRect);
+				if (spec)
+					counts = spec->getCounts(m_zoomedRect);
 			}
 			else
 			{
@@ -1541,10 +1544,11 @@ void MainWidget::draw(void)
 				{
 					spec = m_meas->spectrum(Measurement::TimeSpectrum);
 					if (m_zoomedRect.isEmpty())
-						m_zoomedRect = QRectF(0, 0, spec->width(), 1);
+						m_zoomedRect = QRectF(0, 0, spec ? spec->width() : 1, 1);
 					m_data->setData(spec);
 					roiText = tr("Time");
-					counts = spec->getCounts(m_zoomedRect);
+					if (spec)
+						counts = spec->getCounts(m_zoomedRect);
 				}
 				else
 				{
@@ -1560,8 +1564,9 @@ void MainWidget::draw(void)
 							if (spec)
 							{
 								if (m_zoomedRect.isEmpty())
-									m_zoomedRect = QRectF(0, 0, spec->width(), 1);
-								counts += spec->getCounts(m_zoomedRect);
+									m_zoomedRect = QRectF(0, 0, spec ? spec->width() : 1, 1);
+								if (spec)
+									counts += spec->getCounts(m_zoomedRect);
 							}
 						}
 						roiText = tr("Counts in MCPD: %1 MPSD: %2").arg(dispMcpd->value()).arg(dispMpsd->value());
