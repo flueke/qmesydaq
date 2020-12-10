@@ -24,6 +24,8 @@ include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= subdirs
 
+CONFIG		+= debug_and_release
+
 SUBDIRS		+= qmsetip \
 		qmlsmod \
 		qmsetid \

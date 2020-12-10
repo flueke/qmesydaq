@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE =	subdirs
-CONFIG +=	ordered
+CONFIG +=	ordered debug_and_release
 DEPENDPATH +=	src plugin example
 INCLUDEPATH +=	src plugin example
 

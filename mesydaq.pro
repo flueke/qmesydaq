@@ -27,7 +27,7 @@ win32:VERSION		= $$system(type version)
 include (mesydaqconfig.pri)
 
 TEMPLATE 	= subdirs
-CONFIG		+= ordered edist
+CONFIG		+= ordered edist debug_and_release
 
 SUBDIRS		+= lib interfaces tools
 
