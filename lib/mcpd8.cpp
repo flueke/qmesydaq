@@ -2436,7 +2436,7 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
         {
 // extract triggers
             quint8 source((dp->data[counter + 2] >> 12) & 0x7),
-                   id((dp->data[counter + 2] >> 7) & 0x1F);
+                   id((dp->data[counter + 2] >> 8) & 0xF);
             quint32 data(((quint32(dp->data[counter + 2] << 16) + dp->data[counter + 1]) >> 3) & 0x1FFFFF);
 
             struct EVENT ev = {true, timestamp};
