@@ -55,6 +55,10 @@ public:
 public slots:
 	void presetCheckClicked(bool);
 
+	void mcpdChanged(int);
+
+	void inputChanged(int);
+
 signals:
 	//! this signal will be emitted if the reset button is pressed
 	void resetClicked();

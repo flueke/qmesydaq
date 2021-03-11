@@ -142,3 +142,10 @@ void PresetWidget::resetButtonClicked(void)
 	emit resetClicked();
 }
 
+void PresetWidget::mcpdChanged(int)
+{
+}
+
+void PresetWidget::inputChanged(int)
+{
+}
