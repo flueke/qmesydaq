@@ -183,29 +183,7 @@ bool MCPD8::init(void)
  */
 int MCPD8::width(void) const
 {
-    if (!m_mdll.isEmpty())
-        switch (m_mdll[0]->getModuleId())
-        {
-            case TYPE_MDLL :
-                return (histogram() ? 960 : 0);
-                break;
-            case TYPE_MWPCHR:
-                return (histogram() ? 1024 : 0);
-                break;
-        }
-    int w(0);
-    for (quint8 c = 0; c < 8; c++)
-        if (m_mpsd.find(c) != m_mpsd.end())
-            switch (m_mpsd[c]->getModuleId())
-            {
-                case TYPE_MSTD16:
-                    w += 16;
-                    break;
-                default:
-                    w += 8;
-                    break;
-            }
-    return w;
+    return m_width;
 }
 
 /*
@@ -223,8 +201,7 @@ int MCPD8::maxwidth(void) const
     {
         if (m_mdll[0]->type() == TYPE_MDLL)
             return 960;
-        else
-            return 1024;
+        return 1024;
     }
     for (quint8 c = 0; c < 8; c++)
         if (m_mpsd.find(c) != m_mpsd.end())
@@ -2836,6 +2813,21 @@ void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
         m_mpsd[id]->setHistogram(chan, hist);
     if (!hist)
         setActive(id, chan, false);
+    // update the effective width
+    m_width = 0;
+    if (!m_mdll.isEmpty())
+        switch (m_mdll[0]->getModuleId())
+        {
+            case TYPE_MDLL :
+                m_width = histogram() ? 960 : 0;
+		break;
+            case TYPE_MWPCHR:
+                m_width = histogram() ? 1024 : 0;
+        }
+    else
+        for (quint8 c = 0; c < 8; c++)
+            if (m_mpsd.find(c) != m_mpsd.end())
+                m_width += m_mpsd[c]->width();
 }
 
 /*!

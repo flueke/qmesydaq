@@ -452,6 +452,9 @@ private:
 	float		m_fpgaVersion;
 
 	QMap<quint16, quint16> m_tubeMapping;
+
+	//! Store the effective width
+	int		m_width;
 };
 
 #endif

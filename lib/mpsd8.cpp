@@ -392,6 +392,14 @@ void MPSD8::setHistogram(quint16 chan, bool hist)
 		m_histogram[chan] = hist;
 	if (!hist)
 		setActive(chan, false);
+	// update effective width
+	m_width = 0;
+	quint8 inc(1);
+	if (getModuleId() == TYPE_MSTD16)
+		inc = 2;
+	for (int i = 0; i < m_histogram.size(); ++i)
+		if (m_histogram[i])
+			m_width += inc;
 }
 
 /*!
@@ -629,4 +637,9 @@ void MPSD8::setCapabilities(const quint16 val)
 quint8 MPSD8::getChannels() const
 {
 	return 8;
+}
+
+quint8 MPSD8::width() const
+{
+	return m_width;
 }

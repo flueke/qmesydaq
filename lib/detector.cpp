@@ -1888,7 +1888,7 @@ void Detector::dumpListmode(QSharedDataPointer<SD_PACKET> pPacket)
 }
 
 /*!
-    \fn Detector::rearrange(EVENT_BUFFER evb)
+    \fn Detector::rearrangeEvents(EVENT_BUFFER evb)
 
     callback to rearrange the positions
 
