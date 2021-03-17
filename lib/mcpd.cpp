@@ -53,7 +53,13 @@ MCPD::MCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, q
     bool bResult;
     if (szSourceIp.isEmpty())
         szSourceIp = QString("0.0.0.0");
-    if (QHostAddress(m_szMcpdDataIp) == QHostAddress::Any || QHostAddress(m_szMcpdDataIp) == QHostAddress::AnyIPv6)
+    if (
+#if QT_VERSION < 0x050000
+        QHostAddress(m_szMcpdDataIp) == QHostAddress::Any ||
+#else
+        QHostAddress(m_szMcpdDataIp) == QHostAddress::AnyIPv4 ||
+#endif
+        QHostAddress(m_szMcpdDataIp) == QHostAddress::AnyIPv6)
         m_szMcpdDataIp.clear();
     if (m_wDataPort == m_wPort)
         m_wDataPort = 0;

@@ -58,7 +58,17 @@ DataRepeater::DataRepeater(QObject *parent, const QHostAddress &source, const QH
   \param port    target UDP port (default=54320)
 */
 DataRepeater::DataRepeater(QObject *parent, const QHostAddress &target, quint16 port)
-  : QObject(parent), m_pSocket(NULL), m_Source(QHostAddress::Any), m_Target(target), m_wPort(port), m_iMaxDatagramSize(MAXDATAGRAMSIZE), m_iTimerId(0)
+  : QObject(parent)
+  , m_pSocket(NULL)
+#if QT_VERSION < 0x050000
+  , m_Source(QHostAddress::Any)
+#else
+  , m_Source(QHostAddress::AnyIPv4)
+#endif
+  , m_Target(target)
+  , m_wPort(port)
+  , m_iMaxDatagramSize(MAXDATAGRAMSIZE)
+  , m_iTimerId(0)
 {
   InitSocket();
 
@@ -84,8 +94,18 @@ DataRepeater::DataRepeater(const QHostAddress &source, const QHostAddress &targe
   \param target  target address: allowed is "LocalHost" (default), "Broadcast", IP address
   \param port    target UDP port (default=54320)
 */
-DataRepeater::DataRepeater(const QHostAddress &target, quint16 port) :
-  QObject(), m_pSocket(NULL), m_Source(QHostAddress::Any), m_Target(target), m_wPort(port), m_iMaxDatagramSize(MAXDATAGRAMSIZE), m_iTimerId(0)
+DataRepeater::DataRepeater(const QHostAddress &target, quint16 port)
+  : QObject()
+  , m_pSocket(NULL)
+#if QT_VERSION < 0x050000
+  , m_Source(QHostAddress::Any)
+#else
+  , m_Source(QHostAddress::AnyIPv4)
+#endif
+  , m_Target(target)
+  , m_wPort(port)
+  , m_iMaxDatagramSize(MAXDATAGRAMSIZE)
+  , m_iTimerId(0)
 {
   if (target.isNull())
     m_Target=QHostAddress::LocalHost;
@@ -158,7 +178,11 @@ void DataRepeater::SetSource(const QHostAddress &source)
 {
   // check source address against local host addresses
   if (!QNetworkInterface::allAddresses().contains(source) || source.isNull())
+#if QT_VERSION < 0x050000
     m_Source=QHostAddress::Any;
+#else
+    m_Source=QHostAddress::AnyIPv4;
+#endif
   else
     m_Source=source;
   InitSocket();
@@ -170,7 +194,11 @@ void DataRepeater::SetSource(const QHostAddress &source)
 */
 void DataRepeater::SetSource(const QString &source)
 {
+#if QT_VERSION < 0x050000
   QHostAddress s(QHostAddress::Any);
+#else
+  QHostAddress s(QHostAddress::AnyIPv4);
+#endif
   if (!s.setAddress(source))
   {
     // resolve host name into IP address
@@ -178,7 +206,11 @@ void DataRepeater::SetSource(const QString &source)
     if (!i.addresses().isEmpty())
       s=i.addresses().first();
     else
+#if QT_VERSION < 0x050000
       s=QHostAddress::Any;
+#else
+      s=QHostAddress::AnyIPv4;
+#endif
   }
   SetSource(s);
 }

@@ -193,7 +193,13 @@ int NetworkDevice::createSocket(void)
  */
 bool NetworkDevice::connect_handler(QHostAddress source, quint16 wPort, NetworkDevice::analyzeBufferFunction pFunction, void* pParam)
 {
-    if (source == QHostAddress::Any || source == QHostAddress::AnyIPv6)
+    if (
+#if QT_VERSION < 0x050000
+        source == QHostAddress::Any ||
+#else
+        source == QHostAddress::AnyIPv4 ||
+#endif
+        source == QHostAddress::AnyIPv6)
         source.clear();
     if ((source.isNull() && wPort == 0) || pFunction == NULL)
         return false;
@@ -229,7 +235,13 @@ bool NetworkDevice::connect_handler(QHostAddress source, quint16 wPort, NetworkD
  */
 void NetworkDevice::disconnect_handler(QHostAddress source, quint16 wPort, NetworkDevice::analyzeBufferFunction pFunction)
 {
-    if (source == QHostAddress::Any || source == QHostAddress::AnyIPv6)
+    if (
+#if QT_VERSION < 0x050000
+        source == QHostAddress::Any ||
+#else
+        source == QHostAddress::AnyIPv4 ||
+#endif
+        source == QHostAddress::AnyIPv6)
         source.clear();
     if (pFunction == NULL && source.isNull())
         return;
