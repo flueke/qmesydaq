@@ -630,7 +630,7 @@ void Measurement::setPreset(quint8 cNum, quint64 prval, bool mast)
 {
 	if(m_counter.contains(cNum))
 	{
-		MSG_NOTICE << tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? "master" : "slave");
+		MSG_INFO << tr("setPreset counter: %1 to %2 %3").arg(cNum).arg(prval).arg(mast ? "master" : "slave");
 		m_counter[cNum]->setMaster(mast);
 		m_counter[cNum]->setLimit(prval);
 	}

@@ -141,7 +141,7 @@ void MPSD8::setGain(quint8 channel, quint8 gain, bool preset)
 		m_gainPoti[channel][preset] = gain;
 		m_gainVal[channel][preset] = gv;
 	}
-	MSG_NOTICE << tr("gain %1%2, %3, %4 to %5 (%6)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gain).arg(gv, 6, 'f', 2);
+	MSG_INFO << tr("gain %1%2, %3, %4 to %5 (%6)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(channel).arg(gain).arg(gv, 6, 'f', 2);
 }
 
 /*!
@@ -160,7 +160,7 @@ void MPSD8::setThreshold(quint8 threshold, bool preset)
 	m_threshPoti[preset] = calcThreshpoti(threshold);
 	m_threshVal[preset] = threshold;
 
-	MSG_NOTICE << tr("threshold %1%2, %3 to %4 (%5)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(threshold).arg(m_threshPoti[preset]);
+	MSG_INFO << tr("threshold %1%2, %3 to %4 (%5)").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(threshold).arg(m_threshPoti[preset]);
 }
 
 /*!
@@ -196,7 +196,7 @@ void MPSD8::setThreshpoti(quint8 thresh, bool preset)
  */
 void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool preset)
 {
-	MSG_NOTICE << tr("MPSD8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5").arg(chan).arg(pos).arg(poti).arg(on).arg(preset);
+	MSG_INFO << tr("MPSD8::setPulserPoti(chan = %1, pos = %2, poti = %3, on = %4, preset = %5").arg(chan).arg(pos).arg(poti).arg(on).arg(preset);
 	if(pos > MIDDLE)
 		m_pulsPos[preset] = MIDDLE;
 	else
@@ -211,7 +211,7 @@ void MPSD8::setPulserPoti(quint8 chan, quint8 pos, quint8 poti, quint8 on, bool 
 	m_pulsAmp[preset] = calcPulsAmp(poti, m_gainVal[chan][0]);
 	m_pulser[preset] = on;
 
-	MSG_NOTICE << tr("pulser poti %1%2, bus %3 to pos %4, poti %5 - ampl %6").
+	MSG_INFO << tr("pulser poti %1%2, bus %3 to pos %4, poti %5 - ampl %6").
 		arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(poti).arg(m_pulsAmp[preset], 6, 'f', 2);
 }
 
@@ -354,7 +354,7 @@ void MPSD8::setInternalreg(quint8 reg, quint16 val, bool preset)
 {
 	m_internalReg[reg][preset] = val;
 
-	MSG_NOTICE << tr("register %1%2, %3, %4, to %5").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(reg).arg(m_internalReg[reg][preset]);
+	MSG_INFO << tr("register %1%2, %3, %4, to %5").arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(reg).arg(m_internalReg[reg][preset]);
 }
 
 /*!

@@ -1300,7 +1300,7 @@ void Detector::setParamSource(quint16 id, quint16 param, quint16 source)
  */
 void Detector::setAuxTimer(quint16 id, quint16 tim, quint16 val)
 {
-	MSG_NOTICE << tr("set aux timer : ID = %1, timer = %2, interval = %3").arg(id).arg(tim).arg(val);
+	MSG_INFO << tr("set aux timer : ID = %1, timer = %2, interval = %3").arg(id).arg(tim).arg(val);
 	if (m_mcpd.contains(id))
 		m_mcpd[id]->setAuxTimer(tim, val);
 }
@@ -2115,7 +2115,7 @@ QMap<quint16, quint16>& Detector::getTubeMapping()
 
 QList<int> Detector::mcpdId(void)
 {
-	MSG_NOTICE << "Detector::mcpdId : " << m_mcpd.size();
+	MSG_INFO << "Detector::mcpdId : " << m_mcpd.size();
 	QList<int> st = m_mcpd.keys();
 	qSort(st);
 	return st;

@@ -161,13 +161,13 @@ quint8 MPSD8plus::calcPulsPoti(quint8 val, float gv)
  */
 quint8 MPSD8plus::calcPulsAmp(quint8 val, float gv)
 {
-	MSG_ERROR << tr("MPSD8plus::calcPulsAmp(val = %1, gv = %2").arg(val).arg(gv);
-	MSG_ERROR << tr("m_p1: %1, m_p2: %2").arg(m_p1).arg(m_p2);
+	MSG_INFO << tr("MPSD8plus::calcPulsAmp(val = %1, gv = %2").arg(val).arg(gv);
+	MSG_INFO << tr("m_p1: %1, m_p2: %2").arg(m_p1).arg(m_p2);
 	float pa = (m_p1 + (val * m_p2)) * gv;
 	quint8 pamp = (quint8) pa;
 	if(pa - pamp > 0.5)
 		pamp++;
-	MSG_ERROR << tr("pulspoti: %1, pulsamp: %2").arg(val).arg(pamp);
+	MSG_INFO << tr("pulspoti: %1, pulsamp: %2").arg(val).arg(pamp);
 	return pamp;
 }
 

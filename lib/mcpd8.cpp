@@ -128,7 +128,7 @@ bool MCPD8::init(void)
             {
                 case TYPE_MPSD8P:
                     cap = capabilities(c);
-                    MSG_NOTICE << tr("module : %1 capabilities : %2").arg(c).arg(cap);
+                    MSG_INFO << tr("module : %1 capabilities : %2").arg(c).arg(cap);
                     modus &= cap;
                     break;
                 case TYPE_MDLL :
@@ -145,7 +145,7 @@ bool MCPD8::init(void)
                     break;
             }
         }
-    MSG_NOTICE << tr("setting modus : %1").arg(modus);
+    MSG_INFO << tr("setting modus : %1").arg(modus);
     if (m_mdll.isEmpty())
     {
         if (setTxMode(modus))
@@ -1178,7 +1178,7 @@ bool MCPD8::setCounterCell(quint16 source, quint16 trigger, quint16 compare)
     }
     if (errorflag)
     {
-        MSG_NOTICE << tr("mcpd %1: set counter cell %2: trigger # is %3, compare value %4.").arg(m_byId).arg(source).arg(trigger).arg(compare);
+        MSG_INFO << tr("mcpd %1: set counter cell %2: trigger # is %3, compare value %4.").arg(m_byId).arg(source).arg(trigger).arg(compare);
 
         MSG_DEBUG << tr("SETCELL %1").arg(m_byId);
         QMutexLocker locker(m_pCommandMutex);
@@ -1230,7 +1230,7 @@ bool MCPD8::setParamSource(quint16 param, quint16 source)
 {
     if (!m_mdll.isEmpty() && m_mdll[0]->type() != TYPE_MDLL)
         return true;
-    MSG_NOTICE << tr("set parameter source %1 to %2").arg(param).arg(source);
+    MSG_INFO << tr("set parameter source %1 to %2").arg(param).arg(source);
     if(param > 3 || source > 8)
         return false;
     MSG_DEBUG << tr("SETPARAM %1").arg(m_byId);
@@ -2019,7 +2019,7 @@ bool MCPD8::parseCmdBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                 m_capabilities = m_txMode = 0;
                 m_reg = 0xFFF;
             }
-            MSG_NOTICE << tr("GETCAPABILITIES %1").arg(m_reg);
+            MSG_INFO << tr("GETCAPABILITIES %1").arg(m_reg);
             break;
         case SETCAPABILITIES:
             if(pMdp->data[0] == m_txMode)
