@@ -583,7 +583,7 @@ void ImageChannel::read_value(Tango::Attribute &attr)
 
 	std::vector<Tango::DevULong> tmp1;
 	for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
-		tmp1.push_back(quint32(*it));
+		tmp1.push_back(Tango::DevULong(*it));
 	std::vector<Tango::DevULong>::iterator it = tmp1.begin();
 	for (int i = 0; i < s.height(); ++i)
 	{
@@ -600,7 +600,7 @@ void ImageChannel::read_value(Tango::Attribute &attr)
 	for (int i = 0; i < s.width(); ++i)
 		for (int j = 0; j < s.height(); ++j)
 		{
-			int idx = i * s.width() + j;
+			int idx = i * s.height() + j;
 			Tango::DevULong val = tmp1[idx];
 			attr_value_read[k++] = val;
 		}
