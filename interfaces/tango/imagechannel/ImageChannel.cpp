@@ -581,29 +581,17 @@ void ImageChannel::read_value(Tango::Attribute &attr)
 	QSize s = m_interface->readHistogramSize(m_histo);
 	QList<quint64> tmpList = m_interface->readHistogram(m_histo);
 
+	// Flipping back the data got from Mesydaq interface
 	std::vector<Tango::DevULong> tmp1;
-	for (QList<quint64>::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
-		tmp1.push_back(Tango::DevULong(*it));
-	std::vector<Tango::DevULong>::iterator it = tmp1.begin();
-	for (int i = 0; i < s.height(); ++i)
+	for (int i = s.height(); i > 0; --i)
 	{
-		std::reverse(it, it + s.width());
-		it += s.width();
+		int idx = (i - 1) * s.width();
+		for (int j = 0; j < s.width(); ++j, ++idx)
+			tmp1.push_back(Tango::DevULong(tmpList[idx]));
 	}
-	std::reverse(tmp1.begin(), tmp1.end());
-#if 0
-	tmp.push_back(s.width());
-	tmp.push_back(s.height());
-	tmp.push_back(1);
-#endif
-	int k = 0;
-	for (int i = 0; i < s.width(); ++i)
-		for (int j = 0; j < s.height(); ++j)
-		{
-			int idx = i * s.height() + j;
-			Tango::DevULong val = tmp1[idx];
-			attr_value_read[k++] = val;
-		}
+	int idx(0);
+	for (std::vector<Tango::DevULong>::const_iterator it = tmp1.begin(); it != tmp1.end(); ++it, ++idx)
+		attr_value_read[idx] = Tango::DevULong(*it);
 	attr.set_value(attr_value_read, tmpList.length()); // max: 16777216 = 4096 x 4096
 
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::read_value
