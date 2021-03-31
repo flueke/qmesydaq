@@ -1126,7 +1126,10 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 					m_Hist[AmplitudeHistogram]->addValue(x, y, amp);
 					m_Spectrum[AmplitudeSpectrum]->incVal(amp & 0xFF);
 					int mdll = x / (setupType() == Mdll2 ? 1024 : 960);
-					m_Amplitude[mdll]->incVal(amp & 0xFF);
+					if (mdll < m_Amplitude.size())
+						m_Amplitude[mdll]->incVal(amp & 0xFF);
+					else
+						MSG_ERROR << tr("Amplitude adding failed: x=%1, setuptype=%2, mdll=%3").arg(x).arg(setupType()).arg(mdll);
 				}
 				else
 					m_Hist[AmplitudeHistogram]->incVal(x, amp);
