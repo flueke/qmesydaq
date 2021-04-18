@@ -196,7 +196,12 @@ quint64 MesydaqTimer::value(void)
 void MesydaqTimer::setTime(quint64 val)
 {
 	if (!isStopped())
-		m_value = val - m_start;
+	{
+		if (val >= m_start)
+			m_value = val - m_start;
+		else
+			MSG_ERROR << tr("Got time before starting: %1 %2").arg(val).arg(m_start);
+	}
 	if (isStopped())
 	{
 		MSG_INFO << tr("timer stop");
