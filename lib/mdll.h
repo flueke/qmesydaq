@@ -78,6 +78,9 @@ public:
 	//! \return is the module online or not
 	bool online(void) const;
 
+	//! \return the effective module width, i.e. number of histogrammed tubes
+	virtual quint16 width() const = 0;
+
 protected:
 	//! MCPD-8 id
 	quint8 		m_mcpdId;
@@ -190,6 +193,8 @@ public:
 	 */
 	bool	getMode(bool preset = false) const;
 
+	virtual quint16 width() const;
+
 #if 0
 // Internal registers related methods
 	virtual void	setInternalreg(quint8 reg, quint16 val, bool preset = false);
@@ -283,6 +288,8 @@ public:
 
 	//! returns the number of channels
 	quint16 channels() const;
+
+	virtual quint16 width() const;
 };
 
 #endif

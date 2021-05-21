@@ -355,6 +355,8 @@ private:
 
 	void stdInit(void);
 
+	void updateWidth(void);
+
 private:
 	//! test mode: do not initialize, for testing existence only (read MCPD version)
 	bool		m_bTestOnly;
@@ -454,7 +456,7 @@ private:
 	QMap<quint16, quint16> m_tubeMapping;
 
 	//! Store the effective width
-	int		m_width;
+	quint16		m_width;
 };
 
 #endif

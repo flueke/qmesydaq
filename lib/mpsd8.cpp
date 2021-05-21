@@ -639,7 +639,7 @@ quint8 MPSD8::getChannels() const
 	return 8;
 }
 
-quint8 MPSD8::width() const
+quint16 MPSD8::width() const
 {
 	return m_width;
 }

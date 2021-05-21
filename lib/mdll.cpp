@@ -416,3 +416,8 @@ bool MDLL::getMode(bool preset) const
 {
 	return m_timingMode[preset];
 }
+
+quint16 MDLL::width() const
+{
+	return histogram() ? 960 : 0;
+}

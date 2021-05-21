@@ -173,3 +173,8 @@ quint16 MWPCHR::channels() const
 {
 	return 1024;
 }
+
+quint16 MWPCHR::width() const
+{
+	return histogram() ? 1024 : 0;
+}

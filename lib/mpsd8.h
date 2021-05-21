@@ -74,8 +74,8 @@ public:
 	//! \return is the module online or not
 	virtual bool online(void) const;
 
-	//! \return the effictive module width, i.e. number of histogrammed tubes
-	quint8 width() const;
+	//! \return the effective module width, i.e. number of histogrammed tubes
+	quint16 width() const;
 
 // Pulser related methods
 	virtual void	setPulser(quint8 chan, quint8 pos = 2, quint8 poti = 128, quint8 on = 0, bool preset = false);

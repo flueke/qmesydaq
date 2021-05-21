@@ -2779,6 +2779,7 @@ void MCPD8::setHistogram(bool hist)
     }
     if (!hist)
         setActive(false);
+    updateWidth();
 }
 
 /*!
@@ -2796,6 +2797,7 @@ void MCPD8::setHistogram(quint16 id, bool hist)
         m_mpsd[id]->setHistogram(hist);
     if (!hist)
         setActive(id, false);
+    updateWidth();
 }
 
 /*!
@@ -2813,21 +2815,21 @@ void MCPD8::setHistogram(quint16 id, quint16 chan, bool hist)
         m_mpsd[id]->setHistogram(chan, hist);
     if (!hist)
         setActive(id, chan, false);
+    updateWidth();
+}
+
+void MCPD8::updateWidth()
+{
     // update the effective width
-    m_width = 0;
     if (!m_mdll.isEmpty())
-        switch (m_mdll[0]->getModuleId())
-        {
-            case TYPE_MDLL :
-                m_width = histogram() ? 960 : 0;
-		break;
-            case TYPE_MWPCHR:
-                m_width = histogram() ? 1024 : 0;
-        }
+        m_width = m_mdll[0]->width();
     else
+    {
+        m_width = 0;
         for (quint8 c = 0; c < 8; c++)
             if (m_mpsd.find(c) != m_mpsd.end())
                 m_width += m_mpsd[c]->width();
+    }
 }
 
 /*!
