@@ -585,7 +585,7 @@ histogram file</string>
              </layout>
             </item>
             <item row="0" column="1">
-             <spacer name="horizontalSpacer">
+             <spacer name="horizontalSpacer_1">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -1280,7 +1280,7 @@ histogram file</string>
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QLabel" name="textLabel24">
+            <widget class="QLabel" name="textLabel26">
              <property name="text">
               <string>Sigma:</string>
              </property>
