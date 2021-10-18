@@ -461,7 +461,7 @@ void MainWidget::startStopSlot(bool checked)
 				sName = interface->getHistogramFileName();
 			if (sName.isEmpty())
 				sName = m_meas->getHistfilename();
-#ifdef USE_CARESS
+#if defined(USE_CARESS) || defined(USE_TANGO)
 			else
 				autoSaveHistogram->setChecked(true);
 #endif
