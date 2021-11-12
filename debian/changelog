@@ -2,13 +2,13 @@ qmesydaq (0.93.2) unstable; urgency=low
 
   * UNRELEASED
 
- -- Jenkins <jenkins@debuild.taco.frm2>  Mon, 13 Jul 2020 14:45:00 +0100
+ -- Jenkins <jenkins@debuild.taco.frm2.tum.de>  Mon, 13 Jul 2020 14:45:00 +0100
 
 qmesydaq (0.50.7) unstable; urgency=low
 
   * UNRELEASED
 
- -- Jenkins <jenkins@debuild.taco.frm2>  Mon, 27 Nov 2017 20:28:26 +0100
+ -- Jenkins <jenkins@debuild.taco.frm2.tum.de>  Mon, 27 Nov 2017 20:28:26 +0100
 
 qmesydaq (0.50.6) unstable; urgency=low
 
@@ -22,7 +22,7 @@ qmesydaq (0.50.6) unstable; urgency=low
 
   [ Jenkins ]
 
- -- Jenkins <jenkins@debuild.taco.frm2>  Mon, 27 Nov 2017 20:11:03 +0100
+ -- Jenkins <jenkins@debuild.taco.frm2.tum.de>  Mon, 27 Nov 2017 20:11:03 +0100
 
 qmesydaq (0.50.5) unstable; urgency=low
 
@@ -32,7 +32,7 @@ qmesydaq (0.50.5) unstable; urgency=low
 
   [ Jenkins ]
 
- -- Jenkins <jenkins@debuild.taco.frm2>  Fri, 24 Nov 2017 19:33:56 +0100
+ -- Jenkins <jenkins@debuild.taco.frm2.tum.de>  Fri, 24 Nov 2017 19:33:56 +0100
 
 qmesydaq (0.50.4) unstable; urgency=low
 
@@ -60,7 +60,7 @@ qmesydaq (0.50.4) unstable; urgency=low
 
   [ Jenkins ]
 
- -- Jenkins <jenkins@debuild.taco.frm2>  Wed, 22 Nov 2017 09:50:07 +0100
+ -- Jenkins <jenkins@debuild.taco.frm2.tum.de>  Wed, 22 Nov 2017 09:50:07 +0100
 
 qmesydaq (0.50.3) unstable; urgency=low
 
@@ -151,7 +151,7 @@ qmesydaq (0.50.3) unstable; urgency=low
 
   [ Jenkins ]
 
- -- Jenkins <jenkins@debuild.taco.frm2>  Mon, 09 Oct 2017 14:12:37 +0200
+ -- Jenkins <jenkins@debuild.taco.frm2.tum.de>  Mon, 09 Oct 2017 14:12:37 +0200
 
 qmesydaq (0.50.1) unstable; urgency=low
 
@@ -1613,4 +1613,4 @@ qmesydaq (0.50.1) unstable; urgency=low
 
   [ Jenkins ]
 
- -- Jenkins <jenkins@debuild.taco.frm2>  Wed, 13 Apr 2016 15:53:07 +0200
+ -- Jenkins <jenkins@debuild.taco.frm2.tum.de>  Wed, 13 Apr 2016 15:53:07 +0200
