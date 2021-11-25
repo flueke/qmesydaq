@@ -784,7 +784,13 @@ Spectrum *Measurement::spectrum(const SpectrumType t, int mdll)
 			break;
 		case SingleTubeSpectrum :
 			if (m_Spectrum[SingleTubeSpectrum] && m_Spectrum[SingleTubeSpectrum]->width() > 0)
+			{
+				Histogram *h = m_Hist[PositionHistogram];
+				Spectrum *spec = m_Spectrum[SingleTubeSpectrum];
+				for (int i = 0; i < h->width(); ++i)
+					spec->setValue(i, h->spectrum(i)->getTotalCounts());
 				return m_Spectrum[SingleTubeSpectrum];
+			}
 			break;
 		case Diffractogram :
 #if 0
