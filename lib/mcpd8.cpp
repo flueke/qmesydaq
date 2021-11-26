@@ -2382,6 +2382,12 @@ bool MCPD8::parseDataBuffer(QSharedDataPointer<SD_PACKET> pPacket)
                     }
                     amp &= 0x1FF;               // in MSB of amp is the information left/right
                     y = 0;
+		    x = m_tubeMapping.value(x, 0xFFFF);
+		    if (x == 0xFFFF)
+                    {
+			// ignored++;
+			continue;
+		    }
 #if 0
                     MSG_DEBUG << tr("MSTD-16 event: id: %3, chan : %1 : x : %5 :pos : %2 : amp : %4").arg(chan).arg(y).arg(id).arg(amp).arg(x);
                     MSG_DEBUG << tr("Put this event into channel : %1").arg(lchan);
