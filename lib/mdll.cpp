@@ -237,7 +237,7 @@ void MDLL::setPulser(quint8 pos, quint8 amp, quint8 on, bool preset)
 /*!
     \fn quint8 MDLL::getSpectrum(quint8 val)
 
-    \param val 
+    \param val
     \return the spectrum
  */
 quint8 MDLL::getSpectrum(quint8 val)

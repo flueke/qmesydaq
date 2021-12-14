@@ -98,7 +98,7 @@ void TANGOLoop::runLoop()
 	for (int i = 0; i < 6; ++i)
 		deviceList << m_counterDevice[i];
 
-	QString devices = deviceList.join(" ");	
+	QString devices = deviceList.join(" ");
 	QString fullname("qmesydaq/" + m_personal);
 	MSG_ERROR << tr("device_server to start %1 with device(s) %2").arg(fullname).arg(devices);
 
@@ -141,7 +141,7 @@ void TANGOLoop::runLoop()
 		//----------------------------------------
 		Tango::Util *tg = Tango::Util::init(argc, argv);
 
-		// Create the device server singleton 
+		// Create the device server singleton
 		//	which will create everything
 		//----------------------------------------
 		tg->server_init(false);

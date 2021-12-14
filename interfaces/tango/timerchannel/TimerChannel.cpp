@@ -9,23 +9,23 @@
 //               network. All commands which can be executed on the
 //               TimerChannel are implemented in this file.
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -158,7 +158,7 @@ void TimerChannel::init_device()
 	//	Initialization before get_device_property() call
 
 	/*----- PROTECTED REGION END -----*/	//	TimerChannel::init_device_before
-	
+
 	if (Tango::Util::instance()->is_svr_starting() == false  &&
 		Tango::Util::instance()->is_device_restarting(device_name)==false)
 	{
@@ -166,7 +166,7 @@ void TimerChannel::init_device()
 		DetectorChannel_ns::DetectorChannel::init_device();
 	}
 	//	No device property to be read from database
-	
+
 	attr_preselection_read = new Tango::DevDouble[1];
 	attr_value_read = new Tango::DevDouble[1];
 	/*----- PROTECTED REGION ID(TimerChannel::init_device) ENABLED START -----*/

@@ -24,7 +24,7 @@
 #include "mpsd8.h"
 
 /**
- * \short representation of MSTD-16 peripheral module 
+ * \short representation of MSTD-16 peripheral module
  *
  * \author Jens Krüger <jens.krueger@frm2.tum.de>
  */

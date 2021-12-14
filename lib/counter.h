@@ -36,7 +36,7 @@ Q_OBJECT
 
 public:
 	//! constructor
-	MesydaqCounter(); 
+	MesydaqCounter();
 
 	/**
 	 * starts the counter at time %time%
@@ -47,16 +47,16 @@ public:
 
 	/**
 	 * stops the counter at time %time%
-	 * 
+	 *
 	 * \param time stop time
 	 */
 	virtual void stop(quint64 time);
 
-	/** 
+	/**
 	 * increments the counter if not limit reached and emits the signal
 	 * stop() if the limit is reached
 	 */
-	void operator++(void); 
+	void operator++(void);
 
 	/**
 	 * this operator returns the current value of the counter
@@ -69,17 +69,17 @@ public:
 
 	/**
 	 * sets the counter value
-	 * 
+	 *
 	 * \param val new counter value
 	 */
-	void set(quint64 val); 
-	
+	void set(quint64 val);
+
 	//! sets the counter value to zero
-	void reset(void); 
+	void reset(void);
 
 	/**
-	 * Sets the counter limit if this counter is configured as master otherwise the limit will be cleared. 
-	 * If this limit will be reached the signal stop() will be emitted. 
+	 * Sets the counter limit if this counter is configured as master otherwise the limit will be cleared.
+	 * If this limit will be reached the signal stop() will be emitted.
 	 *
 	 * \param val counter limit, if the value is zero no limit will be set
 	 */
@@ -161,7 +161,7 @@ private:
 	quint64 	m_offset;
 
 	quint64 	m_meastime_msec;
-	
+
 	quint64 	m_ratetime_msec;
 
 	bool		m_rateflag;
@@ -189,7 +189,7 @@ public:
 	virtual void start(quint64 val);
 
 	//! \return current timer value
-	virtual quint64 value(void); 
+	virtual quint64 value(void);
 
 	/**
 	 * Sets the counter time

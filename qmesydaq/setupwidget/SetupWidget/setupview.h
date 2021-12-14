@@ -27,11 +27,11 @@ class SetupView : public QGraphicsView
     Q_OBJECT
 public:
     SetupView(QWidget *parent = 0);
-    
+
 signals:
     void zoomReset();
     void zoomChanged(double zoom);
-    
+
 public slots:
     void resetZoom();
     void setZoom(double zoom);
@@ -43,7 +43,7 @@ protected:
     void wheelEvent(QWheelEvent *event);
     double zoomfactor;
     bool zoomable;
-    
+
 };
 
 #endif // SETUPVIEW_H

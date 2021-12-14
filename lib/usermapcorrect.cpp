@@ -214,15 +214,15 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 			QStringList list = tmp.split(QRegExp("\\s+"));
 			switch (i)
 			{
-				case 0 :
+				case 0:
 					if (list.at(0) != "mesydaq")
 						return false;
 					break;
-				case 1 :
+				case 1:
 					if (list.at(0) != "position")
 						return false;
 					break;
-				case 2 :
+				case 2:
 					if (list.at(0) != "bin")
 						return false;
 					iSrcWidth = iDstWidth = (list.size() - 1) / 2;
@@ -265,15 +265,15 @@ bool UserMapCorrection::loadLUTFile(const QString &fName)
 			QStringList list = tmp.split(QRegExp("\\s+"));
 			switch (i)
 			{
-				case 0 :
+				case 0:
 					if (list.at(0) != "mesydaq")
 						return false;
 					break;
-				case 1 :
+				case 1:
 					if (list.at(0) != "position")
 						return false;
 					break;
-				case 2 :
+				case 2:
 					if (list.at(0) != "bin")
 						return false;
 					break;

@@ -4,7 +4,7 @@
   \tableofcontents
 
 The various functional units of the MCPD allow building a highly flexible system,
-delivering exactly the data needed by an instrument. Not only neutron data, but 
+delivering exactly the data needed by an instrument. Not only neutron data, but
 also environmental parameters can be recorded in several ways.
 
 As it is not really self explaining how to use the many flexible possibilities
@@ -18,7 +18,7 @@ The system offers 3 different kind of data:
    Position and/or energy information, together with a detector address and a
    precise event timestamp
  - Counter/TTL event data generated in MCPD<br>
-   Counter values are buffered immediately on triggering together with ID 
+   Counter values are buffered immediately on triggering together with ID
    information and a precise timestamp, just like a neutron event..
 
    Sources:<br>
@@ -27,7 +27,7 @@ The system offers 3 different kind of data:
    Triggers:<br>
    Counter event readout can be triggered from one of 4 trigger sources:
     - One of 4 auxiliary timers:
- 
+
       This allows for repeated readout at fixed intervals (e.g. to get an easy
       monitor rate calculation)
 
@@ -63,7 +63,7 @@ The system offers 3 different kind of data:
    ADC data readout can be triggerd by nearly the same trigger sources as counters
    decribed above:
     - One of 4 auxialiary timers<br>
-      This allows for repeated readout at fixed intervals (e.g. to get a 
+      This allows for repeated readout at fixed intervals (e.g. to get a
       continuous readout of changing environmental parameters like temperature,
       fields, pressure, ... )
     - One of 2 auxiliary TTL inputs<br>
@@ -78,31 +78,31 @@ G
 
 Chopper signals need precise timing, so it's a good application for a self triggering
 TTL input:
- - Connect the TTL signal from chopper electronics to one of the 4 Monitor/Chopper 
+ - Connect the TTL signal from chopper electronics to one of the 4 Monitor/Chopper
    inputs or the one of the backpanel TTL inputs.
  - Configure the according counter cell using \ref cmd_9 command with:
     - cell#: 0 .. 3 for frontpanel, 4 .. 5 for backpanel
     - trigger source = 7 (trigger on compare register)
     - compare register = 22 (trigger on rising edge of input)
 
-Now each time the TTL input rises, a trigger event is generated, timestamped, 
+Now each time the TTL input rises, a trigger event is generated, timestamped,
 and buffered with the following data:
  - TrigID = 7 (compare register)
  - DataID = n (n = address of input)
- - Data = counter value (may perhaps be discarded in data processing for chopper 
+ - Data = counter value (may perhaps be discarded in data processing for chopper
    pulses)
 
 If a devider for chopper pulses is required, the compare register can be set to
-values other than "22": a "0" will lead to triggering every 2nd rising edge, a 
+values other than "22": a "0" will lead to triggering every 2nd rising edge, a
 "1" every 4th, ...
 
 \subsection monitor_counters Monitor counters
 
-Monitor counters normally don't need precise timing with a 100 ns timebase. So 
-there are several possibilities for monitor counter readout - depending on 
+Monitor counters normally don't need precise timing with a 100 ns timebase. So
+there are several possibilities for monitor counter readout - depending on
 instrumental needs:
 
-Connect the monitor counting output (TTL) to one of the 4 Monitor/Chopper inputs 
+Connect the monitor counting output (TTL) to one of the 4 Monitor/Chopper inputs
 or to one of the 2 backpanel TTL inputs.
 
 \subsubsection monitor_counter_as_parameter Monitor counter as header parameter
@@ -116,7 +116,7 @@ Use command \ref cmd_11 command with:
  - Source = 0 .. 3 for frontpanel inputs, 4 .. 5 for backpanel inputs
 
 Now each time a new data buffer is generated, the defined counters will be read
-into their assigned parameter fields. Timestamp is the header timestamp. 
+into their assigned parameter fields. Timestamp is the header timestamp.
 
 Buffers will be generated and transmitted whenever a buffer is full or at least
 every 40 ms (25 Hz minimum buffer frequency).
@@ -156,7 +156,7 @@ trigger event is generated, timestamped, and buffered with the following data:
  - Data = monitor counter value (may perhaps be discared in data processing for
    chopper pulses)
 
-This allows reading out monitor counters at any power of from 2<sup>1</sup> up to 
+This allows reading out monitor counters at any power of from 2<sup>1</sup> up to
 2<sup>22</sup>
 
 \subsubsection monitor_as_edge_event Monitor counter as edge triggered event
@@ -173,10 +173,10 @@ pressure, fields, ... .
 Often these values can be read out by analog voltage signal. MCPD allow to digitize
 such signals and fill the according values into the data stream.
 
-Just like described \ref monitor_as_timer_event "above" for monitor counters, 
+Just like described \ref monitor_as_timer_event "above" for monitor counters,
 also the ADC readout can be triggered by auxiliary timers:
  - Configure one of the 4 auxiliary timers with the appropriate trigger interval
-   using \ref cmd_10 command 
+   using \ref cmd_10 command
     - timer# = 0 .. 3
     - capture register: 0 .. 65536 (e.g. 10000 for 100 ms intervals)
  - Configure the ADC cell using the \ref cmd_9 command:
@@ -213,7 +213,7 @@ data transmission in one of the 4 parameter fields of the buffer header may be
 a solution:
 
 Use \ref cmd_11 command to setup the selected parameter field for transmission of the
-ADC values: Source = 6 will transmit a combination of both TTL input levels and 
+ADC values: Source = 6 will transmit a combination of both TTL input levels and
 both ADC values in the selected parameter field.
 
 Buffers are transmitted whenever they are full with events or latest every 40 ms.
@@ -231,8 +231,8 @@ stop condition for data taking. For this purpose it's mostly sufficient to have 
 monitor counter as one of the 4 header parameters to generate a stop condition.
 
 Same for external parameters:<br>
-It might be necessary to have a temperature/field/pressure profile with a 
-resolution of some hundred microseconds in offline data analysis. So a timer 
+It might be necessary to have a temperature/field/pressure profile with a
+resolution of some hundred microseconds in offline data analysis. So a timer
 triggered event generation with the necessary frequency is a good idea. But
 for the online status monitoring, the ADC values as one of the header parameters,
 transmitted every 40 ms latest, should be more than enough in most cases.

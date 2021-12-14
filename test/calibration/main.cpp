@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 		MSG_FATAL << QObject::tr("Read file : %1 ").arg(fileName);
 
 		Measurement *meas = new Measurement(new Detector());
-		
+
 		meas->readCalibration(fileName);
 		MapCorrection *map = meas->posHistMapCorrection();
 		for (int j = 0; j < 960; ++j)

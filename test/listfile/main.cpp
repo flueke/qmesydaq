@@ -9,7 +9,7 @@
 
 int main(int argc, char **argv)
 {
-	QString ip[] = {"192.168.168.121", "192.168.168.122", };	
+	QString ip[] = {"192.168.168.121", "192.168.168.122", };
 	quint16 port[] = {54321, 54321, };
 	QString sourceIP[] = {"192.168.168.5", "192.168.168.5", };
 
@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 	QCoreApplication app(argc, argv);
 
 	Detector *detector = new Detector();
-		
+
 	for (int i = 0; i < 2; i++)
 		detector->addMCPD(i, ip[i], port[i], sourceIP[i]);
 

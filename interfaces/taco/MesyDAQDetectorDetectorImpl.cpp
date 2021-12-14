@@ -158,10 +158,10 @@ DevShort MesyDAQ::Detector::Detector::deviceState(void) throw (::TACO::Exception
 		return ::TACO::State::FAULT;
 	switch (m_interface->status())
 	{
-		case 1 :
+		case 1:
 			return ::TACO::State::COUNTING;
 		default:
-		case 0 :
+		case 0:
 			return ::TACO::Server::deviceState();
 	}
 }

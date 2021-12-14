@@ -56,16 +56,16 @@ public:
 #endif
 
 	//! \return the length of the spectrum
-	virtual size_t size() const; 
+	virtual size_t size() const;
 
-	/*! 
+	/*!
 	    \param i cell number
 	    \return the cell number of the spectrum
 	 */
 	virtual double x(size_t i) const;
 
 	/*!
-	    \param i cell number 
+	    \param i cell number
 	    \return the counts of the cell i in spectrum
 	 */
 	virtual double y(size_t i) const;
@@ -135,7 +135,7 @@ public:
 #if QWT_VERSION < 0x060000
 	QSize rasterHint(const QRectF &) const;
 #endif
-	
+
 private:
 	//! The histogram data
 	Histogram		m_histogram;
@@ -153,7 +153,7 @@ class MesydaqPlotSpectrogram : public QwtPlotSpectrogram
 public:
 	/*!
              constructor
-          
+
 	     \param title
          */
 	MesydaqPlotSpectrogram(const QString &title = QString::null)

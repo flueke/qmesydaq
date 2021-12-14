@@ -37,9 +37,9 @@ class DialogBase : public QDialog
     Q_OBJECT
 public:
     DialogBase(QWidget *parent = 0);
-    
+
 signals:
-    
+
 public slots:
 
 protected:
@@ -67,7 +67,6 @@ private:
     QDialogButtonBox *buttonBox;
     QAction *aboutQtAction;
 
-    
 };
 
 #endif // DIALOGBASE_H

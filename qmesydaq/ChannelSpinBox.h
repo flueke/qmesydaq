@@ -23,7 +23,7 @@
 #include <QSpinBox>
 
 /**
- * \short Spinbox to select one of the channels over all modules 
+ * \short Spinbox to select one of the channels over all modules
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  * \version 0.1
  */

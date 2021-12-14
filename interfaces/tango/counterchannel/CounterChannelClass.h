@@ -6,26 +6,26 @@
 // description : Include for the CounterChannel root class.
 //               This class is the singleton class for
 //                the CounterChannel device class.
-//               It contains all properties and methods which the 
+//               It contains all properties and methods which the
 //               CounterChannel requires only once e.g. the commands.
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -109,7 +109,7 @@ class CounterChannelClass : public DetectorChannel_ns::DetectorChannelClass
 		Tango::DbData	cl_prop;
 		Tango::DbData	cl_def_prop;
 		Tango::DbData	dev_def_prop;
-	
+
 		//	Method prototypes
 		static CounterChannelClass *init(const char *);
 		static CounterChannelClass *instance();
@@ -117,7 +117,7 @@ class CounterChannelClass : public DetectorChannel_ns::DetectorChannelClass
 		Tango::DbDatum	get_class_property(string &);
 		Tango::DbDatum	get_default_device_property(string &);
 		Tango::DbDatum	get_default_class_property(string &);
-	
+
 	protected:
 		CounterChannelClass(string &);
 		static CounterChannelClass *_instance;
@@ -129,7 +129,7 @@ class CounterChannelClass : public DetectorChannel_ns::DetectorChannelClass
 		void get_class_property();
 		string get_cvstag();
 		string get_cvsroot();
-	
+
 	private:
 		void device_factory(const Tango::DevVarStringArray *);
 		void create_static_attribute_list(vector<Tango::Attr *> &);

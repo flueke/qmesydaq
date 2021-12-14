@@ -19,7 +19,7 @@
 
 
 TEMPLATE = app
-TARGET = 
+TARGET =
 DEPENDPATH += . src res
 INCLUDEPATH += . ../GraphicsSceneWidget
 DESTDIR = bin

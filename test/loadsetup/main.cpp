@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 		qDebug() << group;
 //		qDebug() << settings.childKeys();
 		settings.endGroup();
-	}	
+	}
 //	delete mesy;
 	return 0;
 }

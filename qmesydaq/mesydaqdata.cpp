@@ -171,7 +171,7 @@ QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
 {
 	return QwtRasterData::rasterHint(r);
 }
-	
+
 /*!
      \fn QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area) const
 
@@ -180,7 +180,7 @@ QSize MesydaqHistogramData::rasterHint(const QRectF &r) const
     \param xMap
     \param yMap
     \param area
- 
+
     \return image of the rendered spectrogram
  */
 QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtScaleMap &yMap, const QRectF &area)	const
@@ -192,13 +192,13 @@ QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtSca
 	QwtRasterData &d_data = const_cast<QwtRasterData &>(data());
 	if (d_data.boundingRect().isEmpty())
 		return QImage();
-	
+
 //	QRect dataRect = transform(xMap, yMap, d_data.boundingRect());
 
 	QwtColorMap::Format format = colorMap().format();
-	
+
 	QImage image(rect.size(), format == QwtColorMap::RGB ? QImage::Format_ARGB32 : QImage::Format_Indexed8);
-	
+
 	const QwtDoubleInterval intensityRange = d_data.range();
 	if (!intensityRange.isValid())
 		return image;
@@ -221,12 +221,12 @@ QImage MesydaqPlotSpectrogram::renderImage(const QwtScaleMap &xMap, const QwtSca
 					ty = int(t);
 					val = d_data.value(tx, ty);
 					rgb = colorMap().rgb(intensityRange, val);
-				}	
+				}
 				image.setPixel(x - rect.left(), y - rect.top(), rgb);
 			}
-		}	
+		}
 	}
-	return image;	
+	return image;
 //	return QwtPlotSpectrogram::renderImage(xMap, yMap, area);
 }
 #endif

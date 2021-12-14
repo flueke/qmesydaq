@@ -54,7 +54,7 @@ protected:
 	void postRequestCommand(CommandEvent::Command, QList<QVariant> = QList<QVariant>());
 	bool waitForEvent(void);
 
-	//! receiver object 
+	//! receiver object
 	QObject *m_receiver;
 
 	//! indicator for received events

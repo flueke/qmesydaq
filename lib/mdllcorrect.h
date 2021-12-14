@@ -46,4 +46,4 @@ public:
 	MdllMapCorrection(const QSize &srcSize, const QSize &destSize);
 };
 
-#endif 
+#endif

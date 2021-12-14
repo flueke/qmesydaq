@@ -66,7 +66,7 @@ void analyzeBuffer(const DATA_PACKET &pd)
 		MSG_DEBUG << QObject::tr("# : %1 has %2 events").arg(pd.bufferNumber).arg(datalen);
 //
 // status IDLE is for replaying files
-// 
+//
 		for(quint32 counter = 0, i = 0; i < datalen; ++i, counter += 3)
 		{
 			tim = pd.data[counter + 1] & 0x7;
@@ -85,23 +85,23 @@ void analyzeBuffer(const DATA_PACKET &pd)
 //				quint16 time = (quint16)tim;
 				switch(dataId)
 				{
-					case MON1ID :
-					case MON2ID :
-					case MON3ID :
-					case MON4ID :
+					case MON1ID:
+					case MON2ID:
+					case MON3ID:
+					case MON4ID:
 						++monitorTriggers;
 //						++(*m_counter[dataId]);
 //						MSG_DEBUG << QObject::tr("counter %1 : (%3 - %4)%2 : %5").arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data), DEBUG);
 						break;
-					case TTL1ID :
-					case TTL2ID :
+					case TTL1ID:
+					case TTL2ID:
 						++ttlTriggers;
 //						++(*m_counter[dataId]);
 //						MSG_DEBUG << QObject::tr("counter %1 : (%3 - %4)%2 : %5")
 //							.arg(dataId).arg(m_counter[dataId]->value()).arg(i).arg(triggers).arg(data);
 						break;
-					case ADC1ID :
-					case ADC2ID :
+					case ADC1ID:
+					case ADC2ID:
 						++adcTriggers;
 //						++(*m_counter[dataId]);
 //						MSG_DEBUG << QObject::tr("counter %1 : (%3 - %4)%2 : %5")
@@ -127,7 +127,7 @@ void analyzeBuffer(const DATA_PACKET &pd)
 				{
 //
 // in MDLL, data format is different:
-// The position inside the PSD is used as y direction 
+// The position inside the PSD is used as y direction
 // Therefore the x position of the MDLL has to be used as channel
 // the y position as position and the channel value is the amplitude value
 // y position (10 bit) is at MPSD "Amplitude" data
@@ -214,7 +214,7 @@ void analyzeBuffer(const DATA_PACKET &pd)
 				}
 			}
 #endif
-		}		
+		}
 		MSG_DEBUG << QObject::tr("# : %1 params: %2 %3 %4 %5").arg(pd.bufferNumber).arg(param[0]).arg(param[1]).arg(param[2]).arg(param[3]);
 	}
 	else
@@ -222,7 +222,7 @@ void analyzeBuffer(const DATA_PACKET &pd)
 }
 
 static const quint16  	sep0 = 0x0000;
-static const quint16  	sep5 = 0x5555;    
+static const quint16  	sep5 = 0x5555;
 static const quint16  	sepA = 0xAAAA;
 static const quint16  	sepF = 0xFFFF;
 
@@ -247,7 +247,7 @@ bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 		ok = (dataBuf.bufferLength < 730);
 		if (ok)
 		{
-			int buflen = (dataBuf.bufferLength - 4) * sizeof(quint16); 
+			int buflen = (dataBuf.bufferLength - 4) * sizeof(quint16);
 			char *pD = (char *)&dataBuf.runID;
 			ok = datStream.readRawData(pD, buflen) == buflen;
 			if (ok)
@@ -289,13 +289,13 @@ void readListfile(QString readfilename)
 	m_diffractogram = new Spectrum(0);
 	m_tubeSpectrum = new Spectrum(0);
 	m_tubeSpectrum->setAutoResize(true);
-    
+
 	datfile.setFileName(readfilename);
 	datfile.open(QIODevice::ReadOnly);
 	datStream.setDevice(&datfile);
 	textStream.setDevice(&datfile);
 #if 0
-	char buffer[1500];	
+	char buffer[1500];
 	while (!datStream.atEnd())
 	{
 		datStream.readRawData(buffer, 1500);
@@ -316,7 +316,7 @@ void readListfile(QString readfilename)
 	g_neutrons = g_triggers = 0;
 
 	qint64	seekPos(0);
-	for(;;) 
+	for(;;)
 	{
 		str = textStream.readLine();
 		seekPos += str.size() + 1;
@@ -349,7 +349,7 @@ void readListfile(QString readfilename)
 			{
 				QCoreApplication::processEvents();
 			}
-		}	
+		}
 	else
 	{
 		QChar c('0');

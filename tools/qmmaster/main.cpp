@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	int	id = 0;
 	bool	master = false;
 	bool	term = false;
-	
+
 	QStringList args = app.arguments();
 	if (args.size() > 1)
 	{

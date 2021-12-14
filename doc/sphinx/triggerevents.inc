@@ -42,11 +42,11 @@ MSB
          4 bit
 
 :Data:  Counter, timer, or ADC value of the identified data source
-        
+
         21 bit (depending on source not necessarily all valid)
-        
+
 :Timestamp:     timing offset to the corresponding header timestamp
-               
+
                 event time = header timestamp + event timestamp
 
                 19 bit

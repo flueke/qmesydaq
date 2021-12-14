@@ -1350,7 +1350,7 @@ void MainWidget::setHistogramType(int val)
 	m_histoType = Measurement::HistogramType(val);
 	switch (m_histoType)
 	{
-		case Measurement::PositionHistogram :
+		case Measurement::PositionHistogram:
 		case Measurement::AmplitudeHistogram:
 		case Measurement::CorrectedPositionHistogram:
 			{
@@ -1466,7 +1466,7 @@ void MainWidget::draw(void)
 	QString roiText(tr("Counts"));
 	switch (m_mode)
 	{
-		case Plot::Histogram :
+		case Plot::Histogram:
 			if (setupType() == Mdll || setupType() == Mdll2)
 			{
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "X (channel)");
@@ -1496,7 +1496,7 @@ void MainWidget::draw(void)
 				counts = histogram.getCounts(m_zoomedRect);
 			}
 			break;
-		case Plot::Diffractogram :
+		case Plot::Diffractogram:
 			spec = m_meas->spectrum(Measurement::Diffractogram);
 			if (m_zoomedRect.isEmpty())
 				m_zoomedRect = QRectF(0, 0, spec ? spec->width() : 1, 1);
@@ -1507,7 +1507,7 @@ void MainWidget::draw(void)
 			if (spec)
 				counts = spec->getCounts(m_zoomedRect);
 			break;
-		case Plot::SingleSpectrum :
+		case Plot::SingleSpectrum:
 			if (setupType() == Mdll || setupType() == Mdll2)
 			{
 				int mdll = dispAll->isChecked() ? -1 : dispMcpd->value();
@@ -1526,7 +1526,7 @@ void MainWidget::draw(void)
 				counts = spec->getCounts(m_zoomedRect);
 			break;
 		case Plot::ModuleSpectrum:
-		case Plot::Spectrum :
+		case Plot::Spectrum:
 			if (setupType() == Mdll || setupType() == Mdll2)
 				m_dataFrame->setAxisTitle(QwtPlot::xBottom, "Y (channel)");
 			if(dispAll->isChecked())
@@ -2562,7 +2562,7 @@ void MainWidget::selectUserMode(int val)
 {
 	switch (val)
 	{
-		case MainWidget::User :
+		case MainWidget::User:
 			realTimeLabel->setHidden(true);
 			extendedStatusBox->setHidden(true);
 			deltaTimingBox->setHidden(true);

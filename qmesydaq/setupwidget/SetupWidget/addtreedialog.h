@@ -52,9 +52,9 @@ public:
 //    void setSubChannelAmount(int amount);
 //    void setTopLevelAmount(int amount);
 
-    
+
 signals:
-    
+
 public slots:
 
 private slots:
@@ -76,7 +76,7 @@ private:
     QSpinBox *subMPSDSpinBox;
     QSpinBox *subChannelSpinBox;
     QDialogButtonBox *buttonBox;
-    
+
 };
 
 #endif // ADDTREEDIALOG_H

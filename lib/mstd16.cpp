@@ -59,16 +59,16 @@ void MSTD16::setPulser(quint8 chan, quint8 pos, quint8 amp, quint8 on, bool pres
 		m_pulsPos[preset] = LEFT;
 	else
 		m_pulsPos[preset] = pos;
-    
+
 	if(chan > 7)
 		m_pulsChan[preset] = 7;
 	else
 		m_pulsChan[preset] = chan;
-    	
+
 	m_pulsPoti[preset] = calcPulsPoti(amp, m_gainVal[chan][0]);
 	m_pulsAmp[preset] = amp;
 	m_pulser[preset] = on;
-   	
+
 	MSG_NOTICE << tr("pulser %1%2, bus %3 to pos %4, ampl %5 - poti %6").
 		arg(preset ? "preset " : "").arg(m_mcpdId).arg(m_busNum).arg(m_pulsPos[preset]).arg(amp).arg(m_pulsPoti[preset]);
 }

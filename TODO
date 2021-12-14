@@ -18,25 +18,25 @@
 
 - Display of slices in X direction
 
-- 1024/960 problem 10 bit/6bit (1024/64) bit 
+- 1024/960 problem 10 bit/6bit (1024/64) bit
 
 list mode data files:
-	- the interpretation of the data depends on the mode of the 
+	- the interpretation of the data depends on the mode of the
 	  MPSD's:
 		for the MPSD-8 modules is the setup the decision point
 		whether the data are position or amplitude !!!!!
-	- 
+	-
 
 - JK : 08/30/2011
 	Resize histogram if the setup of the modules has changed
 		- scanPeriSlot ???
 
 - JK : 08/30/2011
-	Histogram mapping to the tubes 
+	Histogram mapping to the tubes
 
 
 Histogramme enthalten Summen-Spektren in x- und y-Richtung
-	=> 
+	=>
 		- Ortsspektrum in x- und y-Richtung bei MDLL
 		- Channel-Summen-Spektrum und Diffraktogramm für MCPD/MPSD*
 	=>

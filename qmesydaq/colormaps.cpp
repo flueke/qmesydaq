@@ -40,7 +40,7 @@ void MesydaqColorMap::setLogarithmicScaling(void)
 	m_log = true;
 }
 
-QColor MesydaqColorMap::color(const QwtDoubleInterval &interval, double value) const 
+QColor MesydaqColorMap::color(const QwtDoubleInterval &interval, double value) const
 {
 	if (m_log)
 	{
@@ -87,7 +87,7 @@ QwtColorMap *MesydaqColorMap::copy() const
 #endif
 
 StdColorMap::StdColorMap()
-	: MesydaqColorMap() 
+	: MesydaqColorMap()
 {
 	setColorInterval(Qt::darkBlue, Qt::darkRed);
 	addColorStop(0.143, Qt::blue);
@@ -102,16 +102,16 @@ JetColorMap::JetColorMap()
 	: MesydaqColorMap()
 {
 	setColorInterval(QColor(0, 0, 127), QColor(127, 0, 0));
-	addColorStop(0.110, QColor(0, 0, 255));	
-	addColorStop(0.125, QColor(0, 0, 255));	
-	addColorStop(0.340, QColor(0, 221, 255));	
-	addColorStop(0.350, QColor(0, 229, 246));	
-	addColorStop(0.375, QColor(4, 255, 226));	
-	addColorStop(0.640, QColor(237, 255, 8));	
-	addColorStop(0.650, QColor(246, 245, 0));	
-	addColorStop(0.660, QColor(255, 236, 0));	
-	addColorStop(0.890, QColor(255, 18, 0));	
-	addColorStop(0.910, QColor(226, 0, 0));	
+	addColorStop(0.110, QColor(0, 0, 255));
+	addColorStop(0.125, QColor(0, 0, 255));
+	addColorStop(0.340, QColor(0, 221, 255));
+	addColorStop(0.350, QColor(0, 229, 246));
+	addColorStop(0.375, QColor(4, 255, 226));
+	addColorStop(0.640, QColor(237, 255, 8));
+	addColorStop(0.650, QColor(246, 245, 0));
+	addColorStop(0.660, QColor(255, 236, 0));
+	addColorStop(0.890, QColor(255, 18, 0));
+	addColorStop(0.910, QColor(226, 0, 0));
 }
 
 HotColorMap::HotColorMap()

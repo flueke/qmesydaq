@@ -30,7 +30,7 @@
 #include "qmlogging.h"
 
 static const quint16  	sep0 = 0x0000;
-static const quint16  	sep5 = 0x5555;    
+static const quint16  	sep5 = 0x5555;
 static const quint16  	sepA = 0xAAAA;
 static const quint16  	sepF = 0xFFFF;
 
@@ -57,7 +57,7 @@ bool getNextBlock(QDataStream &datStream, DATA_PACKET &dataBuf)
 		ok = (dataBuf.bufferLength < 730);
 		if (ok)
 		{
-			int buflen = (dataBuf.bufferLength - 4) * sizeof(quint16); 
+			int buflen = (dataBuf.bufferLength - 4) * sizeof(quint16);
 			char *pD = (char *)&dataBuf.runID;
 			ok = datStream.readRawData(pD, buflen) == buflen;
 			if (ok)
@@ -99,7 +99,7 @@ void readListfile(const QString &readfilename)
 	datStream.setDevice(&datfile);
 	textStream.setDevice(&datfile);
 #if 0
-	char buffer[1500];	
+	char buffer[1500];
 	while (!datStream.atEnd())
 	{
 		datStream.readRawData(buffer, 1500);
@@ -118,7 +118,7 @@ void readListfile(const QString &readfilename)
 		bcount(0);
 
 	qint64	seekPos(0);
-	for(;;) 
+	for(;;)
 	{
 		str = textStream.readLine();
 		seekPos += str.size() + 1;

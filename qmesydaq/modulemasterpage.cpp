@@ -22,7 +22,7 @@
 
 /*!
     constructor
-    
+
     \param parent parent widget
  */
 ModuleMasterPage::ModuleMasterPage(QWidget *parent)

@@ -766,11 +766,11 @@ Spectrum *Measurement::spectrum(const SpectrumType t, int mdll)
 {
 	switch(t)
 	{
-		case TubeSpectrum :
+		case TubeSpectrum:
 			if (m_Spectrum[TubeSpectrum]->width() > 0)
 				return m_Spectrum[TubeSpectrum];
 			break;
-		case SingleLineSpectrum :
+		case SingleLineSpectrum:
 			{
 				int pos = 0;
 				for (int i = 0; i < m_Hist[PositionHistogram]->width(); ++i)
@@ -782,7 +782,7 @@ Spectrum *Measurement::spectrum(const SpectrumType t, int mdll)
 			}
 			return m_Spectrum[SingleLineSpectrum];
 			break;
-		case SingleTubeSpectrum :
+		case SingleTubeSpectrum:
 			if (m_Spectrum[SingleTubeSpectrum] && m_Spectrum[SingleTubeSpectrum]->width() > 0)
 			{
 				Histogram *h = m_Hist[PositionHistogram];
@@ -792,7 +792,7 @@ Spectrum *Measurement::spectrum(const SpectrumType t, int mdll)
 				return m_Spectrum[SingleTubeSpectrum];
 			}
 			break;
-		case Diffractogram :
+		case Diffractogram:
 #if 0
 			m_Spectrum[Diffractogram]->resize(m_Hist[PositionHistogram]->height());
 			for (int i = 0; i < m_Spectrum[Diffractogram]->width(); ++i)
@@ -1094,18 +1094,18 @@ void Measurement::histogramEvents(QSharedDataPointer<EVENT_BUFFER> evb)
 				}
 				switch (it->ev_trigger.id)
 				{
-					case MON1ID :
-					case MON2ID :
-					case MON3ID :
-					case MON4ID :
+					case MON1ID:
+					case MON2ID:
+					case MON3ID:
+					case MON4ID:
 						++monitorTriggers;
 						break;
-					case TTL1ID :
-					case TTL2ID :
+					case TTL1ID:
+					case TTL2ID:
 						++ttlTriggers;
 						break;
-					case ADC1ID :
-					case ADC2ID :
+					case ADC1ID:
+					case ADC2ID:
 						++adcTriggers;
 #if 0
 						MSG_DEBUG << tr("counter %1 : (%2) %3").arg(dataId).arg(triggers).arg(m_counter[dataId]->value());
@@ -1593,15 +1593,15 @@ void Measurement::updateSetupType(void)
 		for (int j = 0; j < 8; ++j)
 			switch (m_detector->getModuleId(mod, j))
 			{
-				case TYPE_MSTD16 :
+				case TYPE_MSTD16:
 					if (m_detector->active(mod, j))
 						setSetupType(Mstd);
 					break;
-				case TYPE_MWPCHR :
+				case TYPE_MWPCHR:
 					if (m_detector->active(mod, j))
 						setSetupType(Mdll2);
 					break;
-				case TYPE_MDLL :
+				case TYPE_MDLL:
 					if (m_detector->active(mod, j))
 						setSetupType(Mdll);
 					break;

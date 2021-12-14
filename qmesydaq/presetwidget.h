@@ -46,7 +46,7 @@ public:
 
 	void setPresetValue(const quint64 = 0);
 
-	void setValue(const quint64 = 0); 
+	void setValue(const quint64 = 0);
 
 	void setRate(const quint64 = 0);
 

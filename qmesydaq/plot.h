@@ -45,7 +45,7 @@ class MesydaqSpectrumData;
 class MesydaqColorMap;
 
 /**
- * \short The curve to display a spectrum 
+ * \short The curve to display a spectrum
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
@@ -54,18 +54,18 @@ class SpectrumCurve : public QwtPlotCurve
 public:
 	//! default constructor
 	SpectrumCurve();
-	
+
 	/*!
 	 * Constructor
-	 *	 
-	 * \param p pen for the curve 
+	 *
+	 * \param p pen for the curve
 	 * \param s curve name
 	 */
 	SpectrumCurve(const QPen &p, const QString &s = "");
 };
 
 /**
- * \short The class to display the curves, histograms, ... 
+ * \short The class to display the curves, histograms, ...
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
@@ -102,7 +102,7 @@ public:
 
 	//! display the plot area in a fixed ratio or not
 	enum Ratio
-	{	
+	{
 		Free = 0,	//!< user may modify ration between x and y
 		Fixed,		//!< user may only modify the size not the ratio
 	};
@@ -124,7 +124,7 @@ public:
 
 	/*!
 	 * Sets the display of the plot
-	 * 
+	 *
 	 * \param m display mode
 	 */
 	void setDisplayMode(const Mode &m);
@@ -181,7 +181,7 @@ public slots:
 	/*!
 	 * Sets the lin/log scaling
 	 *
-	 * \param log if true set the logarithmic plot 
+	 * \param log if true set the logarithmic plot
 	 */
 	void 	setLinLog(const enum Scale log);
 
@@ -200,7 +200,7 @@ public slots:
 private slots:
 	/*!
 	 * callback if the zoomer has changed
-	 * 
+	 *
 	 * \param rect zoom area
 	 */
 
@@ -229,7 +229,7 @@ protected:
 private:
 	/*!
 	 * installs the zoomer new (due to the internals of Qwt)
-	 * 
+	 *
 	 * \param c color of the zoomer
 	 */
 	void setZoomer(const QColor &c);
@@ -238,7 +238,7 @@ private:
 	//! the zoomer object
 	Zoomer 			*m_zoomer;
 
-	//! the curves 
+	//! the curves
 	QwtPlotCurve 		*m_curve[16];
 
 	//! the x sum curve of the histogram
@@ -253,7 +253,7 @@ private:
 	//! color map for the  scaling
 	MesydaqColorMap		*m_colorMap;
 
-	//! the right axis 
+	//! the right axis
 	QwtScaleWidget		*m_rightAxis;
 
 	//! display mode

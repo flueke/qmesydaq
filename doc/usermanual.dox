@@ -1,403 +1,403 @@
 /*!
-\page usermanual Software Users Manual 
+\page usermanual Software Users Manual
 
 \tableofcontents
 
 \section general General
 
-\subsection general_overview Overview 
+\subsection general_overview Overview
 
-QMesyQAQ is the main user interface to the PSD/MDLL readout system. It is a 
-Qt - application that gives the user total remote control over the PSD/DLL 
-readout system. 
+QMesyQAQ is the main user interface to the PSD/MDLL readout system. It is a
+Qt - application that gives the user total remote control over the PSD/DLL
+readout system.
 
-\note 
+\note
   - PSD - position sensitive detector
   - DLL - delay line (delay locked loop)
 
-This includes:  
-- system setup 
-	- network settings 
-	- module search 
-	- module initialisation 
-- peripheral control 
-	- gains 
-	- thresholds 
-- test pulser 
-	- position 
-	- amplitude 
-- readout mode 
-	- position 
-	- amplitude 
-- data acquisition 
-	- start 
-	- stop 
+This includes:
+- system setup
+	- network settings
+	- module search
+	- module initialisation
+- peripheral control
+	- gains
+	- thresholds
+- test pulser
+	- position
+	- amplitude
+- readout mode
+	- position
+	- amplitude
+- data acquisition
+	- start
+	- stop
 - live graphical display
 	- histogram
 	- spectra
 	- diffractogram
 	- ...
-- data storage 
+- data storage
 	- histograms
-	- listfiles 
-	- setups  
-  
-\subsection hard_software_requirements Hard- and software requirements 
+	- listfiles
+	- setups
+
+\subsection hard_software_requirements Hard- and software requirements
 
 Using QMesyDAQ to control a mesytec psd system requires a PC or workstation with
-an ethernet interface.  
+an ethernet interface.
 The Software is designed for operating systems (Linux, Windows, Mac OS X, ... )
-with Qt4. 
+with Qt4.
 
-\subsection network_communications Network communications  
+\subsection network_communications Network communications
 
-The simplest hardware connection between control PC and the MCPD/MDLL is a direct 
-(crossover) ethernet cable.  
+The simplest hardware connection between control PC and the MCPD/MDLL is a direct
+(crossover) ethernet cable.
 
 Using an existing network infrastructure is of course  also possible, but you
-should have in mind, that this connection will be used for online data transfer, 
-so if  you intend to have higher data rates, a dedicated network connection or 
-separate network branch would be valuable. 
+should have in mind, that this connection will be used for online data transfer,
+so if  you intend to have higher data rates, a dedicated network connection or
+separate network branch would be valuable.
 
-\note In the following we assume that when we talk about the MCPD we include the 
+\note In the following we assume that when we talk about the MCPD we include the
 part from the MDLL module with the same function of the MCPD itself. If we talk
 from the MDLL explicitly we talk about the MDLL specific part.
 
 QMesyDAQ communicates with the central module (MCPD/MDLL) using the UDP/IP protocol
-on an ethernet connection.  This means that each participant in the network has  
-to have unique addresses - both for the ethernet interface and for the 
-IP protocol. 
-  
-\par Network Addresses  
-MCPD comes with its individual ethernet address (MAC address) and a preset 
-IP address (192.168.168.121).  
+on an ethernet connection.  This means that each participant in the network has
+to have unique addresses - both for the ethernet interface and for the
+IP protocol.
 
-The ethernet address (a combination of six bytes like "00-34-5E-89-21-ED") is 
-fixed by hardware. Normally, you won't need this address.  
+\par Network Addresses
+MCPD comes with its individual ethernet address (MAC address) and a preset
+IP address (192.168.168.121).
 
-The IP Address (a four-byte-combination like "123.34.77.128") can be chosen 
-by the user - but some restrictions (no double addresses in a network, ...) 
+The ethernet address (a combination of six bytes like "00-34-5E-89-21-ED") is
+fixed by hardware. Normally, you won't need this address.
+
+The IP Address (a four-byte-combination like "123.34.77.128") can be chosen
+by the user - but some restrictions (no double addresses in a network, ...)
 have to be obeyed.
-   
-If you use a dedicated network for communication between your PC and the MCPD 
-(which we strongly recommend for highest data rates and which can consist  of 
-a simple cross-over network cable in the easiest case) - there's no big worry 
-about the address. You only ha ve to make sure that MCPD and PC are in the 
-same subnet and don't have identical addresses. 
 
-If you use a bigger network, please address yourself to the administrator for 
-a "legal" IP address. 
+If you use a dedicated network for communication between your PC and the MCPD
+(which we strongly recommend for highest data rates and which can consist  of
+a simple cross-over network cable in the easiest case) - there's no big worry
+about the address. You only ha ve to make sure that MCPD and PC are in the
+same subnet and don't have identical addresses.
 
-Please see chapter \ref{} MCPD  for how to change MCPDs IP address.  
+If you use a bigger network, please address yourself to the administrator for
+a "legal" IP address.
 
-Setting and using the correct IP address for the first time  is done in a simple 
-three  step process, described in chapter \ref{} "Quickstart and first steps". 
+Please see chapter \ref{} MCPD  for how to change MCPDs IP address.
 
-After then, you shouldn't have to worry about adressing issues. 
+Setting and using the correct IP address for the first time  is done in a simple
+three  step process, described in chapter \ref{} "Quickstart and first steps".
 
-\section  Installation 
-QMesyDAQ is delivered as a sourcecode distribution - underlying the GNU public 
-license (GPL). 
+After then, you shouldn't have to worry about adressing issues.
 
-It comes as a single compressed ("gzipped") tar archive  file:  
-mesydaq-x.x.x.tar.gz. (with x.x.x the version number)  
+\section  Installation
+QMesyDAQ is delivered as a sourcecode distribution - underlying the GNU public
+license (GPL).
 
-Installation can be done in some simple steps and should work on most Linux 
-systems:  
+It comes as a single compressed ("gzipped") tar archive  file:
+mesydaq-x.x.x.tar.gz. (with x.x.x the version number)
 
-Make sure you have sufficient rights to create directories and install software 
-in the configured paths. (One way to reach that is to do unpacking and 
-installation from the console using "su" for temporary admin login.)  
+Installation can be done in some simple steps and should work on most Linux
+systems:
 
-Copy the file "mesydaq-x.x.x.tar.gz" to a convenient location on your linux 
-system. 
-  
-Uncompress the archive file, e.g. by moving to the appr opriate directory in a 
+Make sure you have sufficient rights to create directories and install software
+in the configured paths. (One way to reach that is to do unpacking and
+installation from the console using "su" for temporary admin login.)
+
+Copy the file "mesydaq-x.x.x.tar.gz" to a convenient location on your linux
+system.
+
+Uncompress the archive file, e.g. by moving to the appr opriate directory in a
 terminal window and using the command:
 \code
-gzip -d mesydaq-x.x.x.tar.gz  
+gzip -d mesydaq-x.x.x.tar.gz
 \endcode
-Expand ("Untar") the directory with     
+Expand ("Untar") the directory with
 \code
-tar -xvf mesydaq-x.x.x.tar 
-\endcode 
-Change to the mesydaq directory with:     
-\code
-cd mesydaq-x.x.x 
+tar -xvf mesydaq-x.x.x.tar
 \endcode
-Install the software with the following three commands: 
+Change to the mesydaq directory with:
 \code
-./configure 
-make 
-make install  
+cd mesydaq-x.x.x
+\endcode
+Install the software with the following three commands:
+\code
+./configure
+make
+make install
 \endcode
 
-QMesyDAQ should now be ready for use, you find the executable in /usr/local/bin. 
- 
-\section operation Operation 
-\subsection operation_overview Overview  
+QMesyDAQ should now be ready for use, you find the executable in /usr/local/bin.
 
-After startup QMesyDAQ presents the following screen:  
- 
+\section operation Operation
+\subsection operation_overview Overview
+
+After startup QMesyDAQ presents the following screen:
+
 \image html start.png
-  
-The main area displays histogram data (counts vs. channel number). 
+
+The main area displays histogram data (counts vs. channel number).
 
 To the right are some control elements for data acquisition. At the bottom is a
-bigger register field that allows access to all user settable parameters. 
-Some text fields in the bottom line of the display show  the status of the data 
-connection and the connected MCPD-X:  
+bigger register field that allows access to all user settable parameters.
+Some text fields in the bottom line of the display show  the status of the data
+connection and the connected MCPD-X:
 Program Status: "Ready" or a varying text if a time consuming action takes place.
-DAQ Status: "DAQ started" or "DAQ stopped" 
-DAQ Mode: "Position mode" or "Amplitude mode" 
-Test Pulser Status: "Pulser off" or "Pulser on" 
-Connection Status: "MCPD (vX.X) connected" or "no MCPD connection"  
+DAQ Status: "DAQ started" or "DAQ stopped"
+DAQ Mode: "Position mode" or "Amplitude mode"
+Test Pulser Status: "Pulser off" or "Pulser on"
+Connection Status: "MCPD (vX.X) connected" or "no MCPD connection"
 
-\subsection usage QMesyDAQ usage  
+\subsection usage QMesyDAQ usage
 
-\subsubsection daq_control Data acquisition control  
+\subsubsection daq_control Data acquisition control
 
 If the system is readily configured, data acquisition starts by just pushing the
-"Start" button in the upper right corner. This button changes into "Stop" when 
-data acquisition (DAQ) start was successful, the DAQ LED turns to green.  
+"Start" button in the upper right corner. This button changes into "Stop" when
+data acquisition (DAQ) start was successful, the DAQ LED turns to green.
 
-The main display will now show varying histograms if events are recorded. The 
-display is refreshed every second as long as data acquisition runs. 
+The main display will now show varying histograms if events are recorded. The
+display is refreshed every second as long as data acquisition runs.
 
-The displays to the right will show total event counts and event rate, the 
-elapsed DAQ time and monitor counts and rates for both monitor inputs at MCPD. 
+The displays to the right will show total event counts and event rate, the
+elapsed DAQ time and monitor counts and rates for both monitor inputs at MCPD.
 
-Rates are displayed in a smaller fonts below the counter values. 
+Rates are displayed in a smaller fonts below the counter values.
 
 To get reproducible daq runs, it is possible to  limit data acquisiton to either
-a given number of total events, total time (in seconds), monitor counts (on both 
-monitors), or even a combination of these. 
+a given number of total events, total time (in seconds), monitor counts (on both
+monitors), or even a combination of these.
 
-To do so, just activate the checkbox "stop at" and fill in the desired value. 
+To do so, just activate the checkbox "stop at" and fill in the desired value.
 DAQ limits are read out at daq start, a later  change will have no effect until
-DAQ is stopped and restarted again.  
+DAQ is stopped and restarted again.
 
 "Reset" will reset the whole DAQ system: DAQ is stopped, counters and timer are
-resetted to zero, histograms are cleared. 
+resetted to zero, histograms are cleared.
 
-All other settings (gains, thresholds, pulser, ...) remain unchanged.    
-  
-\subsubsection display_options Display options  
- 
-This tab register allows to customize the displayed histogram data: 
+All other settings (gains, thresholds, pulser, ...) remain unchanged.
 
-Currently, the display is limited to 2d display of either position / amplitude 
-("X") oder timing ("t") data. 
- 
-It is possible to chose among several display modes: "All" shows a sum 
-projection for all connected channels. 
+\subsubsection display_options Display options
 
-"Chan" allows to select an individual channel number, where channel-# is 
-determined from:  8 x [MPSD-8 module address] + [MPSD-8 channel number]. 
-(Channel 3 of the MPSD-8 with address 0 is display  channel 3, channel 5 of 
-MPSD-X with address 2 is display channel 21.) 
-"Mod " shows all eight channels of the selected MPSD-8 module.  
+This tab register allows to customize the displayed histogram data:
 
-\subsubsection file_handling File handling 
+Currently, the display is limited to 2d display of either position / amplitude
+("X") oder timing ("t") data.
 
-\paragraph file_operations File operations 
-  
-QMesyDAQ operates with two kinds of data files: histograms and listmode data. 
+It is possible to chose among several display modes: "All" shows a sum
+projection for all connected channels.
 
-These can be handled in this dialog.  
-A comment, used for each kind of file, can be given to characterize the data 
-literally. Histograms can be written and read 
-- write puts the current histogram from memory to disk, 
-- read clears the currently existent histogram and inputs a new one from the 
-  given file. 
+"Chan" allows to select an individual channel number, where channel-# is
+determined from:  8 x [MPSD-8 module address] + [MPSD-8 channel number].
+(Channel 3 of the MPSD-8 with address 0 is display  channel 3, channel 5 of
+MPSD-X with address 2 is display channel 21.)
+"Mod " shows all eight channels of the selected MPSD-8 module.
 
-If "acquire listfile" is checked, listmode data files are acquired online 
+\subsubsection file_handling File handling
+
+\paragraph file_operations File operations
+
+QMesyDAQ operates with two kinds of data files: histograms and listmode data.
+
+These can be handled in this dialog.
+A comment, used for each kind of file, can be given to characterize the data
+literally. Histograms can be written and read
+- write puts the current histogram from memory to disk,
+- read clears the currently existent histogram and inputs a new one from the
+  given file.
+
+If "acquire listfile" is checked, listmode data files are acquired online
 during data acquisition, data are written to disk in raw format as they arrive.
-Replay of a listfile is similar to "real" data acquisition, listfiles can also 
-be read additional to existing data. 
- 
-\paragraph current_file_info Current file info 
-  
-Informations on a currently loaded file are displayed here. 
+Replay of a listfile is similar to "real" data acquisition, listfiles can also
+be read additional to existing data.
 
-\paragraph directory_presets Directory presets  
+\paragraph current_file_info Current file info
+
+Informations on a currently loaded file are displayed here.
+
+\paragraph directory_presets Directory presets
 
 Presets for filepaths for histograms, listmode data files, configurations and -
- as a special extension if CARESS interfaced - for caress histograms can be 
-defined here. These presets are saved and reloaded when configurations are 
-written or reloaded. (see also \ref{}). 
+ as a special extension if CARESS interfaced - for caress histograms can be
+defined here. These presets are saved and reloaded when configurations are
+written or reloaded. (see also \ref{}).
 
-\subsubsection tof_parameters TOF - Time of flight parameters  
+\subsubsection tof_parameters TOF - Time of flight parameters
 
-Each event is flagged with a timestamp from a hardware timer in MCPD-2 that 
-allows time of flight applications. Timing data length is 17 bit - in 10  
-bit position data mode the two least significant bits are inactive, only 15 
-MSBs are valid for timing calculation. The value fo r the smallest timing unit 
-can be chosen from 4 presettable times. 
+Each event is flagged with a timestamp from a hardware timer in MCPD-2 that
+allows time of flight applications. Timing data length is 17 bit - in 10
+bit position data mode the two least significant bits are inactive, only 15
+MSBs are valid for timing calculation. The value fo r the smallest timing unit
+can be chosen from 4 presettable times.
 
-In general, time of flight data analysis is subject  to extended off line data 
-processing using the recorded listmode data which also carries the raw timing 
-data. Fo r a quick online view, QMesyDAQ offers some simple TOF options: 
-  
-\paragraph tof_chopper_counter_binwidth TOF timing - chopper counter binwidth  
+In general, time of flight data analysis is subject  to extended off line data
+processing using the recorded listmode data which also carries the raw timing
+data. Fo r a quick online view, QMesyDAQ offers some simple TOF options:
+
+\paragraph tof_chopper_counter_binwidth TOF timing - chopper counter binwidth
 
 For the raw timing data, one of four different hardwa re timer binwidths can be
-selected: 1, 2, 4 and 8 microseconds. 
+selected: 1, 2, 4 and 8 microseconds.
 
 This hardware timing resolution leads - together with  17 bit timing information
-- to maximum time spans of around 128, 256, 512 or 1024 miliseconds.  
+- to maximum time spans of around 128, 256, 512 or 1024 miliseconds.
 
-\paragraph tof_histogramming TOF histogramming 
+\paragraph tof_histogramming TOF histogramming
 
-For a quick overview on TOF data, a fixed 128 bin histogr am is used. To sort 
-the raw timing information into this reduced histogram size, two (three) 
-parameters are available: 
-- Offset: only events with a timestamp greater or equal this value (in 
-  microseconds) are valid 
+For a quick overview on TOF data, a fixed 128 bin histogr am is used. To sort
+the raw timing information into this reduced histogram size, two (three)
+parameters are available:
+- Offset: only events with a timestamp greater or equal this value (in
+  microseconds) are valid
 - Histogram binwidth: raw timing bins (with a hardware  determined width - see
-  \ref{tof_chopper_counter_binwidth}) are matched to histogram bins with a 
-  selectable binwidth. Four standard widths are available: 20, 100, 500 and 1000 
-  microseconds. 
-  
-  The combination of  the above two parameters with  the fixed histogram size of 
-  128 bins leads to a time window with 2.56, 12.8,  64 and 128 miliseconds width 
-  and an adjustable offset. Data outside this window are not accumulated into the 
-  timing histogram (but are in position histogram!). 
- 
-\subsubsection status_display Status display  
-  
-A quick overview on system status is given here:  
+  \ref{tof_chopper_counter_binwidth}) are matched to histogram bins with a
+  selectable binwidth. Four standard widths are available: 20, 100, 500 and 1000
+  microseconds.
 
-A "summary" LED is green if everything is detected in good state (MCPD).  
-MCPD-X status is displayed separately.  
-A row of LEDs, one for each possible MPSD-8 address,  displays the detected 
-peripheral modules. If green, a module is detected and active. If red, a 
-module is detected, but an address collision occurred so that two modules 
-might have the same address. If off, no MPSD-X has been detected at this 
-address. 
+  The combination of  the above two parameters with  the fixed histogram size of
+  128 bins leads to a time window with 2.56, 12.8,  64 and 128 miliseconds width
+  and an adjustable offset. Data outside this window are not accumulated into the
+  timing histogram (but are in position histogram!).
 
-Search starts the detection process manually - normally this is done at startup 
-automatically. 
-"Offline" sets the program into offline mode, e.g. to  perform histogram or 
-listfile operations without a connected hardware. This avoids wait timeouts, 
-as in  online mode hardware is periodically monitored, detected and (re-) 
-initialized, which is not necessary in offline mode. 
-  
-\subsubsection rates_display Rates display 
- 
-For a quick diagnosis of longer experiment runs, the  event and monitor rates 
-are displayed here as well as numerical values and in a log display with 
-arbitrary units. 
+\subsubsection status_display Status display
 
-\subsubsection mpsd_settings MPSD/MDLL settings  
+A quick overview on system status is given here:
 
-At this tab, the connected MPSD/MDLL can be set: 
+A "summary" LED is green if everything is detected in good state (MCPD).
+MCPD-X status is displayed separately.
+A row of LEDs, one for each possible MPSD-8 address,  displays the detected
+peripheral modules. If green, a module is detected and active. If red, a
+module is detected, but an address collision occurred so that two modules
+might have the same address. If off, no MPSD-X has been detected at this
+address.
 
-Each MPSD-8 has eight individual gains and a common th reshold to be set. Gain 
-can be varied from 0.50 to 1.88 in the current version of MPSD-X, threshold can  
-be set from 5% to 50% in amplitude and position mode. 
+Search starts the detection process manually - normally this is done at startup
+automatically.
+"Offline" sets the program into offline mode, e.g. to  perform histogram or
+listfile operations without a connected hardware. This avoids wait timeouts,
+as in  online mode hardware is periodically monitored, detected and (re-)
+initialized, which is not necessary in offline mode.
 
-Gains can be set individually for each channel or with a common value for all 
-channels of a module. 
-Additionally, all connected modules can be set to th e same settings. Settings 
-are transferred to MPSD-8 when pressing the "apply" button. 
+\subsubsection rates_display Rates display
 
-Settings can be saved to a config file and reloaded. In  addition the config 
-file is automatically loaded at program start.  
-All settings (MPSD-8 and MCPD-2) are saved into a common config file.  
+For a quick diagnosis of longer experiment runs, the  event and monitor rates
+are displayed here as well as numerical values and in a log display with
+arbitrary units.
 
-\subsubsection pulser_settings Pulser settings 
- 
-A test pulser can be set to each channel in each module. Three positions (left, 
-middle, right) are available and  the amplitude can be changed from 5 to 95 
-(approx. % of full histogram range in amplitude mode). A fully automatic pulser 
-test can be started on the ma in Panel by just pressing the "Pulsertest" button. 
-DAQ is started automatically and the test pulser is moved  at three positions 
-and two amplitudes in every connected channel. 
-  
-\subsubsection mcpd_settings MCPD settings  
-  
-The central module MCPD can be set to Postion mode or Amplitude mode. 
+\subsubsection mpsd_settings MPSD/MDLL settings
+
+At this tab, the connected MPSD/MDLL can be set:
+
+Each MPSD-8 has eight individual gains and a common th reshold to be set. Gain
+can be varied from 0.50 to 1.88 in the current version of MPSD-X, threshold can
+be set from 5% to 50% in amplitude and position mode.
+
+Gains can be set individually for each channel or with a common value for all
+channels of a module.
+Additionally, all connected modules can be set to th e same settings. Settings
+are transferred to MPSD-8 when pressing the "apply" button.
+
+Settings can be saved to a config file and reloaded. In  addition the config
+file is automatically loaded at program start.
+All settings (MPSD-8 and MCPD-2) are saved into a common config file.
+
+\subsubsection pulser_settings Pulser settings
+
+A test pulser can be set to each channel in each module. Three positions (left,
+middle, right) are available and  the amplitude can be changed from 5 to 95
+(approx. % of full histogram range in amplitude mode). A fully automatic pulser
+test can be started on the ma in Panel by just pressing the "Pulsertest" button.
+DAQ is started automatically and the test pulser is moved  at three positions
+and two amplitudes in every connected channel.
+
+\subsubsection mcpd_settings MCPD settings
+
+The central module MCPD can be set to Postion mode or Amplitude mode.
 
 Transmitted data length can be selected between 8 a nd 10 bit, in amplitude mode
-8 bit is selected automatically. 
-Network settings for QMesyDAQ and MCPD can be defined: Entering an IP address and 
-pressing "apply" leads to usage of this IP in QMesyDAQ. 
-"Set MCPD" leads to a permanent change of the IP address of the MCPD-2.  
-So changing the MCPD address is a simple three step process:  
+8 bit is selected automatically.
+Network settings for QMesyDAQ and MCPD can be defined: Entering an IP address and
+pressing "apply" leads to usage of this IP in QMesyDAQ.
+"Set MCPD" leads to a permanent change of the IP address of the MCPD-2.
+So changing the MCPD address is a simple three step process:
 
-1.  enter the desired IP address 
-2.  press "Set MCPD" to make change effective in MCPD 
-3.  press apply to use altered IP address for communication  
+1.  enter the desired IP address
+2.  press "Set MCPD" to make change effective in MCPD
+3.  press apply to use altered IP address for communication
 
-For later use after startup, the address can be saved to the config file or a 
-previously saved address is restored by loading the config file (attention: all 
-other values like MPSD-8 settings are also writen and reloaded.) 
-  
-\subsubsection caress_settings Caress settings 
-Settings entered here are only necessary for the Caress interface at SPODI / 
-FRM-II Munich. They were left here as a starting point for possible own 
-interfaces to experiment control systems.  
+For later use after startup, the address can be saved to the config file or a
+previously saved address is restored by loading the config file (attention: all
+other values like MPSD-8 settings are also writen and reloaded.)
 
-\subsubsection calibration Calibration 
-Again, this tab is used for reading calibration files needed at SPODI / FRM-II 
-Munich.  nothing is entered here, spectra will be uncorrected. May be useful as 
-starting point for own calibration mechanisms. 
-  
-\section first_time_ip_settings First time IP address settings  
-MCPD is delivered with this "private net" IP address: 192.168.168.121  
+\subsubsection caress_settings Caress settings
+Settings entered here are only necessary for the Caress interface at SPODI /
+FRM-II Munich. They were left here as a starting point for possible own
+interfaces to experiment control systems.
 
-Only the first change of addresses might be a bit more  complicated: you'll have 
-to match your computer's IP with MCPDs IP. Best solution is to connect MCPD  
-- at least temporarily - with a cross-over cable (delivered with MCPD) to the 
-control PC. Then proceed like follows:  
-- Set the IP address of the network interface where MCPD is connected to e.g.: 
-192.168.168.122 (need not be exactly that, but must be part of the subnet 
-192.168.168.xxx  and must not be 192.168.168.121) 
-- Set the netmask to 255.255.255.0 
-- Now you will be able to reach the MCPD via the ethernet / IP connection 
-- Test it e.g. with a "ping":  
+\subsubsection calibration Calibration
+Again, this tab is used for reading calibration files needed at SPODI / FRM-II
+Munich.  nothing is entered here, spectra will be uncorrected. May be useful as
+starting point for own calibration mechanisms.
+
+\section first_time_ip_settings First time IP address settings
+MCPD is delivered with this "private net" IP address: 192.168.168.121
+
+Only the first change of addresses might be a bit more  complicated: you'll have
+to match your computer's IP with MCPDs IP. Best solution is to connect MCPD
+- at least temporarily - with a cross-over cable (delivered with MCPD) to the
+control PC. Then proceed like follows:
+- Set the IP address of the network interface where MCPD is connected to e.g.:
+192.168.168.122 (need not be exactly that, but must be part of the subnet
+192.168.168.xxx  and must not be 192.168.168.121)
+- Set the netmask to 255.255.255.0
+- Now you will be able to reach the MCPD via the ethernet / IP connection
+- Test it e.g. with a "ping":
 \code
-ping  192.168.168.121 
+ping  192.168.168.121
 \endcode
-MCPD should send answer packets.  
+MCPD should send answer packets.
 
-If you will connect to the MCPD only over the cross over cable or a "private" 
-hub etc. (what we highly recommend if you need maximum and undisturbed data 
-rates), everything is done now. 
+If you will connect to the MCPD only over the cross over cable or a "private"
+hub etc. (what we highly recommend if you need maximum and undisturbed data
+rates), everything is done now.
 
-In case you have to use a public network infrastructure, you might have to obey 
-the address rules of this network. So MCPD has to be set to a "legal" address 
-out of this network (proceed like described above) which you should get from 
-your network administration. 
+In case you have to use a public network infrastructure, you might have to obey
+the address rules of this network. So MCPD has to be set to a "legal" address
+out of this network (proceed like described above) which you should get from
+your network administration.
 
-After setting MCPD to this new address, change your PC  back to its "old, but 
-legal" address, which will then be again in the same subnet. Also set the PC 
-back to your standard netmask.  
+After setting MCPD to this new address, change your PC  back to its "old, but
+legal" address, which will then be again in the same subnet. Also set the PC
+back to your standard netmask.
 
-Again - MCPD should be reachable by a ping to the new address (and by 
-QMesyDAQ...)  
-  
-\section quick_start Quickstart  /  First  Steps 
-  
-After hard- and software installation there are only a fe w steps to take to 
-have a first look at the system running: 
-- Connect your control computer and the MCPD-2 with the crossover ethernet 
-  cable. 
-- Connect MCPD and MPSD with the BNC cable, place 50 Ohm termination at the 
-  MPSD side. 
-- "Power" LEDs at MCPD and MPSD should be on, as well as the "Link" LED at 
-  MCPD (indicating the established network connection).  
+Again - MCPD should be reachable by a ping to the new address (and by
+QMesyDAQ...)
 
-Network addresses have to be synchronized: Please see chapter \ref{} for a 
-detailed description. 
+\section quick_start Quickstart  /  First  Steps
 
-Starting QMesyDAQ now should lead to a "MCPD (vx.x) connected" in the bottom 
-line of the QMesyDAQ window. 
+After hard- and software installation there are only a fe w steps to take to
+have a first look at the system running:
+- Connect your control computer and the MCPD-2 with the crossover ethernet
+  cable.
+- Connect MCPD and MPSD with the BNC cable, place 50 Ohm termination at the
+  MPSD side.
+- "Power" LEDs at MCPD and MPSD should be on, as well as the "Link" LED at
+  MCPD (indicating the established network connection).
 
-The "init" led on all MPSD-8 modules should light. 
-Activate the "Pulser test" button on the main panel: three peaks should arise 
-in each connected channel.    
-Ready. 
+Network addresses have to be synchronized: Please see chapter \ref{} for a
+detailed description.
+
+Starting QMesyDAQ now should lead to a "MCPD (vx.x) connected" in the bottom
+line of the QMesyDAQ window.
+
+The "init" led on all MPSD-8 modules should light.
+Activate the "Pulser test" button on the main panel: three peaks should arise
+in each connected channel.
+Ready.
 
 */

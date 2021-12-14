@@ -55,7 +55,6 @@ MPSD8plus::MPSD8plus(quint8 id, QObject *parent)
 		m_pulsPoti[c] = 128;
 		m_pulsAmp[c] = 50;
 	}
-	
 }
 
 /*!
@@ -76,7 +75,7 @@ void MPSD8plus::setGain(quint8 channel, float gainv, bool preset)
     \fn quint8 MPSD8plus::calcGainpoti(float fval)
 
     \param fval floating point value
- 
+
     \return an integer value to be set in the MPSD registers
  */
 quint8 MPSD8plus::calcGainpoti(float fval)
@@ -125,7 +124,7 @@ float MPSD8plus::calcGainval(quint8 ga)
 	float test = fg -g;
 	if(test >= 0.5)
 		g++;
-	fgain = g /100.0; 
+	fgain = g /100.0;
 	return fgain;
 }
 

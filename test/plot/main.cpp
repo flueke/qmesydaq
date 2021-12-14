@@ -31,5 +31,5 @@ int main(int argc, char **argv)
 	mainWindow.resize(600, 700);
 	mainWindow.show();
 
-	return a.exec(); 
+	return a.exec();
 }

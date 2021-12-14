@@ -1,14 +1,14 @@
 /*!
  \page command_reference Command reference
- 
+
  \tableofcontents
 
  \section general_command_format General command format
 
-The layout of the \ref command_buffers "structure of a command buffer" is 
+The layout of the \ref command_buffers "structure of a command buffer" is
 identical for all commands.
 
-In the following, only data from word 10 on (data 0) are considered and 
+In the following, only data from word 10 on (data 0) are considered and
 displayed. The given command number has to be entered in the header field
 "Cmd" (Word 4).
 
@@ -18,13 +18,13 @@ the end of the relevant data.
  \subsection command_answer Command answer
 
 Every command buffer will be answered by MCPD. Set values instead of requested
-values will be inserted into the appropriate fields. 
+values will be inserted into the appropriate fields.
 
 \note
-  If a command fails in the MCPD the header field "Cmd" will contain the 
+  If a command fails in the MCPD the header field "Cmd" will contain the
   command number and the bit 15 (MSB) is set to "1".
 
-\section command_description Command description 
+\section command_description Command description
 
 \subsection cmd_0 Reset
 
@@ -109,7 +109,7 @@ unique throughout the readout system.
 <tr> <td> 11 </td> <td> 0xFFFF </td> </tr>
 </table>
 
-\subsection cmd_5 Set protocol parameters 
+\subsection cmd_5 Set protocol parameters
 
 <table>
 <tr> <th>Set Protocol parameters </th> <th> Cmd = 5 </th> </tr>
@@ -195,7 +195,7 @@ The following table gives an overview of the possible settings:
 
 Sets timing properties:
  - Please make sure that only one MCPD is set to sync master!
- - Sync bus has to be terminated at both ends - master is terminated automatically, 
+ - Sync bus has to be terminated at both ends - master is terminated automatically,
    last slave on bus has to be terminated.
 
 \subsection cmd_7 Set MCPD master clock
@@ -210,7 +210,7 @@ Sets timing properties:
 </table>
 
 Master clock can be set to any value if desired. Normally, a reset is initiated
-before a new run and all counters ares set to 0 (zero) during this reset 
+before a new run and all counters ares set to 0 (zero) during this reset
 automatically.<br>
 Only if another run start time than zero is desired, this registers must be set.
 
@@ -233,7 +233,7 @@ necessary to the run ID at the master module</b>
 <table>
 <tr> <th>Set Counter/ADC cells </th> <th> Cmd = 9 </th> </tr>
 <tr> <td> Word </td> <td> Content </td> </tr>
-<tr> <td> 10 </td> 
+<tr> <td> 10 </td>
 <td> Cell#:<br>
 0 .. 3: monitor/chopper inputs 1 .. 4<br>
 4 .. 5: digital backpanel inputs 1 .. 2<br>
@@ -256,7 +256,7 @@ One of 6 possible counter cells is addressed. The value of the according 21 bit
 counter is transmitted as a trigger event when triggered.
 
 Trigger source can be one of the digital inputs, on of the 4 auxiliary timers
-or a special compare register. 
+or a special compare register.
 \note The compare register does not do a full compare but it checks for a "1"
       at the given bit position, allowing for triggers at multiples of 2.
 
@@ -264,7 +264,7 @@ Counter cells are intended to generate repeated trigger events. They can be
 used e.g. for a continuous monitoring of counter values and ADC inputs.
 
 Choosing the rising signal edge as trigger sources enables to generate a
-(fully timestamped) event w.g. for each chopper signal and allows precise chopper 
+(fully timestamped) event w.g. for each chopper signal and allows precise chopper
 timing calculation.
 
 \subsection cmd_10 Set auxiliary timer
@@ -299,10 +299,10 @@ resets the counter to 0 (zero). Thus 4 independent triggers with periods between
 </table>
 
 Defines the counter source for the given parameter. While 0 .. 5 are real counters,
-6 delivers a combination of the current status of all defined inputs, and 7 .. 8 
+6 delivers a combination of the current status of all defined inputs, and 7 .. 8
 get copies of the current value of the event counter or master clock.
 
-All 4 parameter values are transmitted with every data buffer, delivering a 
+All 4 parameter values are transmitted with every data buffer, delivering a
 continuous monitoring information.
 
 \subsection cmd_12 Get all parameters
@@ -372,7 +372,7 @@ MPSD module.
 </table>
 
 Each peripheral module MPSD has one common lower threshold for its window
-discriminator. An 8 bit value is used to set the lower discriminator 
+discriminator. An 8 bit value is used to set the lower discriminator
 threshold.
 
 \subsection cmd_15 Set MPSD pulser
@@ -388,10 +388,10 @@ threshold.
 <tr> <td> 15 </td> <td> 0xFFFF </td> </tr>
 </table>
 
-A builtin test pulser is useful to check electronics performance without the 
-need of "real" neutron events. The pulser can be set to 3 positions (left, 
-middle, and right) in a PSD channel. Furthermore, the pulser amplitude can 
-be controlled and pulser function can be switched on/off. 
+A builtin test pulser is useful to check electronics performance without the
+need of "real" neutron events. The pulser can be set to 3 positions (left,
+middle, and right) in a PSD channel. Furthermore, the pulser amplitude can
+be controlled and pulser function can be switched on/off.
 \warning Be sure to switch off all pulsers before starting neutron recording!
 
 \subsection cmd_16 Set MPSD mode

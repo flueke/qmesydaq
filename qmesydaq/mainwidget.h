@@ -237,7 +237,7 @@ private:
 private:
 	//! The detector object
 	Detector		*m_detector;
-	
+
 // using thresholds for display
 	//! using thresholds ?
 	bool			m_dispThresh;

@@ -29,28 +29,28 @@
     \param bus
     \param typ
     \param parent
-  
+
     \return pointer to new created module
- */   
+ */
 MPSD8 *MPSD8::create(int bus, int typ, QObject *parent)
 {
 	switch (typ)
 	{
-		case TYPE_MPSD8P :
+		case TYPE_MPSD8P:
 			return new MPSD8plus(bus, parent);
 		case TYPE_MPSD8OLD:
 			return new MPSD8old(bus, parent);
 		case TYPE_MPSD8SADC:
 			return new MPSD8SingleADC(bus, parent);
-		case TYPE_MPSD8 :
+		case TYPE_MPSD8:
 			return new MPSD8(bus, parent);
-		case TYPE_MSTD16 :
+		case TYPE_MSTD16:
 			return new MSTD16(bus, parent);
-//		case TYPE_MDLL :
+//		case TYPE_MDLL:
 //			return new MDLL(bus, parent);
-//		case TYPE_MWPCHR :
+//		case TYPE_MWPCHR:
 //			return new MWPCHR(bus, parent);
-		default :
+		default:
 			return new NoModule(bus, parent);
 	}
 }

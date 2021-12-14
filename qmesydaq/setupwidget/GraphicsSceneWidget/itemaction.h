@@ -27,10 +27,10 @@ class ItemAction : public QAction
     Q_OBJECT
 public:
     explicit ItemAction(int type, QString path,QObject *parent = NULL);
-    
+
 signals:
     void enableItemMode(const int itemType, const QString imagePath);
-    
+
 public slots:
     void triggered();
 
@@ -40,7 +40,7 @@ protected slots:
 protected:
     QString imagePath;
     int itemType;
-    
+
 };
 
 #endif // ITEMACTION_H

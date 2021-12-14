@@ -36,8 +36,8 @@ ChannelSpinBox::ChannelSpinBox(QWidget *parent)
 /*!
     \overload ChannelSpinBox::stepBy(int steps)
 
-    Virtual function that is called whenever the user triggers a step. The steps parameter 
-    indicates how many steps were taken, e.g. Pressing Qt::Key_Down will trigger a call to 
+    Virtual function that is called whenever the user triggers a step. The steps parameter
+    indicates how many steps were taken, e.g. Pressing Qt::Key_Down will trigger a call to
     stepBy(-1), whereas pressing Qt::Key_Prior will trigger a call to stepBy(10).
 
     It will go to the next possible module and will go around if wrapping is enabled

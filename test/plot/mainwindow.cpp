@@ -60,15 +60,15 @@ void MainWindow::setDisplayMode(int val)
 {
 	switch (val)
 	{
-		case Plot::Spectrum :
+		case Plot::Spectrum:
 			m_plot->setSpectrumData(m_spectrumData);
 			m_plot->setDisplayMode(Plot::Spectrum);
 			break;
-		case Plot::Histogram :
+		case Plot::Histogram:
 			m_plot->setHistogramData(m_histogramData);
 			m_plot->setDisplayMode(Plot::Histogram);
 			break;
-		case Plot::Diffractogram :
+		case Plot::Diffractogram:
 			break;
 		default:
 			break;

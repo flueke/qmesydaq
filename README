@@ -16,12 +16,12 @@ empty like
 INTERFACE	=
 
 allowed values ar TACO, CARESS, or TCP
-INTERFACE	= TACO 
+INTERFACE	= TACO
 
 if you have a 64 bit machine add the following line
 CONFIG		+= bit64
 
-if you have the Qwt library build from sources set the value to the 
+if you have the Qwt library build from sources set the value to the
 installation path
 QWT_ROOT 	= /usr/local/qwt5
 

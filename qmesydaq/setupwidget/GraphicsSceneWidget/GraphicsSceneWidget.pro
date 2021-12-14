@@ -19,7 +19,7 @@
 
 TEMPLATE = lib
 TARGET =
-DEPENDPATH += . res 
+DEPENDPATH += . res
 INCLUDEPATH += .
 DESTDIR = bin
 MOC_DIR = .moc

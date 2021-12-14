@@ -24,7 +24,7 @@ include($${SRCBASE}/mesydaqconfig.pri)
 
 TEMPLATE 	= subdirs
 
-TARGET 		= 
+TARGET 		=
 
 SUBDIRS	 	+= listfile \
 		dummy \

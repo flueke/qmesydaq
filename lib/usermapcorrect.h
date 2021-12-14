@@ -101,4 +101,4 @@ private:
 	EditorMemory*	m_pEditorMemory;
 };
 
-#endif 
+#endif

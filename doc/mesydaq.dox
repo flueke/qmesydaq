@@ -1,5 +1,5 @@
 /*!
-  \mainpage QMesyDAQ 
+  \mainpage QMesyDAQ
 
   \tableofcontents
 
@@ -56,13 +56,13 @@
 
   \subpage data_format_description
 
-  \subpage functional_descriptions 
+  \subpage functional_descriptions
 
-  \subpage application_consideration 
+  \subpage application_consideration
 
   \subpage command_reference
 
-  \subpage usermanual 
+  \subpage usermanual
 
   \subpage api
 

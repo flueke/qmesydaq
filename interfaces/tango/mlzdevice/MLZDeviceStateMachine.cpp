@@ -46,7 +46,7 @@ static const char *RcsId = "$Id:  $";
 //  OFF      |  The main function of the device is off.
 //  MOVING   |  The hardware is moving (in case of a motor for example), or the detector is acquiring.
 //  FAULT    |  An error occurred which could not been handled.
-//           |  
+//           |
 //           |  This can be a hardware error, a communication error or even a programming error.
 //  INIT     |  The device is initializing the communication to the hardware and the hardware itself.
 //  ALARM    |  The alarm was caused because of reaching limits, dangerous position or similar circumstances.
@@ -167,7 +167,7 @@ bool MLZDevice::is_Reset_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Not any excluded states for Reset command.
 	/*----- PROTECTED REGION ID(MLZDevice::ResetStateAllowed) ENABLED START -----*/
-	
+
 	/*----- PROTECTED REGION END -----*/	//	MLZDevice::ResetStateAllowed
 	return true;
 }

@@ -61,7 +61,7 @@ double DoublePresetWidget::presetValue(void)
 
     sets the value
 
-    \param val new value 
+    \param val new value
  */
 void DoublePresetWidget::setValue(const double val)
 {
@@ -83,7 +83,7 @@ void DoublePresetWidget::setPresetValue(const double val)
 /*!
     \fn void DoublePresetWidget::setChecked(const bool val)
 
-    callback 
+    callback
 
     \param val
  */

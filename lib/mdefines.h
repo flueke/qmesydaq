@@ -23,7 +23,7 @@
 
 // general definitions for mesydaq
 
-// 
+//
 // command numbers for MCPD-2
 //
 #define O_DATAREQUEST 		0
@@ -211,7 +211,7 @@
 #define	TYPE_MPSD8SADC		102	// 10bit, single ADC, DNS
 #define	TYPE_MPSD8		103
 #define	TYPE_MSTD16		104
-#define	TYPE_MPSD8P		105	
+#define	TYPE_MPSD8P		105
 #define TYPE_MDLL		35
 #define TYPE_MWPCHR		110	// Multi wire proportional chamber high resolution (DEL-FRMII)
 

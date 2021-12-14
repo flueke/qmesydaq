@@ -25,7 +25,7 @@ O  Forward streaming of the incoming data packages
   Done: for spectrum like plots 2012/06/25
         open for 2D plots, due to no idea to get the intensity data
 
-5  Additional plots 
+5  Additional plots
   - Count rate plots (detector, monitor, external signals, ...) over time
     (as history)
     display over full time or fixed time window (sliding curves)
@@ -54,8 +54,8 @@ O  Forward streaming of the incoming data packages
   software and the user should not be able to change the filename.
 
 10 Display some additional extrema from spectra and histograms
-  - in 1D spectra 
-    - maximum/minimum channel 
+  - in 1D spectra
+    - maximum/minimum channel
     - counts in a ROI
   - in 2D histogram
     - maximum/minimum channel and tube
@@ -79,8 +79,8 @@ Refused:
   (File size on current OS should be large enough to store data
    of one measurement)
 
-- Clearing data during the data acquisition 
+- Clearing data during the data acquisition
   (May be a source of errors in real measurements, if no list mode
-   data written) 
-  For adjustments (of beam stop) it can be simulated by start/stop/clear 
+   data written)
+  For adjustments (of beam stop) it can be simulated by start/stop/clear
 

@@ -443,7 +443,7 @@ void MLZDeviceClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for version
 	//	delta_t	not set for version
 	//	delta_val	not set for version
-	
+
 	version->set_default_properties(version_prop);
 	//	Not Polled
 	version->set_disp_level(Tango::OPERATOR);
@@ -469,14 +469,14 @@ void MLZDeviceClass::attribute_factory(vector<Tango::Attr *> &att_list)
 void MLZDeviceClass::pipe_factory()
 {
 	/*----- PROTECTED REGION ID(MLZDeviceClass::pipe_factory_before) ENABLED START -----*/
-	
+
 	//	Add your own code
-	
+
 	/*----- PROTECTED REGION END -----*/	//	MLZDeviceClass::pipe_factory_before
 	/*----- PROTECTED REGION ID(MLZDeviceClass::pipe_factory_after) ENABLED START -----*/
-	
+
 	//	Add your own code
-	
+
 	/*----- PROTECTED REGION END -----*/	//	MLZDeviceClass::pipe_factory_after
 }
 //--------------------------------------------------------

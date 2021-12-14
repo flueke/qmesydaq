@@ -335,10 +335,10 @@ protected:
 	void finishCmdBuffer(quint16 buflen);
 
 	bool sendCommand(bool bCheckAnswer);
-	
+
         /*!
             fills the buffer on index with the value
-           
+
             \param index
             \param value
          */
@@ -367,13 +367,13 @@ private:
 // communication params
 	//! IP address of the module
 	QString 	m_ownIpAddress;
-	
+
 	//! is this MCPD master on sync bus or not
 	bool		m_master;
 
 	//! is this MCPD terminated on sync bus or not
 	bool 		m_term;
-	
+
 	//! is this MCPD external sync enabled or not
 	bool 		m_extsync;
 
@@ -394,7 +394,7 @@ private:
 
 	//! four parameters (transmitted in buffer header), 9 possible sources
 	quint8 		m_paramSource[4];
-	
+
 	MDP_PACKET      m_cmdBuf;
 
 	//! last command buffer number
@@ -422,7 +422,7 @@ private:
 
 	//! the accessed MPSD8 ????
 	QMap<int, MPSD8 *> m_mpsd;
-	
+
 	//! possibly connected MDLL
 	QMap<int, M2D *> m_mdll;
 

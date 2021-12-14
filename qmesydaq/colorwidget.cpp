@@ -46,7 +46,7 @@ MesydaqColorWidget::MesydaqColorWidget(MesydaqColorMap *map, const QString &text
 	layout->addWidget(m_button);
 	setLayout(layout);
 }
-	
+
 void MesydaqColorWidget::setChecked(bool val)
 {
 	m_button->setChecked(val);

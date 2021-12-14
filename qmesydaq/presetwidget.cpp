@@ -71,7 +71,7 @@ void PresetWidget::setRate(const quint64 val)
 	rate->setText(QString::number(val));
 }
 
-/*! 
+/*!
     \fn void PresetWidget::setValue(const quint64 val)
 
     sets the current value
@@ -98,7 +98,7 @@ void PresetWidget::setPresetValue(const quint64 val)
 /*!
     \fn void PresetWidget::setChecked(const bool val)
 
-    callback 
+    callback
 
     \param val
  */

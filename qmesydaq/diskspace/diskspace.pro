@@ -1,5 +1,5 @@
 ############################################################################
-#   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>    
+#   Copyright (C) 2008 by Gregor Montermann <g.montermann@mesytec.com>
 #   Copyright (C) 2009-2020 by Jens Krüger <jens.krueger@frm2.tum.de>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ######################################################################
 
 TEMPLATE 	= app
-TARGET 		= 
+TARGET 		=
 DEPENDPATH 	+= .
 INCLUDEPATH 	+= .
 

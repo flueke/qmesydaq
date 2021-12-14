@@ -44,25 +44,25 @@ public:
 	 * \param value	Value
 	 *
 	 * \return Color corresponding to value
-	 * 
-	 * \warning This method is slow for Indexed color maps. If it is necessary 
-	 * 	    to map many values, its better to get the color table once and 
-	 *	    find the color using colorIndex(). 
+	 *
+	 * \warning This method is slow for Indexed color maps. If it is necessary
+	 * 	    to map many values, its better to get the color table once and
+	 *	    find the color using colorIndex().
 	 */
-	virtual QColor color(const QwtDoubleInterval &, double value) const; 
+	virtual QColor color(const QwtDoubleInterval &, double value) const;
 
 	/**
 	 * Map a value of a given interval into a rgb value
 	 *
 	 * \param interval Range for all values
-	 * \param value Value to map into a rgb value 
+	 * \param value Value to map into a rgb value
 	 *
 	 * \return Color corresponding to value
 	 */
 	virtual QRgb rgb(const QwtDoubleInterval &, double value) const;
 
 #if QWT_VERSION < 0x060000
-	//! Clone the color map. 
+	//! Clone the color map.
 	virtual QwtColorMap *copy () const;
 #endif
 
@@ -77,7 +77,7 @@ private:
 };
 
 /**
- * \short The standard color map for scaling 
+ * \short The standard color map for scaling
  *
  * \author Jens Kr&uuml;ger <jens.krueger@frm2.tum.de>
  */
@@ -89,7 +89,7 @@ public:
 };
 
 /**
- * \short The 'Jet' color map for scaling. 
+ * \short The 'Jet' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'jet' colormap
  *
@@ -103,7 +103,7 @@ public:
 };
 
 /**
- * \short The 'Hot' color map for scaling. 
+ * \short The 'Hot' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'hot' colormap
  *
@@ -117,7 +117,7 @@ public:
 };
 
 /**
- * \short The 'Hsv' color map for scaling. 
+ * \short The 'Hsv' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'hsv' colormap
  *
@@ -131,7 +131,7 @@ public:
 };
 
 /**
- * \short The 'Spring' color map for scaling. 
+ * \short The 'Spring' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'spring' colormap
  *
@@ -145,7 +145,7 @@ public:
 };
 
 /**
- * \short The 'Summer' color map for scaling. 
+ * \short The 'Summer' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'summer' colormap
  *
@@ -159,7 +159,7 @@ public:
 };
 
 /**
- * \short The 'Autumn' color map for scaling. 
+ * \short The 'Autumn' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'autumn' colormap
  *
@@ -173,7 +173,7 @@ public:
 };
 
 /**
- * \short The 'Winter' color map for scaling. 
+ * \short The 'Winter' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'winter' colormap
  *
@@ -187,7 +187,7 @@ public:
 };
 
 /**
- * \short The 'Bone' color map for scaling. 
+ * \short The 'Bone' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'bone' colormap
  *
@@ -201,7 +201,7 @@ public:
 };
 
 /**
- * \short The 'Cool' color map for scaling. 
+ * \short The 'Cool' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'cool' colormap
  *
@@ -215,7 +215,7 @@ public:
 };
 
 /**
- * \short The 'Copper' color map for scaling. 
+ * \short The 'Copper' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'copper' colormap
  *
@@ -229,7 +229,7 @@ public:
 };
 
 /**
- * \short The 'Gray' color map for scaling. 
+ * \short The 'Gray' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'gray' colormap
  *
@@ -243,7 +243,7 @@ public:
 };
 
 /**
- * \short The 'Spectral' color map for scaling. 
+ * \short The 'Spectral' color map for scaling.
  *
  * The colors are taken from the <a href="http://matplotlib.sourceforge.net">matplotlib</a> 'spectral' colormap
  *

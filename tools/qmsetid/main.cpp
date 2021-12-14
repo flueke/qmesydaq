@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	qint16	id = 1;
 	qint16	fromId = 0;
 	qint16	idCount = 0;
-	
+
 	QStringList args = app.arguments();
 	if (args.size() > 1)
 	{

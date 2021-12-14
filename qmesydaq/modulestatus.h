@@ -39,7 +39,7 @@ public:
 	ModuleStatus(QWidget * = 0);
 
 	void update(const QString &, const float, const bool, const bool = true, const bool = true);
-	
+
 	void setId(const quint8);
 
 signals:

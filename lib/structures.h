@@ -29,23 +29,23 @@
 struct MDP_PACKET
 {
 	quint16 bufferLength;	//!< length of the buffer
-	
+
 	quint16 bufferType;	//!< the buffer type
-	
+
 	quint16 headerLength;	//!< the length of the buffer header
-	
-	quint16 bufferNumber;	//!< number of the packet 
-	
+
+	quint16 bufferNumber;	//!< number of the packet
+
 	quint16 cmd;		//!< the command number
-	
+
 	quint8 	deviceStatus;	//!< the device state
-	
+
 	quint8 	deviceId;	//!< the id of the device
-	
+
 	quint16 time[3];	//!< device time
-	
+
 	quint16 headerChksum;	//!< check sum of the header
-	
+
 	quint16 data[750];	//!< the data, length of the data = length of the buffer - length of the header
 };
 
@@ -53,23 +53,23 @@ struct MDP_PACKET
 struct DATA_PACKET
 {
 	quint16 bufferLength;	//!< length of the buffer
-	
+
 	quint16 bufferType;	//!< the buffer type
-	
+
 	quint16 headerLength;	//!< the length of the buffer header
-	
-	quint16 bufferNumber;	//!< number of the packet 
-	
+
+	quint16 bufferNumber;	//!< number of the packet
+
 	quint16 runID; 		//!< the run ID
-	
+
 	quint8  deviceStatus;	//!< the device state
-	
+
 	quint8  deviceId;	//!< device time
-	
+
 	quint16 time[3];	//!< device time
-	
+
 	quint16 param[4][3];	//!< the values of the parameters (belong to the header)
-	
+
 	quint16 data[750];	//!< the events, length of the data = length of the buffer - length of the header
 };
 
@@ -198,7 +198,7 @@ typedef struct NeutronEvent
 
 #if 0
 //! structure for MDLL settings
-typedef struct _MDLL_SETTINGS 
+typedef struct _MDLL_SETTINGS
 {
 	quint8 id;
 //	bool master;
@@ -220,7 +220,7 @@ typedef struct _MDLL_SETTINGS
 	quint8 histType;
 	quint8 slscOff;
 	quint8 datareg;
-    
+
 	quint16 eventCounter0;
 	quint16 eventCounter1;
 	quint16 eventLimit0;
@@ -231,11 +231,11 @@ typedef struct _MDLL_SETTINGS
 	quint16 tsumXhi;
 	quint16 tsumYlo;
 	quint16 tsumYhi;
-    
+
 	quint8 pulserOn;
 	quint8 pulserAmpl;
 	quint8 pulserPos;
-    	
+
 	quint8 energyLow;
 	quint8 energyHi;
 
@@ -258,15 +258,15 @@ typedef struct _MDLL_ADDRESS_SET
 	quint8 ip1;	//!<
 	quint8 ip2;	//!<
 	quint8 ip3;	//!<
-    
+
 	quint8 dip0;	//!<
 	quint8 dip1;
 	quint8 dip2;	//!<
 	quint8 dip3;	//!<
-    
+
 	quint8 cudp;	//!<
 	quint8 dudp;	//!<
-    
+
 	quint8 cip0;	//!<
 	quint8 cip1;	//!<
 	quint8 cip2;	//!<
@@ -378,14 +378,14 @@ const quint8 THRESHPOT = 1;
 // data length
 const quint8 EIGHTBIT = 0;
 const quint8 TENBIT = 1;
- 
+
 // pulser positions
 #if 0
 const quint8 LEFT = 0;
 const quint8 RIGHT = 1;
 const quint8 MIDDLE = 2;
 #endif
- 
+
 // command bytes for FPGA:
 // SPODI type
 const quint8 PERIPOT = 0;
@@ -527,4 +527,4 @@ const quint8 READPORT = 30;
 const quint8 READHISTO = 31;
 const quint8 STARTANGLE = 32;
 
-#endif 
+#endif

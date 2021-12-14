@@ -51,7 +51,7 @@ private slots:
 	void setMcpdIdSlot();
 
 	void setIpUdpSlot();
-	
+
 	void displayMCPDSlot(int = -1);
 
 	void displayCounterCellSlot(int = -1);

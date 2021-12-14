@@ -9,23 +9,23 @@
 //               network. All commands which can be executed on the
 //               DetectorChannel are implemented in this file.
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -165,7 +165,7 @@ void DetectorChannel::init_device()
 	//	Initialization before get_device_property() call
 
 	/*----- PROTECTED REGION END -----*/	//	DetectorChannel::init_device_before
-	
+
 	if (Tango::Util::instance()->is_svr_starting() == false  &&
 		Tango::Util::instance()->is_device_restarting(device_name)==false)
 	{
@@ -175,7 +175,7 @@ void DetectorChannel::init_device()
 
 	//	Get the device properties from database
 	get_device_property();
-	
+
 	attr_active_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(DetectorChannel::init_device) ENABLED START -----*/
 
@@ -194,9 +194,9 @@ void DetectorChannel::init_device()
 void DetectorChannel::get_device_property()
 {
 	/*----- PROTECTED REGION ID(DetectorChannel::get_device_property_before) ENABLED START -----*/
-	
+
 	//	Initialize property data members
-	
+
 	/*----- PROTECTED REGION END -----*/	//	DetectorChannel::get_device_property_before
 
 
@@ -217,7 +217,7 @@ void DetectorChannel::get_device_property()
 		//	Call database and extract values
 		if (Tango::Util::instance()->_UseDb==true)
 			get_db_device()->get_property(dev_prop);
-	
+
 		//	get instance on DetectorChannelClass to get class property
 		Tango::DbDatum	def_prop, cl_prop;
 		DetectorChannelClass	*ds_class =
@@ -315,9 +315,9 @@ void DetectorChannel::get_device_property()
 	}
 
 	/*----- PROTECTED REGION ID(DetectorChannel::get_device_property_after) ENABLED START -----*/
-	
+
 	//	Check device property data members init
-	
+
 	/*----- PROTECTED REGION END -----*/	//	DetectorChannel::get_device_property_after
 }
 
@@ -559,10 +559,10 @@ Tango::DevState DetectorChannel::dev_state()
 	Tango::DevState tmp(Tango::ON);
 	switch (m_interface->status() | m_started)
 	{
-		case 1 :
+		case 1:
 			tmp = ::Tango::MOVING;
 			break;
-		case 0 :
+		case 0:
 		default:
 			break;
 	}

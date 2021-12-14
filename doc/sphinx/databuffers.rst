@@ -93,7 +93,7 @@ Header data dictionary
 :Buffer Number:     Simple 16 bit counter for data buffers. Incremented
                     automatically by MCPD-8 to allow loss monitoring.
                     Separate counters for data and cmd buffers.
-:Buffer Length:     Total length in multiple of 16 bit words, stretching from 
+:Buffer Length:     Total length in multiple of 16 bit words, stretching from
                     “Buffer Type” to last data word.
 :Run ID:            Simple 16 bit run counter, set by software, to allow for
                     integrity control.
@@ -110,12 +110,12 @@ Header data dictionary
 :Header Timestamp:  48 bits current status of the synchronized system timer
                     (100 ns timing resolution). Represents the value of the
                     system timer at the moment of the buffer opening. All events
-                    in a buffer carry a positive 19 bit offset information 
+                    in a buffer carry a positive 19 bit offset information
                     relative to this header timestamp.
 :Parameter 0..3:    MCPD-8 allows the transmission of selected counter/input
-                    value with each buffer. So parameter 0..3 represent the 
+                    value with each buffer. So parameter 0..3 represent the
                     values of the selected counters/inputs at the moment of the
-                    buffer opening (t = header timestamp). Also the digital 
+                    buffer opening (t = header timestamp). Also the digital
                     input status and ADC values can mapped here.
 :Event 0..n:        (n + 1) * 48 bit event information
                     Event structure is explained in detail below.
@@ -180,7 +180,7 @@ Neutron data events (ID = 0)
 
                 19 bit
 
- 
+
 Address reconstruction
 """"""""""""""""""""""
 

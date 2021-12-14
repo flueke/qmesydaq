@@ -131,10 +131,10 @@ bool MCPD8::init(void)
                     MSG_INFO << tr("module : %1 capabilities : %2").arg(c).arg(cap);
                     modus &= cap;
                     break;
-                case TYPE_MDLL :
+                case TYPE_MDLL:
                     modus = TPA;
                     break;
-                case TYPE_NOMODULE :
+                case TYPE_NOMODULE:
                     break;
                 case TYPE_MPSD8SADC:
                     if (modus == TPA)

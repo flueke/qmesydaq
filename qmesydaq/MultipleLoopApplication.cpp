@@ -65,8 +65,8 @@ QObject *MultipleLoopApplication::getLoopEventReceiver()
     \fn void MultipleLoopApplication::setLoopObject(LoopObject *loop)
 
     sets the thread object to handle all incoming events
-    
-    \param loop 
+
+    \param loop
  */
 void MultipleLoopApplication::setLoopObject(LoopObject *loop)
 {

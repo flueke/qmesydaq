@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 	QCoreApplication app(argc, argv);
 
 	Detector *detector(NULL);
-		
+
 #if 1
 	m[0] = new MCPD8(0, "192.168.168.121", 54321, "192.168.168.5");
 	qDebug() << QObject::tr("module 2 : %1").arg(m[0]->version());

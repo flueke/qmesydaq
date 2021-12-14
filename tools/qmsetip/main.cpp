@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	QString toIP = "192.168.168.122";
 	int 	id = 0;
 	qint16	ipCount = 0;
-	
+
 	QStringList args = app.arguments();
 	if (args.size() > 1)
 	{

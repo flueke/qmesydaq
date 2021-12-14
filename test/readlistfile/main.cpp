@@ -54,6 +54,8 @@ int main(int argc, char **argv)
 	Measurement 	m_meas(&m_detector, NULL);
         m_meas.readListfile(fileName);
 
+	MSG_ERROR << QObject::tr("Finished");
+
 	QTimer::singleShot(50, &app, SLOT(quit()));
 
 	app.exec();

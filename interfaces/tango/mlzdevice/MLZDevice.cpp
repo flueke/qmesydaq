@@ -144,9 +144,9 @@ void MLZDevice::init_device()
 	//	Initialization before get_device_property() call
 
 	/*----- PROTECTED REGION END -----*/	//	MLZDevice::init_device_before
-	
+
 	//	No device property to be read from database
-	
+
 	attr_version_read = new Tango::DevString[1];
 	/*----- PROTECTED REGION ID(MLZDevice::init_device) ENABLED START -----*/
 
@@ -317,9 +317,9 @@ void MLZDevice::reset()
 {
 	DEBUG_STREAM << "MLZDevice::Reset()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(MLZDevice::reset) ENABLED START -----*/
-	
+
 	//	Add your own code
-	
+
 	/*----- PROTECTED REGION END -----*/	//	MLZDevice::reset
 }
 //--------------------------------------------------------
@@ -332,9 +332,9 @@ void MLZDevice::reset()
 void MLZDevice::add_dynamic_commands()
 {
 	/*----- PROTECTED REGION ID(MLZDevice::add_dynamic_commands) ENABLED START -----*/
-	
+
 	//	Add your own code to create and add dynamic commands if any
-	
+
 	/*----- PROTECTED REGION END -----*/	//	MLZDevice::add_dynamic_commands
 }
 

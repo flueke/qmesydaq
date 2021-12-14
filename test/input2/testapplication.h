@@ -32,7 +32,7 @@ public:
 	{
 		QStringList args = arguments();
 		qRegisterMetaType<QSharedDataPointer<SD_PACKET> >("QSharedDataPointer<SD_PACKET>");
-	
+
 		startLogging("", "");
 		DEBUGLEVEL = ERROR;
 

@@ -93,7 +93,7 @@ public:
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
 	~OnClass() {};
-	
+
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<MLZDevice *>(dev))->is_On_allowed(any);}
@@ -116,7 +116,7 @@ public:
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
 	~OffClass() {};
-	
+
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<MLZDevice *>(dev))->is_Off_allowed(any);}
@@ -139,7 +139,7 @@ public:
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
 	~GetPropertiesClass() {};
-	
+
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<MLZDevice *>(dev))->is_GetProperties_allowed(any);}
@@ -162,7 +162,7 @@ public:
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
 	~SetPropertiesClass() {};
-	
+
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<MLZDevice *>(dev))->is_SetProperties_allowed(any);}
@@ -185,7 +185,7 @@ public:
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
 	~ResetClass() {};
-	
+
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<MLZDevice *>(dev))->is_Reset_allowed(any);}
@@ -212,7 +212,7 @@ class MLZDeviceClass : public Tango::DeviceClass
 		Tango::DbData	cl_prop;
 		Tango::DbData	cl_def_prop;
 		Tango::DbData	dev_def_prop;
-	
+
 		//	Method prototypes
 		static MLZDeviceClass *init(const char *);
 		static MLZDeviceClass *instance();
@@ -220,7 +220,7 @@ class MLZDeviceClass : public Tango::DeviceClass
 		Tango::DbDatum	get_class_property(string &);
 		Tango::DbDatum	get_default_device_property(string &);
 		Tango::DbDatum	get_default_class_property(string &);
-	
+
 	protected:
 		MLZDeviceClass(string &);
 		static MLZDeviceClass *_instance;
@@ -232,7 +232,7 @@ class MLZDeviceClass : public Tango::DeviceClass
 		void get_class_property();
 		string get_cvstag();
 		string get_cvsroot();
-	
+
 	private:
 		void device_factory(const Tango::DevVarStringArray *);
 		void create_static_attribute_list(vector<Tango::Attr *> &);

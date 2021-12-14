@@ -1,6 +1,6 @@
 #include "histomapping.h"
 
-HistoMapping::HistoMapping() 
+HistoMapping::HistoMapping()
 	: QObject()
 	, hMap(NULL)
 	, lMap(NULL)
@@ -49,8 +49,8 @@ void HistoMapping::initTestCase()
 void HistoMapping::TubesTest()
 {
 	QVERIFY(tubes.length() == 32);
-	QVERIFY(tubes == QList<quint16>() << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 
-			<< 10 << 11 << 12 << 13 << 14 << 15 << 24 << 25 << 26 << 27 << 28 << 29 
+	QVERIFY(tubes == QList<quint16>() << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9
+			<< 10 << 11 << 12 << 13 << 14 << 15 << 24 << 25 << 26 << 27 << 28 << 29
 			<< 30 << 31 << 32 << 33 << 34 << 35 << 36 << 37 << 38 << 39);
 }
 

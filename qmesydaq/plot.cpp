@@ -195,10 +195,10 @@ void Plot::setLinLog(const enum Scale log)
 	m_linlog = log;
 	switch (m_mode)
 	{
-		case Histogram :
+		case Histogram:
 			switch (m_linlog)
 			{
-				case Logarithmic :
+				case Logarithmic:
 #if QWT_VERSION < 0x060000
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLog10ScaleEngine);
 #else
@@ -211,7 +211,7 @@ void Plot::setLinLog(const enum Scale log)
 					m_histogram->setColorMap(m_colorMap);
 #endif
 					break;
-				case Linear :
+				case Linear:
 				default:
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLinearScaleEngine);
 					m_colorMap->setLinearScaling();
@@ -226,7 +226,7 @@ void Plot::setLinLog(const enum Scale log)
 		case Diffractogram:
 		case SingleSpectrum:
 		case ModuleSpectrum:
-		case Spectrum :
+		case Spectrum:
 			switch (m_linlog)
 			{
 				case Logarithmic:
@@ -236,13 +236,13 @@ void Plot::setLinLog(const enum Scale log)
 					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
 #endif
 					break;
-				case Linear :
+				case Linear:
 				default:
             				setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 					break;
 			}
 			break;
-		default :
+		default:
 			break;
 	}
 	replot();
@@ -264,14 +264,14 @@ void Plot::setDisplayMode(const Mode &m)
 			enableAxis(QwtPlot::yRight, false);
 			switch(m_linlog)
 			{
-				case Logarithmic :
+				case Logarithmic:
 #if QWT_VERSION < 0x060000
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 #else
 					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
 #endif
 					break;
-				case Linear :
+				case Linear:
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 					break;
 			}
@@ -283,14 +283,14 @@ void Plot::setDisplayMode(const Mode &m)
 			enableAxis(QwtPlot::yRight, false);
 			switch (m_linlog)
 			{
-				case Logarithmic :
+				case Logarithmic:
 #if QWT_VERSION < 0x060000
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 #else
 					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
 #endif
 					break;
-				case Linear :
+				case Linear:
 				default:
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 					break;
@@ -307,14 +307,14 @@ void Plot::setDisplayMode(const Mode &m)
 			enableAxis(QwtPlot::yRight, false);
 			switch (m_linlog)
 			{
-				case Logarithmic :
+				case Logarithmic:
 #if QWT_VERSION < 0x060000
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLog10ScaleEngine);
 #else
 					setAxisScaleEngine(QwtPlot::yRight, new QwtLogScaleEngine);
 #endif
 					break;
-				case Linear :
+				case Linear:
 				default:
 					setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 					break;
@@ -328,7 +328,7 @@ void Plot::setDisplayMode(const Mode &m)
             		setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
 			switch (m_linlog)
 			{
-				case Logarithmic :
+				case Logarithmic:
 #if QWT_VERSION < 0x060000
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLog10ScaleEngine);
 #else
@@ -341,7 +341,7 @@ void Plot::setDisplayMode(const Mode &m)
 					m_histogram->setColorMap(m_colorMap);
 #endif
 					break;
-				case Linear :
+				case Linear:
 				default:
             				setAxisScaleEngine(QwtPlot::yRight, new QwtLinearScaleEngine);
 					m_colorMap->setLinearScaling();
@@ -366,7 +366,7 @@ void Plot::setDisplayMode(const Mode &m)
 	setZoomer(c);
 }
 
-void Plot::replot(void) 
+void Plot::replot(void)
 {
 	switch(m_mode)
 	{
@@ -393,7 +393,7 @@ void Plot::replot(void)
 				setAxisScale(QwtPlot::yRight, r.minValue(), r.maxValue());
 			}
 			break;
-		default :
+		default:
 			break;
 	}
 	QwtPlot::replot();
@@ -432,19 +432,19 @@ void Plot::zoomed(const QRectF &rect)
 		QRectF r;
 		switch(m_mode)
 		{
-			default : 
+			default:
 				setAxisAutoScale(QwtPlot::yLeft);
 				r = m_curve[0]->boundingRect();
 				setAxisScale(QwtPlot::xBottom, 0, r.width());
 				break;
-			case Histogram :
+			case Histogram:
 				r = m_histogram->boundingRect();
 				setAxisScale(QwtPlot::xBottom, 0, r.width());
 				setAxisScale(QwtPlot::yLeft, 0, r.height());
 				break;
 		}
 	}
-	replot(); 
+	replot();
 #if QWT_VERSION >= 0x060000
 	emit zoom(rect);
 #else
@@ -455,7 +455,7 @@ void Plot::zoomed(const QRectF &rect)
 /*!
     \fn void Plot::zoomAreaSelected(const QRectF &)
 
-    callback for the zoomer area 
+    callback for the zoomer area
 */
 void Plot::zoomAreaSelected(const QRectF &)
 {

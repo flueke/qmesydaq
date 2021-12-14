@@ -95,23 +95,23 @@ Bit 15 = 1 : command buffer <br>
 <td> <b>Header length:</b> </td>
 <td> Length of header information in 16 bit words </td>
 </tr>
-<tr> 
+<tr>
 <td> <b>Buffer number:</b> </td>
 <td> Simple 16 bit counter for data buffers. Incremented automatically
 by MCPD to allow loss monitoring.
 </td>
 </tr>
-<tr> 
+<tr>
 <td> <b>Run ID:</b> </td>
 <td>Simple 16 bit run counter, set by software, to allow integrity control
 </td>
 </tr>
-<tr> 
+<tr>
 <td> <b>MCPD ID:</b> </td>
 <td>8 bit ID of sending MCPD module, to be assigned during hardware initialisation.
 </td>
 </tr>
-<tr> 
+<tr>
 <td> <b>Status:</b> </td>
 <td> 8 bit wide field for sync and start/stop status of sending MCDP <br>
 currently only bits 0, 1 are used: <br>
@@ -119,7 +119,7 @@ bit 0: 1 = DAQ running, 0 = DAQ stopped <br>
 bit 1: 1 = sync OK, 0 = sync error <br>
 </td>
 </tr>
-<tr> 
+<tr>
 <td> <b>Header timestamp:</b> </td>
 <td>
 48 bits current status of the synchronized system timer (100 ns time resolution)<br>
@@ -128,7 +128,7 @@ All events in a buffer carry a positive 19 bit offset timing information relativ
 to this header timestamp.
 </td>
 </tr>
-<tr> 
+<tr>
 <td> <b>Parameter 0 .. 3:</b> </td>
 <td>
 MCPD allows the transmission of selected counter and/or input values with each
@@ -137,7 +137,7 @@ inputs at the moment of buffer opening (t = header timestamp)<br>
 Also the digital input status and ADC values can be mapped here \ref {}.
 </td>
 </tr>
-<tr> 
+<tr>
 <td> <b>Event 0 .. n:</b> </td>
 <td>
 (n + 1) &times; 48 bits events information<br>
@@ -169,7 +169,7 @@ Each neutron event has the following structure:
 
 \paragraph neutron_event_description Description
 
-- ID: ID = 0 signalling a "neutron" event, resulting from a detector event at a 
+- ID: ID = 0 signalling a "neutron" event, resulting from a detector event at a
 periphal module like MPSD.
 
 1 bit
@@ -238,7 +238,7 @@ could look like this:
 
 <b>Position (= event position on identified tube): </b>
 
-Data: 10 bit position data along detector tube. 
+Data: 10 bit position data along detector tube.
 No calculation needed (but possibly calibration against physical data ... )
 
 \subsubsection trigger_data_event Trigger data events (ID = 1)
@@ -265,7 +265,7 @@ Each trigger event has the following structure:
 - ID: ID = 1 signalling a "not neutron" event (= generated centrally in MCPD)
 possible trigger sources are
 - Counters
-- Timers 
+- Timers
 - Digital inputs
 - ADC values
 
@@ -295,8 +295,8 @@ event time = header timestamp + event timestamp
 
 \section command_buffers Command buffers
 
-Each command buffer consists of a buffer header (10 &times; 16 bits = 40 Bytes) 
-and a trailing data block of variable length. The contents of the data block 
+Each command buffer consists of a buffer header (10 &times; 16 bits = 40 Bytes)
+and a trailing data block of variable length. The contents of the data block
 depends on the individual commands.
 
 The total length of a command buffer varies between 40 Bytes (header only) and
@@ -344,7 +344,7 @@ fulfill minimum Ethernet buffer size will not be counted.
 <tr>
 <td> <b>Buffer type:</b> </td>
 <td>16 bit descriptor<br>
-Bits 0 .. 14 carry a version information and may be left blank in buffers sent 
+Bits 0 .. 14 carry a version information and may be left blank in buffers sent
 by control PC.<br>
 Bit 15 = 0 : data buffer<br>
 Bit 15 = 1 : command buffer
@@ -389,7 +389,7 @@ Can be left in buffers sent by the control PC.
 </tr>
 <tr>
 <td> <b>Command checksum:</b> </td>
-<td>16 bit XOR checksum covering all words from "Buffer type" (Word 0) to last 
+<td>16 bit XOR checksum covering all words from "Buffer type" (Word 0) to last
 data word (Word buffer length - 1).
 \warning Set the checksum field to <b>0 (zero)</b> before calculation.
 </td>

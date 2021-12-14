@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 		MSG_FATAL << QObject::tr("Read file : %1 ").arg(fileName);
 
 		Measurement *meas = new Measurement(new Detector());
-		
+
 		meas->readHistograms(fileName);
 
 		Histogram *hp = meas->hist(Measurement::PositionHistogram);

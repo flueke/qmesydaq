@@ -5,23 +5,23 @@
 //
 // description : State machine file for the DetectorChannel class
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -40,7 +40,7 @@
 //  OFF      |  The main function of the device is off.
 //  MOVING   |  The hardware is moving (in case of a motor for example), or the detector is acquiring.
 //  FAULT    |  An error occurred which could not been handled.
-//           |  
+//           |
 //           |  This can be a hardware error, a communication error or even a programming error.
 //  INIT     |  The device is initializing the communication to the hardware and the hardware itself.
 //  ALARM    |  The alarm was caused because of reaching limits, dangerous position or similar circumstances.
@@ -64,7 +64,7 @@ bool DetectorChannel::is_active_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	//	Check access type.
 	if ( type!=Tango::READ_REQ )
 	{
-		//	Compare device state with not allowed states for WRITE 
+		//	Compare device state with not allowed states for WRITE
 		if (get_state()==Tango::OFF ||
 			get_state()==Tango::FAULT ||
 			get_state()==Tango::INIT ||
@@ -82,7 +82,7 @@ bool DetectorChannel::is_active_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	//	Check access type.
 	if ( type==Tango::READ_REQ )
 	{
-		//	Compare device state with not allowed states for READ 
+		//	Compare device state with not allowed states for READ
 		if (get_state()==Tango::INIT ||
 			get_state()==Tango::UNKNOWN)
 		{

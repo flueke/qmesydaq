@@ -9,23 +9,23 @@
 //               network. All commands which can be executed on the
 //               ImageChannel are implemented in this file.
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -182,7 +182,7 @@ void ImageChannel::init_device()
 	//	Initialization before get_device_property() call
 
 	/*----- PROTECTED REGION END -----*/	//	ImageChannel::init_device_before
-	
+
 	if (Tango::Util::instance()->is_svr_starting() == false  &&
 		Tango::Util::instance()->is_device_restarting(device_name)==false)
 	{
@@ -192,7 +192,7 @@ void ImageChannel::init_device()
 
 	//	Get the device properties from database
 	get_device_property();
-	
+
 	attr_preselection_read = new Tango::DevULong64[1];
 	attr_detectorSize_read = new Tango::DevULong[10];
 	attr_roiOffset_read = new Tango::DevULong[10];
@@ -244,7 +244,7 @@ void ImageChannel::get_device_property()
 		//	Call database and extract values
 		if (Tango::Util::instance()->_UseDb==true)
 			get_db_device()->get_property(dev_prop);
-	
+
 		//	get instance on ImageChannelClass to get class property
 		Tango::DbDatum	def_prop, cl_prop;
 		ImageChannelClass	*ds_class =
@@ -370,7 +370,7 @@ void ImageChannel::write_preselection(Tango::WAttribute &attr)
 /**
  *	Read attribute detectorSize related method
  *	Description: Represents the real detector size in all dimensions (max 10).
- *               
+ *
  *               The dimension with the fastest running index should come first. For an image this must be the X dimension.
  *
  *	Data type:	Tango::DevULong
@@ -393,7 +393,7 @@ void ImageChannel::read_detectorSize(Tango::Attribute &attr)
 /**
  *	Read attribute roiOffset related method
  *	Description: Region of interest offset in all dimensions (max 10).
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -414,7 +414,7 @@ void ImageChannel::read_roiOffset(Tango::Attribute &attr)
 /**
  *	Write attribute roiOffset related method
  *	Description: Region of interest offset in all dimensions (max 10).
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -445,7 +445,7 @@ void ImageChannel::write_roiOffset(Tango::WAttribute &attr)
 /**
  *	Read attribute roiSize related method
  *	Description: Region of interest size. Extraction of the region of interest will be done before binning!
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -470,7 +470,7 @@ void ImageChannel::read_roiSize(Tango::Attribute &attr)
 /**
  *	Write attribute roiSize related method
  *	Description: Region of interest size. Extraction of the region of interest will be done before binning!
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -495,7 +495,7 @@ void ImageChannel::write_roiSize(Tango::WAttribute &attr)
 /**
  *	Read attribute binning related method
  *	Description: Binning to be applied to the original image. Binning will be done after extracting the region of interest.
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -516,7 +516,7 @@ void ImageChannel::read_binning(Tango::Attribute &attr)
 /**
  *	Write attribute binning related method
  *	Description: Binning to be applied to the original image. Binning will be done after extracting the region of interest.
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -620,7 +620,7 @@ void ImageChannel::add_dynamic_attributes()
  *
  *	@param argin First element: offset of first element.
  *               Second element: number of elements to get.
- *	@returns 
+ *	@returns
  */
 //--------------------------------------------------------
 Tango::DevVarULongArray *ImageChannel::get_block(const Tango::DevVarULongArray *argin)

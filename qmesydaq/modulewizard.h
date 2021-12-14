@@ -37,7 +37,7 @@ class ModuleWizard : public QWizard, public Ui_ModuleWizard
 	Q_OBJECT
 public:
 	ModuleWizard(const QString & = "192.168.168.121", const quint16 = 0, QWidget * = 0);
-	
+
 	QString ip(void);
 
 	quint16 id(void);

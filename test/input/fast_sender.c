@@ -151,7 +151,7 @@ void setup_socket(struct sock *sock)
     }
     if (set_buffer_size(s) == -1 ) {
         die("Setting buffer size failed");
-    }      
+    }
     if (connect(s, res->ai_addr, res->ai_addrlen) == -1)
     {
         die("connect()");
@@ -171,7 +171,7 @@ int set_buffer_size(int s)
      */
     int opt = 16 * 1024*1024; /* 16 MB */
     socklen_t optlen;
-    
+
     if (setsockopt(s, SOL_SOCKET, SO_RCVBUF, &opt, sizeof(opt)) < 0) {
         return -1;
     }
@@ -288,7 +288,7 @@ void genevent(union event *evin, uint64_t headts)
     ev->slotid = 2;
     ev->amplitude = 100;
     ev->position = 200;
-    ev->ts = 
+    ev->ts =
 #endif
     uint8_t id = 0;
     uint8_t modid = 1;

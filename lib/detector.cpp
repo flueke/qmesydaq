@@ -616,7 +616,7 @@ bool Detector::saveSetup(QSettings &settings)
 			int moduleID = value->getModuleId(j);
 			switch (moduleID)
 			{
-				case TYPE_NOMODULE :
+				case TYPE_NOMODULE:
 					break;
 				case TYPE_MWPCHR:
 					if (j == 0)

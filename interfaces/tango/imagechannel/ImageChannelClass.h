@@ -6,26 +6,26 @@
 // description : Include for the ImageChannel root class.
 //               This class is the singleton class for
 //                the ImageChannel device class.
-//               It contains all properties and methods which the 
+//               It contains all properties and methods which the
 //               ImageChannel requires only once e.g. the commands.
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -176,7 +176,7 @@ public:
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
 	~GetBlockClass() {};
-	
+
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<ImageChannel *>(dev))->is_GetBlock_allowed(any);}
@@ -203,7 +203,7 @@ class ImageChannelClass : public DetectorChannel_ns::DetectorChannelClass
 		Tango::DbData	cl_prop;
 		Tango::DbData	cl_def_prop;
 		Tango::DbData	dev_def_prop;
-	
+
 		//	Method prototypes
 		static ImageChannelClass *init(const char *);
 		static ImageChannelClass *instance();
@@ -211,7 +211,7 @@ class ImageChannelClass : public DetectorChannel_ns::DetectorChannelClass
 		Tango::DbDatum	get_class_property(string &);
 		Tango::DbDatum	get_default_device_property(string &);
 		Tango::DbDatum	get_default_class_property(string &);
-	
+
 	protected:
 		ImageChannelClass(string &);
 		static ImageChannelClass *_instance;
@@ -223,7 +223,7 @@ class ImageChannelClass : public DetectorChannel_ns::DetectorChannelClass
 		void get_class_property();
 		string get_cvstag();
 		string get_cvsroot();
-	
+
 	private:
 		void device_factory(const Tango::DevVarStringArray *);
 		void create_static_attribute_list(vector<Tango::Attr *> &);

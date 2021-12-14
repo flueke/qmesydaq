@@ -5,23 +5,23 @@
 //
 // description : Include file for the ImageChannel class
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -164,7 +164,7 @@ public:
 /**
  *	Attribute detectorSize related methods
  *	Description: Represents the real detector size in all dimensions (max 10).
- *               
+ *
  *               The dimension with the fastest running index should come first. For an image this must be the X dimension.
  *
  *	Data type:	Tango::DevULong
@@ -175,7 +175,7 @@ public:
 /**
  *	Attribute roiOffset related methods
  *	Description: Region of interest offset in all dimensions (max 10).
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -187,7 +187,7 @@ public:
 /**
  *	Attribute roiSize related methods
  *	Description: Region of interest size. Extraction of the region of interest will be done before binning!
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -199,7 +199,7 @@ public:
 /**
  *	Attribute binning related methods
  *	Description: Binning to be applied to the original image. Binning will be done after extracting the region of interest.
- *               
+ *
  *               The dimension order is the same as for detectorSize.
  *
  *	Data type:	Tango::DevULong
@@ -249,7 +249,7 @@ public:
 	 *
 	 *	@param argin First element: offset of first element.
 	 *               Second element: number of elements to get.
-	 *	@returns 
+	 *	@returns
 	 */
 	virtual Tango::DevVarULongArray *get_block(const Tango::DevVarULongArray *argin);
 	virtual bool is_GetBlock_allowed(const CORBA::Any &any);

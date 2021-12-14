@@ -9,23 +9,23 @@
 //               and all properties and methods required
 //               by the ImageChannel once per process.
 //
-// project :     
+// project :
 //
 // This file is part of Tango device class.
-// 
+//
 // Tango is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // Tango is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Tango.  If not, see <http://www.gnu.org/licenses/>.
-// 
+//
 //
 //
 //=============================================================================
@@ -388,7 +388,7 @@ void ImageChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for preselection
 	//	delta_t	not set for preselection
 	//	delta_val	not set for preselection
-	
+
 	preselection->set_default_properties(preselection_prop);
 	//	Not Polled
 	preselection->set_disp_level(Tango::OPERATOR);
@@ -413,7 +413,7 @@ void ImageChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for detectorSize
 	//	delta_t	not set for detectorSize
 	//	delta_val	not set for detectorSize
-	
+
 	detectorsize->set_default_properties(detectorsize_prop);
 	//	Not Polled
 	detectorsize->set_disp_level(Tango::OPERATOR);
@@ -437,7 +437,7 @@ void ImageChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for roiOffset
 	//	delta_t	not set for roiOffset
 	//	delta_val	not set for roiOffset
-	
+
 	roioffset->set_default_properties(roioffset_prop);
 	//	Not Polled
 	roioffset->set_disp_level(Tango::OPERATOR);
@@ -461,7 +461,7 @@ void ImageChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for roiSize
 	//	delta_t	not set for roiSize
 	//	delta_val	not set for roiSize
-	
+
 	roisize->set_default_properties(roisize_prop);
 	//	Not Polled
 	roisize->set_disp_level(Tango::OPERATOR);
@@ -485,7 +485,7 @@ void ImageChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for binning
 	//	delta_t	not set for binning
 	//	delta_val	not set for binning
-	
+
 	binning->set_default_properties(binning_prop);
 	//	Not Polled
 	binning->set_disp_level(Tango::OPERATOR);
@@ -509,7 +509,7 @@ void ImageChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for zeroPoint
 	//	delta_t	not set for zeroPoint
 	//	delta_val	not set for zeroPoint
-	
+
 	zeropoint->set_default_properties(zeropoint_prop);
 	//	Not Polled
 	zeropoint->set_disp_level(Tango::OPERATOR);
@@ -533,7 +533,7 @@ void ImageChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	min_warning	not set for value
 	//	delta_t	not set for value
 	//	delta_val	not set for value
-	
+
 	value->set_default_properties(value_prop);
 	//	Not Polled
 	value->set_disp_level(Tango::OPERATOR);

@@ -186,7 +186,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 #endif
 	for (int i = 1; i < args.size(); ++i)
 	{
-		QString szArgument = args[i], 
+		QString szArgument = args[i],
 			szParameter;
 		bool	bSeparatedParameter(false);
 		if (szArgument.indexOf('=') != -1)
@@ -221,16 +221,16 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 				g_bUseLogfile = true;
 				MSG_DEBUG << QObject::tr("logfile found or created: %1").arg(szParameter);
 			}
-			if (bSeparatedParameter) 
+			if (bSeparatedParameter)
 				++i;
 		}
 		else if (szArgument == "-d" || szArgument == "-debug")
 		{
 			bool bOK(false);
 			int iLogLevel = szParameter.toInt(&bOK);
-			if (bOK) 
+			if (bOK)
 				DEBUGLEVEL = iLogLevel;
-			if (bSeparatedParameter) 
+			if (bSeparatedParameter)
 				++i;
 			MSG_DEBUG << QObject::tr("logging level %1").arg(DEBUGLEVEL);
 		}
@@ -246,7 +246,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 		{
 			std::cout << args.first().split('/').last().toStdString() << " [-l=<logfile> | --log=<logfile] [-d|--debug|-d=<level>|--debug=<level>]" << std::endl
 								<< "         [-nt|--no-timestamp] [-ns|--no-source]" << std::endl;
-			if (szShortUsage != NULL && szShortUsage[0] != '\0') 
+			if (szShortUsage != NULL && szShortUsage[0] != '\0')
 				std::cout << "         " << szShortUsage << std::endl;
 			std::cout << "  -h --help    this help text" << std::endl
 				<< "  -l --log     write messages to this log file" << std::endl
@@ -257,7 +257,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 				<< "               do not print timestamps" << std::endl
 				<< "  -ns --no-source" << std::endl
 				<< "               do not print source file names" << std::endl;
-			if (szLongUsage != NULL && szLongUsage[0] != '\0') 
+			if (szLongUsage != NULL && szLongUsage[0] != '\0')
 				std::cout << szLongUsage << std::endl;
 			exit(0);
 		}

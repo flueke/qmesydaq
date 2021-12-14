@@ -35,11 +35,11 @@ M2D *M2D::create(int bus, int typ, QObject *parent)
 {
 	switch (typ)
 	{
-		case TYPE_MDLL :
+		case TYPE_MDLL:
 			return new MDLL(bus, parent);
-		case TYPE_MWPCHR :
+		case TYPE_MWPCHR:
 			return new MWPCHR(bus, parent);
-		default :
+		default:
 			return reinterpret_cast<M2D *>(new NoModule(bus, parent));
 	}
 }

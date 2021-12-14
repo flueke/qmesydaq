@@ -47,7 +47,7 @@ public:
 	/*!
 	 * Sets the color of the rubber band of the zoomer
 	 *
-	 * \param color color 
+	 * \param color color
          */
 	void setColor(const QColor &color);
 };

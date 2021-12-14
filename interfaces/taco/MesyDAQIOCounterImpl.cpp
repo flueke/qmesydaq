@@ -209,10 +209,10 @@ DevShort MesyDAQ::IO::Counter::deviceState(void) throw (::TACO::Exception)
 		return ::TACO::State::FAULT;
 	switch (m_interface->status())
 	{
-		case 1 :
+		case 1:
 			return ::TACO::State::COUNTING;
 		default:
-		case 0 :
+		case 0:
 			if (::TACO::Server::deviceState() == ::TACO::State::DEVICE_NORMAL)
 				return ::TACO::State::PRESELECTION_REACHED;
 			return ::TACO::Server::deviceState();

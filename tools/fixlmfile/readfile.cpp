@@ -42,14 +42,14 @@ void fixListfile(QString readfilename)
 	textStream.setDevice(&datfile);
 
 	QChar		c;
-    
+
 	QFile	outFile;
 	outFile.setFileName(readfilename + ".cp");
 	QTextStream	outStream;
 
 	for ( ; !textStream.atEnd(); )
 	{
-	
+
 		textStream >> c;
 		if (c == key[0])
 		{
@@ -74,7 +74,7 @@ void fixListfile(QString readfilename)
 		}
 		if (outFile.isOpen())
 			outStream << c;
-	} 
+	}
 	datfile.close();
 	outFile.close();
 }
