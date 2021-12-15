@@ -740,7 +740,13 @@ bool Detector::loadSetup(QSettings &settings)
 
 
 		QHostAddress cmd(cmdIP);
-		if (cmd == QHostAddress::Any || cmd == QHostAddress::AnyIPv6 || IP == cmdIP)
+		if (
+#if QT_VERSION < 0x050000
+		    cmd == QHostAddress::Any ||
+#else
+		    cmd == QHostAddress::AnyIPv4 ||
+#endif
+		    cmd == QHostAddress::AnyIPv6 || IP == cmdIP)
 		{
 			cmdIP = "0.0.0.0";
 			cmdPort = 0;
@@ -749,7 +755,13 @@ bool Detector::loadSetup(QSettings &settings)
 			cmdPort = 0;
 
 		QHostAddress data(dataIP);
-		if (data == QHostAddress::Any || data == QHostAddress::AnyIPv6 || IP == dataIP)
+		if (
+#if QT_VERSION < 0x050000
+		    data == QHostAddress::Any ||
+#else
+		    data == QHostAddress::AnyIPv4 ||
+#endif
+		    data == QHostAddress::AnyIPv6 || IP == dataIP)
 		{
 			dataIP = "0.0.0.0";
 //			dataPort = 0;
