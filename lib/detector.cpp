@@ -595,7 +595,7 @@ bool Detector::saveSetup(QSettings &settings)
 			settings.setValue("terminate", value->isTerminated() ? "true" : "false");
 			settings.setValue("extsync", value->isExtsynced() ? "true" : "false");
 
-			for (int j =0; j < 4; ++j)
+			for (int j = 0; j < 4; ++j)
 			{
 				settings.setValue(QString("auxtimer%1").arg(j), value->getAuxTimer(j));
 				settings.setValue(QString("paramsource%1").arg(j), value->getParamSource(j));
