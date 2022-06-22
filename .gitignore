@@ -11,7 +11,7 @@ Makefile
 Makefile.Debug
 Makefile.Release
 revision.h
-version
+qmversion
 
 data/
 configs/

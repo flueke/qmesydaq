@@ -19,10 +19,10 @@
 ############################################################################
 
 exists(.git) {
-	system(git describe > version)
+	system(git describe > qmversion)
 }
-unix:VERSION		= $$system(cat version)
-win32:VERSION		= $$system(type version)
+unix:VERSION		= $$system(cat qmversion)
+win32:VERSION		= $$system(type qmversion)
 
 include (mesydaqconfig.pri)
 
