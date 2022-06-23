@@ -38,6 +38,9 @@ class Detector;
 class EditorMemory;
 class SetupComment;
 
+class MultipleLoopApplication;
+class QMesyDAQDetectorInterface;
+
 /**
     \short Main Widget in the application
 
@@ -292,6 +295,10 @@ private:
 	QRect			m_roi[3];
 
 	QList<MonitorPresetWidget *>	m_monitorPresets;
+
+	MultipleLoopApplication *m_app;
+
+	QMesyDAQDetectorInterface	*m_interface;
 };
 
 #endif

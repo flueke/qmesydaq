@@ -584,11 +584,13 @@ Tango::DevVarStringArray *DetectorChannel::get_properties()
 	std::string tmpString;
 
 	(*argout)[i] = CORBA::string_dup("writelistmode");
+	writelistmode = m_interface->getListMode();
 	tmpData << writelistmode;
 	tmpData >> tmpString;
 	(*argout)[i + 1] = CORBA::string_dup(tmpString.c_str());
 
 	(*argout)[i + 2] = CORBA::string_dup("writehistogram");
+	writehistogram = m_interface->getHistogramMode();
 	tmpData << writehistogram;
 	tmpData >> tmpString;
 	(*argout)[i + 3] = CORBA::string_dup(tmpString.c_str());

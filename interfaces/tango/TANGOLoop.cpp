@@ -84,6 +84,14 @@ void TANGOLoop::register_device(const QString &device, const QString &fullserver
 void TANGOLoop::runLoop()
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(), qApp->applicationName());
+
+	QString lastConfigFile = settings.value("lastconfigfile", "mesycfg.mcfg").toString();
+
+	settings.beginGroup("config");
+	Tango::DbDatum runid("runid");
+	runid << settings.value("lastrunid", "0").toUInt();
+	settings.endGroup();
+
 	settings.beginGroup("TANGO");
 	m_personal = settings.value("personal", "qm").toString();
 	m_timerDevice = settings.value("timer", "qm/qmesydaq/timer").toString();
@@ -91,6 +99,7 @@ void TANGOLoop::runLoop()
 	m_imageDevice = settings.value("image", "qm/qmesydaq/image").toString();
 	for (int i = 0; i < 6; ++i)
 		m_counterDevice[i] = settings.value(QString("counter%1").arg(i), QString("qm/qmesydaq/counter%1").arg(i)).toString();
+
 	settings.endGroup();
 
 	QStringList	deviceList;
@@ -104,28 +113,54 @@ void TANGOLoop::runLoop()
 
 	register_server("qmesydaq", m_personal);
 
+	QSettings configs(lastConfigFile, QSettings::IniFormat);
+
+	configs.beginGroup("MESYDAQ");
+	Tango::DbDatum listmode("writelistmode");
+	listmode << configs.value("listmode", "false").toBool();
+	Tango::DbDatum histogram("writehistogram");
+	histogram << configs.value("autosavehistogram", "false").toBool();
+	configs.endGroup();
+
 	// register_device(m_detDevice, fullname, "DetectorChannel");
 	register_device(m_timerDevice, fullname, "TimerChannel");
 	{
 		register_device(m_eventDevice, fullname, "CounterChannel");
-		Tango::DbDatum channel("channel");
 		Tango::DbData data;
-		channel << 100;
 		data.clear();
+
+		data.push_back(runid);
+		data.push_back(listmode);
+		data.push_back(histogram);
+		Tango::DbDatum channel("channel");
+		channel << 100;
 		data.push_back(channel);
 		m_db->put_device_property(m_eventDevice.toStdString(), data);
 	}
 	for (int i = 0; i < 6; ++i)
 	{
 		register_device(m_counterDevice[i], fullname, "CounterChannel");
-		Tango::DbDatum channel("channel");
 		Tango::DbData data;
-		channel << i;
 		data.clear();
+
+		data.push_back(runid);
+		data.push_back(listmode);
+		data.push_back(histogram);
+		Tango::DbDatum channel("channel");
+		channel << i;
 		data.push_back(channel);
 		m_db->put_device_property(m_counterDevice[i].toStdString(), data);
 	}
-	register_device(m_imageDevice, fullname, "ImageChannel");
+	{
+		register_device(m_imageDevice, fullname, "ImageChannel");
+		Tango::DbData data;
+		data.clear();
+
+		data.push_back(runid);
+		data.push_back(listmode);
+		data.push_back(histogram);
+		m_db->put_device_property(m_imageDevice.toStdString(), data);
+	}
 
 	try
 	{

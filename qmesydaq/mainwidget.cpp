@@ -95,6 +95,8 @@ MainWidget::MainWidget(Detector *detector, QWidget *parent)
 	, m_pulserDialog(NULL)
 	, m_remoteStart(false)
 	, m_zoomedRect(0, 0, 0, 0)
+	, m_app(NULL)
+	, m_interface(NULL)
 {
 	setupUi(this);
 #ifndef USE_CARESS
@@ -159,11 +161,15 @@ MainWidget::MainWidget(Detector *detector, QWidget *parent)
 	displayModeButtonGroup->setId(dispSingleSpectrum, Plot::SingleSpectrum);
 
 	versionLabel->setText("QMesyDAQ " VERSION "\n" __DATE__);
-	LoopObject *loop = dynamic_cast<LoopObject *>(dynamic_cast<MultipleLoopApplication*>(QApplication::instance())->getLoopObject());
-	if (loop)
+	m_app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
+	if (m_app)
 	{
-		MSG_NOTICE << loop->version();
-		remoteInterfaceVersionLabel->setText(tr("Interface %1").arg(loop->version()));
+		LoopObject *loop = dynamic_cast<LoopObject *>(m_app->getLoopObject());
+		if (loop)
+		{
+			MSG_NOTICE << loop->version();
+			remoteInterfaceVersionLabel->setText(tr("Interface %1").arg(loop->version()));
+		}
 	}
 	else
 		remoteInterfaceVersionLabel->setText("");
@@ -337,6 +343,7 @@ void MainWidget::init()
 #endif
 	dispAllCorrectedPos->setChecked(true);
 	dispAllCorrectedPos->click();
+	m_interface = dynamic_cast<QMesyDAQDetectorInterface*>(m_app->getQtInterface());
 	emit redraw();
 }
 
@@ -452,13 +459,11 @@ void MainWidget::startStopSlot(bool checked)
 		m_dispTimer = 0;
 		startStopButton->setText("Start");
 
-		MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication*>(QApplication::instance());
-		if(app)
+		if(m_app)
 		{
-			QMesyDAQDetectorInterface *interface = dynamic_cast<QMesyDAQDetectorInterface*>(app->getQtInterface());
 			QString sName;
-			if (interface)
-				sName = interface->getHistogramFileName();
+			if (m_interface)
+				sName = m_interface->getHistogramFileName();
 			if (sName.isEmpty())
 				sName = m_meas->getHistfilename();
 #if defined(USE_CARESS) || defined(USE_TANGO)
