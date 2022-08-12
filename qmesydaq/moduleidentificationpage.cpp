@@ -21,6 +21,7 @@
 #include <QMouseEvent>
 #include <QAbstractButton>
 #include <QTimer>
+
 #include "networkdevice.h"
 
 #include "moduleidentificationpage.h"
@@ -42,8 +43,9 @@ ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
 	, m_bOldValid(false)
 {
 	setupUi(this);
-	registerField("ipaddress*", moduleIPInput, "address", "signalTextChanged(QLineEdit *)");
+    registerField("ipaddress*", le_address);
 	registerField("moduleid*", moduleIDInput);
+    registerField("cmdPort*", spin_cmdPort);
 	initialize();
 	m_pThreadMutex = new QMutex();
 	m_pThread = new ModuleIdentificationPageThread(this);
@@ -53,9 +55,10 @@ ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
 	m_pTestTimer->start(WAITTIME);
 	m_pUpdateTimer = new QTimer();
 
-	connect(moduleIPInput, SIGNAL(textChanged(const QString &)), this, SLOT(valueChanged()));
-	connect(moduleIPInput, SIGNAL(textEdited(const QString &)), this, SLOT(valueChanged()));
+    connect(le_address, SIGNAL(textChanged(const QString &)), this, SLOT(valueChanged()));
+    connect(le_address, SIGNAL(textEdited(const QString &)), this, SLOT(valueChanged()));
 	connect(moduleIDInput, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
+    connect(spin_cmdPort, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
 	connect(m_pTestTimer, SIGNAL(timeout()), this, SLOT(testTimeout()));
 	connect(m_pUpdateTimer, SIGNAL(timeout()), this, SLOT(updateTimeout()));
 
@@ -84,7 +87,7 @@ ModuleIdentificationPage::~ModuleIdentificationPage()
  */
 void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
 {
-	moduleIPInput->setAddress(ip);
+    le_address->setText(ip);
 	moduleIDInput->setValue(id);
 }
 
@@ -134,8 +137,9 @@ void ModuleIdentificationPage::testTimeout()
 
 	if (m_pThread->m_iCommand == ModuleIdentificationPageThread::NONE)
 	{
-        	m_pThread->m_szMcpdIp = moduleIPInput->getAddress(); // 'text()' not feasible, returns "127...2" instead of "127.0.0.2"
+            m_pThread->m_szMcpdIp = le_address->text();
         	m_pThread->m_byMcpdId = moduleIDInput->value();
+            m_pThread->m_cmdPort = spin_cmdPort->value();
         	m_pThread->m_iCommand = ModuleIdentificationPageThread::WORK;
         	m_pThread->m_ThreadCondition.wakeOne();
 	}
@@ -209,9 +213,9 @@ void ModuleIdentificationPageThread::run()
 				break;
 		}
 
-		m_iCommand = NONE;
-		MCPD8 *mcpd = new MCPD8(m_byMcpdId, m_szMcpdIp, 54321, QString(), true);
-		m_pWizard->m_bValid = (mcpd->version() > 0.0);
+        m_iCommand = NONE;
+        MCPD8 *mcpd = new MCPD8(m_byMcpdId, m_szMcpdIp, m_cmdPort, QString::null, 0, QString(), true);
+        m_pWizard->m_bValid = (mcpd->version() >= 0.0);
 		delete mcpd;
 		m_pWizard->m_pThreadMutex->unlock();
 	}

@@ -95,5 +95,7 @@ protected:
 
 	//! MCPD id
 	quint8 m_byMcpdId;
+
+    quint16 m_cmdPort;
 };
 #endif
