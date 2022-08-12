@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>284</width>
+    <height>90</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,48 +19,58 @@
   <property name="subTitle">
    <string>The module may be selected as master or slave. In the system is only one master allowed. The slaves may be terminated but one of the slaves must be terminated.</string>
   </property>
-  <widget class="QCheckBox" name="masterCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>80</y>
-     <width>73</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Master</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="terminateCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>150</y>
-     <width>73</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Terminate</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="externsyncCheckBox">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>220</y>
-     <width>171</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>External Synchronisation</string>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="masterCheckBox">
+     <property name="text">
+      <string>Master</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="terminateCheckBox">
+     <property name="text">
+      <string>Terminate</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="externsyncCheckBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>External Synchronisation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>
