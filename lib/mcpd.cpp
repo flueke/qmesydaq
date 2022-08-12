@@ -34,12 +34,12 @@
  *  \param wDataPort     optional different UDP port of the MCPD data
  *  \param szSourceIp    optional host IP address
  */
-MCPD::MCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, quint16 wDataPort, QString szSourceIp)
+MCPD::MCPD(quint8 byId, QString mcpdAddress, quint16 wPort, QString szMcpdDataIp, quint16 wDataPort, QString szSourceIp)
     : m_iErrorCounter(0)
     , m_pNetwork(NULL)
     , m_pDataNetwork(NULL)
     , m_byId(byId)
-    , m_szMcpdIp(szMcpdIp)
+    , m_szMcpdIp(lookup_ipv4(mcpdAddress).toString())
     , m_wPort(wPort)
     , m_szMcpdDataIp(szMcpdDataIp)
     , m_wDataPort(wDataPort)
@@ -61,15 +61,23 @@ MCPD::MCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, q
 #endif
         QHostAddress(m_szMcpdDataIp) == QHostAddress::AnyIPv6)
         m_szMcpdDataIp.clear();
+
     if (m_wDataPort == m_wPort)
         m_wDataPort = 0;
+
+    MSG_NOTICE << tr("%1(%2): host lookup result: %3 -> %4")
+                  .arg(m_szMcpdIp).arg(m_wPort)
+                  .arg(mcpdAddress).arg(m_szMcpdIp);
+
     m_pPacketMutex = new QMutex;
     m_pThread = new MCPDThread(this);
     m_pThread->start();
     m_pCommunicationMutex = new QMutex;
     m_pCommandMutex = new QMutex;
     m_pNetwork = NetworkDevice::create(m_wPort, szSourceIp);
-    bResult = m_pNetwork->connect_handler(QHostAddress(m_szMcpdIp), wPort, &staticAnalyzeBuffer, this);
+
+    bResult = m_pNetwork->connect_handler(QHostAddress(m_szMcpdIp), m_wPort, &staticAnalyzeBuffer, this);
+
     if (!m_szMcpdDataIp.isEmpty() || m_wDataPort != 0)
     {
         if (m_szMcpdDataIp.isEmpty())
@@ -77,7 +85,7 @@ MCPD::MCPD(quint8 byId, QString szMcpdIp, quint16 wPort, QString szMcpdDataIp, q
         if (m_wDataPort == 0)
             m_wDataPort = wPort;
         // m_pDataNetwork = NetworkDevice::create(m_wDataPort, szSourceIp);
-        bResult &= m_pNetwork->connect_handler(QHostAddress(szMcpdDataIp), wDataPort, &staticAnalyzeBuffer, this);
+        bResult &= m_pNetwork->connect_handler(QHostAddress(m_szMcpdDataIp), wDataPort, &staticAnalyzeBuffer, this);
     }
     //! this is normally true and only false, if there is already such a MCPD
     m_bBaseMcpdInitialized = bResult;

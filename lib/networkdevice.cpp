@@ -20,6 +20,7 @@
 #include <QSocketNotifier>
 #include <QUdpSocket>
 #include <QThread>
+#include <QHostInfo>
 #include "networkdevice.h"
 #include "mdefines.h"
 #include "qmlogging.h"
@@ -361,4 +362,21 @@ QString NetworkDevice::ip() const
 quint16 NetworkDevice::port() const
 {
 	return m_wPort;
+}
+
+QHostAddress lookup_ipv4(const QString &address)
+{
+    // Perform a hostname lookup for the given hostname/ip string, then pick the
+    // first IPv4 address from the result.
+    QHostInfo hostInfo = QHostInfo::fromName(address);
+    QList<QHostAddress> addresses = hostInfo.addresses();
+
+    for (int i=0; i<addresses.size(); ++i)
+    {
+        if (addresses[i].protocol() == QAbstractSocket::IPv4Protocol)
+        {
+            return addresses[i];
+        }
+    }
+    return {};
 }

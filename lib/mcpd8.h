@@ -38,7 +38,11 @@ class LIBQMESYDAQ_EXPORT MCPD8 : public MCPD
 	Q_OBJECT
 
 public:
-	MCPD8(quint8, QString = "192.168.168.121", quint16 = 54321, QString = QString(), quint16 = 0, QString = QString(), bool = false);
+    MCPD8(quint8 mcpdId,
+          QString mcpdAddress = "192.168.168.121", quint16 cmdPort = 54321,
+          QString dataDestIp = {}, quint16 dataDestPort = 0,
+          QString hostIp = {},
+          bool testOnly = false);
 
 	virtual ~MCPD8();
 

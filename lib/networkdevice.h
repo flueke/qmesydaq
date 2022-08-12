@@ -114,4 +114,6 @@ private:
 	QList<struct handler>        m_aHandler;
 };
 
+QHostAddress lookup_ipv4(const QString &address);
+
 #endif
