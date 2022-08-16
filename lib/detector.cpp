@@ -577,11 +577,7 @@ bool Detector::saveSetup(QSettings &settings)
 		settings.setValue("id", i);
 		settings.setValue("ipAddress", ip);
 		settings.setValue("port", cmdport);
-		if (!cmdip.isEmpty() && cmdip != "0.0.0.0" && cmdip != ip)
-		{
-			settings.setValue("cmdip", cmdip);
-			settings.setValue("cmdport", cmdport);
-		}
+
 		if (!dataip.isEmpty() && dataip != "0.0.0.0" && dataip != ip)
 		{
 			settings.setValue("dataip", dataip);
