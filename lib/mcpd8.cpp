@@ -1376,7 +1376,7 @@ bool MCPD8::setProtocol(const QString& addr, const QString& datasink, const quin
  */
 void MCPD8::getProtocol(QString &ip, QString &cmdip, quint16 &cmdport, QString &dataip, quint16 &dataport) const
 {
-    ip = m_szMcpdIp;
+    ip = m_mcpdAddress;
     cmdip = m_szMcpdIp;
     cmdport = m_wPort;
     dataip = m_szMcpdDataIp;

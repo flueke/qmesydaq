@@ -39,6 +39,7 @@ MCPD::MCPD(quint8 byId, QString mcpdAddress, quint16 wPort, QString szMcpdDataIp
     , m_pNetwork(NULL)
     , m_pDataNetwork(NULL)
     , m_byId(byId)
+    , m_mcpdAddress(mcpdAddress)
     , m_szMcpdIp(lookup_ipv4(mcpdAddress).toString())
     , m_wPort(wPort)
     , m_szMcpdDataIp(szMcpdDataIp)

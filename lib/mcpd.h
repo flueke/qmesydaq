@@ -115,7 +115,10 @@ protected:
     //! ID of the MCPD
     quint8 m_byId;
 
-    //! IP address of the module
+    //! Hostname/IPv4-address string of the mcpd module.
+    QString m_mcpdAddress;
+
+    //! Resolved ipv4 address string of the module.
     QString m_szMcpdIp;
 
     //! Port of the module
