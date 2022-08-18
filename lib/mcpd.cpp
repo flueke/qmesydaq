@@ -163,19 +163,24 @@ void MCPD::staticAnalyzeBuffer(QSharedDataPointer<SD_PACKET> pPacket, void *pPar
     if ((pPacket.constData()->mdp.deviceStatus & 0x8))
 #endif
     {
-        MSG_NOTICE << tr("MODULE : %1 lost sync").arg(pPacket.constData()->mdp.deviceId);
-        MSG_NOTICE << tr("STATUS : 0x%1").arg(pPacket.constData()->mdp.deviceStatus, 4, 16, QChar('0'));
         if (pMcpd->m_bIsSynced)
+        {
+            MSG_NOTICE << tr("MODULE : %1 lost sync").arg(pPacket.constData()->mdp.deviceId);
+            MSG_NOTICE << tr("STATUS : 0x%1").arg(pPacket.constData()->mdp.deviceStatus, 4, 16, QChar('0'));
             emit pMcpd->lostSync(pPacket.constData()->mdp.deviceId, true);
-        pMcpd->m_bIsSynced = false;
+            pMcpd->m_bIsSynced = false;
+        }
     }
     else
     {
         if (!pMcpd->m_bIsSynced)
+        {
+            MSG_NOTICE << tr("MODULE : %1 gained sync").arg(pPacket.constData()->mdp.deviceId);
             emit pMcpd->lostSync(pPacket.constData()->mdp.deviceId, false);
-        else
             pMcpd->m_bIsSynced = true;
+        }
     }
+
     for (;;)
     {
         pMcpd->m_pPacketMutex->lock();
