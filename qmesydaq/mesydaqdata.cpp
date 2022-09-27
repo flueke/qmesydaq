@@ -79,7 +79,7 @@ void MesydaqSpectrumData::setData(const Spectrum *data)
 	m_spectrum = data ? *data : Spectrum();
 #if QWT_VERSION >= 0x060000
 #warning TODO calculate the spectrum minima
-	d_boundingRect = QRectF(0, 0, data->width(), data->max());
+    d_boundingRect = QRectF(0, 0, m_spectrum.width(), m_spectrum.max());
 #endif
 }
 

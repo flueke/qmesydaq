@@ -103,19 +103,15 @@ Plot::~Plot()
 {
 	// FIXME: circumvent segfault on program exit: QwtPlotSpectrogram attempts to
 	// delete its data object which causes the crash. Maybe its manually deleted
-	// elsewhere or not on the heap at all. Will now leak m_histogram and the other
-	// members.
+    // elsewhere or not on the heap at all.
 	m_histogram->detach();
-	delete m_histogram;
 	m_xSumCurve->detach();
-	delete m_xSumCurve;
 	m_ySumCurve->detach();
-	delete m_ySumCurve;
 
 	for (int i = 0; i < 16; ++i)
 	{
 		m_curve[i]->detach();
-		delete m_curve[i];
+        // delete m_curve[i]; // commented out to avoid another crash on exit
 	}
 }
 
