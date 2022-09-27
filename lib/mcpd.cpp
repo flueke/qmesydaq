@@ -77,7 +77,16 @@ MCPD::MCPD(quint8 byId, QString mcpdAddress, quint16 wPort, QString szMcpdDataIp
     m_pCommandMutex = new QMutex;
     m_pNetwork = NetworkDevice::create(m_wPort, szSourceIp);
 
-    bResult = m_pNetwork->connect_handler(QHostAddress(m_szMcpdIp), m_wPort, &staticAnalyzeBuffer, this);
+    if (m_szMcpdIp.isEmpty())
+    {
+        MSG_ERROR << tr("%1(%2): host lookup failed for hostname '%3'")
+                     .arg(m_szMcpdIp).arg(m_wPort).arg(mcpdAddress);
+        bResult = false;
+    }
+    else
+    {
+        bResult = m_pNetwork->connect_handler(QHostAddress(m_szMcpdIp), m_wPort, &staticAnalyzeBuffer, this);
+    }
 
     if (!m_szMcpdDataIp.isEmpty() || m_wDataPort != 0)
     {
