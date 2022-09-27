@@ -57,10 +57,23 @@ ModuleIdentificationPage::ModuleIdentificationPage(QWidget *parent)
 
     connect(le_address, SIGNAL(textChanged(const QString &)), this, SLOT(valueChanged()));
     connect(le_address, SIGNAL(textEdited(const QString &)), this, SLOT(valueChanged()));
-	connect(moduleIDInput, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
+    connect(moduleIDInput, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
     connect(spin_cmdPort, SIGNAL(valueChanged(int)), this, SLOT(valueChanged()));
 	connect(m_pTestTimer, SIGNAL(timeout()), this, SLOT(testTimeout()));
 	connect(m_pUpdateTimer, SIGNAL(timeout()), this, SLOT(updateTimeout()));
+    connect(moduleIPInput, &IPAddressWidget::signalTextChanged, this, &ModuleIdentificationPage::valueChanged);
+    connect(rb_useHostname, &QRadioButton::toggled, this, &ModuleIdentificationPage::valueChanged);
+    connect(rb_useIpAddress, &QRadioButton::toggled, this, &ModuleIdentificationPage::valueChanged);
+
+    auto on_input_type_changed = [this] ()
+    {
+        le_address->setEnabled(rb_useHostname->isChecked());
+        moduleIPInput->setEnabled(!rb_useHostname->isChecked());
+    };
+
+    connect(rb_useHostname, &QRadioButton::toggled, this, on_input_type_changed);
+    connect(rb_useIpAddress, &QRadioButton::toggled, this, on_input_type_changed);
+    on_input_type_changed(); // force an initial update
 
 	m_pUpdateTimer->start(200);
 }
@@ -88,6 +101,8 @@ ModuleIdentificationPage::~ModuleIdentificationPage()
 void ModuleIdentificationPage::initialize(const QString &ip, const quint16 id)
 {
     le_address->setText(ip);
+    moduleIPInput->setAddress(ip);
+    rb_useIpAddress->setChecked(true);
 	moduleIDInput->setValue(id);
 }
 
@@ -137,7 +152,10 @@ void ModuleIdentificationPage::testTimeout()
 
 	if (m_pThread->m_iCommand == ModuleIdentificationPageThread::NONE)
 	{
-            m_pThread->m_szMcpdIp = le_address->text();
+            if (rb_useIpAddress->isChecked())
+                m_pThread->m_szMcpdIp = moduleIPInput->getAddress();
+            else
+                m_pThread->m_szMcpdIp = le_address->text();
         	m_pThread->m_byMcpdId = moduleIDInput->value();
             m_pThread->m_cmdPort = spin_cmdPort->value();
         	m_pThread->m_iCommand = ModuleIdentificationPageThread::WORK;
