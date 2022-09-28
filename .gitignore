@@ -80,3 +80,5 @@ qled/src/moc_qled.cpp
 gmon.out
 build/
 **/*.sw?
+doc/html/
+doxygen.log
