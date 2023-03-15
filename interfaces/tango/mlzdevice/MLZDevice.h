@@ -40,6 +40,11 @@
 
 #include <tango.h>
 
+#if (TANGO_VERSION_MAJOR >= 10 || (TANGO_VERSION_MAJOR == 9 && TANGO_VERSION_MINOR > 3))
+#define cout2 TANGO_LOG_INFO
+#define cout4 TANGO_LOG_DEBUG
+#endif
+
 
 /*----- PROTECTED REGION END -----*/	//	MLZDevice.h
 

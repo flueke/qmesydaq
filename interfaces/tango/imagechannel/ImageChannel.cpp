@@ -40,8 +40,6 @@
 #include <QList>
 #include "QMesydaqDetectorInterface.h"
 
-#include <libgen.h>
-
 #if 0
 #	include "measurement.h"
 #else
