@@ -145,7 +145,7 @@ ImageChannel::ImageChannel(Tango::DeviceClass *cl, const char *s, const char *d)
 //--------------------------------------------------------
 void ImageChannel::delete_device()
 {
-	DEBUG_STREAM << "ImageChannel::delete_device() " << device_name << endl;
+	DEBUG_STREAM << "ImageChannel::delete_device() " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::delete_device) ENABLED START -----*/
 
 	//	Delete device allocated objects
@@ -176,7 +176,7 @@ void ImageChannel::delete_device()
 //--------------------------------------------------------
 void ImageChannel::init_device()
 {
-	DEBUG_STREAM << "ImageChannel::init_device() create device " << device_name << endl;
+	DEBUG_STREAM << "ImageChannel::init_device() create device " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::init_device_before) ENABLED START -----*/
 
 	//	Initialization before get_device_property() call
@@ -288,7 +288,7 @@ void ImageChannel::get_device_property()
 //--------------------------------------------------------
 void ImageChannel::always_executed_hook()
 {
-	DEBUG_STREAM << "ImageChannel::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "ImageChannel::always_executed_hook()  " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::always_executed_hook) ENABLED START -----*/
 
 	//	code always executed before all requests
@@ -305,7 +305,7 @@ void ImageChannel::always_executed_hook()
 //--------------------------------------------------------
 void ImageChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "ImageChannel::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -320,7 +320,7 @@ void ImageChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void ImageChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "ImageChannel::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -339,7 +339,7 @@ void ImageChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void ImageChannel::read_preselection(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::read_preselection(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_preselection(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_preselection) ENABLED START -----*/
 	//	Set the attribute value
 	attr.set_value(attr_preselection_read);
@@ -357,7 +357,7 @@ void ImageChannel::read_preselection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void ImageChannel::write_preselection(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::write_preselection(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::write_preselection(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve write value
 	Tango::DevULong64	w_val;
 	attr.get_write_value(w_val);
@@ -379,7 +379,7 @@ void ImageChannel::write_preselection(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void ImageChannel::read_detectorSize(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::read_detectorSize(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_detectorSize(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_detectorSize) ENABLED START -----*/
 	//	Set the attribute value
 	QSize s = m_interface->readHistogramSize(m_histo);
@@ -402,7 +402,7 @@ void ImageChannel::read_detectorSize(Tango::Attribute &attr)
 //--------------------------------------------------------
 void ImageChannel::read_roiOffset(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::read_roiOffset(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_roiOffset(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_roiOffset) ENABLED START -----*/
 	//	Set the attribute value
 
@@ -423,7 +423,7 @@ void ImageChannel::read_roiOffset(Tango::Attribute &attr)
 //--------------------------------------------------------
 void ImageChannel::write_roiOffset(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::write_roiOffset(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::write_roiOffset(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve number of write values
 	int	w_length = attr.get_write_value_length();
 
@@ -454,7 +454,7 @@ void ImageChannel::write_roiOffset(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void ImageChannel::read_roiSize(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::read_roiSize(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_roiSize(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_roiSize) ENABLED START -----*/
 	//	Set the attribute value
 
@@ -479,7 +479,7 @@ void ImageChannel::read_roiSize(Tango::Attribute &attr)
 //--------------------------------------------------------
 void ImageChannel::write_roiSize(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::write_roiSize(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::write_roiSize(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve number of write values
 	int	w_length = attr.get_write_value_length();
 
@@ -504,7 +504,7 @@ void ImageChannel::write_roiSize(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void ImageChannel::read_binning(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::read_binning(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_binning(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_binning) ENABLED START -----*/
 	//	Set the attribute value
 
@@ -525,7 +525,7 @@ void ImageChannel::read_binning(Tango::Attribute &attr)
 //--------------------------------------------------------
 void ImageChannel::write_binning(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::write_binning(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::write_binning(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve number of write values
 	int	w_length = attr.get_write_value_length();
 
@@ -555,7 +555,7 @@ void ImageChannel::write_binning(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void ImageChannel::read_zeroPoint(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::read_zeroPoint(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_zeroPoint(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_zeroPoint) ENABLED START -----*/
 	//	Set the attribute value
 	attr.set_value(attr_zeroPoint_read, 2);
@@ -574,7 +574,7 @@ void ImageChannel::read_zeroPoint(Tango::Attribute &attr)
 //--------------------------------------------------------
 void ImageChannel::read_value(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "ImageChannel::read_value(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImageChannel::read_value(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_value) ENABLED START -----*/
 	//	Set the attribute value
 
@@ -626,7 +626,7 @@ void ImageChannel::add_dynamic_attributes()
 Tango::DevVarULongArray *ImageChannel::get_block(const Tango::DevVarULongArray *argin)
 {
 	Tango::DevVarULongArray *argout;
-	DEBUG_STREAM << "ImageChannel::GetBlock()  - " << device_name << endl;
+	DEBUG_STREAM << "ImageChannel::GetBlock()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::get_block) ENABLED START -----*/
 
 	//	Add your own code
@@ -668,7 +668,7 @@ void ImageChannel::add_dynamic_commands()
 Tango::DevVarStringArray *ImageChannel::get_properties()
 {
 	Tango::DevVarStringArray *argout;
-	DEBUG_STREAM << "ImageChannel::GetProperties()  - " << device_name << endl;
+	DEBUG_STREAM << "ImageChannel::GetProperties()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::get_properties) ENABLED START -----*/
 
 	argout = DetectorChannel::get_properties();
@@ -766,7 +766,7 @@ Tango::DevBoolean ImageChannel::update_properties(const Tango::DevVarStringArray
 //--------------------------------------------------------
 void ImageChannel::start()
 {
-	DEBUG_STREAM << "DetectorChannel::Start()  - " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::Start()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::start) ENABLED START -----*/
 	//	Add your own code
 	if (!m_interface)

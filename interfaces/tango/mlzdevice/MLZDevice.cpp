@@ -121,7 +121,7 @@ MLZDevice::MLZDevice(Tango::DeviceClass *cl, const char *s, const char *d)
 //--------------------------------------------------------
 void MLZDevice::delete_device()
 {
-	DEBUG_STREAM << "MLZDevice::delete_device() " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::delete_device() " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::delete_device) ENABLED START -----*/
 
 	//	Delete device allocated objects
@@ -138,7 +138,7 @@ void MLZDevice::delete_device()
 //--------------------------------------------------------
 void MLZDevice::init_device()
 {
-	DEBUG_STREAM << "MLZDevice::init_device() create device " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::init_device() create device " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::init_device_before) ENABLED START -----*/
 
 	//	Initialization before get_device_property() call
@@ -167,7 +167,7 @@ void MLZDevice::init_device()
 //--------------------------------------------------------
 void MLZDevice::always_executed_hook()
 {
-	DEBUG_STREAM << "MLZDevice::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::always_executed_hook()  " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::always_executed_hook) ENABLED START -----*/
 
 	//	code always executed before all requests
@@ -183,7 +183,7 @@ void MLZDevice::always_executed_hook()
 //--------------------------------------------------------
 void MLZDevice::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "MLZDevice::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "MLZDevice::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -202,7 +202,7 @@ void MLZDevice::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void MLZDevice::read_version(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "MLZDevice::read_version(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "MLZDevice::read_version(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::read_version) ENABLED START -----*/
 	//	Set the attribute value
 	attr.set_value(attr_version_read);
@@ -235,7 +235,7 @@ void MLZDevice::add_dynamic_attributes()
 //--------------------------------------------------------
 void MLZDevice::on()
 {
-	DEBUG_STREAM << "MLZDevice::On()  - " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::On()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::on) ENABLED START -----*/
 	//	Add your own code
 
@@ -252,7 +252,7 @@ void MLZDevice::on()
 //--------------------------------------------------------
 void MLZDevice::off()
 {
-	DEBUG_STREAM << "MLZDevice::Off()  - " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::Off()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::off) ENABLED START -----*/
 	//	Add your own code
 
@@ -271,10 +271,10 @@ void MLZDevice::off()
 Tango::DevVarStringArray *MLZDevice::get_properties()
 {
 	Tango::DevVarStringArray *argout;
-	DEBUG_STREAM << "MLZDevice::GetProperties()  - " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::GetProperties()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::get_properties) ENABLED START -----*/
 
-	ERROR_STREAM << "MLZDevice::GetProperties()  - " << device_name << endl;
+	ERROR_STREAM << "MLZDevice::GetProperties()  - " << device_name << ENDLOG;
 	argout = new Tango::DevVarStringArray;
 	argout->length(0);
 
@@ -293,7 +293,7 @@ Tango::DevVarStringArray *MLZDevice::get_properties()
 Tango::DevBoolean MLZDevice::set_properties(const Tango::DevVarStringArray *argin)
 {
 	Tango::DevBoolean argout;
-	DEBUG_STREAM << "MLZDevice::SetProperties()  - " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::SetProperties()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::set_properties) ENABLED START -----*/
 
 	if (argin->length() % 2)
@@ -315,7 +315,7 @@ Tango::DevBoolean MLZDevice::set_properties(const Tango::DevVarStringArray *argi
 //--------------------------------------------------------
 void MLZDevice::reset()
 {
-	DEBUG_STREAM << "MLZDevice::Reset()  - " << device_name << endl;
+	DEBUG_STREAM << "MLZDevice::Reset()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::reset) ENABLED START -----*/
 
 	//	Add your own code

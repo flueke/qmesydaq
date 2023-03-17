@@ -73,7 +73,7 @@ DetectorChannelClass *DetectorChannelClass::_instance = NULL;
 //--------------------------------------------------------
 DetectorChannelClass::DetectorChannelClass(string &s):MLZDevice_ns::MLZDeviceClass(s)
 {
-	cout2 << "Entering DetectorChannelClass constructor" << endl;
+	cout2 << "Entering DetectorChannelClass constructor" << std::endl;
 	set_default_property();
 	write_class_property();
 
@@ -81,7 +81,7 @@ DetectorChannelClass::DetectorChannelClass(string &s):MLZDevice_ns::MLZDeviceCla
 
 	/*----- PROTECTED REGION END -----*/	//	DetectorChannelClass::constructor
 
-	cout2 << "Leaving DetectorChannelClass constructor" << endl;
+	cout2 << "Leaving DetectorChannelClass constructor" << std::endl;
 }
 
 //--------------------------------------------------------
@@ -137,7 +137,7 @@ DetectorChannelClass *DetectorChannelClass::instance()
 {
 	if (_instance == NULL)
 	{
-		cerr << "Class is not initialised !!" << endl;
+		std::cerr << "Class is not initialised !!" << std::endl;
 		exit(-1);
 	}
 	return _instance;
@@ -161,7 +161,7 @@ DetectorChannelClass *DetectorChannelClass::instance()
 //--------------------------------------------------------
 CORBA::Any *StartClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "StartClass::execute(): arrived" << endl;
+	cout2 << "StartClass::execute(): arrived" << std::endl;
 	((static_cast<DetectorChannel *>(device))->start());
 	return new CORBA::Any();
 }
@@ -179,7 +179,7 @@ CORBA::Any *StartClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CO
 //--------------------------------------------------------
 CORBA::Any *StopClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "StopClass::execute(): arrived" << endl;
+	cout2 << "StopClass::execute(): arrived" << std::endl;
 	((static_cast<DetectorChannel *>(device))->stop());
 	return new CORBA::Any();
 }
@@ -197,7 +197,7 @@ CORBA::Any *StopClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const COR
 //--------------------------------------------------------
 CORBA::Any *ClearClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "ClearClass::execute(): arrived" << endl;
+	cout2 << "ClearClass::execute(): arrived" << std::endl;
 	((static_cast<DetectorChannel *>(device))->clear());
 	return new CORBA::Any();
 }
@@ -215,7 +215,7 @@ CORBA::Any *ClearClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CO
 //--------------------------------------------------------
 CORBA::Any *ResumeClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "ResumeClass::execute(): arrived" << endl;
+	cout2 << "ResumeClass::execute(): arrived" << std::endl;
 	((static_cast<DetectorChannel *>(device))->resume());
 	return new CORBA::Any();
 }
@@ -233,7 +233,7 @@ CORBA::Any *ResumeClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const C
 //--------------------------------------------------------
 CORBA::Any *PrepareClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "PrepareClass::execute(): arrived" << endl;
+	cout2 << "PrepareClass::execute(): arrived" << std::endl;
 	((static_cast<DetectorChannel *>(device))->prepare());
 	return new CORBA::Any();
 }
@@ -482,7 +482,7 @@ void DetectorChannelClass::device_factory(const Tango::DevVarStringArray *devlis
 	//	Create devices and add it into the device list
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
-		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
+		cout4 << "Device name : " << (*devlist_ptr)[i].in() << std::endl;
 		device_list.push_back(new DetectorChannel(this, (*devlist_ptr)[i]));
 	}
 
@@ -682,7 +682,7 @@ void DetectorChannelClass::create_static_attribute_list(vector<Tango::Attr *> &a
 		defaultAttList.push_back(att_name);
 	}
 
-	cout2 << defaultAttList.size() << " attributes in default list" << endl;
+	cout2 << defaultAttList.size() << " attributes in default list" << std::endl;
 
 	/*----- PROTECTED REGION ID(DetectorChannelClass::create_static_att_list) ENABLED START -----*/
 
@@ -718,7 +718,7 @@ void DetectorChannelClass::erase_dynamic_attributes(const Tango::DevVarStringArr
 			vector<string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
 			if (ite_str == defaultAttList.end())
 			{
-				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << endl;
+				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << std::endl;
 				Tango::Attribute &att = dev->get_device_attr()->get_attr_by_name(att_name.c_str());
 				dev->remove_attribute(att_list[att.get_attr_idx()], true, false);
 				--ite_att;

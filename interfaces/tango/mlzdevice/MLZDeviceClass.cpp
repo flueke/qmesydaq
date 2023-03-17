@@ -83,7 +83,7 @@ MLZDeviceClass *MLZDeviceClass::_instance = NULL;
 //--------------------------------------------------------
 MLZDeviceClass::MLZDeviceClass(string &s):Tango::DeviceClass(s)
 {
-	cout2 << "Entering MLZDeviceClass constructor" << endl;
+	cout2 << "Entering MLZDeviceClass constructor" << std::endl;
 	set_default_property();
 	write_class_property();
 
@@ -91,7 +91,7 @@ MLZDeviceClass::MLZDeviceClass(string &s):Tango::DeviceClass(s)
 
 	/*----- PROTECTED REGION END -----*/	//	MLZDeviceClass::constructor
 
-	cout2 << "Leaving MLZDeviceClass constructor" << endl;
+	cout2 << "Leaving MLZDeviceClass constructor" << std::endl;
 }
 
 //--------------------------------------------------------
@@ -150,7 +150,7 @@ MLZDeviceClass *MLZDeviceClass::instance()
 {
 	if (_instance == NULL)
 	{
-		cerr << "Class is not initialised !!" << endl;
+		std::cerr << "Class is not initialised !!" << std::endl;
 		exit(-1);
 	}
 	return _instance;
@@ -174,7 +174,7 @@ MLZDeviceClass *MLZDeviceClass::instance()
 //--------------------------------------------------------
 CORBA::Any *OnClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "OnClass::execute(): arrived" << endl;
+	cout2 << "OnClass::execute(): arrived" << std::endl;
 	((static_cast<MLZDevice *>(device))->on());
 	return new CORBA::Any();
 }
@@ -192,7 +192,7 @@ CORBA::Any *OnClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA
 //--------------------------------------------------------
 CORBA::Any *OffClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "OffClass::execute(): arrived" << endl;
+	cout2 << "OffClass::execute(): arrived" << std::endl;
 	((static_cast<MLZDevice *>(device))->off());
 	return new CORBA::Any();
 }
@@ -210,7 +210,7 @@ CORBA::Any *OffClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORB
 //--------------------------------------------------------
 CORBA::Any *GetPropertiesClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "GetPropertiesClass::execute(): arrived" << endl;
+	cout2 << "GetPropertiesClass::execute(): arrived" << std::endl;
 	return insert((static_cast<MLZDevice *>(device))->get_properties());
 }
 
@@ -227,7 +227,7 @@ CORBA::Any *GetPropertiesClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(
 //--------------------------------------------------------
 CORBA::Any *SetPropertiesClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
 {
-	cout2 << "SetPropertiesClass::execute(): arrived" << endl;
+	cout2 << "SetPropertiesClass::execute(): arrived" << std::endl;
 	const Tango::DevVarStringArray *argin;
 	extract(in_any, argin);
 	return insert((static_cast<MLZDevice *>(device))->set_properties(argin));
@@ -246,7 +246,7 @@ CORBA::Any *SetPropertiesClass::execute(Tango::DeviceImpl *device, const CORBA::
 //--------------------------------------------------------
 CORBA::Any *ResetClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "ResetClass::execute(): arrived" << endl;
+	cout2 << "ResetClass::execute(): arrived" << std::endl;
 	((static_cast<MLZDevice *>(device))->reset());
 	return new CORBA::Any();
 }
@@ -385,7 +385,7 @@ void MLZDeviceClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	//	Create devices and add it into the device list
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
-		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
+		cout4 << "Device name : " << (*devlist_ptr)[i].in() << std::endl;
 		device_list.push_back(new MLZDevice(this, (*devlist_ptr)[i]));
 	}
 
@@ -568,7 +568,7 @@ void MLZDeviceClass::create_static_attribute_list(vector<Tango::Attr *> &att_lis
 		defaultAttList.push_back(att_name);
 	}
 
-	cout2 << defaultAttList.size() << " attributes in default list" << endl;
+	cout2 << defaultAttList.size() << " attributes in default list" << std::endl;
 
 	/*----- PROTECTED REGION ID(MLZDeviceClass::create_static_att_list) ENABLED START -----*/
 
@@ -604,7 +604,7 @@ void MLZDeviceClass::erase_dynamic_attributes(const Tango::DevVarStringArray *de
 			vector<string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
 			if (ite_str == defaultAttList.end())
 			{
-				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << endl;
+				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << std::endl;
 				Tango::Attribute &att = dev->get_device_attr()->get_attr_by_name(att_name.c_str());
 				dev->remove_attribute(att_list[att.get_attr_idx()], true, false);
 				--ite_att;

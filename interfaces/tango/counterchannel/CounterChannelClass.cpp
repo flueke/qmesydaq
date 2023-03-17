@@ -73,7 +73,7 @@ CounterChannelClass *CounterChannelClass::_instance = NULL;
 //--------------------------------------------------------
 CounterChannelClass::CounterChannelClass(string &s):DetectorChannel_ns::DetectorChannelClass(s)
 {
-	cout2 << "Entering CounterChannelClass constructor" << endl;
+	cout2 << "Entering CounterChannelClass constructor" << std::endl;
 	set_default_property();
 	write_class_property();
 
@@ -81,7 +81,7 @@ CounterChannelClass::CounterChannelClass(string &s):DetectorChannel_ns::Detector
 
 	/*----- PROTECTED REGION END -----*/	//	CounterChannelClass::constructor
 
-	cout2 << "Leaving CounterChannelClass constructor" << endl;
+	cout2 << "Leaving CounterChannelClass constructor" << std::endl;
 }
 
 //--------------------------------------------------------
@@ -137,7 +137,7 @@ CounterChannelClass *CounterChannelClass::instance()
 {
 	if (_instance == NULL)
 	{
-		cerr << "Class is not initialised !!" << endl;
+		std::cerr << "Class is not initialised !!" << std::endl;
 		exit(-1);
 	}
 	return _instance;
@@ -296,7 +296,7 @@ void CounterChannelClass::device_factory(const Tango::DevVarStringArray *devlist
 	//	Create devices and add it into the device list
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
-		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
+		cout4 << "Device name : " << (*devlist_ptr)[i].in() << std::endl;
 		device_list.push_back(new CounterChannel(this, (*devlist_ptr)[i]));
 	}
 
@@ -487,7 +487,7 @@ void CounterChannelClass::create_static_attribute_list(vector<Tango::Attr *> &at
 		defaultAttList.push_back(att_name);
 	}
 
-	cout2 << defaultAttList.size() << " attributes in default list" << endl;
+	cout2 << defaultAttList.size() << " attributes in default list" << std::endl;
 
 	/*----- PROTECTED REGION ID(CounterChannelClass::create_static_att_list) ENABLED START -----*/
 
@@ -523,7 +523,7 @@ void CounterChannelClass::erase_dynamic_attributes(const Tango::DevVarStringArra
 			vector<string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
 			if (ite_str == defaultAttList.end())
 			{
-				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << endl;
+				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << std::endl;
 				Tango::Attribute &att = dev->get_device_attr()->get_attr_by_name(att_name.c_str());
 				dev->remove_attribute(att_list[att.get_attr_idx()], true, false);
 				--ite_att;

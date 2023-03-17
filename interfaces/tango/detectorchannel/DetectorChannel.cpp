@@ -129,7 +129,7 @@ DetectorChannel::DetectorChannel(Tango::DeviceClass *cl, const char *s, const ch
 //--------------------------------------------------------
 void DetectorChannel::delete_device()
 {
-	DEBUG_STREAM << "DetectorChannel::delete_device() " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::delete_device() " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::delete_device) ENABLED START -----*/
 
 	//	Delete device allocated objects
@@ -154,7 +154,7 @@ void DetectorChannel::delete_device()
 //--------------------------------------------------------
 void DetectorChannel::init_device()
 {
-	DEBUG_STREAM << "DetectorChannel::init_device() create device " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::init_device() create device " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::init_device_before) ENABLED START -----*/
 
 	MultipleLoopApplication *app = dynamic_cast<MultipleLoopApplication *>(QApplication::instance());
@@ -329,7 +329,7 @@ void DetectorChannel::get_device_property()
 //--------------------------------------------------------
 void DetectorChannel::always_executed_hook()
 {
-	DEBUG_STREAM << "DetectorChannel::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::always_executed_hook()  " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::always_executed_hook) ENABLED START -----*/
 
 	//	code always executed before all requests
@@ -348,7 +348,7 @@ void DetectorChannel::always_executed_hook()
 //--------------------------------------------------------
 void DetectorChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "DetectorChannel::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -363,7 +363,7 @@ void DetectorChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void DetectorChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "DetectorChannel::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -382,7 +382,7 @@ void DetectorChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void DetectorChannel::read_active(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "DetectorChannel::read_active(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::read_active(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::read_active) ENABLED START -----*/
 	//	Set the attribute value
 	attr.set_value(attr_active_read);
@@ -400,7 +400,7 @@ void DetectorChannel::read_active(Tango::Attribute &attr)
 //--------------------------------------------------------
 void DetectorChannel::write_active(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "DetectorChannel::write_active(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::write_active(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -435,7 +435,7 @@ void DetectorChannel::add_dynamic_attributes()
 //--------------------------------------------------------
 void DetectorChannel::start()
 {
-	DEBUG_STREAM << "DetectorChannel::Start()  - " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::Start()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::start) ENABLED START -----*/
 	//	Add your own code
 	if (!m_interface)
@@ -469,7 +469,7 @@ void DetectorChannel::start()
 //--------------------------------------------------------
 void DetectorChannel::stop()
 {
-	DEBUG_STREAM << "DetectorChannel::Stop()  - " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::Stop()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::stop) ENABLED START -----*/
 	//	Add your own code
 	if (!m_interface)
@@ -490,7 +490,7 @@ void DetectorChannel::stop()
 //--------------------------------------------------------
 void DetectorChannel::clear()
 {
-	DEBUG_STREAM << "DetectorChannel::Clear()  - " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::Clear()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::clear) ENABLED START -----*/
 
 	//	Add your own code
@@ -506,7 +506,7 @@ void DetectorChannel::clear()
 //--------------------------------------------------------
 void DetectorChannel::resume()
 {
-	DEBUG_STREAM << "DetectorChannel::Resume()  - " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::Resume()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::resume) ENABLED START -----*/
 
 	//	Add your own code
@@ -523,7 +523,7 @@ void DetectorChannel::resume()
 //--------------------------------------------------------
 void DetectorChannel::prepare()
 {
-	DEBUG_STREAM << "DetectorChannel::Prepare()  - " << device_name << endl;
+	DEBUG_STREAM << "DetectorChannel::Prepare()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::prepare) ENABLED START -----*/
 
 	//	Add your own code
@@ -573,7 +573,7 @@ Tango::DevState DetectorChannel::dev_state()
 Tango::DevVarStringArray *DetectorChannel::get_properties()
 {
 	Tango::DevVarStringArray *argout;
-	DEBUG_STREAM << "ImageChannel::GetProperties()  - " << device_name << endl;
+	DEBUG_STREAM << "ImageChannel::GetProperties()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::get_properties) ENABLED START -----*/
 
 	argout = MLZDevice::get_properties();

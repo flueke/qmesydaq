@@ -125,7 +125,7 @@ CounterChannel::CounterChannel(Tango::DeviceClass *cl, const char *s, const char
 //--------------------------------------------------------
 void CounterChannel::delete_device()
 {
-	DEBUG_STREAM << "CounterChannel::delete_device() " << device_name << endl;
+	DEBUG_STREAM << "CounterChannel::delete_device() " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::delete_device) ENABLED START -----*/
 
 	//	Delete device allocated objects
@@ -151,7 +151,7 @@ void CounterChannel::delete_device()
 //--------------------------------------------------------
 void CounterChannel::init_device()
 {
-	DEBUG_STREAM << "CounterChannel::init_device() create device " << device_name << endl;
+	DEBUG_STREAM << "CounterChannel::init_device() create device " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::init_device_before) ENABLED START -----*/
 
 	//	Initialization before get_device_property() call
@@ -249,7 +249,7 @@ void CounterChannel::get_device_property()
 //--------------------------------------------------------
 void CounterChannel::always_executed_hook()
 {
-	DEBUG_STREAM << "CounterChannel::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "CounterChannel::always_executed_hook()  " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::always_executed_hook) ENABLED START -----*/
 
 	//	code always executed before all requests
@@ -266,7 +266,7 @@ void CounterChannel::always_executed_hook()
 //--------------------------------------------------------
 void CounterChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "CounterChannel::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "CounterChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -282,7 +282,7 @@ void CounterChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void CounterChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "CounterChannel::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "CounterChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -302,7 +302,7 @@ void CounterChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void CounterChannel::read_value(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "CounterChannel::read_value(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "CounterChannel::read_value(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::read_value) ENABLED START -----*/
 	//	Set the attribute value
 	if (!m_interface)
@@ -325,7 +325,7 @@ void CounterChannel::read_value(Tango::Attribute &attr)
 //--------------------------------------------------------
 void CounterChannel::read_preselection(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "CounterChannel::read_preselection(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "CounterChannel::read_preselection(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::read_preselection) ENABLED START -----*/
 	//	Set the attribute value
 	if (!m_interface)
@@ -348,7 +348,7 @@ void CounterChannel::read_preselection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void CounterChannel::write_preselection(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "CounterChannel::write_preselection(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "CounterChannel::write_preselection(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve write value
 	Tango::DevULong64	w_val;
 	attr.get_write_value(w_val);
@@ -410,7 +410,7 @@ void CounterChannel::add_dynamic_commands()
 //--------------------------------------------------------
 void CounterChannel::read_active(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "DetectorChannel::read_active(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::read_active(Tango::Attribute &attr) entering... " << ENDLOG;
 	//	Set the attribute value
 	if (!m_interface)
 		::Tango::Except::throw_exception("Runtime error",
@@ -432,7 +432,7 @@ void CounterChannel::read_active(Tango::Attribute &attr)
 //--------------------------------------------------------
 void CounterChannel::write_active(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "DetectorChannel::write_active(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::write_active(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -456,7 +456,7 @@ void CounterChannel::write_active(Tango::WAttribute &attr)
 Tango::DevVarStringArray *CounterChannel::get_properties()
 {
 	Tango::DevVarStringArray *argout;
-	DEBUG_STREAM << "CounterChannel::GetProperties()  - " << device_name << endl;
+	DEBUG_STREAM << "CounterChannel::GetProperties()  - " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::get_properties) ENABLED START -----*/
 
 	argout = DetectorChannel::get_properties();

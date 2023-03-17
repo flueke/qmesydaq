@@ -126,7 +126,7 @@ TimerChannel::TimerChannel(Tango::DeviceClass *cl, const char *s, const char *d)
 //--------------------------------------------------------
 void TimerChannel::delete_device()
 {
-	DEBUG_STREAM << "TimerChannel::delete_device() " << device_name << endl;
+	DEBUG_STREAM << "TimerChannel::delete_device() " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::delete_device) ENABLED START -----*/
 
 	//	Delete device allocated objects
@@ -152,7 +152,7 @@ void TimerChannel::delete_device()
 //--------------------------------------------------------
 void TimerChannel::init_device()
 {
-	DEBUG_STREAM << "TimerChannel::init_device() create device " << device_name << endl;
+	DEBUG_STREAM << "TimerChannel::init_device() create device " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::init_device_before) ENABLED START -----*/
 
 	//	Initialization before get_device_property() call
@@ -187,7 +187,7 @@ void TimerChannel::init_device()
 //--------------------------------------------------------
 void TimerChannel::always_executed_hook()
 {
-	DEBUG_STREAM << "TimerChannel::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "TimerChannel::always_executed_hook()  " << device_name << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::always_executed_hook) ENABLED START -----*/
 
 	//	code always executed before all requests
@@ -204,7 +204,7 @@ void TimerChannel::always_executed_hook()
 //--------------------------------------------------------
 void TimerChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "TimerChannel::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "TimerChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -219,7 +219,7 @@ void TimerChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void TimerChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "TimerChannel::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "TimerChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -238,7 +238,7 @@ void TimerChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void TimerChannel::read_preselection(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "TimerChannel::read_preselection(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "TimerChannel::read_preselection(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::read_preselection) ENABLED START -----*/
 	//	Set the attribute value
 	if (!m_interface)
@@ -261,7 +261,7 @@ void TimerChannel::read_preselection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void TimerChannel::write_preselection(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "TimerChannel::write_preselection(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "TimerChannel::write_preselection(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve write value
 	Tango::DevDouble	w_val;
 	attr.get_write_value(w_val);
@@ -287,7 +287,7 @@ void TimerChannel::write_preselection(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void TimerChannel::read_value(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "TimerChannel::read_value(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "TimerChannel::read_value(Tango::Attribute &attr) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::read_value) ENABLED START -----*/
 	//	Set the attribute value
 
@@ -347,7 +347,7 @@ void TimerChannel::add_dynamic_commands()
 //--------------------------------------------------------
 void TimerChannel::read_active(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "DetectorChannel::read_active(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::read_active(Tango::Attribute &attr) entering... " << ENDLOG;
 	//	Set the attribute value
 	if (!m_interface)
 		::Tango::Except::throw_exception("Runtime error",
@@ -369,7 +369,7 @@ void TimerChannel::read_active(Tango::Attribute &attr)
 //--------------------------------------------------------
 void TimerChannel::write_active(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "DetectorChannel::write_active(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "DetectorChannel::write_active(Tango::WAttribute &attr) entering... " << ENDLOG;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);

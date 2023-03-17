@@ -73,7 +73,7 @@ TimerChannelClass *TimerChannelClass::_instance = NULL;
 //--------------------------------------------------------
 TimerChannelClass::TimerChannelClass(string &s):DetectorChannel_ns::DetectorChannelClass(s)
 {
-	cout2 << "Entering TimerChannelClass constructor" << endl;
+	cout2 << "Entering TimerChannelClass constructor" << std::endl;
 	set_default_property();
 	write_class_property();
 
@@ -81,7 +81,7 @@ TimerChannelClass::TimerChannelClass(string &s):DetectorChannel_ns::DetectorChan
 
 	/*----- PROTECTED REGION END -----*/	//	TimerChannelClass::constructor
 
-	cout2 << "Leaving TimerChannelClass constructor" << endl;
+	cout2 << "Leaving TimerChannelClass constructor" << std::endl;
 }
 
 //--------------------------------------------------------
@@ -137,7 +137,7 @@ TimerChannelClass *TimerChannelClass::instance()
 {
 	if (_instance == NULL)
 	{
-		cerr << "Class is not initialised !!" << endl;
+		std::cerr << "Class is not initialised !!" << std::endl;
 		exit(-1);
 	}
 	return _instance;
@@ -282,7 +282,7 @@ void TimerChannelClass::device_factory(const Tango::DevVarStringArray *devlist_p
 	//	Create devices and add it into the device list
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
-		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
+		cout4 << "Device name : " << (*devlist_ptr)[i].in() << std::endl;
 		device_list.push_back(new TimerChannel(this, (*devlist_ptr)[i]));
 	}
 
@@ -473,7 +473,7 @@ void TimerChannelClass::create_static_attribute_list(vector<Tango::Attr *> &att_
 		defaultAttList.push_back(att_name);
 	}
 
-	cout2 << defaultAttList.size() << " attributes in default list" << endl;
+	cout2 << defaultAttList.size() << " attributes in default list" << std::endl;
 
 	/*----- PROTECTED REGION ID(TimerChannelClass::create_static_att_list) ENABLED START -----*/
 
@@ -509,7 +509,7 @@ void TimerChannelClass::erase_dynamic_attributes(const Tango::DevVarStringArray 
 			vector<string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
 			if (ite_str == defaultAttList.end())
 			{
-				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << endl;
+				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << std::endl;
 				Tango::Attribute &att = dev->get_device_attr()->get_attr_by_name(att_name.c_str());
 				dev->remove_attribute(att_list[att.get_attr_idx()], true, false);
 				--ite_att;
