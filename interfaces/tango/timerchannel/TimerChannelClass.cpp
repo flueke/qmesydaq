@@ -65,13 +65,13 @@ TimerChannelClass *TimerChannelClass::_instance = NULL;
 
 //--------------------------------------------------------
 /**
- * method : 		TimerChannelClass::TimerChannelClass(string &s)
+ * method : 		TimerChannelClass::TimerChannelClass(std::string &s)
  * description : 	constructor for the TimerChannelClass
  *
  * @param s	The class name
  */
 //--------------------------------------------------------
-TimerChannelClass::TimerChannelClass(string &s):DetectorChannel_ns::DetectorChannelClass(s)
+TimerChannelClass::TimerChannelClass(std::string &s):DetectorChannel_ns::DetectorChannelClass(s)
 {
 	cout2 << "Entering TimerChannelClass constructor" << std::endl;
 	set_default_property();
@@ -115,10 +115,10 @@ TimerChannelClass *TimerChannelClass::init(const char *name)
 	{
 		try
 		{
-			string s(name);
+			std::string s(name);
 			_instance = new TimerChannelClass(s);
 		}
-		catch (bad_alloc &)
+		catch (std::bad_alloc &)
 		{
 			throw;
 		}
@@ -158,7 +158,7 @@ TimerChannelClass *TimerChannelClass::instance()
  *	Description : Get the class property for specified name.
  */
 //--------------------------------------------------------
-Tango::DbDatum TimerChannelClass::get_class_property(string &prop_name)
+Tango::DbDatum TimerChannelClass::get_class_property(std::string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_prop.size() ; i++)
 		if (cl_prop[i].name == prop_name)
@@ -173,7 +173,7 @@ Tango::DbDatum TimerChannelClass::get_class_property(string &prop_name)
  *	Description : Return the default value for device property.
  */
 //--------------------------------------------------------
-Tango::DbDatum TimerChannelClass::get_default_device_property(string &prop_name)
+Tango::DbDatum TimerChannelClass::get_default_device_property(std::string &prop_name)
 {
 	for (unsigned int i=0 ; i<dev_def_prop.size() ; i++)
 		if (dev_def_prop[i].name == prop_name)
@@ -188,7 +188,7 @@ Tango::DbDatum TimerChannelClass::get_default_device_property(string &prop_name)
  *	Description : Return the default value for class property.
  */
 //--------------------------------------------------------
-Tango::DbDatum TimerChannelClass::get_default_class_property(string &prop_name)
+Tango::DbDatum TimerChannelClass::get_default_class_property(std::string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_def_prop.size() ; i++)
 		if (cl_def_prop[i].name == prop_name)
@@ -209,10 +209,10 @@ Tango::DbDatum TimerChannelClass::get_default_class_property(string &prop_name)
 //--------------------------------------------------------
 void TimerChannelClass::set_default_property()
 {
-	string	prop_name;
-	string	prop_desc;
-	string	prop_def;
-	vector<string>	vect_data;
+	std::string	prop_name;
+	std::string	prop_desc;
+	std::string	prop_def;
+	std::vector<std::string>	vect_data;
 
 	//	Set Default Class Properties
 
@@ -232,26 +232,26 @@ void TimerChannelClass::write_class_property()
 		return;
 
 	Tango::DbData	data;
-	string	classname = get_name();
-	string	header;
-	string::size_type	start, end;
+	std::string	classname = get_name();
+	std::string	header;
+	std::string::size_type	start, end;
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("");
+	std::string	str_title("");
 	title << str_title;
 	data.push_back(title);
 
 	//	Put Description
 	Tango::DbDatum	description("Description");
-	vector<string>	str_desc;
+	std::vector<std::string>	str_desc;
 	str_desc.push_back("Base class for channels that control measurement time.");
 	description << str_desc;
 	data.push_back(description);
 
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
-	vector<string> inheritance;
+	std::vector<std::string> inheritance;
 	inheritance.push_back("TANGO_BASE_CLASS");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
@@ -316,7 +316,7 @@ void TimerChannelClass::device_factory(const Tango::DevVarStringArray *devlist_p
  *                and store them in the attribute list
  */
 //--------------------------------------------------------
-void TimerChannelClass::attribute_factory(vector<Tango::Attr *> &att_list)
+void TimerChannelClass::attribute_factory(std::vector<Tango::Attr *> &att_list)
 {
 	/*----- PROTECTED REGION ID(TimerChannelClass::attribute_factory_before) ENABLED START -----*/
 
@@ -464,11 +464,11 @@ void TimerChannelClass::command_factory()
  * @param	att_list	the ceated attribute list
  */
 //--------------------------------------------------------
-void TimerChannelClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
+void TimerChannelClass::create_static_attribute_list(std::vector<Tango::Attr *> &att_list)
 {
 	for (unsigned long i=0 ; i<att_list.size() ; i++)
 	{
-		string att_name(att_list[i]->get_name());
+		std::string att_name(att_list[i]->get_name());
 		transform(att_name.begin(), att_name.end(), att_name.begin(), ::tolower);
 		defaultAttList.push_back(att_name);
 	}
@@ -490,23 +490,23 @@ void TimerChannelClass::create_static_attribute_list(vector<Tango::Attr *> &att_
  * @param	list of all attributes
  */
 //--------------------------------------------------------
-void TimerChannelClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, vector<Tango::Attr *> &att_list)
+void TimerChannelClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, std::vector<Tango::Attr *> &att_list)
 {
 	Tango::Util *tg = Tango::Util::instance();
 
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
-		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((string)(*devlist_ptr)[i]).c_str());
+		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((std::string)(*devlist_ptr)[i]).c_str());
 		TimerChannel *dev = static_cast<TimerChannel *> (dev_impl);
 
-		vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
-		vector<Tango::Attribute *>::iterator ite_att;
+		std::vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
+		std::vector<Tango::Attribute *>::iterator ite_att;
 		for (ite_att=dev_att_list.begin() ; ite_att != dev_att_list.end() ; ++ite_att)
 		{
-			string att_name((*ite_att)->get_name_lower());
+			std::string att_name((*ite_att)->get_name_lower());
 			if ((att_name == "state") || (att_name == "status"))
 				continue;
-			vector<string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
+			std::vector<std::string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
 			if (ite_str == defaultAttList.end())
 			{
 				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << std::endl;
@@ -527,9 +527,9 @@ void TimerChannelClass::erase_dynamic_attributes(const Tango::DevVarStringArray 
  *	Description : returns Tango::Attr * object found by name
  */
 //--------------------------------------------------------
-Tango::Attr *TimerChannelClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
+Tango::Attr *TimerChannelClass::get_attr_object_by_name(std::vector<Tango::Attr *> &att_list, std::string attname)
 {
-	vector<Tango::Attr *>::iterator it;
+	std::vector<Tango::Attr *>::iterator it;
 	for (it=att_list.begin() ; it<att_list.end() ; ++it)
 		if ((*it)->get_name()==attname)
 			return (*it);

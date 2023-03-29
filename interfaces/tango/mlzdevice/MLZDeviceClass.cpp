@@ -75,13 +75,13 @@ MLZDeviceClass *MLZDeviceClass::_instance = NULL;
 
 //--------------------------------------------------------
 /**
- * method : 		MLZDeviceClass::MLZDeviceClass(string &s)
+ * method : 		MLZDeviceClass::MLZDeviceClass(std::string &s)
  * description : 	constructor for the MLZDeviceClass
  *
  * @param s	The class name
  */
 //--------------------------------------------------------
-MLZDeviceClass::MLZDeviceClass(string &s):Tango::DeviceClass(s)
+MLZDeviceClass::MLZDeviceClass(std::string &s):Tango::DeviceClass(s)
 {
 	cout2 << "Entering MLZDeviceClass constructor" << std::endl;
 	set_default_property();
@@ -128,10 +128,10 @@ MLZDeviceClass *MLZDeviceClass::init(const char *name)
 	{
 		try
 		{
-			string s(name);
+			std::string s(name);
 			_instance = new MLZDeviceClass(s);
 		}
-		catch (bad_alloc &)
+		catch (std::bad_alloc &)
 		{
 			throw;
 		}
@@ -261,7 +261,7 @@ CORBA::Any *ResetClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CO
  *	Description : Get the class property for specified name.
  */
 //--------------------------------------------------------
-Tango::DbDatum MLZDeviceClass::get_class_property(string &prop_name)
+Tango::DbDatum MLZDeviceClass::get_class_property(std::string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_prop.size() ; i++)
 		if (cl_prop[i].name == prop_name)
@@ -276,7 +276,7 @@ Tango::DbDatum MLZDeviceClass::get_class_property(string &prop_name)
  *	Description : Return the default value for device property.
  */
 //--------------------------------------------------------
-Tango::DbDatum MLZDeviceClass::get_default_device_property(string &prop_name)
+Tango::DbDatum MLZDeviceClass::get_default_device_property(std::string &prop_name)
 {
 	for (unsigned int i=0 ; i<dev_def_prop.size() ; i++)
 		if (dev_def_prop[i].name == prop_name)
@@ -291,7 +291,7 @@ Tango::DbDatum MLZDeviceClass::get_default_device_property(string &prop_name)
  *	Description : Return the default value for class property.
  */
 //--------------------------------------------------------
-Tango::DbDatum MLZDeviceClass::get_default_class_property(string &prop_name)
+Tango::DbDatum MLZDeviceClass::get_default_class_property(std::string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_def_prop.size() ; i++)
 		if (cl_def_prop[i].name == prop_name)
@@ -312,10 +312,10 @@ Tango::DbDatum MLZDeviceClass::get_default_class_property(string &prop_name)
 //--------------------------------------------------------
 void MLZDeviceClass::set_default_property()
 {
-	string	prop_name;
-	string	prop_desc;
-	string	prop_def;
-	vector<string>	vect_data;
+	std::string	prop_name;
+	std::string	prop_desc;
+	std::string	prop_def;
+	std::vector<std::string>	vect_data;
 
 	//	Set Default Class Properties
 
@@ -335,26 +335,26 @@ void MLZDeviceClass::write_class_property()
 		return;
 
 	Tango::DbData	data;
-	string	classname = get_name();
-	string	header;
-	string::size_type	start, end;
+	std::string	classname = get_name();
+	std::string	header;
+	std::string::size_type	start, end;
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("");
+	std::string	str_title("");
 	title << str_title;
 	data.push_back(title);
 
 	//	Put Description
 	Tango::DbDatum	description("Description");
-	vector<string>	str_desc;
+	std::vector<std::string>	str_desc;
 	str_desc.push_back("This is the root of the abstract base class inheritance tree.");
 	description << str_desc;
 	data.push_back(description);
 
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
-	vector<string> inheritance;
+	std::vector<std::string> inheritance;
 	inheritance.push_back("TANGO_BASE_CLASS");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
@@ -419,7 +419,7 @@ void MLZDeviceClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
  *                and store them in the attribute list
  */
 //--------------------------------------------------------
-void MLZDeviceClass::attribute_factory(vector<Tango::Attr *> &att_list)
+void MLZDeviceClass::attribute_factory(std::vector<Tango::Attr *> &att_list)
 {
 	/*----- PROTECTED REGION ID(MLZDeviceClass::attribute_factory_before) ENABLED START -----*/
 
@@ -559,11 +559,11 @@ void MLZDeviceClass::command_factory()
  * @param	att_list	the ceated attribute list
  */
 //--------------------------------------------------------
-void MLZDeviceClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
+void MLZDeviceClass::create_static_attribute_list(std::vector<Tango::Attr *> &att_list)
 {
 	for (unsigned long i=0 ; i<att_list.size() ; i++)
 	{
-		string att_name(att_list[i]->get_name());
+		std::string att_name(att_list[i]->get_name());
 		transform(att_name.begin(), att_name.end(), att_name.begin(), ::tolower);
 		defaultAttList.push_back(att_name);
 	}
@@ -585,23 +585,23 @@ void MLZDeviceClass::create_static_attribute_list(vector<Tango::Attr *> &att_lis
  * @param	list of all attributes
  */
 //--------------------------------------------------------
-void MLZDeviceClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, vector<Tango::Attr *> &att_list)
+void MLZDeviceClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, std::vector<Tango::Attr *> &att_list)
 {
 	Tango::Util *tg = Tango::Util::instance();
 
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
-		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((string)(*devlist_ptr)[i]).c_str());
+		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((std::string)(*devlist_ptr)[i]).c_str());
 		MLZDevice *dev = static_cast<MLZDevice *> (dev_impl);
 
-		vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
-		vector<Tango::Attribute *>::iterator ite_att;
+		std::vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
+		std::vector<Tango::Attribute *>::iterator ite_att;
 		for (ite_att=dev_att_list.begin() ; ite_att != dev_att_list.end() ; ++ite_att)
 		{
-			string att_name((*ite_att)->get_name_lower());
+			std::string att_name((*ite_att)->get_name_lower());
 			if ((att_name == "state") || (att_name == "status"))
 				continue;
-			vector<string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
+			std::vector<std::string>::iterator ite_str = find(defaultAttList.begin(), defaultAttList.end(), att_name);
 			if (ite_str == defaultAttList.end())
 			{
 				cout2 << att_name << " is a UNWANTED dynamic attribute for device " << (*devlist_ptr)[i] << std::endl;
@@ -622,9 +622,9 @@ void MLZDeviceClass::erase_dynamic_attributes(const Tango::DevVarStringArray *de
  *	Description : returns Tango::Attr * object found by name
  */
 //--------------------------------------------------------
-Tango::Attr *MLZDeviceClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
+Tango::Attr *MLZDeviceClass::get_attr_object_by_name(std::vector<Tango::Attr *> &att_list, std::string attname)
 {
-	vector<Tango::Attr *>::iterator it;
+	std::vector<Tango::Attr *>::iterator it;
 	for (it=att_list.begin() ; it<att_list.end() ; ++it)
 		if ((*it)->get_name()==attname)
 			return (*it);

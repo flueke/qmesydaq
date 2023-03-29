@@ -108,7 +108,7 @@ namespace ImageChannel_ns
  *                implementing the classImageChannel
  */
 //--------------------------------------------------------
-ImageChannel::ImageChannel(Tango::DeviceClass *cl, string &s)
+ImageChannel::ImageChannel(Tango::DeviceClass *cl, std::string &s)
  : DetectorChannel(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(ImageChannel::constructor_1) ENABLED START -----*/
@@ -301,9 +301,9 @@ void ImageChannel::always_executed_hook()
  *	Description : Hardware acquisition for attributes
  */
 //--------------------------------------------------------
-void ImageChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void ImageChannel::read_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "ImageChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "ImageChannel::read_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -316,9 +316,9 @@ void ImageChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
  *	Description : Hardware writing for attributes
  */
 //--------------------------------------------------------
-void ImageChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void ImageChannel::write_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "ImageChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "ImageChannel::write_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(ImageChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code

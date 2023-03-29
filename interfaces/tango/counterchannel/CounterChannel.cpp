@@ -90,7 +90,7 @@ namespace CounterChannel_ns
  *                implementing the classCounterChannel
  */
 //--------------------------------------------------------
-CounterChannel::CounterChannel(Tango::DeviceClass *cl, string &s)
+CounterChannel::CounterChannel(Tango::DeviceClass *cl, std::string &s)
  : DetectorChannel(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(CounterChannel::constructor_1) ENABLED START -----*/
@@ -264,9 +264,9 @@ void CounterChannel::always_executed_hook()
  *	Description : Hardware acquisition for attributes
  */
 //--------------------------------------------------------
-void CounterChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void CounterChannel::read_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "CounterChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "CounterChannel::read_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -280,9 +280,9 @@ void CounterChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
  *	Description : Hardware writing for attributes
  */
 //--------------------------------------------------------
-void CounterChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void CounterChannel::write_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "CounterChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "CounterChannel::write_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(CounterChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code

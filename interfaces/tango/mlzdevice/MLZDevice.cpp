@@ -86,7 +86,7 @@ namespace MLZDevice_ns
  *                implementing the classMLZDevice
  */
 //--------------------------------------------------------
-MLZDevice::MLZDevice(Tango::DeviceClass *cl, string &s)
+MLZDevice::MLZDevice(Tango::DeviceClass *cl, std::string &s)
  : TANGO_BASE_CLASS(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(MLZDevice::constructor_1) ENABLED START -----*/
@@ -181,9 +181,9 @@ void MLZDevice::always_executed_hook()
  *	Description : Hardware acquisition for attributes
  */
 //--------------------------------------------------------
-void MLZDevice::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void MLZDevice::read_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "MLZDevice::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "MLZDevice::read_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(MLZDevice::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code

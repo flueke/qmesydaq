@@ -75,17 +75,17 @@ public:
 	//	writehistogram:	Write a histogram file if true
 	Tango::DevBoolean	writehistogram;
 	//	configfile:	Name of the used configuration file
-	string	configfile;
+	std::string	configfile;
 	//	calibrationfile:	Name of the used calibration file
-	string	calibrationfile;
+	std::string	calibrationfile;
 	//	runid:	Number of the run
 	Tango::DevULong	runid;
 	//	lastlistfile:	Name of the last used list mode file
-	string	lastlistfile;
+	std::string	lastlistfile;
 	//	lasthistfile:	Name of the last used histogram file
-	string	lasthistfile;
+	std::string	lasthistfile;
 	//	lastbinnedfile:	Name of the last binned data file
-	string	lastbinnedfile;
+	std::string	lastbinnedfile;
 
 //	Attribute data members
 public:
@@ -99,7 +99,7 @@ public:
 	 *	@param cl	Class.
 	 *	@param s 	Device Name
 	 */
-	DetectorChannel(Tango::DeviceClass *cl,string &s);
+	DetectorChannel(Tango::DeviceClass *cl,std::string &s);
 	/**
 	 * Constructs a newly device object.
 	 *
@@ -149,14 +149,14 @@ public:
 	 *	Description : Hardware acquisition for attributes.
 	 */
 	//--------------------------------------------------------
-	virtual void read_attr_hardware(vector<long> &attr_list);
+	virtual void read_attr_hardware(std::vector<long> &attr_list);
 	//--------------------------------------------------------
 	/*
 	 *	Method      : DetectorChannel::write_attr_hardware()
 	 *	Description : Hardware writing for attributes.
 	 */
 	//--------------------------------------------------------
-	virtual void write_attr_hardware(vector<long> &attr_list);
+	virtual void write_attr_hardware(std::vector<long> &attr_list);
 
 /**
  *	Attribute active related methods

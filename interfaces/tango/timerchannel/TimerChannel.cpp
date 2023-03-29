@@ -91,7 +91,7 @@ namespace TimerChannel_ns
  *                implementing the classTimerChannel
  */
 //--------------------------------------------------------
-TimerChannel::TimerChannel(Tango::DeviceClass *cl, string &s)
+TimerChannel::TimerChannel(Tango::DeviceClass *cl, std::string &s)
  : DetectorChannel(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(TimerChannel::constructor_1) ENABLED START -----*/
@@ -202,9 +202,9 @@ void TimerChannel::always_executed_hook()
  *	Description : Hardware acquisition for attributes
  */
 //--------------------------------------------------------
-void TimerChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void TimerChannel::read_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "TimerChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "TimerChannel::read_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -217,9 +217,9 @@ void TimerChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
  *	Description : Hardware writing for attributes
  */
 //--------------------------------------------------------
-void TimerChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void TimerChannel::write_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "TimerChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "TimerChannel::write_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(TimerChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code

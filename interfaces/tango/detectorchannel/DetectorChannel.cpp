@@ -91,7 +91,7 @@ namespace DetectorChannel_ns
  *                implementing the classDetectorChannel
  */
 //--------------------------------------------------------
-DetectorChannel::DetectorChannel(Tango::DeviceClass *cl, string &s)
+DetectorChannel::DetectorChannel(Tango::DeviceClass *cl, std::string &s)
  : MLZDevice(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(DetectorChannel::constructor_1) ENABLED START -----*/
@@ -346,9 +346,9 @@ void DetectorChannel::always_executed_hook()
  *	Description : Hardware acquisition for attributes
  */
 //--------------------------------------------------------
-void DetectorChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void DetectorChannel::read_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "DetectorChannel::read_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "DetectorChannel::read_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::read_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
@@ -361,9 +361,9 @@ void DetectorChannel::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
  *	Description : Hardware writing for attributes
  */
 //--------------------------------------------------------
-void DetectorChannel::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void DetectorChannel::write_attr_hardware(TANGO_UNUSED(std::vector<long> &attr_list))
 {
-	DEBUG_STREAM << "DetectorChannel::write_attr_hardware(vector<long> &attr_list) entering... " << ENDLOG;
+	DEBUG_STREAM << "DetectorChannel::write_attr_hardware(std::vector<long> &attr_list) entering... " << ENDLOG;
 	/*----- PROTECTED REGION ID(DetectorChannel::write_attr_hardware) ENABLED START -----*/
 
 	//	Add your own code
