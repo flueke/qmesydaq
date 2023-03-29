@@ -210,7 +210,7 @@ void ModuleIdentificationPageThread::run()
 		}
 
 		m_iCommand = NONE;
-		MCPD8 *mcpd = new MCPD8(m_byMcpdId, m_szMcpdIp, 54321, QString::null, true);
+		MCPD8 *mcpd = new MCPD8(m_byMcpdId, m_szMcpdIp, 54321, QString(), true);
 		m_pWizard->m_bValid = (mcpd->version() > 0.0);
 		delete mcpd;
 		m_pWizard->m_pThreadMutex->unlock();

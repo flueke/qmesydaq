@@ -177,7 +177,7 @@ bool EditorMemory::needsToSave(int iDefaultCount) const
 		return false;
 	EditorMemory *pOther = new EditorMemory(m_pParent);
 	EditorMemory *pEmpty = new EditorMemory(m_pParent, iDefaultCount);
-	bool bResult(isDifferent(pOther, getPath()) && isDifferent(pEmpty, QString::null));
+	bool bResult(isDifferent(pOther, getPath()) && isDifferent(pEmpty, QString()));
 	delete pOther;
 	delete pEmpty;
 	return bResult;

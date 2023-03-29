@@ -35,8 +35,8 @@
  * \param wPort     UDP port of MCPD
  * \param szHostIp  IP address to bind to
  */
-MCPD2::MCPD2(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szHostIp /*= QString::null*/)
-    : MCPD(byId, szMcpdIp, wPort, QString::null, 7000, szHostIp)
+MCPD2::MCPD2(quint8 byId, QString szMcpdIp /*= "192.168.168.121"*/, quint16 wPort /*= 54321*/, QString szHostIp /*= QString()*/)
+    : MCPD(byId, szMcpdIp, wPort, QString(), 7000, szHostIp)
     , m_txCmdBufNum(0)
     , m_master(true)
     , m_term(true)

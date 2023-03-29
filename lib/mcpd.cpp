@@ -22,8 +22,8 @@
 #include "qmlogging.h"
 #include "stdafx.h"
 
-/** \fn MCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szMcpdDataIp = QString::null,
- * 		quint16 wDataPort = 0, QString szSourceIp = QString::null)
+/** \fn MCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szMcpdDataIp = QString(),
+ * 		quint16 wDataPort = 0, QString szSourceIp = QString())
  *
  *  Initialize base class for a MCPD.
  *

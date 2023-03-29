@@ -548,7 +548,7 @@ void MainWidget::checkListfilename(bool checked)
 {
 	if (checked)
 	{
-		QString sFilename(QString::null);
+		QString sFilename = QString();
 		bool bAsk(true);
 		if (m_remoteStart)
 		{
@@ -625,7 +625,7 @@ void MainWidget::checkHistogramFilename(bool checked)
 {
  	if (checked)
 	{
-		QString sFilename(QString::null);
+		QString sFilename = QString();
 		bool bAsk(true);
 		if (m_remoteStart)
 		{
@@ -641,7 +641,7 @@ void MainWidget::checkHistogramFilename(bool checked)
 		}
 		else
 		{
-			sFilename = selectHistogramfile(QString::null);
+			sFilename = selectHistogramfile(QString());
 			bAsk = false;
 		}
 

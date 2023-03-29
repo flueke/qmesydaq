@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 	MultipleLoopApplication app(argc, argv);
 	QStringList 		argList = app.arguments();
 	LoopObject 		*loop(NULL);
-	QString 		szLoadConfiguration(QString::null);
+	QString 		szLoadConfiguration = QString();
 	Q_INIT_RESOURCE(qled);
 
 	startLogging(g_szShortUsage, g_szLongUsage);

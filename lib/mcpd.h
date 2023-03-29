@@ -55,7 +55,7 @@ public:
     //! type of handler for data packets
     typedef void (*analyzeBufferFunction)(MCPD* pMcpd, QSharedDataPointer<SD_PACKET> pMdpPacket, void* pParam);
 
-    MCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szMcpdDataIp = QString::null, quint16 wDataPort = 0, QString szSourceIp = QString::null);
+    MCPD(quint8 byId, QString szMcpdIp = "192.168.168.121", quint16 wPort = 54321, QString szMcpdDataIp = QString(), quint16 wDataPort = 0, QString szSourceIp = QString());
 
     virtual ~MCPD();
 

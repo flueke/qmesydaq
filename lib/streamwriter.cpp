@@ -135,7 +135,7 @@ QString StreamWriter::fileName() const
 	QFile* pFile(dynamic_cast<QFile*>(m_pIODevice));
 	if (pFile)
 		return pFile->fileName();
-	return QString::null;
+	return QString();
 }
 
 /*!

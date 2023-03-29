@@ -156,7 +156,7 @@ public:
 
 	     \param title
          */
-	MesydaqPlotSpectrogram(const QString &title = QString::null)
+	MesydaqPlotSpectrogram(const QString &title = QString())
 		: QwtPlotSpectrogram(title)
 	{
 	}

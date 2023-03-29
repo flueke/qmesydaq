@@ -38,7 +38,7 @@ class LIBQMESYDAQ_EXPORT MCPD8 : public MCPD
 	Q_OBJECT
 
 public:
-	MCPD8(quint8, QString = "192.168.168.121", quint16 = 54321, QString = QString::null, quint16 = 0, QString = QString::null, bool = false);
+	MCPD8(quint8, QString = "192.168.168.121", quint16 = 54321, QString = QString(), quint16 = 0, QString = QString(), bool = false);
 
 	virtual ~MCPD8();
 
@@ -95,7 +95,7 @@ public:
 
 	bool scanPeriph(void);
 
-	bool setProtocol(const QString& addr, const QString& datasink = QString::null, const quint16 dataport = 0, const QString& cmdsink = QString::null, const quint16 cmdport = 0);
+	bool setProtocol(const QString& addr, const QString& datasink = QString(), const quint16 dataport = 0, const QString& cmdsink = QString(), const quint16 cmdport = 0);
 
 	void getProtocol(QString& ip, QString& cmdip, quint16& cmdport, QString& dataip, quint16& dataport) const;
 	void getProtocol(quint16 *addr);

@@ -200,7 +200,7 @@ void startLogging(const char* szShortUsage, const char* szLongUsage)
 			if ((i + 1) < args.size())
 				szParameter = args[i + 1];
 			else
-				szParameter = QString::null;
+				szParameter = QString();
 			bSeparatedParameter = true;
 		}
 
