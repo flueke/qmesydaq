@@ -1,7 +1,7 @@
 #ifndef LIBQMESYDAQ_GLOBAL_H
 #define LIBQMESYDAQ_GLOBAL_H
 
-#include <QtCore/qglobal.h>
+#include <QGlobalStatic>
 
 #ifdef LIBQMESYDAQ_LIB
 # define LIBQMESYDAQ_EXPORT Q_DECL_EXPORT
