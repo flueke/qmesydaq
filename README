@@ -2,11 +2,11 @@ QMesyDAQ application is based in part on the work of the Qwt project (http://qwt
 
 The system specific configuration should be done in a file named:
 
-qmesydaqconfig_`hostname -s`.pri
+mesydaqconfig_`hostname -s`.pri
 
 You can create this file via:
 
-# touch qmesydaqconfig_`hostname -s`.pri
+# touch mesydaqconfig_`hostname -s`.pri
 
 Then you may edit this file and fill the following entries
 
@@ -32,7 +32,7 @@ where are the library files of the Qwt library
 QWTLIBS		= $${QWT_ROOT}/lib
 
 what is the name of the Qwt library
-QWTLIB		= qwt-qt4
+QWTLIB		= qwt-qt5
 
 
 Build a distribution
