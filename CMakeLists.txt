@@ -84,3 +84,14 @@ add_definitions(-DVERSION="${GIT_VERSION}")
 add_subdirectory(qled)
 add_subdirectory(lib)
 add_subdirectory(qmesydaq)
+
+#find_package(Doxygen)
+#
+#if (DOXYGEN_FOUND)
+#add_custom_target(doc_doxygen
+#    COMMAND Doxygen::doxygen ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+#    COMMENT "Running doxygen")
+#endif (DOXYGEN_FOUND)
+#
+#add_custom_target(doc ALL)
+#add_dependencies(doc doc_doxygen)

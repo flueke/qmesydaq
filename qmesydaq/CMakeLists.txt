@@ -86,3 +86,5 @@ target_link_libraries(qmesydaq
     PRIVATE qled
     PRIVATE libqmesydaq
     PRIVATE ${QWT_LIBRARY})
+
+install(TARGETS qmesydaq RUNTIME DESTINATION bin)

@@ -45,3 +45,4 @@ target_include_directories(libqmesydaq
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     )
 set_target_properties(libqmesydaq PROPERTIES OUTPUT_NAME mesydaq)
+install(TARGETS libqmesydaq RUNTIME DESTINATION lib)

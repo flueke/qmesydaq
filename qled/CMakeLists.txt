@@ -8,3 +8,4 @@ target_link_libraries(qled PRIVATE Qt5::Widgets Qt5::Svg)
 target_include_directories(qled
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     )
+install(TARGETS qled RUNTIME DESTINATION lib)
