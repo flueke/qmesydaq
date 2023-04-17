@@ -1,4 +1,9 @@
-find_package(Qt5 COMPONENTS Widgets Gui PrintSupport Svg REQUIRED)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+find_package(Qt5 COMPONENTS Widgets Gui Network PrintSupport Svg REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem)
 
 add_executable(qmesydaq
     caresssetup.cpp
@@ -32,10 +37,12 @@ add_executable(qmesydaq
     monitorpresetwidget.cpp
     mpsdpulser.cpp
     MultipleLoopApplication.cpp
+    passworddialog.cpp
     plot.cpp
     presetwidget.cpp
     QMesydaqDetectorInterface.cpp
     QtInterface.cpp
+    StatusBarEntry.cpp
     tacosetup.cpp
     tangosetup.cpp
     tcpsetup.cpp
@@ -68,13 +75,14 @@ add_executable(qmesydaq
     tcpsetup.ui
     )
 
-#qt5_wrap_ui(qmesydaq passworddialog.ui)
-
 target_include_directories(qmesydaq
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/diskspace>
     )
 
 target_link_libraries(qmesydaq
-    PRIVATE Qt5::Widgets Qt5::PrintSupport Qt5::Svg
-    qled libqmesydaq ${QWT_LIBRARY})
+    PRIVATE Qt5::Widgets Qt5::Network Qt5::PrintSupport Qt5::Svg
+    PRIVATE ${Boost_LIBRARIES}
+    PRIVATE qled
+    PRIVATE libqmesydaq
+    PRIVATE ${QWT_LIBRARY})

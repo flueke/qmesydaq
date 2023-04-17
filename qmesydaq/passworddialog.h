@@ -50,5 +50,7 @@ public:
 	{
 		return QCryptographicHash::hash(passwordInput->text().toLatin1().data(), QCryptographicHash::Md5).toHex();
 	}
+
+    ~PasswordDialog() override;
 };
 #endif

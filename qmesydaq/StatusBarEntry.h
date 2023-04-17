@@ -44,6 +44,8 @@ public:
 	{
 		label->setText(text);
 	}
+
+    ~StatusBarEntry() override;
 };
 
 #endif
