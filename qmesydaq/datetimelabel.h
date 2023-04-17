@@ -25,7 +25,7 @@
 class DateTimeLabel : public QLabel
 {
 public:
-	DateTimeLabel(QWidget *parent=0, Qt::WindowFlags f=0);
+	DateTimeLabel(QWidget *parent=0, Qt::WindowFlags f={});
 
 protected:
 	void timerEvent(QTimerEvent *event);

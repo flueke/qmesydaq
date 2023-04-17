@@ -21,6 +21,7 @@
 
 #include "histogrammappingeditor.h"
 #include "ui_histogrammappingeditor.h"
+#include <algorithm>
 #include <QMenuBar>
 #include <QKeyEvent>
 #include <QToolTip>
@@ -346,7 +347,7 @@ bool HistogramMappingEditor::myLessThanTW(const QTableWidgetItem *a, const QTabl
 QList<QTableWidgetItem*> HistogramMappingEditor::getSelectedItems()
 {
 	QList<QTableWidgetItem*> aList(ui->TableWidget->selectedItems());
-	qSort(aList.begin(), aList.end(), HistogramMappingEditor::myLessThanTW);
+    std::sort(std::begin(aList), std::end(aList), HistogramMappingEditor::myLessThanTW);
 	return aList;
 }
 
@@ -447,7 +448,7 @@ void HistogramMappingEditor::shiftTubes(int iShiftRange)
 			aExtractionVec[i].setChannelNumber(iRow % iLength);
 		}
 
-		qSort(aExtractionVec.begin(), aExtractionVec.end(), HistogramMappingEditor::myLessThanEV);
+        std::sort(aExtractionVec.begin(), aExtractionVec.end(), HistogramMappingEditor::myLessThanEV);
 
 		for (int i = 0; i < aExtractionVec.size(); ++i)
 		{

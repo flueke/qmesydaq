@@ -141,27 +141,27 @@ void ModuleIdentificationPage::valueChanged()
  */
 void ModuleIdentificationPage::testTimeout()
 {
-	for (;;)
-	{
-        	m_pThreadMutex->lock();
-        	if (m_pThread->m_iCommand != ModuleIdentificationPageThread::WORK)
-			break;
-        	m_pThreadMutex->unlock();
-        	usleep(1000);
-	}
+    for (;;)
+    {
+            m_pThreadMutex->lock();
+            if (m_pThread->m_iCommand != ModuleIdentificationPageThread::WORK)
+            break;
+            m_pThreadMutex->unlock();
+            usleep(1000);
+    }
 
-	if (m_pThread->m_iCommand == ModuleIdentificationPageThread::NONE)
-	{
+    if (m_pThread->m_iCommand == ModuleIdentificationPageThread::NONE)
+    {
             if (rb_useIpAddress->isChecked())
                 m_pThread->m_szMcpdIp = moduleIPInput->getAddress();
             else
                 m_pThread->m_szMcpdIp = le_address->text();
-        	m_pThread->m_byMcpdId = moduleIDInput->value();
+            m_pThread->m_byMcpdId = moduleIDInput->value();
             m_pThread->m_cmdPort = spin_cmdPort->value();
-        	m_pThread->m_iCommand = ModuleIdentificationPageThread::WORK;
-        	m_pThread->m_ThreadCondition.wakeOne();
-	}
-	m_pThreadMutex->unlock();
+            m_pThread->m_iCommand = ModuleIdentificationPageThread::WORK;
+            m_pThread->m_ThreadCondition.wakeOne();
+    }
+    m_pThreadMutex->unlock();
 }
 
 /*!

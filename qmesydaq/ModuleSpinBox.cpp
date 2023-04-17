@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include "ModuleSpinBox.h"
+#include <algorithm>
 
 /*!
     \fn ModuleSpinBox::ModuleSpinBox(QList<int> modules, QWidget *parent)
@@ -62,7 +63,7 @@ void ModuleSpinBox::setModuleList(QList<int> modules)
 			setValue(m_modList.last());
 		else
 			setValue(m_modList.first());
-		qSort(m_modList);
+        std::sort(std::begin(m_modList), std::end(m_modList));
 		setRange(m_modList.first(), m_modList.last());
 		setValue(m_modList.first());
 	}
@@ -99,8 +100,9 @@ void ModuleSpinBox::stepBy(int steps)
 		}
 		else
 		{
-			QList<int>::const_iterator it = qUpperBound(m_modList, pos);
-			setValue(*it);
+            auto it = std::upper_bound(std::begin(m_modList), std::end(m_modList), pos);
+            if (it != std::end(m_modList))
+                setValue(*it);
 		}
 	}
 	else
@@ -114,11 +116,14 @@ void ModuleSpinBox::stepBy(int steps)
 		}
 		else
 		{
-			QList<int>::const_iterator it = qLowerBound(m_modList, pos);
-			if (*it < pos)
-				setValue(*it);
-			else if (it != m_modList.begin())
-				setValue(*(--it));
+            auto it = std::lower_bound(std::begin(m_modList), std::end(m_modList), pos);
+            if (it != std::end(m_modList))
+            {
+                if (*it < pos)
+                    setValue(*it);
+                else if (it != m_modList.begin())
+                    setValue(*(--it));
+            }
 		}
 	}
 }

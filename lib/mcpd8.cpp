@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <algorithm>
 #include <QHostAddress>
 #include <QTimer>
 #include <QThread>
@@ -3012,7 +3013,7 @@ QList<quint16> MCPD8::getHistogramList(void)
             }
         }
     }
-    qStableSort(result);
+    std::sort(std::begin(result), std::end(result));
     return result;
 }
 

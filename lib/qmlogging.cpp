@@ -152,6 +152,7 @@ static void messageToFile(QtMsgType type, const QMessageLogContext &context, con
 		case QtWarningMsg:  iLogLevel = WARNING; break;
 		case QtCriticalMsg: iLogLevel = ERROR; break;
 		case QtFatalMsg:    iLogLevel = FATAL; break;
+        default: break;
 	}
 	if (iLogLevel <= DEBUGLEVEL)
 	{
@@ -273,19 +274,20 @@ QByteArray HexDump(const void* pData, int iLength)
 		iLength = 16384; // max. 16KB
 	for (int i = 0; i < iLength; i += 16)
 	{
-		QString szLine;
-		szLine.sprintf("%04x  ",i);
+        QString szLine = QString("0x%1").arg(i, 8, 16, QLatin1Char('0'));
+
 		for (int j = 0; j < 16; ++j)
 		{
 			QString szTmp;
 			if (j == 8)
 				szLine += "- ";
 			if ((i + j) < iLength)
-				szTmp.sprintf("%02x ",p[i + j]);
+                szTmp = QString("0x%1").arg(p[i+j], 4, 16, QLatin1Char('0'));
 			else
 				szTmp = "   ";
 			szLine += szTmp;
 		}
+
 		szLine += " ";
 		for (int j = 0; j < 16 && (i + j) < iLength; ++j)
 		{
@@ -296,7 +298,7 @@ QByteArray HexDump(const void* pData, int iLength)
 			   szLine += " - ";
 			szLine += c;
 		}
-		dst += szLine;
+		dst += szLine.toUtf8();
 		dst += "\n";
 	}
 	return dst;

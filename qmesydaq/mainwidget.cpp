@@ -133,7 +133,6 @@ MainWidget::MainWidget(Detector *detector, QWidget *parent)
 	QObject::connect(m_detector, SIGNAL(newCmdPackageReceived()), this, SLOT(updateDisplay()));
 	m_dataFrame->show();
 
-	m_time = QTime(QTime::currentTime());
 	m_time.start();
 	realTimeLabel->setHidden(true);
 
@@ -196,7 +195,7 @@ MainWidget::MainWidget(Detector *detector, QWidget *parent)
 	m_histData = new MesydaqHistogramData();
 
 	m_printer = new QPrinter;
-	m_printer->setOrientation(QPrinter::Landscape);
+	m_printer->setPageOrientation(QPageLayout::Landscape);
 	m_printer->setDocName("PlotCurves");
 	m_printer->setCreator("QMesyDAQ Version: " VERSION);
 
@@ -674,8 +673,7 @@ void MainWidget::updateDisplay(void)
 {
 	quint16 id = (quint16) paramId->value();
 	int ci = statusTab->currentIndex();
-	QTime tmpTime;
-	tmpTime = tmpTime.addMSecs(m_time.elapsed());
+    auto tmpTime = QTime().addMSecs(m_time.msecsSinceReference());
 	if (m_dispTimer)
 		realTimeLabel->setText(QString("Real time: %1").arg(tmpTime.toString("HH:mm:ss.zzz")));
 	if (statusTab->tabText(ci) == tr("Statistics"))
@@ -741,7 +739,6 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 	// nsec = time in 100 nsecs
 	//-> usec =
 	//->
-	QString str;
 	quint64 val;
 	ulong /*nsec,*/
 		sec,
@@ -765,7 +762,11 @@ QString MainWidget::buildTimestring(quint64 timeval, bool nano)
 // remaining seconds:
 	sec = val - (min * 60);
 //	MSG_DEBUG << tr("%1 %2 %3 %4 %1").arg(nsecs).arg(hr).arg(min).arg(sec);
-	str.sprintf("%02lu:%02lu:%02lu", hr, min, sec);
+    auto str = QString("%1:%2:%3")
+        .arg(hr, 2, 10, QLatin1Char('0'))
+        .arg(min, 2, 10, QLatin1Char('0'))
+        .arg(sec, 2, 10, QLatin1Char('0'))
+        ;
 	return str;
 }
 

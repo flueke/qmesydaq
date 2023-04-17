@@ -83,16 +83,16 @@ void IPAddressWidget::init(void)
 #endif
 		font.setFixedPitch(true);
 		pEdit->setFont(font);
-		w += QFontMetrics(pEdit->font()).width("000|");
+		w += QFontMetrics(pEdit->font()).horizontalAdvance("000|");
 		m = pEdit->textMargins();
 		w += m.left() + m.right();
 		QRegExp rx("^(0|[1-9]|[1-9][0-9]|1[0-9][0-9]|2([0-4][0-9]|5[0-5]))$");
 		QValidator *validator = new QRegExpValidator(rx, pEdit);
 		pEdit->setValidator(validator);
 	}
-	w += QFontMetrics(label1->font()).width(".");
-	w += QFontMetrics(label2->font()).width(".");
-	w += QFontMetrics(label2->font()).width(".");
+	w += QFontMetrics(label1->font()).horizontalAdvance(".");
+	w += QFontMetrics(label2->font()).horizontalAdvance(".");
+	w += QFontMetrics(label2->font()).horizontalAdvance(".");
 	setMaximumWidth(w);
 
 	connect(this, SIGNAL(signalTextChanged(QLineEdit *)), this, SLOT(slotTextChanged(QLineEdit *)), Qt::QueuedConnection);

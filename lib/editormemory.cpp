@@ -128,7 +128,7 @@ bool EditorMemory::loadFromPath(QString sPath)
 			}
 			else
 			{
-				QStringList asParts(inS.split(QRegExp("[ \t#;]+"), QString::SkipEmptyParts));
+				QStringList asParts(inS.split(QRegExp("[ \t#;]+"), Qt::SkipEmptyParts));
 				int iStartInput, iEndInput, iStartOutput, iEndOutput;
 				float fFactor;
 

@@ -18,6 +18,7 @@
  *   Free Software Foundation, Inc.,                                        *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.              *
  ****************************************************************************/
+#include <algorithm>
 #include <QThread>
 #include <QStringList>
 #include "mdefines.h"
@@ -2125,7 +2126,7 @@ QList<int> Detector::mcpdId(void)
 {
 	MSG_INFO << "Detector::mcpdId : " << m_mcpd.size();
 	QList<int> st = m_mcpd.keys();
-	qSort(st);
+    std::sort(std::begin(st), std::end(st));
 	return st;
 }
 

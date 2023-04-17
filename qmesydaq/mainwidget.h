@@ -22,7 +22,7 @@
 
 #include <QWidget>
 #include <QColor>
-#include <QTime>
+#include <QElapsedTimer>
 #include "ui_mainwidget.h"
 #include "plot.h"
 #include "measurement.h"
@@ -270,7 +270,7 @@ private:
 	QPrinter		*m_printer;
 
 	//! time object
-	QTime			m_time;
+    QElapsedTimer   m_time;
 
 	//! histogram object currently used
 	Histogram		*m_histogram;

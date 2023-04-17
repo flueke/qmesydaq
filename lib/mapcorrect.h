@@ -25,7 +25,7 @@
 #include "libqmesydaq_global.h"
 #include "histogram.h"
 
-class LIBQMESYDAQ_EXPORT MappedHistogram;
+class MappedHistogram;
 
 /**
  * \short this object represents histogram mapping and correction data

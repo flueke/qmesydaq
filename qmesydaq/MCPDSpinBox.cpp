@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "MCPDSpinBox.h"
+#include <algorithm>
 
 /*!
     \fn MCPDSpinBox::MCPDSpinBox(QList<int> modules, QWidget *parent)
@@ -48,7 +49,7 @@ void MCPDSpinBox::setMCPDList(QList<int> modules)
 	{
 		if (!isEnabled())
 			setEnabled(true);
-		qSort(m_mcpdList);
+        std::sort(std::begin(m_mcpdList), std::end(m_mcpdList));
 		setRange(m_mcpdList.first(), m_mcpdList.last());
 		setValue(m_mcpdList.at(0));
 	}
@@ -83,8 +84,9 @@ void MCPDSpinBox::stepBy(int steps)
 		}
 		else
 		{
-			QList<int>::const_iterator it = qUpperBound(m_mcpdList, pos);
-			setValue(*it);
+            auto it = std::upper_bound(std::begin(m_mcpdList), std::end(m_mcpdList), pos);
+            if (it != std::end(m_mcpdList))
+                setValue(*it);
 		}
 	}
 	else
@@ -96,8 +98,9 @@ void MCPDSpinBox::stepBy(int steps)
 		}
 		else
 		{
-			QList<int>::const_iterator it = qLowerBound(m_mcpdList, pos);
-			setValue(*it);
+            auto it = std::lower_bound(std::begin(m_mcpdList), std::end(m_mcpdList), pos);
+            if (it != std::end(m_mcpdList))
+                setValue(*it);
 		}
 	}
 }

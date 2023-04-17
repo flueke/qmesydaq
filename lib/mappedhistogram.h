@@ -25,9 +25,9 @@
 #include "libqmesydaq_global.h"
 #include "histogram.h"
 
-class LIBQMESYDAQ_EXPORT MappedHistogram;
-class LIBQMESYDAQ_EXPORT MapCorrection;
-class LIBQMESYDAQ_EXPORT Spectrum;
+class MappedHistogram;
+class MapCorrection;
+class Spectrum;
 
 /**
  * \short represents a histogram of mapped and corrected data

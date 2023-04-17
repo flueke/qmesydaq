@@ -1013,7 +1013,7 @@ void Measurement::readCalibration(const QString &name, bool bForceDefault)
 void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 {
 	QString tmp = t.readLine();
-	QStringList list = tmp.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+	QStringList list = tmp.split(QRegExp("\\s+"), Qt::SkipEmptyParts);
 	int tubes = list.size();
 
 	QStringList lines;
@@ -1027,7 +1027,7 @@ void Measurement::fillHistogram(QTextStream &t, Histogram *hist)
 
 	for (int j = 0; j < lines.size(); ++j)
 	{
-		list = lines[j].split(QRegExp("\\s+"), QString::SkipEmptyParts);
+		list = lines[j].split(QRegExp("\\s+"), Qt::SkipEmptyParts);
 		if (list.size() == (tubes + 1))
 		{
 //			add values to histogram
