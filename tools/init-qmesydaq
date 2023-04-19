@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export QMESYDAQ=$(readlink -f $(dirname "${BASH_SOURCE[0]}")/../)
+
+echo "Setting up environment for qmesydaq in $QMESYDAQ: PATH, LD_LIBRARY_PATH"
+
+export PATH="${QMESYDAQ}/bin:${PATH}"
+export LD_LIBRARY_PATH="${QMESYDAQ}/lib:${LD_LIBRARY_PATH}"
