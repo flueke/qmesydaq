@@ -106,7 +106,7 @@ public:
             m_intervals[axis] = interval;
     }
 
-    QwtInterval interval(Qt::Axis axis) const override
+    QwtInterval interval(Qt::Axis axis) const
     {
         if (0 <= axis && axis < 3)
             return m_intervals[axis];

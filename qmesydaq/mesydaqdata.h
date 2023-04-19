@@ -137,7 +137,7 @@ public:
 	QSize rasterHint(const QRectF &) const;
 #endif
 
-    QwtInterval interval(Qt::Axis axis) const override
+    QwtInterval interval(Qt::Axis axis) const
     {
         if (axis == Qt::XAxis)
             return m_range;
