@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "zoomer.h"
+#include <QPen>
 
 #if QWT_VERSION < 0x060000
 Zoomer::Zoomer(QwtPlotCanvas *canvas)
@@ -40,6 +41,6 @@ Zoomer::Zoomer(QWidget *canvas)
 
 void Zoomer::setColor(const QColor &c)
 {
-        setRubberBandPen(c);
+        setRubberBandPen(QPen(c));
         setTrackerPen(c);
 }

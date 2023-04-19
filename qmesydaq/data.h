@@ -99,6 +99,22 @@ public:
 	virtual QwtDoubleInterval range() const;
 
 	virtual double value(double x, double y) const;
+
+    void setInterval(Qt::Axis axis, const QwtInterval &interval)
+    {
+        if (0 <= axis && axis < 3)
+            m_intervals[axis] = interval;
+    }
+
+    QwtInterval interval(Qt::Axis axis) const override
+    {
+        if (0 <= axis && axis < 3)
+            return m_intervals[axis];
+        return {};
+    }
+
+private:
+    QwtInterval m_intervals[3];
 };
 
 class DiffractogramData : public SpectrumData

@@ -23,6 +23,7 @@
 
 #include <qwt_color_map.h>
 #if QWT_VERSION >= 0x060000
+    #include <qwt_interval.h>
 #	define QwtDoubleInterval QwtInterval
 #endif
 

@@ -37,6 +37,7 @@
 #include "qmlogging.h"
 
 #include <QResizeEvent>
+#include <QPen>
 
 SpectrumCurve::SpectrumCurve()
 	: QwtPlotCurve("")

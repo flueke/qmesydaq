@@ -78,7 +78,7 @@ QwtDoubleRect SpectrumData::boundingRect() const
 #if QWT_VERSION < 0x060000
 	QwtDoubleRect rect = QwtData::boundingRect();
 #else
-	QwtDoubleRect rect = d_boundingRect;
+    QwtDoubleRect rect;
 #endif
 	if (rect.isEmpty())
 		 rect = QwtDoubleRect(0.0, 0.1, 1.0, 1.0);

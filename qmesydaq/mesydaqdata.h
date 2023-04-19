@@ -91,6 +91,7 @@ public:
 private:
 	//! The spectrum data
 	Spectrum	m_spectrum;
+    QRectF d_boundingRect;
 };
 
 /**
@@ -136,11 +137,28 @@ public:
 	QSize rasterHint(const QRectF &) const;
 #endif
 
+    QwtInterval interval(Qt::Axis axis) const override
+    {
+        if (axis == Qt::XAxis)
+            return m_range;
+        return {};
+    }
+
+    void setInterval(Qt::Axis axis, const QwtInterval &interval)
+    {
+        if (0 <= axis && axis < 3)
+            m_intervals[axis] = interval;
+
+        if (axis == Qt::XAxis)
+            m_range = interval;
+    }
+
 private:
 	//! The histogram data
 	Histogram		m_histogram;
 
 	QwtDoubleInterval	m_range;
+    QwtInterval m_intervals[3];
 };
 
 /**

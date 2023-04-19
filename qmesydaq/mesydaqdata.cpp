@@ -102,7 +102,6 @@ QwtDoubleRect MesydaqSpectrumData::boundingRect() const
 
 MesydaqHistogramData::MesydaqHistogramData()
 	: QwtRasterData()
-	, m_range(QwtDoubleInterval(0, 0))
 {
 }
 
