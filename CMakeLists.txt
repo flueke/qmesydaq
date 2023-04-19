@@ -42,7 +42,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug")
 endif()
 
-message("-- CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} (mvme)")
+message("-- CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} (qmesydaq)")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -140,18 +140,18 @@ if (WIN32)
     set(CPACK_GENERATOR "NSIS;ZIP")
     set(CPACK_SOURCE_GENERATOR "ZIP")
     set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
-    set(CPACK_NSIS_PACKAGE_NAME "mvme")
-    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "bin\\\\mvme.exe")
+    set(CPACK_NSIS_PACKAGE_NAME "qmesydaq")
+    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "bin\\\\qmesydaq.exe")
     set(CPACK_NSIS_URL_INFO_ABOUT "http://www.mesytec.com")
     set(CPACK_NSIS_CONTACT "info@mesytec.com")
 
     #set(CPACK_NSIS_EXECUTABLES_DIRECTORY "")
     # List of (<link> <link name>) pairs
-    set(CPACK_NSIS_MENU_LINKS
-        "doc/mvme.pdf"                          "mvme Documentation (PDF)"
-        "doc/html/index.html"                   "mvme Documentation (HTML)"
-        "extras/vm-usb/Manual_VM-USB_A00.pdf"   "VM-USB Manual"
-    )
+    #set(CPACK_NSIS_MENU_LINKS
+    #    "doc/mvme.pdf"                          "mvme Documentation (PDF)"
+    #    "doc/html/index.html"                   "mvme Documentation (HTML)"
+    #    "extras/vm-usb/Manual_VM-USB_A00.pdf"   "VM-USB Manual"
+    #)
 else()
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/tools/init-qmesydaq" DESTINATION "bin")
 
