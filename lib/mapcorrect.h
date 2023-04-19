@@ -22,7 +22,7 @@
 #ifndef __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__
 #define __MAPCORRECT_H__EA8A6E38_8A00_4C54_861E_106BE233A7D9__
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 #include "histogram.h"
 
 class MappedHistogram;

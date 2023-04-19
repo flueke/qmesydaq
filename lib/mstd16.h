@@ -20,7 +20,7 @@
 #ifndef MSTD_16_H
 #define MSTD_16_H
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 #include "mpsd8.h"
 
 /**

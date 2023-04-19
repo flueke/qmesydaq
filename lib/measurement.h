@@ -26,7 +26,7 @@
 #include <QMap>
 #include <QPair>
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 #include "counter.h"
 #include "structures.h"
 #include "mdefines.h"

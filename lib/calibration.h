@@ -25,6 +25,7 @@
 //The include of the stdafx is necessary for the round function,
 //which is implemented inside the stdafx.cpp.
 #include "stdafx.h"
+#include "libqmesydaq_export.h"
 
 class TubeRange
 {

@@ -32,7 +32,7 @@
 
 #include <QDebug>
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 
 #define MSG_FATAL    qDebug().nospace() << QString("0 %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()
 #define MSG_ERROR    qDebug().nospace() << QString("1 %1(%2): ").arg(__FILE__).arg(__LINE__).toLocal8Bit().constData()

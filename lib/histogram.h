@@ -27,7 +27,7 @@
 #include <QHash>
 #include <QRect>
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 
 #include "spectrum.h"
 

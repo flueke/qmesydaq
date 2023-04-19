@@ -25,7 +25,7 @@
 
 class Detector;
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 
 
 struct puls

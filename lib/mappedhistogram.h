@@ -22,7 +22,7 @@
 #ifndef _MAPPEDHISTOGRAM_H_
 #define _MAPPEDHISTOGRAM_H_
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 #include "histogram.h"
 
 class MappedHistogram;

@@ -23,8 +23,8 @@
 #include <QObject>
 #include <QQueue>
 
-#include "libqmesydaq_global.h"
 #include "mdefines.h"
+#include "libqmesydaq_export.h"
 
 /**
  * \short Software counter

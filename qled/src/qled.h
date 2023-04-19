@@ -18,14 +18,14 @@
 
 #include <Qt>
 #include <QWidget>
-#include <QtUiPlugin/QDesignerExportWidget>
+#include "qled_export.h"
 
 // My Qt designer widget plugin class
 
 class QColor;
 class QSvgRenderer;
 
-class QDESIGNER_WIDGET_EXPORT QLed : public QWidget
+class QLED_EXPORT QLed : public QWidget
 {
 Q_OBJECT
         Q_ENUMS(ledColor)

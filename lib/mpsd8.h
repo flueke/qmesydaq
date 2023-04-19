@@ -20,7 +20,7 @@
 #ifndef MPSD8_H
 #define MPSD8_H
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 #include "mdefines.h"
 #include "qmlogging.h"
 

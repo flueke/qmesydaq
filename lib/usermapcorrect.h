@@ -24,6 +24,7 @@
 
 #include "mapcorrect.h"
 #include "calibration.h"
+#include "libqmesydaq_export.h"
 
 #include <QHash>
 

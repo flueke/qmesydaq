@@ -14,7 +14,7 @@
 //#include <cstdio>
 //#include <cmath>
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 
 #if defined(_MSC_VER)
 #if !defined(VERSION)

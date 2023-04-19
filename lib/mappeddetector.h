@@ -22,7 +22,7 @@
 #ifndef MAPPEDDETECTOR_H
 #define MAPPEDDETECTOR_H
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 
 /**
 	\short Data of mapped detector tube without channel

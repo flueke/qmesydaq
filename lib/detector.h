@@ -30,7 +30,7 @@
 #include <QMap>
 #include <QPoint>
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 #include "structures.h"
 #include "mdefines.h"
 

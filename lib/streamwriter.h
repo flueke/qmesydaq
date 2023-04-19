@@ -22,7 +22,7 @@
 
 #include <QDataStream>
 #include "structures.h"
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 
 /**
  * \short Base class for streaming MCPD data into files

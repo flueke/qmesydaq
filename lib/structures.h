@@ -24,6 +24,7 @@
 #include <QSharedData>
 #include <QSharedDataPointer>
 #include <QVector>
+#include "libqmesydaq_export.h"
 
 //! command packet structure
 struct MDP_PACKET

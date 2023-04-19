@@ -34,7 +34,7 @@
 #include <QUdpSocket>
 
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 
 /**
  * \short this UDP socket sends the same data, which is written to a listmode file

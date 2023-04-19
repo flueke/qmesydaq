@@ -110,8 +110,8 @@ void MappedHistogram::setMapCorrection(MapCorrection *pMapCorrection, Histogram 
 	if (pSrc == NULL)
 		return;
 	clear();
-	register int iHeight = pSrc->height();
-	register int iWidth = pSrc->width();
+	int iHeight = pSrc->height();
+	int iWidth = pSrc->width();
 	for (int ys = 0; ys < iHeight; ++ys)
 		for (int xs = 0; xs < iWidth; ++xs)
 			addValue(xs, ys, pSrc->value(xs, ys));
@@ -151,7 +151,7 @@ quint64 MappedHistogram::value(quint16 x, quint16 y) const
  */
 double MappedHistogram::floatValue(quint16 x, quint16 y) const
 {
-	register int iPos = y * m_width + x;
+	int iPos = y * m_width + x;
 	if (x < m_width && y < m_height && iPos >= 0 && iPos < m_adblData.count())
 		return m_adblData[iPos];
 	return 0.0;

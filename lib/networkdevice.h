@@ -24,7 +24,7 @@
 #include <QMutex>
 #include <QHostAddress>
 
-#include "libqmesydaq_global.h"
+#include "libqmesydaq_export.h"
 #include "structures.h"
 
 class QUdpSocket;

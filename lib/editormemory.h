@@ -23,6 +23,7 @@
 #define EDITORMEMORY_H
 #include "mapcorrect.h"
 #include "mappeddetector.h"
+#include "libqmesydaq_export.h"
 
 /**
 	\short Mapping editor memory

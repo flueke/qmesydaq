@@ -34,6 +34,7 @@ QLed::QLed(QWidget *parent)
 	, id_Timer(0)
 	, m_shape(Circle)
 {
+    Q_INIT_RESOURCE(qled);
 	renderer = new QSvgRenderer();
 	shapes << ":/resources/circle_" << ":/resources/square_" << ":/resources/triang_" << ":/resources/round_";
 	colors << "red.svg" << "green.svg" << "yellow.svg" << "grey.svg" << "orange.svg" << "purple.svg" << "blue.svg";

@@ -22,6 +22,7 @@
 #define MCPD2_H
 
 #include "mcpd.h"
+#include "libqmesydaq_export.h"
 
 class MPSD8;
 class QTimer;
