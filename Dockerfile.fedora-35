@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1.5
+# vim:ft=dockerfile
+
+# Dockerfile for building the qmesydaq under fedora:35.
+#
+# No build artifacts are currently copied back to the docker host! This file is
+# purely for testing dependency installation and the build process.
+#
+# Example docker build invocation from the root of the source tree:
+#   DOCKER_BUILDKIT=1 docker build  -f ./Dockerfile.fedora-35 .
+
+FROM fedora:35
+
+RUN yum install -y cmake ninja-build g++ qwt-qt5-devel boost-devel
+
+COPY . /qmesydaq-source
+WORKDIR /qmesydaq-build
+
+RUN cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/qmesydaq-install /qmesydaq-source \
+    && ninja && ninja install
+
+RUN test -x /qmesydaq-install/bin/qmesydaq
