@@ -66,7 +66,7 @@ set(not-msvc $<NOT:$<CXX_COMPILER_ID:MSVC>>)
 # Look for qwt
 find_path(QWT_INCLUDE_DIR
     NAMES qwt_plot.h
-    PATH_SUFFIXES qwt qwt-qt5 qwt-6.2.0 qwt-6.1.3 qt5/qwt6
+    PATH_SUFFIXES qwt qwt-qt5 qwt-6.2.0 qwt-6.1.3 qt5/qwt6 qt5/qwt
     PATHS /usr/local/lib/qwt.framework/Headers)
 
 include_directories(${QWT_INCLUDE_DIR})
